@@ -1,15 +1,11 @@
-
-
-
-
-#' Teal module to plot kaplan meier curves with extrapolation superimposed
+#' Teal module to generate a variety of interactive scatter plots
 #'
 #' give more details about the method
 #'
 #' @param label label of teal module in app
 #'
-#'
-#' @author Nick
+#' @author Balazs Toth
+#' @author Nick Paszty
 #'
 #'
 #' @export
@@ -28,7 +24,7 @@
 #'   data = list(ASL = ASL),
 #'   modules = root_modules(
 #'     tm_g_scatterplot(
-#'        label = "Parametric KM Plot",
+#'        label = "Scatter Plot",
 #'        dataname = "ASL",
 #'        var = c("AGE", "BWT"),
 #'        var_choices = which(sapply(ASL, is.numeric)) %>% names()
@@ -42,6 +38,8 @@
 #' }
 #'
 #'
+
+# UPDATE: function needs to be tealified
 tm_g_scatterplot <- function(label,
                              dataname,
                              var,
