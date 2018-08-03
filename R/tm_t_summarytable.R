@@ -1,10 +1,10 @@
-#' Teal module to generate a table of descriptive summary statistics to accompany plots
+#' Teal module to generate a table of descriptive summary statistics table to accompany plots
 #'
 #' give more details about the method
 #'
 #' @param label label of teal module in app
 #'
-#'
+#' @author Balazs Toth
 #' @author Nick Paszty
 #'
 #'
@@ -39,12 +39,11 @@
 #'
 #'
 
-# ENHANCE: function needs to be tealified
-
 require(dplyr)
 require(gridExtra)
 
-data.table.int <- function(data,
+# UPDATE: function needs to be tealified
+tm_t_summarytable <- function(data,
                            biomarker,
                            trt_group,
                            time,
