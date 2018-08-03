@@ -1,13 +1,13 @@
-Package: teal.beer
+Package: teal.goshawk
 Type: Package
-Title: A couple of biomarker teal modules
+Title: I2ON biomarker teal modules
 Version: 0.1.0
 Authors@R: c(
   person("Nick", "Paszty", email = "nick.paszty@gene.com", role = c("aut", "cre")),
   person("Adrian", "Waddell", email = "adrian.waddell@roche.com", role = "ctb")
   )
 Description: More about what it does (maybe more than one line)
-    Use four spaces when indenting paragraphs within the Description.
+    Produces dynamic visualizations including box, line, scatter and spaghetti plots with accompanying summary .
 Depends: teal
 License: What license is it under?
 Encoding: UTF-8
