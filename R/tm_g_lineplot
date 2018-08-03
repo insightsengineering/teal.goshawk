@@ -1,0 +1,133 @@
+#' Teal module to generate a variety of interactive biomarker line plots
+#'
+#' give more details about the method
+#'
+#' @param label label of teal module in app
+#'
+#'
+#' @author Balazs Toth
+#' @author Wenyi Liu
+#'
+#'
+#' @export
+#'
+#' @examples
+#'
+#' \dontrun{
+#' library(random.cdisc.data)
+#' library(dplyr)
+#' ASL <- rnorm(400)
+#'
+#' ASL$BWT <- rnorm(400)
+#' ASL$VARNUM <- rnorm(400)
+#'
+#' x <- teal::init(
+#'   data = list(ASL = ASL),
+#'   modules = root_modules(
+#'     tm_g_lineplot(
+#'        label = "Biomarker Line Plot",
+#'        dataname = "ASL",
+#'        var = c("AGE", "BWT"),
+#'        var_choices = which(sapply(ASL, is.numeric)) %>% names()
+#'    )
+#'   )
+#' )
+#'
+#' shinyApp(x$ui, x$server)
+#'
+#'
+#' }
+#'
+#'
+
+#' Create line plot over time per treatment arm 
+#'
+# libr
+#require(ggplot2)
+#require(dplyr)
+
+# UPDATE: function needs to be tealified
+line.plot.int <- function(label = 'Line Plot',
+                          data,
+                          biomarker,
+                          trt_group,
+                          time,
+                          unit,
+                          timepoint,
+                          color_manual,
+                          median = FALSE,
+                          hline = NULL,
+                          pct = FALSE) {
+  
+  # Summary statistics
+  sum_data <- data %>%
+    group_by(eval(parse(text = time)),
+             eval(parse(text = trt_group))) %>%
+    summarise(count = sum(!is.na(eval(parse(text = biomarker)))),
+              mean = mean(eval(parse(text = biomarker)),na.rm = TRUE),
+              CIup = mean(eval(parse(text = biomarker)),na.rm = TRUE) + 1.96 * sd(eval(parse(text = biomarker)), na.rm = TRUE)/sqrt(n()),
+              CIdown = mean(eval(parse(text = biomarker)),na.rm = TRUE) - 1.96 * sd(eval(parse(text = biomarker)), na.rm = TRUE)/sqrt(n()),
+              median = median(eval(parse(text = biomarker)),na.rm = TRUE),
+              quant25 = quantile(eval(parse(text = biomarker)), 0.25, na.rm = TRUE),
+              quant75 = quantile(eval(parse(text = biomarker)), 0.75, na.rm = TRUE))
+  colnames(sum_data)[1:2] <- c(time,trt_group)
+  
+  
+  # Base plot
+  pd <- position_dodge(0.8)
+  
+  if (median) {
+    line <- 'median'
+    up_limit <- 'quant75'
+    down_limit <- 'quant25'
+  } else {
+    line <- 'mean'
+    up_limit <- 'CIup'
+    down_limit <- 'CIdown'
+  }
+  
+  title <- ''
+  if (pct) {
+    title <- paste0(' pct of ', timepoint)
+  }
+  
+  
+  plot1 <-  ggplot(data = sum_data,
+                   aes_string(x = time,
+                              y = line,
+                              color = trt_group,
+                              group = trt_group)) +
+    geom_point(position = pd) +
+    geom_line(position = pd) +
+    geom_errorbar(aes_string(ymin = down_limit,
+                             ymax = up_limit),
+                  width=1,
+                  position = pd) +
+    theme_bw() +
+    scale_color_manual(values = color_manual, name = 'Dose') +
+    theme(legend.position = "bottom") +
+    ggtitle(paste0(biomarker, ' ', line, ' over time')) +
+    xlab('time') + ylab(paste0(biomarker, ' ', line, title))
+    
+    
+    #Add horizontal line
+    if (!is.null(hline)){
+      plot1 <- plot1 +
+        geom_hline(aes(yintercept = hline))
+    }
+    
+    
+    #Format y scale
+    if (pct){
+      plot1 <- plot1 +
+        scale_y_continuous(
+          breaks = seq(floor(min(sum_data[[line]] / 10)) * 10,
+                       ceiling(max(sum_data[[line]] / 10)) * 10,
+                               by = 20)) +
+        coord_cartesian(ylim=c(0, 200))
+      }
+    
+
+  plot1
+  
+} 
