@@ -10,13 +10,11 @@
 #' @author Balazs Toth
 #' @author first last
 #'
-#' @details provide additional information as needed. perhaps link to specification file
+#' @details provide additional information as needed. link to specification file \url{http://rstudio.com}
 #'
 #' @return an \code{\link[teal]{module}} object#'
 #'
 #' @export
-#'
-#' @template author_unixid
 #'
 #' @examples
 #' # Example using analysis dataset for example ASL or ADSL,
@@ -91,7 +89,7 @@ ui_g/t_function_name <- function(id, ...) {
 
 }
 
-srv_t_ae <- function(input, output, session, datasets, dataname, code_data_processing) {
+srv_g/t_function_name <- function(input, output, session, datasets, dataname, code_data_processing) {
 
   # related to generating the R code via "Show R Code" button
   chunks <- list(
