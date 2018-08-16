@@ -1,9 +1,12 @@
-#' Teal Module: moduel output type (e.g. scatter plot)
+#' Teal Module: scatter plot
 #'
-#' This shiny module displays a ...
+#' This shiny module displays a scatter plot
 #'
-#' @param add as many param lines as there are params that this function expects
-#' @param add as many param lines as there are params that this function expects
+#' @param label menu item label of the module in the teal app 
+#' @param dataname analysis data used in teal module, needs to be available in
+#'   the list passed to the \code{data} argument of \code{\link[teal]{init}}.
+#'   Note that the data are expected to be in vertical form with the
+#'   \code{PARAMCD} variable filtering to one observation per patient per visit.
 #'
 #' @inheritParams teal::standard_layout
 #'
@@ -18,25 +21,33 @@
 #'
 #' @examples
 #' # Example using analysis dataset for example ASL or ADSL,
-#' # ABM points to biomarker data stored in a custom file created to support goshawk. for example ADBIOM
+#' # ABM points to biomarker data stored in a typical LB structure. for example ALB or ADLB.
 #' library(dplyr)
 #'
-#' # assign data frame note that this needs to be done once in the app.R file but should be available
-#' # here during testing
-#' ASL <- ASL
-#' AAE <- ABM
+#' # user configured values for data access. ASL and other data sets need to contain same subject values so commented out ASL sample data below
+#' ASL_path <- "/opt/BIOSTAT/qa/cdpt7738/s30044a/libraries/asl.sas7bdat"
+#' ABM_path <- "/opt/BIOSTAT/qa/cdpt7738/s30044a/libraries/alb.sas7bdat"
+#' 
+#' ASL <- read_bce(ASL_path)
+#' ABM <- read_bce(ABM_path)
+#' 
+#' #data("ASL")
+#' #data("ABM")
+#'
+#' #ASL <- ASL
+#' #ABM <- ABM
 #'
 #' x <- teal::init(
 #'   data = list(ASL = ASL, ABM = ABM),
 #'   modules = root_modules(
-#'     tm_g/t_module_name(
-#'        label = "module label",
+#'     tm_g_scatterplot(
+#'        label = "Scatter Plot",
 #'        dataname = "ABM",
 #'        filter_var = NULL,
 #'        filter_var_choices = c(NULL, "DTHFL", "flag1"),
 #'        arm_var = "ARM",
-#'        arm_var_choices = c("ARM", "ARMCD"),
-#'        etc. this list of parameters much match the list in the analogous function file
+#'        arm_var_choices = c("ARM", "ARMCD")
+#'        #etc. this list of parameters much match the list in the analogous function file
 #'    )
 #'   )
 #' )
@@ -44,7 +55,7 @@
 #' shinyApp(x$ui, x$server)
 #'
 #'
-tm_g/t_module_name <- function(label,
+tm_g_scatterplot <- function(label,
                     dataname,
                     filter_var = NULL,
                     filter_var_choices = NULL,
@@ -58,8 +69,8 @@ tm_g/t_module_name <- function(label,
 
   module(
     label = label,
-    server = srv_g/t_function_name,
-    ui = ui_g/t_function_name,
+    server = srv_g_scatterplot,
+    ui = ui_g_scatterplot,
     ui_args = args,
     server_args = list(dataname = dataname, code_data_processing = code_data_processing),
     filters = dataname
@@ -67,13 +78,13 @@ tm_g/t_module_name <- function(label,
 
 }
 
-ui_g/t_function_name <- function(id, ...) {
+ui_g_scatterplot <- function(id, ...) {
 
   ns <- NS(id)
   a <- list(...)
 
   standard_layout(
-    output = whiteSmallWell(uiOutput(ns("name_of_output"))),
+    output = whiteSmallWell(uiOutput(ns("scatterPlot"))),
     encoding =  div(
       tags$label("Encodings", class="text-primary"),
       helpText("Analysis data:", tags$code(a$dataname)),
@@ -88,7 +99,7 @@ ui_g/t_function_name <- function(id, ...) {
 
 }
 
-srv_g/t_function_name <- function(input, output, session, datasets, dataname, code_data_processing) {
+srv_g_scatterplot <- function(input, output, session, datasets, dataname, code_data_processing) {
 
   # related to generating the R code via "Show R Code" button
   chunks <- list(
@@ -97,7 +108,7 @@ srv_g/t_function_name <- function(input, output, session, datasets, dataname, co
     analysis = "# Not Calculated"
   )
 
-  output$name_of_output <- renderUI({
+  output$scatterPlot <- renderUI({
 
     ASL_FILTERED <- datasets$get_data("ASL", reactive = TRUE, filtered = TRUE)
     ABM_FILTERED <- datasets$get_data(dataname, reactive = TRUE, filtered = TRUE)
@@ -113,7 +124,7 @@ srv_g/t_function_name <- function(input, output, session, datasets, dataname, co
     })
 
     asl_vars <- unique(c("USUBJID", "STUDYID", arm_var))
-    abm_vars <- unique(c("USUBJID", "STUDYID", arm_var, ))
+    abm_vars <- unique(c("USUBJID", "STUDYID", arm_var))
 
     chunks$data <<- bquote({
       ASL <- ASL_FILTERED[, .(asl_vars)] %>% as.data.frame()
@@ -133,14 +144,14 @@ srv_g/t_function_name <- function(input, output, session, datasets, dataname, co
       #if(all_p == TRUE){
       #  total = "All Patients"
       #} else{
-      #  total = NULL
+      total = NULL
       #}
     })
     eval(chunks$data)
 
     # call goshawk function
     #chunks$analysis <<- call(
-    #  "g/t_function_name",
+    #  "g_scatterplot",
     #  class = bquote(ANL[, class_var]),
     #  term = bquote(ANL[, term_var]),
     #  id = bquote(ANL$USUBJID),
