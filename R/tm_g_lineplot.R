@@ -9,9 +9,7 @@ tm_g_lineplot <- function(label,
                           hline = NULL,
                           man_color = NULL,
                           rotate_xlab = FALSE,
-                          plot_height = c(600, 200, 2000),
-                          alpha = c(1, 0, 1),
-                          size = c(4, 1, 12)) {
+                          plot_height = c(600, 200, 2000)) {
   
   args <- as.list(environment())
   
@@ -48,9 +46,7 @@ ui_lineplot <- function(id, ...) {
       radioButtons(ns("stat"), "Select statistics:", c("mean","median"), a$stat),
 
       if (all(c(
-        length(a$plot_height) == 1,
-        length(a$size) == 1,
-        length(a$alpha) == 1
+        length(a$plot_height) == 1
       ))) {
         NULL
       } else {
@@ -58,12 +54,9 @@ ui_lineplot <- function(id, ...) {
       },
       checkboxInput(ns("rotate_xlab"), "Rotate X-axis Label", a$rotate_xlab),
       numericInput(ns("hline"), "Add a horizontal line:", a$hline),
-      optionalSliderInputValMinMax(ns("plot_height"), "plot height", a$plot_height, ticks = FALSE),
-      optionalSliderInputValMinMax(ns("alpha"), "opacity", a$alpha, ticks = FALSE),
-      optionalSliderInputValMinMax(ns("size"), "point size", a$size, ticks = FALSE)
-    )
-    # ,
-    # forms = actionButton(ns("show_rcode"), "Show R Code", width = "100%")
+      optionalSliderInputValMinMax(ns("plot_height"), "plot height", a$plot_height, ticks = FALSE)
+    ),
+    forms = actionButton(ns("show_rcode"), "Show R Code", width = "100%")
   )
   
 }
@@ -78,11 +71,11 @@ srv_lineplot <- function(input, output, session, datasets, dataname, param_var, 
     plotOutput(session$ns("lineplot"), height=plot_height)
   })
   
+  chunks <- list(
+    analysis = "# Not Calculated"
+  )
+  
   output$lineplot <- renderPlot({
-    
-    # chunks <- list(
-    #   analysis = "# Not Calculated"
-    # )
     
     ANL <- datasets$get_data(dataname, reactive = TRUE, filtered = TRUE)
     param <- input$param
@@ -91,10 +84,9 @@ srv_lineplot <- function(input, output, session, datasets, dataname, param_var, 
     median <- ifelse(input$stat=='median',TRUE, FALSE)
     rotate_xlab <- input$rotate_xlab
     hline <- as.numeric(input$hline)
-    alpha <- input$alpha
-    size <- input$size
     
-    validate(need(alpha, "need alpha"))
+    chunks$analysis <<- "# Not Calculated"
+    
     validate(need(!is.null(ANL) && is.data.frame(ANL), "no data left"))
     validate(need(nrow(ANL) > 0 , "no observations left"))
     validate(need(param_var %in% names(ANL),
@@ -111,98 +103,53 @@ srv_lineplot <- function(input, output, session, datasets, dataname, param_var, 
                   paste("variable", trt_group, " is not available in data", dataname)))
     
     
-    # data_name <- paste0(dataname, "_FILTERED")
-    # assign(data_name, ANL)
-    # 
-    # chunks$analysis <<- call(
-    #   "g_lineplot",
-    #   data = bquote(.(as.name(data_name))[, .(yvar), drop=FALSE]),
-    #   biomarker_var = param_var,
-    #   biomarker = param,
-    #   value_var = yvar,
-    #   trt_group = trt_group,
-    #   time = xvar
-    # )
-    # 
-    # p <- try(eval(chunks$analysis))
-    # 
-    # if (is(p, "try-error")) validate(need(FALSE, paste0("could not create the line plot:\n\n", p)))
-    
-    p <- goshawk:::g_lineplot(
-      data = ANL,
+    data_name <- paste0(dataname, "_FILTERED")
+    assign(data_name, ANL)
+
+    chunks$analysis <<- call(
+      "g_lineplot",
+      data = bquote(.(as.name(data_name))),
       biomarker_var = param_var,
       biomarker = param,
       value_var = yvar,
       trt_group = trt_group,
       time = xvar,
-      median = median,
       color_manual = man_color,
-      rotate_xlab = rotate_xlab,
-      hline = hline
+      median = median,
+      hline = hline,
+      rotate_xlab = rotate_xlab
     )
+
+    p <- try(eval(chunks$analysis))
+
+    if (is(p, "try-error")) validate(need(FALSE, paste0("could not create the line plot:\n\n", p)))
     
     p
     
   })
   
-  # observeEvent(input$show_rcode, {
-  #   
-  #   xvar <- input$xvar
-  #   yvar <- input$yvar
-  #   alpha <- input$alpha
-  #   size <- input$size
-  #   color_by <- input$color_by
-  #   
-  #   if (color_by %in% c("", "_none_")) color_by <- NULL
-  #   
-  #   str_header <- get_rcode_header(
-  #     title = paste("lineplot of", yvar, "vs.", xvar),
-  #     description = "",
-  #     libraries = c("ggplot2"),
-  #     data = setNames(list(datasets$get_data(dataname, reactive=FALSE, filtered = FALSE)), dataname),
-  #     git_repo = "http://github.roche.com/Rpackages/teal/R/tm_g_lineplot.R"
-  #   )
-  #   
-  #   str_filter <- get_filter_txt(dataname, datasets)
-  #   
-  #   chunks <- parse_code_chunks(txt = capture.output(teal:::srv_lineplot))
-  #   
-  #   plot_code <-  if (is.null(color_by) || color_by == "_none_") {
-  #     chunks$plot_no_color
-  #   } else {
-  #     pc <- chunks$plot_color
-  #     sub("color = color_by", paste("color =", color_by), pc, fixed=TRUE)
-  #   }
-  #   
-  #   plot_code <- plot_code
-  #   subst_pairs <- c(
-  #     "ggplot(ANL" = paste0("ggplot(", dataname, "_FILTERED"),
-  #     "x = xvar" = paste0("x = ", xvar),
-  #     "y = yvar" = paste0("y = ", yvar),
-  #     "alpha = alpha" = paste0("alpha = ", alpha),
-  #     "size = size" = paste0("size = ", size)
-  #   )
-  #   
-  #   f_sub <- Map(function(pattern, repl) {
-  #     function(txt) sub(pattern, repl, txt, fixed=TRUE)
-  #   }, names(subst_pairs), subst_pairs)
-  #   
-  #   plot_code_subst <- Reduce(function(txt, f) f(txt), f_sub, init = plot_code)
-  #   
-  #   code <- paste(
-  #     c(
-  #       "\n",
-  #       str_header, "\n",
-  #       str_filter, "\n",
-  #       plot_code_subst, "\n",
-  #       "p", "\n"
-  #     ), collapse = "\n"
-  #   )
-  #   
-  #   showRCodeModal(
-  #     title = "R Code for the Current Lineplot",
-  #     rcode = code
-  #   )
-  # })
+  observeEvent(input$show_rcode, {
+    
+    header <- teal.tern:::get_rcode_header(
+      title = "Line Plot",
+      datanames = dataname,
+      datasets = datasets
+    )
+    
+    str_rcode <- paste(c(
+      "",
+      header,
+      "",
+      teal.tern:::remove_enclosing_curly_braces(deparse(chunks$analysis, width.cutoff = 60))
+    ), collapse = "\n")
+    
+    # .log("show R code")
+    showModal(modalDialog(
+      title = "R Code for the Current Line Plot",
+      tags$pre(tags$code(class="R", str_rcode)),
+      easyClose = TRUE,
+      size = "l"
+    ))
+  })
   
 }
