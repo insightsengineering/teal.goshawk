@@ -34,6 +34,8 @@ This shiny module displays a scatter plot
 provide additional information as needed. link to specification file \url{http://rstudio.com}
 }
 \examples{
+
+\dontrun{
 # Example using analysis dataset for example ASL or ADSL,
 # ABM points to biomarker data stored in a typical LB structure. for example ALB or ADLB.
 library(dplyr)
@@ -45,12 +47,6 @@ ABM_path <- "/opt/BIOSTAT/qa/cdpt7738/s30044a/libraries/alb.sas7bdat"
 ASL <- read_bce(ASL_path)
 ABM <- read_bce(ABM_path)
 
-#data("ASL")
-#data("ABM")
-
-#ASL <- ASL
-#ABM <- ABM
-
 x <- teal::init(
   data = list(ASL = ASL, ABM = ABM),
   modules = root_modules(
@@ -58,17 +54,16 @@ x <- teal::init(
        label = "Scatter Plot",
        dataname = "ABM",
        filter_var = NULL,
-       filter_var_choices = c(NULL, "DTHFL", "flag1"),
+       filter_var_choices = c(NULL, "PARAMCD"),
        arm_var = "ARM",
        arm_var_choices = c("ARM", "ARMCD")
-       #etc. this list of parameters much match the list in the analogous function file
    )
   )
 )
 
 shinyApp(x$ui, x$server)
 
-
+}
 }
 \author{
 Balazs Toth

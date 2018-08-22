@@ -20,6 +20,8 @@
 #' @export
 #'
 #' @examples
+#' 
+#'\dontrun{
 #' # Example using analysis dataset for example ASL or ADSL,
 #' # ABM points to biomarker data stored in a typical LB structure. for example ALB or ADLB.
 #' library(dplyr)
@@ -31,12 +33,6 @@
 #' ASL <- read_bce(ASL_path)
 #' ABM <- read_bce(ABM_path)
 #' 
-#' #data("ASL")
-#' #data("ABM")
-#'
-#' #ASL <- ASL
-#' #ABM <- ABM
-#'
 #' x <- teal::init(
 #'   data = list(ASL = ASL, ABM = ABM),
 #'   modules = root_modules(
@@ -44,17 +40,16 @@
 #'        label = "Scatter Plot",
 #'        dataname = "ABM",
 #'        filter_var = NULL,
-#'        filter_var_choices = c(NULL, "DTHFL", "flag1"),
+#'        filter_var_choices = c(NULL, "PARAMCD"),
 #'        arm_var = "ARM",
 #'        arm_var_choices = c("ARM", "ARMCD")
-#'        #etc. this list of parameters much match the list in the analogous function file
 #'    )
 #'   )
 #' )
 #'
 #' shinyApp(x$ui, x$server)
 #'
-#'
+#'}
 tm_g_scatterplot <- function(label,
                     dataname,
                     filter_var = NULL,
@@ -82,9 +77,9 @@ ui_g_scatterplot <- function(id, ...) {
 
   ns <- NS(id)
   a <- list(...)
-
+  
   standard_layout(
-    output = whiteSmallWell(uiOutput(ns("scatterPlot"))),
+    output = whiteSmallWell(uiOutput(ns("scatter_plot"))),
     encoding =  div(
       tags$label("Encodings", class="text-primary"),
       helpText("Analysis data:", tags$code(a$dataname)),
@@ -108,7 +103,7 @@ srv_g_scatterplot <- function(input, output, session, datasets, dataname, code_d
     analysis = "# Not Calculated"
   )
 
-  output$scatterPlot <- renderUI({
+  output$scatter_plot <- renderUI({
 
     ASL_FILTERED <- datasets$get_data("ASL", reactive = TRUE, filtered = TRUE)
     ABM_FILTERED <- datasets$get_data(dataname, reactive = TRUE, filtered = TRUE)
@@ -144,7 +139,7 @@ srv_g_scatterplot <- function(input, output, session, datasets, dataname, code_d
       #if(all_p == TRUE){
       #  total = "All Patients"
       #} else{
-      total = NULL
+      #total = NULL
       #}
     })
     eval(chunks$data)
@@ -161,7 +156,7 @@ srv_g_scatterplot <- function(input, output, session, datasets, dataname, code_d
 
     tbl <- try(eval(chunks$analysis))
 
-    if (is(tbl, "try-error")) validate(need(FALSE, paste0("could not calculate the table:\n\n", tbl)))
+    if (is(tbl, "try-error")) validate(need(FALSE, paste0("could not calculate the plot:\n\n", tbl)))
 
     as_html(tbl)
   })
