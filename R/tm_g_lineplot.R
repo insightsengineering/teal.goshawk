@@ -2,9 +2,11 @@ tm_g_lineplot <- function(label,
                           dataname,
                           xvar, yvar,
                           xvar_choices = xvar, yvar_choices = yvar,
+                          xvar_level = NULL,
                           param_var,
                           param, param_choices = param,
                           trt_group,
+                          trt_group_level = NULL,
                           stat = "mean",
                           hline = NULL,
                           man_color = NULL,
@@ -16,7 +18,7 @@ tm_g_lineplot <- function(label,
   module(
     label = label,
     server = srv_lineplot,
-    server_args = list(dataname = dataname, param_var = param_var, trt_group = trt_group, man_color),
+    server_args = list(dataname = dataname, param_var = param_var, trt_group = trt_group, man_color, xvar_level = xvar_level, trt_group_level = trt_group_level),
     ui = ui_lineplot,
     ui_args = args,
     filters = dataname
@@ -61,7 +63,7 @@ ui_lineplot <- function(id, ...) {
   
 }
 
-srv_lineplot <- function(input, output, session, datasets, dataname, param_var, trt_group, man_color) {
+srv_lineplot <- function(input, output, session, datasets, dataname, param_var, trt_group, man_color, xvar_level = xvar_level, trt_group_level = trt_group_level) {
   
   
   ## dynamic plot height
@@ -113,7 +115,9 @@ srv_lineplot <- function(input, output, session, datasets, dataname, param_var, 
       biomarker = param,
       value_var = yvar,
       trt_group = trt_group,
+      trt_group_level = trt_group_level,
       time = xvar,
+      time_level = xvar_level,
       color_manual = man_color,
       median = median,
       hline = hline,
