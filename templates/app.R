@@ -1,3 +1,5 @@
+#.libPaths(c(file.path(getwd()), "~/goshawk", .libPaths()))
+#goshawk:::g_lineplot
 # required packages
 library(teal)
 library(dplyr)
@@ -5,6 +7,10 @@ library(ggplot2)
 library(gridExtra)
 library(tidyr)
 library(DescTools) # for %% operators e.g. %like any%
+library(teal.goshawk)
+library(goshawk)
+
+#`%||%` <- function(lhs, rhs) if (is.null(lhs)) rhs else lhs
 
 ################################################################################
 # BEGIN: SPA Input Required
@@ -20,26 +26,23 @@ ALB_path <- "~/btk/lupus/dataadam/alb3arm.sas7bdat"
 # default variable names to appear in Data View module
 defVars <- list("PATNUM", "ARMCD")
 
-# list of ALB variable to keep - not sure if we want to do this so commented out. see ALB2 assignment below
-#albvarlist <- c('CRP', 'ESR')
-
-# list of biomarkers of interest. see ALB2 assignment below
-bmlist <- c('CRP', 'ESR')
+# list of biomarkers of interest. see ALB1 assignment below
+param_choices <- c("CRP","ADIGG","IG","IGA","IGE","IGG","IGM","TEST")
 
 ################################################################################
 # END: SPA Input Required
 ################################################################################
 
 ASL <- read_bce(ASL_path)
-ALB <- read_bce(ALB_path)
+ALB0 <- read_bce(ALB_path)
 
 # post process the data to subset records per specification and to create new variables
-ALB2 <- subset(ALB,
-               subset = PARAMCD %in% c(bmlist) & ITTFL == 'Y' & ANLFL == 'Y' & AVISIT %like any% c('BASE%','%WEEK%'), 
-               select = c('STUDYID', 'USUBJID', 'ITTFL', 'ANLFL', 'ARM', 'AVISIT', 'AVISITN', 'PARAMCD', 'AVAL', 'AVALU'))
+ALB1 <- subset(ALB0,
+               subset = PARAMCD %in% c(param_choices) & ITTFL == 'Y' & IAFL == 'Y' & ANLFL == 'Y' & AVISIT %like any% c('BASE%','%WEEK%'), 
+               select = c('STUDYID', 'USUBJID', 'ITTFL', 'IAFL', 'ANLFL', 'ARM', 'AVISIT', 'AVISITN', 'PARAMCD', 'AVAL', 'AVALU', 'BASE', 'CHG', 'PCHG'))
 
 # create a visit code - baseline record code is "BB" week records coded to "W NN"
-ANL <- ALB2 %>% mutate(AVISITCD = paste0(substr(AVISIT,start=1, stop=1), 
+ALB <- ALB1 %>% mutate(AVISITCD = paste0(substr(AVISIT,start=1, stop=1), 
                                          substr(AVISIT, start=regexpr(" ", AVISIT), stop=regexpr(" ", AVISIT)+2)))
 
 # create ASL metadata for Source Data tab
@@ -57,22 +60,22 @@ sdsl_nsubjs <- ASL %>%
 adbm <- file.info(ALB_path)
 
 # get number of variables
-sdbm_nvars <- format(names(ANL), big.mark = ",")
+sdbm_nvars <- format(names(ALB), big.mark = ",")
 
 # get number of subjects
-sdbm_nsubjs <- ANL %>%
+sdbm_nsubjs <- ALB %>%
   pull(USUBJID) %>%
   unique()
 
 # get number of lab parameter values
-#sdbm_nparams <- ANL %>%
+#sdbm_nparams <- ALB %>%
 #  pull(PARAM) %>%
 #  unique()
 
 #browser() for debugging
 
 x <- teal::init(
-  data =  list(ASL = ASL, ANL = ANL),
+  data =  list(ASL = ASL, ALB = ALB),
   modules = root_modules(
     module(
       "Source Data",
@@ -90,8 +93,8 @@ x <- teal::init(
                             p(strong("Data Set Owner:"), adbm$uname), # can uname be linked to peeps?
                             p(strong("Data Set Creation DateTime:"), adbm$mtime),
                             p(strong("Number of  Subjects:"), format(length(sdbm_nsubjs), big.mark = ",")),
-                            p(strong("Number of Variables:"), format(length(names(ANL)), big.mark = ",")),
-                            p(strong("Number of Records:"), format(nrow(ANL), big.mark = ","))),
+                            p(strong("Number of Variables:"), format(length(names(ALB)), big.mark = ",")),
+                            p(strong("Number of Records:"), format(nrow(ALB), big.mark = ","))),
                             #p(strong("Number of Lab Parameters:"), format(length(sdbm_nparams), big.mark = ","))),
       filters = NULL
     ),
@@ -99,14 +102,14 @@ x <- teal::init(
     tm_data_table(label = "View Data", variables_selected = defVars), # may not want to keep this module
     modules(
       label = "Visualizations",
-      tm_table( # may not want to keep this module
-        label = "Demographic Table",
-        dataname = "ASL",
-        xvar = "SEX",
-        xvar_choices = c("SEX", "RACE", "AGEGRP", "REGION"),
-        yvar = "RACE",
-        yvar_choices = c("RACE", "AGEGRP", "REGION")
-      ),
+      # tm_table( # may not want to keep this module
+      #   label = "Demographic Table",
+      #   dataname = "ASL",
+      #   xvar = "SEX",
+      #   xvar_choices = c("SEX", "RACE", "AGEGRP", "REGION"),
+      #   yvar = "RACE",
+      #   yvar_choices = c("RACE", "AGEGRP", "REGION")
+      # ),
       module(
         label = "Box Plot",
         server = function(input, output, session, datasets) {},
@@ -119,17 +122,32 @@ x <- teal::init(
         ui = function(id) div(p("Distribution Plots Here")),
         filters = "ASL"
       ),
-      module(
+      tm_g_lineplot(
         label = "Line Plot",
-        server = function(input, output, session, datasets) {},
-        ui = function(id) div(p("Line Plots Here")),
-        filters = "ASL"
+        dataname = "ALB",
+        xvar = "AVISIT",
+        yvar = "AVAL",
+        yvar_choices = c("AVAL","CHG"),
+        param_var = "PARAMCD",
+        param = "CRP",
+        param_choices = param_choices,
+        trt_group = "ARM"
       ),
-      module(
-        label = "Scatterplot",
-        server = function(input, output, session, datasets) {},
-        ui = function(id) div(p("Scatter Plots Here")),
-        filters = "ASL"
+      tm_g_scatterplot(
+        label = "Scatter Plot",
+        dataname = "ALB",
+        param_var = "PARAMCD",
+        param_choices = param_choices,
+        param = "CRP",
+        value_var = "AVAL",
+        value_var_choices = c("AVAL", "CHG", "PCHG"),
+        baseline_var = "BASE",
+        baseline_var_choices = c("BASE", "BASEL2", "SCRN", "SCRNL2"),
+        trt_group = "ARM",
+        trt_group_choices = c("ARM", "ARMCD"),
+        plot_height = c(600, 200, 2000),
+        m_facet = FALSE,
+        man_color = NULL
       ),
       module(
         label = "Spaghetti Plot",

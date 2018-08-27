@@ -8,7 +8,7 @@ Authors@R: c(
   )
 Description: More about what it does (maybe more than one line)
     Produces dynamic visualizations including box, line, scatter and spaghetti plots with accompanying summary .
-Depends: teal, dplyr, ggplot2, gridExtra, tidyr
+Depends: teal, dplyr, ggplot2, gridExtra, tidyr, DescTools
 License: What license is it under?
 Encoding: UTF-8
 LazyData: true

@@ -4,8 +4,11 @@
 \alias{tm_g_scatterplot}
 \title{Teal Module: scatter plot}
 \usage{
-tm_g_scatterplot(label, dataname, filter_var = NULL,
-  filter_var_choices = NULL, arm_var, arm_var_choices, pre_output = NULL,
+tm_g_scatterplot(label, dataname, param_var, param, param_choices = param,
+  baseline_var, baseline_var_choices = baseline_var, value_var,
+  value_var_choices = value_var, trt_group, trt_group_choices, plot_height,
+  m_facet = FALSE, alpha = c(1, 0, 1), size = c(4, 1, 12), hline = NULL,
+  rotate_xlab = FALSE, man_color = NULL, pre_output = NULL,
   post_output = NULL, code_data_processing = NULL)
 }
 \arguments{
@@ -37,26 +40,46 @@ provide additional information as needed. link to specification file \url{http:/
 
 \dontrun{
 # Example using analysis dataset for example ASL or ADSL,
-# ABM points to biomarker data stored in a typical LB structure. for example ALB or ADLB.
-library(dplyr)
+# ALB points to biomarker data stored in a typical LB structure. for example ALB or ADLB.
 
-# user configured values for data access. ASL and other data sets need to contain same subject values so commented out ASL sample data below
-ASL_path <- "/opt/BIOSTAT/qa/cdpt7738/s30044a/libraries/asl.sas7bdat"
-ABM_path <- "/opt/BIOSTAT/qa/cdpt7738/s30044a/libraries/alb.sas7bdat"
+# for development team testing
+ASL_path <- "~/btk/lupus/dataadam/asl.sas7bdat"
+ALB_path <- "~/btk/lupus/dataadam/alb3arm.sas7bdat"
+
+# list of biomarkers of interest. see ALB2 assignment below
+param_choices <- c("CRP","ADIGG","IG","IGA","IGE","IGG","IGM","TEST")
+value_var_choices <- c("AVAL","CHG","PCHG")
 
 ASL <- read_bce(ASL_path)
-ABM <- read_bce(ABM_path)
+ALB0 <- read_bce(ALB_path)
+
+# post process the data to subset records per specification and to create new variables
+ALB1 <- subset(ALB0,
+              subset = PARAMCD \%in\% c(param_choices) & ITTFL == 'Y' & IAFL == 'Y' & ANLFL == 'Y' & AVISIT \%like any\% c('BASE\%','\%WEEK\%'), 
+              select = c('STUDYID', 'USUBJID', 'ITTFL', 'ANLFL', 'ARM', 'AVISIT', 'AVISITN', 'PARAMCD', 'AVAL', 'AVALU', 'BASE', 'CHG', 'PCHG'))
+
+# create a visit code - baseline record code is "BB" week records coded to "W NN"
+ALB <- ALB1 \%>\% mutate(AVISITCD = paste0(substr(AVISIT,start=1, stop=1), 
+                                        substr(AVISIT, start=regexpr(" ", AVISIT), stop=regexpr(" ", AVISIT)+2)))
+
 
 x <- teal::init(
-  data = list(ASL = ASL, ABM = ABM),
+  data = list(ASL = ASL, ALB = ALB),
   modules = root_modules(
     tm_g_scatterplot(
        label = "Scatter Plot",
-       dataname = "ABM",
-       filter_var = NULL,
-       filter_var_choices = c(NULL, "PARAMCD"),
-       arm_var = "ARM",
-       arm_var_choices = c("ARM", "ARMCD")
+       dataname = "ALB",
+       param_var = "PARAMCD",
+       param_choices = param_choices,
+       param = "CRP",
+       value_var = "AVAL",
+       value_var_choices = c("AVAL", "CHG", "PCHG"),
+       baseline_var = "BASE",
+       baseline_var_choices = c("BASE", "BASEL2", "SCRN", "SCRNL2"),
+       trt_group = "ARM",
+       trt_group_choices = c("ARM", "ARMCD"),
+       plot_height = c(600, 200, 2000),
+       m_facet = FALSE
    )
   )
 )
