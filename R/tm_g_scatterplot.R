@@ -62,7 +62,8 @@
 #'        trt_group = "ARM",
 #'        trt_group_choices = c("ARM", "ARMCD"),
 #'        plot_height = c(600, 200, 2000),
-#'        m_facet = FALSE
+#'        m_facet = FALSE,
+#'        reg_line = FALSE
 #'    )
 #'   )
 #' )
@@ -90,13 +91,14 @@ tm_g_scatterplot <- function(label, # label of module
                              trt_group_choices,
                              plot_height,
                              m_facet = FALSE,
-                             alpha = c(1, 0, 1),
-                             size = c(4, 1, 12),
+                             reg_line = FALSE,
+                             alpha = c(1, 0, 1), # opacity
+                             size = c(4, 1, 12), # point size
                              hline = NULL,
                              rotate_xlab = FALSE,
                              man_color = NULL,
                              pre_output = NULL,
-                             post_output = NULL,
+                             post_output = helpText("Scatter Plot Specific Notes Here"),
                              code_data_processing = NULL) {
 
   args <- as.list(environment())
@@ -107,6 +109,7 @@ tm_g_scatterplot <- function(label, # label of module
     server = srv_g_scatterplot,
     server_args = list(dataname = dataname,
                        param_var = param_var,
+                       param = param,
                        value_var = value_var,
                        baseline_var = baseline_var,
                        trt_group = trt_group,
@@ -115,14 +118,14 @@ tm_g_scatterplot <- function(label, # label of module
     ui = ui_g_scatterplot,
     ui_args = args
   )
-
+  
 }
 
 ui_g_scatterplot <- function(id, ...) {
 
   ns <- NS(id)
   a <- list(...)
-  
+
   standard_layout(
     output = uiOutput(ns("plot_ui")),
     encoding =  div(
@@ -139,20 +142,23 @@ ui_g_scatterplot <- function(id, ...) {
       #optionalSelectInput(ns("filter_var"), "Preset Data Filters", tags$br, a$filter_var_choices, a$filter_var, multiple = TRUE),
       optionalSelectInput(ns("trt_group"), "Arm Variable", a$trt_group_choices, a$trt_group, multiple = FALSE),
 
-      # add additional input statements here
-      if (all(c(
-        length(a$plot_height) == 1,
-        length(a$size) == 1,
-        length(a$alpha) == 1
-      ))) {
-        NULL
-      } else {
-        tags$label("Plot Settings", class="text-primary", style="margin-top: 15px;")
-      },
+      # if (all(c(
+      #   length(a$plot_height) == 1,
+      #   #length(a$axis_scale) == 1,
+      #   length(a$size) == 1,
+      #   length(a$alpha) == 1
+      # ))) {
+      #   NULL
+      # } else {
+        tags$label("Plot Settings", class="text-primary", style="margin-top: 15px;"),
+      # },
       checkboxInput(ns("m_facet"), "Treatment Facetting", a$m_facet),
+      checkboxInput(ns("reg_line"), "Regression Line", a$reg_line),
       checkboxInput(ns("rotate_xlab"), "Rotate X-axis Label", a$rotate_xlab),
       numericInput(ns("hline"), "Add a horizontal line:", a$hline),
-      optionalSliderInputValMinMax(ns("plot_height"), "plot height", a$plot_height, ticks = FALSE),
+      optionalSliderInputValMinMax(ns("plot_height"), "Plot Width & Height", a$plot_height, ticks = FALSE),
+      uiOutput(ns("axis_scale")),
+      #optionalSliderInputValMinMax(ns("yaxis_scale"), "y axis scale limit", a$yaxis_scale, ticks = FALSE),
       optionalSliderInputValMinMax(ns("alpha"), "opacity", a$alpha, ticks = FALSE),
       optionalSliderInputValMinMax(ns("size"), "point size", a$size, ticks = FALSE)
     ),
@@ -166,17 +172,35 @@ ui_g_scatterplot <- function(id, ...) {
 
 }
 
-srv_g_scatterplot <- function(input, output, session, datasets, dataname, param_var, value_var, baseline_var, trt_group, code_data_processing) {
+srv_g_scatterplot <- function(input, output, session, datasets, dataname, param_var, param, value_var, baseline_var, trt_group, code_data_processing) {
 
+  ns <- session$ns # must add for the dynamic ui.range_scale field
   
   ## dynamic plot height
   output$plot_ui <- renderUI({
     plot_height <- input$plot_height
     validate(need(plot_height, "need valid plot height"))
-    plotOutput(session$ns("scatterplot"), height=plot_height)
+    plotOutput(session$ns("scatterplot"), width = plot_height, height = plot_height)
+  })
+  
+  output$axis_scale <- renderUI({
+  ALB <- datasets$get_data(dataname, filtered = TRUE, reactive = TRUE) # must add for the dynamic ui.range_scale field
+  param <- input$param # must add for the dynamic ui.range_scale field
+        scale_data <- ALB %>%
+        filter(eval(parse(text = param_var)) == param)
+
+      # identify min and max values of BM range ignoring NA values
+      min_scale <- min(scale_data[[input$value_var]], na.rm = TRUE)
+      max_scale <- max(scale_data[[input$value_var]], na.rm = TRUE)
+
+      tagList({
+        sliderInput(ns("range_scale"), label="Range Scale", min_scale, max_scale, value = c(min_scale, max_scale))
+      })
+
   })
 
-  output$scatterplot <- renderPlot({
+
+      output$scatterplot <- renderPlot({
     
     # chunks <- list(
     #   analysis = "# Not Calculated"
@@ -190,8 +214,11 @@ srv_g_scatterplot <- function(input, output, session, datasets, dataname, param_
     size <- input$size
     hline <- as.numeric(input$hline)
     m_facet <- input$m_facet
+    reg_line <- input$reg_line
+    min_scale <- input$range_scale[1]
+    max_scale <- input$range_scale[2]
     rotate_xlab <- input$rotate_xlab
-    
+
     validate(need(alpha, "need alpha"))    
     validate(need(!is.null(ALB) && is.data.frame(ALB), "no data left"))
     validate(need(nrow(ALB) > 0 , "no observations left"))
@@ -213,6 +240,9 @@ srv_g_scatterplot <- function(input, output, session, datasets, dataname, param_
       trt_group = trt_group,
       color_manual = NULL,
       f_facet = m_facet,
+      reg_line = reg_line,
+      min_scale = min_scale,
+      max_scale = max_scale,
       rotate_xlab = rotate_xlab,
       hline = hline
     )

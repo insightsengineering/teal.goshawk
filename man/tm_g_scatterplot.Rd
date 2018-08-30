@@ -7,9 +7,11 @@
 tm_g_scatterplot(label, dataname, param_var, param, param_choices = param,
   baseline_var, baseline_var_choices = baseline_var, value_var,
   value_var_choices = value_var, trt_group, trt_group_choices, plot_height,
-  m_facet = FALSE, alpha = c(1, 0, 1), size = c(4, 1, 12), hline = NULL,
-  rotate_xlab = FALSE, man_color = NULL, pre_output = NULL,
-  post_output = NULL, code_data_processing = NULL)
+  m_facet = FALSE, reg_line = FALSE, alpha = c(1, 0, 1), size = c(4, 1,
+  12), hline = NULL, rotate_xlab = FALSE, man_color = NULL,
+  pre_output = NULL,
+  post_output = helpText("Scatter Plot Specific Notes Here"),
+  code_data_processing = NULL)
 }
 \arguments{
 \item{label}{menu item label of the module in the teal app}
@@ -79,7 +81,8 @@ x <- teal::init(
        trt_group = "ARM",
        trt_group_choices = c("ARM", "ARMCD"),
        plot_height = c(600, 200, 2000),
-       m_facet = FALSE
+       m_facet = FALSE,
+       reg_line = FALSE
    )
   )
 )

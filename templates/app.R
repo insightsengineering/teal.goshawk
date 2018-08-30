@@ -7,8 +7,8 @@ library(ggplot2)
 library(gridExtra)
 library(tidyr)
 library(DescTools) # for %% operators e.g. %like any%
-library(teal.goshawk)
 library(goshawk)
+library(teal.goshawk)
 
 #`%||%` <- function(lhs, rhs) if (is.null(lhs)) rhs else lhs
 
@@ -147,7 +147,7 @@ x <- teal::init(
         trt_group_choices = c("ARM", "ARMCD"),
         plot_height = c(600, 200, 2000),
         m_facet = FALSE,
-        man_color = NULL
+        reg_line = FALSE
       ),
       module(
         label = "Spaghetti Plot",
