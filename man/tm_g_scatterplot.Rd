@@ -6,11 +6,10 @@
 \usage{
 tm_g_scatterplot(label, dataname, param_var, param, param_choices = param,
   baseline_var, baseline_var_choices = baseline_var, value_var,
-  value_var_choices = value_var, trt_group, trt_group_choices, plot_height,
-  m_facet = FALSE, reg_line = FALSE, alpha = c(1, 0, 1), size = c(4, 1,
-  12), hline = NULL, rotate_xlab = FALSE, man_color = NULL,
-  pre_output = NULL,
-  post_output = helpText("Scatter Plot Specific Notes Here"),
+  value_var_choices = value_var, trt_group, trt_group_choices, plot_width,
+  plot_height, m_facet = FALSE, reg_line = FALSE, dot_size, hline = NULL,
+  rotate_xlab = FALSE, man_color = NULL, pre_output = NULL,
+  post_output = helpText("Scatter Plot Specific Gutter Comment"),
   code_data_processing = NULL)
 }
 \arguments{
@@ -62,7 +61,14 @@ ALB1 <- subset(ALB0,
 
 # create a visit code - baseline record code is "BB" week records coded to "W NN"
 ALB <- ALB1 \%>\% mutate(AVISITCD = paste0(substr(AVISIT,start=1, stop=1), 
-                                        substr(AVISIT, start=regexpr(" ", AVISIT), stop=regexpr(" ", AVISIT)+2)))
+                                        substr(AVISIT, start=regexpr(" ", AVISIT), stop=regexpr(" ", AVISIT)+2))) \%>\%
+               mutate(AVISITCDN =  ifelse(AVISITCD == "BB", 0, substr(AVISITCD,start=2, stop=4)))
+               
+ALB$AVISITCDN <- as.numeric(ALB$AVISITCDN) # coerce character into numeric
+
+# for proper chronological ordering of visits in visualizations
+ALB <- ALB \%>\%
+      mutate(AVISITCD = factor(AVISITCD) \%>\% reorder(AVISITCDN))
 
 
 x <- teal::init(
@@ -75,14 +81,16 @@ x <- teal::init(
        param_choices = param_choices,
        param = "CRP",
        value_var = "AVAL",
-       value_var_choices = c("AVAL", "CHG", "PCHG"),
+       value_var_choices = c("AVAL", "BASE", "CHG", "PCHG"),
        baseline_var = "BASE",
-       baseline_var_choices = c("BASE", "BASEL2", "SCRN", "SCRNL2"),
+       baseline_var_choices = c("AVAL", "BASE", "CHG", "PCHG"),
        trt_group = "ARM",
        trt_group_choices = c("ARM", "ARMCD"),
-       plot_height = c(600, 200, 2000),
+       plot_width = c(800, 200, 2000),
+       plot_height = c(800, 200, 2000),
        m_facet = FALSE,
-       reg_line = FALSE
+       reg_line = FALSE,
+       dot_size = c(1, 1, 12)
    )
   )
 )

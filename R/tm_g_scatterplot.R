@@ -43,7 +43,14 @@
 #'
 #'# create a visit code - baseline record code is "BB" week records coded to "W NN"
 #'ALB <- ALB1 %>% mutate(AVISITCD = paste0(substr(AVISIT,start=1, stop=1), 
-#'                                         substr(AVISIT, start=regexpr(" ", AVISIT), stop=regexpr(" ", AVISIT)+2)))
+#'                                         substr(AVISIT, start=regexpr(" ", AVISIT), stop=regexpr(" ", AVISIT)+2))) %>%
+#'                mutate(AVISITCDN =  ifelse(AVISITCD == "BB", 0, substr(AVISITCD,start=2, stop=4)))
+#'                
+#'ALB$AVISITCDN <- as.numeric(ALB$AVISITCDN) # coerce character into numeric
+#'
+#'# for proper chronological ordering of visits in visualizations
+#'ALB <- ALB %>%
+#'       mutate(AVISITCD = factor(AVISITCD) %>% reorder(AVISITCDN))
 #'
 #'
 #' x <- teal::init(
@@ -56,14 +63,16 @@
 #'        param_choices = param_choices,
 #'        param = "CRP",
 #'        value_var = "AVAL",
-#'        value_var_choices = c("AVAL", "CHG", "PCHG"),
+#'        value_var_choices = c("AVAL", "BASE", "CHG", "PCHG"),
 #'        baseline_var = "BASE",
-#'        baseline_var_choices = c("BASE", "BASEL2", "SCRN", "SCRNL2"),
+#'        baseline_var_choices = c("AVAL", "BASE", "CHG", "PCHG"),
 #'        trt_group = "ARM",
 #'        trt_group_choices = c("ARM", "ARMCD"),
-#'        plot_height = c(600, 200, 2000),
+#'        plot_width = c(800, 200, 2000),
+#'        plot_height = c(800, 200, 2000),
 #'        m_facet = FALSE,
-#'        reg_line = FALSE
+#'        reg_line = FALSE,
+#'        dot_size = c(1, 1, 12)
 #'    )
 #'   )
 #' )
@@ -74,31 +83,25 @@
 
 tm_g_scatterplot <- function(label, # label of module
                              dataname, # analysis data set
-                             #filter_var = NULL, # not sure yet
-                             #filter_var_choices = NULL, # not sure yet
                              param_var, # name of variable containing the biomarker names: PARAMCD
                              param, # biomarker selected
                              param_choices = param, # list of biomarkers of interest
-                             #visit_var, # name of variable containing the visit values: AVISIT
-                             #visits, # visits selected
-                             #visit_var_choices = visits, # list of visits to plot
-                             baseline_var, # name of variable containing the baseline values: BASE, SCRN, ...
+                             baseline_var, # name of variable containing values displayed on the x-axis
                              baseline_var_choices = baseline_var, # list of baseline variables
-                             #analysis_var, # name of variable containing values to analyze: AVAL, CHG, PCHG, ...
-                             value_var, # analysis variable selected
+                             value_var, # name of variable containing values displayed on the y-axis
                              value_var_choices = value_var, # list of analysis variables to plot
                              trt_group,
                              trt_group_choices,
+                             plot_width,
                              plot_height,
                              m_facet = FALSE,
                              reg_line = FALSE,
-                             alpha = c(1, 0, 1), # opacity
-                             size = c(4, 1, 12), # point size
+                             dot_size, # dot size
                              hline = NULL,
                              rotate_xlab = FALSE,
                              man_color = NULL,
                              pre_output = NULL,
-                             post_output = helpText("Scatter Plot Specific Notes Here"),
+                             post_output = helpText("Scatter Plot Specific Gutter Comment"),
                              code_data_processing = NULL) {
 
   args <- as.list(environment())
@@ -131,36 +134,24 @@ ui_g_scatterplot <- function(id, ...) {
     encoding =  div(
       tags$label("Encodings", class="text-primary"),
       helpText("Dataset:", tags$code(a$dataname)),
-      helpText("Default Analysis Variable:", tags$code(a$value_var)),
-      optionalSelectInput(ns("value_var"), "Select an Analysis Variable", a$value_var_choices, a$value_var, multiple = FALSE),
-      helpText("Default Baseline Variable:", tags$code(a$baseline_var)),
-      optionalSelectInput(ns("baseline_var"), "Select a Baseline Variable", a$baseline_var_choices, a$baseline_var, multiple = FALSE),
-      helpText("Default Biomarker:", tags$code(a$param)),
+      #helpText("Default Biomarker:", tags$code(a$param)),
       optionalSelectInput(ns("param"), "Select a Biomarker", a$param_choices, a$param, multiple = FALSE),
-      #optionalSelectInput(ns("visit_var"), "Visit Variable", a$visit_var_choices, a$visit_var, multiple = TRUE),
-      #optionalSelectInput(ns("bl_visit_var"), "Baseline Visit Variable", a$bl_visit_var_choices, a$bl_visit_var, multiple = FALSE),
-      #optionalSelectInput(ns("filter_var"), "Preset Data Filters", tags$br, a$filter_var_choices, a$filter_var, multiple = TRUE),
-      optionalSelectInput(ns("trt_group"), "Arm Variable", a$trt_group_choices, a$trt_group, multiple = FALSE),
+      #helpText("Default X-Axis Variable:", tags$code(a$baseline_var)),
+      optionalSelectInput(ns("baseline_var"), "Select an X-Axis Variable", a$baseline_var_choices, a$baseline_var, multiple = FALSE),
+      #helpText("Default Y-Axis Variable:", tags$code(a$value_var)),
+      optionalSelectInput(ns("value_var"), "Select a Y-Axis Variable", a$value_var_choices, a$value_var, multiple = FALSE),
+      #optionalSelectInput(ns("trt_group"), "Arm Variable", a$trt_group_choices, a$trt_group, multiple = FALSE),
 
-      # if (all(c(
-      #   length(a$plot_height) == 1,
-      #   #length(a$axis_scale) == 1,
-      #   length(a$size) == 1,
-      #   length(a$alpha) == 1
-      # ))) {
-      #   NULL
-      # } else {
-        tags$label("Plot Settings", class="text-primary", style="margin-top: 15px;"),
-      # },
+      tags$label("Plot Settings", class="text-primary", style="margin-top: 15px;"),
       checkboxInput(ns("m_facet"), "Treatment Facetting", a$m_facet),
       checkboxInput(ns("reg_line"), "Regression Line", a$reg_line),
       checkboxInput(ns("rotate_xlab"), "Rotate X-axis Label", a$rotate_xlab),
       numericInput(ns("hline"), "Add a horizontal line:", a$hline),
-      optionalSliderInputValMinMax(ns("plot_height"), "Plot Width & Height", a$plot_height, ticks = FALSE),
-      uiOutput(ns("axis_scale")),
-      #optionalSliderInputValMinMax(ns("yaxis_scale"), "y axis scale limit", a$yaxis_scale, ticks = FALSE),
-      optionalSliderInputValMinMax(ns("alpha"), "opacity", a$alpha, ticks = FALSE),
-      optionalSliderInputValMinMax(ns("size"), "point size", a$size, ticks = FALSE)
+      optionalSliderInputValMinMax(ns("plot_width"), "Plot Width", a$plot_width, ticks = FALSE),
+      optionalSliderInputValMinMax(ns("plot_height"), "Plot Height", a$plot_height, ticks = FALSE),
+      uiOutput(ns("xaxis_scale")),
+      uiOutput(ns("yaxis_scale")),
+      optionalSliderInputValMinMax(ns("dot_size"), "Dot Size", a$dot_size, ticks = FALSE)
     ),
     forms = tags$div(
       actionButton(ns("show_rcode"), "Show R Code", width = "100%")#,
@@ -176,31 +167,51 @@ srv_g_scatterplot <- function(input, output, session, datasets, dataname, param_
 
   ns <- session$ns # must add for the dynamic ui.range_scale field
   
-  ## dynamic plot height
+  # dynamic plot width
   output$plot_ui <- renderUI({
+    plot_width <- input$plot_width
+    validate(need(plot_width, "need valid plot width"))
     plot_height <- input$plot_height
     validate(need(plot_height, "need valid plot height"))
-    plotOutput(session$ns("scatterplot"), width = plot_height, height = plot_height)
-  })
+    
+    plotOutput(session$ns("scatterplot"), width = plot_width, height = plot_height)
+    })
   
-  output$axis_scale <- renderUI({
-  ALB <- datasets$get_data(dataname, filtered = TRUE, reactive = TRUE) # must add for the dynamic ui.range_scale field
-  param <- input$param # must add for the dynamic ui.range_scale field
-        scale_data <- ALB %>%
-        filter(eval(parse(text = param_var)) == param)
-
+  # dynamic slider for x-axis
+  output$xaxis_scale <- renderUI({
+    ALB <- datasets$get_data(dataname, filtered = TRUE, reactive = TRUE) # must add for the dynamic ui.range_scale field
+    param <- input$param # must add for the dynamic ui.range_scale field
+    scale_data <- ALB %>%
+      filter(eval(parse(text = param_var)) == param)
+    
       # identify min and max values of BM range ignoring NA values
-      min_scale <- min(scale_data[[input$value_var]], na.rm = TRUE)
-      max_scale <- max(scale_data[[input$value_var]], na.rm = TRUE)
+      xmin_scale <- min(scale_data[[input$baseline_var]], na.rm = TRUE)
+      xmax_scale <- max(scale_data[[input$baseline_var]], na.rm = TRUE)
 
       tagList({
-        sliderInput(ns("range_scale"), label="Range Scale", min_scale, max_scale, value = c(min_scale, max_scale))
+        sliderInput(ns("xrange_scale"), label="X-Axis Range Scale", xmin_scale, xmax_scale, value = c(xmin_scale, xmax_scale))
       })
 
   })
 
+  # dynamic slider for y-axis
+  output$yaxis_scale <- renderUI({
+    ALB <- datasets$get_data(dataname, filtered = TRUE, reactive = TRUE) # must add for the dynamic ui.range_scale field
+    param <- input$param # must add for the dynamic ui.range_scale field
+    scale_data <- ALB %>%
+      filter(eval(parse(text = param_var)) == param)
 
-      output$scatterplot <- renderPlot({
+    # identify min and max values of BM range ignoring NA values
+    ymin_scale <- min(scale_data[[input$value_var]], na.rm = TRUE)
+    ymax_scale <- max(scale_data[[input$value_var]], na.rm = TRUE)
+
+    tagList({
+      sliderInput(ns("yrange_scale"), label="Y-Axis Range Scale", ymin_scale, ymax_scale, value = c(ymin_scale, ymax_scale))
+    })
+
+  })
+  
+  output$scatterplot <- renderPlot({
     
     # chunks <- list(
     #   analysis = "# Not Calculated"
@@ -210,16 +221,16 @@ srv_g_scatterplot <- function(input, output, session, datasets, dataname, param_
     param <- input$param
     value_var <- input$value_var
     baseline_var <- input$baseline_var
-    alpha <- input$alpha
-    size <- input$size
+    dot_size <- input$dot_size
     hline <- as.numeric(input$hline)
     m_facet <- input$m_facet
     reg_line <- input$reg_line
-    min_scale <- input$range_scale[1]
-    max_scale <- input$range_scale[2]
+    xmin_scale <- input$xrange_scale[1]
+    xmax_scale <- input$xrange_scale[2]
+    ymin_scale <- input$yrange_scale[1]
+    ymax_scale <- input$yrange_scale[2]
     rotate_xlab <- input$rotate_xlab
 
-    validate(need(alpha, "need alpha"))    
     validate(need(!is.null(ALB) && is.data.frame(ALB), "no data left"))
     validate(need(nrow(ALB) > 0 , "no observations left"))
     validate(need(param_var %in% names(ALB),
@@ -241,8 +252,11 @@ srv_g_scatterplot <- function(input, output, session, datasets, dataname, param_
       color_manual = NULL,
       f_facet = m_facet,
       reg_line = reg_line,
-      min_scale = min_scale,
-      max_scale = max_scale,
+      xmin_scale = xmin_scale,
+      xmax_scale = xmax_scale,
+      ymin_scale = ymin_scale,
+      ymax_scale = ymax_scale,
+      dot_size = dot_size,
       rotate_xlab = rotate_xlab,
       hline = hline
     )

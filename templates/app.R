@@ -45,6 +45,17 @@ ALB1 <- subset(ALB0,
 ALB <- ALB1 %>% mutate(AVISITCD = paste0(substr(AVISIT,start=1, stop=1), 
                                          substr(AVISIT, start=regexpr(" ", AVISIT), stop=regexpr(" ", AVISIT)+2)))
 
+# create a visit code - baseline record code is "BB" week records coded to "W NN"
+ALB <- ALB1 %>% mutate(AVISITCD = paste0(substr(AVISIT,start=1, stop=1),
+                                        substr(AVISIT, start=regexpr(" ", AVISIT), stop=regexpr(" ", AVISIT)+2))) %>%
+                mutate(AVISITCDN =  ifelse(AVISITCD == "BB", 0, substr(AVISITCD,start=2, stop=4)))
+
+ALB$AVISITCDN <- as.numeric(ALB$AVISITCDN) # coerce character into numeric
+
+# for proper chronological ordering of visits in visualizations
+ALB <- ALB %>%
+       mutate(AVISITCD = factor(AVISITCD) %>% reorder(AVISITCDN))
+
 # create ASL metadata for Source Data tab
 adsl <- file.info(ASL_path)
 
@@ -140,14 +151,16 @@ x <- teal::init(
         param_choices = param_choices,
         param = "CRP",
         value_var = "AVAL",
-        value_var_choices = c("AVAL", "CHG", "PCHG"),
+        value_var_choices = c("AVAL", "BASE", "CHG", "PCHG"),
         baseline_var = "BASE",
-        baseline_var_choices = c("BASE", "BASEL2", "SCRN", "SCRNL2"),
+        baseline_var_choices = c("AVAL", "BASE", "CHG", "PCHG"),
         trt_group = "ARM",
-        trt_group_choices = c("ARM", "ARMCD"),
-        plot_height = c(600, 200, 2000),
+        #trt_group_choices = c("ARM", "ARMCD"),
+        plot_width = c(800, 200, 2000),
+        plot_height = c(800, 200, 2000),
         m_facet = FALSE,
-        reg_line = FALSE
+        reg_line = FALSE,
+        dot_size = c(1, 1, 12)
       ),
       module(
         label = "Spaghetti Plot",
