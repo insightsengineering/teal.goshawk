@@ -8,7 +8,7 @@ tm_g_scatterplot(label, dataname, param_var, param, param_choices = param,
   xaxis_var, xaxis_var_choices = xaxis_var, yaxis_var,
   yaxis_var_choices = yaxis_var, trt_group, trt_group_choices, plot_width,
   plot_height, facet = FALSE, reg_line = FALSE, font_size, dot_size,
-  hline = NULL, rotate_xlab = FALSE, man_color = NULL,
+  reg_text_size, hline = NULL, rotate_xlab = FALSE, man_color = NULL,
   pre_output = NULL,
   post_output = helpText("BASE2 = Screening Data, BASE2L2 = Log2(BASE2);\\n                                                    CHG2 = Change from Screening, PCHG2 =  \%Change from Screening;\\n                                                    BASE = BASELINE Data, BASEL2 = Log2(BASE);\\n                                                    CHG = Change from Baseline, PCHG =  \%Change from Baseline;\\n                                                    AVAL = Following Visits, AVALL2 = Log2(AVAL)"),
   code_data_processing = NULL)
@@ -91,6 +91,8 @@ ALB_SUPED2 <- merge(ALB_SUPED1, PARAM_MINS, by="PARAMCD")[, union(names(ALB_SUPE
 ALB_SUPED2$AVISITCDN <- as.numeric(ALB_SUPED2$AVISITCDN) # coerce character into numeric
 ALB <- ALB_SUPED2 \%>\% mutate(AVISITCD = factor(AVISITCD) \%>\% reorder(AVISITCDN))
 
+# to test loq_flag
+ALB <- ALB \%>\% mutate(LOQFL = ifelse(PARAMCD == "CRP" & AVAL < .5, "Y", "N"))
 
 x <- teal::init(
   data = list(ASL = ASL, ALB = ALB),
@@ -112,7 +114,8 @@ x <- teal::init(
        facet = FALSE,
        reg_line = FALSE,
        font_size = c(12, 8, 20),
-       dot_size = c(1, 1, 12)
+       dot_size = c(1, 1, 12),
+       reg_text_size = c(3, 3, 10)
    )
   )
 )

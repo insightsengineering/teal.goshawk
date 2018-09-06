@@ -72,6 +72,8 @@
 #'ALB_SUPED2$AVISITCDN <- as.numeric(ALB_SUPED2$AVISITCDN) # coerce character into numeric
 #'ALB <- ALB_SUPED2 %>% mutate(AVISITCD = factor(AVISITCD) %>% reorder(AVISITCDN))
 #'
+#'# to test loq_flag
+#'ALB <- ALB %>% mutate(LOQFL = ifelse(PARAMCD == "CRP" & AVAL < .5, "Y", "N"))
 #'
 #' x <- teal::init(
 #'   data = list(ASL = ASL, ALB = ALB),
@@ -93,7 +95,8 @@
 #'        facet = FALSE,
 #'        reg_line = FALSE,
 #'        font_size = c(12, 8, 20),
-#'        dot_size = c(1, 1, 12)
+#'        dot_size = c(1, 1, 12),
+#'        reg_text_size = c(3, 3, 10)
 #'    )
 #'   )
 #' )
@@ -119,6 +122,7 @@ tm_g_scatterplot <- function(label, # label of module
                              reg_line = FALSE,
                              font_size,
                              dot_size,
+                             reg_text_size,
                              hline = NULL,
                              rotate_xlab = FALSE,
                              man_color = NULL,
@@ -154,7 +158,7 @@ ui_g_scatterplot <- function(id, ...) {
 
   ns <- NS(id)
   a <- list(...)
-print(a)
+
   standard_layout(
     output = uiOutput(ns("plot_ui")),
     encoding =  div(
@@ -178,7 +182,8 @@ print(a)
       uiOutput(ns("xaxis_scale")),
       uiOutput(ns("yaxis_scale")),
       optionalSliderInputValMinMax(ns("font_size"), "Font Size", a$font_size, ticks = FALSE),
-      optionalSliderInputValMinMax(ns("dot_size"), "Dot Size", a$dot_size, ticks = FALSE)
+      optionalSliderInputValMinMax(ns("dot_size"), "Dot Size", a$dot_size, ticks = FALSE),
+      optionalSliderInputValMinMax(ns("reg_text_size"), "Regression Annotations Size", a$reg_text_size, ticks = FALSE)
     ),
     forms = tags$div(
       actionButton(ns("show_rcode"), "Show R Code", width = "100%")#,
@@ -250,6 +255,7 @@ srv_g_scatterplot <- function(input, output, session, datasets, dataname, param_
     yaxis_var <- input$yaxis_var
     font_size <- input$font_size
     dot_size <- input$dot_size
+    reg_text_size <- input$reg_text_size
     hline <- as.numeric(input$hline)
     facet <- input$facet
     reg_line <- input$reg_line
@@ -288,6 +294,7 @@ srv_g_scatterplot <- function(input, output, session, datasets, dataname, param_
       ymax_scale = ymax_scale,
       font_size = font_size,
       dot_size = dot_size,
+      reg_text_size = reg_text_size,
       rotate_xlab = rotate_xlab,
       hline = hline
     )

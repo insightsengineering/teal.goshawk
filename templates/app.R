@@ -77,6 +77,9 @@ ALB_SUPED2 <- merge(ALB_SUPED1, PARAM_MINS, by="PARAMCD")[, union(names(ALB_SUPE
 ALB_SUPED2$AVISITCDN <- as.numeric(ALB_SUPED2$AVISITCDN) # coerce character into numeric
 ALB <- ALB_SUPED2 %>% mutate(AVISITCD = factor(AVISITCD) %>% reorder(AVISITCDN))
 
+# to test loq_flag
+ALB <- ALB %>% mutate(LOQFL = ifelse(PARAMCD == "CRP" & AVAL < .5, "Y", "N"))
+
 # create ASL metadata for Source Data tab
 adsl <- file.info(ASL_path)
 
@@ -182,8 +185,9 @@ x <- teal::init(
         plot_height = c(800, 200, 2000),
         facet = FALSE,
         reg_line = FALSE,
-        font_size = c(8, 12, 20),
-        dot_size = c(1, 1, 12)
+        font_size = c(12, 8, 20),
+        dot_size = c(1, 1, 12),
+        reg_text_size = 3
       ),
       module(
         label = "Spaghetti Plot",
