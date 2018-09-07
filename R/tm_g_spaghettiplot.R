@@ -57,6 +57,7 @@ ui_spaghettiplot <- function(id, ...) {
       },
       # checkboxInput(ns("rotate_xlab"), "Rotate X-axis Label", a$rotate_xlab),
       # numericInput(ns("hline"), "Add a horizontal line:", a$hline),
+      uiOutput(ns("yaxis_scale")),
       optionalSliderInputValMinMax(ns("plot_height"), "plot height", a$plot_height, ticks = FALSE)
     ),
     forms = actionButton(ns("show_rcode"), "Show R Code", width = "100%")
@@ -66,12 +67,30 @@ ui_spaghettiplot <- function(id, ...) {
 
 srv_lineplot <- function(input, output, session, datasets, dataname, idvar, param_var, trt_group) {
   
+  ns <- session$ns
   
   ## dynamic plot height
   output$plot_ui <- renderUI({
     plot_height <- input$plot_height
     validate(need(plot_height, "need valid plot height"))
     plotOutput(session$ns("spaghettiplot"), height=plot_height)
+  })
+  
+  # dynamic slider for y-axis
+  output$yaxis_scale <- renderUI({
+    ANL <- datasets$get_data(dataname, reactive = TRUE, filtered = TRUE)
+    param <- input$param 
+    scale_data <- ANL %>%
+      filter(eval(parse(text = param_var)) == param)
+    
+    # identify min and max values of BM range ignoring NA values
+    ymin_scale <- min(scale_data[[input$yvar]], na.rm = TRUE)
+    ymax_scale <- max(scale_data[[input$yvar]], na.rm = TRUE)
+    
+    tagList({
+      sliderInput(ns("yrange_scale"), label="Y-Axis Range Scale", ymin_scale, ymax_scale, value = c(ymin_scale, ymax_scale))
+    })
+    
   })
   
   chunks <- list(
@@ -84,6 +103,8 @@ srv_lineplot <- function(input, output, session, datasets, dataname, idvar, para
     param <- input$param
     xvar <- input$xvar
     yvar <- input$yvar
+    ymin_scale <- input$yrange_scale[1]
+    ymax_scale <- input$yrange_scale[2]
     facet_ncol <- input$facet_ncol
     # rotate_xlab <- input$rotate_xlab
     # hline <- as.numeric(input$hline)
@@ -118,6 +139,8 @@ srv_lineplot <- function(input, output, session, datasets, dataname, idvar, para
       value_var = yvar,
       trt_group = trt_group,
       time = xvar,
+      ymin = ymin_scale,
+      ymax = ymax_scale,
       facet_ncol = facet_ncol
     )
     
