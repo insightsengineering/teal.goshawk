@@ -1,3 +1,76 @@
+#' Line plot Teal Module
+#' 
+#'
+#' @param label menue item label of the module in the teal app
+#' @param dataname analysis data used in teal module, needs to be available in the list passed to the data argument of init. 
+#' Note that the data is expected to be in vertical form with the PARAMCD variable filtering to one observation per patient.
+#' @param xvar single name of variable in analysis data that is used as x-axis in the plot for the respective goshawk function.
+#' @param xvar_choices vector with variable names that can be used as xvar.
+#' @param xvar_level vector that can be used to define the factor level of xvar.
+#' @param yvar single name of variable in analysis data that is used as summary variable in the respective gshawk function.
+#' @param yvar_choices vector with variable names that can be used as yvar.
+#' @param param_var single name of variable in analysis data that includes parameter names.
+#' @param param parameter name
+#' @param param_choices vector of parameter names that can be used in param.
+#' @param trt_group single name of treatment arm variable.
+#' @param trt_group_level vector that can be used to define factor level of trt_group.
+#' @param stat string of statistics
+#' @param hline numeric value to add horizontal line to plot
+#' @param man_color vector of strings or numeric values that representing colors
+#' @param rotate_xlab boolean value indicating whether to rotate x-axis labels
+#' @param plot_height numeric vectors to define the plot height.
+#' 
+#' 
+#' @import goshawk
+#'
+#' @author Wenyi Liu (wenyi.liu@roche.com)
+#'
+#' @details 
+#'
+#' @return \code{shiny} object
+#'
+#' @export
+#'
+#' @examples
+#' 
+#' library(random.cdisc.data)
+#' 
+#' ASL <- radam('ASL', N = 100)
+#' ANL <- expand.grid(
+#'   STUDYID = "STUDY A",
+#'   USUBJID = paste0("id-",1:100),
+#'   VISIT = paste0("visit ", 1:10),
+#'   ARM = c("ARM A", "ARM B"),
+#'   PARAMCD = c("CRP", "IGG", "IGM")
+#' )
+#' ANL$AVAL <- rnorm(nrow(ANL))
+#' ANL$CHG <- rnorm(nrow(ANL), 2, 2)
+#' ANL$CHG[ANL$VISIT == "visit 1"] <- NA
+#' ANL$PCHG <- ANL$CHG/ANL$AVAL*100
+#' 
+#' ANL$ARM <- factor(ANL$ARM)
+#' ANL$VISIT <- factor(ANL$VISIT)
+#' 
+#' x <- teal::init(
+#'   data = list(ASL = ASL, ALB = ANL),
+#'   modules = root_modules(
+#'     tm_g_lineplot(
+#'       label = "Line Plot",
+#'       dataname = "ALB",
+#'       xvar = "VISIT",
+#'       yvar = "AVAL",
+#'       yvar_choices = c("AVAL","CHG","PCGH"),
+#'       param_var = "PARAMCD",
+#'       param = "CRP",
+#'       param_choices = c("CRP","IGG","IGM"),
+#'       trt_group = "ARM"
+#'     )
+#'   )
+#' )
+#' 
+#' shinyApp(x$ui, x$server)
+
+
 tm_g_lineplot <- function(label,
                           dataname,
                           xvar, yvar,
@@ -18,7 +91,8 @@ tm_g_lineplot <- function(label,
   module(
     label = label,
     server = srv_lineplot,
-    server_args = list(dataname = dataname, param_var = param_var, trt_group = trt_group, man_color, xvar_level = xvar_level, trt_group_level = trt_group_level),
+    server_args = list(dataname = dataname, param_var = param_var, trt_group = trt_group, man_color = man_color, 
+                       xvar_level = xvar_level, trt_group_level = trt_group_level),
     ui = ui_lineplot,
     ui_args = args,
     filters = dataname
@@ -64,7 +138,7 @@ ui_lineplot <- function(id, ...) {
   
 }
 
-srv_lineplot <- function(input, output, session, datasets, dataname, param_var, trt_group, man_color, xvar_level = xvar_level, trt_group_level = trt_group_level) {
+srv_lineplot <- function(input, output, session, datasets, dataname, param_var, trt_group, man_color = man_color, xvar_level, trt_group_level) {
   
   ns <- session$ns
   
@@ -180,3 +254,5 @@ srv_lineplot <- function(input, output, session, datasets, dataname, param_var, 
   })
   
 }
+
+
