@@ -1,16 +1,92 @@
+#' Spaghetti plot Teal Module
+#' 
+#'
+#' @param label menue item label of the module in the teal app
+#' @param dataname analysis data used in teal module, needs to be available in the list passed to the data argument of init. 
+#' Note that the data is expected to be in vertical form with the PARAMCD variable filtering to one observation per patient.
+#' @param idvar name of unique subject id variable.
+#' @param xvar single name of variable in analysis data that is used as x-axis in the plot for the respective goshawk function.
+#' @param xvar_choices vector with variable names that can be used as xvar.
+#' @param xvar_level vector that can be used to define the factor level of xvar.
+#' @param yvar single name of variable in analysis data that is used as summary variable in the respective gshawk function.
+#' @param yvar_choices vector with variable names that can be used as yvar.
+#' @param param_var single name of variable in analysis data that includes parameter names.
+#' @param param parameter name
+#' @param param_choices vector of parameter names that can be used in param.
+#' @param trt_group single name of treatment arm variable.
+#' @param trt_group_level vector that can be used to define factor level of trt_group.
+#' @param hline numeric value to add horizontal line to plot
+#' @param rotate_xlab boolean value indicating whether to rotate x-axis labels
+#' @param facet_ncol numeric value indicating number of facets per row.
+#' @param plot_height numeric vectors to define the plot height.
+#' 
+#' 
+#' @import goshawk
+#'
+#' @author Wenyi Liu (wenyi.liu@roche.com)
+#'
+#' @details 
+#'
+#' @return \code{shiny} object
+#'
+#' @export
+#'
+#' @examples
+#' 
+#' library(random.cdisc.data)
+#' 
+#' ASL <- radam('ASL', N = 100)
+#' ANL <- expand.grid(
+#'   STUDYID = "STUDY A",
+#'   USUBJID = paste0("id-",1:100),
+#'   VISIT = paste0("visit ", 1:10),
+#'   ARM = c("ARM A", "ARM B"),
+#'   PARAMCD = c("CRP", "IGG", "IGM")
+#' )
+#' ANL$AVAL <- rnorm(nrow(ANL))
+#' ANL$CHG <- rnorm(nrow(ANL), 2, 2)
+#' ANL$CHG[ANL$VISIT == "visit 1"] <- NA
+#' ANL$PCHG <- ANL$CHG/ANL$AVAL*100
+#' 
+#' ANL$ARM <- factor(ANL$ARM)
+#' ANL$VISIT <- factor(ANL$VISIT)
+#' 
+#' x <- teal::init(
+#'   data = list(ASL = ASL, ALB = ANL),
+#'   modules = root_modules(
+#'     tm_g_spaghettiplot(
+#'       label = "Spaghetti Plot",
+#'       dataname = "ALB",
+#'       idvar = "USUBJID",
+#'       xvar = "VISIT",
+#'       yvar = "AVAL",
+#'       yvar_choices = c("AVAL","CHG", "PCHG"),
+#'       param_var = "PARAMCD",
+#'       param = "CRP",
+#'       param_choices = c("CRP","IGG","IGM"),
+#'       trt_group = "ARM"
+#'     )
+#'   )
+#' )
+#' 
+#' shinyApp(x$ui, x$server)
+
+
+
+
 tm_g_spaghettiplot <- function(label,
                                dataname,
                                idvar,
                                xvar, yvar,
                                xvar_choices = xvar, yvar_choices = yvar,
-                               # xvar_level = NULL,
+                               xvar_level = NULL,
                                param_var,
                                param, param_choices = param,
                                trt_group,
-                               # trt_group_level = NULL,
-                               # hline = NULL,
+                               trt_group_level = NULL,
+                               hline = NULL,
                                # man_color = NULL,
-                               # rotate_xlab = FALSE,
+                               rotate_xlab = FALSE,
                                facet_ncol = 2,
                                plot_height = c(600, 200, 2000)) {
   
@@ -19,7 +95,8 @@ tm_g_spaghettiplot <- function(label,
   module(
     label = label,
     server = srv_lineplot,
-    server_args = list(dataname = dataname, idvar = idvar, param_var = param_var, trt_group = trt_group),
+    server_args = list(dataname = dataname, idvar = idvar, param_var = param_var, trt_group = trt_group, 
+                       xvar_level = xvar_level, trt_group_level = trt_group_level),
     ui = ui_spaghettiplot,
     ui_args = args,
     filters = dataname
@@ -55,8 +132,8 @@ ui_spaghettiplot <- function(id, ...) {
       } else {
         tags$label("Plot Settings", class="text-primary", style="margin-top: 15px;")
       },
-      # checkboxInput(ns("rotate_xlab"), "Rotate X-axis Label", a$rotate_xlab),
-      # numericInput(ns("hline"), "Add a horizontal line:", a$hline),
+      checkboxInput(ns("rotate_xlab"), "Rotate X-axis Label", a$rotate_xlab),
+      numericInput(ns("hline"), "Add a horizontal line:", a$hline),
       uiOutput(ns("yaxis_scale")),
       optionalSliderInputValMinMax(ns("plot_height"), "plot height", a$plot_height, ticks = FALSE)
     ),
@@ -65,7 +142,7 @@ ui_spaghettiplot <- function(id, ...) {
   
 }
 
-srv_lineplot <- function(input, output, session, datasets, dataname, idvar, param_var, trt_group) {
+srv_lineplot <- function(input, output, session, datasets, dataname, idvar, param_var, trt_group, xvar_level, trt_group_level) {
   
   ns <- session$ns
   
@@ -106,8 +183,8 @@ srv_lineplot <- function(input, output, session, datasets, dataname, idvar, para
     ymin_scale <- input$yrange_scale[1]
     ymax_scale <- input$yrange_scale[2]
     facet_ncol <- input$facet_ncol
-    # rotate_xlab <- input$rotate_xlab
-    # hline <- as.numeric(input$hline)
+    rotate_xlab <- input$rotate_xlab
+    hline <- as.numeric(input$hline)
     
     chunks$analysis <<- "# Not Calculated"
     
@@ -138,10 +215,14 @@ srv_lineplot <- function(input, output, session, datasets, dataname, idvar, para
       biomarker = param,
       value_var = yvar,
       trt_group = trt_group,
+      trt_group_level = trt_group_level,
       time = xvar,
+      time_level = xvar_level,
       ymin = ymin_scale,
       ymax = ymax_scale,
-      facet_ncol = facet_ncol
+      facet_ncol = facet_ncol,
+      hline = hline,
+      rotate_xlab = rotate_xlab
     )
     
     p <- try(eval(chunks$analysis))
