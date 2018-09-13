@@ -3,7 +3,7 @@
 #' This shiny module displays a density distribution plot
 #'
 #' @param label menu item label of the module in the teal app 
-#' @param dataname analysis data used in teal module, needs to be available in
+#' @param dataname analysis data set name. needs to be available in
 #'   the list passed to the \code{data} argument of \code{\link[teal]{init}}.
 #'   Note that the data are expected to be in vertical form with the
 #'   \code{PARAMCD} variable filtering to one observation per patient per visit.
@@ -98,7 +98,6 @@
 #'        loq_flag_var = 'LOQFL',
 #'        plot_width = c(800, 200, 2000),
 #'        plot_height = c(500, 200, 2000),
-#'        facet = FALSE,
 #'        font_size = c(12, 8, 20),
 #'        line_size = c(1, 1, 12)
 #'    )
@@ -121,7 +120,6 @@ tm_g_density_distribution_plot <- function(label, # label of module
                                            loq_flag_var = 'LOQFL',
                                            plot_width,
                                            plot_height,
-                                           facet = FALSE,
                                            font_size,
                                            line_size,
                                            hline = NULL,
@@ -174,7 +172,6 @@ ui_g_density_distribution_plot <- function(id, ...) {
       optionalSelectInput(ns("xaxis_var"), "Select an X-Axis Variable", a$xaxis_var_choices, a$xaxis_var, multiple = FALSE),
 
       tags$label("Plot Settings", class="text-primary", style="margin-top: 15px;"),
-      checkboxInput(ns("facet"), "Visit Facetting", a$facet),
       checkboxInput(ns("rotate_xlab"), "Rotate X-axis Label", a$rotate_xlab),
       numericInput(ns("hline"), "Add a horizontal line:", a$hline),
       optionalSliderInputValMinMax(ns("plot_width"), "Plot Width", a$plot_width, ticks = FALSE),
@@ -230,16 +227,12 @@ srv_g_density_distribution_plot <- function(input, output, session, datasets, da
     #   analysis = "# Not Calculated"
     # )
     
-    # for debugging
-    print(paste0('Inside renderPlot, FACET is now: ', input$facet))
-    
     ALB <- datasets$get_data(dataname, reactive = TRUE, filtered = TRUE)
     param <- input$param
     xaxis_var <- input$xaxis_var
     font_size <- input$font_size
     line_size <- input$line_size
     hline <- as.numeric(input$hline)
-    facet <- input$facet
     xmin_scale <- input$xrange_scale[1]
     xmax_scale <- input$xrange_scale[2]
     rotate_xlab <- input$rotate_xlab
@@ -255,9 +248,6 @@ srv_g_density_distribution_plot <- function(input, output, session, datasets, da
     validate(need(xaxis_var %in% names(ALB),
                   paste("variable", xaxis_var, " is not available in data", dataname)))
 
-    # for debugging
-    print(paste0('Before sending to goshawk, FACET is now: ', facet))
-    
         p <- goshawk:::g_density_distribution_plot(
       data = ALB,
       param_var = param_var,
@@ -265,7 +255,6 @@ srv_g_density_distribution_plot <- function(input, output, session, datasets, da
       xaxis_var = xaxis_var,
       trt_group = trt_group,
       color_manual = NULL,
-      facet = facet,
       xmin_scale = xmin_scale,
       xmax_scale = xmax_scale,
       font_size = font_size,
@@ -285,7 +274,6 @@ srv_g_density_distribution_plot <- function(input, output, session, datasets, da
       xaxis_var <- input$xaxis_var
       font_size <- input$font_size
 
-  # in this order only the table displays. so only last output is rendered to the app
   t <- goshawk:::t_summarytable(
   data = ALB,
   trt_group = trt_group,

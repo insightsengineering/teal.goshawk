@@ -7,15 +7,15 @@
 tm_g_density_distribution_plot(label, dataname, param_var, param,
   param_choices = param, xaxis_var, xaxis_var_choices = xaxis_var,
   trt_group, trt_group_choices, loq_flag_var = "LOQFL", plot_width,
-  plot_height, facet = FALSE, font_size, line_size, hline = NULL,
-  rotate_xlab = FALSE, man_color = NULL, pre_output = NULL,
+  plot_height, font_size, line_size, hline = NULL, rotate_xlab = FALSE,
+  man_color = NULL, pre_output = NULL,
   post_output = helpText("Variable Name Legend: BASE2 = Screening Data, BASE2L2 = Log2(BASE2);\\n                                                    CHG2 = Change from Screening, PCHG2 =  \%Change from Screening;\\n                                                    BASE = BASELINE Data, BASEL2 = Log2(BASE);\\n                                                    CHG = Change from Baseline, PCHG =  \%Change from Baseline;\\n                                                    AVAL = Following Visits, AVALL2 = Log2(AVAL)"),
   code_data_processing = NULL)
 }
 \arguments{
 \item{label}{menu item label of the module in the teal app}
 
-\item{dataname}{analysis data used in teal module, needs to be available in
+\item{dataname}{analysis data set name. needs to be available in
 the list passed to the \code{data} argument of \code{\link[teal]{init}}.
 Note that the data are expected to be in vertical form with the
 \code{PARAMCD} variable filtering to one observation per patient per visit.}
@@ -109,7 +109,6 @@ x <- teal::init(
        loq_flag_var = 'LOQFL',
        plot_width = c(800, 200, 2000),
        plot_height = c(500, 200, 2000),
-       facet = FALSE,
        font_size = c(12, 8, 20),
        line_size = c(1, 1, 12)
    )
