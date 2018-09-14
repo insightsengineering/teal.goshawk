@@ -73,7 +73,8 @@ select(USUBJID, PARAMCD, AVAL) \%>\%
 # - adjust existing BASELINE record values where values are missing: According to SPA this is a STREAM artifact
 ALB_SUPED1 <- ALB_SUBSET \%>\% mutate(AVISITCD = paste0(substr(AVISIT,start=1, stop=1), 
                                         substr(AVISIT, start=regexpr(" ", AVISIT), stop=regexpr(" ", AVISIT)+2))) \%>\%
-               mutate(AVISITCDN =  ifelse(AVISITCD == "BB", 0, substr(AVISITCD,start=2, stop=4))) \%>\%
+               mutate(AVISITCD = ifelse(AVISITCD == "BB", "BL", AVISITCD)) \%>\%
+               mutate(AVISITCDN =  ifelse(AVISITCD == "BL", 0, substr(AVISITCD,start=2, stop=4))) \%>\%
                mutate(BASE = ifelse(AVISIT == "BASELINE" & is.na(BASE), AVAL, BASE)) \%>\%
                mutate(CHG = ifelse(AVISIT == "BASELINE" & is.na(CHG), 0, CHG)) \%>\%
                mutate(PCHG = ifelse(AVISIT == "BASELINE" & is.na(PCHG), 0, PCHG))
