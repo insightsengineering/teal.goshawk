@@ -4,7 +4,8 @@
 library(teal)
 library(dplyr)
 library(ggplot2)
-library(gridExtra)
+#library(gridExtra)
+library(stringr)
 library(tidyr)
 library(DescTools) # for %% operators e.g. %like any%
 library(goshawk)
@@ -152,11 +153,21 @@ x <- teal::init(
         ui = function(id) div(p("Box PLots Here")),
         filters = "ASL"
       ),
-      module(
-        label = "Distribution",
-        server = function(input, output, session, datasets) {},
-        ui = function(id) div(p("Distribution Plots Here")),
-        filters = "ASL"
+      tm_g_density_distribution_plot(
+        label = "Density Distribution Plot",
+        dataname = "ALB",
+        param_var = "PARAMCD",
+        param_choices = param_choices,
+        param = "CRP",
+        xaxis_var = "AVAL",
+        xaxis_var_choices = c("AVAL", "BASE", "CHG", "PCHG", "BASE2", "CHG2", "PCHG2", "AVALL2", "BASEL2", "BASE2L2"),
+        trt_group = "ARM",
+        trt_group_choices = c("ARM", "ARMCD"),
+        loq_flag_var = 'LOQFL',
+        plot_width = c(800, 200, 2000),
+        plot_height = c(500, 200, 2000),
+        font_size = c(12, 8, 20),
+        line_size = c(1, 1, 12)
       ),
       tm_g_lineplot(
         label = "Line Plot",
@@ -187,7 +198,7 @@ x <- teal::init(
         reg_line = FALSE,
         font_size = c(12, 8, 20),
         dot_size = c(1, 1, 12),
-        reg_text_size = 3
+        reg_text_size = c(3, 3, 10)
       ),
       module(
         label = "Spaghetti Plot",
