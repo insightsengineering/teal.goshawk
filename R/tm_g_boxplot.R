@@ -33,8 +33,8 @@
 #' @export
 #' 
 #' @examples
+#' 
 #'\dontrun{
-#'
 #' # Example using analysis dataset for example ASL or ADSL,
 #' # ABM points to biomarker data stored in a custom file created to support goshawk. for example ADBIOM
 #' library(dplyr)
@@ -66,7 +66,8 @@
 #'
 #' shinyApp(x$ui, x$server)
 #'
-#' }
+#'}
+#' 
 #' 
 tm_g_boxplot <- function(label,
                          dataname,
