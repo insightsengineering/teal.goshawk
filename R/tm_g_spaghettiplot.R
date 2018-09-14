@@ -1,9 +1,10 @@
-#' Line plot Teal Module
+#' Spaghetti plot Teal Module
 #' 
 #'
 #' @param label menue item label of the module in the teal app
 #' @param dataname analysis data used in teal module, needs to be available in the list passed to the data argument of init. 
 #' Note that the data is expected to be in vertical form with the PARAMCD variable filtering to one observation per patient.
+#' @param idvar name of unique subject id variable.
 #' @param xvar single name of variable in analysis data that is used as x-axis in the plot for the respective goshawk function.
 #' @param xvar_choices vector with variable names that can be used as xvar.
 #' @param xvar_level vector that can be used to define the factor level of xvar.
@@ -14,10 +15,9 @@
 #' @param param_choices vector of parameter names that can be used in param.
 #' @param trt_group single name of treatment arm variable.
 #' @param trt_group_level vector that can be used to define factor level of trt_group.
-#' @param stat string of statistics
 #' @param hline numeric value to add horizontal line to plot
-#' @param man_color vector of strings or numeric values that representing colors
 #' @param rotate_xlab boolean value indicating whether to rotate x-axis labels
+#' @param facet_ncol numeric value indicating number of facets per row.
 #' @param plot_height numeric vectors to define the plot height.
 #' 
 #' 
@@ -54,12 +54,13 @@
 #' x <- teal::init(
 #'   data = list(ASL = ASL, ALB = ANL),
 #'   modules = root_modules(
-#'     tm_g_lineplot(
-#'       label = "Line Plot",
+#'     tm_g_spaghettiplot(
+#'       label = "Spaghetti Plot",
 #'       dataname = "ALB",
+#'       idvar = "USUBJID",
 #'       xvar = "VISIT",
 #'       yvar = "AVAL",
-#'       yvar_choices = c("AVAL","CHG","PCGH"),
+#'       yvar_choices = c("AVAL","CHG", "PCHG"),
 #'       param_var = "PARAMCD",
 #'       param = "CRP",
 #'       param_choices = c("CRP","IGG","IGM"),
@@ -71,29 +72,32 @@
 #' shinyApp(x$ui, x$server)
 
 
-tm_g_lineplot <- function(label,
-                          dataname,
-                          xvar, yvar,
-                          xvar_choices = xvar, yvar_choices = yvar,
-                          xvar_level = NULL,
-                          param_var,
-                          param, param_choices = param,
-                          trt_group,
-                          trt_group_level = NULL,
-                          stat = "mean",
-                          hline = NULL,
-                          man_color = NULL,
-                          rotate_xlab = FALSE,
-                          plot_height = c(600, 200, 2000)) {
+
+
+tm_g_spaghettiplot <- function(label,
+                               dataname,
+                               idvar,
+                               xvar, yvar,
+                               xvar_choices = xvar, yvar_choices = yvar,
+                               xvar_level = NULL,
+                               param_var,
+                               param, param_choices = param,
+                               trt_group,
+                               trt_group_level = NULL,
+                               hline = NULL,
+                               # man_color = NULL,
+                               rotate_xlab = FALSE,
+                               facet_ncol = 2,
+                               plot_height = c(600, 200, 2000)) {
   
   args <- as.list(environment())
   
   module(
     label = label,
     server = srv_lineplot,
-    server_args = list(dataname = dataname, param_var = param_var, trt_group = trt_group, man_color = man_color, 
+    server_args = list(dataname = dataname, idvar = idvar, param_var = param_var, trt_group = trt_group, 
                        xvar_level = xvar_level, trt_group_level = trt_group_level),
-    ui = ui_lineplot,
+    ui = ui_spaghettiplot,
     ui_args = args,
     filters = dataname
   )
@@ -101,7 +105,7 @@ tm_g_lineplot <- function(label,
 }
 
 
-ui_lineplot <- function(id, ...) {
+ui_spaghettiplot <- function(id, ...) {
   
   ns <- NS(id)
   a <- list(...)
@@ -119,8 +123,8 @@ ui_lineplot <- function(id, ...) {
       optionalSelectInput(ns("xvar"), "x variable", a$xvar_choices, a$xvar, multiple = FALSE),
       optionalSelectInput(ns("yvar"), "y variable", a$yvar_choices, a$yvar, multiple = FALSE),
       helpText("Treatment group:", tags$code(a$trt_group)),
-      radioButtons(ns("stat"), "Select statistics:", c("mean","median"), a$stat),
-
+      numericInput(ns("facet_ncol"), "Select number of plots per row:", a$facet_ncol, min = 1),
+      
       if (all(c(
         length(a$plot_height) == 1
       ))) {
@@ -138,7 +142,7 @@ ui_lineplot <- function(id, ...) {
   
 }
 
-srv_lineplot <- function(input, output, session, datasets, dataname, param_var, trt_group, man_color = man_color, xvar_level, trt_group_level) {
+srv_lineplot <- function(input, output, session, datasets, dataname, idvar, param_var, trt_group, xvar_level, trt_group_level) {
   
   ns <- session$ns
   
@@ -146,7 +150,7 @@ srv_lineplot <- function(input, output, session, datasets, dataname, param_var, 
   output$plot_ui <- renderUI({
     plot_height <- input$plot_height
     validate(need(plot_height, "need valid plot height"))
-    plotOutput(session$ns("lineplot"), height=plot_height)
+    plotOutput(session$ns("spaghettiplot"), height=plot_height)
   })
   
   # dynamic slider for y-axis
@@ -170,7 +174,7 @@ srv_lineplot <- function(input, output, session, datasets, dataname, param_var, 
     analysis = "# Not Calculated"
   )
   
-  output$lineplot <- renderPlot({
+  output$spaghettiplot <- renderPlot({
     
     ANL <- datasets$get_data(dataname, reactive = TRUE, filtered = TRUE)
     param <- input$param
@@ -178,7 +182,7 @@ srv_lineplot <- function(input, output, session, datasets, dataname, param_var, 
     yvar <- input$yvar
     ymin_scale <- input$yrange_scale[1]
     ymax_scale <- input$yrange_scale[2]
-    median <- ifelse(input$stat=='median',TRUE, FALSE)
+    facet_ncol <- input$facet_ncol
     rotate_xlab <- input$rotate_xlab
     hline <- as.numeric(input$hline)
     
@@ -202,27 +206,27 @@ srv_lineplot <- function(input, output, session, datasets, dataname, param_var, 
     
     data_name <- paste0(dataname, "_FILTERED")
     assign(data_name, ANL)
-
+    
     chunks$analysis <<- call(
-      "g_lineplot",
+      "g_spaghettiplot",
       data = bquote(.(as.name(data_name))),
+      subj_id = idvar,
       biomarker_var = param_var,
       biomarker = param,
       value_var = yvar,
-      ymin = ymin_scale,
-      ymax = ymax_scale,
       trt_group = trt_group,
       trt_group_level = trt_group_level,
       time = xvar,
       time_level = xvar_level,
-      color_manual = man_color,
-      median = median,
+      ymin = ymin_scale,
+      ymax = ymax_scale,
+      facet_ncol = facet_ncol,
       hline = hline,
       rotate_xlab = rotate_xlab
     )
-
+    
     p <- try(eval(chunks$analysis))
-
+    
     if (is(p, "try-error")) validate(need(FALSE, paste0("could not create the line plot:\n\n", p)))
     
     p
@@ -232,7 +236,7 @@ srv_lineplot <- function(input, output, session, datasets, dataname, param_var, 
   observeEvent(input$show_rcode, {
     
     header <- teal.tern:::get_rcode_header(
-      title = "Line Plot",
+      title = "Spaghetti Plot",
       datanames = dataname,
       datasets = datasets
     )
@@ -246,7 +250,7 @@ srv_lineplot <- function(input, output, session, datasets, dataname, param_var, 
     
     # .log("show R code")
     showModal(modalDialog(
-      title = "R Code for the Current Line Plot",
+      title = "R Code for the Current Spaghetti Plot",
       tags$pre(tags$code(class="R", str_rcode)),
       easyClose = TRUE,
       size = "l"
@@ -254,5 +258,3 @@ srv_lineplot <- function(input, output, session, datasets, dataname, param_var, 
   })
   
 }
-
-
