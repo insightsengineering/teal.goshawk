@@ -1,14 +1,13 @@
 #.libPaths(c(file.path(getwd()), "~/goshawk", .libPaths()))
 #goshawk:::g_lineplot
 # required packages
-library(teal)
+library(DescTools) # for %% operators e.g. %like any%
 library(dplyr)
 library(ggplot2)
+library(goshawk)
 #library(gridExtra)
 library(stringr)
-library(tidyr)
-library(DescTools) # for %% operators e.g. %like any%
-library(goshawk)
+library(teal)
 library(teal.goshawk)
 
 #`%||%` <- function(lhs, rhs) if (is.null(lhs)) rhs else lhs
