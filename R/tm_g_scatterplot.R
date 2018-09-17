@@ -13,6 +13,12 @@
 #' @author Balazs Toth
 #' @author first last
 #'
+#' @import DescTools
+#' @import dplyr
+#' @import ggplot2
+#' @import goshawk
+#' @import teal
+#'
 #' @details provide additional information as needed. link to specification file \url{http://rstudio.com}
 #'
 #' @return an \code{\link[teal]{module}} object#'

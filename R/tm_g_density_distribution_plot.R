@@ -15,7 +15,6 @@
 #' @import ggplot2
 #' @import goshawk
 #' @import teal
-#' @import tidyr
 #'
 #' @author Balazs Toth
 #' @author Nick Paszty
