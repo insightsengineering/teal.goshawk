@@ -5,9 +5,9 @@
 \title{Spaghetti plot Teal Module}
 \usage{
 tm_g_spaghettiplot(label, dataname, idvar, xvar, yvar, xvar_choices = xvar,
-  yvar_choices = yvar, param_var, param, param_choices = param, trt_group,
-  hline = NULL, rotate_xlab = FALSE, facet_ncol = 2,
-  plot_height = c(600, 200, 2000))
+  yvar_choices = yvar, xvar_level = NULL, param_var, param,
+  param_choices = param, trt_group, trt_group_level = NULL, hline = NULL,
+  rotate_xlab = FALSE, facet_ncol = 2, plot_height = c(600, 200, 2000))
 }
 \arguments{
 \item{label}{menue item label of the module in the teal app}
@@ -25,6 +25,8 @@ Note that the data is expected to be in vertical form with the PARAMCD variable 
 
 \item{yvar_choices}{vector with variable names that can be used as yvar.}
 
+\item{xvar_level}{vector that can be used to define the factor level of xvar.}
+
 \item{param_var}{single name of variable in analysis data that includes parameter names.}
 
 \item{param}{parameter name}
@@ -33,6 +35,8 @@ Note that the data is expected to be in vertical form with the PARAMCD variable 
 
 \item{trt_group}{single name of treatment arm variable.}
 
+\item{trt_group_level}{vector that can be used to define factor level of trt_group.}
+
 \item{hline}{numeric value to add horizontal line to plot}
 
 \item{rotate_xlab}{boolean value indicating whether to rotate x-axis labels}
@@ -40,10 +44,6 @@ Note that the data is expected to be in vertical form with the PARAMCD variable 
 \item{facet_ncol}{numeric value indicating number of facets per row.}
 
 \item{plot_height}{numeric vectors to define the plot height.}
-
-\item{xvar_level}{vector that can be used to define the factor level of xvar.}
-
-\item{trt_group_level}{vector that can be used to define factor level of trt_group.}
 }
 \value{
 \code{shiny} object
@@ -55,6 +55,87 @@ Spaghetti plot Teal Module
 
 }
 \examples{
+
+# EXAMPLE 1
+
+# Example using analysis dataset for example ASL or ADSL,
+library(goshawk)
+library(DescTools)
+library(teal)
+
+# ALB points to biomarker data stored in a typical LB structure. for example ALB or ADLB.
+
+# for development team testing
+ASL_path <- "~/btk/lupus/dataadam/asl.sas7bdat"
+ALB_path <- "~/btk/lupus/dataadam/alb3arm.sas7bdat"
+
+# list of biomarkers of interest. see ALB2 assignment below
+param_choices <- c("CRP","ADIGG","IG","IGA","IGE","IGG","IGM","TEST")
+
+ASL0 <- read_bce(ASL_path)
+ASL <- subset(ASL0, subset = ITTFL == 'Y' & IAFL == 'Y')
+
+ALB0 <- read_bce(ALB_path)
+
+# post process the data to subset records per specification
+ALB_SUBSET <- subset(ALB0,
+                     subset = PARAMCD \%in\% c(param_choices) & ITTFL == 'Y' & IAFL == 'Y' & ANLFL == 'Y' & AVISIT \%like any\% c('BASE\%','\%WEEK\%'),
+                     select = c('STUDYID', 'USUBJID', 'ITTFL', 'ANLFL', 'ARM', 'AVISIT', 'AVISITN', 'PARAMCD', 'AVAL', 'AVALU', 'BASE', 'CHG', 'PCHG',
+                                'LBSTRESC', 'LBSTRESN'))
+
+# calculate the minimum AVAL for each PARAMCD
+PARAM_MINS <- ALB_SUBSET \%>\%
+  select(USUBJID, PARAMCD, AVAL) \%>\%
+  filter(PARAMCD \%in\% param_choices) \%>\%
+  group_by(PARAMCD) \%>\%
+  summarise(AVAL_MIN=min(AVAL, na.rm=TRUE))
+
+# post process the data to create several new variables and adjust existing record specific valules per specification
+# - create a visit code variable - baseline record code is "BB" and week records coded to "W NN"
+# - adjust existing BASELINE record values where values are missing: According to SPA this is a STREAM artifact
+ALB_SUPED1 <- ALB_SUBSET \%>\% mutate(AVISITCD = paste0(substr(AVISIT,start=1, stop=1),
+                                                      substr(AVISIT, start=regexpr(" ", AVISIT), stop=regexpr(" ", AVISIT)+2))) \%>\%
+  mutate(AVISITCDN =  ifelse(AVISITCD == "BB", 0, substr(AVISITCD,start=2, stop=4))) \%>\%
+  mutate(BASE = ifelse(AVISIT == "BASELINE" & is.na(BASE), AVAL, BASE)) \%>\%
+  mutate(CHG = ifelse(AVISIT == "BASELINE" & is.na(CHG), 0, CHG)) \%>\%
+  mutate(PCHG = ifelse(AVISIT == "BASELINE" & is.na(PCHG), 0, PCHG))
+# may need to add similar code for BASE2 related variables
+
+
+# merge minimum AVAL value onto the ALB data to calculate the log2 variables and preserve the variable order
+ALB_SUPED2 <- merge(ALB_SUPED1, PARAM_MINS, by="PARAMCD")[, union(names(ALB_SUPED1), names(PARAM_MINS))] \%>\%
+  mutate(AVALL2 = ifelse(AVAL == 0, log2(AVAL_MIN/2), log2(AVAL))) \%>\%
+  mutate(BASEL2 = ifelse(BASE == 0, log2(AVAL_MIN/2), log2(BASE))) #\%>\% need SPA to finish adding BASE2 to ALB
+#mutate(BASE2L2 = ifelse(BASE2 == 0, log2(AVAL_MIN/2), log2(AVAL)))
+
+# for proper chronological ordering of visits in visualizations
+ALB_SUPED2$AVISITCDN <- as.numeric(ALB_SUPED2$AVISITCDN) # coerce character into numeric
+ALB <- ALB_SUPED2 \%>\% mutate(AVISITCD = factor(AVISITCD) \%>\% reorder(AVISITCDN))
+
+# to test loq_flag
+ALB <- ALB \%>\% mutate(LOQFL = ifelse(PARAMCD == "CRP" & AVAL < .5, "Y", "N"))
+
+x <- teal::init(
+  data = list(ASL = ASL, ALB = ALB),
+  modules = root_modules(
+    tm_g_spaghettiplot(
+      label = "Spaghetti Plot",
+      dataname = "ALB",
+      idvar = "USUBJID",
+      xvar = "AVISITCD",
+      yvar = "AVAL",
+      yvar_choices = c("AVAL","CHG", "PCHG"),
+      param_var = "PARAMCD",
+      param = "CRP",
+      param_choices = param_choices,
+      trt_group = "ARM"
+    )
+  )
+)
+
+shinyApp(x$ui, x$server)
+
+# EXAMPLE 2
 
 library(random.cdisc.data)
 
