@@ -218,7 +218,7 @@ ui_lineplot <- function(id, ...) {
   
 }
 
-srv_lineplot <- function(input, output, session, datasets, dataname, param_var, trt_group, man_color = man_color, xvar_level, trt_group_level) {
+srv_lineplot <- function(input, output, session, datasets, dataname, param_var, trt_group, man_color, xvar_level, trt_group_level) {
   
   ns <- session$ns
   
