@@ -175,7 +175,7 @@ tm_g_spaghettiplot <- function(label,
   
   module(
     label = label,
-    server = srv_lineplot,
+    server = srv_spaghettiplot,
     server_args = list(dataname = dataname, idvar = idvar, param_var = param_var, trt_group = trt_group, 
                        xvar_level = xvar_level, trt_group_level = trt_group_level),
     ui = ui_spaghettiplot,
@@ -223,7 +223,7 @@ ui_spaghettiplot <- function(id, ...) {
   
 }
 
-srv_lineplot <- function(input, output, session, datasets, dataname, idvar, param_var, trt_group, xvar_level, trt_group_level) {
+srv_spaghettiplot <- function(input, output, session, datasets, dataname, idvar, param_var, trt_group, xvar_level, trt_group_level) {
   
   ns <- session$ns
   
