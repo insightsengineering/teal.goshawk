@@ -16,7 +16,6 @@
 #' @param trt_group_level vector that can be used to define factor level of trt_group.
 #' @param stat string of statistics
 #' @param hline numeric value to add horizontal line to plot
-#' @param man_color vector of strings or numeric values that representing colors
 #' @param rotate_xlab boolean value indicating whether to rotate x-axis labels
 #' @param plot_height numeric vectors to define the plot height.
 #' 
@@ -162,7 +161,7 @@ tm_g_lineplot <- function(label,
                           trt_group_level = NULL,
                           stat = "mean",
                           hline = NULL,
-                          man_color = NULL,
+                          # man_color = NULL,
                           rotate_xlab = FALSE,
                           plot_height = c(600, 200, 2000)) {
   
@@ -171,7 +170,7 @@ tm_g_lineplot <- function(label,
   module(
     label = label,
     server = srv_lineplot,
-    server_args = list(dataname = dataname, param_var = param_var, trt_group = trt_group, man_color = man_color, 
+    server_args = list(dataname = dataname, param_var = param_var, trt_group = trt_group,
                        xvar_level = xvar_level, trt_group_level = trt_group_level),
     ui = ui_lineplot,
     ui_args = args,
@@ -218,7 +217,7 @@ ui_lineplot <- function(id, ...) {
   
 }
 
-srv_lineplot <- function(input, output, session, datasets, dataname, param_var, trt_group, man_color, xvar_level, trt_group_level) {
+srv_lineplot <- function(input, output, session, datasets, dataname, param_var, trt_group, xvar_level, trt_group_level) {
   
   ns <- session$ns
   
@@ -233,12 +232,22 @@ srv_lineplot <- function(input, output, session, datasets, dataname, param_var, 
   output$yaxis_scale <- renderUI({
     ANL <- datasets$get_data(dataname, reactive = TRUE, filtered = TRUE)
     param <- input$param 
+    xvar <- input$xvar
+    value_var <- input$yvar
     scale_data <- ANL %>%
-      filter(eval(parse(text = param_var)) == param)
+      filter(eval(parse(text = param_var)) == param) %>%
+      group_by(eval(parse(text = xvar)),
+               eval(parse(text = trt_group))) %>%
+      summarise(mean = mean(eval(parse(text = value_var)),na.rm = TRUE),
+                CIup = mean(eval(parse(text = value_var)),na.rm = TRUE) + 1.96 * sd(eval(parse(text = value_var)), na.rm = TRUE)/sqrt(n()),
+                CIdown = mean(eval(parse(text = value_var)),na.rm = TRUE) - 1.96 * sd(eval(parse(text = value_var)), na.rm = TRUE)/sqrt(n()),
+                median = median(eval(parse(text = value_var)),na.rm = TRUE),
+                quant25 = quantile(eval(parse(text = value_var)), 0.25, na.rm = TRUE),
+                quant75 = quantile(eval(parse(text = value_var)), 0.75, na.rm = TRUE))
     
     # identify min and max values of BM range ignoring NA values
-    ymin_scale <- min(scale_data[[input$yvar]], na.rm = TRUE)
-    ymax_scale <- max(scale_data[[input$yvar]], na.rm = TRUE)
+    ymin_scale <- round(min(scale_data[,c('mean','CIup','CIdown','median','quant25','quant75')], na.rm = TRUE), digits = 1)
+    ymax_scale <- round(max(scale_data[,c('CIup','CIdown','quant25','quant75')], na.rm = TRUE), digits = 1)
     
     tagList({
       sliderInput(ns("yrange_scale"), label="Y-Axis Range Scale", ymin_scale, ymax_scale, value = c(ymin_scale, ymax_scale))
@@ -295,7 +304,7 @@ srv_lineplot <- function(input, output, session, datasets, dataname, param_var, 
       trt_group_level = trt_group_level,
       time = xvar,
       time_level = xvar_level,
-      color_manual = man_color,
+      color_manual = NULL,
       median = median,
       hline = hline,
       rotate_xlab = rotate_xlab
