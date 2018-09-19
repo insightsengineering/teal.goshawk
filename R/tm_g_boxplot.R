@@ -12,8 +12,6 @@
 #' @param param_choices vector of choices to choose the parameter from
 #' @param value_var default columm in \code{dataname} to plot.
 #' @param value_var_choices choice of which columns in \code{dataname} to plot
-#' @param facet if FALSE, then display one plot, if TRUE then display a faceted 
-#'   plot for each valid value of \code{visit_var} that exists in the filtered data. 
 #' @param trt_group treatment variable
 #' @param trt_group_choices choices for \code{trt_group}
 #' @param visit_var default columm in \code{dataname} to use for visit.
@@ -22,6 +20,13 @@
 #'   be used and no selection of visit_var will be available.
 #' 
 #' @inheritParams teal::standard_layout
+#' 
+#' @import DescTools
+#' @import dplyr
+#' @import ggplot2
+#' @import goshawk
+#' @import teal
+#' @import shinyjs
 #'
 #' @author Balazs Toth
 #' @author Jeff Tomlinson (tomlinsj) jeffrey.tomlinson@roche.com
@@ -31,13 +36,16 @@
 #' @return an \code{\link[teal]{module}} object#'
 #'
 #' @export
-#' 
+#'
 #' @examples
 #' 
 #'\dontrun{
 #' # Example using analysis dataset for example ASL or ADSL,
+#' # ALB points to biomarker data stored in a typical LB structure. for example ALB or ADLB.
+#' 
+#' # Example using analysis dataset for example ASL or ADSL,
 #' # ABM points to biomarker data stored in a custom file created to support goshawk. for example ADBIOM
-#' library(dplyr)
+#' library(dplyr) 
 #'
 #' # assign data frame note that this needs to be done once in the app.R file but should be available
 #' # here during testing
@@ -55,20 +63,19 @@
 #'           param_choices = c("IGA","IGG","IGM"),
 #'           value_var = "AVAL",
 #'           value_var_choices = c("AVAL", "CHG"),
-#'           facet= TRUE,
-#'           visit_var = "AVISIT,
+#'           visit_var = "AVISIT",
 #'           visit_var_choices = "AVISIT",
 #'           trt_group = "ARM",
 #'           trt_group_choices = c("ARM", "ARMCD")
 #'         )
-#'   )
 #' )
 #'
 #' shinyApp(x$ui, x$server)
 #'
 #'}
-#' 
-#' 
+
+library(shinyjs)
+
 tm_g_boxplot <- function(label,
                          dataname,
                          filter_var = NULL,
@@ -79,11 +86,12 @@ tm_g_boxplot <- function(label,
                          value_var = "AVAL",
                          value_var_choices = c("AVAL", "CHG"),
                          plot_height = c(600, 200, 2000),
-                         trt_group,
+                         trt_group = "ARM",
                          trt_group_choices = NULL,
-                         visit_var = NULL,
+                         visit_var = "AVISIT",
                          visit_var_choices = NULL,
-                         facet = FALSE,
+                         facet_choices = FALSE,
+                         facet = TRUE,
                          loq_flag_var = 'LOQFL',
                          pre_output = NULL,
                          post_output = NULL,
@@ -91,11 +99,24 @@ tm_g_boxplot <- function(label,
   
   args <- as.list(environment())
   
+  # If there are no choices specified for visit_var then set to visit_var to
+  # enable the default display of the selected visit variable in the UI
+  if (is.null(args$visit_var_choices)) args$visit_var_choices = args$visit_var
+  
+  # If there are no choices specified for treatment group then set the choices 
+  # variable to the treatment group to enable the display of the treatment 
+  # group variable on the UI.
+  if (is.null(args$trt_group_choices)) args$trt_group_choices = args$trt_group
+  
   module(
     label = label,
     filters = dataname,
     server = srv_g_boxplot,
     server_args = list(dataname = dataname,
+                       facet = facet,
+                       facet_choices = facet_choices,
+                       visit_var = visit_var,
+                       visit_var_choices = visit_var_choices,
                        param_var = param_var,
                        value_var = value_var,
                        trt_group = trt_group,
@@ -115,6 +136,7 @@ ui_g_boxplot <- function(id, ...) {
   inpWidth <- NA
   
   standard_layout(
+    useShinyjs(),
     output = div(tagList(uiOutput(ns("plot_ui")), uiOutput(ns("table_ui")))),
     encoding =  div(
       tags$label("Encodings", class="text-primary"),
@@ -136,6 +158,14 @@ ui_g_boxplot <- function(id, ...) {
                           , width = inpWidth
       ),
       
+      optionalSelectInput(ns("visit_var")
+                          , label = "Visit Variable"
+                          , choices = a$visit_var_choices
+                          , selected = a$visit_var
+                          , multiple = FALSE
+                          , width = inpWidth
+      ),
+      
       optionalSelectInput(inputId = ns("param")
                          , label = "Biomarker"
                          , choices = a$param_choices
@@ -152,17 +182,9 @@ ui_g_boxplot <- function(id, ...) {
                           , width = inpWidth
       ),
 
-      optionalSelectInput(ns("visit_var")
-                          , label = "Visit Variable"
-                          , choices = a$visit_var_choices
-                          , selected = a$visit_var
-                          , multiple = FALSE
-                          , width = inpWidth
-      ),
-      
       tags$label("Plot Settings", class="text-primary", style="margin-top: 15px;"),
       
-      checkboxInput(ns("facet"), "Visit Facetting", a$facet),
+      hidden(checkboxInput(ns("facet"), "Visit Facetting", a$facet)),
       
       uiOutput(ns("yaxis_scale")),
 
@@ -183,13 +205,14 @@ ui_g_boxplot <- function(id, ...) {
                                    , ticks = FALSE
                                    , width = inpWidth
                                    ),
-      numericInput(ns("alpha")
-                   , label = "Dot Transparency"
-                   , value = 0.8
-                   , min = 0, max = 1.0, step = 0.1
-                   , width = inpWidth
-                   ),
-      
+
+      optionalSliderInputValMinMax(ns("alpha")
+                                   , label = "Dot Transparency"
+                                   , value_min_max = c(0.8, 0.0, 1.0)
+                                   , step = 0.1
+                                   , ticks = FALSE
+                                   , width = inpWidth
+                                  ),
       optionalSliderInputValMinMax(ns("plot_height")
                                    , label = "Plot height"
                                    , a$plot_height
@@ -204,16 +227,26 @@ ui_g_boxplot <- function(id, ...) {
 }
 
 srv_g_boxplot <- function(input, output, session, datasets
+                          , facet, facet_choices
+                          , visit_var, visit_var_choices
                           , param_var, value_var, trt_group, trt_group_choices
                           , loq_flag_var
                           , dataname, code_data_processing) {
-  
   ## dynamic plot height
   output$plot_ui <- renderUI({
     plot_height <- input$plot_height
     validate(need(plot_height, "need valid plot height"))
     plotOutput(session$ns("boxplot"), height=plot_height)
   })
+  
+  # Disable the selector for facetting if the no choice given
+  if (facet_choices) {
+    print("Show facet selection")
+    show(id = "facet")
+  } else {
+    print("Disable hidden facet selection")
+    disable(id = "facet")
+  }
   
   # The current filtered data.
   cdata <- reactive({
@@ -315,7 +348,7 @@ srv_g_boxplot <- function(input, output, session, datasets
       unit = unit,
       ymin_scale = ymin_scale,
       ymax_scale = ymax_scale, 
-      color_manual = c('ARM 1' = "#1F78B4", 'ARM 2' = "#33A02C", 'ARM 3' = "#601010"),
+      color_manual = NULL,
       shape_manual = c('N' = 1, 'Y' = 2, 'NA' = NULL),
       alpha = alpha,
       dot_size = dot_size,
@@ -326,14 +359,14 @@ srv_g_boxplot <- function(input, output, session, datasets
     p
   }
   )
-  
-   output$table_ui <- renderTable({
 
+   output$table_ui <- renderTable({
       ALB <- datasets$get_data(dataname, reactive = TRUE, filtered = TRUE)
+
       param <- input$param
       xaxis_var <- input$value_var
       font_size <- input$font_size
-      facet <- input$facet
+      facet <- ifelse(facet_choices, input$facet, facet)
       visit_var <- input$visit_var
       
       # If the data isn't faceted by visit and there is more than one visit

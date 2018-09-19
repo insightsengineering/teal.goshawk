@@ -7,9 +7,10 @@
 tm_g_boxplot(label, dataname, filter_var = NULL, filter_var_choices = NULL,
   param_var, param, param_choices = param, value_var = "AVAL",
   value_var_choices = c("AVAL", "CHG"), plot_height = c(600, 200, 2000),
-  trt_group, trt_group_choices = NULL, visit_var = NULL,
-  visit_var_choices = NULL, facet = FALSE, loq_flag_var = "LOQFL",
-  pre_output = NULL, post_output = NULL, code_data_processing = NULL)
+  trt_group = "ARM", trt_group_choices = NULL, visit_var = "AVISIT",
+  visit_var_choices = NULL, facet_choices = FALSE, facet = TRUE,
+  loq_flag_var = "LOQFL", pre_output = NULL, post_output = NULL,
+  code_data_processing = NULL)
 }
 \arguments{
 \item{label}{menu item label of the module in the teal app}
@@ -39,9 +40,6 @@ Note that the data are expected to be in vertical form with the
 for visit.  If there is just one value in visit_var_choices, then this will
 be used and no selection of visit_var will be available.}
 
-\item{facet}{if FALSE, then display one plot, if TRUE then display a faceted 
-plot for each valid value of \code{visit_var} that exists in the filtered data.}
-
 \item{pre_output}{optional, \code{shiny.tag} with text placed before the
 output to put the output into context. For example the
 \code{\link[shiny]{helpText}} elements are useful.}
@@ -58,6 +56,43 @@ This shiny module displays a box plot
 }
 \details{
 provide additional information as needed. link to specification file \url{http://rstudio.com}
+}
+\examples{
+
+\dontrun{
+# Example using analysis dataset for example ASL or ADSL,
+# ALB points to biomarker data stored in a typical LB structure. for example ALB or ADLB.
+
+# Example using analysis dataset for example ASL or ADSL,
+# ABM points to biomarker data stored in a custom file created to support goshawk. for example ADBIOM
+library(dplyr) 
+
+# assign data frame note that this needs to be done once in the app.R file but should be available
+# here during testing
+ASL <- ASL
+ABM <- ALB
+
+x <- teal::init(
+  data = list(ASL = ASL, ABM = ABM),
+  modules = root_modules(
+        tm_g_boxplot(
+          label = "Box Plot",
+          dataname = "ALB",
+          param_var = "PARAMCD",
+          param = "IGA",
+          param_choices = c("IGA","IGG","IGM"),
+          value_var = "AVAL",
+          value_var_choices = c("AVAL", "CHG"),
+          visit_var = "AVISIT",
+          visit_var_choices = "AVISIT",
+          trt_group = "ARM",
+          trt_group_choices = c("ARM", "ARMCD")
+        )
+)
+
+shinyApp(x$ui, x$server)
+
+}
 }
 \author{
 Balazs Toth
