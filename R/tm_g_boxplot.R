@@ -26,7 +26,6 @@
 #' @import ggplot2
 #' @import goshawk
 #' @import teal
-#' @import shinyjs
 #'
 #' @author Balazs Toth
 #' @author Jeff Tomlinson (tomlinsj) jeffrey.tomlinson@roche.com
@@ -73,8 +72,6 @@
 #' shinyApp(x$ui, x$server)
 #'
 #'}
-
-library(shinyjs)
 
 tm_g_boxplot <- function(label,
                          dataname,
@@ -136,7 +133,6 @@ ui_g_boxplot <- function(id, ...) {
   inpWidth <- NA
   
   standard_layout(
-    useShinyjs(),
     output = div(tagList(uiOutput(ns("plot_ui")), uiOutput(ns("table_ui")))),
     encoding =  div(
       tags$label("Encodings", class="text-primary"),
@@ -184,7 +180,10 @@ ui_g_boxplot <- function(id, ...) {
 
       tags$label("Plot Settings", class="text-primary", style="margin-top: 15px;"),
       
-      hidden(checkboxInput(ns("facet"), "Visit Facetting", a$facet)),
+      # Only display the facet by visit checkbox if faceting choices given.
+      if(a$facet_choices) {
+        checkboxInput(ns("facet"), "Visit Facetting", a$facet)
+      },
       
       uiOutput(ns("yaxis_scale")),
 
@@ -238,15 +237,6 @@ srv_g_boxplot <- function(input, output, session, datasets
     validate(need(plot_height, "need valid plot height"))
     plotOutput(session$ns("boxplot"), height=plot_height)
   })
-  
-  # Disable the selector for facetting if the no choice given
-  if (facet_choices) {
-    print("Show facet selection")
-    show(id = "facet")
-  } else {
-    print("Disable hidden facet selection")
-    disable(id = "facet")
-  }
   
   # The current filtered data.
   cdata <- reactive({
@@ -306,7 +296,7 @@ srv_g_boxplot <- function(input, output, session, datasets
     value_var <- input$value_var
     visit_var <- input$visit_var
     param <- input$param
-    facet <- input$facet
+    if (facet_choices) facet <- input$facet
     dot_size <- input$dot_size
     font_size <- input$font_size
     alpha <- input$alpha
