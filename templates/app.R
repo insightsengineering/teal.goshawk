@@ -146,11 +146,17 @@ x <- teal::init(
       #   yvar = "RACE",
       #   yvar_choices = c("RACE", "AGEGRP", "REGION")
       # ),
-      module(
+      tm_g_boxplot(
         label = "Box Plot",
-        server = function(input, output, session, datasets) {},
-        ui = function(id) div(p("Box PLots Here")),
-        filters = "ASL"
+        dataname = "ALB",
+        param_var = "PARAMCD",
+        param = "IGA",
+        param_choices = param_choices,
+        value_var = "AVAL",
+        value_var_choices = c("AVAL", "BASE", "CHG", "PCHG", "BASE2", "CHG2", "PCHG2", "AVALL2", "BASEL2", "BASE2L2"),
+        visit_var = "AVISITCD",
+        loq_flag_var = "LOQFL",
+        trt_group = "ARM"
       ),
       tm_g_density_distribution_plot(
         label = "Density Distribution Plot",
