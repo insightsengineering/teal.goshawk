@@ -18,6 +18,11 @@
 #' @param visit_var_choices choice of which columns in \code{dataname} to use
 #'   for visit.  If there is just one value in visit_var_choices, then this will
 #'   be used and no selection of visit_var will be available.
+#' @param plot_height  numeric vectors to define the plot height.
+#' @param facet boolen - if TRUE facet the display
+#' @param facet_choices boolean - if TRUE display a check box for facetting
+#' @param loq_flag_var variable for the LOQ.  Values are "Y" or "N"
+#' @param code_data_processing TODO
 #' 
 #' @inheritParams teal::standard_layout
 #' 
@@ -43,11 +48,13 @@
 #' # ALB points to biomarker data stored in a typical LB structure. for example ALB or ADLB.
 #' 
 #' # Example using analysis dataset for example ASL or ADSL,
-#' # ABM points to biomarker data stored in a custom file created to support goshawk. for example ADBIOM
+#' # ABM points to biomarker data stored in a custom file created to support goshawk. 
+#' for example ADBIOM
+#' 
 #' library(dplyr) 
 #'
-#' # assign data frame note that this needs to be done once in the app.R file but should be available
-#' # here during testing
+#' # assign data frame note that this needs to be done once in the app.R file but 
+#' should be available here during testing
 #' ASL <- ASL
 #' ABM <- ALB
 #'
@@ -75,8 +82,6 @@
 
 tm_g_boxplot <- function(label,
                          dataname,
-                         filter_var = NULL,
-                         filter_var_choices = NULL,
                          param_var, # name of variable containing the biomarker names: PARAMCD
                          param, # biomarker selected
                          param_choices = param, # list of biomarkers of interest
@@ -311,7 +316,7 @@ srv_g_boxplot <- function(input, output, session, datasets
     # Units to display, just take the first if there multiples.
     unit <- ALB %>% 
       filter(eval(parse(text = param_var)) == param) %>% 
-      select(AVALU) %>% 
+      select("AVALU") %>% 
       unique() %>% 
       top_n(1,1) %>% 
       as.character()

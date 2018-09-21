@@ -4,10 +4,10 @@
 \alias{tm_g_boxplot}
 \title{Teal Module: box plot}
 \usage{
-tm_g_boxplot(label, dataname, filter_var = NULL, filter_var_choices = NULL,
-  param_var, param, param_choices = param, value_var = "AVAL",
-  value_var_choices = c("AVAL", "CHG"), plot_height = c(600, 200, 2000),
-  trt_group = "ARM", trt_group_choices = NULL, visit_var = "AVISIT",
+tm_g_boxplot(label, dataname, param_var, param, param_choices = param,
+  value_var = "AVAL", value_var_choices = c("AVAL", "CHG"),
+  plot_height = c(600, 200, 2000), trt_group = "ARM",
+  trt_group_choices = NULL, visit_var = "AVISIT",
   visit_var_choices = NULL, facet_choices = FALSE, facet = TRUE,
   loq_flag_var = "LOQFL", pre_output = NULL, post_output = NULL,
   code_data_processing = NULL)
@@ -30,6 +30,8 @@ Note that the data are expected to be in vertical form with the
 
 \item{value_var_choices}{choice of which columns in \code{dataname} to plot}
 
+\item{plot_height}{numeric vectors to define the plot height.}
+
 \item{trt_group}{treatment variable}
 
 \item{trt_group_choices}{choices for \code{trt_group}}
@@ -40,6 +42,12 @@ Note that the data are expected to be in vertical form with the
 for visit.  If there is just one value in visit_var_choices, then this will
 be used and no selection of visit_var will be available.}
 
+\item{facet_choices}{boolean - if TRUE display a check box for facetting}
+
+\item{facet}{boolen - if TRUE facet the display}
+
+\item{loq_flag_var}{variable for the LOQ.  Values are "Y" or "N"}
+
 \item{pre_output}{optional, \code{shiny.tag} with text placed before the
 output to put the output into context. For example the
 \code{\link[shiny]{helpText}} elements are useful.}
@@ -47,6 +55,8 @@ output to put the output into context. For example the
 \item{post_output}{optional, \code{shiny.tag} with text placed before the
 output to put the output into context. For example the
 \code{\link[shiny]{helpText}} elements are useful.}
+
+\item{code_data_processing}{TODO}
 }
 \value{
 an \code{\link[teal]{module}} object#'
@@ -64,11 +74,13 @@ provide additional information as needed. link to specification file \url{http:/
 # ALB points to biomarker data stored in a typical LB structure. for example ALB or ADLB.
 
 # Example using analysis dataset for example ASL or ADSL,
-# ABM points to biomarker data stored in a custom file created to support goshawk. for example ADBIOM
+# ABM points to biomarker data stored in a custom file created to support goshawk. 
+for example ADBIOM
+
 library(dplyr) 
 
-# assign data frame note that this needs to be done once in the app.R file but should be available
-# here during testing
+# assign data frame note that this needs to be done once in the app.R file but 
+should be available here during testing
 ASL <- ASL
 ABM <- ALB
 
