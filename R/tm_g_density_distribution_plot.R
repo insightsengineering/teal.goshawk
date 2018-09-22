@@ -1,12 +1,25 @@
 #' Teal Module: density distribution plot
 #'
-#' This shiny module displays a density distribution plot
+#' This module displays a density distribution plot.
 #'
 #' @param label menu item label of the module in the teal app 
 #' @param dataname analysis data set name. needs to be available in
 #'   the list passed to the \code{data} argument of \code{\link[teal]{init}}.
 #'   Note that the data are expected to be in vertical form with the
 #'   \code{PARAMCD} variable filtering to one observation per patient per visit.
+#' @param param_var name of variable containing biomarker codes e.g. PARAMCD.
+#' @param param_choices list of biomarkers of interest.
+#' @param param biomarker selected.
+#' @param xaxis_var name of variable containing biomarker results displayed on X-axis e.g. BASE.
+#' @param xaxis_var_choices list of variables containing biomarker results choices.
+#' @param trt_group name of variable representing treatment group e.g. ARM.
+#' @param loq_flag_var name of variable containing LOQ flag e.g. LBLOQFL.
+#' @param plot_width controls plot width.
+#' @param plot_height controls plot height.
+#' @param font_size control font size for title, x-axis, y-axis and legend font.
+#' @param line_size plot line thickness.
+#' @param hline y-axis value to position of horizontal line.
+#' @param rotate_xlab 45 degree rotation of x-axis values.
 #'
 #' @inheritParams teal::standard_layout
 #' 
@@ -14,14 +27,13 @@
 #' @import dplyr
 #' @import ggplot2
 #' @import goshawk
+#' @import shiny
 #' @import teal
 #'
-#' @author Balazs Toth
-#' @author Nick Paszty
+#' @author Nick Paszty (npaszty) paszty.nicholas@gene.com
+#' @author Balazs Toth (tothb2)  toth.balazs@gene.com
 #'
-#' @details provide additional information as needed. link to specification file \url{http://rstudio.com}
-#'
-#' @return an \code{\link[teal]{module}} object#'
+#' @details This module displays a density distribution plot. link to specification file \url{http://rstudio.com}
 #'
 #' @export
 #'
@@ -31,56 +43,8 @@
 #' # Example using analysis dataset for example ASL or ADSL,
 #' # ALB points to biomarker data stored in a typical LB structure. for example ALB or ADLB.
 #' 
-#'# for development team testing
-#'ASL_path <- "~/btk/lupus/dataadam/asl.sas7bdat"
-#'ALB_path <- "~/btk/lupus/dataadam/alb3arm.sas7bdat"
-#'
-#'# list of biomarkers of interest. see ALB2 assignment below
-#'param_choices <- c("CRP","ADIGG","IG","IGA","IGE","IGG","IGM","TEST")
-#'
-#'ASL0 <- read_bce(ASL_path)
-#'ASL <- subset(ASL0, subset = ITTFL == 'Y' & IAFL == 'Y')
-#'
-#'ALB0 <- read_bce(ALB_path)
-#'
-#'# post process the data to subset records per specification
-#'ALB_SUBSET <- subset(ALB0,
-#'               subset = PARAMCD %in% c(param_choices) & ITTFL == 'Y' & IAFL == 'Y' & ANLFL == 'Y' & AVISIT %like any% c('BASE%','%WEEK%'), 
-#'               select = c('STUDYID', 'USUBJID', 'ITTFL', 'ANLFL', 'ARM', 'AVISIT', 'AVISITN', 'PARAMCD', 'AVAL', 'AVALU', 'BASE', 'CHG', 'PCHG',
-#'                'LBSTRESC', 'LBSTRESN'))
-#'
-#' # calculate the minimum AVAL for each PARAMCD
-#' PARAM_MINS <- ALB_SUBSET %>%
-#' select(USUBJID, PARAMCD, AVAL) %>%
-#'   filter(PARAMCD %in% param_choices) %>%
-#'   group_by(PARAMCD) %>%
-#'   summarise(AVAL_MIN=min(AVAL, na.rm=TRUE))
-#'   
-#'# post process the data to create several new variables and adjust existing record specific valules per specification
-#'# - create a visit code variable - baseline record code is "BB" and week records coded to "W NN"
-#'# - adjust existing BASELINE record values where values are missing: According to SPA this is a STREAM artifact
-#'ALB_SUPED1 <- ALB_SUBSET %>% mutate(AVISITCD = paste0(substr(AVISIT,start=1, stop=1), 
-#'                                         substr(AVISIT, start=regexpr(" ", AVISIT), stop=regexpr(" ", AVISIT)+2))) %>%
-#'                mutate(AVISITCD = ifelse(AVISITCD == "BB", "BL", AVISITCD)) %>%
-#'                mutate(AVISITCDN =  ifelse(AVISITCD == "BL", 0, substr(AVISITCD,start=2, stop=4))) %>%
-#'                mutate(BASE = ifelse(AVISIT == "BASELINE" & is.na(BASE), AVAL, BASE)) %>%
-#'                mutate(CHG = ifelse(AVISIT == "BASELINE" & is.na(CHG), 0, CHG)) %>%
-#'                mutate(PCHG = ifelse(AVISIT == "BASELINE" & is.na(PCHG), 0, PCHG))
-#'                # may need to add similar code for BASE2 related variables
-#'
-#'   
-#' # merge minimum AVAL value onto the ALB data to calculate the log2 variables and preserve the variable order
-#' ALB_SUPED2 <- merge(ALB_SUPED1, PARAM_MINS, by="PARAMCD")[, union(names(ALB_SUPED1), names(PARAM_MINS))] %>%
-#'        mutate(AVALL2 = ifelse(AVAL == 0, log2(AVAL_MIN/2), log2(AVAL))) %>%
-#'        mutate(BASEL2 = ifelse(BASE == 0, log2(AVAL_MIN/2), log2(BASE))) #%>% need SPA to finish adding BASE2 to ALB
-#'        #mutate(BASE2L2 = ifelse(BASE2 == 0, log2(AVAL_MIN/2), log2(AVAL)))
-#'
-#'# for proper chronological ordering of visits in visualizations
-#'ALB_SUPED2$AVISITCDN <- as.numeric(ALB_SUPED2$AVISITCDN) # coerce character into numeric
-#'ALB <- ALB_SUPED2 %>% mutate(AVISITCD = factor(AVISITCD) %>% reorder(AVISITCDN))
-#'
-#'# to test loq_flag_var
-#'ALB <- ALB %>% mutate(LOQFL = ifelse(PARAMCD == "CRP" & AVAL < .5, "Y", "N"))
+#' # need a test data set created using random.cdisc.data.
+#' # example call uses expects ALB structure 
 #'
 #' x <- teal::init(
 #'   data = list(ASL = ASL, ALB = ALB),
@@ -90,11 +54,10 @@
 #'        dataname = "ALB",
 #'        param_var = "PARAMCD",
 #'        param_choices = param_choices,
-#'        param = "CRP",
+#'        param = param_choices[1],
 #'        xaxis_var = "AVAL",
 #'        xaxis_var_choices = c("AVAL", "BASE", "CHG", "PCHG", "BASE2", "CHG2", "PCHG2", "AVALL2", "BASEL2", "BASE2L2"),
 #'        trt_group = "ARM",
-#'        trt_group_choices = c("ARM", "ARMCD"),
 #'        loq_flag_var = 'LOQFL',
 #'        plot_width = c(800, 200, 2000),
 #'        plot_height = c(500, 200, 2000),
@@ -108,15 +71,14 @@
 #'
 #'}
 
-tm_g_density_distribution_plot <- function(label, # label of module
-                                           dataname, # analysis data set
-                                           param_var, # name of variable containing the biomarker names: PARAMCD
-                                           param, # biomarker selected
-                                           param_choices = param, # list of biomarkers of interest
-                                           xaxis_var, # name of variable containing values displayed on the x-axis
-                                           xaxis_var_choices = xaxis_var, # list of baseline variables
+tm_g_density_distribution_plot <- function(label,
+                                           dataname,
+                                           param_var,
+                                           param_choices = param,
+                                           param,
+                                           xaxis_var,
+                                           xaxis_var_choices = xaxis_var,
                                            trt_group,
-                                           trt_group_choices,
                                            loq_flag_var = 'LOQFL',
                                            plot_width,
                                            plot_height,
@@ -124,13 +86,8 @@ tm_g_density_distribution_plot <- function(label, # label of module
                                            line_size,
                                            hline = NULL,
                                            rotate_xlab = FALSE,
-                                           man_color = NULL,
                                            pre_output = NULL,
-                                           post_output = helpText("Variable Name Legend: BASE2 = Screening Data, BASE2L2 = Log2(BASE2);
-                                                    CHG2 = Change from Screening, PCHG2 =  %Change from Screening;
-                                                    BASE = BASELINE Data, BASEL2 = Log2(BASE);
-                                                    CHG = Change from Baseline, PCHG =  %Change from Baseline;
-                                                    AVAL = Following Visits, AVALL2 = Log2(AVAL)"),
+                                           post_output = NULL,
                                            code_data_processing = NULL) {
 
   args <- as.list(environment())
@@ -180,10 +137,10 @@ ui_g_density_distribution_plot <- function(id, ...) {
       optionalSliderInputValMinMax(ns("font_size"), "Font Size", a$font_size, ticks = FALSE),
       optionalSliderInputValMinMax(ns("line_size"), "Line Size", a$line_size, ticks = FALSE)
     ),
-    forms = tags$div(
-      actionButton(ns("show_rcode"), "Show R Code", width = "100%")#,
-      # downloadButton(ns("export_plot"), "Export Image", width = "100%")
-    ),
+    # forms = tags$div(
+    #   actionButton(ns("show_rcode"), "Show R Code", width = "100%")#,
+    #   # downloadButton(ns("export_plot"), "Export Image", width = "100%")
+    # ),
     pre_output = a$pre_output,
     post_output = a$post_output
   )
