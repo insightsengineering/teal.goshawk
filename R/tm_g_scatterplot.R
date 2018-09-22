@@ -1,27 +1,43 @@
 #' Teal Module: scatter plot
 #'
-#' This shiny module displays a scatter plot
+#' This module displays a scatter plot.
 #'
 #' @param label menu item label of the module in the teal app 
 #' @param dataname analysis data used in teal module, needs to be available in
 #'   the list passed to the \code{data} argument of \code{\link[teal]{init}}.
 #'   Note that the data are expected to be in vertical form with the
 #'   \code{PARAMCD} variable filtering to one observation per patient per visit.
+#' @param param_var name of variable containing biomarker codes e.g. PARAMCD.
+#' @param param_choices list of biomarkers of interest.
+#' @param param biomarker selected.
+#' @param xaxis_var name of variable containing biomarker results displayed on X-axis e.g. BASE.
+#' @param xaxis_var_choices list of variables containing biomarker results choices.
+#' @param yaxis_var name of variable containing biomarker results displayed on Y-axis e.g. BASE.
+#' @param yaxis_var_choices list of variables containing biomarker results choices.
+#' @param trt_group name of variable representing treatment group e.g. ARM.
+#' @param facet controls facetting with trt_grp.
+#' @param reg_line include regression line and annotations for slope and coefficient in visualization. Use with facet TRUE.
+#' @param rotate_xlab 45 degree rotation of x-axis values.
+#' @param hline y-axis value to position of horizontal line.
+#' @param plot_width controls plot width.
+#' @param plot_height controls plot height.
+#' @param font_size control font size for title, x-axis, y-axis and legend font.
+#' @param dot_size scatter dot size.
+#' @param reg_text_size regression line annotation font size.
 #'
 #' @inheritParams teal::standard_layout
 #'
-#' @author Balazs Toth
-#' @author first last
+#' @author Nick Paszty (npaszty) paszty.nicholas@gene.com
+#' @author Balazs Toth (tothb2)  toth.balazs@gene.com
 #'
 #' @import DescTools
 #' @import dplyr
 #' @import ggplot2
 #' @import goshawk
+#' @import shiny
 #' @import teal
 #'
-#' @details provide additional information as needed. link to specification file \url{http://rstudio.com}
-#'
-#' @return an \code{\link[teal]{module}} object#'
+#' @details This module displays a scatter plot. link to specification file \url{http://rstudio.com}
 #'
 #' @export
 #'
@@ -30,56 +46,9 @@
 #'\dontrun{
 #' # Example using analysis dataset for example ASL or ADSL,
 #' # ALB points to biomarker data stored in a typical LB structure. for example ALB or ADLB.
-#' 
-#'# for development team testing
-#'ASL_path <- "~/btk/lupus/dataadam/asl.sas7bdat"
-#'ALB_path <- "~/btk/lupus/dataadam/alb3arm.sas7bdat"
 #'
-#'# list of biomarkers of interest. see ALB2 assignment below
-#'param_choices <- c("CRP","ADIGG","IG","IGA","IGE","IGG","IGM","TEST")
-#'
-#'ASL0 <- read_bce(ASL_path)
-#'ASL <- subset(ASL0, subset = ITTFL == 'Y' & IAFL == 'Y')
-#'
-#'ALB0 <- read_bce(ALB_path)
-#'
-#'# post process the data to subset records per specification
-#'ALB_SUBSET <- subset(ALB0,
-#'               subset = PARAMCD %in% c(param_choices) & ITTFL == 'Y' & IAFL == 'Y' & ANLFL == 'Y' & AVISIT %like any% c('BASE%','%WEEK%'), 
-#'               select = c('STUDYID', 'USUBJID', 'ITTFL', 'ANLFL', 'ARM', 'AVISIT', 'AVISITN', 'PARAMCD', 'AVAL', 'AVALU', 'BASE', 'CHG', 'PCHG',
-#'                'LBSTRESC', 'LBSTRESN'))
-#'
-#' # calculate the minimum AVAL for each PARAMCD
-#' PARAM_MINS <- ALB_SUBSET %>%
-#' select(USUBJID, PARAMCD, AVAL) %>%
-#'   filter(PARAMCD %in% param_choices) %>%
-#'   group_by(PARAMCD) %>%
-#'   summarise(AVAL_MIN=min(AVAL, na.rm=TRUE))
-#'   
-#'# post process the data to create several new variables and adjust existing record specific valules per specification
-#'# - create a visit code variable - baseline record code is "BB" and week records coded to "W NN"
-#'# - adjust existing BASELINE record values where values are missing: According to SPA this is a STREAM artifact
-#'ALB_SUPED1 <- ALB_SUBSET %>% mutate(AVISITCD = paste0(substr(AVISIT,start=1, stop=1), 
-#'                                         substr(AVISIT, start=regexpr(" ", AVISIT), stop=regexpr(" ", AVISIT)+2))) %>%
-#'                mutate(AVISITCDN =  ifelse(AVISITCD == "BB", 0, substr(AVISITCD,start=2, stop=4))) %>%
-#'                mutate(BASE = ifelse(AVISIT == "BASELINE" & is.na(BASE), AVAL, BASE)) %>%
-#'                mutate(CHG = ifelse(AVISIT == "BASELINE" & is.na(CHG), 0, CHG)) %>%
-#'                mutate(PCHG = ifelse(AVISIT == "BASELINE" & is.na(PCHG), 0, PCHG))
-#'                # may need to add similar code for BASE2 related variables
-#'
-#'   
-#' # merge minimum AVAL value onto the ALB data to calculate the log2 variables and preserve the variable order
-#' ALB_SUPED2 <- merge(ALB_SUPED1, PARAM_MINS, by="PARAMCD")[, union(names(ALB_SUPED1), names(PARAM_MINS))] %>%
-#'        mutate(AVALL2 = ifelse(AVAL == 0, log2(AVAL_MIN/2), log2(AVAL))) %>%
-#'        mutate(BASEL2 = ifelse(BASE == 0, log2(AVAL_MIN/2), log2(BASE))) #%>% need SPA to finish adding BASE2 to ALB
-#'        #mutate(BASE2L2 = ifelse(BASE2 == 0, log2(AVAL_MIN/2), log2(AVAL)))
-#'
-#'# for proper chronological ordering of visits in visualizations
-#'ALB_SUPED2$AVISITCDN <- as.numeric(ALB_SUPED2$AVISITCDN) # coerce character into numeric
-#'ALB <- ALB_SUPED2 %>% mutate(AVISITCD = factor(AVISITCD) %>% reorder(AVISITCDN))
-#'
-#'# to test loq_flag
-#'ALB <- ALB %>% mutate(LOQFL = ifelse(PARAMCD == "CRP" & AVAL < .5, "Y", "N"))
+#' # need a test data set created using random.cdisc.data.
+#' # example call uses expects ALB structure 
 #'
 #' x <- teal::init(
 #'   data = list(ASL = ASL, ALB = ALB),
@@ -89,13 +58,12 @@
 #'        dataname = "ALB",
 #'        param_var = "PARAMCD",
 #'        param_choices = param_choices,
-#'        param = "CRP",
+#'        param = param_choices[1],
 #'        xaxis_var = "BASE",
 #'        xaxis_var_choices = c("AVAL", "BASE", "CHG", "PCHG", "BASE2", "CHG2", "PCHG2", "AVALL2", "BASEL2", "BASE2L2"),
 #'        yaxis_var = "AVAL",
 #'        yaxis_var_choices = c("AVAL", "BASE", "CHG", "PCHG", "BASE2", "CHG2", "PCHG2", "AVALL2", "BASEL2", "BASE2L2"),
 #'        trt_group = "ARM",
-#'        trt_group_choices = c("ARM", "ARMCD"),
 #'        plot_width = c(800, 200, 2000),
 #'        plot_height = c(800, 200, 2000),
 #'        facet = FALSE,
@@ -121,23 +89,17 @@ tm_g_scatterplot <- function(label, # label of module
                              yaxis_var, # name of variable containing values displayed on the y-axis
                              yaxis_var_choices = yaxis_var, # list of analysis variables to plot
                              trt_group,
-                             trt_group_choices,
-                             plot_width,
-                             plot_height,
                              facet = FALSE,
                              reg_line = FALSE,
+                             rotate_xlab = FALSE,
+                             hline = NULL,
+                             plot_width,
+                             plot_height,
                              font_size,
                              dot_size,
                              reg_text_size,
-                             hline = NULL,
-                             rotate_xlab = FALSE,
-                             man_color = NULL,
                              pre_output = NULL,
-                             post_output = helpText("BASE2 = Screening Data, BASE2L2 = Log2(BASE2);
-                                                    CHG2 = Change from Screening, PCHG2 =  %Change from Screening;
-                                                    BASE = BASELINE Data, BASEL2 = Log2(BASE);
-                                                    CHG = Change from Baseline, PCHG =  %Change from Baseline;
-                                                    AVAL = Following Visits, AVALL2 = Log2(AVAL)"),
+                             post_output = NULL,
                              code_data_processing = NULL) {
 
   args <- as.list(environment())
@@ -170,14 +132,9 @@ ui_g_scatterplot <- function(id, ...) {
     encoding =  div(
       tags$label("Encodings", class="text-primary"),
       helpText("Dataset:", tags$code(a$dataname)),
-      #helpText("Default Biomarker:", tags$code(a$param)),
       optionalSelectInput(ns("param"), "Select a Biomarker", a$param_choices, a$param, multiple = FALSE),
-      #helpText("Default X-Axis Variable:", tags$code(a$xaxis_var)),
       optionalSelectInput(ns("xaxis_var"), "Select an X-Axis Variable", a$xaxis_var_choices, a$xaxis_var, multiple = FALSE),
-      #helpText("Default Y-Axis Variable:", tags$code(a$yaxis_var)),
       optionalSelectInput(ns("yaxis_var"), "Select a Y-Axis Variable", a$yaxis_var_choices, a$yaxis_var, multiple = FALSE),
-      #optionalSelectInput(ns("trt_group"), "Arm Variable", a$trt_group_choices, a$trt_group, multiple = FALSE),
-
       tags$label("Plot Settings", class="text-primary", style="margin-top: 15px;"),
       checkboxInput(ns("facet"), "Treatment Facetting", a$facet),
       checkboxInput(ns("reg_line"), "Regression Line", a$reg_line),
@@ -191,10 +148,10 @@ ui_g_scatterplot <- function(id, ...) {
       optionalSliderInputValMinMax(ns("dot_size"), "Dot Size", a$dot_size, ticks = FALSE),
       optionalSliderInputValMinMax(ns("reg_text_size"), "Regression Annotations Size", a$reg_text_size, ticks = FALSE)
     ),
-    forms = tags$div(
-      actionButton(ns("show_rcode"), "Show R Code", width = "100%")#,
-      # downloadButton(ns("export_plot"), "Export Image", width = "100%")
-    ),
+    # forms = tags$div(
+    #   actionButton(ns("show_rcode"), "Show R Code", width = "100%")#,
+    #   # downloadButton(ns("export_plot"), "Export Image", width = "100%")
+    # ),
     pre_output = a$pre_output,
     post_output = a$post_output
   )
