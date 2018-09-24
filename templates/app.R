@@ -37,48 +37,61 @@ param_choices <- c("CRP","ADIGG","IG","IGA","IGE","IGG","IGM","TEST")
 # END: SPA Input Required
 ################################################################################
 
-ASL0 <- read_bce(ASL_path)
-ASL <- subset(ASL0, subset = ITTFL == 'Y' & IAFL == 'Y')
+# post process the ASL and ALB data to subset records per specification
+ASL <- read_bce(ASL_path) %>%
+  filter(ITTFL == 'Y' & IAFL == 'Y')
 
-ALB0 <- read_bce(ALB_path)
+# !!!!!!!!!! Need to update FL condition to include the BASE2 analysis records which are the Screening records. BASE2 not in test dataset
+ALB_SUBSET <- read_bce(ALB_path) %>%
+  filter(PARAMCD %in% c(param_choices) & ITTFL == 'Y' & IAFL == 'Y' & ANLFL == 'Y' & AVISIT %like any% c('BASE%','%WEEK%')) %>%
+  select(c('STUDYID', 'USUBJID',
+           'ITTFL', 'ANLFL', 
+           'ARM', 'ARMCD', 
+           'AVISIT', 'AVISITN', 
+           'PARAMCD', 
+           'AVAL', 'AVALU', 'BASE', 'CHG', 'PCHG', #'BASE2', 'CHG2', 'PCHG2',
+           'LBSTRESC', 'LBSTRESN'))
 
-# post process the data to subset records per specification
-ALB_SUBSET <- subset(ALB0,
-              subset = PARAMCD %in% c(param_choices) & ITTFL == 'Y' & IAFL == 'Y' & ANLFL == 'Y' & AVISIT %like any% c('BASE%','%WEEK%'),
-              select = c('STUDYID', 'USUBJID', 'ITTFL', 'ANLFL', 'ARM', 'AVISIT', 'AVISITN', 'PARAMCD', 'AVAL', 'AVALU', 'BASE', 'CHG', 'PCHG',
-               'LBSTRESC', 'LBSTRESN'))
-
-# calculate the minimum AVAL for each PARAMCD
+# calculate the minimum AVAL for each PARAMCD. used to create a non-zero value for log2 transformed analysis values
 PARAM_MINS <- ALB_SUBSET %>%
-select(USUBJID, PARAMCD, AVAL) %>%
+  select(USUBJID, PARAMCD, AVAL) %>%
   filter(PARAMCD %in% param_choices) %>%
   group_by(PARAMCD) %>%
   summarise(AVAL_MIN=min(AVAL, na.rm=TRUE))
 
 # post process the data to create several new variables and adjust existing record specific valules per specification
-# - create a visit code variable - baseline record code is "BB" and week records coded to "W NN"
+# - create a visit code variable - baseline record code is "BL" and week records coded to "W NN"
 # - adjust existing BASELINE record values where values are missing: According to SPA this is a STREAM artifact
-ALB_SUPED1 <- ALB_SUBSET %>% mutate(AVISITCD = paste0(substr(AVISIT,start=1, stop=1),
-                                        substr(AVISIT, start=regexpr(" ", AVISIT), stop=regexpr(" ", AVISIT)+2))) %>%
-               mutate(AVISITCDN =  ifelse(AVISITCD == "BB", 0, substr(AVISITCD,start=2, stop=4))) %>%
-               mutate(BASE = ifelse(AVISIT == "BASELINE" & is.na(BASE), AVAL, BASE)) %>%
-               mutate(CHG = ifelse(AVISIT == "BASELINE" & is.na(CHG), 0, CHG)) %>%
-               mutate(PCHG = ifelse(AVISIT == "BASELINE" & is.na(PCHG), 0, PCHG))
-               # may need to add similar code for BASE2 related variables
-
+ALB_SUPED1 <- ALB_SUBSET %>% 
+  mutate(AVISITCD = paste0(substr(AVISIT,start=1, stop=1),
+                           substr(AVISIT, start=regexpr(" ", AVISIT), stop=regexpr(" ", AVISIT)+2))) %>%
+  mutate(AVISITCD = ifelse(AVISITCD == "BB", "BL", AVISITCD)) %>%
+  mutate(AVISITCDN =  ifelse(AVISITCD == "BL", 0, substr(AVISITCD,start=2, stop=4))) %>%
+  mutate(BASE = ifelse(AVISIT == "BASELINE" & is.na(BASE), AVAL, BASE)) %>%
+  mutate(CHG = ifelse(AVISIT == "BASELINE" & is.na(CHG), 0, CHG)) %>%
+  mutate(PCHG = ifelse(AVISIT == "BASELINE" & is.na(PCHG), 0, PCHG)) %>%
+  #!!!!!!!!!! may need to add similar code for BASE2 related variables
+  mutate(TRTORD = ifelse(grepl("C", ARMCD), 1, ifelse(grepl("B", ARMCD), 2, ifelse(grepl("A", ARMCD), 3, NA))))
 
 # merge minimum AVAL value onto the ALB data to calculate the log2 variables and preserve the variable order
 ALB_SUPED2 <- merge(ALB_SUPED1, PARAM_MINS, by="PARAMCD")[, union(names(ALB_SUPED1), names(PARAM_MINS))] %>%
-       mutate(AVALL2 = ifelse(AVAL == 0, log2(AVAL_MIN/2), log2(AVAL))) %>%
-       mutate(BASEL2 = ifelse(BASE == 0, log2(AVAL_MIN/2), log2(BASE))) #%>% need SPA to finish adding BASE2 to ALB
-       #mutate(BASE2L2 = ifelse(BASE2 == 0, log2(AVAL_MIN/2), log2(AVAL)))
+  mutate(AVALL2 = ifelse(AVAL == 0, log2(AVAL_MIN/2), log2(AVAL))) %>%
+  mutate(BASEL2 = ifelse(BASE == 0, log2(AVAL_MIN/2), log2(BASE))) #%>% need SPA to finish adding BASE2 to ALB
+#mutate(BASE2L2 = ifelse(BASE2 == 0, log2(AVAL_MIN/2), log2(AVAL)))
 
 # for proper chronological ordering of visits in visualizations
 ALB_SUPED2$AVISITCDN <- as.numeric(ALB_SUPED2$AVISITCDN) # coerce character into numeric
-ALB <- ALB_SUPED2 %>% mutate(AVISITCD = factor(AVISITCD) %>% reorder(AVISITCDN))
 
-# to test loq_flag
-ALB <- ALB %>% mutate(LOQFL = ifelse(PARAMCD == "CRP" & AVAL < .5, "Y", "N"))
+# create final data set used by goshawk
+ALB <- ALB_SUPED2 %>% 
+  mutate(AVISITCD = factor(AVISITCD) %>% reorder(AVISITCDN)) %>%
+  mutate(ARMORVAL = ARM) %>%
+  mutate(ARM = case_when(
+    ARMCD == "C" ~ "Placebo",
+    ARMCD == "B" ~ "150mg QD",
+    ARMCD == "A" ~ "200mg BID",
+    TRUE ~ as.character(NA))) %>% # !!!!!!!!!! to test loq_flag
+  mutate(LOQFL = ifelse(PARAMCD == "CRP" & AVAL < .5, "Y", "N"))
 
 # create ASL metadata for Source Data tab
 adsl <- file.info(ASL_path)
