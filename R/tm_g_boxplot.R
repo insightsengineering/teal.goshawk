@@ -45,16 +45,17 @@
 #' 
 #'\dontrun{
 #' # Example using analysis dataset for example ASL or ADSL,
-#' # ALB points to biomarker data stored in a typical LB structure. for example ALB or ADLB.
+#' # ALB points to biomarker data stored in a typical LB structure. for example
+#' ALB or ADLB.
 #' 
 #' # Example using analysis dataset for example ASL or ADSL,
-#' # ABM points to biomarker data stored in a custom file created to support goshawk. 
-#' for example ADBIOM
-#' 
+#' # ABM points to biomarker data stored in a custom file created to support
+#' goshawk. for example ADBIOM
 #' library(dplyr) 
 #'
-#' # assign data frame note that this needs to be done once in the app.R file but 
-#' should be available here during testing
+#' # assign data frame note that this needs to be done once in the app.R file
+#' but should be available # here during testing
+#' 
 #' ASL <- ASL
 #' ABM <- ALB
 #'
@@ -224,7 +225,8 @@ ui_g_boxplot <- function(id, ...) {
                                    , step = 50
                                    , width = inpWidth)
 
-    )
+    ), 
+    forms = actionButton(ns("show_rcode"), "Show R Code", width = "100%")
     
   )
   
@@ -236,6 +238,14 @@ srv_g_boxplot <- function(input, output, session, datasets
                           , param_var, value_var, trt_group, trt_group_choices
                           , loq_flag_var
                           , dataname, code_data_processing) {
+  
+  chunks <<- list(
+    analysis = "# Not Calculated",
+    table = "# Not calculated",
+    boxsetup = " ",
+    tablesetup =  " "
+  )
+  
   ## dynamic plot height
   output$plot_ui <- renderUI({
     plot_height <- input$plot_height
@@ -309,17 +319,10 @@ srv_g_boxplot <- function(input, output, session, datasets
     # Get the filtered data - Filter by both the right an left filters. 
     ASL_FILTERED <- datasets$get_data("ASL", reactive = TRUE, filtered = TRUE)
     ALB <- cdata()    
+    # attr(ALB, "source") <- "Local filtered" 
   
     ymin_scale <- input$yrange_scale[1]
     ymax_scale <- input$yrange_scale[2]
-    
-    # Units to display, just take the first if there multiples.
-    unit <- ALB %>% 
-      filter(eval(parse(text = param_var)) == param) %>% 
-      select("AVALU") %>% 
-      unique() %>% 
-      top_n(1,1) %>% 
-      as.character()
     
     validate(need(!is.null(ALB) && is.data.frame(ALB), "no data left"))
     validate(need(nrow(ALB) > 0 , "no observations left"))
@@ -332,25 +335,44 @@ srv_g_boxplot <- function(input, output, session, datasets
     validate(need(value_var %in% names(ALB),
                   paste("variable", value_var, " is not available in data", dataname)))
     
-    facet_var <- ifelse(facet == T, visit_var, "None")
-
-    p <- g_boxplot(
-      data = ALB,
-      biomarker = param,
-      value_var = value_var,
-      trt_group = trt_group,
-      timepoint = "over time", 
-      unit = unit,
-      ymin_scale = ymin_scale,
-      ymax_scale = ymax_scale, 
-      color_manual = NULL,
-      shape_manual = c('N' = 1, 'Y' = 2, 'NA' = NULL),
-      alpha = alpha,
-      dot_size = dot_size,
-      font_size = font_size,
-      facet = facet_var
+    chunks$boxsetup <<- bquote({
+      # If no facet variable has been specified and we're to facet, then set to "None".
+      facet_var <- ifelse(facet == T, visit_var, "None")
+  
+      # Units to display, just take the first if there multiples.
+      unit <- ALB %>% 
+        filter(eval(parse(text = param_var)) == param) %>% 
+        select("AVALU") %>% 
+        unique() %>% 
+        top_n(1,1) %>% 
+        as.character()
+    })
+    eval(chunks$boxsetup)
+    
+    
+    data_name <- paste0("ALB", "_FILTERED")
+    assign(data_name, ALB)
+    
+    chunks$analysis <<- call(
+      "g_boxplot",
+      data = bquote(.(as.name(data_name))),
+        biomarker = param,
+        value_var = value_var,
+        trt_group = trt_group,
+        timepoint = "over time",
+        unit = unit,
+        ymin_scale = ymin_scale,
+        ymax_scale = ymax_scale,
+        color_manual = NULL,
+        shape_manual = c('N' = 1, 'Y' = 2, 'NA' = NULL),
+        alpha = alpha,
+        dot_size = dot_size,
+        font_size = font_size,
+        facet = facet_var
     )
     
+    p <- try(eval(chunks$analysis))
+    if (is(p, "try-error")) validate(need(FALSE, paste0("could not create plot for box plot:\n\n", p)))
     p
   }
   )
@@ -366,15 +388,21 @@ srv_g_boxplot <- function(input, output, session, datasets
       
       # If the data isn't faceted by visit and there is more than one visit
       # present in the data, combine the visit data for the summary.
-      if (!facet) {
-        numVis <- length(unique(ALB[,visit_var]))
-        if (numVis > 1) {
-          ALB[,visit_var] <- "All"
+      chunks$tablesetup <<- bquote({
+        if (!facet) {
+          numVis <- length(unique(ALB[,visit_var]))
+          if (numVis > 1) {
+            ALB[,visit_var] <- "All"
+          }
         }
-      }
+      }) 
 
-      t <- t_summarytable(
-        data = ALB,
+      data_name <- paste0("ALB", "_FILTERED")
+      assign(data_name, ALB)
+
+      chunks$table <<- call(
+        "t_summarytable",
+        data = bquote(.(as.name(data_name))),
         trt_group = trt_group,
         param_var = param_var,
         param = param,
@@ -382,10 +410,44 @@ srv_g_boxplot <- function(input, output, session, datasets
         xaxis_var = xaxis_var, 
         font_size = font_size
       )
-
-    t
-
+      t <- try(eval(chunks$table))
+      if (is(t, "try-error")) validate(need(FALSE, paste0("could not create table for box plot:\n\n", p)))
+      t
+      
   })
   
-  
+   
+   observeEvent(input$show_rcode, {
+     
+     print(class(datasets))
+     glimpse(datasets)
+     
+     header <- teal.tern:::get_rcode_header(
+       title = "Box Plot",
+          datanames = "ALB",
+          datasets = datasets
+       )
+
+     library(teal.tern)
+     str_rcode <- paste(c(
+       "",
+       header,
+       "",
+       teal.tern:::remove_enclosing_curly_braces(deparse(chunks$boxsetup)),
+       "",
+       deparse(chunks$analysis, width.cutoff = 50),
+       "\n",
+       teal.tern:::remove_enclosing_curly_braces(deparse(chunks$tablesetup)),
+       "",
+       deparse(chunks$table, width.cutoff = 50)
+       
+     ), collapse = "\n")
+     
+     showModal(modalDialog(
+       title = "R Code for the Current box Plot",
+       tags$pre(tags$code(class="R", str_rcode)),
+       easyClose = TRUE
+     ))
+   })
+   
 }
