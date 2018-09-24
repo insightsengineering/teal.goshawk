@@ -71,16 +71,17 @@ provide additional information as needed. link to specification file \url{http:/
 
 \dontrun{
 # Example using analysis dataset for example ASL or ADSL,
-# ALB points to biomarker data stored in a typical LB structure. for example ALB or ADLB.
+# ALB points to biomarker data stored in a typical LB structure. for example
+# ALB or ADLB.
 
 # Example using analysis dataset for example ASL or ADSL,
-# ABM points to biomarker data stored in a custom file created to support goshawk. 
-for example ADBIOM
-
+# ABM points to biomarker data stored in a custom file created to support
+# goshawk. for example ADBIOM
 library(dplyr) 
 
-# assign data frame note that this needs to be done once in the app.R file but 
-should be available here during testing
+# assign data frame note that this needs to be done once in the app.R file
+# but should be available # here during testing
+
 ASL <- ASL
 ABM <- ALB
 
