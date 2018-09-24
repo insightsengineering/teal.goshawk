@@ -57,27 +57,26 @@
 #' # but should be available # here during testing
 #' 
 #' ASL <- ASL
-#' ABM <- ALB
+#' ALB <- ALB
 #'
-#' x <- teal::init(
-#'   data = list(ASL = ASL, ABM = ABM),
+#' #' x <- teal::init(
+#'   data =  list(ASL = ASL, ALB = ALB),
 #'   modules = root_modules(
-#'         tm_g_boxplot(
-#'           label = "Box Plot",
-#'           dataname = "ALB",
-#'           param_var = "PARAMCD",
-#'           param = "IGA",
-#'           param_choices = c("IGA","IGG","IGM"),
-#'           value_var = "AVAL",
-#'           value_var_choices = c("AVAL", "CHG"),
-#'           visit_var = "AVISIT",
-#'           visit_var_choices = "AVISIT",
-#'           trt_group = "ARM",
-#'           trt_group_choices = c("ARM", "ARMCD")
-#'         )
+#'       tm_g_boxplot(
+#'         label = "Box Plot",
+#'         dataname = "ALB",
+#'         param_var = "PARAMCD",
+#'         param = "IGA",
+#'         param_choices = c("IGA", "IGG", "IGM"),
+#'         value_var = "AVAL",
+#'         value_var_choices = c("AVAL", "BASE", "CHG"),
+#'         visit_var = "AVISIT",
+#'         trt_group = "ARM"
+#'       )
+#'   )
 #' )
-#'
 #' shinyApp(x$ui, x$server)
+#'
 #'
 #'}
 
@@ -95,7 +94,7 @@ tm_g_boxplot <- function(label,
                          visit_var_choices = NULL,
                          facet_choices = FALSE,
                          facet = TRUE,
-                         loq_flag_var = 'LOQFL',
+                         loq_flag_var = NULL,
                          pre_output = NULL,
                          post_output = NULL,
                          code_data_processing = NULL) {
@@ -246,7 +245,7 @@ srv_g_boxplot <- function(input, output, session, datasets
     boxsetup = " ",
     tablesetup =  " "
   )
-  
+
   ## dynamic plot height
   output$plot_ui <- renderUI({
     plot_height <- input$plot_height
@@ -320,9 +319,9 @@ srv_g_boxplot <- function(input, output, session, datasets
     
     # Get the filtered data - Filter by both the right an left filters. 
     ASL_FILTERED <- datasets$get_data("ASL", reactive = TRUE, filtered = TRUE)
-    ALB <- cdata()    
+    ALB <- datasets$get_data("ALB", reactive = TRUE, filtered = TRUE)   
     # attr(ALB, "source") <- "Local filtered" 
-  
+    
     ymin_scale <- input$yrange_scale[1]
     ymax_scale <- input$yrange_scale[2]
     
@@ -365,6 +364,7 @@ srv_g_boxplot <- function(input, output, session, datasets
         unit = unit,
         ymin_scale = ymin_scale,
         ymax_scale = ymax_scale,
+        loq_flag = loq_flag_var, 
         color_manual = NULL,
         shape_manual = c('N' = 1, 'Y' = 2, 'NA' = NULL),
         alpha = alpha,
