@@ -6,9 +6,10 @@
 \usage{
 tm_g_density_distribution_plot(label, dataname, param_var,
   param_choices = param, param, xaxis_var, xaxis_var_choices = xaxis_var,
-  trt_group, loq_flag_var = "LOQFL", plot_width, plot_height, font_size,
-  line_size, hline = NULL, rotate_xlab = FALSE, pre_output = NULL,
-  post_output = NULL, code_data_processing = NULL)
+  trt_group = "ARM", loq_flag_var = "LOQFL", plot_width = c(800, 200,
+  2000), plot_height = c(500, 200, 2000), font_size = c(12, 8, 20),
+  line_size = c(1, 0.25, 3), hline = NULL, rotate_xlab = FALSE,
+  pre_output = NULL, post_output = NULL, code_data_processing = NULL)
 }
 \arguments{
 \item{label}{menu item label of the module in the teal app}
@@ -30,7 +31,7 @@ Note that the data are expected to be in vertical form with the
 
 \item{trt_group}{name of variable representing treatment group e.g. ARM.}
 
-\item{loq_flag_var}{name of variable containing LOQ flag e.g. LBLOQFL.}
+\item{loq_flag_var}{name of variable containing LOQ flag used in the t_summary table function e.g. LBLOQFL.}
 
 \item{plot_width}{controls plot width.}
 
@@ -83,7 +84,7 @@ x <- teal::init(
        plot_width = c(800, 200, 2000),
        plot_height = c(500, 200, 2000),
        font_size = c(12, 8, 20),
-       line_size = c(1, 1, 12)
+       line_size = c(1, .25, 3)
    )
   )
 )

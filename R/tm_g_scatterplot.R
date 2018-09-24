@@ -65,7 +65,7 @@
 #'        yaxis_var_choices = c("AVAL", "BASE", "CHG", "PCHG", "BASE2", "CHG2", "PCHG2", "AVALL2", "BASEL2", "BASE2L2"),
 #'        trt_group = "ARM",
 #'        plot_width = c(800, 200, 2000),
-#'        plot_height = c(800, 200, 2000),
+#'        plot_height = c(500, 200, 2000),
 #'        facet = FALSE,
 #'        reg_line = FALSE,
 #'        font_size = c(12, 8, 20),
@@ -88,16 +88,16 @@ tm_g_scatterplot <- function(label, # label of module
                              xaxis_var_choices = xaxis_var, # list of baseline variables
                              yaxis_var, # name of variable containing values displayed on the y-axis
                              yaxis_var_choices = yaxis_var, # list of analysis variables to plot
-                             trt_group,
+                             trt_group = "ARM",
                              facet = FALSE,
                              reg_line = FALSE,
                              rotate_xlab = FALSE,
                              hline = NULL,
-                             plot_width,
-                             plot_height,
-                             font_size,
-                             dot_size,
-                             reg_text_size,
+                             plot_width = c(800, 200, 2000),
+                             plot_height = c(500, 200, 2000),
+                             font_size = c(12, 8, 20),
+                             dot_size = c(1, 1, 12),
+                             reg_text_size = c(3, 3, 10),
                              pre_output = NULL,
                              post_output = NULL,
                              code_data_processing = NULL) {
@@ -180,9 +180,9 @@ srv_g_scatterplot <- function(input, output, session, datasets, dataname, param_
       filter(eval(parse(text = param_var)) == param)
     
       # identify min and max values of BM range ignoring NA values
-      xmin_scale <- min(scale_data[[input$xaxis_var]], na.rm = TRUE)
-      xmax_scale <- max(scale_data[[input$xaxis_var]], na.rm = TRUE)
-
+      xmin_scale <- RoundTo(min(scale_data[[input$xaxis_var]], na.rm = TRUE), multiple = .001, FUN = floor)
+      xmax_scale <- RoundTo(max(scale_data[[input$xaxis_var]], na.rm = TRUE), multiple = .001, FUN = ceiling)
+      
       tagList({
         sliderInput(ns("xrange_scale"), label="X-Axis Range Scale", xmin_scale, xmax_scale, value = c(xmin_scale, xmax_scale))
       })
@@ -197,8 +197,8 @@ srv_g_scatterplot <- function(input, output, session, datasets, dataname, param_
       filter(eval(parse(text = param_var)) == param)
 
     # identify min and max values of BM range ignoring NA values
-    ymin_scale <- min(scale_data[[input$yaxis_var]], na.rm = TRUE)
-    ymax_scale <- max(scale_data[[input$yaxis_var]], na.rm = TRUE)
+    ymin_scale <- RoundTo(min(scale_data[[input$yaxis_var]], na.rm = TRUE), multiple = .001, FUN = floor)
+    ymax_scale <- RoundTo(max(scale_data[[input$yaxis_var]], na.rm = TRUE), multiple = .001, FUN = ceiling)
 
     tagList({
       sliderInput(ns("yrange_scale"), label="Y-Axis Range Scale", ymin_scale, ymax_scale, value = c(ymin_scale, ymax_scale))
