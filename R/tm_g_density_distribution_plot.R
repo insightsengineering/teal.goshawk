@@ -13,7 +13,7 @@
 #' @param xaxis_var name of variable containing biomarker results displayed on X-axis e.g. BASE.
 #' @param xaxis_var_choices list of variables containing biomarker results choices.
 #' @param trt_group name of variable representing treatment group e.g. ARM.
-#' @param loq_flag_var name of variable containing LOQ flag e.g. LBLOQFL.
+#' @param loq_flag_var name of variable containing LOQ flag used in the t_summary table function e.g. LBLOQFL.
 #' @param plot_width controls plot width.
 #' @param plot_height controls plot height.
 #' @param font_size control font size for title, x-axis, y-axis and legend font.
@@ -62,7 +62,7 @@
 #'        plot_width = c(800, 200, 2000),
 #'        plot_height = c(500, 200, 2000),
 #'        font_size = c(12, 8, 20),
-#'        line_size = c(1, 1, 12)
+#'        line_size = c(1, .25, 3)
 #'    )
 #'   )
 #' )
@@ -78,12 +78,12 @@ tm_g_density_distribution_plot <- function(label,
                                            param,
                                            xaxis_var,
                                            xaxis_var_choices = xaxis_var,
-                                           trt_group,
+                                           trt_group = "ARM",
                                            loq_flag_var = 'LOQFL',
-                                           plot_width,
-                                           plot_height,
-                                           font_size,
-                                           line_size,
+                                           plot_width = c(800, 200, 2000),
+                                           plot_height = c(500, 200, 2000),
+                                           font_size = c(12, 8, 20),
+                                           line_size = c(1, .25, 3),
                                            hline = NULL,
                                            rotate_xlab = FALSE,
                                            pre_output = NULL,
@@ -130,12 +130,12 @@ ui_g_density_distribution_plot <- function(id, ...) {
 
       tags$label("Plot Settings", class="text-primary", style="margin-top: 15px;"),
       checkboxInput(ns("rotate_xlab"), "Rotate X-axis Label", a$rotate_xlab),
-      numericInput(ns("hline"), "Add a horizontal line:", a$hline),
+      numericInput(ns("hline"), "Add a horizontal line:", a$hline, min = 0, max = 1, step = .1),
       optionalSliderInputValMinMax(ns("plot_width"), "Plot Width", a$plot_width, ticks = FALSE),
       optionalSliderInputValMinMax(ns("plot_height"), "Plot Height", a$plot_height, ticks = FALSE),
       uiOutput(ns("xaxis_scale")),
       optionalSliderInputValMinMax(ns("font_size"), "Font Size", a$font_size, ticks = FALSE),
-      optionalSliderInputValMinMax(ns("line_size"), "Line Size", a$line_size, ticks = FALSE)
+      optionalSliderInputValMinMax(ns("line_size"), "Line Size", a$line_size, value_min_max = c(1, .25, 3), step = .25, ticks = FALSE)
     ),
     # forms = tags$div(
     #   actionButton(ns("show_rcode"), "Show R Code", width = "100%")#,
@@ -169,9 +169,11 @@ srv_g_density_distribution_plot <- function(input, output, session, datasets, da
       filter(eval(parse(text = param_var)) == param)
     
       # identify min and max values of BM range ignoring NA values
-      xmin_scale <- min(scale_data[[input$xaxis_var]], na.rm = TRUE)
-      xmax_scale <- max(scale_data[[input$xaxis_var]], na.rm = TRUE)
-
+      # xmin_scale <- min(scale_data[[input$xaxis_var]], na.rm = TRUE)
+      # xmax_scale <- max(scale_data[[input$xaxis_var]], na.rm = TRUE)
+      xmin_scale <- RoundTo(min(scale_data[[input$xaxis_var]], na.rm = TRUE), multiple = .001, FUN = floor)
+      xmax_scale <- RoundTo(max(scale_data[[input$xaxis_var]], na.rm = TRUE), multiple = .001, FUN = ceiling)
+      
       tagList({
         sliderInput(ns("xrange_scale"), label="X-Axis Range Scale", xmin_scale, xmax_scale, value = c(xmin_scale, xmax_scale))
       })

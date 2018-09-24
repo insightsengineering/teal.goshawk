@@ -6,10 +6,12 @@
 \usage{
 tm_g_scatterplot(label, dataname, param_var, param, param_choices = param,
   xaxis_var, xaxis_var_choices = xaxis_var, yaxis_var,
-  yaxis_var_choices = yaxis_var, trt_group, facet = FALSE,
-  reg_line = FALSE, rotate_xlab = FALSE, hline = NULL, plot_width,
-  plot_height, font_size, dot_size, reg_text_size, pre_output = NULL,
-  post_output = NULL, code_data_processing = NULL)
+  yaxis_var_choices = yaxis_var, trt_group = "ARM", facet = FALSE,
+  reg_line = FALSE, rotate_xlab = FALSE, hline = NULL,
+  plot_width = c(800, 200, 2000), plot_height = c(500, 200, 2000),
+  font_size = c(12, 8, 20), dot_size = c(1, 1, 12), reg_text_size = c(3,
+  3, 10), pre_output = NULL, post_output = NULL,
+  code_data_processing = NULL)
 }
 \arguments{
 \item{label}{menu item label of the module in the teal app}
@@ -91,7 +93,7 @@ x <- teal::init(
        yaxis_var_choices = c("AVAL", "BASE", "CHG", "PCHG", "BASE2", "CHG2", "PCHG2", "AVALL2", "BASEL2", "BASE2L2"),
        trt_group = "ARM",
        plot_width = c(800, 200, 2000),
-       plot_height = c(800, 200, 2000),
+       plot_height = c(500, 200, 2000),
        facet = FALSE,
        reg_line = FALSE,
        font_size = c(12, 8, 20),
