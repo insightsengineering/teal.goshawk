@@ -190,9 +190,25 @@ ui_g_boxplot <- function(id, ...) {
       if(a$facet_choices) {
         checkboxInput(ns("facet"), "Visit Facetting", a$facet)
       },
+
+      optionalSliderInputValMinMax(ns("plot_height")
+                                   , label = "Plot height"
+                                   , a$plot_height
+                                   , ticks = FALSE
+                                   , step = 50
+                                   , width = inpWidth),
       
       uiOutput(ns("yaxis_scale")),
 
+      optionalSliderInputValMinMax(ns("font_size")
+                                   , label = "Font Size"
+                                   , a$font_size
+                                   , value_min_max = c(12, 8, 20)
+                                   , step = 1
+                                   , ticks = FALSE
+                                   , width = inpWidth
+      ),
+      
       optionalSliderInputValMinMax(ns("dot_size")
                                    , label = "Dot Size"
                                    , a$dot_size
@@ -202,29 +218,14 @@ ui_g_boxplot <- function(id, ...) {
                                    , width = inpWidth
                                    ),
       
-      optionalSliderInputValMinMax(ns("font_size")
-                                   , label = "Font Size"
-                                   , a$font_size
-                                   , value_min_max = c(12, 8, 20)
-                                   , step = 1
-                                   , ticks = FALSE
-                                   , width = inpWidth
-                                   ),
-
       optionalSliderInputValMinMax(ns("alpha")
                                    , label = "Dot Transparency"
                                    , value_min_max = c(0.8, 0.0, 1.0)
                                    , step = 0.1
                                    , ticks = FALSE
                                    , width = inpWidth
-                                  ),
-      optionalSliderInputValMinMax(ns("plot_height")
-                                   , label = "Plot height"
-                                   , a$plot_height
-                                   , ticks = FALSE
-                                   , step = 50
-                                   , width = inpWidth)
-
+      )
+      
     ), 
     forms = actionButton(ns("show_rcode"), "Show R Code", width = "100%")
     
@@ -286,9 +287,10 @@ srv_g_boxplot <- function(input, output, session, datasets
         case_when(
           f <= 1.0 ~ 1,
           f <= 2.0 ~ 2,
-          f <= 5.0 ~ 5,
+          f <= 5.0 ~ 5, 
           TRUE ~ 10
         )
+      
       ymin_scale <- RoundTo(lo, multiple = nndiff, FUN = floor)
       ymax_scale <- RoundTo(hi, multiple = nndiff, FUN = ceiling)
 
@@ -298,7 +300,7 @@ srv_g_boxplot <- function(input, output, session, datasets
                       , label=paste("Y-Axis Range for",param)
                       , ymin_scale, ymax_scale
                       , value = c(ymin_scale, ymax_scale)
-                      , width = 200)
+                      )
         })
       }
     })  
@@ -399,7 +401,7 @@ srv_g_boxplot <- function(input, output, session, datasets
 
       data_name <- paste0("ALB", "_FILTERED")
       assign(data_name, ALB)
-
+      
       chunks$table <<- call(
         "t_summarytable",
         data = bquote(.(as.name(data_name))),
@@ -418,9 +420,6 @@ srv_g_boxplot <- function(input, output, session, datasets
   
    
    observeEvent(input$show_rcode, {
-     
-     print(class(datasets))
-     glimpse(datasets)
      
      header <- teal.tern:::get_rcode_header(
        title = "Box Plot",
