@@ -8,7 +8,8 @@ Authors@R: c(
   )
 Description: More about what it does (maybe more than one line)
     Produces dynamic visualizations including box, line, scatter and spaghetti plots with accompanying summary .
-Depends:  DescTools, dplyr, ggplot2, goshawk, teal
+Depends:  DescTools, dplyr, ggplot2, goshawk, teal, methods
+Imports:  shiny
 License: What license is it under?
 Encoding: UTF-8
 LazyData: true
