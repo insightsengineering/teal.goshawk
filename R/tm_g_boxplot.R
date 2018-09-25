@@ -59,7 +59,7 @@
 #' ASL <- ASL
 #' ALB <- ALB
 #'
-#' #' x <- teal::init(
+#' x <- teal::init(
 #'   data =  list(ASL = ASL, ALB = ALB),
 #'   modules = root_modules(
 #'       tm_g_boxplot(
@@ -67,10 +67,10 @@
 #'         dataname = "ALB",
 #'         param_var = "PARAMCD",
 #'         param = "IGA",
-#'         param_choices = c("IGA", "IGG", "IGM"),
+#'         param_choices = c("CRP", "IGA", "IGG", "IGM"),
 #'         value_var = "AVAL",
 #'         value_var_choices = c("AVAL", "BASE", "CHG"),
-#'         visit_var = "AVISIT",
+#'         visit_var = "AVISITCD",
 #'         trt_group = "ARM"
 #'       )
 #'   )
