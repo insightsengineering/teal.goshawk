@@ -9,7 +9,7 @@ tm_g_boxplot(label, dataname, param_var, param, param_choices = param,
   plot_height = c(600, 200, 2000), trt_group = "ARM",
   trt_group_choices = NULL, visit_var = "AVISIT",
   visit_var_choices = NULL, facet_choices = FALSE, facet = TRUE,
-  loq_flag_var = "LOQFL", pre_output = NULL, post_output = NULL,
+  loq_flag_var = NULL, pre_output = NULL, post_output = NULL,
   code_data_processing = NULL)
 }
 \arguments{
@@ -83,27 +83,26 @@ library(dplyr)
 # but should be available # here during testing
 
 ASL <- ASL
-ABM <- ALB
+ALB <- ALB
 
-x <- teal::init(
-  data = list(ASL = ASL, ABM = ABM),
+#' x <- teal::init(
+  data =  list(ASL = ASL, ALB = ALB),
   modules = root_modules(
-        tm_g_boxplot(
-          label = "Box Plot",
-          dataname = "ALB",
-          param_var = "PARAMCD",
-          param = "IGA",
-          param_choices = c("IGA","IGG","IGM"),
-          value_var = "AVAL",
-          value_var_choices = c("AVAL", "CHG"),
-          visit_var = "AVISIT",
-          visit_var_choices = "AVISIT",
-          trt_group = "ARM",
-          trt_group_choices = c("ARM", "ARMCD")
-        )
+      tm_g_boxplot(
+        label = "Box Plot",
+        dataname = "ALB",
+        param_var = "PARAMCD",
+        param = "IGA",
+        param_choices = c("IGA", "IGG", "IGM"),
+        value_var = "AVAL",
+        value_var_choices = c("AVAL", "BASE", "CHG"),
+        visit_var = "AVISIT",
+        trt_group = "ARM"
+      )
+  )
 )
-
 shinyApp(x$ui, x$server)
+
 
 }
 }

@@ -27,8 +27,8 @@
 #' @inheritParams teal::standard_layout
 #' 
 #' @import DescTools
+#' @import methods
 #' @import dplyr
-#' @import ggplot2
 #' @import goshawk
 #' @import teal
 #'
