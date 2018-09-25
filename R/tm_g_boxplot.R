@@ -319,8 +319,8 @@ srv_g_boxplot <- function(input, output, session, datasets
     
     # Get the filtered data - Filter by both the right an left filters. 
     ASL_FILTERED <- datasets$get_data("ASL", reactive = TRUE, filtered = TRUE)
-    ALB <- datasets$get_data("ALB", reactive = TRUE, filtered = TRUE)   
-    # attr(ALB, "source") <- "Local filtered" 
+    ALB <- datasets$get_data("ALB", reactive = TRUE, filtered = TRUE) %>%
+      filter(eval(parse(text = param_var)) == input$param)
     
     ymin_scale <- input$yrange_scale[1]
     ymax_scale <- input$yrange_scale[2]
@@ -349,7 +349,6 @@ srv_g_boxplot <- function(input, output, session, datasets
         as.character()
     })
     eval(chunks$boxsetup)
-    
     
     data_name <- paste0("ALB", "_FILTERED")
     assign(data_name, ALB)
