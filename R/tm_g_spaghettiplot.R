@@ -15,6 +15,7 @@
 #' @param param_choices vector of parameter names that can be used in param.
 #' @param trt_group single name of treatment arm variable.
 #' @param trt_group_level vector that can be used to define factor level of trt_group.
+#' @param man_color string vector representing customized colors
 #' @param hline numeric value to add horizontal line to plot
 #' @param rotate_xlab boolean value indicating whether to rotate x-axis labels
 #' @param facet_ncol numeric value indicating number of facets per row.
@@ -166,7 +167,7 @@ tm_g_spaghettiplot <- function(label,
                                trt_group,
                                trt_group_level = NULL,
                                hline = NULL,
-                               # man_color = NULL,
+                               man_color = NULL,
                                rotate_xlab = FALSE,
                                facet_ncol = 2,
                                plot_height = c(600, 200, 2000)) {
@@ -177,7 +178,7 @@ tm_g_spaghettiplot <- function(label,
     label = label,
     server = srv_spaghettiplot,
     server_args = list(dataname = dataname, idvar = idvar, param_var = param_var, trt_group = trt_group, 
-                       xvar_level = xvar_level, trt_group_level = trt_group_level),
+                       xvar_level = xvar_level, trt_group_level = trt_group_level, man_color = man_color),
     ui = ui_spaghettiplot,
     ui_args = args,
     filters = dataname
@@ -223,7 +224,7 @@ ui_spaghettiplot <- function(id, ...) {
   
 }
 
-srv_spaghettiplot <- function(input, output, session, datasets, dataname, idvar, param_var, trt_group, xvar_level, trt_group_level) {
+srv_spaghettiplot <- function(input, output, session, datasets, dataname, idvar, param_var, trt_group, man_color, xvar_level, trt_group_level) {
   
   ns <- session$ns
   
