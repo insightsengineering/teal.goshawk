@@ -242,8 +242,8 @@ srv_spaghettiplot <- function(input, output, session, datasets, dataname, idvar,
       filter(eval(parse(text = param_var)) == param)
     
     # identify min and max values of BM range ignoring NA values
-    ymin_scale <- min(scale_data[[input$yvar]], na.rm = TRUE)
-    ymax_scale <- max(scale_data[[input$yvar]], na.rm = TRUE)
+    ymin_scale <- round(min(scale_data[[input$yvar]], na.rm = TRUE), digits = 1)
+    ymax_scale <- round(max(scale_data[[input$yvar]], na.rm = TRUE), digits = 1)
     
     tagList({
       sliderInput(ns("yrange_scale"), label="Y-Axis Range Scale", ymin_scale, ymax_scale, value = c(ymin_scale, ymax_scale))
