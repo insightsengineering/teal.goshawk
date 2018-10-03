@@ -14,6 +14,7 @@
 #' @param param_choices vector of parameter names that can be used in param.
 #' @param trt_group single name of treatment arm variable.
 #' @param trt_group_level vector that can be used to define factor level of trt_group.
+#' @param man_color string vector representing customized colors
 #' @param stat string of statistics
 #' @param hline numeric value to add horizontal line to plot
 #' @param rotate_xlab boolean value indicating whether to rotate x-axis labels
