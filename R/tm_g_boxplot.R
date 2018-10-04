@@ -280,18 +280,23 @@ srv_g_boxplot <- function(input, output, session, datasets
       # Calculate nice default limits based on the min and max from the data
       lo <- ylimits()$low
       hi <- ylimits()$high
-      exp <- floor(log10(hi - lo))
-      f <- (hi - lo)/(10^exp)
-      nndiff <- 10^(exp-1) *
-        case_when(
-          f <= 1.0 ~ 1,
-          f <= 2.0 ~ 2,
-          f <= 5.0 ~ 5, 
-          TRUE ~ 10
-        )
-      
-      ymin_scale <- RoundTo(lo, multiple = nndiff, FUN = floor)
-      ymax_scale <- RoundTo(hi, multiple = nndiff, FUN = ceiling)
+      if (hi == lo) {
+        ymin_scale = lo - 1
+        ymax_scale = hi + 1
+      } else {
+        exp <- floor(log10(hi - lo))
+        f <- (hi - lo)/(10^exp)
+        nndiff <- 10^(exp-1) *
+          case_when(
+            f <= 1.0 ~ 1,
+            f <= 2.0 ~ 2,
+            f <= 5.0 ~ 5, 
+            TRUE ~ 10
+          )
+        
+        ymin_scale <- RoundTo(lo, multiple = nndiff, FUN = floor)
+        ymax_scale <- RoundTo(hi, multiple = nndiff, FUN = ceiling)
+      }
 
       if (is.finite(ymin_scale)) {
         tagList({
@@ -365,7 +370,7 @@ srv_g_boxplot <- function(input, output, session, datasets
         ymax_scale = ymax_scale,
         loq_flag = loq_flag_var, 
         color_manual = NULL,
-        shape_manual = c('N' = 1, 'Y' = 2, 'NA' = NULL),
+        shape_manual = c('N' = 1, 'Y' = 2, 'NA' = 0),
         alpha = alpha,
         dot_size = dot_size,
         font_size = font_size,
