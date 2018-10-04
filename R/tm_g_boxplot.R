@@ -369,7 +369,7 @@ srv_g_boxplot <- function(input, output, session, datasets
         ymin_scale = ymin_scale,
         ymax_scale = ymax_scale,
         loq_flag = loq_flag_var, 
-        color_manual = c('Placebo' = "#000000", '150mg QD' = "#3498DB", '200mg BID' = "#E74C3C"),
+        color_manual = NULL,
         shape_manual = c('N' = 1, 'Y' = 2, 'NA' = 0),
         alpha = alpha,
         dot_size = dot_size,
