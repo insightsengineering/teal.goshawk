@@ -14,6 +14,7 @@
 #' @param param_choices vector of parameter names that can be used in param.
 #' @param trt_group single name of treatment arm variable.
 #' @param trt_group_level vector that can be used to define factor level of trt_group.
+#' @param man_color string vector representing customized colors
 #' @param stat string of statistics
 #' @param hline numeric value to add horizontal line to plot
 #' @param rotate_xlab boolean value indicating whether to rotate x-axis labels
@@ -161,7 +162,7 @@ tm_g_lineplot <- function(label,
                           trt_group_level = NULL,
                           stat = "mean",
                           hline = NULL,
-                          # man_color = NULL,
+                          man_color = NULL,
                           rotate_xlab = FALSE,
                           plot_height = c(600, 200, 2000)) {
   
@@ -170,7 +171,7 @@ tm_g_lineplot <- function(label,
   module(
     label = label,
     server = srv_lineplot,
-    server_args = list(dataname = dataname, param_var = param_var, trt_group = trt_group,
+    server_args = list(dataname = dataname, param_var = param_var, trt_group = trt_group, man_color = man_color,
                        xvar_level = xvar_level, trt_group_level = trt_group_level),
     ui = ui_lineplot,
     ui_args = args,
@@ -217,7 +218,7 @@ ui_lineplot <- function(id, ...) {
   
 }
 
-srv_lineplot <- function(input, output, session, datasets, dataname, param_var, trt_group, xvar_level, trt_group_level) {
+srv_lineplot <- function(input, output, session, datasets, dataname, param_var, trt_group, man_color, xvar_level, trt_group_level) {
   
   ns <- session$ns
   
@@ -304,7 +305,7 @@ srv_lineplot <- function(input, output, session, datasets, dataname, param_var, 
       trt_group_level = trt_group_level,
       time = xvar,
       time_level = xvar_level,
-      color_manual = NULL,
+      color_manual = man_color,
       median = median,
       hline = hline,
       rotate_xlab = rotate_xlab
