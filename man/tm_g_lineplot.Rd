@@ -7,7 +7,8 @@
 tm_g_lineplot(label, dataname, xvar, yvar, xvar_choices = xvar,
   yvar_choices = yvar, xvar_level = NULL, param_var, param,
   param_choices = param, trt_group, trt_group_level = NULL, stat = "mean",
-  hline = NULL, rotate_xlab = FALSE, plot_height = c(600, 200, 2000))
+  hline = NULL, man_color = NULL, rotate_xlab = FALSE,
+  plot_height = c(600, 200, 2000))
 }
 \arguments{
 \item{label}{menue item label of the module in the teal app}
@@ -38,6 +39,8 @@ Note that the data is expected to be in vertical form with the PARAMCD variable 
 \item{stat}{string of statistics}
 
 \item{hline}{numeric value to add horizontal line to plot}
+
+\item{man_color}{string vector representing customized colors}
 
 \item{rotate_xlab}{boolean value indicating whether to rotate x-axis labels}
 

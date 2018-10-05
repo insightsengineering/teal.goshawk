@@ -7,7 +7,8 @@
 tm_g_spaghettiplot(label, dataname, idvar, xvar, yvar, xvar_choices = xvar,
   yvar_choices = yvar, xvar_level = NULL, param_var, param,
   param_choices = param, trt_group, trt_group_level = NULL, hline = NULL,
-  rotate_xlab = FALSE, facet_ncol = 2, plot_height = c(600, 200, 2000))
+  man_color = NULL, rotate_xlab = FALSE, facet_ncol = 2,
+  plot_height = c(600, 200, 2000))
 }
 \arguments{
 \item{label}{menue item label of the module in the teal app}
@@ -38,6 +39,8 @@ Note that the data is expected to be in vertical form with the PARAMCD variable 
 \item{trt_group_level}{vector that can be used to define factor level of trt_group.}
 
 \item{hline}{numeric value to add horizontal line to plot}
+
+\item{man_color}{string vector representing customized colors}
 
 \item{rotate_xlab}{boolean value indicating whether to rotate x-axis labels}
 
