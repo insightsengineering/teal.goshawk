@@ -6,10 +6,11 @@
 \usage{
 tm_g_density_distribution_plot(label, dataname, param_var,
   param_choices = param, param, xaxis_var, xaxis_var_choices = xaxis_var,
-  trt_group = "ARM", loq_flag_var = "LOQFL", plot_width = c(800, 200,
-  2000), plot_height = c(500, 200, 2000), font_size = c(12, 8, 20),
-  line_size = c(1, 0.25, 3), hline = NULL, rotate_xlab = FALSE,
-  pre_output = NULL, post_output = NULL, code_data_processing = NULL)
+  trt_group = "ARM", color_manual = NULL, loq_flag_var = "LOQFL",
+  plot_width = c(800, 200, 2000), plot_height = c(500, 200, 2000),
+  font_size = c(12, 8, 20), line_size = c(1, 0.25, 3), hline = NULL,
+  rotate_xlab = FALSE, pre_output = NULL, post_output = NULL,
+  code_data_processing = NULL)
 }
 \arguments{
 \item{label}{menu item label of the module in the teal app}
@@ -21,7 +22,7 @@ Note that the data are expected to be in vertical form with the
 
 \item{param_var}{name of variable containing biomarker codes e.g. PARAMCD.}
 
-\item{param_choices}{list of biomarkers of interest.}
+\item{param_choices}{list of biomarkers of interest. assigned in app.R.}
 
 \item{param}{biomarker selected.}
 
@@ -30,6 +31,8 @@ Note that the data are expected to be in vertical form with the
 \item{xaxis_var_choices}{list of variables containing biomarker results choices.}
 
 \item{trt_group}{name of variable representing treatment group e.g. ARM.}
+
+\item{color_manual}{vector of treatment colors. assigned values in app.R otherwise uses default colors.}
 
 \item{loq_flag_var}{name of variable containing LOQ flag used in the t_summary table function e.g. LBLOQFL.}
 
@@ -80,6 +83,7 @@ x <- teal::init(
        xaxis_var = "AVAL",
        xaxis_var_choices = c("AVAL", "BASE", "CHG", "PCHG", "BASE2", "CHG2", "PCHG2", "AVALL2", "BASEL2", "BASE2L2"),
        trt_group = "ARM",
+       color_manual = color_manual,
        loq_flag_var = 'LOQFL',
        plot_width = c(800, 200, 2000),
        plot_height = c(500, 200, 2000),

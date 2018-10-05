@@ -6,12 +6,12 @@
 \usage{
 tm_g_scatterplot(label, dataname, param_var, param, param_choices = param,
   xaxis_var, xaxis_var_choices = xaxis_var, yaxis_var,
-  yaxis_var_choices = yaxis_var, trt_group = "ARM", facet = FALSE,
-  reg_line = FALSE, rotate_xlab = FALSE, hline = NULL,
-  plot_width = c(800, 200, 2000), plot_height = c(500, 200, 2000),
-  font_size = c(12, 8, 20), dot_size = c(1, 1, 12), reg_text_size = c(3,
-  3, 10), pre_output = NULL, post_output = NULL,
-  code_data_processing = NULL)
+  yaxis_var_choices = yaxis_var, trt_group = "ARM", color_manual = NULL,
+  shape_manual = NULL, facet = FALSE, reg_line = FALSE,
+  rotate_xlab = FALSE, hline = NULL, plot_width = c(800, 200, 2000),
+  plot_height = c(500, 200, 2000), font_size = c(12, 8, 20),
+  dot_size = c(1, 1, 12), reg_text_size = c(3, 3, 10), pre_output = NULL,
+  post_output = NULL, code_data_processing = NULL)
 }
 \arguments{
 \item{label}{menu item label of the module in the teal app}
@@ -25,7 +25,7 @@ Note that the data are expected to be in vertical form with the
 
 \item{param}{biomarker selected.}
 
-\item{param_choices}{list of biomarkers of interest.}
+\item{param_choices}{list of biomarkers of interest. assigned in app.R.}
 
 \item{xaxis_var}{name of variable containing biomarker results displayed on X-axis e.g. BASE.}
 
@@ -36,6 +36,10 @@ Note that the data are expected to be in vertical form with the
 \item{yaxis_var_choices}{list of variables containing biomarker results choices.}
 
 \item{trt_group}{name of variable representing treatment group e.g. ARM.}
+
+\item{color_manual}{vector of treatment colors. assigned values in app.R otherwise uses default colors.}
+
+\item{shape_manual}{vector of LOQ shapes. assigned values in app.R otherwise uses default shapes.}
 
 \item{facet}{controls facetting with trt_grp.}
 
@@ -92,6 +96,8 @@ x <- teal::init(
        yaxis_var = "AVAL",
        yaxis_var_choices = c("AVAL", "BASE", "CHG", "PCHG", "BASE2", "CHG2", "PCHG2", "AVALL2", "BASEL2", "BASE2L2"),
        trt_group = "ARM",
+       color_manual = color_manual,
+       shape_manual = shape_manual,
        plot_width = c(800, 200, 2000),
        plot_height = c(500, 200, 2000),
        facet = FALSE,

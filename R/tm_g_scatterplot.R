@@ -8,13 +8,15 @@
 #'   Note that the data are expected to be in vertical form with the
 #'   \code{PARAMCD} variable filtering to one observation per patient per visit.
 #' @param param_var name of variable containing biomarker codes e.g. PARAMCD.
-#' @param param_choices list of biomarkers of interest.
+#' @param param_choices list of biomarkers of interest. assigned in app.R.
 #' @param param biomarker selected.
 #' @param xaxis_var name of variable containing biomarker results displayed on X-axis e.g. BASE.
 #' @param xaxis_var_choices list of variables containing biomarker results choices.
 #' @param yaxis_var name of variable containing biomarker results displayed on Y-axis e.g. BASE.
 #' @param yaxis_var_choices list of variables containing biomarker results choices.
 #' @param trt_group name of variable representing treatment group e.g. ARM.
+#' @param color_manual vector of treatment colors. assigned values in app.R otherwise uses default colors.
+#' @param shape_manual vector of LOQ shapes. assigned values in app.R otherwise uses default shapes.
 #' @param facet controls facetting with trt_grp.
 #' @param reg_line include regression line and annotations for slope and coefficient in visualization. Use with facet TRUE.
 #' @param rotate_xlab 45 degree rotation of x-axis values.
@@ -64,6 +66,8 @@
 #'        yaxis_var = "AVAL",
 #'        yaxis_var_choices = c("AVAL", "BASE", "CHG", "PCHG", "BASE2", "CHG2", "PCHG2", "AVALL2", "BASEL2", "BASE2L2"),
 #'        trt_group = "ARM",
+#'        color_manual = color_manual,
+#'        shape_manual = shape_manual,
 #'        plot_width = c(800, 200, 2000),
 #'        plot_height = c(500, 200, 2000),
 #'        facet = FALSE,
@@ -89,6 +93,8 @@ tm_g_scatterplot <- function(label, # label of module
                              yaxis_var, # name of variable containing values displayed on the y-axis
                              yaxis_var_choices = yaxis_var, # list of analysis variables to plot
                              trt_group = "ARM",
+                             color_manual = NULL,
+                             shape_manual = NULL,
                              facet = FALSE,
                              reg_line = FALSE,
                              rotate_xlab = FALSE,
@@ -131,7 +137,7 @@ ui_g_scatterplot <- function(id, ...) {
     output = uiOutput(ns("plot_ui")),
     encoding =  div(
       tags$label("Encodings", class="text-primary"),
-      helpText("Dataset:", tags$code(a$dataname)),
+      helpText("Analysis data:", tags$code(a$dataname)),
       optionalSelectInput(ns("param"), "Select a Biomarker", a$param_choices, a$param, multiple = FALSE),
       optionalSelectInput(ns("xaxis_var"), "Select an X-Axis Variable", a$xaxis_var_choices, a$xaxis_var, multiple = FALSE),
       optionalSelectInput(ns("yaxis_var"), "Select a Y-Axis Variable", a$yaxis_var_choices, a$yaxis_var, multiple = FALSE),
@@ -228,19 +234,19 @@ srv_g_scatterplot <- function(input, output, session, datasets, dataname, param_
     ymax_scale <- input$yrange_scale[2]
     rotate_xlab <- input$rotate_xlab
 
-    validate(need(!is.null(ALB) && is.data.frame(ALB), "no data left"))
-    validate(need(nrow(ALB) > 0 , "no observations left"))
+    validate(need(!is.null(ALB) && is.data.frame(ALB), "No data left"))
+    validate(need(nrow(ALB) > 0 , "No observations left"))
     validate(need(param_var %in% names(ALB),
                   paste("Biomarker parameter variable", param_var, " is not available in data", dataname)))
     validate(need(param %in% unique(ALB[[param_var]]),
                   paste("Biomarker", param, " is not available in data", dataname)))
     validate(need(trt_group %in% names(ALB),
-                  paste("variable", trt_group, " is not available in data", dataname)))
+                  paste("Variable", trt_group, " is not available in data", dataname)))
     validate(need(xaxis_var %in% names(ALB),
-                  paste("variable", xaxis_var, " is not available in data", dataname)))
-        validate(need(yaxis_var %in% names(ALB),
-                  paste("variable", yaxis_var, " is not available in data", dataname)))
-        
+                  paste("Variable", xaxis_var, " is not available in data", dataname)))
+    validate(need(yaxis_var %in% names(ALB),
+                  paste("Variable", yaxis_var, " is not available in data", dataname)))
+
     p <- goshawk:::g_scatterplot(
       data = ALB,
       param_var = param_var,
@@ -248,7 +254,8 @@ srv_g_scatterplot <- function(input, output, session, datasets, dataname, param_
       xaxis_var = xaxis_var,
       yaxis_var = yaxis_var,
       trt_group = trt_group,
-      color_manual = NULL,
+      color_manual = color_manual,
+      shape_manual = shape_manual,
       facet = facet,
       reg_line = reg_line,
       xmin_scale = xmin_scale,

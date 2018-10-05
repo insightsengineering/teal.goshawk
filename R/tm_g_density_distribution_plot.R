@@ -8,11 +8,12 @@
 #'   Note that the data are expected to be in vertical form with the
 #'   \code{PARAMCD} variable filtering to one observation per patient per visit.
 #' @param param_var name of variable containing biomarker codes e.g. PARAMCD.
-#' @param param_choices list of biomarkers of interest.
+#' @param param_choices list of biomarkers of interest. assigned in app.R.
 #' @param param biomarker selected.
 #' @param xaxis_var name of variable containing biomarker results displayed on X-axis e.g. BASE.
 #' @param xaxis_var_choices list of variables containing biomarker results choices.
 #' @param trt_group name of variable representing treatment group e.g. ARM.
+#' @param color_manual vector of treatment colors. assigned values in app.R otherwise uses default colors.
 #' @param loq_flag_var name of variable containing LOQ flag used in the t_summary table function e.g. LBLOQFL.
 #' @param plot_width controls plot width.
 #' @param plot_height controls plot height.
@@ -58,6 +59,7 @@
 #'        xaxis_var = "AVAL",
 #'        xaxis_var_choices = c("AVAL", "BASE", "CHG", "PCHG", "BASE2", "CHG2", "PCHG2", "AVALL2", "BASEL2", "BASE2L2"),
 #'        trt_group = "ARM",
+#'        color_manual = color_manual,
 #'        loq_flag_var = 'LOQFL',
 #'        plot_width = c(800, 200, 2000),
 #'        plot_height = c(500, 200, 2000),
@@ -79,6 +81,7 @@ tm_g_density_distribution_plot <- function(label,
                                            xaxis_var,
                                            xaxis_var_choices = xaxis_var,
                                            trt_group = "ARM",
+                                           color_manual = NULL,
                                            loq_flag_var = 'LOQFL',
                                            plot_width = c(800, 200, 2000),
                                            plot_height = c(500, 200, 2000),
@@ -124,7 +127,7 @@ ui_g_density_distribution_plot <- function(id, ...) {
     output = div(tagList(uiOutput(ns("plot_ui")), uiOutput(ns("table_ui")))),
     encoding =  div(
       tags$label("Encodings", class="text-primary"),
-      helpText("Dataset:", tags$code(a$dataname)),
+      helpText("Analysis data:", tags$code(a$dataname)),
       optionalSelectInput(ns("param"), "Select a Biomarker", a$param_choices, a$param, multiple = FALSE),
       optionalSelectInput(ns("xaxis_var"), "Select an X-Axis Variable", a$xaxis_var_choices, a$xaxis_var, multiple = FALSE),
 
@@ -202,6 +205,7 @@ srv_g_density_distribution_plot <- function(input, output, session, datasets, da
                   paste("Biomarker parameter variable", param_var, " is not available in data", dataname)))
     validate(need(param %in% unique(ALB[[param_var]]),
                   paste("Biomarker", param, " is not available in data", dataname)))
+    validate(need(xaxis_var, "no valid x variable selected"))
     validate(need(trt_group %in% names(ALB),
                   paste("variable", trt_group, " is not available in data", dataname)))
     validate(need(xaxis_var %in% names(ALB),
@@ -213,7 +217,7 @@ srv_g_density_distribution_plot <- function(input, output, session, datasets, da
       param = param,
       xaxis_var = xaxis_var,
       trt_group = trt_group,
-      color_manual = NULL,
+      color_manual = color_manual,
       xmin_scale = xmin_scale,
       xmax_scale = xmax_scale,
       font_size = font_size,
