@@ -1,18 +1,3 @@
-# #.libPaths(c(file.path(getwd()), "~/goshawk", .libPaths()))
-# #goshawk:::g_lineplot
-# # required packages
-# library(DescTools) # for %% operators e.g. %like any%
-# library(dplyr)
-# library(ggplot2)
-# library(goshawk)
-# library(grid)
-# library(gridExtra)
-# library(stringr)
-# library(teal)
-# library(teal.goshawk)
-# 
-# #`%||%` <- function(lhs, rhs) if (is.null(lhs)) rhs else lhs
-
 ################################################################################
 # BEGIN: SPA Input Required
 ################################################################################
@@ -357,7 +342,8 @@ x <- teal::init(
         visit_var = "AVISITCD",
         visit_var_choices = "AVISITCD",
         trt_group = "ARM",
-        color_manual
+        color_manual = color_manual,
+        shape_manual = shape_manual
       ),
       tm_g_density_distribution_plot(
         label = "Density Distribution Plot",
