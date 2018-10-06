@@ -66,6 +66,8 @@ output to put the output into context. For example the
 \item{post_output}{optional, \code{shiny.tag} with text placed before the
 output to put the output into context. For example the
 \code{\link[shiny]{helpText}} elements are useful.}
+
+\item{code_data_processing}{TODO}
 }
 \description{
 This module displays a scatter plot.

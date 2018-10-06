@@ -21,6 +21,7 @@
 #' @param line_size plot line thickness.
 #' @param hline y-axis value to position of horizontal line.
 #' @param rotate_xlab 45 degree rotation of x-axis values.
+#' @param code_data_processing TODO
 #'
 #' @inheritParams teal::standard_layout
 #' 
@@ -107,6 +108,7 @@ tm_g_density_distribution_plot <- function(label,
                        param = param,
                        xaxis_var = xaxis_var,
                        trt_group = trt_group,
+                       color_manual = color_manual,
                        code_data_processing = code_data_processing
                        ),
     ui = ui_g_density_distribution_plot,
@@ -150,7 +152,7 @@ ui_g_density_distribution_plot <- function(id, ...) {
 
 }
 
-srv_g_density_distribution_plot <- function(input, output, session, datasets, dataname, param_var, param, xaxis_var, trt_group, code_data_processing) {
+srv_g_density_distribution_plot <- function(input, output, session, datasets, dataname, param_var, param, xaxis_var, trt_group, color_manual, code_data_processing) {
 
   ns <- session$ns # must add for the dynamic ui.range_scale field
   

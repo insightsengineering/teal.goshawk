@@ -13,6 +13,8 @@
 #' @param value_var default columm in \code{dataname} to plot.
 #' @param value_var_choices choice of which columns in \code{dataname} to plot
 #' @param trt_group treatment variable
+#' @param color_manual vector of treatment colors. assigned values in app.R otherwise uses default colors.
+#' @param shape_manual vector of LOQ shapes. assigned values in app.R otherwise uses default shapes.
 #' @param trt_group_choices choices for \code{trt_group}
 #' @param visit_var default columm in \code{dataname} to use for visit.
 #' @param visit_var_choices choice of which columns in \code{dataname} to use
@@ -90,6 +92,7 @@ tm_g_boxplot <- function(label,
                          plot_height = c(600, 200, 2000),
                          trt_group = "ARM",
                          color_manual = NULL,
+                         shape_manual = NULL,
                          trt_group_choices = NULL,
                          visit_var = "AVISIT",
                          visit_var_choices = NULL,
@@ -123,6 +126,8 @@ tm_g_boxplot <- function(label,
                        param_var = param_var,
                        value_var = value_var,
                        trt_group = trt_group,
+                       color_manual = color_manual,
+                       shape_manual = shape_manual,
                        trt_group_choices = trt_group_choices,
                        loq_flag_var = loq_flag_var,
                        code_data_processing = code_data_processing
@@ -236,7 +241,7 @@ ui_g_boxplot <- function(id, ...) {
 srv_g_boxplot <- function(input, output, session, datasets
                           , facet, facet_choices
                           , visit_var, visit_var_choices
-                          , param_var, value_var, trt_group, trt_group_choices
+                          , param_var, value_var, trt_group, color_manual, shape_manual, trt_group_choices
                           , loq_flag_var
                           , dataname, code_data_processing) {
   
@@ -371,7 +376,7 @@ srv_g_boxplot <- function(input, output, session, datasets
         ymax_scale = ymax_scale,
         loq_flag = loq_flag_var, 
         color_manual = color_manual,
-        shape_manual = c('N' = 1, 'Y' = 2, 'NA' = 0),
+        shape_manual = shape_manual,
         alpha = alpha,
         dot_size = dot_size,
         font_size = font_size,

@@ -40,10 +40,10 @@ protocol_url <- c('https://idmdirect.roche.com/rnc-webservices/document/0900323e
 ATYPE <- "Interim Analysis"
 
 # assign treatment colors to match those used in SPA study output
-color_manual = c('Placebo' = "#000000", '150mg QD' = "#3498DB", '200mg BID' = "#E74C3C")
+color_manual <-  c('Placebo' = "#000000", '150mg QD' = "#3498DB", '200mg BID' = "#E74C3C")
 
 # assign LOQ flag symbols: circles and triangles respectively
-shape_manual = c('N' = 1, 'Y' = 2, 'NA' = 0)
+shape_manual <-  c('N' = 1, 'Y' = 2, 'NA' = 0)
 
 # list of biomarkers of interest. see ALB1 assignment below
 param_choices <- c("ACIGG", "ACIGM", "ADIGG", "ANAPC", "ANAPDS", "ANAPH", "ANAPM", "ANAPND", "ANAPP", "ANAPR", "ANAPS", "ANAPSP", "ASSBABC", "AVCT_JMT",
@@ -356,7 +356,8 @@ x <- teal::init(
         loq_flag_var = "LOQFL",
         visit_var = "AVISITCD",
         visit_var_choices = "AVISITCD",
-        trt_group = "ARM"
+        trt_group = "ARM",
+        color_manual
       ),
       tm_g_density_distribution_plot(
         label = "Density Distribution Plot",

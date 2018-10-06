@@ -7,7 +7,7 @@
 tm_g_boxplot(label, dataname, param_var, param, param_choices = param,
   value_var = "AVAL", value_var_choices = c("AVAL", "CHG"),
   plot_height = c(600, 200, 2000), trt_group = "ARM", color_manual = NULL,
-  trt_group_choices = NULL, visit_var = "AVISIT",
+  shape_manual = NULL, trt_group_choices = NULL, visit_var = "AVISIT",
   visit_var_choices = NULL, facet_choices = FALSE, facet = TRUE,
   loq_flag_var = NULL, pre_output = NULL, post_output = NULL,
   code_data_processing = NULL)
@@ -33,6 +33,10 @@ Note that the data are expected to be in vertical form with the
 \item{plot_height}{numeric vectors to define the plot height.}
 
 \item{trt_group}{treatment variable}
+
+\item{color_manual}{vector of treatment colors. assigned values in app.R otherwise uses default colors.}
+
+\item{shape_manual}{vector of LOQ shapes. assigned values in app.R otherwise uses default shapes.}
 
 \item{trt_group_choices}{choices for \code{trt_group}}
 

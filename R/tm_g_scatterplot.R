@@ -26,6 +26,7 @@
 #' @param font_size control font size for title, x-axis, y-axis and legend font.
 #' @param dot_size scatter dot size.
 #' @param reg_text_size regression line annotation font size.
+#' @param code_data_processing TODO
 #'
 #' @inheritParams teal::standard_layout
 #'
@@ -120,6 +121,8 @@ tm_g_scatterplot <- function(label, # label of module
                        xaxis_var = xaxis_var,
                        yaxis_var = yaxis_var,
                        trt_group = trt_group,
+                       color_manual = color_manual,
+                       shape_manual = shape_manual,
                        code_data_processing = code_data_processing
                        ),
     ui = ui_g_scatterplot,
@@ -164,7 +167,10 @@ ui_g_scatterplot <- function(id, ...) {
 
 }
 
-srv_g_scatterplot <- function(input, output, session, datasets, dataname, param_var, param, xaxis_var, yaxis_var, trt_group, code_data_processing) {
+srv_g_scatterplot <- function(input, output, session, datasets, dataname, 
+                              param_var, param, xaxis_var, yaxis_var, 
+                              trt_group, color_manual, shape_manual,
+                              code_data_processing) {
 
   ns <- session$ns # must add for the dynamic ui.range_scale field
   
