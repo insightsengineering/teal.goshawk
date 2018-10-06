@@ -1,17 +1,17 @@
-#.libPaths(c(file.path(getwd()), "~/goshawk", .libPaths()))
-#goshawk:::g_lineplot
-# required packages
-library(DescTools) # for %% operators e.g. %like any%
-library(dplyr)
-library(ggplot2)
-library(goshawk)
-library(grid)
-library(gridExtra)
-library(stringr)
-library(teal)
-library(teal.goshawk)
-
-#`%||%` <- function(lhs, rhs) if (is.null(lhs)) rhs else lhs
+# #.libPaths(c(file.path(getwd()), "~/goshawk", .libPaths()))
+# #goshawk:::g_lineplot
+# # required packages
+# library(DescTools) # for %% operators e.g. %like any%
+# library(dplyr)
+# library(ggplot2)
+# library(goshawk)
+# library(grid)
+# library(gridExtra)
+# library(stringr)
+# library(teal)
+# library(teal.goshawk)
+# 
+# #`%||%` <- function(lhs, rhs) if (is.null(lhs)) rhs else lhs
 
 ################################################################################
 # BEGIN: SPA Input Required
@@ -64,6 +64,53 @@ exclude_chg <- c("DLCT_JCH", "DLCT_MZB", "DLCT_TXN", "AVCT_JMT")
 ################################################################################
 # END: SPA Input Required
 ################################################################################
+
+
+# pathing estabblished in install.R
+#.libPaths(c(normalizePath("./libs"), .libPaths()))
+
+# # for testing
+# check_libs <- .libPaths(c(normalizePath("./libs"), .libPaths()))
+# check_libs
+
+options(teal_logging = FALSE)
+
+## Log user activity
+
+dir.exists("logs") || dir.create("logs")
+file.exists("logs/use.txt") || file.create("logs/use.txt")
+cat(paste(Sys.info()['user'], Sys.time(), "\n"), file="logs/use.txt", append=TRUE)
+
+if (file.access(access_path, 4) != 0) {
+  ui <- function() {
+    fixedPage(
+      div(
+        class="jumbotron",
+        tags$h1("No Data Access"),
+        tags$p("It appears that you do not have read access to the ", MOLECULE, INDICATION, STUDY, " data. 
+                  Please contact the Lead Study SPA to request access.")          
+      )
+    )
+  }
+  server <- function(input, output) {}
+  
+  shinyApp(ui, server)
+  
+} else {
+  
+  # required packages
+  library(DescTools) # for %% operators e.g. %like any%
+  library(dplyr) # for all goshawk
+  library(ggplot2) # for all goshawk
+  library(goshawk) # application functions
+  library(grid) # for line plot
+  library(gridExtra) # for line plot
+  library(methods) # for box plot
+  library(stringr) # for line plot 
+  library(teal) # application framework
+  library(teal.goshawk) # application modules
+  
+
 ################################################################################
 # BEGIN: Generic Data Post Processing
 ################################################################################
@@ -112,7 +159,7 @@ ALB_SUPED1 <- ALB_SUBSET %>%
   mutate(CHG = ifelse(AVISIT == "BASELINE" & is.na(CHG), 0, CHG)) %>%
   mutate(PCHG = ifelse(AVISIT == "BASELINE" & is.na(PCHG), 0, PCHG)) %>%
   
-  mutate(TRTORD = ifelse(grepl("C", ARMCD), 3, ifelse(grepl("B", ARMCD), 2, ifelse(grepl("A", ARMCD), 1, NA))))
+  mutate(TRTORD = ifelse(grepl("C", ARMCD), 1, ifelse(grepl("B", ARMCD), 2, ifelse(grepl("A", ARMCD), 3, NA))))
 
 # merge minimum AVAL value onto the ALB data to calculate the log2 variables. preserve the variable order
 ALB_SUPED2 <- merge(PARAM_MINS, ALB_SUPED1, by="PARAMCD", all=TRUE)[, union(names(ALB_SUPED1), names(PARAM_MINS))] %>%
@@ -330,46 +377,125 @@ x <- teal::init(
       tm_g_lineplot(
         label = "Line Plot",
         dataname = "ALB",
-        xvar = "AVISIT",
-        yvar = "AVAL",
-        yvar_choices = c("AVAL","CHG"),
         param_var = "PARAMCD",
-        param = "CRP",
         param_choices = param_choices,
-        trt_group = "ARM"
+        param = param_choices[1],
+        xvar = "AVISITCD",
+        yvar = "AVAL",
+        yvar_choices = c("AVAL", "BASE", "CHG", "PCHG", "BASE2", "CHG2", "PCHG2", "AVALL2", "BASEL2", "BASE2L2"),
+        trt_group = "ARM",
+        man_color = color_manual
       ),
+      
       tm_g_scatterplot(
         label = "Scatter Plot",
         dataname = "ALB",
         param_var = "PARAMCD",
         param_choices = param_choices,
-        param = "CRP",
+        param = param_choices[1],
         xaxis_var = "BASE",
         xaxis_var_choices = c("AVAL", "BASE", "CHG", "PCHG", "BASE2", "CHG2", "PCHG2", "AVALL2", "BASEL2", "BASE2L2"),
         yaxis_var = "AVAL",
         yaxis_var_choices = c("AVAL", "BASE", "CHG", "PCHG", "BASE2", "CHG2", "PCHG2", "AVALL2", "BASEL2", "BASE2L2"),
         trt_group = "ARM",
+        color_manual = color_manual,
+        shape_manual = shape_manual,
         plot_width = c(800, 200, 2000),
-        plot_height = c(800, 200, 2000),
+        plot_height = c(500, 200, 2000),
         facet = FALSE,
         reg_line = FALSE,
         font_size = c(12, 8, 20),
         dot_size = c(1, 1, 12),
         reg_text_size = c(3, 3, 10)
       ),
-      module(
+
+      tm_g_spaghettiplot(
         label = "Spaghetti Plot",
-        server = function(input, output, session, datasets) {},
-        ui = function(id) div(p("Spaghetti Plots Here")),
-        filters = "ASL"
+        dataname = "ALB",
+        idvar = "USUBJID",
+        param_var = "PARAMCD",
+        param_choices = param_choices,
+        param = param_choices[1],
+        xvar = "AVISITCD",
+        yvar = "AVAL",
+        yvar_choices = c("AVAL","CHG", "PCHG", "AVALL2"),
+        trt_group = "ARM",
+        man_color = color_manual
       )
     )
   ),
-  header = tags$h1("I2ON Biomarker Visualizations"),
-  footer = tags$p("Packages: teal.goshawk, goshawk", 
+  
+  header = tags$h1("I2ON Biomarker Visualizations: ", trimws(MOLECULE), "-", trimws(INDICATION), "-", trimws(STUDY)),
+  footer = tags$p(actionLink("showAboutModal", "About,"),
+                  tags$a("Issues", href="https://github.roche.com/STATSSPA/statsspa_384/issues", target="blank"),
+                  p("Packages: teal.goshawk, goshawk"),
                   p("Authors: Wenyi Liu, Nick Paszty, Jeffrey Tomlinson, Bali Toth"),
-                  p("Copyright 2018"))
+                  p("Acknowledgments: Doug Kelkhoff, Adrian Waddell, Heng Wang"),
+                  p("Copyright 2018"),
+                  class="text-muted")
+  
+)
 
-  )
+# Add context sensitive help code
+body(x$server)[[length(body(x$server))+1]] <- quote(
+  
+  observeEvent(input$showAnlVarLegendModal, {
+    showModal(modalDialog(
+      title = "Pull Down Menu Variables",
+      tags$p(
+        "These variables will appear in the Visualizations 'Analysis Variable' pull down menu. This legend
+        provides the variable labels to help clarify the short analysis variable names."
+      ),
+      easyClose = TRUE
+    ))
+  })
+)
+
+# Add context sensitive help code
+body(x$server)[[length(body(x$server))+1]] <- quote(
+
+  observeEvent(input$showProtocolModal, {
+    showModal(modalDialog(
+      title = "Study Protocol",
+      tags$p(
+        "The study protocol is stored in the IDM Direct system ",
+        a("here.", href=paste0(protocol_url), target="blank")
+      ),
+      easyClose = TRUE
+    ))
+  })
+)
+
+body(x$server)[[length(body(x$server))+1]] <- quote(
+  
+  observeEvent(input$showAboutModal, {
+    showModal(modalDialog(
+      title = "About this shiny app: I2ON Biomarker Visualizations",
+      tags$p(
+        "This shiny app was brought to you by the SPA Data Analytics Group in partnership with Biostatistics and with support from SPA.
+         For more additional information please contact:"
+      ),
+      tags$ul(
+        tags$li(tags$a(href="https://roche.jiveon.com/people/paszty.nicholas@gene.com", "Nick Paszty (SPA-DA)", target = "blank")),
+        tags$li(tags$a(href="https://roche.jiveon.com/people/toth.balazs@gene.com", "Bali Toth (Biostatistics)", target = "blank")),
+        tags$li(tags$a(href="https://roche.jiveon.com/people/borkowsky.jennifer@gene.com", "Jennifer Borkowsky (SPA-DA)", target = "blank"))
+      ),
+      tags$p(
+        "Please click on the 'Manual' link below for helpful usage information on the user interface and how it interacts with the underlying data.
+         Note: While the information in the Manual is relevant to this app, it was developed specifically for the atezo app. ",
+        tags$a(href="https://pages.github.roche.com/waddella/atezo-pooled-analysis-shinyapp/", "Manual.", target="blank")
+      ),
+      tags$p(
+        paste0("The app uses R version: ", R.version$version.string)
+      ),
+      tags$p(
+        paste0("The app uses teal version: ", utils::packageDescription(pkg = "teal", field="Version"))
+      ),
+      easyClose = TRUE
+    ))
+  })
+)
 
 shinyApp(x$ui, x$server)
+
+}
