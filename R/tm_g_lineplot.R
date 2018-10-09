@@ -10,6 +10,7 @@
 #' @param yvar single name of variable in analysis data that is used as summary variable in the respective gshawk function.
 #' @param yvar_choices vector with variable names that can be used as yvar.
 #' @param param_var single name of variable in analysis data that includes parameter names.
+#' @param param_var_label single name of variable in analysis data that includes parameter lables.
 #' @param param parameter name
 #' @param param_choices vector of parameter names that can be used in param.
 #' @param trt_group single name of treatment arm variable.
@@ -79,7 +80,7 @@ tm_g_lineplot <- function(label,
                           xvar, yvar,
                           xvar_choices = xvar, yvar_choices = yvar,
                           xvar_level = NULL,
-                          param_var,
+                          param_var, param_var_label = 'PARAM',
                           param, param_choices = param,
                           trt_group,
                           trt_group_level = NULL,
@@ -96,7 +97,7 @@ tm_g_lineplot <- function(label,
     label = label,
     server = srv_lineplot,
     server_args = list(dataname = dataname, param_var = param_var, trt_group = trt_group, man_color = man_color,
-                       xvar_level = xvar_level, trt_group_level = trt_group_level),
+                       xvar_level = xvar_level, trt_group_level = trt_group_level, param_var_label = param_var_label),
     ui = ui_lineplot,
     ui_args = args,
     filters = dataname
@@ -143,7 +144,7 @@ ui_lineplot <- function(id, ...) {
   
 }
 
-srv_lineplot <- function(input, output, session, datasets, dataname, param_var, trt_group, man_color, xvar_level, trt_group_level) {
+srv_lineplot <- function(input, output, session, datasets, dataname, param_var, trt_group, man_color, xvar_level, trt_group_level, param_var_label) {
   
   ns <- session$ns
   
@@ -223,6 +224,7 @@ srv_lineplot <- function(input, output, session, datasets, dataname, param_var, 
       "g_lineplot",
       data = bquote(.(as.name(data_name))),
       biomarker_var = param_var,
+      biomarker_var_label = param_var_label,
       biomarker = param,
       value_var = yvar,
       ymin = ymin_scale,

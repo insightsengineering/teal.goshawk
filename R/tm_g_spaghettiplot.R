@@ -11,6 +11,7 @@
 #' @param yvar single name of variable in analysis data that is used as summary variable in the respective gshawk function.
 #' @param yvar_choices vector with variable names that can be used as yvar.
 #' @param param_var single name of variable in analysis data that includes parameter names.
+#' @param param_var_label single name of variable in analysis data that includes parameter lables.
 #' @param param parameter name
 #' @param param_choices vector of parameter names that can be used in param.
 #' @param trt_group single name of treatment arm variable.
@@ -35,7 +36,7 @@
 #'
 #' @examples
 #'
-#' # EXAMPLE 2
+#' # EXAMPLE
 #' 
 #' library(random.cdisc.data)
 #' 
@@ -84,7 +85,7 @@ tm_g_spaghettiplot <- function(label,
                                xvar, yvar,
                                xvar_choices = xvar, yvar_choices = yvar,
                                xvar_level = NULL,
-                               param_var,
+                               param_var, param_var_label = 'PARAM',
                                param, param_choices = param,
                                trt_group,
                                trt_group_level = NULL,
@@ -101,7 +102,8 @@ tm_g_spaghettiplot <- function(label,
     label = label,
     server = srv_spaghettiplot,
     server_args = list(dataname = dataname, idvar = idvar, param_var = param_var, trt_group = trt_group, 
-                       xvar_level = xvar_level, trt_group_level = trt_group_level, man_color = man_color),
+                       xvar_level = xvar_level, trt_group_level = trt_group_level, man_color = man_color,
+                       param_var_label = param_var_label),
     ui = ui_spaghettiplot,
     ui_args = args,
     filters = dataname
@@ -148,7 +150,7 @@ ui_spaghettiplot <- function(id, ...) {
   
 }
 
-srv_spaghettiplot <- function(input, output, session, datasets, dataname, idvar, param_var, trt_group, man_color, xvar_level, trt_group_level) {
+srv_spaghettiplot <- function(input, output, session, datasets, dataname, idvar, param_var, trt_group, man_color, xvar_level, trt_group_level, param_var_label) {
   
   ns <- session$ns
   
@@ -219,6 +221,7 @@ srv_spaghettiplot <- function(input, output, session, datasets, dataname, idvar,
       data = bquote(.(as.name(data_name))),
       subj_id = idvar,
       biomarker_var = param_var,
+      biomarker_var_label = param_var_label,
       biomarker = param,
       value_var = yvar,
       trt_group = trt_group,
