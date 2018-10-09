@@ -126,6 +126,7 @@ PARAM_MINS <- ALB_SUBSET %>%
 # post process the data to create several new variables and adjust existing record specific valules per specification
 # - create a visit code variable - week records coded to "W NN"
 # - adjust existing BASELINE record values where values are missing: According to SPA this is a STREAM artifact
+# - add 100 to both percent change variables to reflect change of baseline/screening rather than change from baseline/screening
 ALB_SUPED1 <- ALB_SUBSET %>% 
   mutate(AVISITCD = case_when(
     AVISIT == 'SCREENING' ~ 'SCR',
@@ -143,6 +144,9 @@ ALB_SUPED1 <- ALB_SUBSET %>%
   mutate(BASE = ifelse(AVISIT == "BASELINE" & is.na(BASE), AVAL, BASE)) %>%
   mutate(CHG = ifelse(AVISIT == "BASELINE" & is.na(CHG), 0, CHG)) %>%
   mutate(PCHG = ifelse(AVISIT == "BASELINE" & is.na(PCHG), 0, PCHG)) %>%
+  
+  mutate(PCHG = PCHG + 100) %>%
+  mutate(PCHG2 = PCHG2 + 100) %>%
   
   mutate(TRTORD = ifelse(grepl("C", ARMCD), 1, ifelse(grepl("B", ARMCD), 2, ifelse(grepl("A", ARMCD), 3, NA))))
 
@@ -281,11 +285,12 @@ x <- teal::init(
     
     module(
       "Source Data",
-      server = function(input, output, session, datasets) {},
+      server = function(input, output, session, datasets, protocol_url) {},
       ui = function(id) div(
         h5(strong("Molecule:"), MOLECULE),
         h5(strong("Indication:"), INDICATION),
-        h5(strong("Study:"), STUDY, actionLink("showProtocolModal", tags$img(height=15, width=15, src="img/qmark.png"))),
+        h5(strong("Study:"), STUDY),
+        # h5(strong("Study:"), STUDY, actionLink("showProtocolModal", tags$img(height=15, width=15, src="img/qmark.png"))),
         h5(strong("Analysis Type:"), ATYPE),
         tags$ul(
           h6(
