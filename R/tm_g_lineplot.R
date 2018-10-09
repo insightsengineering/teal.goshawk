@@ -19,6 +19,7 @@
 #' @param hline numeric value to add horizontal line to plot
 #' @param rotate_xlab boolean value indicating whether to rotate x-axis labels
 #' @param plot_height numeric vectors to define the plot height.
+#' @param font_size control font size for title, x-axis, y-axis and legend font.
 #' 
 #' 
 #' @import goshawk
@@ -33,85 +34,7 @@
 #'
 #' @examples
 #' 
-#' # EXAMPLE 1
-#' 
-#' # Example using analysis dataset for example ASL or ADSL,
-#' library(goshawk)
-#' library(DescTools)
-#' library(teal)
-#' 
-#' # ALB points to biomarker data stored in a typical LB structure. for example ALB or ADLB.
-#' 
-#' # for development team testing
-#' ASL_path <- "~/btk/lupus/dataadam/asl.sas7bdat"
-#' ALB_path <- "~/btk/lupus/dataadam/alb3arm.sas7bdat"
-#' 
-#' # list of biomarkers of interest. see ALB2 assignment below
-#' param_choices <- c("CRP","ADIGG","IG","IGA","IGE","IGG","IGM","TEST")
-#' 
-#' ASL0 <- read_bce(ASL_path)
-#' ASL <- subset(ASL0, subset = ITTFL == 'Y' & IAFL == 'Y')
-#' 
-#' ALB0 <- read_bce(ALB_path)
-#' 
-#' # post process the data to subset records per specification
-#' ALB_SUBSET <- subset(ALB0,
-#'                      subset = PARAMCD %in% c(param_choices) & ITTFL == 'Y' & IAFL == 'Y' & ANLFL == 'Y' & AVISIT %like any% c('BASE%','%WEEK%'),
-#'                      select = c('STUDYID', 'USUBJID', 'ITTFL', 'ANLFL', 'ARM', 'AVISIT', 'AVISITN', 'PARAMCD', 'AVAL', 'AVALU', 'BASE', 'CHG', 'PCHG',
-#'                                 'LBSTRESC', 'LBSTRESN'))
-#' 
-#' # calculate the minimum AVAL for each PARAMCD
-#' PARAM_MINS <- ALB_SUBSET %>%
-#'   select(USUBJID, PARAMCD, AVAL) %>%
-#'   filter(PARAMCD %in% param_choices) %>%
-#'   group_by(PARAMCD) %>%
-#'   summarise(AVAL_MIN=min(AVAL, na.rm=TRUE))
-#' 
-#' # post process the data to create several new variables and adjust existing record specific valules per specification
-#' # - create a visit code variable - baseline record code is "BB" and week records coded to "W NN"
-#' # - adjust existing BASELINE record values where values are missing: According to SPA this is a STREAM artifact
-#' ALB_SUPED1 <- ALB_SUBSET %>% mutate(AVISITCD = paste0(substr(AVISIT,start=1, stop=1),
-#'                                                       substr(AVISIT, start=regexpr(" ", AVISIT), stop=regexpr(" ", AVISIT)+2))) %>%
-#'   mutate(AVISITCDN =  ifelse(AVISITCD == "BB", 0, substr(AVISITCD,start=2, stop=4))) %>%
-#'   mutate(BASE = ifelse(AVISIT == "BASELINE" & is.na(BASE), AVAL, BASE)) %>%
-#'   mutate(CHG = ifelse(AVISIT == "BASELINE" & is.na(CHG), 0, CHG)) %>%
-#'   mutate(PCHG = ifelse(AVISIT == "BASELINE" & is.na(PCHG), 0, PCHG))
-#' # may need to add similar code for BASE2 related variables
-#' 
-#' 
-#' # merge minimum AVAL value onto the ALB data to calculate the log2 variables and preserve the variable order
-#' ALB_SUPED2 <- merge(ALB_SUPED1, PARAM_MINS, by="PARAMCD")[, union(names(ALB_SUPED1), names(PARAM_MINS))] %>%
-#'   mutate(AVALL2 = ifelse(AVAL == 0, log2(AVAL_MIN/2), log2(AVAL))) %>%
-#'   mutate(BASEL2 = ifelse(BASE == 0, log2(AVAL_MIN/2), log2(BASE))) #%>% need SPA to finish adding BASE2 to ALB
-#' #mutate(BASE2L2 = ifelse(BASE2 == 0, log2(AVAL_MIN/2), log2(AVAL)))
-#' 
-#' # for proper chronological ordering of visits in visualizations
-#' ALB_SUPED2$AVISITCDN <- as.numeric(ALB_SUPED2$AVISITCDN) # coerce character into numeric
-#' ALB <- ALB_SUPED2 %>% mutate(AVISITCD = factor(AVISITCD) %>% reorder(AVISITCDN))
-#' 
-#' # to test loq_flag
-#' ALB <- ALB %>% mutate(LOQFL = ifelse(PARAMCD == "CRP" & AVAL < .5, "Y", "N"))
-#' 
-#' x <- teal::init(
-#'   data = list(ASL = ASL, ALB = ALB),
-#'   modules = root_modules(
-#'     tm_g_lineplot(
-#'       label = "Line Plot",
-#'       dataname = "ALB",
-#'       xvar = "AVISITCD",
-#'       yvar = "AVAL",
-#'       yvar_choices = c("AVAL","CHG","PCGH"),
-#'       param_var = "PARAMCD",
-#'       param = "CRP",
-#'       param_choices = param_choices,
-#'       trt_group = "ARM"
-#'     )
-#'   )
-#' )
-#' 
-#' shinyApp(x$ui, x$server)
-#' 
-#' # EXAMPLE 2
+#' # EXAMPLE
 #' 
 #' library(random.cdisc.data)
 #' 
@@ -164,7 +87,8 @@ tm_g_lineplot <- function(label,
                           hline = NULL,
                           man_color = NULL,
                           rotate_xlab = FALSE,
-                          plot_height = c(600, 200, 2000)) {
+                          plot_height = c(600, 200, 2000),
+                          font_size = c(12, 8, 20)) {
   
   args <- as.list(environment())
   
@@ -211,7 +135,8 @@ ui_lineplot <- function(id, ...) {
       checkboxInput(ns("rotate_xlab"), "Rotate X-axis Label", a$rotate_xlab),
       numericInput(ns("hline"), "Add a horizontal line:", a$hline),
       uiOutput(ns("yaxis_scale")),
-      optionalSliderInputValMinMax(ns("plot_height"), "plot height", a$plot_height, ticks = FALSE)
+      optionalSliderInputValMinMax(ns("plot_height"), "plot height", a$plot_height, ticks = FALSE),
+      optionalSliderInputValMinMax(ns("font_size"), "Font Size", a$font_size, ticks = FALSE)
     ),
     forms = actionButton(ns("show_rcode"), "Show R Code", width = "100%")
   )
@@ -271,6 +196,7 @@ srv_lineplot <- function(input, output, session, datasets, dataname, param_var, 
     median <- ifelse(input$stat=='median',TRUE, FALSE)
     rotate_xlab <- input$rotate_xlab
     hline <- as.numeric(input$hline)
+    font_size <- input$font_size
     
     chunks$analysis <<- "# Not Calculated"
     
@@ -308,7 +234,8 @@ srv_lineplot <- function(input, output, session, datasets, dataname, param_var, 
       color_manual = man_color,
       median = median,
       hline = hline,
-      rotate_xlab = rotate_xlab
+      rotate_xlab = rotate_xlab,
+      font_size = font_size
     )
 
     p <- try(eval(chunks$analysis))
