@@ -47,7 +47,7 @@
 #' 
 #' # need a test data set created using random.cdisc.data.
 #' # example call uses expects ALB structure 
-#'
+#' param_choices <- c("CRP", "ADIGG", "CCL20")
 #' x <- teal::init(
 #'   data = list(ASL = ASL, ALB = ALB),
 #'   modules = root_modules(
@@ -152,7 +152,8 @@ ui_g_density_distribution_plot <- function(id, ...) {
 
 }
 
-srv_g_density_distribution_plot <- function(input, output, session, datasets, dataname, param_var, param, xaxis_var, trt_group, color_manual, code_data_processing) {
+srv_g_density_distribution_plot <- function(input, output, session, datasets, dataname, param_var, param, 
+                                            xaxis_var, trt_group, color_manual, code_data_processing) {
 
   ns <- session$ns # must add for the dynamic ui.range_scale field
   
@@ -166,32 +167,48 @@ srv_g_density_distribution_plot <- function(input, output, session, datasets, da
     plotOutput(session$ns("density_distribution_plot"), width = plot_width, height = plot_height)
     })
   
+  # filter data by param and the xmin and xmax values
+  filter_ALB <- reactive({
+
+    param <- input$param
+    
+    xmin_scale <- -Inf
+    xmax_scale <- Inf
+    
+    if (length(input$xrange_scale)){
+        xmin_scale <- input$xrange_scale[1]
+        xmax_scale <- input$xrange_scale[2]
+    }
+    
+    datasets$get_data(dataname, filtered = TRUE, reactive = TRUE) %>%
+      filter(eval(parse(text = param_var)) == param &
+               xmin_scale <= eval(parse(text = xaxis_var)) &
+               eval(parse(text = xaxis_var)) <= xmax_scale)
+  })
+  
   # dynamic slider for x-axis
   output$xaxis_scale <- renderUI({
+    #message(datasets$list_data_info(dataname))
     ALB <- datasets$get_data(dataname, filtered = TRUE, reactive = TRUE) # must add for the dynamic ui.range_scale field
     param <- input$param # must add for the dynamic ui.range_scale field
+    print(paste("PARAM is:", param))
     scale_data <- ALB %>%
       filter(eval(parse(text = param_var)) == param)
-    
       # identify min and max values of BM range ignoring NA values
-      # xmin_scale <- min(scale_data[[input$xaxis_var]], na.rm = TRUE)
-      # xmax_scale <- max(scale_data[[input$xaxis_var]], na.rm = TRUE)
       xmin_scale <- RoundTo(min(scale_data[[input$xaxis_var]], na.rm = TRUE), multiple = .001, FUN = floor)
       xmax_scale <- RoundTo(max(scale_data[[input$xaxis_var]], na.rm = TRUE), multiple = .001, FUN = ceiling)
       
       tagList({
         sliderInput(ns("xrange_scale"), label="X-Axis Range Scale", xmin_scale, xmax_scale, value = c(xmin_scale, xmax_scale))
       })
-
   })
 
   output$density_distribution_plot <- renderPlot({
-    
+print(paste("Length of xmin_scale:", length(input$xmin_scale)))    
     # chunks <- list(
     #   analysis = "# Not Calculated"
     # )
-    
-    ALB <- datasets$get_data(dataname, reactive = TRUE, filtered = TRUE)
+    ALB <- filter_ALB()
     param <- input$param
     xaxis_var <- input$xaxis_var
     font_size <- input$font_size
@@ -201,55 +218,54 @@ srv_g_density_distribution_plot <- function(input, output, session, datasets, da
     xmax_scale <- input$xrange_scale[2]
     rotate_xlab <- input$rotate_xlab
 
-    validate(need(!is.null(ALB) && is.data.frame(ALB), "no data left"))
-    validate(need(nrow(ALB) > 0 , "no observations left")) # this seems counter intuitive
+    validate(need(!is.null(ALB) && is.data.frame(ALB), "No Data Left"))
+    validate(need(nrow(ALB) > 0 , "No Observations Left"))
     validate(need(param_var %in% names(ALB),
                   paste("Biomarker parameter variable", param_var, " is not available in data", dataname)))
     validate(need(param %in% unique(ALB[[param_var]]),
                   paste("Biomarker", param, " is not available in data", dataname)))
-    validate(need(xaxis_var, "no valid x variable selected"))
+    validate(need(xaxis_var, "No Valid X-Axis Variable Selected"))
     validate(need(trt_group %in% names(ALB),
                   paste("variable", trt_group, " is not available in data", dataname)))
     validate(need(xaxis_var %in% names(ALB),
                   paste("variable", xaxis_var, " is not available in data", dataname)))
 
-        p <- goshawk:::g_density_distribution_plot(
-      data = ALB,
-      param_var = param_var,
-      param = param,
-      xaxis_var = xaxis_var,
-      trt_group = trt_group,
-      color_manual = color_manual,
-      xmin_scale = xmin_scale,
-      xmax_scale = xmax_scale,
-      font_size = font_size,
-      line_size = line_size,
-      rotate_xlab = rotate_xlab,
-      hline = hline
+      p <- goshawk:::g_density_distribution_plot(
+        data = ALB,
+        param_var = param_var,
+        param = param,
+        xaxis_var = xaxis_var,
+        trt_group = trt_group,
+        color_manual = color_manual,
+        font_size = font_size,
+        line_size = line_size,
+        rotate_xlab = rotate_xlab,
+        hline = hline
     )
 
-    p
-    
+     p
+
   })
 
  output$table_ui <- renderTable({
 
-      ALB <- datasets$get_data(dataname, reactive = TRUE, filtered = TRUE)
-      param <- input$param
-      xaxis_var <- input$xaxis_var
-      font_size <- input$font_size
+   ALB <- filter_ALB()
+   param <- input$param
+   xaxis_var <- input$xaxis_var
+   font_size <- input$font_size
 
-  t <- goshawk:::t_summarytable(
-  data = ALB,
-  trt_group = trt_group,
-  param_var = param_var,
-  param = param,
-  xaxis_var = xaxis_var,
-  font_size = font_size
+   t <- goshawk:::t_summarytable(
+     data = ALB,
+     trt_group = trt_group,
+     param_var = param_var,
+     param = param,
+     xaxis_var = xaxis_var,
+     font_size = font_size
   )
 
-    t
+   t
 
   })
 
 }
+
