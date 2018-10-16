@@ -96,9 +96,6 @@ tm_g_density_distribution_plot <- function(label,
 
   args <- as.list(environment())
   
-  # for debugging
-  #print(paste0('Where assigned, ARGS is now: ', args))
-
   module(
     label = label,
     filters = dataname,
@@ -121,10 +118,7 @@ ui_g_density_distribution_plot <- function(id, ...) {
 
   ns <- NS(id)
   a <- list(...)
-  
-  # for debugging
-  #print(paste0('Where assigned, a is now: ', a))
-  
+
   standard_layout(
     output = div(tagList(uiOutput(ns("plot_ui")), uiOutput(ns("table_ui")))),
     encoding =  div(
@@ -188,10 +182,8 @@ srv_g_density_distribution_plot <- function(input, output, session, datasets, da
   
   # dynamic slider for x-axis
   output$xaxis_scale <- renderUI({
-    #message(datasets$list_data_info(dataname))
     ALB <- datasets$get_data(dataname, filtered = TRUE, reactive = TRUE) # must add for the dynamic ui.range_scale field
     param <- input$param # must add for the dynamic ui.range_scale field
-    print(paste("PARAM is:", param))
     scale_data <- ALB %>%
       filter(eval(parse(text = param_var)) == param)
       # identify min and max values of BM range ignoring NA values
@@ -204,7 +196,6 @@ srv_g_density_distribution_plot <- function(input, output, session, datasets, da
   })
 
   output$density_distribution_plot <- renderPlot({
-print(paste("Length of xmin_scale:", length(input$xmin_scale)))    
     # chunks <- list(
     #   analysis = "# Not Calculated"
     # )
@@ -214,8 +205,6 @@ print(paste("Length of xmin_scale:", length(input$xmin_scale)))
     font_size <- input$font_size
     line_size <- input$line_size
     hline <- as.numeric(input$hline)
-    xmin_scale <- input$xrange_scale[1]
-    xmax_scale <- input$xrange_scale[2]
     rotate_xlab <- input$rotate_xlab
 
     validate(need(!is.null(ALB) && is.data.frame(ALB), "No Data Left"))
@@ -268,4 +257,3 @@ print(paste("Length of xmin_scale:", length(input$xmin_scale)))
   })
 
 }
-

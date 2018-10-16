@@ -52,7 +52,7 @@
 #'
 #' # need a test data set created using random.cdisc.data.
 #' # example call uses expects ALB structure 
-#'
+#' param_choices <- c("CRP", "ADIGG", "CCL20")
 #' x <- teal::init(
 #'   data = list(ASL = ASL, ALB = ALB),
 #'   modules = root_modules(
@@ -184,13 +184,41 @@ srv_g_scatterplot <- function(input, output, session, datasets, dataname,
     plotOutput(session$ns("scatterplot"), width = plot_width, height = plot_height)
     })
   
+  # filter data by param and the xmin, xmax, ymin and ymax values
+  filter_ALB <- reactive({
+    
+    param <- input$param
+    
+    xmin_scale <- -Inf
+    xmax_scale <- Inf
+    ymin_scale <- -Inf
+    ymax_scale <- Inf
+
+    if (length(input$xrange_scale)){
+      xmin_scale <- input$xrange_scale[1]
+      xmax_scale <- input$xrange_scale[2]
+    }
+    
+    if (length(input$yrange_scale)){
+      ymin_scale <- input$yrange_scale[1]
+      ymax_scale <- input$yrange_scale[2]
+    }
+
+    datasets$get_data(dataname, filtered = TRUE, reactive = TRUE) %>%
+      filter(eval(parse(text = param_var)) == param &
+               xmin_scale <= eval(parse(text = xaxis_var)) &
+               eval(parse(text = xaxis_var)) <= xmax_scale &
+               ymin_scale <= eval(parse(text = yaxis_var)) &
+               eval(parse(text = yaxis_var)) <= ymax_scale) 
+  })
+  
+  
   # dynamic slider for x-axis
   output$xaxis_scale <- renderUI({
     ALB <- datasets$get_data(dataname, filtered = TRUE, reactive = TRUE) # must add for the dynamic ui.range_scale field
     param <- input$param # must add for the dynamic ui.range_scale field
     scale_data <- ALB %>%
       filter(eval(parse(text = param_var)) == param)
-    
       # identify min and max values of BM range ignoring NA values
       xmin_scale <- RoundTo(min(scale_data[[input$xaxis_var]], na.rm = TRUE), multiple = .001, FUN = floor)
       xmax_scale <- RoundTo(max(scale_data[[input$xaxis_var]], na.rm = TRUE), multiple = .001, FUN = ceiling)
@@ -198,7 +226,6 @@ srv_g_scatterplot <- function(input, output, session, datasets, dataname,
       tagList({
         sliderInput(ns("xrange_scale"), label="X-Axis Range Scale", xmin_scale, xmax_scale, value = c(xmin_scale, xmax_scale))
       })
-
   })
 
   # dynamic slider for y-axis
@@ -207,24 +234,20 @@ srv_g_scatterplot <- function(input, output, session, datasets, dataname,
     param <- input$param # must add for the dynamic ui.range_scale field
     scale_data <- ALB %>%
       filter(eval(parse(text = param_var)) == param)
+      # identify min and max values of BM range ignoring NA values
+      ymin_scale <- RoundTo(min(scale_data[[input$yaxis_var]], na.rm = TRUE), multiple = .001, FUN = floor)
+      ymax_scale <- RoundTo(max(scale_data[[input$yaxis_var]], na.rm = TRUE), multiple = .001, FUN = ceiling)
 
-    # identify min and max values of BM range ignoring NA values
-    ymin_scale <- RoundTo(min(scale_data[[input$yaxis_var]], na.rm = TRUE), multiple = .001, FUN = floor)
-    ymax_scale <- RoundTo(max(scale_data[[input$yaxis_var]], na.rm = TRUE), multiple = .001, FUN = ceiling)
-
-    tagList({
-      sliderInput(ns("yrange_scale"), label="Y-Axis Range Scale", ymin_scale, ymax_scale, value = c(ymin_scale, ymax_scale))
-    })
-
+      tagList({
+        sliderInput(ns("yrange_scale"), label="Y-Axis Range Scale", ymin_scale, ymax_scale, value = c(ymin_scale, ymax_scale))
+      })
   })
   
   output$scatterplot <- renderPlot({
-    
     # chunks <- list(
     #   analysis = "# Not Calculated"
     # )
-    
-    ALB <- datasets$get_data(dataname, reactive = TRUE, filtered = TRUE)
+    ALB <- filter_ALB()
     param <- input$param
     xaxis_var <- input$xaxis_var
     yaxis_var <- input$yaxis_var
@@ -234,10 +257,10 @@ srv_g_scatterplot <- function(input, output, session, datasets, dataname,
     hline <- as.numeric(input$hline)
     facet <- input$facet
     reg_line <- input$reg_line
-    xmin_scale <- input$xrange_scale[1]
-    xmax_scale <- input$xrange_scale[2]
-    ymin_scale <- input$yrange_scale[1]
-    ymax_scale <- input$yrange_scale[2]
+    # xmin_scale <- input$xrange_scale[1]
+    # xmax_scale <- input$xrange_scale[2]
+    # ymin_scale <- input$yrange_scale[1]
+    # ymax_scale <- input$yrange_scale[2]
     rotate_xlab <- input$rotate_xlab
 
     validate(need(!is.null(ALB) && is.data.frame(ALB), "No data left"))
@@ -264,10 +287,10 @@ srv_g_scatterplot <- function(input, output, session, datasets, dataname,
       shape_manual = shape_manual,
       facet = facet,
       reg_line = reg_line,
-      xmin_scale = xmin_scale,
-      xmax_scale = xmax_scale,
-      ymin_scale = ymin_scale,
-      ymax_scale = ymax_scale,
+      # xmin_scale = xmin_scale,
+      # xmax_scale = xmax_scale,
+      # ymin_scale = ymin_scale,
+      # ymax_scale = ymax_scale,
       font_size = font_size,
       dot_size = dot_size,
       reg_text_size = reg_text_size,

@@ -83,7 +83,7 @@ This module displays a scatter plot. link to specification file \url{http://rstu
 
 # need a test data set created using random.cdisc.data.
 # example call uses expects ALB structure 
-
+param_choices <- c("CRP", "ADIGG", "CCL20")
 x <- teal::init(
   data = list(ASL = ASL, ALB = ALB),
   modules = root_modules(
