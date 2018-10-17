@@ -160,7 +160,7 @@ ui_g_boxplot <- function(id, ...) {
                           , selected = a$filter_var
                           , multiple = TRUE
                           , width = inpWidth
-      ),
+                          ),
       
       optionalSelectInput(ns("trt_group")
                           , label = "Treatment Group"
@@ -171,13 +171,13 @@ ui_g_boxplot <- function(id, ...) {
       ),
       
       optionalSelectInput(inputId = ns("param")
-                          , label = "Biomarker"
-                          , choices = a$param_choices
-                          , selected = a$param
-                          , multiple = FALSE
-                          , width = inpWidth
+                         , label = "Biomarker"
+                         , choices = a$param_choices
+                         , selected = a$param
+                         , multiple = FALSE
+                         , width = inpWidth
       ),
-      
+    
       optionalSelectInput(ns("value_var")
                           , label = "Analysis Variable"
                           , choices = a$value_var_choices
@@ -185,7 +185,7 @@ ui_g_boxplot <- function(id, ...) {
                           , multiple = FALSE
                           , width = inpWidth
       ),
-      
+
       tags$label("Plot Settings", class="text-primary", style="margin-top: 15px;"),
       
       optionalSelectInput(ns("xaxis_var")
@@ -195,7 +195,7 @@ ui_g_boxplot <- function(id, ...) {
                           , multiple = FALSE
                           , width = inpWidth
       ),
-      
+
       optionalSelectInput(ns("facet_var")
                           , label = "Facet by"
                           , choices = a$facet_var_choices
@@ -211,6 +211,7 @@ ui_g_boxplot <- function(id, ...) {
                                    , width = inpWidth),
       
       uiOutput(ns("yaxis_scale")),
+      uiOutput(ns("yaxis_filter")),
       
       optionalSliderInputValMinMax(ns("font_size")
                                    , label = "Font Size"
@@ -228,7 +229,7 @@ ui_g_boxplot <- function(id, ...) {
                                    , step = 1
                                    , ticks = FALSE
                                    , width = inpWidth
-      ),
+                                   ),
       
       optionalSliderInputValMinMax(ns("alpha")
                                    , label = "Dot Transparency"
@@ -261,7 +262,7 @@ srv_g_boxplot <- function(input, output, session, datasets
     boxsetup = " ",
     tablesetup =  " "
   )
-  
+
   ## dynamic plot height
   output$plot_ui <- renderUI({
     plot_height <- input$plot_height
@@ -269,19 +270,20 @@ srv_g_boxplot <- function(input, output, session, datasets
     plotOutput(session$ns("boxplot"), height=plot_height)
   })
   
-  # filter data by param and the xmin and xmax values
+  # filter data by param and the xmin and xmax values from the filter slider.
   filter_ALB <- reactive({
     
     param <- input$param
-    
+    value_var <- input$value_var
+
     ymin_scale <- -Inf
     ymax_scale <- Inf
     
-    if (length(input$yrange_scale)){
-      ymin_scale <- input$yrange_scale[1]
-      ymax_scale <- input$yrange_scale[2]
+    if (length(input$yrange_filter)){
+      ymin_scale <- input$yrange_filter[1]
+      ymax_scale <- input$yrange_filter[2]
     }
-    
+
     datasets$get_data(dataname, filtered = TRUE, reactive = TRUE) %>%
       filter(eval(parse(text = param_var)) == param &
                ymin_scale <= eval(parse(text = value_var)) &
@@ -307,46 +309,74 @@ srv_g_boxplot <- function(input, output, session, datasets
     return(list(low = rng[1], high = rng[2]))
   })  
   
+  # Get "nice" limits for Y axis.  Code based on "Graphics Gems" by Andrew Glassner.
+  get_axis_limits <- function(lo_, hi_) {
+    hi <- signif(max(hi_, lo_), 6)
+    lo <- signif(min(hi_, lo_), 6)
+    if (hi == lo) {
+      ymin_scale = lo - 1
+      ymax_scale = hi + 1
+      step_scale = 0.1
+      eqt = T
+    } else {
+      exp <- floor(log10(abs(hi - lo)))
+      f <- abs(hi - lo)/(10^exp)
+      nndiff <- 10^(exp-1) *
+        case_when(
+          f <= 1.0 ~ 1,
+          f <= 2.0 ~ 2,
+          f <= 5.0 ~ 5, 
+          TRUE ~ 10
+        )
+      # Ensure we have arounds 1000 steps on the scale.
+      step_scale <- 10^(exp-3) * 
+        case_when(
+          f <= 2.0 ~ 1,
+          f <= 5.0 ~ 2,
+          TRUE ~ 5
+        )
+      
+      ymin_scale <- RoundTo(lo, multiple = nndiff, FUN = floor)
+      ymax_scale <- RoundTo(hi, multiple = nndiff, FUN = ceiling)
+      eqt = F
+    }
+    return(list(min = ymin_scale, max = ymax_scale, step = step_scale, eqt = eqt))
+  }  
+  
   # dynamic slider for y-axis - Use ylimits 
   observe({
     output$yaxis_scale <- renderUI({
-      param <- input$param # must add for the dynamic ui.range_scale field
+      param <- input$param
+      value_var <- input$value_var
       
       # Calculate nice default limits based on the min and max from the data
-      lo <- ylimits()$low
-      hi <- ylimits()$high
-      if (hi == lo) {
-        ymin_scale = lo - 1
-        ymax_scale = hi + 1
-      } else {
-        exp <- floor(log10(hi - lo))
-        f <- (hi - lo)/(10^exp)
-        nndiff <- 10^(exp-1) *
-          case_when(
-            f <= 1.0 ~ 1,
-            f <= 2.0 ~ 2,
-            f <= 5.0 ~ 5, 
-            TRUE ~ 10
-          )
-        # Have between 1000 and 2000 increments between low and high values.
-        step_scale <- 10^(exp-3) * 
-          case_when(
-            f <= 2.0 ~ 1,
-            f <= 5.0 ~ 2,
-            TRUE ~ 5
-          )
-        
-        ymin_scale <- RoundTo(lo, multiple = nndiff, FUN = floor)
-        ymax_scale <- RoundTo(hi, multiple = nndiff, FUN = ceiling)
-      }
-      
-      if (is.finite(ymin_scale)) {
+      yax <- get_axis_limits(ylimits()$low, ylimits()$high )
+
+      if (is.finite(yax$min) ) {
         tagList({
           sliderInput(session$ns("yrange_scale")
-                      , label=paste("Y-Axis Range for",param)
-                      , ymin_scale, ymax_scale
-                      , step = step_scale
-                      , value = c(ymin_scale, ymax_scale) 
+                      , label=paste0("Y-Axis range for ", param, " (", value_var, ")")
+                      , yax$min, yax$max
+                      , value = c(yax$min, yax$max) 
+          )
+        })
+      }
+    })  
+    output$yaxis_filter <- renderUI({
+      param <- input$param 
+      value_var <- input$value_var
+      
+      # Calculate nice default limits based on the min and max from the data
+      yax <- get_axis_limits(ylimits()$low, ylimits()$high )
+      # print(c("Scale (f) :", yax$min, yax$max, yax$step, (yax$max-yax$min)/yax$step))
+      
+      if (is.finite(yax$min) & !yax$eqt) {
+        tagList({
+          sliderInput(session$ns("yrange_filter")
+                      , label=paste0("Filter for ", param, " (", value_var, ")")
+                      , yax$min, yax$max
+                      , step = yax$step
+                      , value = c(yax$min, yax$max) 
           )
         })
       }
@@ -364,7 +394,7 @@ srv_g_boxplot <- function(input, output, session, datasets
       updateSelectInput(session,"xaxis_var", selected = s)
     }
   })
-  
+
   observeEvent(input$xaxis_var,{
     x <- input$xaxis_var
     f <- input$facet_var
@@ -422,26 +452,26 @@ srv_g_boxplot <- function(input, output, session, datasets
     
     data_name <- paste0("ALB", "_FILTERED")
     assign(data_name, filter_ALB())
-    
+
     chunks$analysis <<- call(
       "g_boxplot",
       data = bquote(.(as.name(data_name))),
-      biomarker = param,
-      value_var = value_var,
-      trt_group = trt_group,
-      timepoint = "over time",
-      unit = unit,
-      ymin_scale = ymin_scale,
-      ymax_scale = ymax_scale,
-      loq_flag = loq_flag_var, 
-      color_manual = color_manual,
-      shape_manual = shape_manual,
-      alpha = alpha,
-      dot_size = dot_size,
-      font_size = font_size,
-      xaxis_var = xaxis_var,
-      armlabel = armlabel,
-      facet = facet_var
+        biomarker = param,
+        value_var = value_var,
+        trt_group = trt_group,
+        timepoint = "over time",
+        unit = unit,
+        ymin_scale = ymin_scale,
+        ymax_scale = ymax_scale,
+        loq_flag = loq_flag_var, 
+        color_manual = color_manual,
+        shape_manual = shape_manual,
+        alpha = alpha,
+        dot_size = dot_size,
+        font_size = font_size,
+        xaxis_var = xaxis_var,
+        armlabel = armlabel,
+        facet = facet_var
     )
     
     p <- try(eval(chunks$analysis))
@@ -449,61 +479,61 @@ srv_g_boxplot <- function(input, output, session, datasets
     p
   }
   )
-  
-  output$table_ui <- renderTable({
-    ALB <- filter_ALB()
-    
-    param <- input$param
-    xaxis_var <- input$value_var
-    font_size <- input$font_size
-    facet <- ifelse(facet_var_choices, input$facet_var, facet_var)
-    
-    data_name <- paste0("ALB", "_FILTERED")
-    assign(data_name, ALB)
-    
-    chunks$table <<- call(
-      "t_summarytable",
-      data = bquote(.(as.name(data_name))),
-      trt_group = trt_group,
-      param_var = param_var,
-      param = param,
-      visit_var = facet_var,
-      xaxis_var = xaxis_var, 
-      font_size = font_size
-    )
-    t <- try(eval(chunks$table))
-    if (is(t, "try-error")) validate(need(FALSE, paste0("could not create table for box plot:\n\n", p)))
-    t
-    
-  })
-  
-  
-  observeEvent(input$show_rcode, {
-    
-    header <- teal.tern:::get_rcode_header(
-      title = "Box Plot",
-      datanames = "ALB",
-      datasets = datasets
-    )
-    
-    library(teal.tern)
-    str_rcode <- paste(c(
-      "",
-      header,
-      "",
-      teal.tern:::remove_enclosing_curly_braces(deparse(chunks$boxsetup)),
-      "",
-      deparse(chunks$analysis, width.cutoff = 50),
-      "\n",
-      deparse(chunks$table, width.cutoff = 50)
+
+   output$table_ui <- renderTable({
+      ALB <- filter_ALB()
+
+      param <- input$param
+      xaxis_var <- input$value_var
+      font_size <- input$font_size
+      facet <- ifelse(facet_var_choices, input$facet_var, facet_var)
+
+      data_name <- paste0("ALB", "_FILTERED")
+      assign(data_name, ALB)
       
-    ), collapse = "\n")
-    
-    showModal(modalDialog(
-      title = "R Code for the Current box Plot",
-      tags$pre(tags$code(class="R", str_rcode)),
-      easyClose = TRUE
-    ))
+      chunks$table <<- call(
+        "t_summarytable",
+        data = bquote(.(as.name(data_name))),
+        trt_group = trt_group,
+        param_var = param_var,
+        param = param,
+        visit_var = facet_var,
+        xaxis_var = xaxis_var, 
+        font_size = font_size
+      )
+      t <- try(eval(chunks$table))
+      if (is(t, "try-error")) validate(need(FALSE, paste0("could not create table for box plot:\n\n", p)))
+      t
+      
   })
   
+   
+   observeEvent(input$show_rcode, {
+     
+     header <- teal.tern:::get_rcode_header(
+       title = "Box Plot",
+          datanames = "ALB",
+          datasets = datasets
+       )
+
+     library(teal.tern)
+     str_rcode <- paste(c(
+       "",
+       header,
+       "",
+       teal.tern:::remove_enclosing_curly_braces(deparse(chunks$boxsetup)),
+       "",
+       deparse(chunks$analysis, width.cutoff = 50),
+       "\n",
+       deparse(chunks$table, width.cutoff = 50)
+       
+     ), collapse = "\n")
+     
+     showModal(modalDialog(
+       title = "R Code for the Current box Plot",
+       tags$pre(tags$code(class="R", str_rcode)),
+       easyClose = TRUE
+     ))
+   })
+   
 }
