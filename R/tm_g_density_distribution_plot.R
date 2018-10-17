@@ -47,7 +47,7 @@
 #' 
 #' # need a test data set created using random.cdisc.data.
 #' # example call uses expects ALB structure 
-#' param_choices <- c("CRP", "ADIGG", "CCL20")
+#' param_choices <- c("ACIGG", "CRP", "ADIGG", "CCL20")
 #' x <- teal::init(
 #'   data = list(ASL = ASL, ALB = ALB),
 #'   modules = root_modules(
@@ -177,7 +177,8 @@ srv_g_density_distribution_plot <- function(input, output, session, datasets, da
     datasets$get_data(dataname, filtered = TRUE, reactive = TRUE) %>%
       filter(eval(parse(text = param_var)) == param &
                xmin_scale <= eval(parse(text = xaxis_var)) &
-               eval(parse(text = xaxis_var)) <= xmax_scale)
+               eval(parse(text = xaxis_var)) <= xmax_scale |
+               is.na(xaxis_var))
   })
   
   # dynamic slider for x-axis
