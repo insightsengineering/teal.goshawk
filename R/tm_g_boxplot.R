@@ -309,54 +309,40 @@ srv_g_boxplot <- function(input, output, session, datasets
     return(list(low = rng[1], high = rng[2]))
   })  
   
-  # Get "nice" limits for Y axis.  Code based on "Graphics Gems" by Andrew Glassner.
-  get_axis_limits <- function(lo_, hi_) {
+  # Get "nice" limits for Y axis. 
+  get_axis_limits <- function(lo_, hi_, req.n = 2000) {
     hi <- signif(max(hi_, lo_), 6)
     lo <- signif(min(hi_, lo_), 6)
     if (hi == lo) {
-      ymin_scale = lo - 1
-      ymax_scale = hi + 1
-      step_scale = 0.1
-      eqt = T
+      return(list(min = lo-1, max = hi+1, step = 0.1, eqt = TRUE))
     } else {
-      exp <- floor(log10(abs(hi - lo)))
-      f <- abs(hi - lo)/(10^exp)
-      nndiff <- 10^(exp-1) *
-        case_when(
-          f <= 1.0 ~ 1,
-          f <= 2.0 ~ 2,
-          f <= 5.0 ~ 5, 
-          TRUE ~ 10
-        )
-      # Ensure we have arounds 1000 steps on the scale.
-      step_scale <- 10^(exp-3) * 
-        case_when(
-          f <= 2.0 ~ 1,
-          f <= 5.0 ~ 2,
-          TRUE ~ 5
-        )
-      
-      ymin_scale <- RoundTo(lo, multiple = nndiff, FUN = floor)
-      ymax_scale <- RoundTo(hi, multiple = nndiff, FUN = ceiling)
-      eqt = F
+      p <- pretty(c(lo, hi), n=10)
+      d <- pretty(c(lo, hi), n=1.2*req.n, min.n = 0.5*req.n)
+      return(list(min = head(p,1), max = tail(p,1), step = signif(d[2] - d[1], 8), eqt = FALSE))
     }
-    return(list(min = ymin_scale, max = ymax_scale, step = step_scale, eqt = eqt))
   }  
+  
+  # Extend is.infinit to include zero  length objects.
+  is_finite <- function(x){
+    if(length(x) == 0) return(FALSE)
+    return(is.finite(x))
+  }
+  
   
   # dynamic slider for y-axis - Use ylimits 
   observe({
     output$yaxis_scale <- renderUI({
       param <- input$param
       value_var <- input$value_var
-      
       # Calculate nice default limits based on the min and max from the data
-      yax <- get_axis_limits(ylimits()$low, ylimits()$high )
+      yax <- get_axis_limits(ylimits()$low, ylimits()$high, req.n = 100)
 
-      if (is.finite(yax$min) ) {
+      if (is_finite(yax$min) ) {
         tagList({
           sliderInput(session$ns("yrange_scale")
                       , label=paste0("Y-Axis range for ", param, " (", value_var, ")")
                       , yax$min, yax$max
+                      , step = yax$step
                       , value = c(yax$min, yax$max) 
           )
         })
@@ -367,10 +353,10 @@ srv_g_boxplot <- function(input, output, session, datasets
       value_var <- input$value_var
       
       # Calculate nice default limits based on the min and max from the data
-      yax <- get_axis_limits(ylimits()$low, ylimits()$high )
+      yax <- get_axis_limits(ylimits()$low, ylimits()$high, req.n = 2000 )
       # print(c("Scale (f) :", yax$min, yax$max, yax$step, (yax$max-yax$min)/yax$step))
       
-      if (is.finite(yax$min) & !yax$eqt) {
+      if (is_finite(yax$min) & !yax$eqt) {
         tagList({
           sliderInput(session$ns("yrange_filter")
                       , label=paste0("Filter for ", param, " (", value_var, ")")
@@ -418,8 +404,7 @@ srv_g_boxplot <- function(input, output, session, datasets
     
     # Get the filtered data - Filter by both the right an left filters. 
     ASL_FILTERED <- datasets$get_data("ASL", reactive = TRUE, filtered = TRUE)
-    ALB <- datasets$get_data("ALB", reactive = TRUE, filtered = TRUE) %>%
-      filter(eval(parse(text = param_var)) == input$param)
+    ALB <- filter_ALB()
     
     ymin_scale <- input$yrange_scale[1]
     ymax_scale <- input$yrange_scale[2]
@@ -438,7 +423,7 @@ srv_g_boxplot <- function(input, output, session, datasets
                   paste("variable", xaxis_var, " is not available in data", dataname)))
     validate(need(facet_var %in% names(ALB),
                   paste("variable", facet_var, " is not available in data", dataname)))
-    
+
     chunks$boxsetup <<- bquote({
       # Units to display, just take the first if there multiples.
       unit <- ALB %>% 
