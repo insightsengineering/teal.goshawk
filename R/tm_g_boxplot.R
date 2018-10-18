@@ -30,11 +30,13 @@
 #' @param shape_manual vector of LOQ shapes. assigned values in app.R otherwise uses default shapes.
 #' @param plot_height  numeric vectors to define the plot height.
 #' @param loq_flag_var variable for the LOQ.  Values are "Y" or "N"
+#' @param code_data_processing Not used
 #' 
 #' @inheritParams teal::standard_layout
 #' 
 #' @import DescTools
 #' @import methods
+#' @import utils
 #' @import dplyr
 #' @import goshawk
 #' @import teal
@@ -110,7 +112,7 @@ tm_g_boxplot <- function(label,
                          code_data_processing = NULL) {
   
   args <- as.list(environment())
-  
+
   # If there are no choices specified for treatment group/x axis/fact then set the 
   # appropriate choices variable to the treatment group to enable the display of the treatment 
   # group variable on the UI.
@@ -256,7 +258,7 @@ srv_g_boxplot <- function(input, output, session, datasets
                           , armlabel
                           , dataname, code_data_processing) {
   
-  chunks <<- list(
+  chunks <- list(
     analysis = "# Not Calculated",
     table = "# Not calculated",
     boxsetup = " ",
@@ -275,19 +277,28 @@ srv_g_boxplot <- function(input, output, session, datasets
     
     param <- input$param
     value_var <- input$value_var
-
-    ymin_scale <- -Inf
-    ymax_scale <- Inf
     
-    if (length(input$yrange_filter)){
+    # Select all of the data for the parameter.
+    alb <- datasets$get_data(dataname, filtered = TRUE, reactive = TRUE) %>%
+      filter( eval(parse(text = param_var)) == param )
+    
+    # Only consider filtering on value if there is data to filter, the filter
+    # slider is loaded and that there are some non-missing values present.
+    # Then check to see if the filter sliders have been moved from their default
+    # positions.  Only is all of these conditions have been met, filter on
+    # the values.
+    if (length(alb) & length(input$yrange_filter) & is_finite(ylimits()$low)) {
       ymin_scale <- input$yrange_filter[1]
       ymax_scale <- input$yrange_filter[2]
+      axlim <- get_axis_limits(ylimits()$low, ylimits()$high, req.n = 2) 
+      if (( ymin_scale != axlim$min | ymax_scale != axlim$max)){
+        alb <- alb %>% 
+          filter(ymin_scale <= eval(parse(text = value_var)) & 
+                 eval(parse(text = value_var)) <= ymax_scale)
+      }
     }
-
-    datasets$get_data(dataname, filtered = TRUE, reactive = TRUE) %>%
-      filter(eval(parse(text = param_var)) == param &
-               ymin_scale <= eval(parse(text = value_var)) &
-               eval(parse(text = value_var)) <= ymax_scale)
+    return(alb)
+      
   })
   
   # The current filtered data (by standard Teal filters)
@@ -328,7 +339,6 @@ srv_g_boxplot <- function(input, output, session, datasets
     return(is.finite(x))
   }
   
-  
   # dynamic slider for y-axis - Use ylimits 
   observe({
     output$yaxis_scale <- renderUI({
@@ -348,14 +358,14 @@ srv_g_boxplot <- function(input, output, session, datasets
         })
       }
     })  
+    
     output$yaxis_filter <- renderUI({
       param <- input$param 
       value_var <- input$value_var
       
       # Calculate nice default limits based on the min and max from the data
       yax <- get_axis_limits(ylimits()$low, ylimits()$high, req.n = 2000 )
-      # print(c("Scale (f) :", yax$min, yax$max, yax$step, (yax$max-yax$min)/yax$step))
-      
+
       if (is_finite(yax$min) & !yax$eqt) {
         tagList({
           sliderInput(session$ns("yrange_filter")

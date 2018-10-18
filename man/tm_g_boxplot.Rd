@@ -66,6 +66,8 @@ output to put the output into context. For example the
 then the label attribute for \code{trt_group} will be used.  If there is 
 no label attribute for \code{trt_group}, then the name of the parameter (
 in title case) will be used.}
+
+\item{code_data_processing}{Not used}
 }
 \value{
 an \code{\link[teal]{module}} object#'
