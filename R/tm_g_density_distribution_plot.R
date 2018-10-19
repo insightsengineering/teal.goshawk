@@ -3,23 +3,20 @@
 #' This module displays a density distribution plot.
 #'
 #' @param label menu item label of the module in the teal app 
-#' @param dataname analysis data set name. needs to be available in
-#'   the list passed to the \code{data} argument of \code{\link[teal]{init}}.
-#'   Note that the data are expected to be in vertical form with the
-#'   \code{PARAMCD} variable filtering to one observation per patient per visit.
+#' @param dataname ADaM structured analysis laboratory (ADLB/ALB) data frame.  
 #' @param param_var name of variable containing biomarker codes e.g. PARAMCD.
-#' @param param_choices list of biomarkers of interest. assigned in app.R.
+#' @param param_choices list of biomarkers of interest.
 #' @param param biomarker selected.
-#' @param xaxis_var name of variable containing biomarker results displayed on X-axis e.g. BASE.
+#' @param xaxis_var name of variable containing biomarker results displayed on X-axis e.g. AVAL.
 #' @param xaxis_var_choices list of variables containing biomarker results choices.
 #' @param trt_group name of variable representing treatment group e.g. ARM.
-#' @param color_manual vector of treatment colors. assigned values in app.R otherwise uses default colors.
-#' @param loq_flag_var name of variable containing LOQ flag used in the t_summary table function e.g. LBLOQFL.
+#' @param color_manual vector of colors applied to treatment values.
+#' @param loq_flag_var name of variable containing LOQ flag e.g. LBLOQFL.
 #' @param plot_width controls plot width.
 #' @param plot_height controls plot height.
-#' @param font_size control font size for title, x-axis, y-axis and legend font.
+#' @param font_size font size control for title, x-axis label, y-axis label and legend.
 #' @param line_size plot line thickness.
-#' @param hline y-axis value to position of horizontal line.
+#' @param hline y-axis value to position a horizontal line.
 #' @param rotate_xlab 45 degree rotation of x-axis values.
 #' @param code_data_processing TODO
 #'
@@ -42,11 +39,9 @@
 #' @examples
 #' 
 #'\dontrun{
-#' # Example using analysis dataset for example ASL or ADSL,
-#' # ALB points to biomarker data stored in a typical LB structure. for example ALB or ADLB.
+#' # Example using ADaM structure analysis dataset.
+#' # ALB refers to biomarker data stored in expected laboratory structure.
 #' 
-#' # need a test data set created using random.cdisc.data.
-#' # example call uses expects ALB structure 
 #' param_choices <- c("ACIGG", "CRP", "ADIGG", "CCL20")
 #' x <- teal::init(
 #'   data = list(ASL = ASL, ALB = ALB),
@@ -197,9 +192,6 @@ srv_g_density_distribution_plot <- function(input, output, session, datasets, da
   })
 
   output$density_distribution_plot <- renderPlot({
-    # chunks <- list(
-    #   analysis = "# Not Calculated"
-    # )
     ALB <- filter_ALB()
     param <- input$param
     xaxis_var <- input$xaxis_var

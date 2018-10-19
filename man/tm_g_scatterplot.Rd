@@ -16,32 +16,29 @@ tm_g_scatterplot(label, dataname, param_var, param, param_choices = param,
 \arguments{
 \item{label}{menu item label of the module in the teal app}
 
-\item{dataname}{analysis data used in teal module, needs to be available in
-the list passed to the \code{data} argument of \code{\link[teal]{init}}.
-Note that the data are expected to be in vertical form with the
-\code{PARAMCD} variable filtering to one observation per patient per visit.}
+\item{dataname}{ADaM structured analysis laboratory (ADLB/ALB) data frame.}
 
 \item{param_var}{name of variable containing biomarker codes e.g. PARAMCD.}
 
 \item{param}{biomarker selected.}
 
-\item{param_choices}{list of biomarkers of interest. assigned in app.R.}
+\item{param_choices}{list of biomarkers of interest.}
 
 \item{xaxis_var}{name of variable containing biomarker results displayed on X-axis e.g. BASE.}
 
 \item{xaxis_var_choices}{list of variables containing biomarker results choices.}
 
-\item{yaxis_var}{name of variable containing biomarker results displayed on Y-axis e.g. BASE.}
+\item{yaxis_var}{name of variable containing biomarker results displayed on Y-axis e.g. AVAL.}
 
 \item{yaxis_var_choices}{list of variables containing biomarker results choices.}
 
 \item{trt_group}{name of variable representing treatment group e.g. ARM.}
 
-\item{color_manual}{vector of treatment colors. assigned values in app.R otherwise uses default colors.}
+\item{color_manual}{vector of colors applied to treatment values.}
 
-\item{shape_manual}{vector of LOQ shapes. assigned values in app.R otherwise uses default shapes.}
+\item{shape_manual}{vector of symbols applied to LOQ values.}
 
-\item{facet}{controls facetting with trt_grp.}
+\item{facet}{set layout to use treatment facetting.}
 
 \item{reg_line}{include regression line and annotations for slope and coefficient in visualization. Use with facet TRUE.}
 
@@ -53,11 +50,11 @@ Note that the data are expected to be in vertical form with the
 
 \item{plot_height}{controls plot height.}
 
-\item{font_size}{control font size for title, x-axis, y-axis and legend font.}
+\item{font_size}{font size control for title, x-axis label, y-axis label and legend.}
 
-\item{dot_size}{scatter dot size.}
+\item{dot_size}{plot dot size.}
 
-\item{reg_text_size}{regression line annotation font size.}
+\item{reg_text_size}{font size control for regression line annotations.}
 
 \item{pre_output}{optional, \code{shiny.tag} with text placed before the
 output to put the output into context. For example the
@@ -78,11 +75,9 @@ This module displays a scatter plot. link to specification file \url{http://rstu
 \examples{
 
 \dontrun{
-# Example using analysis dataset for example ASL or ADSL,
-# ALB points to biomarker data stored in a typical LB structure. for example ALB or ADLB.
+# Example using ADaM structure analysis dataset.
+# ALB refers to biomarker data stored in expected laboratory structure.
 
-# need a test data set created using random.cdisc.data.
-# example call uses expects ALB structure 
 param_choices <- c("ANAPC", "CRP", "ADIGG", "CCL20")
 x <- teal::init(
   data = list(ASL = ASL, ALB = ALB),

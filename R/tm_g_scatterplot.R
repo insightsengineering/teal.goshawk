@@ -3,29 +3,26 @@
 #' This module displays a scatter plot.
 #'
 #' @param label menu item label of the module in the teal app 
-#' @param dataname analysis data used in teal module, needs to be available in
-#'   the list passed to the \code{data} argument of \code{\link[teal]{init}}.
-#'   Note that the data are expected to be in vertical form with the
-#'   \code{PARAMCD} variable filtering to one observation per patient per visit.
+#' @param dataname ADaM structured analysis laboratory (ADLB/ALB) data frame.  
 #' @param param_var name of variable containing biomarker codes e.g. PARAMCD.
-#' @param param_choices list of biomarkers of interest. assigned in app.R.
+#' @param param_choices list of biomarkers of interest.
 #' @param param biomarker selected.
 #' @param xaxis_var name of variable containing biomarker results displayed on X-axis e.g. BASE.
 #' @param xaxis_var_choices list of variables containing biomarker results choices.
-#' @param yaxis_var name of variable containing biomarker results displayed on Y-axis e.g. BASE.
+#' @param yaxis_var name of variable containing biomarker results displayed on Y-axis e.g. AVAL.
 #' @param yaxis_var_choices list of variables containing biomarker results choices.
 #' @param trt_group name of variable representing treatment group e.g. ARM.
-#' @param color_manual vector of treatment colors. assigned values in app.R otherwise uses default colors.
-#' @param shape_manual vector of LOQ shapes. assigned values in app.R otherwise uses default shapes.
-#' @param facet controls facetting with trt_grp.
+#' @param color_manual vector of colors applied to treatment values.
+#' @param shape_manual vector of symbols applied to LOQ values.
+#' @param facet set layout to use treatment facetting.
 #' @param reg_line include regression line and annotations for slope and coefficient in visualization. Use with facet TRUE.
 #' @param rotate_xlab 45 degree rotation of x-axis values.
 #' @param hline y-axis value to position of horizontal line.
 #' @param plot_width controls plot width.
 #' @param plot_height controls plot height.
-#' @param font_size control font size for title, x-axis, y-axis and legend font.
-#' @param dot_size scatter dot size.
-#' @param reg_text_size regression line annotation font size.
+#' @param font_size font size control for title, x-axis label, y-axis label and legend.
+#' @param dot_size plot dot size.
+#' @param reg_text_size font size control for regression line annotations.
 #' @param code_data_processing TODO
 #'
 #' @inheritParams teal::standard_layout
@@ -47,11 +44,9 @@
 #' @examples
 #' 
 #'\dontrun{
-#' # Example using analysis dataset for example ASL or ADSL,
-#' # ALB points to biomarker data stored in a typical LB structure. for example ALB or ADLB.
+#' # Example using ADaM structure analysis dataset.
+#' # ALB refers to biomarker data stored in expected laboratory structure.
 #'
-#' # need a test data set created using random.cdisc.data.
-#' # example call uses expects ALB structure 
 #' param_choices <- c("ANAPC", "CRP", "ADIGG", "CCL20")
 #' x <- teal::init(
 #'   data = list(ASL = ASL, ALB = ALB),
@@ -84,15 +79,15 @@
 #'
 #'}
 
-tm_g_scatterplot <- function(label, # label of module
-                             dataname, # analysis data set
-                             param_var, # name of variable containing the biomarker names: PARAMCD
-                             param, # biomarker selected
-                             param_choices = param, # list of biomarkers of interest
-                             xaxis_var, # name of variable containing values displayed on the x-axis
-                             xaxis_var_choices = xaxis_var, # list of baseline variables
-                             yaxis_var, # name of variable containing values displayed on the y-axis
-                             yaxis_var_choices = yaxis_var, # list of analysis variables to plot
+tm_g_scatterplot <- function(label,
+                             dataname,
+                             param_var,
+                             param,
+                             param_choices = param,
+                             xaxis_var,
+                             xaxis_var_choices = xaxis_var,
+                             yaxis_var, 
+                             yaxis_var_choices = yaxis_var,
                              trt_group = "ARM",
                              color_manual = NULL,
                              shape_manual = NULL,
@@ -245,9 +240,6 @@ srv_g_scatterplot <- function(input, output, session, datasets, dataname,
   })
   
   output$scatterplot <- renderPlot({
-    # chunks <- list(
-    #   analysis = "# Not Calculated"
-    # )
     ALB <- filter_ALB()
     param <- input$param
     xaxis_var <- input$xaxis_var
@@ -258,10 +250,6 @@ srv_g_scatterplot <- function(input, output, session, datasets, dataname,
     hline <- as.numeric(input$hline)
     facet <- input$facet
     reg_line <- input$reg_line
-    # xmin_scale <- input$xrange_scale[1]
-    # xmax_scale <- input$xrange_scale[2]
-    # ymin_scale <- input$yrange_scale[1]
-    # ymax_scale <- input$yrange_scale[2]
     rotate_xlab <- input$rotate_xlab
 
     validate(need(!is.null(ALB) && is.data.frame(ALB), "No data left"))
@@ -288,10 +276,6 @@ srv_g_scatterplot <- function(input, output, session, datasets, dataname,
       shape_manual = shape_manual,
       facet = facet,
       reg_line = reg_line,
-      # xmin_scale = xmin_scale,
-      # xmax_scale = xmax_scale,
-      # ymin_scale = ymin_scale,
-      # ymax_scale = ymax_scale,
       font_size = font_size,
       dot_size = dot_size,
       reg_text_size = reg_text_size,
