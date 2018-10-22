@@ -13,9 +13,9 @@ tm_g_density_distribution_plot(label, dataname, param_var,
   code_data_processing = NULL)
 }
 \arguments{
-\item{label}{menu item label of the module in the teal app}
+\item{label}{menu item label of the module in the teal app.}
 
-\item{dataname}{ADaM structured analysis laboratory (ADLB/ALB) data frame.}
+\item{dataname}{ADaM structured analysis laboratory data frame e.g. ALB.}
 
 \item{param_var}{name of variable containing biomarker codes e.g. PARAMCD.}
 
@@ -56,10 +56,11 @@ output to put the output into context. For example the
 \item{code_data_processing}{TODO}
 }
 \description{
-This module displays a density distribution plot.
+This module displays the web user interface and calls the functions that create 
+a density distribution plot and an accompanying summary table.
 }
 \details{
-This module displays a density distribution plot. link to specification file \url{http://rstudio.com}
+None
 }
 \examples{
 

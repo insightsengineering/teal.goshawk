@@ -14,7 +14,7 @@ tm_g_scatterplot(label, dataname, param_var, param, param_choices = param,
   post_output = NULL, code_data_processing = NULL)
 }
 \arguments{
-\item{label}{menu item label of the module in the teal app}
+\item{label}{menu item label of the module in the teal app.}
 
 \item{dataname}{ADaM structured analysis laboratory (ADLB/ALB) data frame.}
 

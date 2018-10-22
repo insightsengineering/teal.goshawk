@@ -2,7 +2,7 @@
 #'
 #' This module displays a scatter plot.
 #'
-#' @param label menu item label of the module in the teal app 
+#' @param label menu item label of the module in the teal app.
 #' @param dataname ADaM structured analysis laboratory (ADLB/ALB) data frame.  
 #' @param param_var name of variable containing biomarker codes e.g. PARAMCD.
 #' @param param_choices list of biomarkers of interest.

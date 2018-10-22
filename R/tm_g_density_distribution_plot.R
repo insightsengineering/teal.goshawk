@@ -1,9 +1,10 @@
 #' Teal Module: density distribution plot
 #'
-#' This module displays a density distribution plot.
+#' This module displays the web user interface and calls the functions that create 
+#' a density distribution plot and an accompanying summary table.
 #'
-#' @param label menu item label of the module in the teal app 
-#' @param dataname ADaM structured analysis laboratory (ADLB/ALB) data frame.  
+#' @param label menu item label of the module in the teal app.
+#' @param dataname ADaM structured analysis laboratory data frame e.g. ALB.
 #' @param param_var name of variable containing biomarker codes e.g. PARAMCD.
 #' @param param_choices list of biomarkers of interest.
 #' @param param biomarker selected.
@@ -32,7 +33,7 @@
 #' @author Nick Paszty (npaszty) paszty.nicholas@gene.com
 #' @author Balazs Toth (tothb2)  toth.balazs@gene.com
 #'
-#' @details This module displays a density distribution plot. link to specification file \url{http://rstudio.com}
+#' @details None
 #'
 #' @export
 #'
