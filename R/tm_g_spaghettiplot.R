@@ -18,6 +18,7 @@
 #' @param trt_group_level vector that can be used to define factor level of trt_group.
 #' @param man_color string vector representing customized colors
 #' @param hline numeric value to add horizontal line to plot
+#' @param group_mean boolean value indicating whether to overlay group means.
 #' @param rotate_xlab boolean value indicating whether to rotate x-axis labels
 #' @param facet_ncol numeric value indicating number of facets per row.
 #' @param plot_height numeric vectors to define the plot height.
@@ -89,6 +90,7 @@ tm_g_spaghettiplot <- function(label,
                                param, param_choices = param,
                                trt_group,
                                trt_group_level = NULL,
+                               group_mean = FALSE,
                                hline = NULL,
                                man_color = NULL,
                                rotate_xlab = FALSE,
@@ -139,6 +141,7 @@ ui_spaghettiplot <- function(id, ...) {
       } else {
         tags$label("Plot Settings", class="text-primary", style="margin-top: 15px;")
       },
+      checkboxInput(ns("group_mean"), "Overlay group mean", a$group_mean),
       checkboxInput(ns("rotate_xlab"), "Rotate X-axis Label", a$rotate_xlab),
       numericInput(ns("hline"), "Add a horizontal line:", a$hline),
       uiOutput(ns("yaxis_scale")),
@@ -193,6 +196,7 @@ srv_spaghettiplot <- function(input, output, session, datasets, dataname, idvar,
     facet_ncol <- input$facet_ncol
     rotate_xlab <- input$rotate_xlab
     hline <- as.numeric(input$hline)
+    group_mean <- input$group_mean
     font_size <- input$font_size
     
     chunks$analysis <<- "# Not Calculated"
@@ -234,7 +238,8 @@ srv_spaghettiplot <- function(input, output, session, datasets, dataname, idvar,
       facet_ncol = facet_ncol,
       hline = hline,
       rotate_xlab = rotate_xlab,
-      font_size = font_size
+      font_size = font_size,
+      group_mean = group_mean
     )
     
     p <- try(eval(chunks$analysis))
