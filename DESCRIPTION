@@ -4,13 +4,18 @@ Title: I2ON biomarker teal modules
 Version: 0.1.0
 Authors@R: c(
   person("Nick", "Paszty", email = "nick.paszty@gene.com", role = c("aut", "cre")),
+  person("Jeffrey", "Tomlinson", email = "tomlinson.jeffrey@roche.com", role = c("aut")),
+  person("Wenyi", "Liu", email = "liu.wenyi@roche.com", role = c("aut")),
   person("Adrian", "Waddell", email = "adrian.waddell@roche.com", role = "ctb")
   )
-Description: More about what it does (maybe more than one line)
-    Produces dynamic visualizations including box, line, scatter and spaghetti plots with accompanying summary .
-Depends:  DescTools, dplyr, ggplot2, goshawk, teal, methods
+Description: Modules that produce web interfaces through which visualizations can be dynamically
+    modified and displayed. These included box plot, density distribution, line plot, scatter plot
+    and spaghetti plot with accompanying summary. Data are expected in ADaM structure. Requires 
+    analysis subject level (ADSL/ASL) and analysis laboratory (ADLB/ALB) data sets. Beyond core variables,
+    Lower Limit of Quantification flag variable (LOQFL) is expected with levels 'Y', 'N' or NA.
+Depends:  DescTools, dplyr, ggplot2, goshawk, methods, shiny, stringr, teal
 Imports:  shiny
-License: What license is it under?
+License: GPL-2
 Encoding: UTF-8
 LazyData: true
 RoxygenNote: 6.0.1

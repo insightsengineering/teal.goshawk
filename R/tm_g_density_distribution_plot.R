@@ -1,25 +1,25 @@
 #' Teal Module: density distribution plot
 #'
-#' This module displays a density distribution plot.
+#' This module displays the web user interface and calls the functions that create 
+#' a density distribution plot and an accompanying summary table.
 #'
-#' @param label menu item label of the module in the teal app 
-#' @param dataname analysis data set name. needs to be available in
-#'   the list passed to the \code{data} argument of \code{\link[teal]{init}}.
-#'   Note that the data are expected to be in vertical form with the
-#'   \code{PARAMCD} variable filtering to one observation per patient per visit.
+#' @param label menu item label of the module in the teal app.
+#' @param dataname ADaM structured analysis laboratory data frame e.g. ALB.
 #' @param param_var name of variable containing biomarker codes e.g. PARAMCD.
 #' @param param_choices list of biomarkers of interest.
 #' @param param biomarker selected.
-#' @param xaxis_var name of variable containing biomarker results displayed on X-axis e.g. BASE.
+#' @param xaxis_var name of variable containing biomarker results displayed on X-axis e.g. AVAL.
 #' @param xaxis_var_choices list of variables containing biomarker results choices.
 #' @param trt_group name of variable representing treatment group e.g. ARM.
-#' @param loq_flag_var name of variable containing LOQ flag used in the t_summary table function e.g. LBLOQFL.
+#' @param color_manual vector of colors applied to treatment values.
+#' @param loq_flag_var name of variable containing LOQ flag e.g. LBLOQFL.
 #' @param plot_width controls plot width.
 #' @param plot_height controls plot height.
-#' @param font_size control font size for title, x-axis, y-axis and legend font.
+#' @param font_size font size control for title, x-axis label, y-axis label and legend.
 #' @param line_size plot line thickness.
-#' @param hline y-axis value to position of horizontal line.
+#' @param hline y-axis value to position a horizontal line.
 #' @param rotate_xlab 45 degree rotation of x-axis values.
+#' @param code_data_processing TODO
 #'
 #' @inheritParams teal::standard_layout
 #' 
@@ -33,19 +33,17 @@
 #' @author Nick Paszty (npaszty) paszty.nicholas@gene.com
 #' @author Balazs Toth (tothb2)  toth.balazs@gene.com
 #'
-#' @details This module displays a density distribution plot. link to specification file \url{http://rstudio.com}
+#' @details None
 #'
 #' @export
 #'
 #' @examples
 #' 
 #'\dontrun{
-#' # Example using analysis dataset for example ASL or ADSL,
-#' # ALB points to biomarker data stored in a typical LB structure. for example ALB or ADLB.
+#' # Example using ADaM structure analysis dataset.
+#' # ALB refers to biomarker data stored in expected laboratory structure.
 #' 
-#' # need a test data set created using random.cdisc.data.
-#' # example call uses expects ALB structure 
-#'
+#' param_choices <- c("ACIGG", "CRP", "ADIGG", "CCL20")
 #' x <- teal::init(
 #'   data = list(ASL = ASL, ALB = ALB),
 #'   modules = root_modules(
@@ -58,6 +56,7 @@
 #'        xaxis_var = "AVAL",
 #'        xaxis_var_choices = c("AVAL", "BASE", "CHG", "PCHG", "BASE2", "CHG2", "PCHG2", "AVALL2", "BASEL2", "BASE2L2"),
 #'        trt_group = "ARM",
+#'        color_manual = color_manual,
 #'        loq_flag_var = 'LOQFL',
 #'        plot_width = c(800, 200, 2000),
 #'        plot_height = c(500, 200, 2000),
@@ -79,6 +78,7 @@ tm_g_density_distribution_plot <- function(label,
                                            xaxis_var,
                                            xaxis_var_choices = xaxis_var,
                                            trt_group = "ARM",
+                                           color_manual = NULL,
                                            loq_flag_var = 'LOQFL',
                                            plot_width = c(800, 200, 2000),
                                            plot_height = c(500, 200, 2000),
@@ -92,9 +92,6 @@ tm_g_density_distribution_plot <- function(label,
 
   args <- as.list(environment())
   
-  # for debugging
-  #print(paste0('Where assigned, ARGS is now: ', args))
-
   module(
     label = label,
     filters = dataname,
@@ -104,6 +101,7 @@ tm_g_density_distribution_plot <- function(label,
                        param = param,
                        xaxis_var = xaxis_var,
                        trt_group = trt_group,
+                       color_manual = color_manual,
                        code_data_processing = code_data_processing
                        ),
     ui = ui_g_density_distribution_plot,
@@ -116,15 +114,12 @@ ui_g_density_distribution_plot <- function(id, ...) {
 
   ns <- NS(id)
   a <- list(...)
-  
-  # for debugging
-  #print(paste0('Where assigned, a is now: ', a))
-  
+
   standard_layout(
     output = div(tagList(uiOutput(ns("plot_ui")), uiOutput(ns("table_ui")))),
     encoding =  div(
       tags$label("Encodings", class="text-primary"),
-      helpText("Dataset:", tags$code(a$dataname)),
+      helpText("Analysis data:", tags$code(a$dataname)),
       optionalSelectInput(ns("param"), "Select a Biomarker", a$param_choices, a$param, multiple = FALSE),
       optionalSelectInput(ns("xaxis_var"), "Select an X-Axis Variable", a$xaxis_var_choices, a$xaxis_var, multiple = FALSE),
 
@@ -147,7 +142,8 @@ ui_g_density_distribution_plot <- function(id, ...) {
 
 }
 
-srv_g_density_distribution_plot <- function(input, output, session, datasets, dataname, param_var, param, xaxis_var, trt_group, code_data_processing) {
+srv_g_density_distribution_plot <- function(input, output, session, datasets, dataname, param_var, param, 
+                                            xaxis_var, trt_group, color_manual, code_data_processing) {
 
   ns <- session$ns # must add for the dynamic ui.range_scale field
   
@@ -161,88 +157,96 @@ srv_g_density_distribution_plot <- function(input, output, session, datasets, da
     plotOutput(session$ns("density_distribution_plot"), width = plot_width, height = plot_height)
     })
   
+  # filter data by param and the xmin and xmax values
+  filter_ALB <- reactive({
+
+    param <- input$param
+    
+    xmin_scale <- -Inf
+    xmax_scale <- Inf
+    
+    if (length(input$xrange_scale)){
+        xmin_scale <- input$xrange_scale[1]
+        xmax_scale <- input$xrange_scale[2]
+    }
+    
+    datasets$get_data(dataname, filtered = TRUE, reactive = TRUE) %>%
+      filter(eval(parse(text = param_var)) == param &
+               xmin_scale <= eval(parse(text = xaxis_var)) &
+               eval(parse(text = xaxis_var)) <= xmax_scale |
+               is.na(xaxis_var))
+  })
+  
   # dynamic slider for x-axis
   output$xaxis_scale <- renderUI({
     ALB <- datasets$get_data(dataname, filtered = TRUE, reactive = TRUE) # must add for the dynamic ui.range_scale field
     param <- input$param # must add for the dynamic ui.range_scale field
     scale_data <- ALB %>%
       filter(eval(parse(text = param_var)) == param)
-    
       # identify min and max values of BM range ignoring NA values
-      # xmin_scale <- min(scale_data[[input$xaxis_var]], na.rm = TRUE)
-      # xmax_scale <- max(scale_data[[input$xaxis_var]], na.rm = TRUE)
       xmin_scale <- RoundTo(min(scale_data[[input$xaxis_var]], na.rm = TRUE), multiple = .001, FUN = floor)
       xmax_scale <- RoundTo(max(scale_data[[input$xaxis_var]], na.rm = TRUE), multiple = .001, FUN = ceiling)
       
       tagList({
         sliderInput(ns("xrange_scale"), label="X-Axis Range Scale", xmin_scale, xmax_scale, value = c(xmin_scale, xmax_scale))
       })
-
   })
 
   output$density_distribution_plot <- renderPlot({
-    
-    # chunks <- list(
-    #   analysis = "# Not Calculated"
-    # )
-    
-    ALB <- datasets$get_data(dataname, reactive = TRUE, filtered = TRUE)
+    ALB <- filter_ALB()
     param <- input$param
     xaxis_var <- input$xaxis_var
     font_size <- input$font_size
     line_size <- input$line_size
     hline <- as.numeric(input$hline)
-    xmin_scale <- input$xrange_scale[1]
-    xmax_scale <- input$xrange_scale[2]
     rotate_xlab <- input$rotate_xlab
 
-    validate(need(!is.null(ALB) && is.data.frame(ALB), "no data left"))
-    validate(need(nrow(ALB) > 0 , "no observations left")) # this seems counter intuitive
+    validate(need(!is.null(ALB) && is.data.frame(ALB), "No Data Left"))
+    validate(need(nrow(ALB) > 0 , "No Observations Left"))
     validate(need(param_var %in% names(ALB),
                   paste("Biomarker parameter variable", param_var, " is not available in data", dataname)))
     validate(need(param %in% unique(ALB[[param_var]]),
                   paste("Biomarker", param, " is not available in data", dataname)))
+    validate(need(xaxis_var, "No Valid X-Axis Variable Selected"))
     validate(need(trt_group %in% names(ALB),
                   paste("variable", trt_group, " is not available in data", dataname)))
     validate(need(xaxis_var %in% names(ALB),
                   paste("variable", xaxis_var, " is not available in data", dataname)))
 
-        p <- goshawk:::g_density_distribution_plot(
-      data = ALB,
-      param_var = param_var,
-      param = param,
-      xaxis_var = xaxis_var,
-      trt_group = trt_group,
-      color_manual = NULL,
-      xmin_scale = xmin_scale,
-      xmax_scale = xmax_scale,
-      font_size = font_size,
-      line_size = line_size,
-      rotate_xlab = rotate_xlab,
-      hline = hline
+      p <- goshawk:::g_density_distribution_plot(
+        data = ALB,
+        param_var = param_var,
+        param = param,
+        xaxis_var = xaxis_var,
+        trt_group = trt_group,
+        color_manual = color_manual,
+        font_size = font_size,
+        line_size = line_size,
+        rotate_xlab = rotate_xlab,
+        hline = hline
     )
 
-    p
-    
+     p
+
   })
 
  output$table_ui <- renderTable({
 
-      ALB <- datasets$get_data(dataname, reactive = TRUE, filtered = TRUE)
-      param <- input$param
-      xaxis_var <- input$xaxis_var
-      font_size <- input$font_size
+   ALB <- filter_ALB()
+   param <- input$param
+   xaxis_var <- input$xaxis_var
+   font_size <- input$font_size
 
-  t <- goshawk:::t_summarytable(
-  data = ALB,
-  trt_group = trt_group,
-  param_var = param_var,
-  param = param,
-  xaxis_var = xaxis_var,
-  font_size = font_size
+   t <- goshawk:::t_summarytable(
+     data = ALB,
+     trt_group = trt_group,
+     param_var = param_var,
+     param = param,
+     xaxis_var = xaxis_var,
+     font_size = font_size
   )
 
-    t
+   t
 
   })
 

@@ -6,18 +6,16 @@
 \usage{
 tm_g_density_distribution_plot(label, dataname, param_var,
   param_choices = param, param, xaxis_var, xaxis_var_choices = xaxis_var,
-  trt_group = "ARM", loq_flag_var = "LOQFL", plot_width = c(800, 200,
-  2000), plot_height = c(500, 200, 2000), font_size = c(12, 8, 20),
-  line_size = c(1, 0.25, 3), hline = NULL, rotate_xlab = FALSE,
-  pre_output = NULL, post_output = NULL, code_data_processing = NULL)
+  trt_group = "ARM", color_manual = NULL, loq_flag_var = "LOQFL",
+  plot_width = c(800, 200, 2000), plot_height = c(500, 200, 2000),
+  font_size = c(12, 8, 20), line_size = c(1, 0.25, 3), hline = NULL,
+  rotate_xlab = FALSE, pre_output = NULL, post_output = NULL,
+  code_data_processing = NULL)
 }
 \arguments{
-\item{label}{menu item label of the module in the teal app}
+\item{label}{menu item label of the module in the teal app.}
 
-\item{dataname}{analysis data set name. needs to be available in
-the list passed to the \code{data} argument of \code{\link[teal]{init}}.
-Note that the data are expected to be in vertical form with the
-\code{PARAMCD} variable filtering to one observation per patient per visit.}
+\item{dataname}{ADaM structured analysis laboratory data frame e.g. ALB.}
 
 \item{param_var}{name of variable containing biomarker codes e.g. PARAMCD.}
 
@@ -25,23 +23,25 @@ Note that the data are expected to be in vertical form with the
 
 \item{param}{biomarker selected.}
 
-\item{xaxis_var}{name of variable containing biomarker results displayed on X-axis e.g. BASE.}
+\item{xaxis_var}{name of variable containing biomarker results displayed on X-axis e.g. AVAL.}
 
 \item{xaxis_var_choices}{list of variables containing biomarker results choices.}
 
 \item{trt_group}{name of variable representing treatment group e.g. ARM.}
 
-\item{loq_flag_var}{name of variable containing LOQ flag used in the t_summary table function e.g. LBLOQFL.}
+\item{color_manual}{vector of colors applied to treatment values.}
+
+\item{loq_flag_var}{name of variable containing LOQ flag e.g. LBLOQFL.}
 
 \item{plot_width}{controls plot width.}
 
 \item{plot_height}{controls plot height.}
 
-\item{font_size}{control font size for title, x-axis, y-axis and legend font.}
+\item{font_size}{font size control for title, x-axis label, y-axis label and legend.}
 
 \item{line_size}{plot line thickness.}
 
-\item{hline}{y-axis value to position of horizontal line.}
+\item{hline}{y-axis value to position a horizontal line.}
 
 \item{rotate_xlab}{45 degree rotation of x-axis values.}
 
@@ -52,22 +52,23 @@ output to put the output into context. For example the
 \item{post_output}{optional, \code{shiny.tag} with text placed before the
 output to put the output into context. For example the
 \code{\link[shiny]{helpText}} elements are useful.}
+
+\item{code_data_processing}{TODO}
 }
 \description{
-This module displays a density distribution plot.
+This module displays the web user interface and calls the functions that create 
+a density distribution plot and an accompanying summary table.
 }
 \details{
-This module displays a density distribution plot. link to specification file \url{http://rstudio.com}
+None
 }
 \examples{
 
 \dontrun{
-# Example using analysis dataset for example ASL or ADSL,
-# ALB points to biomarker data stored in a typical LB structure. for example ALB or ADLB.
+# Example using ADaM structure analysis dataset.
+# ALB refers to biomarker data stored in expected laboratory structure.
 
-# need a test data set created using random.cdisc.data.
-# example call uses expects ALB structure 
-
+param_choices <- c("ACIGG", "CRP", "ADIGG", "CCL20")
 x <- teal::init(
   data = list(ASL = ASL, ALB = ALB),
   modules = root_modules(
@@ -80,6 +81,7 @@ x <- teal::init(
        xaxis_var = "AVAL",
        xaxis_var_choices = c("AVAL", "BASE", "CHG", "PCHG", "BASE2", "CHG2", "PCHG2", "AVALL2", "BASEL2", "BASE2L2"),
        trt_group = "ARM",
+       color_manual = color_manual,
        loq_flag_var = 'LOQFL',
        plot_width = c(800, 200, 2000),
        plot_height = c(500, 200, 2000),

@@ -10,14 +10,18 @@
 #' @param yvar single name of variable in analysis data that is used as summary variable in the respective gshawk function.
 #' @param yvar_choices vector with variable names that can be used as yvar.
 #' @param param_var single name of variable in analysis data that includes parameter names.
+#' @param param_var_label single name of variable in analysis data that includes parameter lables.
 #' @param param parameter name
 #' @param param_choices vector of parameter names that can be used in param.
 #' @param trt_group single name of treatment arm variable.
 #' @param trt_group_level vector that can be used to define factor level of trt_group.
+#' @param man_color string vector representing customized colors
 #' @param stat string of statistics
 #' @param hline numeric value to add horizontal line to plot
 #' @param rotate_xlab boolean value indicating whether to rotate x-axis labels
 #' @param plot_height numeric vectors to define the plot height.
+#' @param font_size control font size for title, x-axis, y-axis and legend font.
+#' @param dodge control the position dodge of error bar
 #' 
 #' 
 #' @import goshawk
@@ -32,85 +36,7 @@
 #'
 #' @examples
 #' 
-#' # EXAMPLE 1
-#' 
-#' # Example using analysis dataset for example ASL or ADSL,
-#' library(goshawk)
-#' library(DescTools)
-#' library(teal)
-#' 
-#' # ALB points to biomarker data stored in a typical LB structure. for example ALB or ADLB.
-#' 
-#' # for development team testing
-#' ASL_path <- "~/btk/lupus/dataadam/asl.sas7bdat"
-#' ALB_path <- "~/btk/lupus/dataadam/alb3arm.sas7bdat"
-#' 
-#' # list of biomarkers of interest. see ALB2 assignment below
-#' param_choices <- c("CRP","ADIGG","IG","IGA","IGE","IGG","IGM","TEST")
-#' 
-#' ASL0 <- read_bce(ASL_path)
-#' ASL <- subset(ASL0, subset = ITTFL == 'Y' & IAFL == 'Y')
-#' 
-#' ALB0 <- read_bce(ALB_path)
-#' 
-#' # post process the data to subset records per specification
-#' ALB_SUBSET <- subset(ALB0,
-#'                      subset = PARAMCD %in% c(param_choices) & ITTFL == 'Y' & IAFL == 'Y' & ANLFL == 'Y' & AVISIT %like any% c('BASE%','%WEEK%'),
-#'                      select = c('STUDYID', 'USUBJID', 'ITTFL', 'ANLFL', 'ARM', 'AVISIT', 'AVISITN', 'PARAMCD', 'AVAL', 'AVALU', 'BASE', 'CHG', 'PCHG',
-#'                                 'LBSTRESC', 'LBSTRESN'))
-#' 
-#' # calculate the minimum AVAL for each PARAMCD
-#' PARAM_MINS <- ALB_SUBSET %>%
-#'   select(USUBJID, PARAMCD, AVAL) %>%
-#'   filter(PARAMCD %in% param_choices) %>%
-#'   group_by(PARAMCD) %>%
-#'   summarise(AVAL_MIN=min(AVAL, na.rm=TRUE))
-#' 
-#' # post process the data to create several new variables and adjust existing record specific valules per specification
-#' # - create a visit code variable - baseline record code is "BB" and week records coded to "W NN"
-#' # - adjust existing BASELINE record values where values are missing: According to SPA this is a STREAM artifact
-#' ALB_SUPED1 <- ALB_SUBSET %>% mutate(AVISITCD = paste0(substr(AVISIT,start=1, stop=1),
-#'                                                       substr(AVISIT, start=regexpr(" ", AVISIT), stop=regexpr(" ", AVISIT)+2))) %>%
-#'   mutate(AVISITCDN =  ifelse(AVISITCD == "BB", 0, substr(AVISITCD,start=2, stop=4))) %>%
-#'   mutate(BASE = ifelse(AVISIT == "BASELINE" & is.na(BASE), AVAL, BASE)) %>%
-#'   mutate(CHG = ifelse(AVISIT == "BASELINE" & is.na(CHG), 0, CHG)) %>%
-#'   mutate(PCHG = ifelse(AVISIT == "BASELINE" & is.na(PCHG), 0, PCHG))
-#' # may need to add similar code for BASE2 related variables
-#' 
-#' 
-#' # merge minimum AVAL value onto the ALB data to calculate the log2 variables and preserve the variable order
-#' ALB_SUPED2 <- merge(ALB_SUPED1, PARAM_MINS, by="PARAMCD")[, union(names(ALB_SUPED1), names(PARAM_MINS))] %>%
-#'   mutate(AVALL2 = ifelse(AVAL == 0, log2(AVAL_MIN/2), log2(AVAL))) %>%
-#'   mutate(BASEL2 = ifelse(BASE == 0, log2(AVAL_MIN/2), log2(BASE))) #%>% need SPA to finish adding BASE2 to ALB
-#' #mutate(BASE2L2 = ifelse(BASE2 == 0, log2(AVAL_MIN/2), log2(AVAL)))
-#' 
-#' # for proper chronological ordering of visits in visualizations
-#' ALB_SUPED2$AVISITCDN <- as.numeric(ALB_SUPED2$AVISITCDN) # coerce character into numeric
-#' ALB <- ALB_SUPED2 %>% mutate(AVISITCD = factor(AVISITCD) %>% reorder(AVISITCDN))
-#' 
-#' # to test loq_flag
-#' ALB <- ALB %>% mutate(LOQFL = ifelse(PARAMCD == "CRP" & AVAL < .5, "Y", "N"))
-#' 
-#' x <- teal::init(
-#'   data = list(ASL = ASL, ALB = ALB),
-#'   modules = root_modules(
-#'     tm_g_lineplot(
-#'       label = "Line Plot",
-#'       dataname = "ALB",
-#'       xvar = "AVISITCD",
-#'       yvar = "AVAL",
-#'       yvar_choices = c("AVAL","CHG","PCGH"),
-#'       param_var = "PARAMCD",
-#'       param = "CRP",
-#'       param_choices = param_choices,
-#'       trt_group = "ARM"
-#'     )
-#'   )
-#' )
-#' 
-#' shinyApp(x$ui, x$server)
-#' 
-#' # EXAMPLE 2
+#' # EXAMPLE
 #' 
 #' library(random.cdisc.data)
 #' 
@@ -155,23 +81,25 @@ tm_g_lineplot <- function(label,
                           xvar, yvar,
                           xvar_choices = xvar, yvar_choices = yvar,
                           xvar_level = NULL,
-                          param_var,
+                          param_var, param_var_label = 'PARAM',
                           param, param_choices = param,
                           trt_group,
                           trt_group_level = NULL,
                           stat = "mean",
                           hline = NULL,
-                          # man_color = NULL,
+                          man_color = NULL,
                           rotate_xlab = FALSE,
-                          plot_height = c(600, 200, 2000)) {
+                          plot_height = c(600, 200, 2000),
+                          font_size = c(12, 8, 20),
+                          dodge = c(0.4, 0, 1)) {
   
   args <- as.list(environment())
   
   module(
     label = label,
     server = srv_lineplot,
-    server_args = list(dataname = dataname, param_var = param_var, trt_group = trt_group,
-                       xvar_level = xvar_level, trt_group_level = trt_group_level),
+    server_args = list(dataname = dataname, param_var = param_var, trt_group = trt_group, man_color = man_color,
+                       xvar_level = xvar_level, trt_group_level = trt_group_level, param_var_label = param_var_label),
     ui = ui_lineplot,
     ui_args = args,
     filters = dataname
@@ -209,15 +137,18 @@ ui_lineplot <- function(id, ...) {
       },
       checkboxInput(ns("rotate_xlab"), "Rotate X-axis Label", a$rotate_xlab),
       numericInput(ns("hline"), "Add a horizontal line:", a$hline),
+      optionalSliderInputValMinMax(ns("plot_height"), "Plot Height", a$plot_height, ticks = FALSE),
       uiOutput(ns("yaxis_scale")),
-      optionalSliderInputValMinMax(ns("plot_height"), "plot height", a$plot_height, ticks = FALSE)
+      uiOutput(ns("yvar_scale")),
+      optionalSliderInputValMinMax(ns("dodge"), "Error bar position dodge", a$dodge, ticks = FALSE),
+      optionalSliderInputValMinMax(ns("font_size"), "Font Size", a$font_size, ticks = FALSE)
     ),
     forms = actionButton(ns("show_rcode"), "Show R Code", width = "100%")
   )
   
 }
 
-srv_lineplot <- function(input, output, session, datasets, dataname, param_var, trt_group, xvar_level, trt_group_level) {
+srv_lineplot <- function(input, output, session, datasets, dataname, param_var, trt_group, man_color, xvar_level, trt_group_level, param_var_label) {
   
   ns <- session$ns
   
@@ -230,10 +161,12 @@ srv_lineplot <- function(input, output, session, datasets, dataname, param_var, 
   
   # dynamic slider for y-axis
   output$yaxis_scale <- renderUI({
-    ANL <- datasets$get_data(dataname, reactive = TRUE, filtered = TRUE)
+    ANL <- datasets$get_data(dataname, filtered = TRUE, reactive = TRUE)
     param <- input$param 
     xvar <- input$xvar
     value_var <- input$yvar
+    median <- ifelse(input$stat=='median',TRUE, FALSE)
+    
     scale_data <- ANL %>%
       filter(eval(parse(text = param_var)) == param) %>%
       group_by(eval(parse(text = xvar)),
@@ -246,13 +179,64 @@ srv_lineplot <- function(input, output, session, datasets, dataname, param_var, 
                 quant75 = quantile(eval(parse(text = value_var)), 0.75, na.rm = TRUE))
     
     # identify min and max values of BM range ignoring NA values
-    ymin_scale <- round(min(scale_data[,c('mean','CIup','CIdown','median','quant25','quant75')], na.rm = TRUE), digits = 1)
-    ymax_scale <- round(max(scale_data[,c('CIup','CIdown','quant25','quant75')], na.rm = TRUE), digits = 1)
+    ymin_scale <- -Inf
+    ymax_scale <- Inf
+    
+    if(median){
+      ymin_scale <- min(scale_data[,c('median','quant25','quant75')], na.rm = TRUE)
+      ymax_scale <- max(scale_data[,c('quant25','quant75')], na.rm = TRUE)
+    } else {
+      ymin_scale <- min(scale_data[,c('mean','CIup','CIdown')], na.rm = TRUE)
+      ymax_scale <- max(scale_data[,c('CIup','CIdown')], na.rm = TRUE)
+    }
     
     tagList({
-      sliderInput(ns("yrange_scale"), label="Y-Axis Range Scale", ymin_scale, ymax_scale, value = c(ymin_scale, ymax_scale))
+      sliderInput(ns("yrange_scale"), label="Y-Axis Range Scale", 
+                  round(ymin_scale*1.1, digits = 1), round(ymax_scale*1.1, digits = 1), 
+                  value = c(round(ymin_scale*1.1, digits = 1), round(ymax_scale*1.1, digits = 1)))
     })
     
+  })
+  
+  # dynamic slider for filter input value by parameter
+  output$yvar_scale <- renderUI({
+    ANL <- datasets$get_data(dataname, filtered = TRUE, reactive = TRUE)
+    param <- input$param
+    value_var <- input$yvar
+    scale_data <- filter(ANL, eval(parse(text = param_var)) == param)
+
+    # identify min and max values of BM range ignoring NA values
+    ymin_scale <- min(scale_data[,value_var], na.rm = TRUE)
+    ymax_scale <- max(scale_data[,value_var], na.rm = TRUE)
+
+    tagList({
+      sliderInput(ns("yfilter_scale"), label=paste0(value_var, " Value Range Scale"), 
+                  floor(ymin_scale), ceiling(ymax_scale),
+                  value = c(floor(ymin_scale), ceiling(ymax_scale)))
+    })
+  })
+
+
+  # filter data by param and the y-axis range values
+  filter_ANL <- reactive({
+
+    param <- input$param
+    yvar <- input$yvar
+    ANL <- datasets$get_data(dataname, filtered = TRUE, reactive = TRUE)
+
+    ymin_scale <- -Inf
+    ymax_scale <- Inf
+
+    if (length(input$yfilter_scale)){
+      ymin_scale <- input$yfilter_scale[1]
+      ymax_scale <- input$yfilter_scale[2]
+    }
+
+    ANL %>%
+      filter(eval(parse(text = param_var)) == param &
+               (ymin_scale <= eval(parse(text = yvar)) &
+                  eval(parse(text = yvar)) <= ymax_scale) |
+               (is.na(yvar)))
   })
   
   chunks <- list(
@@ -261,7 +245,7 @@ srv_lineplot <- function(input, output, session, datasets, dataname, param_var, 
   
   output$lineplot <- renderPlot({
     
-    ANL <- datasets$get_data(dataname, reactive = TRUE, filtered = TRUE)
+    ANL <- filter_ANL()
     param <- input$param
     xvar <- input$xvar
     yvar <- input$yvar
@@ -270,6 +254,8 @@ srv_lineplot <- function(input, output, session, datasets, dataname, param_var, 
     median <- ifelse(input$stat=='median',TRUE, FALSE)
     rotate_xlab <- input$rotate_xlab
     hline <- as.numeric(input$hline)
+    font_size <- input$font_size
+    dodge <- input$dodge
     
     chunks$analysis <<- "# Not Calculated"
     
@@ -296,6 +282,7 @@ srv_lineplot <- function(input, output, session, datasets, dataname, param_var, 
       "g_lineplot",
       data = bquote(.(as.name(data_name))),
       biomarker_var = param_var,
+      biomarker_var_label = param_var_label,
       biomarker = param,
       value_var = yvar,
       ymin = ymin_scale,
@@ -304,10 +291,12 @@ srv_lineplot <- function(input, output, session, datasets, dataname, param_var, 
       trt_group_level = trt_group_level,
       time = xvar,
       time_level = xvar_level,
-      color_manual = NULL,
+      color_manual = man_color,
       median = median,
       hline = hline,
-      rotate_xlab = rotate_xlab
+      rotate_xlab = rotate_xlab,
+      font_size = font_size,
+      dodge = dodge
     )
 
     p <- try(eval(chunks$analysis))

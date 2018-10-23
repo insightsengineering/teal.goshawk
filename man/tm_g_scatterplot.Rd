@@ -6,20 +6,17 @@
 \usage{
 tm_g_scatterplot(label, dataname, param_var, param, param_choices = param,
   xaxis_var, xaxis_var_choices = xaxis_var, yaxis_var,
-  yaxis_var_choices = yaxis_var, trt_group = "ARM", facet = FALSE,
-  reg_line = FALSE, rotate_xlab = FALSE, hline = NULL,
-  plot_width = c(800, 200, 2000), plot_height = c(500, 200, 2000),
-  font_size = c(12, 8, 20), dot_size = c(1, 1, 12), reg_text_size = c(3,
-  3, 10), pre_output = NULL, post_output = NULL,
-  code_data_processing = NULL)
+  yaxis_var_choices = yaxis_var, trt_group = "ARM", color_manual = NULL,
+  shape_manual = NULL, facet = FALSE, reg_line = FALSE,
+  rotate_xlab = FALSE, hline = NULL, plot_width = c(800, 200, 2000),
+  plot_height = c(500, 200, 2000), font_size = c(12, 8, 20),
+  dot_size = c(1, 1, 12), reg_text_size = c(3, 3, 10), pre_output = NULL,
+  post_output = NULL, code_data_processing = NULL)
 }
 \arguments{
-\item{label}{menu item label of the module in the teal app}
+\item{label}{menu item label of the module in the teal app.}
 
-\item{dataname}{analysis data used in teal module, needs to be available in
-the list passed to the \code{data} argument of \code{\link[teal]{init}}.
-Note that the data are expected to be in vertical form with the
-\code{PARAMCD} variable filtering to one observation per patient per visit.}
+\item{dataname}{ADaM structured analysis laboratory (ADLB/ALB) data frame.}
 
 \item{param_var}{name of variable containing biomarker codes e.g. PARAMCD.}
 
@@ -31,13 +28,17 @@ Note that the data are expected to be in vertical form with the
 
 \item{xaxis_var_choices}{list of variables containing biomarker results choices.}
 
-\item{yaxis_var}{name of variable containing biomarker results displayed on Y-axis e.g. BASE.}
+\item{yaxis_var}{name of variable containing biomarker results displayed on Y-axis e.g. AVAL.}
 
 \item{yaxis_var_choices}{list of variables containing biomarker results choices.}
 
 \item{trt_group}{name of variable representing treatment group e.g. ARM.}
 
-\item{facet}{controls facetting with trt_grp.}
+\item{color_manual}{vector of colors applied to treatment values.}
+
+\item{shape_manual}{vector of symbols applied to LOQ values.}
+
+\item{facet}{set layout to use treatment facetting.}
 
 \item{reg_line}{include regression line and annotations for slope and coefficient in visualization. Use with facet TRUE.}
 
@@ -49,11 +50,11 @@ Note that the data are expected to be in vertical form with the
 
 \item{plot_height}{controls plot height.}
 
-\item{font_size}{control font size for title, x-axis, y-axis and legend font.}
+\item{font_size}{font size control for title, x-axis label, y-axis label and legend.}
 
-\item{dot_size}{scatter dot size.}
+\item{dot_size}{plot dot size.}
 
-\item{reg_text_size}{regression line annotation font size.}
+\item{reg_text_size}{font size control for regression line annotations.}
 
 \item{pre_output}{optional, \code{shiny.tag} with text placed before the
 output to put the output into context. For example the
@@ -62,6 +63,8 @@ output to put the output into context. For example the
 \item{post_output}{optional, \code{shiny.tag} with text placed before the
 output to put the output into context. For example the
 \code{\link[shiny]{helpText}} elements are useful.}
+
+\item{code_data_processing}{TODO}
 }
 \description{
 This module displays a scatter plot.
@@ -72,12 +75,10 @@ This module displays a scatter plot. link to specification file \url{http://rstu
 \examples{
 
 \dontrun{
-# Example using analysis dataset for example ASL or ADSL,
-# ALB points to biomarker data stored in a typical LB structure. for example ALB or ADLB.
+# Example using ADaM structure analysis dataset.
+# ALB refers to biomarker data stored in expected laboratory structure.
 
-# need a test data set created using random.cdisc.data.
-# example call uses expects ALB structure 
-
+param_choices <- c("ANAPC", "CRP", "ADIGG", "CCL20")
 x <- teal::init(
   data = list(ASL = ASL, ALB = ALB),
   modules = root_modules(
@@ -92,6 +93,8 @@ x <- teal::init(
        yaxis_var = "AVAL",
        yaxis_var_choices = c("AVAL", "BASE", "CHG", "PCHG", "BASE2", "CHG2", "PCHG2", "AVALL2", "BASEL2", "BASE2L2"),
        trt_group = "ARM",
+       color_manual = color_manual,
+       shape_manual = shape_manual,
        plot_width = c(800, 200, 2000),
        plot_height = c(500, 200, 2000),
        facet = FALSE,
