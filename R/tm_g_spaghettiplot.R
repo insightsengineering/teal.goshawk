@@ -145,7 +145,7 @@ ui_spaghettiplot <- function(id, ...) {
       checkboxInput(ns("rotate_xlab"), "Rotate X-axis Label", a$rotate_xlab),
       numericInput(ns("hline"), "Add a horizontal line:", a$hline),
       uiOutput(ns("yaxis_scale")),
-      optionalSliderInputValMinMax(ns("plot_height"), "plot height", a$plot_height, ticks = FALSE),
+      optionalSliderInputValMinMax(ns("plot_height"), "Plot Height", a$plot_height, ticks = FALSE),
       optionalSliderInputValMinMax(ns("font_size"), "Font Size", a$font_size, ticks = FALSE)
     ),
     forms = actionButton(ns("show_rcode"), "Show R Code", width = "100%")
@@ -172,11 +172,13 @@ srv_spaghettiplot <- function(input, output, session, datasets, dataname, idvar,
       filter(eval(parse(text = param_var)) == param)
     
     # identify min and max values of BM range ignoring NA values
-    ymin_scale <- round(min(scale_data[[input$yvar]], na.rm = TRUE), digits = 1)
-    ymax_scale <- round(max(scale_data[[input$yvar]], na.rm = TRUE), digits = 1)
+    ymin_scale <- min(scale_data[[input$yvar]], na.rm = TRUE)
+    ymax_scale <- max(scale_data[[input$yvar]], na.rm = TRUE)
     
     tagList({
-      sliderInput(ns("yrange_scale"), label="Y-Axis Range Scale", ymin_scale, ymax_scale, value = c(ymin_scale, ymax_scale))
+      sliderInput(ns("yrange_scale"), label="Y-Axis Range Scale", 
+                  round(ymin_scale*1.1, digits = 1), round(ymax_scale*1.1, digits = 1), 
+                  value = c(round(ymin_scale*1.1, digits = 1), round(ymax_scale*1.1, digits = 1)))
     })
     
   })
