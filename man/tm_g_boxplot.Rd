@@ -7,10 +7,17 @@
 tm_g_boxplot(label, dataname, param_var, param, param_choices = param,
   value_var = "AVAL", value_var_choices = c("AVAL", "CHG"),
   plot_height = c(600, 200, 2000), trt_group = "ARM", color_manual = NULL,
+<<<<<<< HEAD
+  shape_manual = NULL, trt_group_choices = NULL, facet_var = "ARM",
+  facet_var_choices = NULL, xaxis_var = "AVISIT",
+  xaxis_var_choices = NULL, loq_flag_var = NULL, pre_output = NULL,
+  post_output = NULL, armlabel = NULL, code_data_processing = NULL)
+=======
   shape_manual = NULL, trt_group_choices = NULL, visit_var = "AVISIT",
   visit_var_choices = NULL, facet_choices = FALSE, facet = TRUE,
   loq_flag_var = NULL, pre_output = NULL, post_output = NULL,
   code_data_processing = NULL)
+>>>>>>> master
 }
 \arguments{
 \item{label}{menu item label of the module in the teal app}
@@ -32,23 +39,32 @@ Note that the data are expected to be in vertical form with the
 
 \item{plot_height}{numeric vectors to define the plot height.}
 
-\item{trt_group}{treatment variable}
+\item{trt_group}{treatment variable.  The boxes and symbols are colored according
+to this parameter.}
 
 \item{color_manual}{vector of treatment colors. assigned values in app.R otherwise uses default colors.}
+<<<<<<< HEAD
+=======
 
 \item{shape_manual}{vector of LOQ shapes. assigned values in app.R otherwise uses default shapes.}
 
 \item{trt_group_choices}{choices for \code{trt_group}}
+>>>>>>> master
 
-\item{visit_var}{default columm in \code{dataname} to use for visit.}
+\item{shape_manual}{vector of LOQ shapes. assigned values in app.R otherwise uses default shapes.}
 
-\item{visit_var_choices}{choice of which columns in \code{dataname} to use
-for visit.  If there is just one value in visit_var_choices, then this will
-be used and no selection of visit_var will be available.}
+\item{trt_group_choices}{choices for \code{trt_group}.  If not specified then
+trt_group cannot be changed.}
 
-\item{facet_choices}{boolean - if TRUE display a check box for facetting}
+\item{facet_var}{variable to facet the plots by.}
 
-\item{facet}{boolen - if TRUE facet the display}
+\item{facet_var_choices}{choices for \code{facet_var}. if not specified then
+\code{facet_var} will be fixed and cannot be changed.}
+
+\item{xaxis_var}{variable to categorize the x-axis}
+
+\item{xaxis_var_choices}{choices for \code{xaxis_var}. if not specified then
+\code{xaxis_var} will be fixed and cannot be changed.}
 
 \item{loq_flag_var}{variable for the LOQ.  Values are "Y" or "N"}
 
@@ -60,7 +76,12 @@ output to put the output into context. For example the
 output to put the output into context. For example the
 \code{\link[shiny]{helpText}} elements are useful.}
 
-\item{code_data_processing}{TODO}
+\item{armlabel}{header for the treatment symbols in the legend.  If not specified
+then the label attribute for \code{trt_group} will be used.  If there is 
+no label attribute for \code{trt_group}, then the name of the parameter (
+in title case) will be used.}
+
+\item{code_data_processing}{Not used}
 }
 \value{
 an \code{\link[teal]{module}} object#'
