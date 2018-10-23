@@ -21,6 +21,7 @@
 #' @param rotate_xlab boolean value indicating whether to rotate x-axis labels
 #' @param plot_height numeric vectors to define the plot height.
 #' @param font_size control font size for title, x-axis, y-axis and legend font.
+#' @param dodge control the position dodge of error bar
 #' 
 #' 
 #' @import goshawk
@@ -89,7 +90,8 @@ tm_g_lineplot <- function(label,
                           man_color = NULL,
                           rotate_xlab = FALSE,
                           plot_height = c(600, 200, 2000),
-                          font_size = c(12, 8, 20)) {
+                          font_size = c(12, 8, 20),
+                          dodge = c(0.4, 0, 1)) {
   
   args <- as.list(environment())
   
@@ -135,8 +137,10 @@ ui_lineplot <- function(id, ...) {
       },
       checkboxInput(ns("rotate_xlab"), "Rotate X-axis Label", a$rotate_xlab),
       numericInput(ns("hline"), "Add a horizontal line:", a$hline),
+      optionalSliderInputValMinMax(ns("plot_height"), "Plot Height", a$plot_height, ticks = FALSE),
       uiOutput(ns("yaxis_scale")),
-      optionalSliderInputValMinMax(ns("plot_height"), "plot height", a$plot_height, ticks = FALSE),
+      uiOutput(ns("yvar_scale")),
+      optionalSliderInputValMinMax(ns("dodge"), "Error bar position dodge", a$dodge, ticks = FALSE),
       optionalSliderInputValMinMax(ns("font_size"), "Font Size", a$font_size, ticks = FALSE)
     ),
     forms = actionButton(ns("show_rcode"), "Show R Code", width = "100%")
@@ -157,10 +161,12 @@ srv_lineplot <- function(input, output, session, datasets, dataname, param_var, 
   
   # dynamic slider for y-axis
   output$yaxis_scale <- renderUI({
-    ANL <- datasets$get_data(dataname, reactive = TRUE, filtered = TRUE)
+    ANL <- datasets$get_data(dataname, filtered = TRUE, reactive = TRUE)
     param <- input$param 
     xvar <- input$xvar
     value_var <- input$yvar
+    median <- ifelse(input$stat=='median',TRUE, FALSE)
+    
     scale_data <- ANL %>%
       filter(eval(parse(text = param_var)) == param) %>%
       group_by(eval(parse(text = xvar)),
@@ -173,13 +179,64 @@ srv_lineplot <- function(input, output, session, datasets, dataname, param_var, 
                 quant75 = quantile(eval(parse(text = value_var)), 0.75, na.rm = TRUE))
     
     # identify min and max values of BM range ignoring NA values
-    ymin_scale <- round(min(scale_data[,c('mean','CIup','CIdown','median','quant25','quant75')], na.rm = TRUE), digits = 1)
-    ymax_scale <- round(max(scale_data[,c('CIup','CIdown','quant25','quant75')], na.rm = TRUE), digits = 1)
+    ymin_scale <- -Inf
+    ymax_scale <- Inf
+    
+    if(median){
+      ymin_scale <- min(scale_data[,c('median','quant25','quant75')], na.rm = TRUE)
+      ymax_scale <- max(scale_data[,c('quant25','quant75')], na.rm = TRUE)
+    } else {
+      ymin_scale <- min(scale_data[,c('mean','CIup','CIdown')], na.rm = TRUE)
+      ymax_scale <- max(scale_data[,c('CIup','CIdown')], na.rm = TRUE)
+    }
     
     tagList({
-      sliderInput(ns("yrange_scale"), label="Y-Axis Range Scale", ymin_scale, ymax_scale, value = c(ymin_scale, ymax_scale))
+      sliderInput(ns("yrange_scale"), label="Y-Axis Range Scale", 
+                  round(ymin_scale*1.1, digits = 1), round(ymax_scale*1.1, digits = 1), 
+                  value = c(round(ymin_scale*1.1, digits = 1), round(ymax_scale*1.1, digits = 1)))
     })
     
+  })
+  
+  # dynamic slider for filter input value by parameter
+  output$yvar_scale <- renderUI({
+    ANL <- datasets$get_data(dataname, filtered = TRUE, reactive = TRUE)
+    param <- input$param
+    value_var <- input$yvar
+    scale_data <- filter(ANL, eval(parse(text = param_var)) == param)
+
+    # identify min and max values of BM range ignoring NA values
+    ymin_scale <- min(scale_data[,value_var], na.rm = TRUE)
+    ymax_scale <- max(scale_data[,value_var], na.rm = TRUE)
+
+    tagList({
+      sliderInput(ns("yfilter_scale"), label=paste0(value_var, " Value Range Scale"), 
+                  floor(ymin_scale), ceiling(ymax_scale),
+                  value = c(floor(ymin_scale), ceiling(ymax_scale)))
+    })
+  })
+
+
+  # filter data by param and the y-axis range values
+  filter_ANL <- reactive({
+
+    param <- input$param
+    yvar <- input$yvar
+    ANL <- datasets$get_data(dataname, filtered = TRUE, reactive = TRUE)
+
+    ymin_scale <- -Inf
+    ymax_scale <- Inf
+
+    if (length(input$yfilter_scale)){
+      ymin_scale <- input$yfilter_scale[1]
+      ymax_scale <- input$yfilter_scale[2]
+    }
+
+    ANL %>%
+      filter(eval(parse(text = param_var)) == param &
+               (ymin_scale <= eval(parse(text = yvar)) &
+                  eval(parse(text = yvar)) <= ymax_scale) |
+               (is.na(yvar)))
   })
   
   chunks <- list(
@@ -188,7 +245,7 @@ srv_lineplot <- function(input, output, session, datasets, dataname, param_var, 
   
   output$lineplot <- renderPlot({
     
-    ANL <- datasets$get_data(dataname, reactive = TRUE, filtered = TRUE)
+    ANL <- filter_ANL()
     param <- input$param
     xvar <- input$xvar
     yvar <- input$yvar
@@ -198,6 +255,7 @@ srv_lineplot <- function(input, output, session, datasets, dataname, param_var, 
     rotate_xlab <- input$rotate_xlab
     hline <- as.numeric(input$hline)
     font_size <- input$font_size
+    dodge <- input$dodge
     
     chunks$analysis <<- "# Not Calculated"
     
@@ -237,7 +295,8 @@ srv_lineplot <- function(input, output, session, datasets, dataname, param_var, 
       median = median,
       hline = hline,
       rotate_xlab = rotate_xlab,
-      font_size = font_size
+      font_size = font_size,
+      dodge = dodge
     )
 
     p <- try(eval(chunks$analysis))
