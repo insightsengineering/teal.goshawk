@@ -159,45 +159,6 @@ srv_lineplot <- function(input, output, session, datasets, dataname, param_var, 
     plotOutput(session$ns("lineplot"), height=plot_height)
   })
   
-  # dynamic slider for y-axis
-  output$yaxis_scale <- renderUI({
-    ANL <- datasets$get_data(dataname, filtered = TRUE, reactive = TRUE)
-    param <- input$param 
-    xvar <- input$xvar
-    value_var <- input$yvar
-    median <- ifelse(input$stat=='median',TRUE, FALSE)
-    
-    scale_data <- ANL %>%
-      filter(eval(parse(text = param_var)) == param) %>%
-      group_by(eval(parse(text = xvar)),
-               eval(parse(text = trt_group))) %>%
-      summarise(mean = mean(eval(parse(text = value_var)),na.rm = TRUE),
-                CIup = mean(eval(parse(text = value_var)),na.rm = TRUE) + 1.96 * sd(eval(parse(text = value_var)), na.rm = TRUE)/sqrt(n()),
-                CIdown = mean(eval(parse(text = value_var)),na.rm = TRUE) - 1.96 * sd(eval(parse(text = value_var)), na.rm = TRUE)/sqrt(n()),
-                median = median(eval(parse(text = value_var)),na.rm = TRUE),
-                quant25 = quantile(eval(parse(text = value_var)), 0.25, na.rm = TRUE),
-                quant75 = quantile(eval(parse(text = value_var)), 0.75, na.rm = TRUE))
-    
-    # identify min and max values of BM range ignoring NA values
-    ymin_scale <- -Inf
-    ymax_scale <- Inf
-    
-    if(median){
-      ymin_scale <- min(scale_data[,c('median','quant25','quant75')], na.rm = TRUE)
-      ymax_scale <- max(scale_data[,c('quant25','quant75')], na.rm = TRUE)
-    } else {
-      ymin_scale <- min(scale_data[,c('mean','CIup','CIdown')], na.rm = TRUE)
-      ymax_scale <- max(scale_data[,c('CIup','CIdown')], na.rm = TRUE)
-    }
-    
-    tagList({
-      sliderInput(ns("yrange_scale"), label="Y-Axis Range Scale", 
-                  round(ymin_scale*1.1, digits = 1), round(ymax_scale*1.1, digits = 1), 
-                  value = c(round(ymin_scale*1.1, digits = 1), round(ymax_scale*1.1, digits = 1)))
-    })
-    
-  })
-  
   # dynamic slider for filter input value by parameter
   output$yvar_scale <- renderUI({
     ANL <- datasets$get_data(dataname, filtered = TRUE, reactive = TRUE)
@@ -238,6 +199,46 @@ srv_lineplot <- function(input, output, session, datasets, dataname, param_var, 
                   eval(parse(text = yvar)) <= ymax_scale) |
                (is.na(yvar)))
   })
+  
+  # dynamic slider for y-axis
+  output$yaxis_scale <- renderUI({
+    ANL <- filter_ANL()
+    param <- input$param 
+    xvar <- input$xvar
+    value_var <- input$yvar
+    median <- ifelse(input$stat=='median',TRUE, FALSE)
+    
+    scale_data <- ANL %>%
+      filter(eval(parse(text = param_var)) == param) %>%
+      group_by(eval(parse(text = xvar)),
+               eval(parse(text = trt_group))) %>%
+      summarise(mean = mean(eval(parse(text = value_var)),na.rm = TRUE),
+                CIup = mean(eval(parse(text = value_var)),na.rm = TRUE) + 1.96 * sd(eval(parse(text = value_var)), na.rm = TRUE)/sqrt(n()),
+                CIdown = mean(eval(parse(text = value_var)),na.rm = TRUE) - 1.96 * sd(eval(parse(text = value_var)), na.rm = TRUE)/sqrt(n()),
+                median = median(eval(parse(text = value_var)),na.rm = TRUE),
+                quant25 = quantile(eval(parse(text = value_var)), 0.25, na.rm = TRUE),
+                quant75 = quantile(eval(parse(text = value_var)), 0.75, na.rm = TRUE))
+    
+    # identify min and max values of BM range ignoring NA values
+    ymin_scale <- -Inf
+    ymax_scale <- Inf
+    
+    if(median){
+      ymin_scale <- min(scale_data[,c('median','quant25','quant75')], na.rm = TRUE)
+      ymax_scale <- max(scale_data[,c('quant25','quant75')], na.rm = TRUE)
+    } else {
+      ymin_scale <- min(scale_data[,c('mean','CIup','CIdown')], na.rm = TRUE)
+      ymax_scale <- max(scale_data[,c('CIup','CIdown')], na.rm = TRUE)
+    }
+    
+    tagList({
+      sliderInput(ns("yrange_scale"), label="Y-Axis Range Scale", 
+                  round(ymin_scale*1.1, digits = 1), round(ymax_scale*1.1, digits = 1), 
+                  value = c(round(ymin_scale*1.1, digits = 1), round(ymax_scale*1.1, digits = 1)))
+    })
+    
+  })
+  
   
   chunks <- list(
     analysis = "# Not Calculated"
