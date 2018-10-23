@@ -9,7 +9,7 @@ tm_g_lineplot(label, dataname, xvar, yvar, xvar_choices = xvar,
   param_var_label = "PARAM", param, param_choices = param, trt_group,
   trt_group_level = NULL, stat = "mean", hline = NULL, man_color = NULL,
   rotate_xlab = FALSE, plot_height = c(600, 200, 2000), font_size = c(12,
-  8, 20))
+  8, 20), dodge = c(0.4, 0, 1))
 }
 \arguments{
 \item{label}{menue item label of the module in the teal app}
@@ -50,6 +50,8 @@ Note that the data is expected to be in vertical form with the PARAMCD variable 
 \item{plot_height}{numeric vectors to define the plot height.}
 
 \item{font_size}{control font size for title, x-axis, y-axis and legend font.}
+
+\item{dodge}{control the position dodge of error bar}
 }
 \value{
 \code{shiny} object

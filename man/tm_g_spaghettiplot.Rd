@@ -7,9 +7,9 @@
 tm_g_spaghettiplot(label, dataname, idvar, xvar, yvar, xvar_choices = xvar,
   yvar_choices = yvar, xvar_level = NULL, param_var,
   param_var_label = "PARAM", param, param_choices = param, trt_group,
-  trt_group_level = NULL, hline = NULL, man_color = NULL,
-  rotate_xlab = FALSE, facet_ncol = 2, plot_height = c(600, 200, 2000),
-  font_size = c(12, 8, 20))
+  trt_group_level = NULL, group_mean = FALSE, hline = NULL,
+  man_color = NULL, rotate_xlab = FALSE, facet_ncol = 2,
+  plot_height = c(600, 200, 2000), font_size = c(12, 8, 20))
 }
 \arguments{
 \item{label}{menue item label of the module in the teal app}
@@ -40,6 +40,8 @@ Note that the data is expected to be in vertical form with the PARAMCD variable 
 \item{trt_group}{single name of treatment arm variable.}
 
 \item{trt_group_level}{vector that can be used to define factor level of trt_group.}
+
+\item{group_mean}{boolean value indicating whether to overlay group means.}
 
 \item{hline}{numeric value to add horizontal line to plot}
 
