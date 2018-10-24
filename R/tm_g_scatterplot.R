@@ -139,6 +139,9 @@ ui_g_scatterplot <- function(id, ...) {
       optionalSelectInput(ns("param"), "Select a Biomarker", a$param_choices, a$param, multiple = FALSE),
       optionalSelectInput(ns("xaxis_var"), "Select an X-Axis Variable", a$xaxis_var_choices, a$xaxis_var, multiple = FALSE),
       optionalSelectInput(ns("yaxis_var"), "Select a Y-Axis Variable", a$yaxis_var_choices, a$yaxis_var, multiple = FALSE),
+      uiOutput(ns("xaxis_scale")),
+      uiOutput(ns("yaxis_scale")),
+      
       tags$label("Plot Settings", class="text-primary", style="margin-top: 15px;"),
       checkboxInput(ns("facet"), "Treatment Facetting", a$facet),
       checkboxInput(ns("reg_line"), "Regression Line", a$reg_line),
@@ -146,8 +149,6 @@ ui_g_scatterplot <- function(id, ...) {
       numericInput(ns("hline"), "Add a horizontal line:", a$hline),
       optionalSliderInputValMinMax(ns("plot_width"), "Plot Width", a$plot_width, ticks = FALSE),
       optionalSliderInputValMinMax(ns("plot_height"), "Plot Height", a$plot_height, ticks = FALSE),
-      uiOutput(ns("xaxis_scale")),
-      uiOutput(ns("yaxis_scale")),
       optionalSliderInputValMinMax(ns("font_size"), "Font Size", a$font_size, ticks = FALSE),
       optionalSliderInputValMinMax(ns("dot_size"), "Dot Size", a$dot_size, ticks = FALSE),
       optionalSliderInputValMinMax(ns("reg_text_size"), "Regression Annotations Size", a$reg_text_size, ticks = FALSE)
@@ -220,7 +221,7 @@ srv_g_scatterplot <- function(input, output, session, datasets, dataname,
       xmax_scale <- RoundTo(max(scale_data[[input$xaxis_var]], na.rm = TRUE), multiple = .001, FUN = ceiling)
       
       tagList({
-        sliderInput(ns("xrange_scale"), label="X-Axis Range Scale", xmin_scale, xmax_scale, value = c(xmin_scale, xmax_scale))
+        sliderInput(ns("xrange_scale"), label="X-Axis Variable Data Filter", xmin_scale, xmax_scale, value = c(xmin_scale, xmax_scale))
       })
   })
 
@@ -235,7 +236,7 @@ srv_g_scatterplot <- function(input, output, session, datasets, dataname,
       ymax_scale <- RoundTo(max(scale_data[[input$yaxis_var]], na.rm = TRUE), multiple = .001, FUN = ceiling)
 
       tagList({
-        sliderInput(ns("yrange_scale"), label="Y-Axis Range Scale", ymin_scale, ymax_scale, value = c(ymin_scale, ymax_scale))
+        sliderInput(ns("yrange_scale"), label="Y-Axis Variable Data Filter", ymin_scale, ymax_scale, value = c(ymin_scale, ymax_scale))
       })
   })
   

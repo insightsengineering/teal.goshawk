@@ -9,8 +9,9 @@ tm_g_boxplot(label, dataname, param_var, param, param_choices = param,
   plot_height = c(600, 200, 2000), trt_group = "ARM", color_manual = NULL,
   shape_manual = NULL, trt_group_choices = NULL, facet_var = "ARM",
   facet_var_choices = NULL, xaxis_var = "AVISIT",
-  xaxis_var_choices = NULL, loq_flag_var = NULL, pre_output = NULL,
-  post_output = NULL, armlabel = NULL, code_data_processing = NULL)
+  xaxis_var_choices = NULL, loq_flag_var = NULL, rotate_xlab = FALSE,
+  pre_output = NULL, post_output = NULL, armlabel = NULL,
+  code_data_processing = NULL)
 }
 \arguments{
 \item{label}{menu item label of the module in the teal app}
@@ -53,6 +54,8 @@ trt_group cannot be changed.}
 \code{xaxis_var} will be fixed and cannot be changed.}
 
 \item{loq_flag_var}{variable for the LOQ.  Values are "Y" or "N"}
+
+\item{rotate_xlab}{45 degree rotation of x-axis values.}
 
 \item{pre_output}{optional, \code{shiny.tag} with text placed before the
 output to put the output into context. For example the
@@ -107,7 +110,8 @@ x <- teal::init(
         param_choices = c("CRP", "IGA", "IGG", "IGM"),
         value_var = "AVAL",
         value_var_choices = c("AVAL", "BASE", "CHG"),
-        visit_var = "AVISITCD",
+        rotate_xlab = FALSE,
+        xaxis_var = "AVISITCD",
         trt_group = "ARM"
       )
   )

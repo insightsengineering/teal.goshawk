@@ -30,6 +30,7 @@
 #' @param shape_manual vector of LOQ shapes. assigned values in app.R otherwise uses default shapes.
 #' @param plot_height  numeric vectors to define the plot height.
 #' @param loq_flag_var variable for the LOQ.  Values are "Y" or "N"
+#' @param rotate_xlab 45 degree rotation of x-axis values.
 #' @param code_data_processing Not used
 #' 
 #' @inheritParams teal::standard_layout
@@ -79,7 +80,8 @@
 #'         param_choices = c("CRP", "IGA", "IGG", "IGM"),
 #'         value_var = "AVAL",
 #'         value_var_choices = c("AVAL", "BASE", "CHG"),
-#'         visit_var = "AVISITCD",
+#'         rotate_xlab = FALSE,
+#'         xaxis_var = "AVISITCD",
 #'         trt_group = "ARM"
 #'       )
 #'   )
@@ -106,6 +108,7 @@ tm_g_boxplot <- function(label,
                          xaxis_var = "AVISIT",
                          xaxis_var_choices = NULL,
                          loq_flag_var = NULL,
+                         rotate_xlab = FALSE,
                          pre_output = NULL,
                          post_output = NULL,
                          armlabel = NULL,
@@ -187,8 +190,6 @@ ui_g_boxplot <- function(id, ...) {
                           , multiple = FALSE
                           , width = inpWidth
       ),
-
-      tags$label("Plot Settings", class="text-primary", style="margin-top: 15px;"),
       
       optionalSelectInput(ns("xaxis_var")
                           , label = "X-Axis Variable"
@@ -197,7 +198,7 @@ ui_g_boxplot <- function(id, ...) {
                           , multiple = FALSE
                           , width = inpWidth
       ),
-
+      
       optionalSelectInput(ns("facet_var")
                           , label = "Facet by"
                           , choices = a$facet_var_choices
@@ -205,15 +206,20 @@ ui_g_boxplot <- function(id, ...) {
                           , multiple = FALSE
                           , width = inpWidth
       ),
+      
+      uiOutput(ns("yaxis_scale")),
+      uiOutput(ns("yaxis_filter")),
+      
+      tags$label("Plot Settings", class="text-primary", style="margin-top: 15px;"),
+      
+      checkboxInput(ns("rotate_xlab"), "Rotate X-axis Label", a$rotate_xlab),
+      
       optionalSliderInputValMinMax(ns("plot_height")
                                    , label = "Plot height"
                                    , a$plot_height
                                    , ticks = FALSE
                                    , step = 50
                                    , width = inpWidth),
-      
-      uiOutput(ns("yaxis_scale")),
-      uiOutput(ns("yaxis_filter")),
       
       optionalSliderInputValMinMax(ns("font_size")
                                    , label = "Font Size"
@@ -277,6 +283,7 @@ srv_g_boxplot <- function(input, output, session, datasets
     
     param <- input$param
     value_var <- input$value_var
+    rotate_xlab <- input$rotate_xlab
     
     # Select all of the data for the parameter.
     alb <- datasets$get_data(dataname, filtered = TRUE, reactive = TRUE) %>%
@@ -350,7 +357,7 @@ srv_g_boxplot <- function(input, output, session, datasets
       if (is_finite(yax$min) ) {
         tagList({
           sliderInput(session$ns("yrange_scale")
-                      , label=paste0("Y-Axis range for ", param, " (", value_var, ")")
+                      , label=paste0("Y-Axis Range Zoom")
                       , yax$min, yax$max
                       , step = yax$step
                       , value = c(yax$min, yax$max) 
@@ -369,7 +376,7 @@ srv_g_boxplot <- function(input, output, session, datasets
       if (is_finite(yax$min) & !yax$eqt) {
         tagList({
           sliderInput(session$ns("yrange_filter")
-                      , label=paste0("Filter for ", param, " (", value_var, ")")
+                      , label=paste0("Y-Axis Variable Data Filter")
                       , yax$min, yax$max
                       , step = yax$step
                       , value = c(yax$min, yax$max) 
@@ -406,6 +413,7 @@ srv_g_boxplot <- function(input, output, session, datasets
     filter_var <- input$filter_var
     value_var <- input$value_var
     param <- input$param
+    rotate_xlab = input$rotate_xlab
     dot_size <- input$dot_size
     font_size <- input$font_size
     alpha <- input$alpha
@@ -419,20 +427,20 @@ srv_g_boxplot <- function(input, output, session, datasets
     ymin_scale <- input$yrange_scale[1]
     ymax_scale <- input$yrange_scale[2]
     
-    validate(need(!is.null(ALB) && is.data.frame(ALB), "no data left"))
-    validate(need(nrow(ALB) > 0 , "no observations left"))
+    validate(need(!is.null(ALB) && is.data.frame(ALB), "No data left"))
+    validate(need(nrow(ALB) > 0 , "No observations left"))
     validate(need(param_var %in% names(ALB),
                   paste("Biomarker parameter variable", param_var, " is not available in data", dataname)))
     validate(need(param %in% unique(ALB[[param_var]]),
                   paste("Biomarker", param, " is not available in data", dataname)))
     validate(need(trt_group %in% names(ALB),
-                  paste("variable", trt_group, " is not available in data", dataname)))
+                  paste("Variable", trt_group, " is not available in data", dataname)))
     validate(need(value_var %in% names(ALB),
-                  paste("variable", value_var, " is not available in data", dataname)))
+                  paste("Variable", value_var, " is not available in data", dataname)))
     validate(need(xaxis_var %in% names(ALB),
-                  paste("variable", xaxis_var, " is not available in data", dataname)))
+                  paste("Variable", xaxis_var, " is not available in data", dataname)))
     validate(need(facet_var %in% names(ALB),
-                  paste("variable", facet_var, " is not available in data", dataname)))
+                  paste("Variable", facet_var, " is not available in data", dataname)))
 
     chunks$boxsetup <<- bquote({
       # Units to display, just take the first if there multiples.
@@ -453,6 +461,7 @@ srv_g_boxplot <- function(input, output, session, datasets
       data = bquote(.(as.name(data_name))),
         biomarker = param,
         value_var = value_var,
+        rotate_xlab = rotate_xlab,
         trt_group = trt_group,
         timepoint = "over time",
         unit = unit,
