@@ -175,10 +175,12 @@ srv_spaghettiplot <- function(input, output, session, datasets, dataname, idvar,
     ymin_scale <- min(scale_data[[input$yvar]], na.rm = TRUE)
     ymax_scale <- max(scale_data[[input$yvar]], na.rm = TRUE)
     
+    ran <- ymax_scale - ymin_scale
+    
     tagList({
       sliderInput(ns("yrange_scale"), label="Y-Axis Range Scale", 
-                  round(ymin_scale*1.1, digits = 1), round(ymax_scale*1.1, digits = 1), 
-                  value = c(round(ymin_scale*1.1, digits = 1), round(ymax_scale*1.1, digits = 1)))
+                  round(ymin_scale - 0.1*ran, digits = 1), round(ymax_scale + 0.1*ran, digits = 1), 
+                  value = c(round(ymin_scale - 0.1*ran, digits = 1), round(ymax_scale + 0.1*ran, digits = 1)))
     })
     
   })

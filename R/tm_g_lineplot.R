@@ -231,10 +231,12 @@ srv_lineplot <- function(input, output, session, datasets, dataname, param_var, 
       ymax_scale <- max(scale_data[,c('CIup','CIdown')], na.rm = TRUE)
     }
     
+    ran <- ymax_scale - ymin_scale
+    
     tagList({
       sliderInput(ns("yrange_scale"), label="Y-Axis Range Scale", 
-                  round(ymin_scale*1.1, digits = 1), round(ymax_scale*1.1, digits = 1), 
-                  value = c(round(ymin_scale*1.1, digits = 1), round(ymax_scale*1.1, digits = 1)))
+                  round(ymin_scale - 0.1 * ran, digits = 1), round(ymax_scale + 0.1 * ran, digits = 1), 
+                  value = c(round(ymin_scale - 0.1 * ran, digits = 1), round(ymax_scale + 0.1 * ran, digits = 1)))
     })
     
   })
