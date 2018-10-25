@@ -75,7 +75,6 @@
 #' 
 #' shinyApp(x$ui, x$server)
 
-
 tm_g_lineplot <- function(label,
                           dataname,
                           xvar, yvar,
@@ -107,7 +106,6 @@ tm_g_lineplot <- function(label,
   
 }
 
-
 ui_lineplot <- function(id, ...) {
   
   ns <- NS(id)
@@ -119,31 +117,28 @@ ui_lineplot <- function(id, ...) {
   standard_layout(
     output = uiOutput(ns("plot_ui")),
     encoding = div(
-      tags$label("Encodings", class="text-primary"),
-      helpText("Analysis data:", tags$code(a$dataname)),
-      helpText("Biomarker parameter variable:", tags$code(a$param_var)),
-      optionalSelectInput(ns("param"), "Biomarker", a$param_choices, a$param, multiple = FALSE),
-      optionalSelectInput(ns("xvar"), "x variable", a$xvar_choices, a$xvar, multiple = FALSE),
-      optionalSelectInput(ns("yvar"), "y variable", a$yvar_choices, a$yvar, multiple = FALSE),
-      helpText("Treatment group:", tags$code(a$trt_group)),
-      radioButtons(ns("stat"), "Select statistics:", c("mean","median"), a$stat),
-
+      tags$label(a$dataname, "Data Settings", class="text-primary"),
+      optionalSelectInput(ns("param"), "Select a Biomarker", a$param_choices, a$param, multiple = FALSE),
+      optionalSelectInput(ns("xvar"), "X-Axis Variable", a$xvar_choices, a$xvar, multiple = FALSE),
+      optionalSelectInput(ns("yvar"), "Select a Y-Axis Variable", a$yvar_choices, a$yvar, multiple = FALSE),
+      radioButtons(ns("stat"), "Select a Statistic:", c("mean","median"), a$stat),
+      uiOutput(ns("yvar_scale")),
+      uiOutput(ns("yaxis_scale")),
+      
       if (all(c(
         length(a$plot_height) == 1
       ))) {
         NULL
       } else {
-        tags$label("Plot Settings", class="text-primary", style="margin-top: 15px;")
+        tags$label("Plot Aesthetic Settings", class="text-primary", style="margin-top: 15px;")
       },
-      checkboxInput(ns("rotate_xlab"), "Rotate X-axis Label", a$rotate_xlab),
-      numericInput(ns("hline"), "Add a horizontal line:", a$hline),
+      checkboxInput(ns("rotate_xlab"), "Rotate X-Axis Label", a$rotate_xlab),
+      numericInput(ns("hline"), "Add a Horizontal Line:", a$hline),
       optionalSliderInputValMinMax(ns("plot_height"), "Plot Height", a$plot_height, ticks = FALSE),
-      uiOutput(ns("yaxis_scale")),
-      uiOutput(ns("yvar_scale")),
-      optionalSliderInputValMinMax(ns("dodge"), "Error bar position dodge", a$dodge, ticks = FALSE),
+      optionalSliderInputValMinMax(ns("dodge"), "Error Bar Position Dodge", a$dodge, ticks = FALSE),
       optionalSliderInputValMinMax(ns("font_size"), "Font Size", a$font_size, ticks = FALSE)
     ),
-    forms = actionButton(ns("show_rcode"), "Show R Code", width = "100%")
+    # forms = actionButton(ns("show_rcode"), "Show R Code", width = "100%")
   )
   
 }
@@ -171,7 +166,7 @@ srv_lineplot <- function(input, output, session, datasets, dataname, param_var, 
     ymax_scale <- max(scale_data[,value_var], na.rm = TRUE)
 
     tagList({
-      sliderInput(ns("yfilter_scale"), label=paste0(value_var, " Value Range Scale"), 
+      sliderInput(ns("yfilter_scale"), label=paste0(value_var, "Y-Axis Variable Data Filter"), 
                   floor(ymin_scale), ceiling(ymax_scale),
                   value = c(floor(ymin_scale), ceiling(ymax_scale)))
     })
@@ -234,7 +229,7 @@ srv_lineplot <- function(input, output, session, datasets, dataname, param_var, 
     ran <- ymax_scale - ymin_scale
     
     tagList({
-      sliderInput(ns("yrange_scale"), label="Y-Axis Range Scale", 
+      sliderInput(ns("yrange_scale"), label="Y-Axis Range Zoom", 
                   round(ymin_scale - 0.1 * ran, digits = 1), round(ymax_scale + 0.1 * ran, digits = 1), 
                   value = c(round(ymin_scale - 0.1 * ran, digits = 1), round(ymax_scale + 0.1 * ran, digits = 1)))
     })

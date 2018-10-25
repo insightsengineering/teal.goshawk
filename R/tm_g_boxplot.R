@@ -156,27 +156,10 @@ ui_g_boxplot <- function(id, ...) {
   standard_layout(
     output = div(tagList(uiOutput(ns("plot_ui")), uiOutput(ns("table_ui")))),
     encoding =  div(
-      tags$label("Encodings", class="text-primary"),
-      
-      helpText("Analysis data:", tags$code(a$dataname)),
-      optionalSelectInput(ns("filter_var")
-                          , label = "Preset Data Filters"
-                          , choices = a$filter_var_choices
-                          , selected = a$filter_var
-                          , multiple = TRUE
-                          , width = inpWidth
-                          ),
-      
-      optionalSelectInput(ns("trt_group")
-                          , label = "Treatment Group"
-                          , choices = a$trt_group_choices
-                          , selected = a$trt_group
-                          , multiple = FALSE
-                          , width = inpWidth
-      ),
+      tags$label(a$dataname, "Data Settings", class="text-primary"),
       
       optionalSelectInput(inputId = ns("param")
-                         , label = "Biomarker"
+                         , label = " Select a Biomarker"
                          , choices = a$param_choices
                          , selected = a$param
                          , multiple = FALSE
@@ -184,7 +167,7 @@ ui_g_boxplot <- function(id, ...) {
       ),
     
       optionalSelectInput(ns("value_var")
-                          , label = "Analysis Variable"
+                          , label = "Select a Y-Axis Variable"
                           , choices = a$value_var_choices
                           , selected = a$value_var
                           , multiple = FALSE
@@ -192,7 +175,7 @@ ui_g_boxplot <- function(id, ...) {
       ),
       
       optionalSelectInput(ns("xaxis_var")
-                          , label = "X-Axis Variable"
+                          , label = "Select an X-Axis Variable"
                           , choices = a$xaxis_var_choices
                           , selected = a$xaxis_var
                           , multiple = FALSE
@@ -207,12 +190,12 @@ ui_g_boxplot <- function(id, ...) {
                           , width = inpWidth
       ),
       
-      uiOutput(ns("yaxis_scale")),
       uiOutput(ns("yaxis_filter")),
+      uiOutput(ns("yaxis_scale")),
       
-      tags$label("Plot Settings", class="text-primary", style="margin-top: 15px;"),
+      tags$label("Plot Aesthetic Settings", class="text-primary", style="margin-top: 15px;"),
       
-      checkboxInput(ns("rotate_xlab"), "Rotate X-axis Label", a$rotate_xlab),
+      checkboxInput(ns("rotate_xlab"), "Rotate X-Axis Label", a$rotate_xlab),
       
       optionalSliderInputValMinMax(ns("plot_height")
                                    , label = "Plot height"
@@ -248,7 +231,7 @@ ui_g_boxplot <- function(id, ...) {
       )
       
     ), 
-    forms = actionButton(ns("show_rcode"), "Show R Code", width = "100%")
+    # forms = actionButton(ns("show_rcode"), "Show R Code", width = "100%")
     
   )
   
@@ -348,23 +331,6 @@ srv_g_boxplot <- function(input, output, session, datasets
   
   # dynamic slider for y-axis - Use ylimits 
   observe({
-    output$yaxis_scale <- renderUI({
-      param <- input$param
-      value_var <- input$value_var
-      # Calculate nice default limits based on the min and max from the data
-      yax <- get_axis_limits(ylimits()$low, ylimits()$high, req.n = 100)
-
-      if (is_finite(yax$min) ) {
-        tagList({
-          sliderInput(session$ns("yrange_scale")
-                      , label=paste0("Y-Axis Range Zoom")
-                      , yax$min, yax$max
-                      , step = yax$step
-                      , value = c(yax$min, yax$max) 
-          )
-        })
-      }
-    })  
     
     output$yaxis_filter <- renderUI({
       param <- input$param 
@@ -383,7 +349,26 @@ srv_g_boxplot <- function(input, output, session, datasets
           )
         })
       }
+    })
+    
+    output$yaxis_scale <- renderUI({
+      param <- input$param
+      value_var <- input$value_var
+      # Calculate nice default limits based on the min and max from the data
+      yax <- get_axis_limits(ylimits()$low, ylimits()$high, req.n = 100)
+      
+      if (is_finite(yax$min) ) {
+        tagList({
+          sliderInput(session$ns("yrange_scale")
+                      , label=paste0("Y-Axis Range Zoom")
+                      , yax$min, yax$max
+                      , step = yax$step
+                      , value = c(yax$min, yax$max) 
+          )
+        })
+      }
     })  
+    
   })
   
   # If facet selection changes to be the same as x axis selection, set the

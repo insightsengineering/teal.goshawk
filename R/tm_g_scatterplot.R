@@ -134,7 +134,7 @@ ui_g_scatterplot <- function(id, ...) {
   standard_layout(
     output = uiOutput(ns("plot_ui")),
     encoding =  div(
-      tags$label("Encodings", class="text-primary"),
+      tags$label(a$dataname, "Data Settings", class="text-primary"),
       helpText("Analysis data:", tags$code(a$dataname)),
       optionalSelectInput(ns("param"), "Select a Biomarker", a$param_choices, a$param, multiple = FALSE),
       optionalSelectInput(ns("xaxis_var"), "Select an X-Axis Variable", a$xaxis_var_choices, a$xaxis_var, multiple = FALSE),
@@ -142,7 +142,7 @@ ui_g_scatterplot <- function(id, ...) {
       uiOutput(ns("xaxis_scale")),
       uiOutput(ns("yaxis_scale")),
       
-      tags$label("Plot Settings", class="text-primary", style="margin-top: 15px;"),
+      tags$label("Plot Aesthetic Settings", class="text-primary", style="margin-top: 15px;"),
       checkboxInput(ns("facet"), "Treatment Facetting", a$facet),
       checkboxInput(ns("reg_line"), "Regression Line", a$reg_line),
       checkboxInput(ns("rotate_xlab"), "Rotate X-axis Label", a$rotate_xlab),

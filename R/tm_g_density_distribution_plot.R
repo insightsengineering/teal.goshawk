@@ -118,15 +118,14 @@ ui_g_density_distribution_plot <- function(id, ...) {
   standard_layout(
     output = div(tagList(uiOutput(ns("plot_ui")), uiOutput(ns("table_ui")))),
     encoding =  div(
-      tags$label("Encodings", class="text-primary"),
-      helpText("Analysis data:", tags$code(a$dataname)),
+      tags$label(a$dataname, "Data Settings", class="text-primary"),
       optionalSelectInput(ns("param"), "Select a Biomarker", a$param_choices, a$param, multiple = FALSE),
       optionalSelectInput(ns("xaxis_var"), "Select an X-Axis Variable", a$xaxis_var_choices, a$xaxis_var, multiple = FALSE),
       uiOutput(ns("xaxis_scale")),
       
-      tags$label("Plot Settings", class="text-primary", style="margin-top: 15px;"),
-      checkboxInput(ns("rotate_xlab"), "Rotate X-axis Label", a$rotate_xlab),
-      numericInput(ns("hline"), "Add a horizontal line:", a$hline, min = 0, max = 1, step = .1),
+      tags$label("Plot Aesthetic Settings", class="text-primary", style="margin-top: 15px;"),
+      checkboxInput(ns("rotate_xlab"), "Rotate X-Axis Label", a$rotate_xlab),
+      numericInput(ns("hline"), "Add a Horizontal Line:", a$hline, min = 0, max = 1, step = .1),
       optionalSliderInputValMinMax(ns("plot_width"), "Plot Width", a$plot_width, ticks = FALSE),
       optionalSliderInputValMinMax(ns("plot_height"), "Plot Height", a$plot_height, ticks = FALSE),
       optionalSliderInputValMinMax(ns("font_size"), "Font Size", a$font_size, ticks = FALSE),
