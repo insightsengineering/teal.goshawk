@@ -179,8 +179,8 @@ srv_spaghettiplot <- function(input, output, session, datasets, dataname, idvar,
     
     tagList({
       sliderInput(ns("yrange_scale"), label="Y-Axis Range Scale", 
-                  round(ymin_scale - 0.1*ran, digits = 1), round(ymax_scale + 0.1*ran, digits = 1), 
-                  value = c(round(ymin_scale - 0.1*ran, digits = 1), round(ymax_scale + 0.1*ran, digits = 1)))
+                  floor(ymin_scale), ceiling(ymax_scale), 
+                  value = c(floor(ymin_scale), ceiling(ymax_scale)))
     })
     
   })
