@@ -166,7 +166,7 @@ srv_lineplot <- function(input, output, session, datasets, dataname, param_var, 
     ymax_scale <- max(scale_data[,value_var], na.rm = TRUE)
 
     tagList({
-      sliderInput(ns("yfilter_scale"), label=paste0(value_var, "Y-Axis Variable Data Filter"), 
+      sliderInput(ns("yfilter_scale"), label=paste0("Y-Axis Variable Data Filter"), 
                   floor(ymin_scale), ceiling(ymax_scale),
                   value = c(floor(ymin_scale), ceiling(ymax_scale)))
     })
