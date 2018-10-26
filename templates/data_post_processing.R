@@ -29,7 +29,7 @@ shape_manual = c('N' = 1, 'Y' = 2, 'NA' = 0)
 # list of biomarkers of interest. see ALB1 assignment below
 param_choices <- c("ACIGG", "ACIGM", "ADIGG", "ANAPC", "ANAPDS", "ANAPH", "ANAPM", "ANAPND", "ANAPP", "ANAPR", "ANAPS", "ANAPSP", "ASSBABC", "AVCT_JMT",
                    "B2G1GAAB", "B2GLYIGG", "B2GLYIGM", "BASOSF", "BTKP", "BTKT",
-                   "C3", "C4S", "CCL20", "CCL3", "CCL4", "CD19A", "CD19P", "CD3A", "CD3P", "CD4A", "CD4P", "CD8A", "CD8P", "CRP",
+                   "C3", "C4S", "CCL20", "CCL3", "CCL4", "CD19A", "CD19P", "CD3A", "CD3P", "CD4A", "CD4P", "CD8A", "CD8P", "CD63", "CRP",
                    "DLCT_JCH", "DLCT_MZB", "DLCT_TXN",
                    "IGG", "IGM",
                    "NLBC_JCH", "NLBC_MZB", "NLBC_TXN",
@@ -104,7 +104,7 @@ ALB_SUPED1 <- ALB_SUBSET %>%
   mutate(TRTORD = ifelse(grepl("C", ARMCD), 1, ifelse(grepl("B", ARMCD), 2, ifelse(grepl("A", ARMCD), 3, NA))) %make_label% "Treatment Order")
 
 # merge minimum AVAL value onto the ALB data to calculate the log2 variables. preserve the variable order
-ALB_SUPED2 <- inner_join(PARAM_MINS, ALB_SUPED1, by="PARAMCD")[, union(names(ALB_SUPED1), names(PARAM_MINS))] %>%
+ALB_SUPED2 <- right_join(PARAM_MINS, ALB_SUPED1, by="PARAMCD")[, union(names(ALB_SUPED1), names(PARAM_MINS))] %>%
   # visit values
   mutate(AVALL2 = ifelse(PARAMCD %in% exclude_l2, AVAL, # excludes biomarkers where log2 is not appropriate: for example assay value already log2
                          ifelse(PARAMCD %in% exclude_chg, NA, # excludes biomarkers where log2 is not appropriate: for example CHG type assay

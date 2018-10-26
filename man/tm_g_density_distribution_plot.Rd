@@ -68,7 +68,7 @@ None
 # Example using ADaM structure analysis dataset.
 # ALB refers to biomarker data stored in expected laboratory structure.
 
-param_choices <- c("ACIGG", "CRP", "ADIGG", "CCL20")
+param_choices <- c("ACIGG", "CRP", "ADIGG", "CCL20", "IGG")
 x <- teal::init(
   data = list(ASL = ASL, ALB = ALB),
   modules = root_modules(

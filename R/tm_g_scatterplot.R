@@ -184,7 +184,8 @@ srv_g_scatterplot <- function(input, output, session, datasets, dataname,
   filter_ALB <- reactive({
     
     param <- input$param
-    
+    xaxis_var <- input$xaxis_var
+    yaxis_var <- input$yaxis_var
     xmin_scale <- -Inf
     xmax_scale <- Inf
     ymin_scale <- -Inf

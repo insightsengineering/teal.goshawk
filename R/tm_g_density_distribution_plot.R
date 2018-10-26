@@ -43,7 +43,7 @@
 #' # Example using ADaM structure analysis dataset.
 #' # ALB refers to biomarker data stored in expected laboratory structure.
 #' 
-#' param_choices <- c("ACIGG", "CRP", "ADIGG", "CCL20")
+#' param_choices <- c("ACIGG", "CRP", "ADIGG", "CCL20", "IGG")
 #' x <- teal::init(
 #'   data = list(ASL = ASL, ALB = ALB),
 #'   modules = root_modules(
@@ -160,9 +160,11 @@ srv_g_density_distribution_plot <- function(input, output, session, datasets, da
   filter_ALB <- reactive({
 
     param <- input$param
-    
+    xaxis_var <- input$xaxis_var
     xmin_scale <- -Inf
     xmax_scale <- Inf
+    
+    
     
     if (length(input$xrange_scale)){
         xmin_scale <- input$xrange_scale[1]
@@ -173,7 +175,8 @@ srv_g_density_distribution_plot <- function(input, output, session, datasets, da
       filter(eval(parse(text = param_var)) == param &
                xmin_scale <= eval(parse(text = xaxis_var)) &
                eval(parse(text = xaxis_var)) <= xmax_scale |
-               is.na(xaxis_var))
+               is.na(xaxis_var)
+               )
   })
   
   # dynamic slider for x-axis
@@ -185,7 +188,7 @@ srv_g_density_distribution_plot <- function(input, output, session, datasets, da
       # identify min and max values of BM range ignoring NA values
       xmin_scale <- RoundTo(min(scale_data[[input$xaxis_var]], na.rm = TRUE), multiple = .001, FUN = floor)
       xmax_scale <- RoundTo(max(scale_data[[input$xaxis_var]], na.rm = TRUE), multiple = .001, FUN = ceiling)
-      
+
       tagList({
         sliderInput(ns("xrange_scale"), label="X-Axis Variable Data Filter", xmin_scale, xmax_scale, value = c(xmin_scale, xmax_scale))
       })
