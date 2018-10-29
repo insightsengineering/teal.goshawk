@@ -121,7 +121,6 @@ ui_g_density_distribution_plot <- function(id, ...) {
       tags$label(a$dataname, "Data Settings", class="text-primary"),
       optionalSelectInput(ns("param"), "Select a Biomarker", a$param_choices, a$param, multiple = FALSE),
       optionalSelectInput(ns("xaxis_var"), "Select an X-Axis Variable", a$xaxis_var_choices, a$xaxis_var, multiple = FALSE),
-      # uiOutput(ns("xaxis_scale")),
       uiOutput(ns("xmin_value")),
       uiOutput(ns("xmax_value")),
       
@@ -181,21 +180,6 @@ srv_g_density_distribution_plot <- function(input, output, session, datasets, da
                )
   })
 
-  # # dynamic slider for x-axis
-  # output$xaxis_scale <- renderUI({
-  #   ALB <- datasets$get_data(dataname, filtered = TRUE, reactive = TRUE) # must add for the dynamic ui.range_scale field
-  #   param <- input$param # must add for the dynamic ui.range_scale field
-  #   scale_data <- ALB %>%
-  #     filter(eval(parse(text = param_var)) == param)
-  #   # identify min and max values of BM range ignoring NA values
-  #   xmin_scale <- RoundTo(min(scale_data[[input$xaxis_var]], na.rm = TRUE), multiple = .001, FUN = floor)
-  #   xmax_scale <- RoundTo(max(scale_data[[input$xaxis_var]], na.rm = TRUE), multiple = .001, FUN = ceiling)
-  #   
-  #   tagList({
-  #     sliderInput(ns("xrange_scale"), label="X-Axis Variable Data Filter", xmin_scale, xmax_scale, value = c(xmin_scale, xmax_scale))
-  #   })
-  # })
-  
   # x-axis minimum value
   output$xmin_value <- renderUI({
     ALB <- datasets$get_data(dataname, filtered = TRUE, reactive = TRUE) # must add for the dynamic ui.range_scale field
