@@ -191,7 +191,7 @@ srv_g_density_distribution_plot <- function(input, output, session, datasets, da
     xmax_range <- RoundTo(max(scale_data[[input$xaxis_var]], na.rm = TRUE), multiple = .001, FUN = ceiling)
     
     tagList({
-      numericInput(ns("xmin"), paste0("Minimum X-Axis Value (", xmin_range, ")"), xmin_range, min = xmin_range, max = xmax_range)
+      numericInput(ns("xmin"), paste0("Minimum X-Axis Value (", xmin_range, ")"), value = xmin_range, min = xmin_range, max = xmax_range)
     })
   })
   
@@ -206,7 +206,7 @@ srv_g_density_distribution_plot <- function(input, output, session, datasets, da
       xmax_range <- RoundTo(max(scale_data[[input$xaxis_var]], na.rm = TRUE), multiple = .001, FUN = ceiling)
 
       tagList({
-        numericInput(ns("xmax"), paste0("Maximum X-Axis Value (", xmax_range, ")"), xmax_range, min = xmin_range, max = xmax_range)
+        numericInput(ns("xmax"), paste0("Maximum X-Axis Value (", xmax_range, ")"), value = xmax_range, min = xmin_range, max = xmax_range)
       })
   })
 

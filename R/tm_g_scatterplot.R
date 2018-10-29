@@ -139,8 +139,12 @@ ui_g_scatterplot <- function(id, ...) {
       optionalSelectInput(ns("param"), "Select a Biomarker", a$param_choices, a$param, multiple = FALSE),
       optionalSelectInput(ns("xaxis_var"), "Select an X-Axis Variable", a$xaxis_var_choices, a$xaxis_var, multiple = FALSE),
       optionalSelectInput(ns("yaxis_var"), "Select a Y-Axis Variable", a$yaxis_var_choices, a$yaxis_var, multiple = FALSE),
-      uiOutput(ns("xaxis_scale")),
-      uiOutput(ns("yaxis_scale")),
+      # uiOutput(ns("xaxis_scale")),
+      # uiOutput(ns("yaxis_scale")),
+      uiOutput(ns("xmin_value")),
+      uiOutput(ns("xmax_value")),
+      uiOutput(ns("ymin_value")),
+      uiOutput(ns("ymax_value")),
       
       tags$label("Plot Aesthetic Settings", class="text-primary", style="margin-top: 15px;"),
       checkboxInput(ns("facet"), "Treatment Facetting", a$facet),
@@ -186,59 +190,95 @@ srv_g_scatterplot <- function(input, output, session, datasets, dataname,
     param <- input$param
     xaxis_var <- input$xaxis_var
     yaxis_var <- input$yaxis_var
-    xmin_scale <- -Inf
-    xmax_scale <- Inf
-    ymin_scale <- -Inf
-    ymax_scale <- Inf
+    xmin_range <- -Inf
+    xmax_range <- Inf
+    ymin_range <- -Inf
+    ymax_range <- Inf
 
-    if (length(input$xrange_scale)){
-      xmin_scale <- input$xrange_scale[1]
-      xmax_scale <- input$xrange_scale[2]
+    if (length(input$xmin)){
+      xmin_range <- input$xmin
     }
     
-    if (length(input$yrange_scale)){
-      ymin_scale <- input$yrange_scale[1]
-      ymax_scale <- input$yrange_scale[2]
+    if (length(input$xmax)){
+      xmax_range <- input$xmax
+    }
+
+    if (length(input$ymin)){
+      ymin_range <- input$ymin
+    }
+
+    if (length(input$ymax)){
+      ymax_range <- input$ymax
     }
 
     datasets$get_data(dataname, filtered = TRUE, reactive = TRUE) %>%
       filter(eval(parse(text = param_var)) == param &
-               (xmin_scale <= eval(parse(text = xaxis_var)) &
-               eval(parse(text = xaxis_var)) <= xmax_scale &
-               ymin_scale <= eval(parse(text = yaxis_var)) &
-               eval(parse(text = yaxis_var)) <= ymax_scale) |
+               (xmin_range <= eval(parse(text = xaxis_var)) &
+               eval(parse(text = xaxis_var)) <= xmax_range &
+               ymin_range <= eval(parse(text = yaxis_var)) &
+               eval(parse(text = yaxis_var)) <= ymax_range) |
                (is.na(xaxis_var) | is.na(yaxis_var)))
   })
   
   
-  # dynamic slider for x-axis
-  output$xaxis_scale <- renderUI({
+  # x-axis minimum value
+  output$xmin_value <- renderUI({
     ALB <- datasets$get_data(dataname, filtered = TRUE, reactive = TRUE) # must add for the dynamic ui.range_scale field
     param <- input$param # must add for the dynamic ui.range_scale field
     scale_data <- ALB %>%
       filter(eval(parse(text = param_var)) == param)
       # identify min and max values of BM range ignoring NA values
-      xmin_scale <- RoundTo(min(scale_data[[input$xaxis_var]], na.rm = TRUE), multiple = .001, FUN = floor)
-      xmax_scale <- RoundTo(max(scale_data[[input$xaxis_var]], na.rm = TRUE), multiple = .001, FUN = ceiling)
+      xmin_range <- RoundTo(min(scale_data[[input$xaxis_var]], na.rm = TRUE), multiple = .001, FUN = floor)
+      xmax_range <- RoundTo(max(scale_data[[input$xaxis_var]], na.rm = TRUE), multiple = .001, FUN = ceiling)
       
       tagList({
-        sliderInput(ns("xrange_scale"), label="X-Axis Variable Data Filter", xmin_scale, xmax_scale, value = c(xmin_scale, xmax_scale))
+        numericInput(ns("xmin"), paste0("Minimum X-Axis Value (", xmin_range, ")"), value = xmin_range, min = xmin_range, max = xmax_range)
       })
   })
 
-  # dynamic slider for y-axis
-  output$yaxis_scale <- renderUI({
+  # x-axis maximum value
+  output$xmax_value <- renderUI({
     ALB <- datasets$get_data(dataname, filtered = TRUE, reactive = TRUE) # must add for the dynamic ui.range_scale field
     param <- input$param # must add for the dynamic ui.range_scale field
     scale_data <- ALB %>%
       filter(eval(parse(text = param_var)) == param)
-      # identify min and max values of BM range ignoring NA values
-      ymin_scale <- RoundTo(min(scale_data[[input$yaxis_var]], na.rm = TRUE), multiple = .001, FUN = floor)
-      ymax_scale <- RoundTo(max(scale_data[[input$yaxis_var]], na.rm = TRUE), multiple = .001, FUN = ceiling)
+    # identify min and max values of BM range ignoring NA values
+    xmin_range <- RoundTo(min(scale_data[[input$xaxis_var]], na.rm = TRUE), multiple = .001, FUN = floor)
+    xmax_range <- RoundTo(max(scale_data[[input$xaxis_var]], na.rm = TRUE), multiple = .001, FUN = ceiling)
+    
+    tagList({
+      numericInput(ns("xmax"), paste0("Maximum X-Axis Value (", xmax_range, ")"), value = xmax_range, min = xmin_range, max = xmax_range)
+    })
+  })
 
-      tagList({
-        sliderInput(ns("yrange_scale"), label="Y-Axis Variable Data Filter", ymin_scale, ymax_scale, value = c(ymin_scale, ymax_scale))
-      })
+  # y-axis minimum value
+  output$ymin_value <- renderUI({
+    ALB <- datasets$get_data(dataname, filtered = TRUE, reactive = TRUE) # must add for the dynamic ui.range_scale field
+    param <- input$param # must add for the dynamic ui.range_scale field
+    scale_data <- ALB %>%
+      filter(eval(parse(text = param_var)) == param)
+    # identify min and max values of BM range ignoring NA values
+    ymin_range <- RoundTo(min(scale_data[[input$yaxis_var]], na.rm = TRUE), multiple = .001, FUN = floor)
+    ymax_range <- RoundTo(max(scale_data[[input$yaxis_var]], na.rm = TRUE), multiple = .001, FUN = ceiling)
+    
+    tagList({
+      numericInput(ns("ymin"), paste0("Minimum Y-Axis Value (", ymin_range, ")"), value = ymin_range, min = ymin_range, max = ymax_range)
+    })
+  })
+  
+  # y-axis maximum value
+  output$ymax_value <- renderUI({
+    ALB <- datasets$get_data(dataname, filtered = TRUE, reactive = TRUE) # must add for the dynamic ui.range_scale field
+    param <- input$param # must add for the dynamic ui.range_scale field
+    scale_data <- ALB %>%
+      filter(eval(parse(text = param_var)) == param)
+    # identify min and max values of BM range ignoring NA values
+    ymin_range <- RoundTo(min(scale_data[[input$yaxis_var]], na.rm = TRUE), multiple = .001, FUN = floor)
+    ymax_range <- RoundTo(max(scale_data[[input$yaxis_var]], na.rm = TRUE), multiple = .001, FUN = ceiling)
+    
+    tagList({
+      numericInput(ns("ymax"), paste0("Maximum Y-Axis Value (", ymax_range, ")"), value = ymax_range, min = ymin_range, max = ymax_range)
+    })
   })
   
   output$scatterplot <- renderPlot({
