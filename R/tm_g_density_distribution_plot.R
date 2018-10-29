@@ -121,7 +121,9 @@ ui_g_density_distribution_plot <- function(id, ...) {
       tags$label(a$dataname, "Data Settings", class="text-primary"),
       optionalSelectInput(ns("param"), "Select a Biomarker", a$param_choices, a$param, multiple = FALSE),
       optionalSelectInput(ns("xaxis_var"), "Select an X-Axis Variable", a$xaxis_var_choices, a$xaxis_var, multiple = FALSE),
-      uiOutput(ns("xaxis_scale")),
+      # uiOutput(ns("xaxis_scale")),
+      uiOutput(ns("xmin_value")),
+      uiOutput(ns("xmax_value")),
       
       tags$label("Plot Aesthetic Settings", class="text-primary", style="margin-top: 15px;"),
       checkboxInput(ns("rotate_xlab"), "Rotate X-Axis Label", a$rotate_xlab),
@@ -161,36 +163,66 @@ srv_g_density_distribution_plot <- function(input, output, session, datasets, da
 
     param <- input$param
     xaxis_var <- input$xaxis_var
-    xmin_scale <- -Inf
-    xmax_scale <- Inf
+    xmin_range <- -Inf
+    xmax_range <- Inf
     
-    
-    
-    if (length(input$xrange_scale)){
-        xmin_scale <- input$xrange_scale[1]
-        xmax_scale <- input$xrange_scale[2]
+    if (length(input$xmin)){
+      xmin_range <- input$xmin
     }
     
+    if (length(input$xmax)){
+      xmax_range <- input$xmax
+    }
     datasets$get_data(dataname, filtered = TRUE, reactive = TRUE) %>%
       filter(eval(parse(text = param_var)) == param &
-               xmin_scale <= eval(parse(text = xaxis_var)) &
-               eval(parse(text = xaxis_var)) <= xmax_scale |
+               xmin_range <= eval(parse(text = xaxis_var)) &
+               eval(parse(text = xaxis_var)) <= xmax_range |
                is.na(xaxis_var)
                )
   })
+
+  # # dynamic slider for x-axis
+  # output$xaxis_scale <- renderUI({
+  #   ALB <- datasets$get_data(dataname, filtered = TRUE, reactive = TRUE) # must add for the dynamic ui.range_scale field
+  #   param <- input$param # must add for the dynamic ui.range_scale field
+  #   scale_data <- ALB %>%
+  #     filter(eval(parse(text = param_var)) == param)
+  #   # identify min and max values of BM range ignoring NA values
+  #   xmin_scale <- RoundTo(min(scale_data[[input$xaxis_var]], na.rm = TRUE), multiple = .001, FUN = floor)
+  #   xmax_scale <- RoundTo(max(scale_data[[input$xaxis_var]], na.rm = TRUE), multiple = .001, FUN = ceiling)
+  #   
+  #   tagList({
+  #     sliderInput(ns("xrange_scale"), label="X-Axis Variable Data Filter", xmin_scale, xmax_scale, value = c(xmin_scale, xmax_scale))
+  #   })
+  # })
   
-  # dynamic slider for x-axis
-  output$xaxis_scale <- renderUI({
+  # x-axis minimum value
+  output$xmin_value <- renderUI({
+    ALB <- datasets$get_data(dataname, filtered = TRUE, reactive = TRUE) # must add for the dynamic ui.range_scale field
+    param <- input$param # must add for the dynamic ui.range_scale field
+    scale_data <- ALB %>%
+      filter(eval(parse(text = param_var)) == param)
+    # identify min and max values of BM range ignoring NA values
+    xmin_range <- RoundTo(min(scale_data[[input$xaxis_var]], na.rm = TRUE), multiple = .001, FUN = floor)
+    xmax_range <- RoundTo(max(scale_data[[input$xaxis_var]], na.rm = TRUE), multiple = .001, FUN = ceiling)
+    
+    tagList({
+      numericInput(ns("xmin"), paste0("Minimum X-Axis Value (", xmin_range, ")"), xmin_range, min = xmin_range, max = xmax_range)
+    })
+  })
+  
+  # x-axis maximum value
+  output$xmax_value <- renderUI({
     ALB <- datasets$get_data(dataname, filtered = TRUE, reactive = TRUE) # must add for the dynamic ui.range_scale field
     param <- input$param # must add for the dynamic ui.range_scale field
     scale_data <- ALB %>%
       filter(eval(parse(text = param_var)) == param)
       # identify min and max values of BM range ignoring NA values
-      xmin_scale <- RoundTo(min(scale_data[[input$xaxis_var]], na.rm = TRUE), multiple = .001, FUN = floor)
-      xmax_scale <- RoundTo(max(scale_data[[input$xaxis_var]], na.rm = TRUE), multiple = .001, FUN = ceiling)
+      xmin_range <- RoundTo(min(scale_data[[input$xaxis_var]], na.rm = TRUE), multiple = .001, FUN = floor)
+      xmax_range <- RoundTo(max(scale_data[[input$xaxis_var]], na.rm = TRUE), multiple = .001, FUN = ceiling)
 
       tagList({
-        sliderInput(ns("xrange_scale"), label="X-Axis Variable Data Filter", xmin_scale, xmax_scale, value = c(xmin_scale, xmax_scale))
+        numericInput(ns("xmax"), paste0("Maximum X-Axis Value (", xmax_range, ")"), xmax_range, min = xmin_range, max = xmax_range)
       })
   })
 
