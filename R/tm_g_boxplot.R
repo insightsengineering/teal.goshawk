@@ -189,14 +189,15 @@ ui_g_boxplot <- function(id, ...) {
                           , multiple = FALSE
                           , width = inpWidth
       ),
-      
-      uiOutput(ns("yaxis_filter")),
-      uiOutput(ns("yaxis_scale")),
-      
+      uiOutput(ns("ymin_value")),
+      uiOutput(ns("ymax_value")),
+
       tags$label("Plot Aesthetic Settings", class="text-primary", style="margin-top: 15px;"),
       
       checkboxInput(ns("rotate_xlab"), "Rotate X-Axis Label", a$rotate_xlab),
       
+      uiOutput(ns("yaxis_scale")),
+
       optionalSliderInputValMinMax(ns("plot_height")
                                    , label = "Plot height"
                                    , a$plot_height
@@ -230,8 +231,8 @@ ui_g_boxplot <- function(id, ...) {
                                    , width = inpWidth
       )
       
-    ), 
-    # forms = actionButton(ns("show_rcode"), "Show R Code", width = "100%")
+    )
+    # , forms = actionButton(ns("show_rcode"), "Show R Code", width = "100%")
     
   )
   
@@ -266,22 +267,23 @@ srv_g_boxplot <- function(input, output, session, datasets
     
     param <- input$param
     value_var <- input$value_var
-    rotate_xlab <- input$rotate_xlab
     
     # Select all of the data for the parameter.
     alb <- datasets$get_data(dataname, filtered = TRUE, reactive = TRUE) %>%
       filter( eval(parse(text = param_var)) == param )
     
     # Only consider filtering on value if there is data to filter, the filter
-    # slider is loaded and that there are some non-missing values present.
-    # Then check to see if the filter sliders have been moved from their default
-    # positions.  Only is all of these conditions have been met, filter on
+    # inputs are loaded and that there are some non-missing values present.
+    # Then check to see if the filter values have been altered from their default
+    # values.  Only is all of these conditions have been met, filter on
     # the values.
-    if (length(alb) & length(input$yrange_filter) & is_finite(ylimits()$low)) {
-      ymin_scale <- input$yrange_filter[1]
-      ymax_scale <- input$yrange_filter[2]
+    if (length(alb) & is_finite(input$ymin) & is_finite(ylimits()$low)) {
+      ymin_scale <- input$ymin
+      ymax_scale <- input$ymax
       axlim <- get_axis_limits(ylimits()$low, ylimits()$high, req.n = 2) 
-      if (( ymin_scale != axlim$min | ymax_scale != axlim$max)){
+      if (is_finite(ymin_scale) & is_finite(ymax_scale) & 
+          ( ymin_scale != axlim$min | ymax_scale != axlim$max)){
+        
         alb <- alb %>% 
           filter(ymin_scale <= eval(parse(text = value_var)) & 
                  eval(parse(text = value_var)) <= ymax_scale)
@@ -323,7 +325,7 @@ srv_g_boxplot <- function(input, output, session, datasets
     }
   }  
   
-  # Extend is.infinit to include zero  length objects.
+  # Extend is.infinit to include zero length objects.
   is_finite <- function(x){
     if(length(x) == 0) return(FALSE)
     return(is.finite(x))
@@ -332,38 +334,39 @@ srv_g_boxplot <- function(input, output, session, datasets
   # dynamic slider for y-axis - Use ylimits 
   observe({
     
-    output$yaxis_filter <- renderUI({
-      param <- input$param 
-      value_var <- input$value_var
-      
-      # Calculate nice default limits based on the min and max from the data
-      yax <- get_axis_limits(ylimits()$low, ylimits()$high, req.n = 2000 )
-
+    # Calculate nice default limits based on the min and max from the data
+    yax <- get_axis_limits(ylimits()$low, ylimits()$high, req.n = 2 )
+    
+    output$ymin_value <- renderUI({
       if (is_finite(yax$min) & !yax$eqt) {
         tagList({
-          sliderInput(session$ns("yrange_filter")
-                      , label=paste0("Y-Axis Variable Data Filter")
-                      , yax$min, yax$max
-                      , step = yax$step
-                      , value = c(yax$min, yax$max) 
-          )
+          numericInput(session$ns("ymin")
+                       , paste0("Select ", input$value_var, " From (", yax$min, ")")
+                       , value = yax$min, min = yax$min, max = yax$max)
+        })
+      }
+    })
+    
+    output$ymax_value <- renderUI({
+      if (is_finite(yax$max) & !yax$eqt) {
+        tagList({
+          numericInput(session$ns("ymax")
+                       , paste0("Select ", input$value_var, " To (", yax$max, ")")
+                       , value = yax$max, min = yax$min, max = yax$max)
         })
       }
     })
     
     output$yaxis_scale <- renderUI({
-      param <- input$param
-      value_var <- input$value_var
-      # Calculate nice default limits based on the min and max from the data
       yax <- get_axis_limits(ylimits()$low, ylimits()$high, req.n = 100)
-      
-      if (is_finite(yax$min) ) {
+      if (is_finite(yax$min) & is_finite(yax$max) 
+          & is_finite(input$ymin) & is_finite(input$ymax) ) {
         tagList({
           sliderInput(session$ns("yrange_scale")
                       , label=paste0("Y-Axis Range Zoom")
                       , yax$min, yax$max
                       , step = yax$step
-                      , value = c(yax$min, yax$max) 
+                      , value = c(input$ymin, input$ymax) 
           )
         })
       }
@@ -411,7 +414,11 @@ srv_g_boxplot <- function(input, output, session, datasets
     
     ymin_scale <- input$yrange_scale[1]
     ymax_scale <- input$yrange_scale[2]
+    ymin <- input$ymin
+    ymax <- input$ymax
     
+    validate(need(ymax >= ymin,
+                  paste("Minimum filter value greater than maximum filter value")))
     validate(need(!is.null(ALB) && is.data.frame(ALB), "No data left"))
     validate(need(nrow(ALB) > 0 , "No observations left"))
     validate(need(param_var %in% names(ALB),
