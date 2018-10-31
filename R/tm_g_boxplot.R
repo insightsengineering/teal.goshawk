@@ -189,9 +189,17 @@ ui_g_boxplot <- function(id, ...) {
                           , multiple = FALSE
                           , width = inpWidth
       ),
-      uiOutput(ns("ymin_value")),
-      uiOutput(ns("ymax_value")),
-
+      
+      div(style="padding: 0px;",
+          uiOutput(ns("y_select")),
+          div(
+            uiOutput(ns("ymin_value"), style="display: inline-block; vertical-align:center;"),
+            tags$p(" to ", style="display: inline-block; vertical-align:center;"),
+            uiOutput(ns("ymax_value"), style="display: inline-block; vertical-align:center;"),
+            style="padding: 0px; margin: 0px"
+          )
+      ),
+      
       tags$label("Plot Aesthetic Settings", class="text-primary", style="margin-top: 15px;"),
       
       checkboxInput(ns("rotate_xlab"), "Rotate X-Axis Label", a$rotate_xlab),
@@ -336,12 +344,18 @@ srv_g_boxplot <- function(input, output, session, datasets
     
     # Calculate nice default limits based on the min and max from the data
     yax <- get_axis_limits(ylimits()$low, ylimits()$high, req.n = 2 )
+
+    output$y_select <- renderUI({
+      HTML(
+        paste0("<strong>Select data for ", input$value_var, " (", yax$min, " to ", yax$max, ")</strong>")
+      )
+    })
     
     output$ymin_value <- renderUI({
       if (is_finite(yax$min) & !yax$eqt) {
         tagList({
           numericInput(session$ns("ymin")
-                       , paste0("Select ", input$value_var, " From (", yax$min, ")")
+                       , label = NULL
                        , value = yax$min, min = yax$min, max = yax$max)
         })
       }
@@ -351,7 +365,7 @@ srv_g_boxplot <- function(input, output, session, datasets
       if (is_finite(yax$max) & !yax$eqt) {
         tagList({
           numericInput(session$ns("ymax")
-                       , paste0("Select ", input$value_var, " To (", yax$max, ")")
+                       , label = NULL
                        , value = yax$max, min = yax$min, max = yax$max)
         })
       }
