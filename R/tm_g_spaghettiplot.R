@@ -144,7 +144,8 @@ ui_spaghettiplot <- function(id, ...) {
       numericInput(ns("hline"), "Add a Horizontal Line:", a$hline),
       optionalSliderInputValMinMax(ns("plot_height"), "Plot Height", a$plot_height, ticks = FALSE),
       optionalSliderInputValMinMax(ns("font_size"), "Font Size", a$font_size, ticks = FALSE)
-    ),
+    )
+    # ,
     # forms = actionButton(ns("show_rcode"), "Show R Code", width = "100%")
   )
   
@@ -175,7 +176,7 @@ srv_spaghettiplot <- function(input, output, session, datasets, dataname, idvar,
     ran <- ymax_scale - ymin_scale
     
     tagList({
-      sliderInput(ns("yrange_scale"), label="Y-Axis Variable Data Filter", 
+      sliderInput(ns("yrange_scale"), label="Y-Axis Range Zoom", 
                   floor(ymin_scale), ceiling(ymax_scale), 
                   value = c(floor(ymin_scale), ceiling(ymax_scale)))
     })
