@@ -137,7 +137,8 @@ ui_lineplot <- function(id, ...) {
       optionalSliderInputValMinMax(ns("plot_height"), "Plot Height", a$plot_height, ticks = FALSE),
       optionalSliderInputValMinMax(ns("dodge"), "Error Bar Position Dodge", a$dodge, ticks = FALSE),
       optionalSliderInputValMinMax(ns("font_size"), "Font Size", a$font_size, ticks = FALSE)
-    ),
+    )
+    # ,
     # forms = actionButton(ns("show_rcode"), "Show R Code", width = "100%")
   )
   
