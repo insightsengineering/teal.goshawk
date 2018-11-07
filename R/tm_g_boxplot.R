@@ -30,6 +30,9 @@
 #' @param shape_manual vector of LOQ shapes. assigned values in app.R otherwise uses default shapes.
 #' @param plot_height  numeric vectors to define the plot height.
 #' @param loq_flag_var variable for the LOQ.  Values are "Y" or "N"
+#' @param hline y-axis value to position a horizontal line.  NULL = No line.
+#' @param facet_ncol numeric value indicating number of facets per row.
+#'     NULL = Use the default for ggplot2::facet_wrap.
 #' @param rotate_xlab 45 degree rotation of x-axis values.
 #' @param code_data_processing Not used
 #' 
@@ -108,6 +111,8 @@ tm_g_boxplot <- function(label,
                          xaxis_var = "AVISIT",
                          xaxis_var_choices = NULL,
                          loq_flag_var = NULL,
+                         hline = NULL, 
+                         facet_ncol = NULL, 
                          rotate_xlab = FALSE,
                          pre_output = NULL,
                          post_output = NULL,
@@ -202,7 +207,11 @@ ui_g_boxplot <- function(id, ...) {
       
       tags$label("Plot Aesthetic Settings", class="text-primary", style="margin-top: 15px;"),
       
+      numericInput(ns("facet_ncol"), "Number of Plots Per Row:", a$facet_ncol, step = 1),
+      
       checkboxInput(ns("rotate_xlab"), "Rotate X-Axis Label", a$rotate_xlab),
+      
+      numericInput(ns("hline"), "Add a Horizontal Line:", a$hline),
       
       uiOutput(ns("yaxis_scale")),
 
@@ -288,13 +297,14 @@ srv_g_boxplot <- function(input, output, session, datasets
     if (length(alb) & is_finite(input$ymin) & is_finite(ylimits()$low)) {
       ymin_scale <- input$ymin
       ymax_scale <- input$ymax
-      axlim <- get_axis_limits(ylimits()$low, ylimits()$high, req.n = 2) 
+      axlim <- get_axis_limits(min(cdata()$BASE, na.rm = T)
+                               , max(cdata()$BASE, na.rm = T), req.n = 0 )
+      
       if (is_finite(ymin_scale) & is_finite(ymax_scale) & 
           ( ymin_scale != axlim$min | ymax_scale != axlim$max)){
         
         alb <- alb %>% 
-          filter(ymin_scale <= eval(parse(text = value_var)) & 
-                 eval(parse(text = value_var)) <= ymax_scale)
+          filter(ymin_scale <= BASE & BASE <= ymax_scale)
       }
     }
     return(alb)
@@ -324,7 +334,10 @@ srv_g_boxplot <- function(input, output, session, datasets
   get_axis_limits <- function(lo_, hi_, req.n = 2000) {
     hi <- signif(max(hi_, lo_), 6)
     lo <- signif(min(hi_, lo_), 6)
-    if (hi == lo) {
+
+    if (req.n == 0) {
+      return(list(min = lo, max = hi, step = 0, eqt = (hi == lo)))
+    } else if (hi == lo) {
       return(list(min = lo-1, max = hi+1, step = 0.1, eqt = TRUE))
     } else {
       p <- pretty(c(lo, hi), n=10)
@@ -333,8 +346,9 @@ srv_g_boxplot <- function(input, output, session, datasets
     }
   }  
   
-  # Extend is.infinit to include zero length objects.
+  # Extend is.infinite to include zero length objects.
   is_finite <- function(x){
+    # print(c("IS_FINITE:", x, class(x)))
     if(length(x) == 0) return(FALSE)
     return(is.finite(x))
   }
@@ -343,49 +357,48 @@ srv_g_boxplot <- function(input, output, session, datasets
   observe({
     
     # Calculate nice default limits based on the min and max from the data
-    yax <- get_axis_limits(ylimits()$low, ylimits()$high, req.n = 2 )
+    ybase <- get_axis_limits(min(cdata()$BASE, na.rm = T), max(cdata()$BASE, na.rm = T), req.n = 0 )
 
     output$y_select <- renderUI({
       HTML(
-        paste0("<strong>Select data for ", input$value_var, " (", yax$min, " to ", yax$max, ")</strong>")
+        paste0("<label>Select data for ", "BASE", " (", ybase$min, " to ", ybase$max, ")</label>")
       )
     })
     
     output$ymin_value <- renderUI({
-      if (is_finite(yax$min) & !yax$eqt) {
+      if (is_finite(ybase$min) & !ybase$eqt) {
         tagList({
           numericInput(session$ns("ymin")
                        , label = NULL
-                       , value = yax$min, min = yax$min, max = yax$max)
+                       , value = ybase$min, min = ybase$min, max = ybase$max)
         })
       }
     })
     
     output$ymax_value <- renderUI({
-      if (is_finite(yax$max) & !yax$eqt) {
+      if (is_finite(ybase$max) & !ybase$eqt) {
         tagList({
           numericInput(session$ns("ymax")
                        , label = NULL
-                       , value = yax$max, min = yax$min, max = yax$max)
+                       , value = ybase$max, min = ybase$min, max = ybase$max)
         })
       }
     })
     
     output$yaxis_scale <- renderUI({
       yax <- get_axis_limits(ylimits()$low, ylimits()$high, req.n = 100)
-      if (is_finite(yax$min) & is_finite(yax$max) 
-          & is_finite(input$ymin) & is_finite(input$ymax) ) {
+      if (is_finite(yax$min) & is_finite(yax$max) ) {
         tagList({
           sliderInput(session$ns("yrange_scale")
-                      , label=paste0("Y-Axis Range Zoom")
-                      , yax$min, yax$max
+                      , label = paste0("Y-Axis Range Zoom")
+                      , min = yax$min
+                      , max = yax$max
                       , step = yax$step
-                      , value = c(input$ymin, input$ymax) 
+                      , value = c(yax$min, yax$max) 
           )
         })
       }
     })  
-    
   })
   
   # If facet selection changes to be the same as x axis selection, set the
@@ -415,6 +428,8 @@ srv_g_boxplot <- function(input, output, session, datasets
     filter_var <- input$filter_var
     value_var <- input$value_var
     param <- input$param
+    hline <- input$hline
+    facet_ncol <- input$facet_ncol
     rotate_xlab = input$rotate_xlab
     dot_size <- input$dot_size
     font_size <- input$font_size
@@ -428,6 +443,7 @@ srv_g_boxplot <- function(input, output, session, datasets
     
     ymin_scale <- input$yrange_scale[1]
     ymax_scale <- input$yrange_scale[2]
+    
     ymin <- input$ymin
     ymax <- input$ymax
     
@@ -467,6 +483,8 @@ srv_g_boxplot <- function(input, output, session, datasets
       data = bquote(.(as.name(data_name))),
         biomarker = param,
         value_var = value_var,
+        hline = hline, 
+        facet_ncol = facet_ncol,
         rotate_xlab = rotate_xlab,
         trt_group = trt_group,
         timepoint = "over time",
