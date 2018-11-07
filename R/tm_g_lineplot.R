@@ -6,7 +6,7 @@
 #' Note that the data is expected to be in vertical form with the PARAMCD variable filtering to one observation per patient.
 #' @param xvar single name of variable in analysis data that is used as x-axis in the plot for the respective goshawk function.
 #' @param xvar_choices vector with variable names that can be used as xvar.
-#' @param xvar_level vector that can be used to define the factor level of xvar.
+#' @param xvar_level vector that can be used to define the factor level of xvar. Only use it when xvar is character or factor
 #' @param yvar single name of variable in analysis data that is used as summary variable in the respective gshawk function.
 #' @param yvar_choices vector with variable names that can be used as yvar.
 #' @param param_var single name of variable in analysis data that includes parameter names.
@@ -18,6 +18,8 @@
 #' @param man_color string vector representing customized colors
 #' @param stat string of statistics
 #' @param hline numeric value to add horizontal line to plot
+#' @param xtick numeric vector to define the tick values of x-axis when x variable is numeric. Default value is waive()
+#' @param xlabel vector with same length of xtick to define the label of x-axis tick values. Default value is waive()
 #' @param rotate_xlab boolean value indicating whether to rotate x-axis labels
 #' @param plot_height numeric vectors to define the plot height.
 #' @param font_size control font size for title, x-axis, y-axis and legend font.
@@ -44,10 +46,11 @@
 #' ANL <- expand.grid(
 #'   STUDYID = "STUDY A",
 #'   USUBJID = paste0("id-",1:100),
-#'   VISIT = paste0("visit ", 1:10),
+#'   VISITN = c(1:10),
 #'   ARM = c("ARM A", "ARM B"),
 #'   PARAMCD = c("CRP", "IGG", "IGM")
 #' )
+#' ANL$VISIT <- paste0("visit ", ANL$VISITN)
 #' ANL$AVAL <- rnorm(nrow(ANL))
 #' ANL$CHG <- rnorm(nrow(ANL), 2, 2)
 #' ANL$CHG[ANL$VISIT == "visit 1"] <- NA
@@ -87,6 +90,7 @@ tm_g_lineplot <- function(label,
                           stat = "mean",
                           hline = NULL,
                           man_color = NULL,
+                          xtick = waiver(), xlabel = xtick,
                           rotate_xlab = FALSE,
                           plot_height = c(600, 200, 2000),
                           font_size = c(12, 8, 20),
@@ -98,7 +102,8 @@ tm_g_lineplot <- function(label,
     label = label,
     server = srv_lineplot,
     server_args = list(dataname = dataname, param_var = param_var, trt_group = trt_group, man_color = man_color,
-                       xvar_level = xvar_level, trt_group_level = trt_group_level, param_var_label = param_var_label),
+                       xvar_level = xvar_level, trt_group_level = trt_group_level, param_var_label = param_var_label,
+                       xtick = xtick, xlabel = xlabel),
     ui = ui_lineplot,
     ui_args = args,
     filters = dataname
@@ -144,7 +149,8 @@ ui_lineplot <- function(id, ...) {
   
 }
 
-srv_lineplot <- function(input, output, session, datasets, dataname, param_var, trt_group, man_color, xvar_level, trt_group_level, param_var_label) {
+srv_lineplot <- function(input, output, session, datasets, dataname, param_var, trt_group, man_color, xvar_level, 
+                         trt_group_level, param_var_label, xtick, xlabel) {
   
   ns <- session$ns
   
@@ -221,18 +227,18 @@ srv_lineplot <- function(input, output, session, datasets, dataname, param_var, 
     
     if(median){
       ymin_scale <- min(scale_data[,c('median','quant25','quant75')], na.rm = TRUE)
-      ymax_scale <- max(scale_data[,c('quant25','quant75')], na.rm = TRUE)
+      ymax_scale <- max(scale_data[,c('median','quant25','quant75')], na.rm = TRUE)
     } else {
       ymin_scale <- min(scale_data[,c('mean','CIup','CIdown')], na.rm = TRUE)
-      ymax_scale <- max(scale_data[,c('CIup','CIdown')], na.rm = TRUE)
+      ymax_scale <- max(scale_data[,c('mean','CIup','CIdown')], na.rm = TRUE)
     }
     
     ran <- ymax_scale - ymin_scale
     
     tagList({
       sliderInput(ns("yrange_scale"), label="Y-Axis Range Zoom", 
-                  round(ymin_scale - 0.1 * ran, digits = 1), round(ymax_scale + 0.1 * ran, digits = 1), 
-                  value = c(round(ymin_scale - 0.1 * ran, digits = 1), round(ymax_scale + 0.1 * ran, digits = 1)))
+                  round(ymin_scale, digits = 1), round(ymax_scale, digits = 1), 
+                  value = c(round(ymin_scale, digits = 1), round(ymax_scale, digits = 1)))
     })
     
   })
@@ -293,6 +299,8 @@ srv_lineplot <- function(input, output, session, datasets, dataname, param_var, 
       color_manual = man_color,
       median = median,
       hline = hline,
+      xtick = xtick,
+      xlabel = xlabel,
       rotate_xlab = rotate_xlab,
       font_size = font_size,
       dodge = dodge
