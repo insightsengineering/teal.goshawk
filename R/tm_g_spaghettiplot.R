@@ -7,7 +7,7 @@
 #' @param idvar name of unique subject id variable.
 #' @param xvar single name of variable in analysis data that is used as x-axis in the plot for the respective goshawk function.
 #' @param xvar_choices vector with variable names that can be used as xvar.
-#' @param xvar_level vector that can be used to define the factor level of xvar.
+#' @param xvar_level vector that can be used to define the factor level of xvar. Only use it when xvar is character or factor.
 #' @param yvar single name of variable in analysis data that is used as summary variable in the respective gshawk function.
 #' @param yvar_choices vector with variable names that can be used as yvar.
 #' @param param_var single name of variable in analysis data that includes parameter names.
@@ -19,6 +19,8 @@
 #' @param man_color string vector representing customized colors
 #' @param hline numeric value to add horizontal line to plot
 #' @param group_mean boolean value indicating whether to overlay group means.
+#' @param xtick numeric vector to define the tick values of x-axis when x variable is numeric. Default value is waive().
+#' @param xlabel vector with same length of xtick to define the label of x-axis tick values. Default value is waive().
 #' @param rotate_xlab boolean value indicating whether to rotate x-axis labels
 #' @param facet_ncol numeric value indicating number of facets per row.
 #' @param plot_height numeric vectors to define the plot height.
@@ -45,10 +47,11 @@
 #' ANL <- expand.grid(
 #'   STUDYID = "STUDY A",
 #'   USUBJID = paste0("id-",1:100),
-#'   VISIT = paste0("visit ", 1:10),
+#'   VISITN = c(1:10),
 #'   ARM = c("ARM A", "ARM B"),
 #'   PARAMCD = c("CRP", "IGG", "IGM")
 #' )
+#' ANL$VISIT <- paste0("visit ", ANL$VISITN)
 #' ANL$AVAL <- rnorm(nrow(ANL))
 #' ANL$CHG <- rnorm(nrow(ANL), 2, 2)
 #' ANL$CHG[ANL$VISIT == "visit 1"] <- NA
@@ -93,6 +96,7 @@ tm_g_spaghettiplot <- function(label,
                                group_mean = FALSE,
                                hline = NULL,
                                man_color = NULL,
+                               xtick = waiver(), xlabel = xtick,
                                rotate_xlab = FALSE,
                                facet_ncol = 2,
                                plot_height = c(600, 200, 2000),
@@ -105,7 +109,7 @@ tm_g_spaghettiplot <- function(label,
     server = srv_spaghettiplot,
     server_args = list(dataname = dataname, idvar = idvar, param_var = param_var, trt_group = trt_group, 
                        xvar_level = xvar_level, trt_group_level = trt_group_level, man_color = man_color,
-                       param_var_label = param_var_label),
+                       param_var_label = param_var_label, xtick = xtick, xlabel = xlabel),
     ui = ui_spaghettiplot,
     ui_args = args,
     filters = dataname
@@ -151,7 +155,8 @@ ui_spaghettiplot <- function(id, ...) {
   
 }
 
-srv_spaghettiplot <- function(input, output, session, datasets, dataname, idvar, param_var, trt_group, man_color, xvar_level, trt_group_level, param_var_label) {
+srv_spaghettiplot <- function(input, output, session, datasets, dataname, idvar, param_var, trt_group, man_color, xvar_level, 
+                              trt_group_level, param_var_label, xtick, xlabel) {
   
   ns <- session$ns
   
@@ -239,6 +244,8 @@ srv_spaghettiplot <- function(input, output, session, datasets, dataname, idvar,
       ymax = ymax_scale,
       facet_ncol = facet_ncol,
       hline = hline,
+      xtick = xtick,
+      xlabel = xlabel,
       rotate_xlab = rotate_xlab,
       font_size = font_size,
       group_mean = group_mean
