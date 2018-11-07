@@ -6,7 +6,7 @@
 #' Note that the data is expected to be in vertical form with the PARAMCD variable filtering to one observation per patient.
 #' @param xvar single name of variable in analysis data that is used as x-axis in the plot for the respective goshawk function.
 #' @param xvar_choices vector with variable names that can be used as xvar.
-#' @param xvar_level vector that can be used to define the factor level of xvar. Only use it when xvar is character or factor
+#' @param xvar_level vector that can be used to define the factor level of xvar. Only use it when xvar is character or factor.
 #' @param yvar single name of variable in analysis data that is used as summary variable in the respective gshawk function.
 #' @param yvar_choices vector with variable names that can be used as yvar.
 #' @param param_var single name of variable in analysis data that includes parameter names.
@@ -18,9 +18,9 @@
 #' @param man_color string vector representing customized colors
 #' @param stat string of statistics
 #' @param hline numeric value to add horizontal line to plot
-#' @param xtick numeric vector to define the tick values of x-axis when x variable is numeric. Default value is waive()
-#' @param xlabel vector with same length of xtick to define the label of x-axis tick values. Default value is waive()
-#' @param rotate_xlab boolean value indicating whether to rotate x-axis labels
+#' @param xtick numeric vector to define the tick values of x-axis when x variable is numeric. Default value is waive().
+#' @param xlabel vector with same length of xtick to define the label of x-axis tick values. Default value is waive().
+#' @param rotate_xlab boolean value indicating whether to rotate x-axis labels.
 #' @param plot_height numeric vectors to define the plot height.
 #' @param font_size control font size for title, x-axis, y-axis and legend font.
 #' @param dodge control the position dodge of error bar
