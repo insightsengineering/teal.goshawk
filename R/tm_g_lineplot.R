@@ -83,6 +83,8 @@ tm_g_lineplot <- function(label,
                           xvar, yvar,
                           xvar_choices = xvar, yvar_choices = yvar,
                           xvar_level = NULL,
+                          filter_var = yvar,
+                          filter_var_choices = filter_var,
                           param_var, param_var_label = 'PARAM',
                           param, param_choices = param,
                           trt_group,
@@ -127,7 +129,16 @@ ui_lineplot <- function(id, ...) {
       optionalSelectInput(ns("xvar"), "X-Axis Variable", a$xvar_choices, a$xvar, multiple = FALSE),
       optionalSelectInput(ns("yvar"), "Select a Y-Axis Variable", a$yvar_choices, a$yvar, multiple = FALSE),
       radioButtons(ns("stat"), "Select a Statistic:", c("mean","median"), a$stat),
-      uiOutput(ns("yvar_scale")),
+      radioButtons(ns("filter_var"), "Filter Data based on:", a$filter_var_choices, a$filter_var),
+      div(style="padding: 0px;",
+          uiOutput(ns("filter_val_label")),
+          div(
+            uiOutput(ns("filter_min"), style="display: inline-block; vertical-align:center;"),
+            tags$p(" to ", style="display: inline-block; vertical-align:center;"),
+            uiOutput(ns("filter_max"), style="display: inline-block; vertical-align:center;"),
+            style="padding: 0px; margin: 0px"
+          )
+      ),
       uiOutput(ns("yaxis_scale")),
       
       if (all(c(
@@ -161,22 +172,62 @@ srv_lineplot <- function(input, output, session, datasets, dataname, param_var, 
     plotOutput(session$ns("lineplot"), height=plot_height)
   })
   
-  # dynamic slider for filter input value by parameter
-  output$yvar_scale <- renderUI({
+  # Filter data based on input filter_var
+  # output$filter_val_scale <- renderUI({
+  #   ANL <- datasets$get_data(dataname, filtered = TRUE, reactive = TRUE)
+  #   param <- input$param
+  #   value_var <- input$filter_var
+  #   scale_data <- filter(ANL, eval(parse(text = param_var)) == param)
+  # 
+  #   # identify min and max values of BM range ignoring NA values
+  #   ymin_scale <- min(scale_data[,value_var], na.rm = TRUE)
+  #   ymax_scale <- max(scale_data[,value_var], na.rm = TRUE)
+  # 
+  #   tagList({
+  #     sliderInput(ns("filter_scale"), label=paste0("Select Data for ", value_var), 
+  #                 floor(ymin_scale), ceiling(ymax_scale),
+  #                 value = c(floor(ymin_scale), ceiling(ymax_scale)))
+  #   })
+  # })
+  # 
+  observe({
+    # derive min max value of input filter_var
     ANL <- datasets$get_data(dataname, filtered = TRUE, reactive = TRUE)
     param <- input$param
-    value_var <- input$yvar
+    value_var <- input$filter_var
     scale_data <- filter(ANL, eval(parse(text = param_var)) == param)
-
+    
     # identify min and max values of BM range ignoring NA values
-    ymin_scale <- min(scale_data[,value_var], na.rm = TRUE)
-    ymax_scale <- max(scale_data[,value_var], na.rm = TRUE)
-
-    tagList({
-      sliderInput(ns("yfilter_scale"), label=paste0("Y-Axis Variable Data Filter"), 
-                  floor(ymin_scale), ceiling(ymax_scale),
-                  value = c(floor(ymin_scale), ceiling(ymax_scale)))
+    min_scale <- min(scale_data[,value_var], na.rm = TRUE)
+    max_scale <- max(scale_data[,value_var], na.rm = TRUE)
+    
+    # Output variable UI
+    output$filter_val_label <- renderUI({
+      HTML(
+        paste0("<strong>Select data for ", input$value_var, " (", min_scale, " to ", max_scale, ")</strong>")
+      )
     })
+    
+    output$filter_min <- renderUI({
+      tagList({
+        numericInput(session$ns("filtermin"), label = NULL, value = min_scale, min = min_scale, max = max_scale)
+      })
+    })
+    
+    output$filter_max <- renderUI({
+      tagList({
+        numericInput(session$ns("filtermax"), label = NULL, value = max_scale, min = min_scale, max = max_scale)
+      })
+    })
+    
+    output$filter_val_scale <- renderUI({
+      tagList({
+        sliderInput(ns("filter_scale"), label=paste0("Select Data for ", value_var), 
+                    floor(min_scale), ceiling(max_scale),
+                    value = c(floor(min_scale), ceiling(max_scale)))
+      })
+    })
+    
   })
 
 
@@ -184,22 +235,25 @@ srv_lineplot <- function(input, output, session, datasets, dataname, param_var, 
   filter_ANL <- reactive({
 
     param <- input$param
-    yvar <- input$yvar
+    filter_var <- input$filter_var
     ANL <- datasets$get_data(dataname, filtered = TRUE, reactive = TRUE)
 
     ymin_scale <- -Inf
     ymax_scale <- Inf
 
-    if (length(input$yfilter_scale)){
-      ymin_scale <- input$yfilter_scale[1]
-      ymax_scale <- input$yfilter_scale[2]
+    if (length(input$filtermin)){
+      ymin_scale <- input$filtermin
+    }
+    
+    if (length(input$filtermax)){
+      ymax_scale <- input$filtermax
     }
 
     ANL %>%
       filter(eval(parse(text = param_var)) == param &
-               (ymin_scale <= eval(parse(text = yvar)) &
-                  eval(parse(text = yvar)) <= ymax_scale) |
-               (is.na(yvar)))
+               (ymin_scale <= eval(parse(text = filter_var)) &
+                  eval(parse(text = filter_var)) <= ymax_scale) |
+               (is.na(filter_var)))
   })
   
   # dynamic slider for y-axis
