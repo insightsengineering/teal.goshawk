@@ -155,9 +155,21 @@ ui_spaghettiplot <- function(id, ...) {
       } else {
         tags$label("Plot Aesthetic Settings", class="text-primary", style="margin-top: 15px;")
       },
-      numericInput(ns("facet_ncol"), "Number of Plots Per Row:", a$facet_ncol, min = 1),
+      div(style="padding: 0px;",
+          div(style="display: inline-block;vertical-align:moddle; width: 175px;",
+              tags$b("Number of Plots Per Row:")),
+          div(style="display: inline-block;vertical-align:middle; width: 100px;",
+              numericInput(ns("facet_ncol"), "", a$facet_ncol, min = 1))
+      ),
+      # numericInput(ns("facet_ncol"), "Number of Plots Per Row:", a$facet_ncol, min = 1),
       checkboxInput(ns("rotate_xlab"), "Rotate X-Axis Label", a$rotate_xlab),
-      numericInput(ns("hline"), "Add a Horizontal Line:", a$hline),
+      div(style="padding: 0px;",
+          div(style="display: inline-block;vertical-align:moddle; width: 175px;",
+              tags$b("Add a Horizontal Line:")),
+          div(style="display: inline-block;vertical-align:middle; width: 100px;",
+              numericInput(ns("hline"), "", a$hline))
+      ),
+      # numericInput(ns("hline"), "Add a Horizontal Line:", a$hline),
       optionalSliderInputValMinMax(ns("plot_height"), "Plot Height", a$plot_height, ticks = FALSE),
       optionalSliderInputValMinMax(ns("font_size"), "Font Size", a$font_size, ticks = FALSE)
     )
