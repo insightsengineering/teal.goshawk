@@ -173,23 +173,6 @@ srv_lineplot <- function(input, output, session, datasets, dataname, param_var, 
   })
   
   # Filter data based on input filter_var
-  # output$filter_val_scale <- renderUI({
-  #   ANL <- datasets$get_data(dataname, filtered = TRUE, reactive = TRUE)
-  #   param <- input$param
-  #   value_var <- input$filter_var
-  #   scale_data <- filter(ANL, eval(parse(text = param_var)) == param)
-  # 
-  #   # identify min and max values of BM range ignoring NA values
-  #   ymin_scale <- min(scale_data[,value_var], na.rm = TRUE)
-  #   ymax_scale <- max(scale_data[,value_var], na.rm = TRUE)
-  # 
-  #   tagList({
-  #     sliderInput(ns("filter_scale"), label=paste0("Select Data for ", value_var), 
-  #                 floor(ymin_scale), ceiling(ymax_scale),
-  #                 value = c(floor(ymin_scale), ceiling(ymax_scale)))
-  #   })
-  # })
-  # 
   observe({
     # derive min max value of input filter_var
     ANL <- datasets$get_data(dataname, filtered = TRUE, reactive = TRUE)
@@ -258,14 +241,14 @@ srv_lineplot <- function(input, output, session, datasets, dataname, param_var, 
   
   # dynamic slider for y-axis
   output$yaxis_scale <- renderUI({
-    ANL <- filter_ANL()
     param <- input$param 
     xvar <- input$xvar
     value_var <- input$yvar
     median <- ifelse(input$stat=='median',TRUE, FALSE)
+    ANL <- filter_ANL() %>% filter(eval(parse(text = param_var)) == param)
+    
     
     scale_data <- ANL %>%
-      filter(eval(parse(text = param_var)) == param) %>%
       group_by(eval(parse(text = xvar)),
                eval(parse(text = trt_group))) %>%
       summarise(mean = mean(eval(parse(text = value_var)),na.rm = TRUE),
