@@ -6,7 +6,7 @@
 #' Note that the data is expected to be in vertical form with the PARAMCD variable filtering to one observation per patient.
 #' @param xvar single name of variable in analysis data that is used as x-axis in the plot for the respective goshawk function.
 #' @param xvar_choices vector with variable names that can be used as xvar.
-#' @param xvar_level vector that can be used to define the factor level of xvar.
+#' @param xvar_level vector that can be used to define the factor level of xvar. Only use it when xvar is character or factor.
 #' @param yvar single name of variable in analysis data that is used as summary variable in the respective gshawk function.
 #' @param yvar_choices vector with variable names that can be used as yvar.
 #' @param param_var single name of variable in analysis data that includes parameter names.
@@ -18,7 +18,9 @@
 #' @param man_color string vector representing customized colors
 #' @param stat string of statistics
 #' @param hline numeric value to add horizontal line to plot
-#' @param rotate_xlab boolean value indicating whether to rotate x-axis labels
+#' @param xtick numeric vector to define the tick values of x-axis when x variable is numeric. Default value is waive().
+#' @param xlabel vector with same length of xtick to define the label of x-axis tick values. Default value is waive().
+#' @param rotate_xlab boolean value indicating whether to rotate x-axis labels.
 #' @param plot_height numeric vectors to define the plot height.
 #' @param font_size control font size for title, x-axis, y-axis and legend font.
 #' @param dodge control the position dodge of error bar
@@ -44,10 +46,11 @@
 #' ANL <- expand.grid(
 #'   STUDYID = "STUDY A",
 #'   USUBJID = paste0("id-",1:100),
-#'   VISIT = paste0("visit ", 1:10),
+#'   VISITN = c(1:10),
 #'   ARM = c("ARM A", "ARM B"),
 #'   PARAMCD = c("CRP", "IGG", "IGM")
 #' )
+#' ANL$VISIT <- paste0("visit ", ANL$VISITN)
 #' ANL$AVAL <- rnorm(nrow(ANL))
 #' ANL$CHG <- rnorm(nrow(ANL), 2, 2)
 #' ANL$CHG[ANL$VISIT == "visit 1"] <- NA
@@ -80,6 +83,8 @@ tm_g_lineplot <- function(label,
                           xvar, yvar,
                           xvar_choices = xvar, yvar_choices = yvar,
                           xvar_level = NULL,
+                          filter_var = yvar,
+                          filter_var_choices = filter_var,
                           param_var, param_var_label = 'PARAM',
                           param, param_choices = param,
                           trt_group,
@@ -87,6 +92,7 @@ tm_g_lineplot <- function(label,
                           stat = "mean",
                           hline = NULL,
                           man_color = NULL,
+                          xtick = waiver(), xlabel = xtick,
                           rotate_xlab = FALSE,
                           plot_height = c(600, 200, 2000),
                           font_size = c(12, 8, 20),
@@ -98,7 +104,8 @@ tm_g_lineplot <- function(label,
     label = label,
     server = srv_lineplot,
     server_args = list(dataname = dataname, param_var = param_var, trt_group = trt_group, man_color = man_color,
-                       xvar_level = xvar_level, trt_group_level = trt_group_level, param_var_label = param_var_label),
+                       xvar_level = xvar_level, trt_group_level = trt_group_level, param_var_label = param_var_label,
+                       xtick = xtick, xlabel = xlabel),
     ui = ui_lineplot,
     ui_args = args,
     filters = dataname
@@ -122,7 +129,16 @@ ui_lineplot <- function(id, ...) {
       optionalSelectInput(ns("xvar"), "X-Axis Variable", a$xvar_choices, a$xvar, multiple = FALSE),
       optionalSelectInput(ns("yvar"), "Select a Y-Axis Variable", a$yvar_choices, a$yvar, multiple = FALSE),
       radioButtons(ns("stat"), "Select a Statistic:", c("mean","median"), a$stat),
-      uiOutput(ns("yvar_scale")),
+      radioButtons(ns("filter_var"), "Filter Data based on:", a$filter_var_choices, a$filter_var),
+      div(style="padding: 0px;",
+          uiOutput(ns("filter_val_label")),
+          div(
+            uiOutput(ns("filter_min"), style="display: inline-block; vertical-align:center;"),
+            tags$p(" to ", style="display: inline-block; vertical-align:center;"),
+            uiOutput(ns("filter_max"), style="display: inline-block; vertical-align:center;"),
+            style="padding: 0px; margin: 0px"
+          )
+      ),
       uiOutput(ns("yaxis_scale")),
       
       if (all(c(
@@ -133,17 +149,24 @@ ui_lineplot <- function(id, ...) {
         tags$label("Plot Aesthetic Settings", class="text-primary", style="margin-top: 15px;")
       },
       checkboxInput(ns("rotate_xlab"), "Rotate X-Axis Label", a$rotate_xlab),
-      numericInput(ns("hline"), "Add a Horizontal Line:", a$hline),
+      div(style="padding: 0px;",
+          div(style="display: inline-block;vertical-align:moddle; width: 175px;",
+              tags$b("Add a Horizontal Line:")),
+          div(style="display: inline-block;vertical-align:middle; width: 100px;",
+              numericInput(ns("hline"), "", a$hline))
+      ),
       optionalSliderInputValMinMax(ns("plot_height"), "Plot Height", a$plot_height, ticks = FALSE),
       optionalSliderInputValMinMax(ns("dodge"), "Error Bar Position Dodge", a$dodge, ticks = FALSE),
       optionalSliderInputValMinMax(ns("font_size"), "Font Size", a$font_size, ticks = FALSE)
-    ),
+    )
+    # ,
     # forms = actionButton(ns("show_rcode"), "Show R Code", width = "100%")
   )
   
 }
 
-srv_lineplot <- function(input, output, session, datasets, dataname, param_var, trt_group, man_color, xvar_level, trt_group_level, param_var_label) {
+srv_lineplot <- function(input, output, session, datasets, dataname, param_var, trt_group, man_color, xvar_level, 
+                         trt_group_level, param_var_label, xtick, xlabel) {
   
   ns <- session$ns
   
@@ -154,22 +177,45 @@ srv_lineplot <- function(input, output, session, datasets, dataname, param_var, 
     plotOutput(session$ns("lineplot"), height=plot_height)
   })
   
-  # dynamic slider for filter input value by parameter
-  output$yvar_scale <- renderUI({
+  # Filter data based on input filter_var
+  observe({
+    # derive min max value of input filter_var
     ANL <- datasets$get_data(dataname, filtered = TRUE, reactive = TRUE)
     param <- input$param
-    value_var <- input$yvar
+    value_var <- input$filter_var
     scale_data <- filter(ANL, eval(parse(text = param_var)) == param)
-
+    
     # identify min and max values of BM range ignoring NA values
-    ymin_scale <- min(scale_data[,value_var], na.rm = TRUE)
-    ymax_scale <- max(scale_data[,value_var], na.rm = TRUE)
-
-    tagList({
-      sliderInput(ns("yfilter_scale"), label=paste0("Y-Axis Variable Data Filter"), 
-                  floor(ymin_scale), ceiling(ymax_scale),
-                  value = c(floor(ymin_scale), ceiling(ymax_scale)))
+    min_scale <- min(scale_data[,value_var], na.rm = TRUE)
+    max_scale <- max(scale_data[,value_var], na.rm = TRUE)
+    
+    # Output variable UI
+    output$filter_val_label <- renderUI({
+      HTML(
+        paste0("<strong>Select data for ", input$value_var, " (", min_scale, " to ", max_scale, ")</strong>")
+      )
     })
+    
+    output$filter_min <- renderUI({
+      tagList({
+        numericInput(session$ns("filtermin"), label = NULL, value = min_scale, min = min_scale, max = max_scale)
+      })
+    })
+    
+    output$filter_max <- renderUI({
+      tagList({
+        numericInput(session$ns("filtermax"), label = NULL, value = max_scale, min = min_scale, max = max_scale)
+      })
+    })
+    
+    output$filter_val_scale <- renderUI({
+      tagList({
+        sliderInput(ns("filter_scale"), label=paste0("Select Data for ", value_var), 
+                    floor(min_scale), ceiling(max_scale),
+                    value = c(floor(min_scale), ceiling(max_scale)))
+      })
+    })
+    
   })
 
 
@@ -177,34 +223,37 @@ srv_lineplot <- function(input, output, session, datasets, dataname, param_var, 
   filter_ANL <- reactive({
 
     param <- input$param
-    yvar <- input$yvar
+    filter_var <- input$filter_var
     ANL <- datasets$get_data(dataname, filtered = TRUE, reactive = TRUE)
 
     ymin_scale <- -Inf
     ymax_scale <- Inf
 
-    if (length(input$yfilter_scale)){
-      ymin_scale <- input$yfilter_scale[1]
-      ymax_scale <- input$yfilter_scale[2]
+    if (length(input$filtermin)){
+      ymin_scale <- input$filtermin
+    }
+    
+    if (length(input$filtermax)){
+      ymax_scale <- input$filtermax
     }
 
     ANL %>%
       filter(eval(parse(text = param_var)) == param &
-               (ymin_scale <= eval(parse(text = yvar)) &
-                  eval(parse(text = yvar)) <= ymax_scale) |
-               (is.na(yvar)))
+               (ymin_scale <= eval(parse(text = filter_var)) &
+                  eval(parse(text = filter_var)) <= ymax_scale) |
+               (is.na(filter_var)))
   })
   
   # dynamic slider for y-axis
   output$yaxis_scale <- renderUI({
-    ANL <- filter_ANL()
     param <- input$param 
     xvar <- input$xvar
     value_var <- input$yvar
     median <- ifelse(input$stat=='median',TRUE, FALSE)
+    ANL <- filter_ANL() %>% filter(eval(parse(text = param_var)) == param)
+    
     
     scale_data <- ANL %>%
-      filter(eval(parse(text = param_var)) == param) %>%
       group_by(eval(parse(text = xvar)),
                eval(parse(text = trt_group))) %>%
       summarise(mean = mean(eval(parse(text = value_var)),na.rm = TRUE),
@@ -220,18 +269,18 @@ srv_lineplot <- function(input, output, session, datasets, dataname, param_var, 
     
     if(median){
       ymin_scale <- min(scale_data[,c('median','quant25','quant75')], na.rm = TRUE)
-      ymax_scale <- max(scale_data[,c('quant25','quant75')], na.rm = TRUE)
+      ymax_scale <- max(scale_data[,c('median','quant25','quant75')], na.rm = TRUE)
     } else {
       ymin_scale <- min(scale_data[,c('mean','CIup','CIdown')], na.rm = TRUE)
-      ymax_scale <- max(scale_data[,c('CIup','CIdown')], na.rm = TRUE)
+      ymax_scale <- max(scale_data[,c('mean','CIup','CIdown')], na.rm = TRUE)
     }
     
     ran <- ymax_scale - ymin_scale
     
     tagList({
       sliderInput(ns("yrange_scale"), label="Y-Axis Range Zoom", 
-                  round(ymin_scale - 0.1 * ran, digits = 1), round(ymax_scale + 0.1 * ran, digits = 1), 
-                  value = c(round(ymin_scale - 0.1 * ran, digits = 1), round(ymax_scale + 0.1 * ran, digits = 1)))
+                  round(ymin_scale, digits = 1), round(ymax_scale, digits = 1), 
+                  value = c(round(ymin_scale, digits = 1), round(ymax_scale, digits = 1)))
     })
     
   })
@@ -292,6 +341,8 @@ srv_lineplot <- function(input, output, session, datasets, dataname, param_var, 
       color_manual = man_color,
       median = median,
       hline = hline,
+      xtick = xtick,
+      xlabel = xlabel,
       rotate_xlab = rotate_xlab,
       font_size = font_size,
       dodge = dodge
