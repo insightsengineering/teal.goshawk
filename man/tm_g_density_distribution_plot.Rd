@@ -7,8 +7,8 @@
 tm_g_density_distribution_plot(label, dataname, param_var,
   param_choices = param, param, xaxis_var, xaxis_var_choices = xaxis_var,
   trt_group = "ARM", color_manual = NULL, loq_flag_var = "LOQFL",
-  plot_width = c(800, 200, 2000), plot_height = c(500, 200, 2000),
-  font_size = c(12, 8, 20), line_size = c(1, 0.25, 3), hline = NULL,
+  plot_height = c(500, 200, 2000), font_size = c(12, 8, 20),
+  line_size = c(1, 0.25, 3), hline = NULL, facet_ncol = 2,
   rotate_xlab = FALSE, pre_output = NULL, post_output = NULL,
   code_data_processing = NULL)
 }
@@ -33,8 +33,6 @@ tm_g_density_distribution_plot(label, dataname, param_var,
 
 \item{loq_flag_var}{name of variable containing LOQ flag e.g. LBLOQFL.}
 
-\item{plot_width}{controls plot width.}
-
 \item{plot_height}{controls plot height.}
 
 \item{font_size}{font size control for title, x-axis label, y-axis label and legend.}
@@ -42,6 +40,8 @@ tm_g_density_distribution_plot(label, dataname, param_var,
 \item{line_size}{plot line thickness.}
 
 \item{hline}{y-axis value to position a horizontal line.}
+
+\item{facet_ncol}{numeric value indicating number of facets per row.}
 
 \item{rotate_xlab}{45 degree rotation of x-axis values.}
 
@@ -83,7 +83,6 @@ x <- teal::init(
        trt_group = "ARM",
        color_manual = color_manual,
        loq_flag_var = 'LOQFL',
-       plot_width = c(800, 200, 2000),
        plot_height = c(500, 200, 2000),
        font_size = c(12, 8, 20),
        line_size = c(1, .25, 3)

@@ -13,11 +13,11 @@
 #' @param trt_group name of variable representing treatment group e.g. ARM.
 #' @param color_manual vector of colors applied to treatment values.
 #' @param loq_flag_var name of variable containing LOQ flag e.g. LBLOQFL.
-#' @param plot_width controls plot width.
 #' @param plot_height controls plot height.
 #' @param font_size font size control for title, x-axis label, y-axis label and legend.
 #' @param line_size plot line thickness.
 #' @param hline y-axis value to position a horizontal line.
+#' @param facet_ncol numeric value indicating number of facets per row.
 #' @param rotate_xlab 45 degree rotation of x-axis values.
 #' @param code_data_processing TODO
 #'
@@ -58,7 +58,6 @@
 #'        trt_group = "ARM",
 #'        color_manual = color_manual,
 #'        loq_flag_var = 'LOQFL',
-#'        plot_width = c(800, 200, 2000),
 #'        plot_height = c(500, 200, 2000),
 #'        font_size = c(12, 8, 20),
 #'        line_size = c(1, .25, 3)
@@ -80,11 +79,11 @@ tm_g_density_distribution_plot <- function(label,
                                            trt_group = "ARM",
                                            color_manual = NULL,
                                            loq_flag_var = 'LOQFL',
-                                           plot_width = c(800, 200, 2000),
                                            plot_height = c(500, 200, 2000),
                                            font_size = c(12, 8, 20),
                                            line_size = c(1, .25, 3),
                                            hline = NULL,
+                                           facet_ncol = 2,
                                            rotate_xlab = FALSE,
                                            pre_output = NULL,
                                            post_output = NULL,
@@ -105,7 +104,7 @@ tm_g_density_distribution_plot <- function(label,
                        code_data_processing = code_data_processing
                        ),
     ui = ui_g_density_distribution_plot,
-    ui_args = args
+     ui_args = args
   )
   
 }
@@ -121,13 +120,15 @@ ui_g_density_distribution_plot <- function(id, ...) {
       tags$label(a$dataname, "Data Settings", class="text-primary"),
       optionalSelectInput(ns("param"), "Select a Biomarker", a$param_choices, a$param, multiple = FALSE),
       optionalSelectInput(ns("xaxis_var"), "Select an X-Axis Variable", a$xaxis_var_choices, a$xaxis_var, multiple = FALSE),
-      uiOutput(ns("xmin_value")),
-      uiOutput(ns("xmax_value")),
-      
+      radioButtons(ns("constraint_var"), "Data Constraint", c("None" = "NONE", "Screening" = "BASE2", "Baseline" = "BASE")),
+      uiOutput(ns("constraint_min_value"), style="display: inline-block; vertical-align:center"),
+      uiOutput(ns("constraint_max_value"), style="display: inline-block; vertical-align:center"),
+
       tags$label("Plot Aesthetic Settings", class="text-primary", style="margin-top: 15px;"),
+      uiOutput(ns("xaxis_zoom")),
+      numericInput(ns("facet_ncol"), "Number of Plots Per Row:", a$facet_ncol, min = 1),
       checkboxInput(ns("rotate_xlab"), "Rotate X-Axis Label", a$rotate_xlab),
       numericInput(ns("hline"), "Add a Horizontal Line:", a$hline, min = 0, max = 1, step = .1),
-      optionalSliderInputValMinMax(ns("plot_width"), "Plot Width", a$plot_width, ticks = FALSE),
       optionalSliderInputValMinMax(ns("plot_height"), "Plot Height", a$plot_height, ticks = FALSE),
       optionalSliderInputValMinMax(ns("font_size"), "Font Size", a$font_size, ticks = FALSE),
       optionalSliderInputValMinMax(ns("line_size"), "Line Size", a$line_size, value_min_max = c(1, .25, 3), step = .25, ticks = FALSE)
@@ -139,7 +140,6 @@ ui_g_density_distribution_plot <- function(id, ...) {
     pre_output = a$pre_output,
     post_output = a$post_output
   )
-
 }
 
 srv_g_density_distribution_plot <- function(input, output, session, datasets, dataname, param_var, param, 
@@ -149,74 +149,134 @@ srv_g_density_distribution_plot <- function(input, output, session, datasets, da
   
   # dynamic plot width
   output$plot_ui <- renderUI({
-    plot_width <- input$plot_width
-    validate(need(plot_width, "need valid plot width"))
     plot_height <- input$plot_height
     validate(need(plot_height, "need valid plot height"))
     
-    plotOutput(session$ns("density_distribution_plot"), width = plot_width, height = plot_height)
+    plotOutput(session$ns("density_distribution_plot"), height = plot_height)
     })
   
-  # filter data by param and the xmin and xmax values
-  filter_ALB <- reactive({
-
-    param <- input$param
-    xaxis_var <- input$xaxis_var
-    xmin_range <- -Inf
-    xmax_range <- Inf
+  # dynamic slider for x-axis
+  output$xaxis_zoom <- renderUI({
+    ALB <- datasets$get_data(dataname, reactive = TRUE, filtered = TRUE)
+    param <- input$param 
+    scale_data <- ALB %>%
+      filter(eval(parse(text = param_var)) == param)
     
-    if (length(input$xmin)){
-      xmin_range <- input$xmin
+    # establish default value during reaction and prior to value being available
+    xmin_scale <- -Inf
+    xmax_scale <- Inf
+    
+    # identify min and max values of BM range ignoring NA values
+    xmin_scale <- min(scale_data[[input$xaxis_var]], na.rm = TRUE)
+    xmax_scale <- max(scale_data[[input$xaxis_var]], na.rm = TRUE)
+    
+    ran <- xmax_scale - xmin_scale
+    
+    tagList({
+      sliderInput(ns("xrange_scale"), label="X-Axis Range Zoom", 
+                  floor(xmin_scale), ceiling(xmax_scale), 
+                  value = c(floor(xmin_scale), ceiling(xmax_scale)))
+    })
+    
+  })
+
+  # filter data by param and the constraint_min and constraint_max values
+  filter_ALB <- reactive({
+    param <- input$param
+    constraint_var <- input$constraint_var
+
+    if (constraint_var != "NONE"){
+    constraint_min_range <- -Inf
+    constraint_max_range <- Inf
+    
+    if (length(input$constraint_min)){
+      constraint_min_range <- input$constraint_min
     }
     
-    if (length(input$xmax)){
-      xmax_range <- input$xmax
+    if (length(input$constraint_max)){
+      constraint_max_range <- input$constraint_max
     }
     datasets$get_data(dataname, filtered = TRUE, reactive = TRUE) %>%
       filter(eval(parse(text = param_var)) == param &
-               xmin_range <= eval(parse(text = xaxis_var)) &
-               eval(parse(text = xaxis_var)) <= xmax_range |
-               is.na(xaxis_var)
+               constraint_min_range <= eval(parse(text = constraint_var)) &
+               eval(parse(text = constraint_var)) <= constraint_max_range |
+               is.na(constraint_var)
                )
+    } else{
+      datasets$get_data(dataname, filtered = TRUE, reactive = TRUE) %>%
+        filter(eval(parse(text = param_var)) == param)
+    }
   })
 
-  # x-axis minimum value
-  output$xmin_value <- renderUI({
-    ALB <- datasets$get_data(dataname, filtered = TRUE, reactive = TRUE) # must add for the dynamic ui.range_scale field
-    param <- input$param # must add for the dynamic ui.range_scale field
-    scale_data <- ALB %>%
-      filter(eval(parse(text = param_var)) == param)
-    # identify min and max values of BM range ignoring NA values
-    xmin_range <- RoundTo(min(scale_data[[input$xaxis_var]], na.rm = TRUE), multiple = .001, FUN = floor)
-    xmax_range <- RoundTo(max(scale_data[[input$xaxis_var]], na.rm = TRUE), multiple = .001, FUN = ceiling)
-    
-    tagList({
-      numericInput(ns("xmin"), paste0("Minimum X-Axis Value (", xmin_range, ")"), value = xmin_range, min = xmin_range, max = xmax_range)
-    })
-  })
-  
-  # x-axis maximum value
-  output$xmax_value <- renderUI({
-    ALB <- datasets$get_data(dataname, filtered = TRUE, reactive = TRUE) # must add for the dynamic ui.range_scale field
-    param <- input$param # must add for the dynamic ui.range_scale field
-    scale_data <- ALB %>%
-      filter(eval(parse(text = param_var)) == param)
-      # identify min and max values of BM range ignoring NA values
-      xmin_range <- RoundTo(min(scale_data[[input$xaxis_var]], na.rm = TRUE), multiple = .001, FUN = floor)
-      xmax_range <- RoundTo(max(scale_data[[input$xaxis_var]], na.rm = TRUE), multiple = .001, FUN = ceiling)
+  # minimum data constraint value
+  output$constraint_min_value <- renderUI({
+    # conditionally reveal min and max constraint fields
+    if (input$constraint_var != "NONE") {
+      ALB <- datasets$get_data(dataname, filtered = TRUE, reactive = TRUE)
+      param <- input$param
+      scale_data <- ALB %>%
+        filter(eval(parse(text = param_var)) == param)
+      # ensure that there are records at visit to process based on the constraint vatriable selection
+      visitFreq <- unique(scale_data$AVISITCD)
+      if (input$constraint_var == "BASE2" & visitFreq[1] == "SCR" | 
+          input$constraint_var == "BASE" & (visitFreq[1] == "BL" | visitFreq[2] == "BL")){
+        # identify min and max values of constraint var range ignoring NA values
+        constraint_min_range <- min(scale_data[[input$constraint_var]], na.rm = TRUE)
+        constraint_max_range <- max(scale_data[[input$constraint_var]], na.rm = TRUE)
+        
+        tagList({
+          numericInput(ns("constraint_min"), 
+                       paste0("Min (", constraint_min_range, ")"), 
+                       value = constraint_min_range, 
+                       min = constraint_min_range, max = constraint_max_range)
+        })
+      }
+    }
+    else {
+      return(NULL)
+    }
 
-      tagList({
-        numericInput(ns("xmax"), paste0("Maximum X-Axis Value (", xmax_range, ")"), value = xmax_range, min = xmin_range, max = xmax_range)
-      })
   })
 
-  output$density_distribution_plot <- renderPlot({
+  # maximum data constraint value
+  output$constraint_max_value <- renderUI({
+    # conditionally reveal min and max constraint fields
+    if (input$constraint_var != "NONE") {
+      ALB <- datasets$get_data(dataname, filtered = TRUE, reactive = TRUE)
+      param <- input$param
+      scale_data <- ALB %>%
+        filter(eval(parse(text = param_var)) == param)
+      # ensure that there are records at visit to process based on the constraint vatriable selection
+      visitFreq <- unique(scale_data$AVISITCD)
+      if (input$constraint_var == "BASE2" & visitFreq[1] == "SCR" | 
+          input$constraint_var == "BASE" & (visitFreq[1] == "BL" | visitFreq[2] == "BL")){
+        # identify min and max values of constraint var range ignoring NA values
+        constraint_min_range <- min(scale_data[[input$constraint_var]], na.rm = TRUE)
+        constraint_max_range <- max(scale_data[[input$constraint_var]], na.rm = TRUE)
+
+          tagList({
+            numericInput(ns("constraint_max"), 
+                         paste0("Max (", constraint_max_range, ")"),
+                         value = constraint_max_range, 
+                         min = constraint_min_range, max = constraint_max_range)
+          })
+      }
+    }
+    else {
+      return(NULL)
+    }
+  })
+
+    output$density_distribution_plot <- renderPlot({
     ALB <- filter_ALB()
     param <- input$param
     xaxis_var <- input$xaxis_var
+    xmin_scale <- input$xrange_scale[1]
+    xmax_scale <- input$xrange_scale[2]
     font_size <- input$font_size
     line_size <- input$line_size
     hline <- as.numeric(input$hline)
+    facet_ncol <- input$facet_ncol
     rotate_xlab <- input$rotate_xlab
 
     validate(need(!is.null(ALB) && is.data.frame(ALB), "No Data Left"))
@@ -237,9 +297,12 @@ srv_g_density_distribution_plot <- function(input, output, session, datasets, da
         param = param,
         xaxis_var = xaxis_var,
         trt_group = trt_group,
+        xmin = xmin_scale,
+        xmax = xmax_scale,
         color_manual = color_manual,
         font_size = font_size,
         line_size = line_size,
+        facet_ncol = facet_ncol,
         rotate_xlab = rotate_xlab,
         hline = hline
     )
