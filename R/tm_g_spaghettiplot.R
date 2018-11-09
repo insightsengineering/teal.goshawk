@@ -7,7 +7,7 @@
 #' @param idvar name of unique subject id variable.
 #' @param xvar single name of variable in analysis data that is used as x-axis in the plot for the respective goshawk function.
 #' @param xvar_choices vector with variable names that can be used as xvar.
-#' @param xvar_level vector that can be used to define the factor level of xvar.
+#' @param xvar_level vector that can be used to define the factor level of xvar. Only use it when xvar is character or factor.
 #' @param yvar single name of variable in analysis data that is used as summary variable in the respective gshawk function.
 #' @param yvar_choices vector with variable names that can be used as yvar.
 #' @param param_var single name of variable in analysis data that includes parameter names.
@@ -19,6 +19,8 @@
 #' @param man_color string vector representing customized colors
 #' @param hline numeric value to add horizontal line to plot
 #' @param group_mean boolean value indicating whether to overlay group means.
+#' @param xtick numeric vector to define the tick values of x-axis when x variable is numeric. Default value is waive().
+#' @param xlabel vector with same length of xtick to define the label of x-axis tick values. Default value is waive().
 #' @param rotate_xlab boolean value indicating whether to rotate x-axis labels
 #' @param facet_ncol numeric value indicating number of facets per row.
 #' @param plot_height numeric vectors to define the plot height.
@@ -45,10 +47,11 @@
 #' ANL <- expand.grid(
 #'   STUDYID = "STUDY A",
 #'   USUBJID = paste0("id-",1:100),
-#'   VISIT = paste0("visit ", 1:10),
+#'   VISITN = c(1:10),
 #'   ARM = c("ARM A", "ARM B"),
 #'   PARAMCD = c("CRP", "IGG", "IGM")
 #' )
+#' ANL$VISIT <- paste0("visit ", ANL$VISITN)
 #' ANL$AVAL <- rnorm(nrow(ANL))
 #' ANL$CHG <- rnorm(nrow(ANL), 2, 2)
 #' ANL$CHG[ANL$VISIT == "visit 1"] <- NA
@@ -86,6 +89,8 @@ tm_g_spaghettiplot <- function(label,
                                xvar, yvar,
                                xvar_choices = xvar, yvar_choices = yvar,
                                xvar_level = NULL,
+                               filter_var = yvar,
+                               filter_var_choices = filter_var,
                                param_var, param_var_label = 'PARAM',
                                param, param_choices = param,
                                trt_group,
@@ -93,6 +98,7 @@ tm_g_spaghettiplot <- function(label,
                                group_mean = FALSE,
                                hline = NULL,
                                man_color = NULL,
+                               xtick = waiver(), xlabel = xtick,
                                rotate_xlab = FALSE,
                                facet_ncol = 2,
                                plot_height = c(600, 200, 2000),
@@ -105,7 +111,7 @@ tm_g_spaghettiplot <- function(label,
     server = srv_spaghettiplot,
     server_args = list(dataname = dataname, idvar = idvar, param_var = param_var, trt_group = trt_group, 
                        xvar_level = xvar_level, trt_group_level = trt_group_level, man_color = man_color,
-                       param_var_label = param_var_label),
+                       param_var_label = param_var_label, xtick = xtick, xlabel = xlabel),
     ui = ui_spaghettiplot,
     ui_args = args,
     filters = dataname
@@ -130,6 +136,16 @@ ui_spaghettiplot <- function(id, ...) {
       optionalSelectInput(ns("xvar"), "X-Axis Variable", a$xvar_choices, a$xvar, multiple = FALSE),
       optionalSelectInput(ns("yvar"), "Select a Y-Axis Variable", a$yvar_choices, a$yvar, multiple = FALSE),
       checkboxInput(ns("group_mean"), "Overlay Group Mean", a$group_mean),
+      radioButtons(ns("filter_var"), "Filter Data based on:", a$filter_var_choices, a$filter_var),
+      div(style="padding: 0px;",
+          uiOutput(ns("filter_val_label")),
+          div(
+            uiOutput(ns("filter_min"), style="display: inline-block; vertical-align:center;"),
+            tags$p(" to ", style="display: inline-block; vertical-align:center;"),
+            uiOutput(ns("filter_max"), style="display: inline-block; vertical-align:center;"),
+            style="padding: 0px; margin: 0px"
+          )
+      ),
       uiOutput(ns("yaxis_scale")),
       
       if (all(c(
@@ -139,18 +155,32 @@ ui_spaghettiplot <- function(id, ...) {
       } else {
         tags$label("Plot Aesthetic Settings", class="text-primary", style="margin-top: 15px;")
       },
-      numericInput(ns("facet_ncol"), "Number of Plots Per Row:", a$facet_ncol, min = 1),
+      div(style="padding: 0px;",
+          div(style="display: inline-block;vertical-align:moddle; width: 175px;",
+              tags$b("Number of Plots Per Row:")),
+          div(style="display: inline-block;vertical-align:middle; width: 100px;",
+              numericInput(ns("facet_ncol"), "", a$facet_ncol, min = 1))
+      ),
+      # numericInput(ns("facet_ncol"), "Number of Plots Per Row:", a$facet_ncol, min = 1),
       checkboxInput(ns("rotate_xlab"), "Rotate X-Axis Label", a$rotate_xlab),
-      numericInput(ns("hline"), "Add a Horizontal Line:", a$hline),
+      div(style="padding: 0px;",
+          div(style="display: inline-block;vertical-align:moddle; width: 175px;",
+              tags$b("Add a Horizontal Line:")),
+          div(style="display: inline-block;vertical-align:middle; width: 100px;",
+              numericInput(ns("hline"), "", a$hline))
+      ),
+      # numericInput(ns("hline"), "Add a Horizontal Line:", a$hline),
       optionalSliderInputValMinMax(ns("plot_height"), "Plot Height", a$plot_height, ticks = FALSE),
       optionalSliderInputValMinMax(ns("font_size"), "Font Size", a$font_size, ticks = FALSE)
-    ),
+    )
+    # ,
     # forms = actionButton(ns("show_rcode"), "Show R Code", width = "100%")
   )
   
 }
 
-srv_spaghettiplot <- function(input, output, session, datasets, dataname, idvar, param_var, trt_group, man_color, xvar_level, trt_group_level, param_var_label) {
+srv_spaghettiplot <- function(input, output, session, datasets, dataname, idvar, param_var, trt_group, man_color, xvar_level, 
+                              trt_group_level, param_var_label, xtick, xlabel) {
   
   ns <- session$ns
   
@@ -161,21 +191,89 @@ srv_spaghettiplot <- function(input, output, session, datasets, dataname, idvar,
     plotOutput(session$ns("spaghettiplot"), height=plot_height)
   })
   
+  # filter data by param and the y-axis range values
+  filter_ANL <- reactive({
+    
+    param <- input$param
+    filter_var <- input$filter_var
+    ANL <- datasets$get_data(dataname, filtered = TRUE, reactive = TRUE)
+    
+    ymin_scale <- -Inf
+    ymax_scale <- Inf
+    
+    if (length(input$filtermin)){
+      ymin_scale <- input$filtermin
+    }
+    
+    if (length(input$filtermax)){
+      ymax_scale <- input$filtermax
+    }
+    
+    ANL %>%
+      filter(eval(parse(text = param_var)) == param &
+               (ymin_scale <= eval(parse(text = filter_var)) &
+                  eval(parse(text = filter_var)) <= ymax_scale) |
+               (is.na(filter_var)))
+  })
+  
+
+    # Filter data based on input filter_var
+  observe({
+    # derive min max value of input filter_var
+    ANL <- datasets$get_data(dataname, filtered = TRUE, reactive = TRUE)
+    param <- input$param
+    value_var <- input$filter_var
+    scale_data <- filter(ANL, eval(parse(text = param_var)) == param)
+    
+    # identify min and max values of BM range ignoring NA values
+    min_scale <- min(scale_data[,value_var], na.rm = TRUE)
+    max_scale <- max(scale_data[,value_var], na.rm = TRUE)
+    
+    # Output variable UI
+    output$filter_val_label <- renderUI({
+      HTML(
+        paste0("<strong>Select data for ", input$value_var, " (", min_scale, " to ", max_scale, ")</strong>")
+      )
+    })
+    
+    output$filter_min <- renderUI({
+      tagList({
+        numericInput(session$ns("filtermin"), label = NULL, value = min_scale, min = min_scale, max = max_scale)
+      })
+    })
+    
+    output$filter_max <- renderUI({
+      tagList({
+        numericInput(session$ns("filtermax"), label = NULL, value = max_scale, min = min_scale, max = max_scale)
+      })
+    })
+    
+    output$filter_val_scale <- renderUI({
+      tagList({
+        sliderInput(ns("filter_scale"), label=paste0("Select Data for ", value_var), 
+                    floor(min_scale), ceiling(max_scale),
+                    value = c(floor(min_scale), ceiling(max_scale)))
+      })
+    })
+    
+  })
+  
   # dynamic slider for y-axis
   output$yaxis_scale <- renderUI({
-    ANL <- datasets$get_data(dataname, reactive = TRUE, filtered = TRUE)
+    ANL <- filter_ANL()
     param <- input$param 
     scale_data <- ANL %>%
       filter(eval(parse(text = param_var)) == param)
     
+    ymin_scale <- -Inf
+    ymax_scale <- Inf
+    
     # identify min and max values of BM range ignoring NA values
     ymin_scale <- min(scale_data[[input$yvar]], na.rm = TRUE)
     ymax_scale <- max(scale_data[[input$yvar]], na.rm = TRUE)
-    
-    ran <- ymax_scale - ymin_scale
-    
+     
     tagList({
-      sliderInput(ns("yrange_scale"), label="Y-Axis Variable Data Filter", 
+      sliderInput(ns("yrange_scale"), label="Y-Axis Range Zoom", 
                   floor(ymin_scale), ceiling(ymax_scale), 
                   value = c(floor(ymin_scale), ceiling(ymax_scale)))
     })
@@ -188,7 +286,7 @@ srv_spaghettiplot <- function(input, output, session, datasets, dataname, idvar,
   
   output$spaghettiplot <- renderPlot({
     
-    ANL <- datasets$get_data(dataname, reactive = TRUE, filtered = TRUE)
+    ANL <- filter_ANL()
     param <- input$param
     xvar <- input$xvar
     yvar <- input$yvar
@@ -238,6 +336,8 @@ srv_spaghettiplot <- function(input, output, session, datasets, dataname, idvar,
       ymax = ymax_scale,
       facet_ncol = facet_ncol,
       hline = hline,
+      xtick = xtick,
+      xlabel = xlabel,
       rotate_xlab = rotate_xlab,
       font_size = font_size,
       group_mean = group_mean
