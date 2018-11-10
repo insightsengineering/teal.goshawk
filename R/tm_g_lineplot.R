@@ -252,7 +252,6 @@ srv_lineplot <- function(input, output, session, datasets, dataname, param_var, 
     median <- ifelse(input$stat=='median',TRUE, FALSE)
     ANL <- filter_ANL() %>% filter(eval(parse(text = param_var)) == param)
     
-    
     scale_data <- ANL %>%
       group_by(eval(parse(text = xvar)),
                eval(parse(text = trt_group))) %>%
@@ -275,8 +274,6 @@ srv_lineplot <- function(input, output, session, datasets, dataname, param_var, 
       ymax_scale <- max(scale_data[,c('mean','CIup','CIdown')], na.rm = TRUE)
     }
     
-    ran <- ymax_scale - ymin_scale
-    
     tagList({
       sliderInput(ns("yrange_scale"), label="Y-Axis Range Zoom", 
                   round(ymin_scale, digits = 1), round(ymax_scale, digits = 1), 
@@ -296,8 +293,7 @@ srv_lineplot <- function(input, output, session, datasets, dataname, param_var, 
     param <- input$param
     xvar <- input$xvar
     yvar <- input$yvar
-    ymin_scale <- input$yrange_scale[1]
-    ymax_scale <- input$yrange_scale[2]
+    ylim <- input$yrange_scale
     median <- ifelse(input$stat=='median',TRUE, FALSE)
     rotate_xlab <- input$rotate_xlab
     hline <- as.numeric(input$hline)
@@ -332,8 +328,7 @@ srv_lineplot <- function(input, output, session, datasets, dataname, param_var, 
       biomarker_var_label = param_var_label,
       biomarker = param,
       value_var = yvar,
-      ymin = ymin_scale,
-      ymax = ymax_scale,
+      ylim = ylim,
       trt_group = trt_group,
       trt_group_level = trt_group_level,
       time = xvar,

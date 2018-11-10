@@ -161,7 +161,6 @@ ui_spaghettiplot <- function(id, ...) {
           div(style="display: inline-block;vertical-align:middle; width: 100px;",
               numericInput(ns("facet_ncol"), "", a$facet_ncol, min = 1))
       ),
-      # numericInput(ns("facet_ncol"), "Number of Plots Per Row:", a$facet_ncol, min = 1),
       checkboxInput(ns("rotate_xlab"), "Rotate X-Axis Label", a$rotate_xlab),
       div(style="padding: 0px;",
           div(style="display: inline-block;vertical-align:moddle; width: 175px;",
@@ -169,7 +168,6 @@ ui_spaghettiplot <- function(id, ...) {
           div(style="display: inline-block;vertical-align:middle; width: 100px;",
               numericInput(ns("hline"), "", a$hline))
       ),
-      # numericInput(ns("hline"), "Add a Horizontal Line:", a$hline),
       optionalSliderInputValMinMax(ns("plot_height"), "Plot Height", a$plot_height, ticks = FALSE),
       optionalSliderInputValMinMax(ns("font_size"), "Font Size", a$font_size, ticks = FALSE)
     )
@@ -290,8 +288,7 @@ srv_spaghettiplot <- function(input, output, session, datasets, dataname, idvar,
     param <- input$param
     xvar <- input$xvar
     yvar <- input$yvar
-    ymin_scale <- input$yrange_scale[1]
-    ymax_scale <- input$yrange_scale[2]
+    ylim <- input$yrange_scale
     facet_ncol <- input$facet_ncol
     rotate_xlab <- input$rotate_xlab
     hline <- as.numeric(input$hline)
@@ -332,8 +329,7 @@ srv_spaghettiplot <- function(input, output, session, datasets, dataname, idvar,
       time = xvar,
       time_level = xvar_level,
       color_manual = man_color,
-      ymin = ymin_scale,
-      ymax = ymax_scale,
+      ylim = ylim,
       facet_ncol = facet_ncol,
       hline = hline,
       xtick = xtick,
