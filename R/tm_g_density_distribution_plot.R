@@ -170,8 +170,6 @@ srv_g_density_distribution_plot <- function(input, output, session, datasets, da
     xmin_scale <- min(scale_data[[input$xaxis_var]], na.rm = TRUE)
     xmax_scale <- max(scale_data[[input$xaxis_var]], na.rm = TRUE)
     
-    ran <- xmax_scale - xmin_scale
-    
     tagList({
       sliderInput(ns("xrange_scale"), label="X-Axis Range Zoom", 
                   floor(xmin_scale), ceiling(xmax_scale), 

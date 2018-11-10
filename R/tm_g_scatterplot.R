@@ -14,11 +14,11 @@
 #' @param trt_group name of variable representing treatment group e.g. ARM.
 #' @param color_manual vector of colors applied to treatment values.
 #' @param shape_manual vector of symbols applied to LOQ values.
+#' @param facet_ncol numeric value indicating number of facets per row.
 #' @param facet set layout to use treatment facetting.
 #' @param reg_line include regression line and annotations for slope and coefficient in visualization. Use with facet TRUE.
 #' @param rotate_xlab 45 degree rotation of x-axis values.
 #' @param hline y-axis value to position of horizontal line.
-#' @param plot_width controls plot width.
 #' @param plot_height controls plot height.
 #' @param font_size font size control for title, x-axis label, y-axis label and legend.
 #' @param dot_size plot dot size.
@@ -64,8 +64,8 @@
 #'        trt_group = "ARM",
 #'        color_manual = color_manual,
 #'        shape_manual = shape_manual,
-#'        plot_width = c(800, 200, 2000),
 #'        plot_height = c(500, 200, 2000),
+#'        facet_ncol = 2,
 #'        facet = FALSE,
 #'        reg_line = FALSE,
 #'        font_size = c(12, 8, 20),
@@ -91,11 +91,11 @@ tm_g_scatterplot <- function(label,
                              trt_group = "ARM",
                              color_manual = NULL,
                              shape_manual = NULL,
+                             facet_ncol = 2,
                              facet = FALSE,
                              reg_line = FALSE,
                              rotate_xlab = FALSE,
                              hline = NULL,
-                             plot_width = c(800, 200, 2000),
                              plot_height = c(500, 200, 2000),
                              font_size = c(12, 8, 20),
                              dot_size = c(1, 1, 12),
@@ -139,19 +139,24 @@ ui_g_scatterplot <- function(id, ...) {
       optionalSelectInput(ns("param"), "Select a Biomarker", a$param_choices, a$param, multiple = FALSE),
       optionalSelectInput(ns("xaxis_var"), "Select an X-Axis Variable", a$xaxis_var_choices, a$xaxis_var, multiple = FALSE),
       optionalSelectInput(ns("yaxis_var"), "Select a Y-Axis Variable", a$yaxis_var_choices, a$yaxis_var, multiple = FALSE),
+      radioButtons(ns("constraint_var"), "Data Constraint", c("None" = "NONE", "Screening" = "BASE2", "Baseline" = "BASE")),
+      uiOutput(ns("constraint_min_value"), style="display: inline-block; vertical-align:center"),
+      uiOutput(ns("constraint_max_value"), style="display: inline-block; vertical-align:center"),
       # uiOutput(ns("xaxis_scale")),
       # uiOutput(ns("yaxis_scale")),
-      uiOutput(ns("xmin_value")),
-      uiOutput(ns("xmax_value")),
-      uiOutput(ns("ymin_value")),
-      uiOutput(ns("ymax_value")),
+      # uiOutput(ns("xmin_value")),
+      # uiOutput(ns("xmax_value")),
+      # uiOutput(ns("ymin_value")),
+      # uiOutput(ns("ymax_value")),
       
       tags$label("Plot Aesthetic Settings", class="text-primary", style="margin-top: 15px;"),
+      uiOutput(ns("xaxis_zoom")),
+      uiOutput(ns("yaxis_zoom")),
+      numericInput(ns("facet_ncol"), "Number of Plots Per Row:", a$facet_ncol, min = 1),
       checkboxInput(ns("facet"), "Treatment Facetting", a$facet),
       checkboxInput(ns("reg_line"), "Regression Line", a$reg_line),
       checkboxInput(ns("rotate_xlab"), "Rotate X-axis Label", a$rotate_xlab),
       numericInput(ns("hline"), "Add a horizontal line:", a$hline),
-      optionalSliderInputValMinMax(ns("plot_width"), "Plot Width", a$plot_width, ticks = FALSE),
       optionalSliderInputValMinMax(ns("plot_height"), "Plot Height", a$plot_height, ticks = FALSE),
       optionalSliderInputValMinMax(ns("font_size"), "Font Size", a$font_size, ticks = FALSE),
       optionalSliderInputValMinMax(ns("dot_size"), "Dot Size", a$dot_size, ticks = FALSE),
@@ -176,109 +181,145 @@ srv_g_scatterplot <- function(input, output, session, datasets, dataname,
   
   # dynamic plot width
   output$plot_ui <- renderUI({
-    plot_width <- input$plot_width
-    validate(need(plot_width, "need valid plot width"))
     plot_height <- input$plot_height
     validate(need(plot_height, "need valid plot height"))
     
-    plotOutput(session$ns("scatterplot"), width = plot_width, height = plot_height)
+    plotOutput(session$ns("scatterplot"), height = plot_height)
     })
   
-  # filter data by param and the xmin, xmax, ymin and ymax values
+  # dynamic slider for x-axis
+  output$xaxis_zoom <- renderUI({
+    ALB <- datasets$get_data(dataname, reactive = TRUE, filtered = TRUE)
+    param <- input$param 
+    scale_data <- ALB %>%
+      filter(eval(parse(text = param_var)) == param)
+    
+    # establish default value during reaction and prior to value being available
+    xmin_scale <- -Inf
+    xmax_scale <- Inf
+    
+    # identify min and max values of BM range ignoring NA values
+    xmin_scale <- min(scale_data[[input$xaxis_var]], na.rm = TRUE)
+    xmax_scale <- max(scale_data[[input$xaxis_var]], na.rm = TRUE)
+    
+    tagList({
+      sliderInput(ns("xrange_scale"), label="X-Axis Range Zoom", 
+                  floor(xmin_scale), ceiling(xmax_scale), 
+                  value = c(floor(xmin_scale), ceiling(xmax_scale)))
+    })
+    
+  })
+
+  # dynamic slider for y-axis
+  output$yaxis_zoom <- renderUI({
+    ALB <- datasets$get_data(dataname, reactive = TRUE, filtered = TRUE)
+    param <- input$param 
+    scale_data <- ALB %>%
+      filter(eval(parse(text = param_var)) == param)
+    
+    # establish default value during reaction and prior to value being available
+    ymin_scale <- -Inf
+    ymax_scale <- Inf
+    
+    # identify min and max values of BM range ignoring NA values
+    ymin_scale <- min(scale_data[[input$yaxis_var]], na.rm = TRUE)
+    ymax_scale <- max(scale_data[[input$yaxis_var]], na.rm = TRUE)
+    
+    tagList({
+      sliderInput(ns("yrange_scale"), label="Y-Axis Range Zoom", 
+                  floor(ymin_scale), ceiling(ymax_scale), 
+                  value = c(floor(ymin_scale), ceiling(ymax_scale)))
+    })
+    
+  })
+  
+  
+  
+  # filter data by param and the constraint_min and constraint_max values
   filter_ALB <- reactive({
-    
     param <- input$param
-    xaxis_var <- input$xaxis_var
-    yaxis_var <- input$yaxis_var
-    xmin_range <- -Inf
-    xmax_range <- Inf
-    ymin_range <- -Inf
-    ymax_range <- Inf
-
-    if (length(input$xmin)){
-      xmin_range <- input$xmin
-    }
+    constraint_var <- input$constraint_var
     
-    if (length(input$xmax)){
-      xmax_range <- input$xmax
-    }
-
-    if (length(input$ymin)){
-      ymin_range <- input$ymin
-    }
-
-    if (length(input$ymax)){
-      ymax_range <- input$ymax
-    }
-
-    datasets$get_data(dataname, filtered = TRUE, reactive = TRUE) %>%
-      filter(eval(parse(text = param_var)) == param &
-               (xmin_range <= eval(parse(text = xaxis_var)) &
-               eval(parse(text = xaxis_var)) <= xmax_range &
-               ymin_range <= eval(parse(text = yaxis_var)) &
-               eval(parse(text = yaxis_var)) <= ymax_range) |
-               (is.na(xaxis_var) | is.na(yaxis_var)))
-  })
-  
-  
-  # x-axis minimum value
-  output$xmin_value <- renderUI({
-    ALB <- datasets$get_data(dataname, filtered = TRUE, reactive = TRUE) # must add for the dynamic ui.range_scale field
-    param <- input$param # must add for the dynamic ui.range_scale field
-    scale_data <- ALB %>%
-      filter(eval(parse(text = param_var)) == param)
-      # identify min and max values of BM range ignoring NA values
-      xmin_range <- RoundTo(min(scale_data[[input$xaxis_var]], na.rm = TRUE), multiple = .001, FUN = floor)
-      xmax_range <- RoundTo(max(scale_data[[input$xaxis_var]], na.rm = TRUE), multiple = .001, FUN = ceiling)
+    if (constraint_var != "NONE"){
+      constraint_min_range <- -Inf
+      constraint_max_range <- Inf
       
-      tagList({
-        numericInput(ns("xmin"), paste0("Minimum X-Axis Value (", xmin_range, ")"), value = xmin_range, min = xmin_range, max = xmax_range)
-      })
-  })
-
-  # x-axis maximum value
-  output$xmax_value <- renderUI({
-    ALB <- datasets$get_data(dataname, filtered = TRUE, reactive = TRUE) # must add for the dynamic ui.range_scale field
-    param <- input$param # must add for the dynamic ui.range_scale field
-    scale_data <- ALB %>%
-      filter(eval(parse(text = param_var)) == param)
-    # identify min and max values of BM range ignoring NA values
-    xmin_range <- RoundTo(min(scale_data[[input$xaxis_var]], na.rm = TRUE), multiple = .001, FUN = floor)
-    xmax_range <- RoundTo(max(scale_data[[input$xaxis_var]], na.rm = TRUE), multiple = .001, FUN = ceiling)
-    
-    tagList({
-      numericInput(ns("xmax"), paste0("Maximum X-Axis Value (", xmax_range, ")"), value = xmax_range, min = xmin_range, max = xmax_range)
-    })
-  })
-
-  # y-axis minimum value
-  output$ymin_value <- renderUI({
-    ALB <- datasets$get_data(dataname, filtered = TRUE, reactive = TRUE) # must add for the dynamic ui.range_scale field
-    param <- input$param # must add for the dynamic ui.range_scale field
-    scale_data <- ALB %>%
-      filter(eval(parse(text = param_var)) == param)
-    # identify min and max values of BM range ignoring NA values
-    ymin_range <- RoundTo(min(scale_data[[input$yaxis_var]], na.rm = TRUE), multiple = .001, FUN = floor)
-    ymax_range <- RoundTo(max(scale_data[[input$yaxis_var]], na.rm = TRUE), multiple = .001, FUN = ceiling)
-    
-    tagList({
-      numericInput(ns("ymin"), paste0("Minimum Y-Axis Value (", ymin_range, ")"), value = ymin_range, min = ymin_range, max = ymax_range)
-    })
+      if (length(input$constraint_min)){
+        constraint_min_range <- input$constraint_min
+      }
+      
+      if (length(input$constraint_max)){
+        constraint_max_range <- input$constraint_max
+      }
+      datasets$get_data(dataname, filtered = TRUE, reactive = TRUE) %>%
+        filter(eval(parse(text = param_var)) == param &
+                 constraint_min_range <= eval(parse(text = constraint_var)) &
+                 eval(parse(text = constraint_var)) <= constraint_max_range |
+                 is.na(constraint_var)
+        )
+    } else{
+      datasets$get_data(dataname, filtered = TRUE, reactive = TRUE) %>%
+        filter(eval(parse(text = param_var)) == param)
+    }
   })
   
-  # y-axis maximum value
-  output$ymax_value <- renderUI({
-    ALB <- datasets$get_data(dataname, filtered = TRUE, reactive = TRUE) # must add for the dynamic ui.range_scale field
-    param <- input$param # must add for the dynamic ui.range_scale field
-    scale_data <- ALB %>%
-      filter(eval(parse(text = param_var)) == param)
-    # identify min and max values of BM range ignoring NA values
-    ymin_range <- RoundTo(min(scale_data[[input$yaxis_var]], na.rm = TRUE), multiple = .001, FUN = floor)
-    ymax_range <- RoundTo(max(scale_data[[input$yaxis_var]], na.rm = TRUE), multiple = .001, FUN = ceiling)
+  # minimum data constraint value
+  output$constraint_min_value <- renderUI({
+    # conditionally reveal min and max constraint fields
+    if (input$constraint_var != "NONE") {
+      ALB <- datasets$get_data(dataname, filtered = TRUE, reactive = TRUE)
+      param <- input$param
+      scale_data <- ALB %>%
+        filter(eval(parse(text = param_var)) == param)
+      # ensure that there are records at visit to process based on the constraint vatriable selection
+      visitFreq <- unique(scale_data$AVISITCD)
+      if (input$constraint_var == "BASE2" & visitFreq[1] == "SCR" | 
+          input$constraint_var == "BASE" & (visitFreq[1] == "BL" | visitFreq[2] == "BL")){
+        # identify min and max values of constraint var range ignoring NA values
+        constraint_min_range <- min(scale_data[[input$constraint_var]], na.rm = TRUE)
+        constraint_max_range <- max(scale_data[[input$constraint_var]], na.rm = TRUE)
+        
+        tagList({
+          numericInput(ns("constraint_min"), 
+                       paste0("Min (", constraint_min_range, ")"), 
+                       value = constraint_min_range, 
+                       min = constraint_min_range, max = constraint_max_range)
+        })
+      }
+    }
+    else {
+      return(NULL)
+    }
     
-    tagList({
-      numericInput(ns("ymax"), paste0("Maximum Y-Axis Value (", ymax_range, ")"), value = ymax_range, min = ymin_range, max = ymax_range)
-    })
+  })
+  
+  # maximum data constraint value
+  output$constraint_max_value <- renderUI({
+    # conditionally reveal min and max constraint fields
+    if (input$constraint_var != "NONE") {
+      ALB <- datasets$get_data(dataname, filtered = TRUE, reactive = TRUE)
+      param <- input$param
+      scale_data <- ALB %>%
+        filter(eval(parse(text = param_var)) == param)
+      # ensure that there are records at visit to process based on the constraint vatriable selection
+      visitFreq <- unique(scale_data$AVISITCD)
+      if (input$constraint_var == "BASE2" & visitFreq[1] == "SCR" | 
+          input$constraint_var == "BASE" & (visitFreq[1] == "BL" | visitFreq[2] == "BL")){
+        # identify min and max values of constraint var range ignoring NA values
+        constraint_min_range <- min(scale_data[[input$constraint_var]], na.rm = TRUE)
+        constraint_max_range <- max(scale_data[[input$constraint_var]], na.rm = TRUE)
+        
+        tagList({
+          numericInput(ns("constraint_max"), 
+                       paste0("Max (", constraint_max_range, ")"),
+                       value = constraint_max_range, 
+                       min = constraint_min_range, max = constraint_max_range)
+        })
+      }
+    }
+    else {
+      return(NULL)
+    }
   })
   
   output$scatterplot <- renderPlot({
@@ -286,10 +327,15 @@ srv_g_scatterplot <- function(input, output, session, datasets, dataname,
     param <- input$param
     xaxis_var <- input$xaxis_var
     yaxis_var <- input$yaxis_var
+    xmin_scale <- input$xrange_scale[1]
+    xmax_scale <- input$xrange_scale[2]
+    ymin_scale <- input$yrange_scale[1]
+    ymax_scale <- input$yrange_scale[2]
     font_size <- input$font_size
     dot_size <- input$dot_size
     reg_text_size <- input$reg_text_size
     hline <- as.numeric(input$hline)
+    facet_ncol <- input$facet_ncol
     facet <- input$facet
     reg_line <- input$reg_line
     rotate_xlab <- input$rotate_xlab
@@ -314,8 +360,13 @@ srv_g_scatterplot <- function(input, output, session, datasets, dataname,
       xaxis_var = xaxis_var,
       yaxis_var = yaxis_var,
       trt_group = trt_group,
+      xmin = xmin_scale,
+      xmax = xmax_scale,
+      ymin = ymin_scale,
+      ymax = ymax_scale,
       color_manual = color_manual,
       shape_manual = shape_manual,
+      facet_ncol = facet_ncol,
       facet = facet,
       reg_line = reg_line,
       font_size = font_size,

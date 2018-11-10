@@ -7,11 +7,11 @@
 tm_g_scatterplot(label, dataname, param_var, param, param_choices = param,
   xaxis_var, xaxis_var_choices = xaxis_var, yaxis_var,
   yaxis_var_choices = yaxis_var, trt_group = "ARM", color_manual = NULL,
-  shape_manual = NULL, facet = FALSE, reg_line = FALSE,
-  rotate_xlab = FALSE, hline = NULL, plot_width = c(800, 200, 2000),
-  plot_height = c(500, 200, 2000), font_size = c(12, 8, 20),
-  dot_size = c(1, 1, 12), reg_text_size = c(3, 3, 10), pre_output = NULL,
-  post_output = NULL, code_data_processing = NULL)
+  shape_manual = NULL, facet_ncol = 2, facet = FALSE, reg_line = FALSE,
+  rotate_xlab = FALSE, hline = NULL, plot_height = c(500, 200, 2000),
+  font_size = c(12, 8, 20), dot_size = c(1, 1, 12), reg_text_size = c(3,
+  3, 10), pre_output = NULL, post_output = NULL,
+  code_data_processing = NULL)
 }
 \arguments{
 \item{label}{menu item label of the module in the teal app.}
@@ -38,6 +38,8 @@ tm_g_scatterplot(label, dataname, param_var, param, param_choices = param,
 
 \item{shape_manual}{vector of symbols applied to LOQ values.}
 
+\item{facet_ncol}{numeric value indicating number of facets per row.}
+
 \item{facet}{set layout to use treatment facetting.}
 
 \item{reg_line}{include regression line and annotations for slope and coefficient in visualization. Use with facet TRUE.}
@@ -45,8 +47,6 @@ tm_g_scatterplot(label, dataname, param_var, param, param_choices = param,
 \item{rotate_xlab}{45 degree rotation of x-axis values.}
 
 \item{hline}{y-axis value to position of horizontal line.}
-
-\item{plot_width}{controls plot width.}
 
 \item{plot_height}{controls plot height.}
 
@@ -95,8 +95,8 @@ x <- teal::init(
        trt_group = "ARM",
        color_manual = color_manual,
        shape_manual = shape_manual,
-       plot_width = c(800, 200, 2000),
        plot_height = c(500, 200, 2000),
+       facet_ncol = 2,
        facet = FALSE,
        reg_line = FALSE,
        font_size = c(12, 8, 20),
