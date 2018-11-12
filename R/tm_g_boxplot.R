@@ -34,6 +34,10 @@
 #' @param facet_ncol numeric value indicating number of facets per row.
 #'     NULL = Use the default for ggplot2::facet_wrap.
 #' @param rotate_xlab 45 degree rotation of x-axis values.
+#' @param filter_vars Variables to be used for filtering the data.  The default 
+#'    is BASE2 and BASE
+#' @param filter_labs Labels for the radio buttons for the \code{filter_vars}.
+#'    The defaults are "Screening" for BASE2 and "Baseline" for BASE.   
 #' @param code_data_processing Not used
 #' 
 #' @inheritParams teal::standard_layout
@@ -117,6 +121,8 @@ tm_g_boxplot <- function(label,
                          pre_output = NULL,
                          post_output = NULL,
                          armlabel = NULL,
+                         filter_vars = c("BASE2", "BASE"),
+                         filter_labs = c("Screening", "Baseline"),
                          code_data_processing = NULL) {
   
   args <- as.list(environment())
@@ -145,6 +151,8 @@ tm_g_boxplot <- function(label,
                        shape_manual = shape_manual,
                        loq_flag_var = loq_flag_var,
                        armlabel = armlabel,
+                       filter_vars = filter_vars,
+                       filter_labs = filter_labs,
                        code_data_processing = code_data_processing
     ),
     ui = ui_g_boxplot,
@@ -195,14 +203,21 @@ ui_g_boxplot <- function(id, ...) {
                           , width = inpWidth
       ),
       
-      div(style="padding: 0px;",
-          uiOutput(ns("y_select")),
-          div(
-            uiOutput(ns("ymin_value"), style="display: inline-block; vertical-align:center;"),
-            tags$p(" to ", style="display: inline-block; vertical-align:center;"),
-            uiOutput(ns("ymax_value"), style="display: inline-block; vertical-align:center;"),
-            style="padding: 0px; margin: 0px"
-          )
+      radioButtons(ns("y_filter_by"), 
+                   "Data Constraint:",
+                   inline = TRUE,
+                   choiceNames = as.list(c("None", a$filter_labs)),
+                   choiceValues = as.list(c("None", a$filter_vars))
+                   ),
+        div(id = ns("y_filter"), style="padding: 0px;",
+            uiOutput(ns("y_select")),
+            div(style="padding: 0px; margin: 0px",
+              uiOutput(ns("ymin_value")
+                           , style="display: inline-block; vertical-align:center;"),
+              uiOutput(ns("yto"), style="display: inline-block; vertical-align:center;"),
+              uiOutput(ns("ymax_value")
+                           , style="display: inline-block; vertical-align:center;")
+            )
       ),
       
       tags$label("Plot Aesthetic Settings", class="text-primary", style="margin-top: 15px;"),
@@ -263,6 +278,7 @@ srv_g_boxplot <- function(input, output, session, datasets
                           , color_manual, shape_manual
                           , loq_flag_var
                           , armlabel
+                          , filter_vars, filter_labs
                           , dataname, code_data_processing) {
   
   chunks <- list(
@@ -292,19 +308,22 @@ srv_g_boxplot <- function(input, output, session, datasets
     # Only consider filtering on value if there is data to filter, the filter
     # inputs are loaded and that there are some non-missing values present.
     # Then check to see if the filter values have been altered from their default
-    # values.  Only is all of these conditions have been met, filter on
+    # values.  Only if all of these conditions have been met, filter on
     # the values.
-    if (length(alb) & is_finite(input$ymin) & is_finite(ylimits()$low)) {
+    filt_var <- input$y_filter_by
+    print(filt_var)
+    if (length(alb) & filt_var != "None" &
+        is_finite(input$ymin) & is_finite(ylimits()$low)) {
       ymin_scale <- input$ymin
       ymax_scale <- input$ymax
-      axlim <- get_axis_limits(min(cdata()$BASE, na.rm = T)
-                               , max(cdata()$BASE, na.rm = T), req.n = 0 )
+      axlim <- get_axis_limits(min(cdata()[,filt_var], na.rm = T)
+                               , max(cdata()[,filt_var], na.rm = T), req.n = 0 )
       
       if (is_finite(ymin_scale) & is_finite(ymax_scale) & 
           ( ymin_scale != axlim$min | ymax_scale != axlim$max)){
         
         alb <- alb %>% 
-          filter(ymin_scale <= BASE & BASE <= ymax_scale)
+          filter(ymin_scale <= eval(parse(text = filt_var)) & eval(parse(text = filt_var)) <= ymax_scale)
       }
     }
     return(alb)
@@ -355,35 +374,49 @@ srv_g_boxplot <- function(input, output, session, datasets
   
   # dynamic slider for y-axis - Use ylimits 
   observe({
-    
-    # Calculate nice default limits based on the min and max from the data
-    ybase <- get_axis_limits(min(cdata()$BASE, na.rm = T), max(cdata()$BASE, na.rm = T), req.n = 0 )
-
-    output$y_select <- renderUI({
-      HTML(
-        paste0("<label>Select data for ", "BASE", " (", ybase$min, " to ", ybase$max, ")</label>")
-      )
-    })
-    
-    output$ymin_value <- renderUI({
-      if (is_finite(ybase$min) & !ybase$eqt) {
-        tagList({
+    if (input$y_filter_by == "None") {
+      print("None")
+      output$y_select <- renderUI({
+        HTML(
+          paste0("<label>No Data Selection</label>")
+        )
+      })
+      tagList({
+        updateNumericInput(session, "ymin"
+                     , value = 0, min = 0, max = 0, step = 0)
+        updateNumericInput(session, "ymax"
+                           , value = 0, min = 0, max = 0, step = 0)
+      })
+    } else {
+      print("Filter")
+      # Calculate nice default limits based on the min and max from the data
+      ybase <- get_axis_limits(min(cdata()[,input$y_filter_by], na.rm = T)
+                               , max(cdata()[,input$y_filter_by], na.rm = T)
+                               , req.n = 0 )
+      
+      output$y_select <- renderUI({
+        HTML(
+          paste0("<label>Select data for ", input$y_filter_by, " (", ybase$min
+                 , " to ", ybase$max, ")</label>")
+        )
+      })
+      
+      output$ymin_value <- renderUI({
+        if (is_finite(ybase$min) & !ybase$eqt) {
           numericInput(session$ns("ymin")
                        , label = NULL
                        , value = ybase$min, min = ybase$min, max = ybase$max)
-        })
-      }
-    })
-    
-    output$ymax_value <- renderUI({
-      if (is_finite(ybase$max) & !ybase$eqt) {
-        tagList({
+        }
+      })
+      
+      output$ymax_value <- renderUI({
+        if (is_finite(ybase$max) & !ybase$eqt) {
           numericInput(session$ns("ymax")
                        , label = NULL
                        , value = ybase$max, min = ybase$min, max = ybase$max)
-        })
-      }
-    })
+        }
+      })
+    }
     
     output$yaxis_scale <- renderUI({
       yax <- get_axis_limits(ylimits()$low, ylimits()$high, req.n = 100)
@@ -443,12 +476,14 @@ srv_g_boxplot <- function(input, output, session, datasets
     
     ymin_scale <- input$yrange_scale[1]
     ymax_scale <- input$yrange_scale[2]
-    
-    ymin <- input$ymin
-    ymax <- input$ymax
-    
-    validate(need(ymax >= ymin,
-                  paste("Minimum filter value greater than maximum filter value")))
+
+    if (input$y_filter_by != "None") {    
+      ymin <- input$ymin
+      ymax <- input$ymax
+  
+      validate(need(ymax >= ymin,
+                    paste("Minimum filter value greater than maximum filter value")))
+    }
     validate(need(!is.null(ALB) && is.data.frame(ALB), "No data left"))
     validate(need(nrow(ALB) > 0 , "No observations left"))
     validate(need(param_var %in% names(ALB),

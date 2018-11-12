@@ -11,7 +11,8 @@ tm_g_boxplot(label, dataname, param_var, param, param_choices = param,
   facet_var_choices = NULL, xaxis_var = "AVISIT",
   xaxis_var_choices = NULL, loq_flag_var = NULL, hline = NULL,
   facet_ncol = NULL, rotate_xlab = FALSE, pre_output = NULL,
-  post_output = NULL, armlabel = NULL, code_data_processing = NULL)
+  post_output = NULL, armlabel = NULL, filter_vars = c("BASE2", "BASE"),
+  filter_labs = c("Screening", "Baseline"), code_data_processing = NULL)
 }
 \arguments{
 \item{label}{menu item label of the module in the teal app}
@@ -74,6 +75,12 @@ output to put the output into context. For example the
 then the label attribute for \code{trt_group} will be used.  If there is 
 no label attribute for \code{trt_group}, then the name of the parameter (
 in title case) will be used.}
+
+\item{filter_vars}{Variables to be used for filtering the data.  The default 
+is BASE2 and BASE}
+
+\item{filter_labs}{Labels for the radio buttons for the \code{filter_vars}.
+The defaults are "Screening" for BASE2 and "Baseline" for BASE.}
 
 \item{code_data_processing}{Not used}
 }
