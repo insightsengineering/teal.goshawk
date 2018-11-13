@@ -281,6 +281,28 @@ srv_g_boxplot <- function(input, output, session, datasets
                           , filter_vars, filter_labs
                           , dataname, code_data_processing) {
   
+  # Get "nice" limits for Y axis. 
+  get_axis_limits <- function(lo_, hi_, req.n = 2000) {
+    hi <- signif(max(hi_, lo_), 6)
+    lo <- signif(min(hi_, lo_), 6)
+    
+    if (req.n == 0) {
+      return(list(min = lo, max = hi, step = 0, eqt = (hi == lo)))
+    } else if (hi == lo) {
+      return(list(min = lo-1, max = hi+1, step = 0.1, eqt = TRUE))
+    } else {
+      p <- pretty(c(lo, hi), n=10)
+      d <- pretty(c(lo, hi), n=1.2*req.n, min.n = 0.5*req.n)
+      return(list(min = head(p,1), max = tail(p,1), step = signif(d[2] - d[1], 8), eqt = FALSE))
+    }
+  }  
+  
+  # Extend is.infinite to include zero length objects.
+  is_finite <- function(x){
+    if(length(x) == 0) return(FALSE)
+    return(is.finite(x))
+  }
+  
   chunks <- list(
     analysis = "# Not Calculated",
     table = "# Not calculated",
@@ -311,7 +333,6 @@ srv_g_boxplot <- function(input, output, session, datasets
     # values.  Only if all of these conditions have been met, filter on
     # the values.
     filt_var <- input$y_filter_by
-    print(filt_var)
     if (length(alb) & filt_var != "None" &
         is_finite(input$ymin) & is_finite(ylimits()$low)) {
       ymin_scale <- input$ymin
@@ -319,7 +340,7 @@ srv_g_boxplot <- function(input, output, session, datasets
       axlim <- get_axis_limits(min(cdata()[,filt_var], na.rm = T)
                                , max(cdata()[,filt_var], na.rm = T), req.n = 0 )
       
-      if (is_finite(ymin_scale) & is_finite(ymax_scale) & 
+      if (!axlim$eqt & is_finite(ymin_scale) & is_finite(ymax_scale) & 
           ( ymin_scale != axlim$min | ymax_scale != axlim$max)){
         
         alb <- alb %>% 
@@ -349,71 +370,51 @@ srv_g_boxplot <- function(input, output, session, datasets
     return(list(low = rng[1], high = rng[2]))
   })  
   
-  # Get "nice" limits for Y axis. 
-  get_axis_limits <- function(lo_, hi_, req.n = 2000) {
-    hi <- signif(max(hi_, lo_), 6)
-    lo <- signif(min(hi_, lo_), 6)
-
-    if (req.n == 0) {
-      return(list(min = lo, max = hi, step = 0, eqt = (hi == lo)))
-    } else if (hi == lo) {
-      return(list(min = lo-1, max = hi+1, step = 0.1, eqt = TRUE))
-    } else {
-      p <- pretty(c(lo, hi), n=10)
-      d <- pretty(c(lo, hi), n=1.2*req.n, min.n = 0.5*req.n)
-      return(list(min = head(p,1), max = tail(p,1), step = signif(d[2] - d[1], 8), eqt = FALSE))
-    }
-  }  
-  
-  # Extend is.infinite to include zero length objects.
-  is_finite <- function(x){
-    # print(c("IS_FINITE:", x, class(x)))
-    if(length(x) == 0) return(FALSE)
-    return(is.finite(x))
-  }
-  
   # dynamic slider for y-axis - Use ylimits 
   observe({
     if (input$y_filter_by == "None") {
-      print("None")
       output$y_select <- renderUI({
         HTML(
           paste0("<label>No Data Selection</label>")
         )
       })
       tagList({
-        updateNumericInput(session, "ymin"
-                     , value = 0, min = 0, max = 0, step = 0)
-        updateNumericInput(session, "ymax"
-                           , value = 0, min = 0, max = 0, step = 0)
+        output$ymin_value <- renderUI({NULL})
+        output$ymax_value <- renderUI({NULL})
       })
     } else {
-      print("Filter")
       # Calculate nice default limits based on the min and max from the data
       ybase <- get_axis_limits(min(cdata()[,input$y_filter_by], na.rm = T)
                                , max(cdata()[,input$y_filter_by], na.rm = T)
                                , req.n = 0 )
       
-      output$y_select <- renderUI({
-        HTML(
-          paste0("<label>Select data for ", input$y_filter_by, " (", ybase$min
-                 , " to ", ybase$max, ")</label>")
-        )
-      })
+      if (ybase$eqt) {
+        output$y_select <- renderUI({
+          HTML(
+            paste0("<label>", input$y_filter_by, ": No selection possible (Min=Max))</label>")
+          )
+        })
+      } else {
+        output$y_select <- renderUI({NULL})
+      }
       
       output$ymin_value <- renderUI({
         if (is_finite(ybase$min) & !ybase$eqt) {
           numericInput(session$ns("ymin")
-                       , label = NULL
+                       , label = paste0("Min (", ybase$min, ")")
                        , value = ybase$min, min = ybase$min, max = ybase$max)
+        } else {
+          return(NULL)
         }
       })
       
       output$ymax_value <- renderUI({
         if (is_finite(ybase$max) & !ybase$eqt) {
           numericInput(session$ns("ymax")
-                       , label = NULL
+                       , label = paste0("Max (", ybase$max, ")")
                        , value = ybase$max, min = ybase$min, max = ybase$max)
+        } else {
+          return(NULL)
         }
       })
     }
@@ -476,13 +477,14 @@ srv_g_boxplot <- function(input, output, session, datasets
     
     ymin_scale <- input$yrange_scale[1]
     ymax_scale <- input$yrange_scale[2]
-
+    
     if (input$y_filter_by != "None") {    
       ymin <- input$ymin
       ymax <- input$ymax
-  
-      validate(need(ymax >= ymin,
+      if (length(ymin) > 0 & !is.null(ymin)) {
+        validate(need(ymax >= ymin,
                     paste("Minimum filter value greater than maximum filter value")))
+      }
     }
     validate(need(!is.null(ALB) && is.data.frame(ALB), "No data left"))
     validate(need(nrow(ALB) > 0 , "No observations left"))
@@ -498,7 +500,9 @@ srv_g_boxplot <- function(input, output, session, datasets
                   paste("Variable", xaxis_var, " is not available in data", dataname)))
     validate(need(facet_var %in% names(ALB),
                   paste("Variable", facet_var, " is not available in data", dataname)))
-
+    validate(need(filter_vars %in% names(ALB),
+                  paste("Variable", filter_var, " is not available in data", dataname)))
+    
     chunks$boxsetup <<- bquote({
       # Units to display, just take the first if there multiples.
       unit <- ALB %>% 
