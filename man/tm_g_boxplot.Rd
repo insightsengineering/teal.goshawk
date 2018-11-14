@@ -9,9 +9,10 @@ tm_g_boxplot(label, dataname, param_var, param, param_choices = param,
   plot_height = c(600, 200, 2000), trt_group = "ARM", color_manual = NULL,
   shape_manual = NULL, trt_group_choices = NULL, facet_var = "ARM",
   facet_var_choices = NULL, xaxis_var = "AVISIT",
-  xaxis_var_choices = NULL, loq_flag_var = NULL, rotate_xlab = FALSE,
-  pre_output = NULL, post_output = NULL, armlabel = NULL,
-  code_data_processing = NULL)
+  xaxis_var_choices = NULL, loq_flag_var = NULL, hline = NULL,
+  facet_ncol = NULL, rotate_xlab = FALSE, pre_output = NULL,
+  post_output = NULL, armlabel = NULL, filter_vars = c("BASE2", "BASE"),
+  filter_labs = c("Screening", "Baseline"), code_data_processing = NULL)
 }
 \arguments{
 \item{label}{menu item label of the module in the teal app}
@@ -55,6 +56,11 @@ trt_group cannot be changed.}
 
 \item{loq_flag_var}{variable for the LOQ.  Values are "Y" or "N"}
 
+\item{hline}{y-axis value to position a horizontal line.  NULL = No line.}
+
+\item{facet_ncol}{numeric value indicating number of facets per row.
+NULL = Use the default for ggplot2::facet_wrap.}
+
 \item{rotate_xlab}{45 degree rotation of x-axis values.}
 
 \item{pre_output}{optional, \code{shiny.tag} with text placed before the
@@ -69,6 +75,12 @@ output to put the output into context. For example the
 then the label attribute for \code{trt_group} will be used.  If there is 
 no label attribute for \code{trt_group}, then the name of the parameter (
 in title case) will be used.}
+
+\item{filter_vars}{Variables to be used for filtering the data.  The default 
+is BASE2 and BASE}
+
+\item{filter_labs}{Labels for the radio buttons for the \code{filter_vars}.
+The defaults are "Screening" for BASE2 and "Baseline" for BASE.}
 
 \item{code_data_processing}{Not used}
 }
