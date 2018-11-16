@@ -205,7 +205,7 @@ ui_g_boxplot <- function(id, ...) {
       
       radioButtons(ns("y_filter_by"), 
                    "Data Constraint:",
-                   inline = TRUE,
+                   inline = FALSE,
                    choiceNames = as.list(c("None", a$filter_labs)),
                    choiceValues = as.list(c("None", a$filter_vars))
                    ),
@@ -373,11 +373,6 @@ srv_g_boxplot <- function(input, output, session, datasets
   # dynamic slider for y-axis - Use ylimits 
   observe({
     if (input$y_filter_by == "None") {
-      output$y_select <- renderUI({
-        HTML(
-          paste0("<label>No Data Selection</label>")
-        )
-      })
       tagList({
         output$ymin_value <- renderUI({NULL})
         output$ymax_value <- renderUI({NULL})
