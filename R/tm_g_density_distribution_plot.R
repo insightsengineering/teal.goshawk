@@ -1,18 +1,16 @@
-#' Teal Module: density distribution plot
+#' Density Distribution Plot
 #'
-#' This module displays the web user interface and calls the functions that create 
-#' a density distribution plot and an accompanying summary table.
+#' This teal module renders the UI and calls the functions that create a density distribution plot and an accompanying summary table.
 #'
 #' @param label menu item label of the module in the teal app.
-#' @param dataname ADaM structured analysis laboratory data frame e.g. ALB.
+#' @param dataname analysis data passed to the data argument of teal init. E.g. ADaM structured laboratory data frame ALB.
 #' @param param_var name of variable containing biomarker codes e.g. PARAMCD.
 #' @param param_choices list of biomarkers of interest.
 #' @param param biomarker selected.
-#' @param xaxis_var name of variable containing biomarker results displayed on X-axis e.g. AVAL.
+#' @param xaxis_var name of variable containing biomarker results displayed on x-axis e.g. AVAL.
 #' @param xaxis_var_choices list of variables containing biomarker results choices.
 #' @param trt_group name of variable representing treatment group e.g. ARM.
 #' @param color_manual vector of colors applied to treatment values.
-#' @param loq_flag_var name of variable containing LOQ flag e.g. LBLOQFL.
 #' @param plot_height controls plot height.
 #' @param font_size font size control for title, x-axis label, y-axis label and legend.
 #' @param line_size plot line thickness.
@@ -57,7 +55,6 @@
 #'        xaxis_var_choices = c("AVAL", "BASE", "CHG", "PCHG", "BASE2", "CHG2", "PCHG2", "AVALL2", "BASEL2", "BASE2L2"),
 #'        trt_group = "ARM",
 #'        color_manual = color_manual,
-#'        loq_flag_var = 'LOQFL',
 #'        plot_height = c(500, 200, 2000),
 #'        font_size = c(12, 8, 20),
 #'        line_size = c(1, .25, 3)
@@ -78,7 +75,6 @@ tm_g_density_distribution_plot <- function(label,
                                            xaxis_var_choices = xaxis_var,
                                            trt_group = "ARM",
                                            color_manual = NULL,
-                                           loq_flag_var = 'LOQFL',
                                            plot_height = c(500, 200, 2000),
                                            font_size = c(12, 8, 20),
                                            line_size = c(1, .25, 3),

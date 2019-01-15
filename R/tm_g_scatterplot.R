@@ -1,15 +1,15 @@
-#' Teal Module: scatter plot
+#' Scatter Plot
 #'
-#' This module displays a scatter plot.
+#' This teal module renders the UI and calls the function that creates a scatter plot.
 #'
 #' @param label menu item label of the module in the teal app.
-#' @param dataname ADaM structured analysis laboratory (ADLB/ALB) data frame.  
+#' @param dataname analysis data passed to the data argument of teal init. E.g. ADaM structured laboratory data frame ALB.
 #' @param param_var name of variable containing biomarker codes e.g. PARAMCD.
 #' @param param_choices list of biomarkers of interest.
 #' @param param biomarker selected.
-#' @param xaxis_var name of variable containing biomarker results displayed on X-axis e.g. BASE.
+#' @param xaxis_var name of variable containing biomarker results displayed on x-axis e.g. BASE.
 #' @param xaxis_var_choices list of variables containing biomarker results choices.
-#' @param yaxis_var name of variable containing biomarker results displayed on Y-axis e.g. AVAL.
+#' @param yaxis_var name of variable containing biomarker results displayed on y-axis e.g. AVAL.
 #' @param yaxis_var_choices list of variables containing biomarker results choices.
 #' @param trt_group name of variable representing treatment group e.g. ARM.
 #' @param color_manual vector of colors applied to treatment values.

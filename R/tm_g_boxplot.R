@@ -1,44 +1,33 @@
-#' Teal Module: box plot
+#' Box Plot
 #'
-#' This shiny module displays a box plot
+#' This teal module renders the UI and calls the functions that create a box plot and accompanying summary table.
 #'
-#' @param label menu item label of the module in the teal app 
-#' @param dataname analysis data used in teal module, needs to be available in
-#'   the list passed to the \code{data} argument of \code{\link[teal]{init}}.
-#'   Note that the data are expected to be in vertical form with the
-#'   \code{PARAMCD} variable filtering to one observation per patient per visit.
-#' @param param_var columm in \code{dataname} to select parameters 
-#' @param param default parameter selected from \code{param_var}
-#' @param param_choices vector of choices to choose the parameter from
-#' @param value_var default columm in \code{dataname} to plot.
-#' @param value_var_choices choice of which columns in \code{dataname} to plot
-#' @param trt_group treatment variable.  The boxes and symbols are colored according
-#'    to this parameter.  
-#' @param trt_group_choices choices for \code{trt_group}.  If not specified then
-#'    trt_group cannot be changed.
-#' @param xaxis_var variable to categorize the x-axis
-#' @param xaxis_var_choices choices for \code{xaxis_var}. if not specified then
-#'    \code{xaxis_var} will be fixed and cannot be changed.
+#' @param label menu item label of the module in the teal app.
+#' @param dataname analysis data passed to the data argument of teal init. E.g. ADaM structured laboratory data frame ALB.
+#' @param param_var name of variable containing biomarker codes e.g. PARAMCD.
+#' @param param_choices list of biomarkers of interest.
+#' @param param biomarker selected.
+#' @param yaxis_var name of variable containing biomarker results displayed on y-axis e.g. AVAL.
+#' @param yaxis_var_choices list of variables containing biomarker results choices.
+#' @param xaxis_var variable to categorize the x-axis.
+#' @param xaxis_var_choices variable choices with which to categorize x-axis.
 #' @param facet_var variable to facet the plots by.
-#' @param facet_var_choices choices for \code{facet_var}. if not specified then
-#'    \code{facet_var} will be fixed and cannot be changed.
-#' @param armlabel header for the treatment symbols in the legend.  If not specified
-#'    then the label attribute for \code{trt_group} will be used.  If there is 
-#'    no label attribute for \code{trt_group}, then the name of the parameter (
-#'    in title case) will be used.
-#' @param color_manual vector of treatment colors. assigned values in app.R otherwise uses default colors.
-#' @param shape_manual vector of LOQ shapes. assigned values in app.R otherwise uses default shapes.
-#' @param plot_height  numeric vectors to define the plot height.
-#' @param loq_flag_var variable for the LOQ.  Values are "Y" or "N"
-#' @param hline y-axis value to position a horizontal line.  NULL = No line.
-#' @param facet_ncol numeric value indicating number of facets per row.
-#'     NULL = Use the default for ggplot2::facet_wrap.
-#' @param rotate_xlab 45 degree rotation of x-axis values.
+#' @param facet_var_choices variable choices with which to facet the plots.
 #' @param filter_vars Variables to be used for filtering the data.  The default 
 #'    is BASE2 and BASE
 #' @param filter_labs Labels for the radio buttons for the \code{filter_vars}.
 #'    The defaults are "Screening" for BASE2 and "Baseline" for BASE.   
-#' @param code_data_processing Not used
+#' @param trt_group name of variable representing treatment group e.g. ARM.
+#' @param armlabel label for the treatment symbols in the legend.
+#'        If not specified then the label attribute for trt_group will be used. 
+#'        If there is no label attribute for trt_group, then the name of the parameter (in title case) will be used.
+#' @param color_manual vector of colors applied to treatment values.
+#' @param shape_manual vector of symbols applied to LOQ values.
+#' @param facet_ncol numeric value indicating number of facets per row.
+#' @param rotate_xlab 45 degree rotation of x-axis values.
+#' @param hline y-axis value to position a horizontal line.  NULL = No line.
+#' @param plot_height  numeric vectors to define the plot height.
+#' @param code_data_processing TODO
 #' 
 #' @inheritParams teal::standard_layout
 #' 
@@ -49,8 +38,8 @@
 #' @import goshawk
 #' @import teal
 #'
-#' @author Balazs Toth
 #' @author Jeff Tomlinson (tomlinsj) jeffrey.tomlinson@roche.com
+#' @author Balazs Toth (tothb2) toth.balazs@gene.com
 #'
 #' @details provide additional information as needed. link to specification file \url{http://rstudio.com}
 #'
@@ -61,17 +50,10 @@
 #' @examples
 #' 
 #'\dontrun{
-#' # Example using analysis dataset for example ASL or ADSL,
-#' # ALB points to biomarker data stored in a typical LB structure. for example
-#' # ALB or ADLB.
+#' # Example using ADaM structure analysis dataset.
+#' # ALB refers to biomarker data stored in expected laboratory structure.
 #' 
-#' # Example using analysis dataset for example ASL or ADSL,
-#' # ABM points to biomarker data stored in a custom file created to support
-#' # goshawk. for example ADBIOM
 #' library(dplyr) 
-#'
-#' # assign data frame note that this needs to be done once in the app.R file
-#' # but should be available # here during testing
 #' 
 #' ASL <- ASL
 #' ALB <- ALB
@@ -83,12 +65,15 @@
 #'         label = "Box Plot",
 #'         dataname = "ALB",
 #'         param_var = "PARAMCD",
-#'         param = "IGA",
+#'         param = "CRP",
 #'         param_choices = c("CRP", "IGA", "IGG", "IGM"),
-#'         value_var = "AVAL",
-#'         value_var_choices = c("AVAL", "BASE", "CHG"),
+#'         yaxis_var = "AVAL",
+#'         yaxis_var_choices = c("AVAL", "BASE", "CHG"),
 #'         rotate_xlab = FALSE,
-#'         xaxis_var = "AVISITCD",
+#'         xaxis_var = "ARM",
+#'         xaxis_var_choices = c("ARM", "AVISITCD"),
+#'         facet_var= "AVISITCD",
+#'         facet_var_choices = c("ARM", "AVISITCD"),
 #'         trt_group = "ARM"
 #'       )
 #'   )
@@ -100,29 +85,27 @@
 
 tm_g_boxplot <- function(label,
                          dataname,
-                         param_var, # name of variable containing the biomarker names: PARAMCD
-                         param, # biomarker selected
-                         param_choices = param, # list of biomarkers of interest
-                         value_var = "AVAL",
-                         value_var_choices = c("AVAL", "CHG"),
-                         plot_height = c(600, 200, 2000),
+                         param_var,
+                         param_choices = param,
+                         param,
+                         yaxis_var = "AVAL",
+                         yaxis_var_choices = c("AVAL", "CHG"),
+                         xaxis_var = "AVISIT",
+                         xaxis_var_choices = NULL,
+                         facet_var = "ARM",
+                         facet_var_choices = NULL,
+                         filter_vars = c("BASE2", "BASE"),
+                         filter_labs = c("Screening", "Baseline"),
                          trt_group = "ARM",
                          color_manual = NULL,
                          shape_manual = NULL,
-                         trt_group_choices = NULL,
-                         facet_var = "ARM",
-                         facet_var_choices = NULL,
-                         xaxis_var = "AVISIT",
-                         xaxis_var_choices = NULL,
-                         loq_flag_var = NULL,
                          hline = NULL, 
                          facet_ncol = NULL, 
                          rotate_xlab = FALSE,
                          pre_output = NULL,
                          post_output = NULL,
                          armlabel = NULL,
-                         filter_vars = c("BASE2", "BASE"),
-                         filter_labs = c("Screening", "Baseline"),
+                         plot_height = c(600, 200, 2000),
                          code_data_processing = NULL) {
   
   args <- as.list(environment())
@@ -130,7 +113,6 @@ tm_g_boxplot <- function(label,
   # If there are no choices specified for treatment group/x axis/fact then set the 
   # appropriate choices variable to the treatment group to enable the display of the treatment 
   # group variable on the UI.
-  if (is.null(args$trt_group_choices)) args$trt_group_choices = args$trt_group
   if (is.null(args$xaxis_var_choices)) args$xaxis_var_choices = args$xaxis_var
   if (is.null(args$facet_var_choices)) args$facet_var_choices = args$facet_var
   
@@ -144,12 +126,10 @@ tm_g_boxplot <- function(label,
                        xaxis_var = xaxis_var,
                        xaxis_var_choices = xaxis_var_choices,
                        param_var = param_var,
-                       value_var = value_var,
+                       yaxis_var = yaxis_var,
                        trt_group = trt_group,
-                       trt_group_choices = trt_group_choices,
                        color_manual = color_manual,
                        shape_manual = shape_manual,
-                       loq_flag_var = loq_flag_var,
                        armlabel = armlabel,
                        filter_vars = filter_vars,
                        filter_labs = filter_labs,
@@ -179,10 +159,10 @@ ui_g_boxplot <- function(id, ...) {
                          , width = inpWidth
       ),
     
-      optionalSelectInput(ns("value_var")
+      optionalSelectInput(ns("yaxis_var")
                           , label = "Select a Y-Axis Variable"
-                          , choices = a$value_var_choices
-                          , selected = a$value_var
+                          , choices = a$yaxis_var_choices
+                          , selected = a$yaxis_var
                           , multiple = FALSE
                           , width = inpWidth
       ),
@@ -273,10 +253,9 @@ ui_g_boxplot <- function(id, ...) {
 srv_g_boxplot <- function(input, output, session, datasets
                           , facet_var, facet_var_choices
                           , xaxis_var, xaxis_var_choices
-                          , param_var, value_var
-                          , trt_group, trt_group_choices
+                          , param_var, yaxis_var
+                          , trt_group
                           , color_manual, shape_manual
-                          , loq_flag_var
                           , armlabel
                           , filter_vars, filter_labs
                           , dataname, code_data_processing) {
@@ -321,7 +300,7 @@ srv_g_boxplot <- function(input, output, session, datasets
   filter_ALB <- reactive({
     
     param <- input$param
-    value_var <- input$value_var
+    yaxis_var <- input$yaxis_var
     
     # Select all of the data for the parameter.
     alb <- datasets$get_data(dataname, filtered = TRUE, reactive = TRUE) %>%
@@ -365,7 +344,7 @@ srv_g_boxplot <- function(input, output, session, datasets
     if (nrow(cdata()) == 0 ) 
       rng <- c( -Inf, Inf)
     else 
-      rng <- range(cdata()[[input$value_var]], na.rm = TRUE)
+      rng <- range(cdata()[[input$yaxis_var]], na.rm = TRUE)
     
     return(list(low = rng[1], high = rng[2]))
   })  
@@ -455,7 +434,7 @@ srv_g_boxplot <- function(input, output, session, datasets
   output$boxplot <- renderPlot({
     
     filter_var <- input$filter_var
-    value_var <- input$value_var
+    yaxis_var <- input$yaxis_var
     param <- input$param
     hline <- input$hline
     facet_ncol <- input$facet_ncol
@@ -489,8 +468,8 @@ srv_g_boxplot <- function(input, output, session, datasets
                   paste("Biomarker", param, " is not available in data", dataname)))
     validate(need(trt_group %in% names(ALB),
                   paste("Variable", trt_group, " is not available in data", dataname)))
-    validate(need(value_var %in% names(ALB),
-                  paste("Variable", value_var, " is not available in data", dataname)))
+    validate(need(yaxis_var %in% names(ALB),
+                  paste("Variable", yaxis_var, " is not available in data", dataname)))
     validate(need(xaxis_var %in% names(ALB),
                   paste("Variable", xaxis_var, " is not available in data", dataname)))
     validate(need(facet_var %in% names(ALB),
@@ -516,7 +495,7 @@ srv_g_boxplot <- function(input, output, session, datasets
       "g_boxplot",
       data = bquote(.(as.name(data_name))),
         biomarker = param,
-        value_var = value_var,
+        yaxis_var = yaxis_var,
         hline = hline, 
         facet_ncol = facet_ncol,
         rotate_xlab = rotate_xlab,
@@ -525,7 +504,6 @@ srv_g_boxplot <- function(input, output, session, datasets
         unit = unit,
         ymin_scale = ymin_scale,
         ymax_scale = ymax_scale,
-        loq_flag = loq_flag_var, 
         color_manual = color_manual,
         shape_manual = shape_manual,
         alpha = alpha,
@@ -546,7 +524,7 @@ srv_g_boxplot <- function(input, output, session, datasets
       ALB <- filter_ALB()
 
       param <- input$param
-      xaxis_var <- input$value_var
+      xaxis_var <- input$yaxis_var
       font_size <- input$font_size
       facet <- ifelse(facet_var_choices, input$facet_var, facet_var)
 

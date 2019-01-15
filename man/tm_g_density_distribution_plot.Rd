@@ -5,12 +5,12 @@
 \title{Teal Module: density distribution plot}
 \usage{
 tm_g_density_distribution_plot(label, dataname, param_var,
-  param_choices = param, param, xaxis_var, xaxis_var_choices = xaxis_var,
-  trt_group = "ARM", color_manual = NULL, loq_flag_var = "LOQFL",
-  plot_height = c(500, 200, 2000), font_size = c(12, 8, 20),
-  line_size = c(1, 0.25, 3), hline = NULL, facet_ncol = 2,
-  rotate_xlab = FALSE, pre_output = NULL, post_output = NULL,
-  code_data_processing = NULL)
+  param_choices = param, param, xaxis_var,
+  xaxis_var_choices = xaxis_var, trt_group = "ARM",
+  color_manual = NULL, loq_flag_var = "LOQFL", plot_height = c(500,
+  200, 2000), font_size = c(12, 8, 20), line_size = c(1, 0.25, 3),
+  hline = NULL, facet_ncol = 2, rotate_xlab = FALSE,
+  pre_output = NULL, post_output = NULL, code_data_processing = NULL)
 }
 \arguments{
 \item{label}{menu item label of the module in the teal app.}

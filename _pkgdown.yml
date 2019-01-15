@@ -1,0 +1,24 @@
+url: https://pages.github.roche.com/Rpackages/teal.goshawk
+
+template:
+  params:
+    bootswatch: cerulean
+
+navbar:
+  right:
+    - icon: fa-github
+      href: https://github.roche.com/Rpackages/teal.goshawk
+
+development:
+  mode: devel
+
+reference:
+
+  - title: Modules
+    desc: These modules render the UI and call the respective visualization function
+    contents:
+      - tm_g_boxplot
+      - tm_g_density_distribution_plot
+      - tm_g_lineplot
+      - tm_g_scatterplot
+      - tm_g_spaghettiplot

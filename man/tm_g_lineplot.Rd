@@ -5,11 +5,13 @@
 \title{Line plot Teal Module}
 \usage{
 tm_g_lineplot(label, dataname, xvar, yvar, xvar_choices = xvar,
-  yvar_choices = yvar, xvar_level = NULL, param_var,
+  yvar_choices = yvar, xvar_level = NULL, filter_var = yvar,
+  filter_var_choices = filter_var, param_var,
   param_var_label = "PARAM", param, param_choices = param, trt_group,
-  trt_group_level = NULL, stat = "mean", hline = NULL, man_color = NULL,
-  rotate_xlab = FALSE, plot_height = c(600, 200, 2000), font_size = c(12,
-  8, 20), dodge = c(0.4, 0, 1))
+  trt_group_level = NULL, stat = "mean", hline = NULL,
+  man_color = NULL, xtick = waiver(), xlabel = xtick,
+  rotate_xlab = FALSE, plot_height = c(600, 200, 2000),
+  font_size = c(12, 8, 20), dodge = c(0.4, 0, 1))
 }
 \arguments{
 \item{label}{menue item label of the module in the teal app}
@@ -25,7 +27,7 @@ Note that the data is expected to be in vertical form with the PARAMCD variable 
 
 \item{yvar_choices}{vector with variable names that can be used as yvar.}
 
-\item{xvar_level}{vector that can be used to define the factor level of xvar.}
+\item{xvar_level}{vector that can be used to define the factor level of xvar. Only use it when xvar is character or factor.}
 
 \item{param_var}{single name of variable in analysis data that includes parameter names.}
 
@@ -45,7 +47,11 @@ Note that the data is expected to be in vertical form with the PARAMCD variable 
 
 \item{man_color}{string vector representing customized colors}
 
-\item{rotate_xlab}{boolean value indicating whether to rotate x-axis labels}
+\item{xtick}{numeric vector to define the tick values of x-axis when x variable is numeric. Default value is waive().}
+
+\item{xlabel}{vector with same length of xtick to define the label of x-axis tick values. Default value is waive().}
+
+\item{rotate_xlab}{boolean value indicating whether to rotate x-axis labels.}
 
 \item{plot_height}{numeric vectors to define the plot height.}
 
@@ -72,10 +78,11 @@ ASL <- radam('ASL', N = 100)
 ANL <- expand.grid(
   STUDYID = "STUDY A",
   USUBJID = paste0("id-",1:100),
-  VISIT = paste0("visit ", 1:10),
+  VISITN = c(1:10),
   ARM = c("ARM A", "ARM B"),
   PARAMCD = c("CRP", "IGG", "IGM")
 )
+ANL$VISIT <- paste0("visit ", ANL$VISITN)
 ANL$AVAL <- rnorm(nrow(ANL))
 ANL$CHG <- rnorm(nrow(ANL), 2, 2)
 ANL$CHG[ANL$VISIT == "visit 1"] <- NA

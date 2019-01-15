@@ -1,20 +1,20 @@
-#' Spaghetti plot Teal Module
-#' 
+#' Spaghetti Plot
 #'
-#' @param label menue item label of the module in the teal app
-#' @param dataname analysis data used in teal module, needs to be available in the list passed to the data argument of init. 
-#' Note that the data is expected to be in vertical form with the PARAMCD variable filtering to one observation per patient.
+#' This teal module renders the UI and calls the function that creates a spaghetti plot.
+#'
+#' @param label menu item label of the module in the teal app.
+#' @param dataname analysis data passed to the data argument of teal init. E.g. ADaM structured laboratory data frame ALB.
+#' @param param_var name of variable containing biomarker codes e.g. PARAMCD.
+#' @param param_choices list of biomarkers of interest.
+#' @param param biomarker selected.
+#' @param param_var_label single name of variable in analysis data that includes parameter labels.
 #' @param idvar name of unique subject id variable.
 #' @param xvar single name of variable in analysis data that is used as x-axis in the plot for the respective goshawk function.
 #' @param xvar_choices vector with variable names that can be used as xvar.
 #' @param xvar_level vector that can be used to define the factor level of xvar. Only use it when xvar is character or factor.
 #' @param yvar single name of variable in analysis data that is used as summary variable in the respective gshawk function.
 #' @param yvar_choices vector with variable names that can be used as yvar.
-#' @param param_var single name of variable in analysis data that includes parameter names.
-#' @param param_var_label single name of variable in analysis data that includes parameter lables.
-#' @param param parameter name
-#' @param param_choices vector of parameter names that can be used in param.
-#' @param trt_group single name of treatment arm variable.
+#' @param trt_group name of variable representing treatment group e.g. ARM.
 #' @param trt_group_level vector that can be used to define factor level of trt_group.
 #' @param man_color string vector representing customized colors
 #' @param hline numeric value to add horizontal line to plot
@@ -29,8 +29,9 @@
 #' 
 #' @import goshawk
 #'
-#' @author Wenyi Liu (wenyi.liu@roche.com)
-#'
+#' @author Wenyi Liu (luiw2) wenyi.liu@roche.com
+#' @author Balazs Toth (tothb2) toth.balazs@gene.com
+#' 
 #' @details 
 #'
 #' @return \code{shiny} object
@@ -66,13 +67,13 @@
 #'     tm_g_spaghettiplot(
 #'       label = "Spaghetti Plot",
 #'       dataname = "ALB",
+#'       param_var = "PARAMCD",
+#'       param = "CRP",
+#'       param_choices = c("CRP","IGG","IGM"),
 #'       idvar = "USUBJID",
 #'       xvar = "VISIT",
 #'       yvar = "AVAL",
 #'       yvar_choices = c("AVAL","CHG", "PCHG"),
-#'       param_var = "PARAMCD",
-#'       param = "CRP",
-#'       param_choices = c("CRP","IGG","IGM"),
 #'       trt_group = "ARM"
 #'     )
 #'   )
@@ -80,19 +81,18 @@
 #' 
 #' shinyApp(x$ui, x$server)
 
-
-
-
 tm_g_spaghettiplot <- function(label,
                                dataname,
+                               param_var,
+                               param_choices = param,
+                               param, 
+                               param_var_label = 'PARAM',
                                idvar,
                                xvar, yvar,
                                xvar_choices = xvar, yvar_choices = yvar,
                                xvar_level = NULL,
                                filter_var = yvar,
                                filter_var_choices = filter_var,
-                               param_var, param_var_label = 'PARAM',
-                               param, param_choices = param,
                                trt_group,
                                trt_group_level = NULL,
                                group_mean = FALSE,

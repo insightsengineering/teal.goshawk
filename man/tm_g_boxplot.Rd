@@ -6,13 +6,14 @@
 \usage{
 tm_g_boxplot(label, dataname, param_var, param, param_choices = param,
   value_var = "AVAL", value_var_choices = c("AVAL", "CHG"),
-  plot_height = c(600, 200, 2000), trt_group = "ARM", color_manual = NULL,
-  shape_manual = NULL, trt_group_choices = NULL, facet_var = "ARM",
-  facet_var_choices = NULL, xaxis_var = "AVISIT",
+  plot_height = c(600, 200, 2000), trt_group = "ARM",
+  color_manual = NULL, shape_manual = NULL, trt_group_choices = NULL,
+  facet_var = "ARM", facet_var_choices = NULL, xaxis_var = "AVISIT",
   xaxis_var_choices = NULL, loq_flag_var = NULL, hline = NULL,
   facet_ncol = NULL, rotate_xlab = FALSE, pre_output = NULL,
-  post_output = NULL, armlabel = NULL, filter_vars = c("BASE2", "BASE"),
-  filter_labs = c("Screening", "Baseline"), code_data_processing = NULL)
+  post_output = NULL, armlabel = NULL, filter_vars = c("BASE2",
+  "BASE"), filter_labs = c("Screening", "Baseline"),
+  code_data_processing = NULL)
 }
 \arguments{
 \item{label}{menu item label of the module in the teal app}
