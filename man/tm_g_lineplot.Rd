@@ -2,22 +2,28 @@
 % Please edit documentation in R/tm_g_lineplot.R
 \name{tm_g_lineplot}
 \alias{tm_g_lineplot}
-\title{Line plot Teal Module}
+\title{Line plot}
 \usage{
-tm_g_lineplot(label, dataname, xvar, yvar, xvar_choices = xvar,
+tm_g_lineplot(label, dataname, param_var, param_choices = param, param,
+  param_var_label = "PARAM", xvar, yvar, xvar_choices = xvar,
   yvar_choices = yvar, xvar_level = NULL, filter_var = yvar,
-  filter_var_choices = filter_var, param_var,
-  param_var_label = "PARAM", param, param_choices = param, trt_group,
-  trt_group_level = NULL, stat = "mean", hline = NULL,
-  man_color = NULL, xtick = waiver(), xlabel = xtick,
-  rotate_xlab = FALSE, plot_height = c(600, 200, 2000),
+  filter_var_choices = filter_var, trt_group, trt_group_level = NULL,
+  stat = "mean", hline = NULL, man_color = NULL, xtick = waiver(),
+  xlabel = xtick, rotate_xlab = FALSE, plot_height = c(600, 200, 2000),
   font_size = c(12, 8, 20), dodge = c(0.4, 0, 1))
 }
 \arguments{
-\item{label}{menue item label of the module in the teal app}
+\item{label}{menu item label of the module in the teal app.}
 
-\item{dataname}{analysis data used in teal module, needs to be available in the list passed to the data argument of init. 
-Note that the data is expected to be in vertical form with the PARAMCD variable filtering to one observation per patient.}
+\item{dataname}{analysis data passed to the data argument of teal init. E.g. ADaM structured laboratory data frame ALB.}
+
+\item{param_var}{name of variable containing biomarker codes e.g. PARAMCD.}
+
+\item{param_choices}{list of biomarkers of interest.}
+
+\item{param}{biomarker selected.}
+
+\item{param_var_label}{single name of variable in analysis data that includes parameter labels.}
 
 \item{xvar}{single name of variable in analysis data that is used as x-axis in the plot for the respective goshawk function.}
 
@@ -29,15 +35,7 @@ Note that the data is expected to be in vertical form with the PARAMCD variable 
 
 \item{xvar_level}{vector that can be used to define the factor level of xvar. Only use it when xvar is character or factor.}
 
-\item{param_var}{single name of variable in analysis data that includes parameter names.}
-
-\item{param_var_label}{single name of variable in analysis data that includes parameter lables.}
-
-\item{param}{parameter name}
-
-\item{param_choices}{vector of parameter names that can be used in param.}
-
-\item{trt_group}{single name of treatment arm variable.}
+\item{trt_group}{name of variable representing treatment group e.g. ARM.}
 
 \item{trt_group_level}{vector that can be used to define factor level of trt_group.}
 
@@ -63,7 +61,7 @@ Note that the data is expected to be in vertical form with the PARAMCD variable 
 \code{shiny} object
 }
 \description{
-Line plot Teal Module
+This teal module renders the UI and calls the function that creates a line plot.
 }
 \details{
 
@@ -97,12 +95,12 @@ x <- teal::init(
     tm_g_lineplot(
       label = "Line Plot",
       dataname = "ALB",
+      param_var = "PARAMCD",
+      param_choices = c("CRP","IGG","IGM"),
+      param = "CRP",
       xvar = "VISIT",
       yvar = "AVAL",
       yvar_choices = c("AVAL","CHG","PCGH"),
-      param_var = "PARAMCD",
-      param = "CRP",
-      param_choices = c("CRP","IGG","IGM"),
       trt_group = "ARM"
     )
   )
@@ -111,5 +109,7 @@ x <- teal::init(
 shinyApp(x$ui, x$server)
 }
 \author{
-Wenyi Liu (wenyi.liu@roche.com)
+Wenyi Liu (luiw2) wenyi.liu@roche.com
+
+Balazs Toth (tothb2) toth.balazs@gene.com
 }

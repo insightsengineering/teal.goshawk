@@ -2,20 +2,19 @@
 % Please edit documentation in R/tm_g_density_distribution_plot.R
 \name{tm_g_density_distribution_plot}
 \alias{tm_g_density_distribution_plot}
-\title{Teal Module: density distribution plot}
+\title{Density Distribution Plot}
 \usage{
 tm_g_density_distribution_plot(label, dataname, param_var,
-  param_choices = param, param, xaxis_var,
-  xaxis_var_choices = xaxis_var, trt_group = "ARM",
-  color_manual = NULL, loq_flag_var = "LOQFL", plot_height = c(500,
-  200, 2000), font_size = c(12, 8, 20), line_size = c(1, 0.25, 3),
-  hline = NULL, facet_ncol = 2, rotate_xlab = FALSE,
-  pre_output = NULL, post_output = NULL, code_data_processing = NULL)
+  param_choices = param, param, xaxis_var, xaxis_var_choices = xaxis_var,
+  trt_group = "ARM", color_manual = NULL, plot_height = c(500, 200, 2000),
+  font_size = c(12, 8, 20), line_size = c(1, 0.25, 3), hline = NULL,
+  facet_ncol = 2, rotate_xlab = FALSE, pre_output = NULL,
+  post_output = NULL, code_data_processing = NULL)
 }
 \arguments{
 \item{label}{menu item label of the module in the teal app.}
 
-\item{dataname}{ADaM structured analysis laboratory data frame e.g. ALB.}
+\item{dataname}{analysis data passed to the data argument of teal init. E.g. ADaM structured laboratory data frame ALB.}
 
 \item{param_var}{name of variable containing biomarker codes e.g. PARAMCD.}
 
@@ -23,15 +22,13 @@ tm_g_density_distribution_plot(label, dataname, param_var,
 
 \item{param}{biomarker selected.}
 
-\item{xaxis_var}{name of variable containing biomarker results displayed on X-axis e.g. AVAL.}
+\item{xaxis_var}{name of variable containing biomarker results displayed on x-axis e.g. AVAL.}
 
 \item{xaxis_var_choices}{list of variables containing biomarker results choices.}
 
 \item{trt_group}{name of variable representing treatment group e.g. ARM.}
 
 \item{color_manual}{vector of colors applied to treatment values.}
-
-\item{loq_flag_var}{name of variable containing LOQ flag e.g. LBLOQFL.}
 
 \item{plot_height}{controls plot height.}
 
@@ -56,8 +53,7 @@ output to put the output into context. For example the
 \item{code_data_processing}{TODO}
 }
 \description{
-This module displays the web user interface and calls the functions that create 
-a density distribution plot and an accompanying summary table.
+This teal module renders the UI and calls the functions that create a density distribution plot and an accompanying summary table.
 }
 \details{
 None
@@ -82,7 +78,6 @@ x <- teal::init(
        xaxis_var_choices = c("AVAL", "BASE", "CHG", "PCHG", "BASE2", "CHG2", "PCHG2", "AVALL2", "BASEL2", "BASE2L2"),
        trt_group = "ARM",
        color_manual = color_manual,
-       loq_flag_var = 'LOQFL',
        plot_height = c(500, 200, 2000),
        font_size = c(12, 8, 20),
        line_size = c(1, .25, 3)

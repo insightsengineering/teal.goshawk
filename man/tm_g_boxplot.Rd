@@ -2,65 +2,56 @@
 % Please edit documentation in R/tm_g_boxplot.R
 \name{tm_g_boxplot}
 \alias{tm_g_boxplot}
-\title{Teal Module: box plot}
+\title{Box Plot}
 \usage{
-tm_g_boxplot(label, dataname, param_var, param, param_choices = param,
-  value_var = "AVAL", value_var_choices = c("AVAL", "CHG"),
-  plot_height = c(600, 200, 2000), trt_group = "ARM",
-  color_manual = NULL, shape_manual = NULL, trt_group_choices = NULL,
-  facet_var = "ARM", facet_var_choices = NULL, xaxis_var = "AVISIT",
-  xaxis_var_choices = NULL, loq_flag_var = NULL, hline = NULL,
+tm_g_boxplot(label, dataname, param_var, param_choices = param, param,
+  yaxis_var = "AVAL", yaxis_var_choices = c("AVAL", "CHG"),
+  xaxis_var = "AVISIT", xaxis_var_choices = NULL, facet_var = "ARM",
+  facet_var_choices = NULL, filter_vars = c("BASE2", "BASE"),
+  filter_labs = c("Screening", "Baseline"), trt_group = "ARM",
+  color_manual = NULL, shape_manual = NULL, hline = NULL,
   facet_ncol = NULL, rotate_xlab = FALSE, pre_output = NULL,
-  post_output = NULL, armlabel = NULL, filter_vars = c("BASE2",
-  "BASE"), filter_labs = c("Screening", "Baseline"),
+  post_output = NULL, armlabel = NULL, plot_height = c(600, 200, 2000),
   code_data_processing = NULL)
 }
 \arguments{
-\item{label}{menu item label of the module in the teal app}
+\item{label}{menu item label of the module in the teal app.}
 
-\item{dataname}{analysis data used in teal module, needs to be available in
-the list passed to the \code{data} argument of \code{\link[teal]{init}}.
-Note that the data are expected to be in vertical form with the
-\code{PARAMCD} variable filtering to one observation per patient per visit.}
+\item{dataname}{analysis data passed to the data argument of teal init. E.g. ADaM structured laboratory data frame ALB.}
 
-\item{param_var}{columm in \code{dataname} to select parameters}
+\item{param_var}{name of variable containing biomarker codes e.g. PARAMCD.}
 
-\item{param}{default parameter selected from \code{param_var}}
+\item{param_choices}{list of biomarkers of interest.}
 
-\item{param_choices}{vector of choices to choose the parameter from}
+\item{param}{biomarker selected.}
 
-\item{value_var}{default columm in \code{dataname} to plot.}
+\item{yaxis_var}{name of variable containing biomarker results displayed on y-axis e.g. AVAL.}
 
-\item{value_var_choices}{choice of which columns in \code{dataname} to plot}
+\item{yaxis_var_choices}{list of variables containing biomarker results choices.}
 
-\item{plot_height}{numeric vectors to define the plot height.}
+\item{xaxis_var}{variable to categorize the x-axis.}
 
-\item{trt_group}{treatment variable.  The boxes and symbols are colored according
-to this parameter.}
-
-\item{color_manual}{vector of treatment colors. assigned values in app.R otherwise uses default colors.}
-
-\item{shape_manual}{vector of LOQ shapes. assigned values in app.R otherwise uses default shapes.}
-
-\item{trt_group_choices}{choices for \code{trt_group}.  If not specified then
-trt_group cannot be changed.}
+\item{xaxis_var_choices}{variable choices with which to categorize x-axis.}
 
 \item{facet_var}{variable to facet the plots by.}
 
-\item{facet_var_choices}{choices for \code{facet_var}. if not specified then
-\code{facet_var} will be fixed and cannot be changed.}
+\item{facet_var_choices}{variable choices with which to facet the plots.}
 
-\item{xaxis_var}{variable to categorize the x-axis}
+\item{filter_vars}{Variables to be used for filtering the data.  The default 
+is BASE2 and BASE}
 
-\item{xaxis_var_choices}{choices for \code{xaxis_var}. if not specified then
-\code{xaxis_var} will be fixed and cannot be changed.}
+\item{filter_labs}{Labels for the radio buttons for the \code{filter_vars}.
+The defaults are "Screening" for BASE2 and "Baseline" for BASE.}
 
-\item{loq_flag_var}{variable for the LOQ.  Values are "Y" or "N"}
+\item{trt_group}{name of variable representing treatment group e.g. ARM.}
+
+\item{color_manual}{vector of colors applied to treatment values.}
+
+\item{shape_manual}{vector of symbols applied to LOQ values.}
 
 \item{hline}{y-axis value to position a horizontal line.  NULL = No line.}
 
-\item{facet_ncol}{numeric value indicating number of facets per row.
-NULL = Use the default for ggplot2::facet_wrap.}
+\item{facet_ncol}{numeric value indicating number of facets per row.}
 
 \item{rotate_xlab}{45 degree rotation of x-axis values.}
 
@@ -72,24 +63,19 @@ output to put the output into context. For example the
 output to put the output into context. For example the
 \code{\link[shiny]{helpText}} elements are useful.}
 
-\item{armlabel}{header for the treatment symbols in the legend.  If not specified
-then the label attribute for \code{trt_group} will be used.  If there is 
-no label attribute for \code{trt_group}, then the name of the parameter (
-in title case) will be used.}
+\item{armlabel}{label for the treatment symbols in the legend.
+If not specified then the label attribute for trt_group will be used. 
+If there is no label attribute for trt_group, then the name of the parameter (in title case) will be used.}
 
-\item{filter_vars}{Variables to be used for filtering the data.  The default 
-is BASE2 and BASE}
+\item{plot_height}{numeric vectors to define the plot height.}
 
-\item{filter_labs}{Labels for the radio buttons for the \code{filter_vars}.
-The defaults are "Screening" for BASE2 and "Baseline" for BASE.}
-
-\item{code_data_processing}{Not used}
+\item{code_data_processing}{TODO}
 }
 \value{
 an \code{\link[teal]{module}} object#'
 }
 \description{
-This shiny module displays a box plot
+This teal module renders the UI and calls the functions that create a box plot and accompanying summary table.
 }
 \details{
 provide additional information as needed. link to specification file \url{http://rstudio.com}
@@ -97,17 +83,10 @@ provide additional information as needed. link to specification file \url{http:/
 \examples{
 
 \dontrun{
-# Example using analysis dataset for example ASL or ADSL,
-# ALB points to biomarker data stored in a typical LB structure. for example
-# ALB or ADLB.
+# Example using ADaM structure analysis dataset.
+# ALB refers to biomarker data stored in expected laboratory structure.
 
-# Example using analysis dataset for example ASL or ADSL,
-# ABM points to biomarker data stored in a custom file created to support
-# goshawk. for example ADBIOM
 library(dplyr) 
-
-# assign data frame note that this needs to be done once in the app.R file
-# but should be available # here during testing
 
 ASL <- ASL
 ALB <- ALB
@@ -119,12 +98,15 @@ x <- teal::init(
         label = "Box Plot",
         dataname = "ALB",
         param_var = "PARAMCD",
-        param = "IGA",
+        param = "CRP",
         param_choices = c("CRP", "IGA", "IGG", "IGM"),
-        value_var = "AVAL",
-        value_var_choices = c("AVAL", "BASE", "CHG"),
+        yaxis_var = "AVAL",
+        yaxis_var_choices = c("AVAL", "BASE", "CHG"),
         rotate_xlab = FALSE,
-        xaxis_var = "AVISITCD",
+        xaxis_var = "ARM",
+        xaxis_var_choices = c("ARM", "AVISITCD"),
+        facet_var= "AVISITCD",
+        facet_var_choices = c("ARM", "AVISITCD"),
         trt_group = "ARM"
       )
   )
@@ -135,7 +117,7 @@ shinyApp(x$ui, x$server)
 }
 }
 \author{
-Balazs Toth
-
 Jeff Tomlinson (tomlinsj) jeffrey.tomlinson@roche.com
+
+Balazs Toth (tothb2) toth.balazs@gene.com
 }

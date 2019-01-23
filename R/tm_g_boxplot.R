@@ -147,7 +147,22 @@ ui_g_boxplot <- function(id, ...) {
   inpWidth <- NA
   
   standard_layout(
-    output = div(tagList(uiOutput(ns("plot_ui")), uiOutput(ns("table_ui")))),
+    output = div(
+      fluidRow(
+        uiOutput(ns("plot_ui"))
+      ),
+      fluidRow(
+        column(width = 12,
+               h4("Selected Data Points"),
+               verbatimTextOutput(ns("brush_data"))
+        )
+      ),
+      fluidRow(
+        uiOutput(ns("table_ui"))
+      )
+    ),
+
+    # output = div(tagList(uiOutput(ns("plot_ui")), uiOutput(ns("brush_ui")), uiOutput(ns("table_ui")))),
     encoding =  div(
       tags$label(a$dataname, "Data Settings", class="text-primary"),
       
@@ -260,6 +275,8 @@ srv_g_boxplot <- function(input, output, session, datasets
                           , filter_vars, filter_labs
                           , dataname, code_data_processing) {
   
+  ns <- session$ns # must add for the dynamic ui.range_scale field
+  
   # Get "nice" limits for Y axis. 
   get_axis_limits <- function(lo_, hi_, req.n = 2000) {
     hi <- signif(max(hi_, lo_), 6)
@@ -293,7 +310,14 @@ srv_g_boxplot <- function(input, output, session, datasets
   output$plot_ui <- renderUI({
     plot_height <- input$plot_height
     validate(need(plot_height, "need valid plot height"))
-    plotOutput(session$ns("boxplot"), height=plot_height)
+    
+    plotOutput(ns("boxplot"), height = plot_height,
+               brush = brushOpts(id = ns("boxplot_brush"))
+               )
+  })
+  
+  output$brush_data <- renderPrint({
+    brushedPoints(select(filter_ALB(),"USUBJID", "ARM", "AVISITCD", "PARAMCD", xaxis_var, yaxis_var, "LOQFL"), input$boxplot_brush)
   })
   
   # filter data by param and the xmin and xmax values from the filter slider.

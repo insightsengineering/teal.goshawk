@@ -47,7 +47,7 @@
 #' # Example using ADaM structure analysis dataset.
 #' # ALB refers to biomarker data stored in expected laboratory structure.
 #'
-#' param_choices <- c("ANAPC", "CRP", "ADIGG", "CCL20")
+#' param_choices <- c("CRP", "ADIGG", "CCL20")
 #' x <- teal::init(
 #'   data = list(ASL = ASL, ALB = ALB),
 #'   modules = root_modules(
@@ -132,7 +132,17 @@ ui_g_scatterplot <- function(id, ...) {
   a <- list(...)
 
   standard_layout(
-    output = uiOutput(ns("plot_ui")),
+    output = div(
+      fluidRow(
+             uiOutput(ns("plot_ui"))
+      ),
+      fluidRow(
+        column(width = 12,
+               h4("Selected Data Points"),
+               verbatimTextOutput(ns("brush_data"))
+        )
+      )
+    ),
     encoding =  div(
       tags$label(a$dataname, "Data Settings", class="text-primary"),
       helpText("Analysis data:", tags$code(a$dataname)),
@@ -142,13 +152,6 @@ ui_g_scatterplot <- function(id, ...) {
       radioButtons(ns("constraint_var"), "Data Constraint", c("None" = "NONE", "Screening" = "BASE2", "Baseline" = "BASE")),
       uiOutput(ns("constraint_min_value"), style="display: inline-block; vertical-align:center"),
       uiOutput(ns("constraint_max_value"), style="display: inline-block; vertical-align:center"),
-      # uiOutput(ns("xaxis_scale")),
-      # uiOutput(ns("yaxis_scale")),
-      # uiOutput(ns("xmin_value")),
-      # uiOutput(ns("xmax_value")),
-      # uiOutput(ns("ymin_value")),
-      # uiOutput(ns("ymax_value")),
-      
       tags$label("Plot Aesthetic Settings", class="text-primary", style="margin-top: 15px;"),
       uiOutput(ns("xaxis_zoom")),
       uiOutput(ns("yaxis_zoom")),
@@ -184,8 +187,14 @@ srv_g_scatterplot <- function(input, output, session, datasets, dataname,
     plot_height <- input$plot_height
     validate(need(plot_height, "need valid plot height"))
     
-    plotOutput(session$ns("scatterplot"), height = plot_height)
+    plotOutput(ns("scatterplot"), height = plot_height,
+               brush = brushOpts(id = ns("scatterplot_brush"))
+               )
     })
+  
+  output$brush_data <- renderPrint({
+    brushedPoints(select(filter_ALB(),"USUBJID", "ARM", "AVISITCD", "PARAMCD", xaxis_var, yaxis_var, "LOQFL"), input$scatterplot_brush)
+  })  
   
   # dynamic slider for x-axis
   output$xaxis_zoom <- renderUI({
@@ -232,8 +241,6 @@ srv_g_scatterplot <- function(input, output, session, datasets, dataname,
     })
     
   })
-  
-  
   
   # filter data by param and the constraint_min and constraint_max values
   filter_ALB <- reactive({
@@ -379,6 +386,6 @@ srv_g_scatterplot <- function(input, output, session, datasets, dataname,
     p
 
   })
-    
+  
 }
  

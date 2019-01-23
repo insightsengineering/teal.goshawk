@@ -2,21 +2,21 @@
 % Please edit documentation in R/tm_g_scatterplot.R
 \name{tm_g_scatterplot}
 \alias{tm_g_scatterplot}
-\title{Teal Module: scatter plot}
+\title{Scatter Plot}
 \usage{
-tm_g_scatterplot(label, dataname, param_var, param,
-  param_choices = param, xaxis_var, xaxis_var_choices = xaxis_var,
-  yaxis_var, yaxis_var_choices = yaxis_var, trt_group = "ARM",
-  color_manual = NULL, shape_manual = NULL, facet_ncol = 2,
-  facet = FALSE, reg_line = FALSE, rotate_xlab = FALSE,
-  hline = NULL, plot_height = c(500, 200, 2000), font_size = c(12, 8,
-  20), dot_size = c(1, 1, 12), reg_text_size = c(3, 3, 10),
-  pre_output = NULL, post_output = NULL, code_data_processing = NULL)
+tm_g_scatterplot(label, dataname, param_var, param, param_choices = param,
+  xaxis_var, xaxis_var_choices = xaxis_var, yaxis_var,
+  yaxis_var_choices = yaxis_var, trt_group = "ARM", color_manual = NULL,
+  shape_manual = NULL, facet_ncol = 2, facet = FALSE, reg_line = FALSE,
+  rotate_xlab = FALSE, hline = NULL, plot_height = c(500, 200, 2000),
+  font_size = c(12, 8, 20), dot_size = c(1, 1, 12), reg_text_size = c(3,
+  3, 10), pre_output = NULL, post_output = NULL,
+  code_data_processing = NULL)
 }
 \arguments{
 \item{label}{menu item label of the module in the teal app.}
 
-\item{dataname}{ADaM structured analysis laboratory (ADLB/ALB) data frame.}
+\item{dataname}{analysis data passed to the data argument of teal init. E.g. ADaM structured laboratory data frame ALB.}
 
 \item{param_var}{name of variable containing biomarker codes e.g. PARAMCD.}
 
@@ -24,11 +24,11 @@ tm_g_scatterplot(label, dataname, param_var, param,
 
 \item{param_choices}{list of biomarkers of interest.}
 
-\item{xaxis_var}{name of variable containing biomarker results displayed on X-axis e.g. BASE.}
+\item{xaxis_var}{name of variable containing biomarker results displayed on x-axis e.g. BASE.}
 
 \item{xaxis_var_choices}{list of variables containing biomarker results choices.}
 
-\item{yaxis_var}{name of variable containing biomarker results displayed on Y-axis e.g. AVAL.}
+\item{yaxis_var}{name of variable containing biomarker results displayed on y-axis e.g. AVAL.}
 
 \item{yaxis_var_choices}{list of variables containing biomarker results choices.}
 
@@ -67,7 +67,7 @@ output to put the output into context. For example the
 \item{code_data_processing}{TODO}
 }
 \description{
-This module displays a scatter plot.
+This teal module renders the UI and calls the function that creates a scatter plot.
 }
 \details{
 This module displays a scatter plot. link to specification file \url{http://rstudio.com}
@@ -78,7 +78,7 @@ This module displays a scatter plot. link to specification file \url{http://rstu
 # Example using ADaM structure analysis dataset.
 # ALB refers to biomarker data stored in expected laboratory structure.
 
-param_choices <- c("ANAPC", "CRP", "ADIGG", "CCL20")
+param_choices <- c("CRP", "ADIGG", "CCL20")
 x <- teal::init(
   data = list(ASL = ASL, ALB = ALB),
   modules = root_modules(
