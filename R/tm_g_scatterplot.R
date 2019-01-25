@@ -58,9 +58,9 @@
 #'        param_choices = param_choices,
 #'        param = param_choices[1],
 #'        xaxis_var = "BASE",
-#'        xaxis_var_choices = c("AVAL", "BASE", "CHG", "PCHG", "BASE2", "CHG2", "PCHG2", "AVALL2", "BASEL2", "BASE2L2"),
+#'        xaxis_var_choices = c("AVAL", "BASE", "CHG", "PCHG", "AVALL2"),
 #'        yaxis_var = "AVAL",
-#'        yaxis_var_choices = c("AVAL", "BASE", "CHG", "PCHG", "BASE2", "CHG2", "PCHG2", "AVALL2", "BASEL2", "BASE2L2"),
+#'        yaxis_var_choices = c("AVAL", "BASE", "CHG", "PCHG", "AVALL2"),
 #'        trt_group = "ARM",
 #'        color_manual = color_manual,
 #'        shape_manual = shape_manual,
@@ -180,9 +180,9 @@ srv_g_scatterplot <- function(input, output, session, datasets, dataname,
                               trt_group, color_manual, shape_manual,
                               code_data_processing) {
 
-  ns <- session$ns # must add for the dynamic ui.range_scale field
+  ns <- session$ns
   
-  # dynamic plot width
+  # dynamic plot height and brushing
   output$plot_ui <- renderUI({
     plot_height <- input$plot_height
     validate(need(plot_height, "need valid plot height"))

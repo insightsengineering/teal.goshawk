@@ -12,34 +12,34 @@
 #' @param xvar single name of variable in analysis data that is used as x-axis in the plot for the respective goshawk function.
 #' @param xvar_choices vector with variable names that can be used as xvar.
 #' @param xvar_level vector that can be used to define the factor level of xvar. Only use it when xvar is character or factor.
+#' @param filter_var data constraint variable.
+#' @param filter_var_choices data constraint variable choices.
 #' @param yvar single name of variable in analysis data that is used as summary variable in the respective gshawk function.
 #' @param yvar_choices vector with variable names that can be used as yvar.
 #' @param trt_group name of variable representing treatment group e.g. ARM.
 #' @param trt_group_level vector that can be used to define factor level of trt_group.
 #' @param man_color string vector representing customized colors
 #' @param hline numeric value to add horizontal line to plot
-#' @param group_mean boolean value indicating whether to overlay group means.
 #' @param xtick numeric vector to define the tick values of x-axis when x variable is numeric. Default value is waive().
 #' @param xlabel vector with same length of xtick to define the label of x-axis tick values. Default value is waive().
 #' @param rotate_xlab boolean value indicating whether to rotate x-axis labels
 #' @param facet_ncol numeric value indicating number of facets per row.
 #' @param plot_height numeric vectors to define the plot height.
 #' @param font_size control font size for title, x-axis, y-axis and legend font.
-#' 
+#' @param group_stats control group mean or median overlay.
 #' 
 #' @import goshawk
 #'
 #' @author Wenyi Liu (luiw2) wenyi.liu@roche.com
 #' @author Balazs Toth (tothb2) toth.balazs@gene.com
 #' 
-#' @details 
-#'
 #' @return \code{shiny} object
 #'
 #' @export
 #'
 #' @examples
 #'
+#'\dontrun{
 #' # EXAMPLE
 #' 
 #' library(random.cdisc.data)
@@ -80,6 +80,7 @@
 #' )
 #' 
 #' shinyApp(x$ui, x$server)
+#' }
 
 tm_g_spaghettiplot <- function(label,
                                dataname,
@@ -95,7 +96,7 @@ tm_g_spaghettiplot <- function(label,
                                filter_var_choices = filter_var,
                                trt_group,
                                trt_group_level = NULL,
-                               group_mean = FALSE,
+                               group_stats = "NONE",
                                hline = NULL,
                                man_color = NULL,
                                xtick = waiver(), xlabel = xtick,
@@ -109,7 +110,7 @@ tm_g_spaghettiplot <- function(label,
   module(
     label = label,
     server = srv_spaghettiplot,
-    server_args = list(dataname = dataname, idvar = idvar, param_var = param_var, trt_group = trt_group, 
+    server_args = list(dataname = dataname, idvar = idvar, param_var = param_var, trt_group = trt_group, yvar = yvar,
                        xvar_level = xvar_level, trt_group_level = trt_group_level, man_color = man_color,
                        param_var_label = param_var_label, xtick = xtick, xlabel = xlabel),
     ui = ui_spaghettiplot,
@@ -129,13 +130,24 @@ ui_spaghettiplot <- function(id, ...) {
   
   
   standard_layout(
-    output = uiOutput(ns("plot_ui")),
+    output = div(
+      fluidRow(
+        uiOutput(ns("plot_ui"))
+      )
+    #   fluidRow(
+    #     column(width = 12,
+    #            h4("Selected Data Points"),
+    #            verbatimTextOutput(ns("brush_data"))
+    #     )
+    #   )
+    ),
+    # output = uiOutput(ns("plot_ui")),
     encoding = div(
       tags$label(a$dataname, "Data Settings", class="text-primary"),
       optionalSelectInput(ns("param"), "Select a Biomarker", a$param_choices, a$param, multiple = FALSE),
       optionalSelectInput(ns("xvar"), "X-Axis Variable", a$xvar_choices, a$xvar, multiple = FALSE),
       optionalSelectInput(ns("yvar"), "Select a Y-Axis Variable", a$yvar_choices, a$yvar, multiple = FALSE),
-      checkboxInput(ns("group_mean"), "Overlay Group Mean", a$group_mean),
+      radioButtons(ns("group_stats"), "Group Statistics", c("None" = "NONE", "Mean" = "MEAN", "Median" = "MEDIAN"), inline = TRUE),
       radioButtons(ns("filter_var"), "Data Constraint", a$filter_var_choices, a$filter_var),
       uiOutput(ns("filter_min"), style="display: inline-block; vertical-align:center"),
       uiOutput(ns("filter_max"), style="display: inline-block; vertical-align:center"),
@@ -162,7 +174,8 @@ ui_spaghettiplot <- function(id, ...) {
               numericInput(ns("hline"), "", a$hline))
       ),
       optionalSliderInputValMinMax(ns("plot_height"), "Plot Height", a$plot_height, ticks = FALSE),
-      optionalSliderInputValMinMax(ns("font_size"), "Font Size", a$font_size, ticks = FALSE)
+      optionalSliderInputValMinMax(ns("font_size"), "Font Size", a$font_size, ticks = FALSE),
+      optionalSliderInputValMinMax(ns("alpha"), "Line Transparency", a$alpha, value_min_max =  c(0.8, 0.0, 1.0), step = 0.1, ticks = FALSE)
     )
     # ,
     # forms = actionButton(ns("show_rcode"), "Show R Code", width = "100%")
@@ -170,17 +183,26 @@ ui_spaghettiplot <- function(id, ...) {
   
 }
 
-srv_spaghettiplot <- function(input, output, session, datasets, dataname, idvar, param_var, trt_group, man_color, xvar_level, 
+srv_spaghettiplot <- function(input, output, session, datasets, dataname, idvar, param_var, trt_group, man_color, yvar, xvar_level, 
                               trt_group_level, param_var_label, xtick, xlabel) {
   
   ns <- session$ns
   
-  ## dynamic plot height
+  ## dynamic plot height and brushing
   output$plot_ui <- renderUI({
     plot_height <- input$plot_height
     validate(need(plot_height, "need valid plot height"))
-    plotOutput(session$ns("spaghettiplot"), height=plot_height)
+    
+    plotOutput(ns("spaghettiplot"), height=plot_height)
+               # brush = brushOpts(id = ns("spaghettiplot_brush"))
+               # )
   })
+  
+  # output$brush_data <- renderPrint({
+  #   # brushedPoints(select(filter_ANL(),"USUBJID", "ARM", "AVISITCD", "PARAMCD", yvar, "LOQFL"), input$spaghettiplot_brush)
+  #   brushedPoints(select(filter_ANL(),"USUBJID", "ARM"), input$spaghettiplot_brush)
+  # })  
+  
   
   # filter data by param and the y-axis range values
   filter_ANL <- reactive({
@@ -287,8 +309,10 @@ srv_spaghettiplot <- function(input, output, session, datasets, dataname, idvar,
     facet_ncol <- input$facet_ncol
     rotate_xlab <- input$rotate_xlab
     hline <- as.numeric(input$hline)
-    group_mean <- input$group_mean
+    group_stats <- input$group_stats
     font_size <- input$font_size
+    alpha <- input$alpha
+    
     
     chunks$analysis <<- "# Not Calculated"
     
@@ -331,7 +355,8 @@ srv_spaghettiplot <- function(input, output, session, datasets, dataname, idvar,
       xlabel = xlabel,
       rotate_xlab = rotate_xlab,
       font_size = font_size,
-      group_mean = group_mean
+      alpha = alpha,
+      group_stats = group_stats
     )
     
     p <- try(eval(chunks$analysis))
@@ -355,7 +380,7 @@ srv_spaghettiplot <- function(input, output, session, datasets, dataname, idvar,
       header,
       "",
       teal.tern:::remove_enclosing_curly_braces(deparse(chunks$analysis, width.cutoff = 60))
-    ), collapse = "\n")
+    ), glue_collapse = "\n")
     
     # .log("show R code")
     showModal(modalDialog(

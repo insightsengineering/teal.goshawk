@@ -41,8 +41,6 @@
 #' @author Jeff Tomlinson (tomlinsj) jeffrey.tomlinson@roche.com
 #' @author Balazs Toth (tothb2) toth.balazs@gene.com
 #'
-#' @details provide additional information as needed. link to specification file \url{http://rstudio.com}
-#'
 #' @return an \code{\link[teal]{module}} object#'
 #'
 #' @export
@@ -571,7 +569,6 @@ srv_g_boxplot <- function(input, output, session, datasets
       
   })
   
-   
    observeEvent(input$show_rcode, {
      
      header <- teal.tern:::get_rcode_header(
@@ -580,7 +577,6 @@ srv_g_boxplot <- function(input, output, session, datasets
           datasets = datasets
        )
 
-     library(teal.tern)
      str_rcode <- paste(c(
        "",
        header,

@@ -11,6 +11,8 @@
 #' @param xvar single name of variable in analysis data that is used as x-axis in the plot for the respective goshawk function.
 #' @param xvar_choices vector with variable names that can be used as xvar.
 #' @param xvar_level vector that can be used to define the factor level of xvar. Only use it when xvar is character or factor.
+#' @param filter_var data constraint variable.
+#' @param filter_var_choices data constraint variable choices.
 #' @param yvar single name of variable in analysis data that is used as summary variable in the respective gshawk function.
 #' @param yvar_choices vector with variable names that can be used as yvar.
 #' @param trt_group name of variable representing treatment group e.g. ARM.
@@ -25,13 +27,10 @@
 #' @param font_size control font size for title, x-axis, y-axis and legend font.
 #' @param dodge control the position dodge of error bar
 #' 
-#' 
 #' @import goshawk
 #'
 #' @author Wenyi Liu (luiw2) wenyi.liu@roche.com
 #' @author Balazs Toth (tothb2) toth.balazs@gene.com
-#'
-#' @details 
 #'
 #' @return \code{shiny} object
 #'
@@ -39,6 +38,7 @@
 #'
 #' @examples
 #' 
+#'\dontrun{
 #' # EXAMPLE
 #' 
 #' library(random.cdisc.data)
@@ -78,6 +78,7 @@
 #' )
 #' 
 #' shinyApp(x$ui, x$server)
+#' }
 
 tm_g_lineplot <- function(label,
                           dataname,
@@ -199,7 +200,7 @@ srv_lineplot <- function(input, output, session, datasets, dataname, param_var, 
       
       output$filter_max <- renderUI({
         tagList({
-          numericInput(session$ns("filtermax"), label = paste0("Min (", max_scale, ")"), value = max_scale, min = min_scale, max = max_scale)
+          numericInput(session$ns("filtermax"), label = paste0("Max (", max_scale, ")"), value = max_scale, min = min_scale, max = max_scale)
         })
       })
       

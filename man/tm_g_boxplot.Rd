@@ -77,9 +77,6 @@ an \code{\link[teal]{module}} object#'
 \description{
 This teal module renders the UI and calls the functions that create a box plot and accompanying summary table.
 }
-\details{
-provide additional information as needed. link to specification file \url{http://rstudio.com}
-}
 \examples{
 
 \dontrun{

@@ -35,6 +35,10 @@ tm_g_lineplot(label, dataname, param_var, param_choices = param, param,
 
 \item{xvar_level}{vector that can be used to define the factor level of xvar. Only use it when xvar is character or factor.}
 
+\item{filter_var}{data constraint variable.}
+
+\item{filter_var_choices}{data constraint variable choices.}
+
 \item{trt_group}{name of variable representing treatment group e.g. ARM.}
 
 \item{trt_group_level}{vector that can be used to define factor level of trt_group.}
@@ -63,11 +67,9 @@ tm_g_lineplot(label, dataname, param_var, param_choices = param, param,
 \description{
 This teal module renders the UI and calls the function that creates a line plot.
 }
-\details{
-
-}
 \examples{
 
+\dontrun{
 # EXAMPLE
 
 library(random.cdisc.data)
@@ -107,6 +109,7 @@ x <- teal::init(
 )
 
 shinyApp(x$ui, x$server)
+}
 }
 \author{
 Wenyi Liu (luiw2) wenyi.liu@roche.com

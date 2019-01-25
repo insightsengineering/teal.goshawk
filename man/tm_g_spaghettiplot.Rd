@@ -8,8 +8,8 @@ tm_g_spaghettiplot(label, dataname, param_var, param_choices = param, param,
   param_var_label = "PARAM", idvar, xvar, yvar, xvar_choices = xvar,
   yvar_choices = yvar, xvar_level = NULL, filter_var = yvar,
   filter_var_choices = filter_var, trt_group, trt_group_level = NULL,
-  group_mean = FALSE, hline = NULL, man_color = NULL, xtick = waiver(),
-  xlabel = xtick, rotate_xlab = FALSE, facet_ncol = 2,
+  group_stats = "NONE", hline = NULL, man_color = NULL,
+  xtick = waiver(), xlabel = xtick, rotate_xlab = FALSE, facet_ncol = 2,
   plot_height = c(600, 200, 2000), font_size = c(12, 8, 20))
 }
 \arguments{
@@ -37,11 +37,15 @@ tm_g_spaghettiplot(label, dataname, param_var, param_choices = param, param,
 
 \item{xvar_level}{vector that can be used to define the factor level of xvar. Only use it when xvar is character or factor.}
 
+\item{filter_var}{data constraint variable.}
+
+\item{filter_var_choices}{data constraint variable choices.}
+
 \item{trt_group}{name of variable representing treatment group e.g. ARM.}
 
 \item{trt_group_level}{vector that can be used to define factor level of trt_group.}
 
-\item{group_mean}{boolean value indicating whether to overlay group means.}
+\item{group_stats}{control group mean or median overlay.}
 
 \item{hline}{numeric value to add horizontal line to plot}
 
@@ -65,11 +69,9 @@ tm_g_spaghettiplot(label, dataname, param_var, param_choices = param, param,
 \description{
 This teal module renders the UI and calls the function that creates a spaghetti plot.
 }
-\details{
-
-}
 \examples{
 
+\dontrun{
 # EXAMPLE
 
 library(random.cdisc.data)
@@ -110,6 +112,7 @@ x <- teal::init(
 )
 
 shinyApp(x$ui, x$server)
+}
 }
 \author{
 Wenyi Liu (luiw2) wenyi.liu@roche.com

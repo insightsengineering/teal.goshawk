@@ -52,7 +52,7 @@
 #'        param_choices = param_choices,
 #'        param = param_choices[1],
 #'        xaxis_var = "AVAL",
-#'        xaxis_var_choices = c("AVAL", "BASE", "CHG", "PCHG", "BASE2", "CHG2", "PCHG2", "AVALL2", "BASEL2", "BASE2L2"),
+#'        xaxis_var_choices = c("AVAL", "BASE", "CHG", "PCHG", "AVALL2"),
 #'        trt_group = "ARM",
 #'        color_manual = color_manual,
 #'        plot_height = c(500, 200, 2000),
