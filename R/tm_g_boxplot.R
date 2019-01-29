@@ -53,8 +53,8 @@
 #' 
 #' library(dplyr) 
 #' 
-#' ASL <- ASL
-#' ALB <- ALB
+#' ASL <- ADSL
+#' ALB <- ADLB
 #'
 #' x <- teal::init(
 #'   data =  list(ASL = ASL, ALB = ALB),
@@ -69,7 +69,7 @@
 #'         yaxis_var_choices = c("AVAL", "BASE", "CHG"),
 #'         rotate_xlab = FALSE,
 #'         xaxis_var = "ARM",
-#'         xaxis_var_choices = c("ARM", "AVISITCD"),
+#'         xaxis_var_choices = c("ARM", "AVISITCD", "STUDYID"),
 #'         facet_var= "AVISITCD",
 #'         facet_var_choices = c("ARM", "AVISITCD"),
 #'         trt_group = "ARM"
@@ -77,7 +77,6 @@
 #'   )
 #' )
 #' shinyApp(x$ui, x$server)
-#'
 #'
 #'}
 
@@ -88,7 +87,7 @@ tm_g_boxplot <- function(label,
                          param,
                          yaxis_var = "AVAL",
                          yaxis_var_choices = c("AVAL", "CHG"),
-                         xaxis_var = "AVISIT",
+                         xaxis_var = "AVISITCD",
                          xaxis_var_choices = NULL,
                          facet_var = "ARM",
                          facet_var_choices = NULL,
@@ -187,7 +186,7 @@ ui_g_boxplot <- function(id, ...) {
                           , multiple = FALSE
                           , width = inpWidth
       ),
-      
+
       optionalSelectInput(ns("facet_var")
                           , label = "Facet by"
                           , choices = a$facet_var_choices
@@ -273,7 +272,7 @@ srv_g_boxplot <- function(input, output, session, datasets
                           , filter_vars, filter_labs
                           , dataname, code_data_processing) {
   
-  ns <- session$ns # must add for the dynamic ui.range_scale field
+  ns <- session$ns
   
   # Get "nice" limits for Y axis. 
   get_axis_limits <- function(lo_, hi_, req.n = 2000) {
@@ -315,7 +314,7 @@ srv_g_boxplot <- function(input, output, session, datasets
   })
   
   output$brush_data <- renderPrint({
-    brushedPoints(select(filter_ALB(),"USUBJID", "ARM", "AVISITCD", "PARAMCD", xaxis_var, yaxis_var, "LOQFL"), input$boxplot_brush)
+    brushedPoints(select(filter_ALB(), "STUDYID", "USUBJID", "ARM", "AVISITCD", "PARAMCD", xaxis_var, yaxis_var, "LOQFL"), input$boxplot_brush)
   })
   
   # filter data by param and the xmin and xmax values from the filter slider.
@@ -522,7 +521,6 @@ srv_g_boxplot <- function(input, output, session, datasets
         facet_ncol = facet_ncol,
         rotate_xlab = rotate_xlab,
         trt_group = trt_group,
-        timepoint = "over time",
         unit = unit,
         ymin_scale = ymin_scale,
         ymax_scale = ymax_scale,
