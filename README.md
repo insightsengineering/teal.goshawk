@@ -4,6 +4,7 @@ The teal.goshawk package renders the UI and calls the respective biomarker visua
 The modules included are:
 
  - Box Plot
+ - Correlation Plot
  - Density Distribution Plot
  - Line Plot
  - Scatter Plot
