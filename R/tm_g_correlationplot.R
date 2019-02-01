@@ -1,6 +1,6 @@
-#' Scatter Plot
+#' Correlation Plot
 #'
-#' This teal module renders the UI and calls the function that creates a scatter plot.
+#' This teal module renders the UI and calls the function that creates a correlation plot.
 #'
 #' @param label menu item label of the module in the teal app.
 #' @param dataname analysis data passed to the data argument of teal init. E.g. ADaM structured laboratory data frame ALB.
@@ -37,7 +37,7 @@
 #' @import shiny
 #' @import teal
 #'
-#' @details This module displays a scatter plot. link to specification file \url{http://rstudio.com}
+#' @details This module displays a correlation plot.
 #'
 #' @export
 #'
@@ -48,17 +48,22 @@
 #' # ALB refers to biomarker data stored in expected laboratory structure.
 #'
 #' param_choices <- c("CRP", "ADIGG", "CCL20")
+#' xaxis_param_choices <- param_choices
+#' yaxis_param_choices <- param_choices
+#' 
 #' x <- teal::init(
 #'   data = list(ASL = ASL, ALB = ALB),
 #'   modules = root_modules(
-#'     tm_g_scatterplot(
-#'        label = "Scatter Plot",
+#'     tm_g_correlationplot(
+#'        label = "Correlation Plot",
 #'        dataname = "ALB",
 #'        param_var = "PARAMCD",
-#'        param_choices = param_choices,
-#'        param = param_choices[1],
+#'        xaxis_param_choices = param_choices,
+#'        xaxis_param = param_choices[1],
 #'        xaxis_var = "BASE",
 #'        xaxis_var_choices = c("AVAL", "BASE", "CHG", "PCHG", "AVALL2"),
+#'        yaxis_param_choices = param_choices,
+#'        yaxis_param = param_choices[2],
 #'        yaxis_var = "AVAL",
 #'        yaxis_var_choices = c("AVAL", "BASE", "CHG", "PCHG", "AVALL2"),
 #'        trt_group = "ARM",
@@ -79,14 +84,16 @@
 #'
 #'}
 
-tm_g_scatterplot <- function(label,
+tm_g_correlationplot <- function(label,
                              dataname,
                              param_var,
-                             param,
-                             param_choices = param,
-                             xaxis_var,
+                             xaxis_param = xaxis_param,
+                             xaxis_param_choices = xaxis_param,
+                             xaxis_var = xaxis_var,
                              xaxis_var_choices = xaxis_var,
-                             yaxis_var, 
+                             yaxis_param = yaxis_param,
+                             yaxis_param_choices = yaxis_param,
+                             yaxis_var = yaxis_var, 
                              yaxis_var_choices = yaxis_var,
                              trt_group = "ARM",
                              color_manual = NULL,
@@ -109,24 +116,25 @@ tm_g_scatterplot <- function(label,
   module(
     label = label,
     filters = dataname,
-    server = srv_g_scatterplot,
+    server = srv_g_correlationplot,
     server_args = list(dataname = dataname,
                        param_var = param_var,
-                       param = param,
+                       xaxis_param = xaxis_param,
                        xaxis_var = xaxis_var,
+                       yaxis_param = yaxis_param,
                        yaxis_var = yaxis_var,
                        trt_group = trt_group,
                        color_manual = color_manual,
                        shape_manual = shape_manual,
                        code_data_processing = code_data_processing
                        ),
-    ui = ui_g_scatterplot,
+    ui = ui_g_correlationplot,
     ui_args = args
   )
   
 }
 
-ui_g_scatterplot <- function(id, ...) {
+ui_g_correlationplot <- function(id, ...) {
 
   ns <- NS(id)
   a <- list(...)
@@ -146,10 +154,11 @@ ui_g_scatterplot <- function(id, ...) {
     encoding =  div(
       tags$label(a$dataname, "Data Settings", class="text-primary"),
       helpText("Analysis data:", tags$code(a$dataname)),
-      optionalSelectInput(ns("param"), "Select a Biomarker", a$param_choices, a$param, multiple = FALSE),
+      optionalSelectInput(ns("xaxis_param"), "Select an X-Axis Biomarker", a$xaxis_param_choices, a$xaxis_param, multiple = FALSE),
       optionalSelectInput(ns("xaxis_var"), "Select an X-Axis Variable", a$xaxis_var_choices, a$xaxis_var, multiple = FALSE),
+      optionalSelectInput(ns("yaxis_param"), "Select a Y-Axis Biomarker", a$yaxis_param_choices, a$yaxis_param, multiple = FALSE),
       optionalSelectInput(ns("yaxis_var"), "Select a Y-Axis Variable", a$yaxis_var_choices, a$yaxis_var, multiple = FALSE),
-      radioButtons(ns("constraint_var"), "Data Constraint", c("None" = "NONE", "Screening" = "BASE2", "Baseline" = "BASE")),
+      radioButtons(ns("constraint_var"), "X-Axis Data Constraint", c("None" = "NONE", "Screening" = "BASE2", "Baseline" = "BASE")),
       uiOutput(ns("constraint_min_value"), style="display: inline-block; vertical-align:center"),
       uiOutput(ns("constraint_max_value"), style="display: inline-block; vertical-align:center"),
       tags$label("Plot Aesthetic Settings", class="text-primary", style="margin-top: 15px;"),
@@ -175,8 +184,8 @@ ui_g_scatterplot <- function(id, ...) {
 
 }
 
-srv_g_scatterplot <- function(input, output, session, datasets, dataname, 
-                              param_var, param, xaxis_var, yaxis_var, 
+srv_g_correlationplot <- function(input, output, session, datasets, dataname, 
+                              param_var, xaxis_param, xaxis_var, yaxis_param, yaxis_var, 
                               trt_group, color_manual, shape_manual,
                               code_data_processing) {
 
@@ -187,21 +196,21 @@ srv_g_scatterplot <- function(input, output, session, datasets, dataname,
     plot_height <- input$plot_height
     validate(need(plot_height, "need valid plot height"))
     
-    plotOutput(ns("scatterplot"), height = plot_height,
-               brush = brushOpts(id = ns("scatterplot_brush"))
+    plotOutput(ns("correlationplot"), height = plot_height,
+               brush = brushOpts(id = ns("correlationplot_brush"))
                )
     })
   
   output$brush_data <- renderPrint({
-    brushedPoints(select(filter_ALB(),"STUDYID", "USUBJID", "ARM", "AVISITCD", "PARAMCD", xaxis_var, yaxis_var, "LOQFL"), input$scatterplot_brush)
+    brushedPoints(select(filter_ALB(),"STUDYID", "USUBJID", "ARM", "AVISITCD", "PARAMCD", input$xaxis_var, input$yaxis_var, "LOQFL"), input$correlationplot_brush)
   })  
   
   # dynamic slider for x-axis
   output$xaxis_zoom <- renderUI({
     ALB <- datasets$get_data(dataname, reactive = TRUE, filtered = TRUE)
-    param <- input$param 
+    xaxis_param <- input$xaxis_param
     scale_data <- ALB %>%
-      filter(eval(parse(text = param_var)) == param)
+      filter(eval(parse(text = param_var)) == xaxis_param)
     
     # establish default value during reaction and prior to value being available
     xmin_scale <- -Inf
@@ -222,9 +231,9 @@ srv_g_scatterplot <- function(input, output, session, datasets, dataname,
   # dynamic slider for y-axis
   output$yaxis_zoom <- renderUI({
     ALB <- datasets$get_data(dataname, reactive = TRUE, filtered = TRUE)
-    param <- input$param 
+    yaxis_param <- input$yaxis_param 
     scale_data <- ALB %>%
-      filter(eval(parse(text = param_var)) == param)
+      filter(eval(parse(text = param_var)) == yaxis_param)
     
     # establish default value during reaction and prior to value being available
     ymin_scale <- -Inf
@@ -244,7 +253,8 @@ srv_g_scatterplot <- function(input, output, session, datasets, dataname,
   
   # filter data by param and the constraint_min and constraint_max values
   filter_ALB <- reactive({
-    param <- input$param
+    xaxis_param <- input$xaxis_param
+    yaxis_param <- input$yaxis_param
     constraint_var <- input$constraint_var
     
     if (constraint_var != "NONE"){
@@ -259,14 +269,14 @@ srv_g_scatterplot <- function(input, output, session, datasets, dataname,
         constraint_max_range <- input$constraint_max
       }
       datasets$get_data(dataname, filtered = TRUE, reactive = TRUE) %>%
-        filter(eval(parse(text = param_var)) == param &
+        filter((eval(parse(text = param_var)) == xaxis_param | eval(parse(text = param_var)) == yaxis_param) &
                  constraint_min_range <= eval(parse(text = constraint_var)) &
                  eval(parse(text = constraint_var)) <= constraint_max_range |
                  is.na(constraint_var)
         )
     } else{
       datasets$get_data(dataname, filtered = TRUE, reactive = TRUE) %>%
-        filter(eval(parse(text = param_var)) == param)
+        filter(eval(parse(text = param_var)) == xaxis_param | eval(parse(text = param_var)) == yaxis_param)
     }
   })
   
@@ -275,9 +285,9 @@ srv_g_scatterplot <- function(input, output, session, datasets, dataname,
     # conditionally reveal min and max constraint fields
     if (input$constraint_var != "NONE") {
       ALB <- datasets$get_data(dataname, filtered = TRUE, reactive = TRUE)
-      param <- input$param
+      xaxis_param <- input$xaxis_param
       scale_data <- ALB %>%
-        filter(eval(parse(text = param_var)) == param)
+        filter(eval(parse(text = param_var)) == xaxis_param)
       # ensure that there are records at visit to process based on the constraint vatriable selection
       visitFreq <- unique(scale_data$AVISITCD)
       if (input$constraint_var == "BASE2" & visitFreq[1] == "SCR" | 
@@ -305,9 +315,9 @@ srv_g_scatterplot <- function(input, output, session, datasets, dataname,
     # conditionally reveal min and max constraint fields
     if (input$constraint_var != "NONE") {
       ALB <- datasets$get_data(dataname, filtered = TRUE, reactive = TRUE)
-      param <- input$param
+      xaxis_param <- input$xaxis_param
       scale_data <- ALB %>%
-        filter(eval(parse(text = param_var)) == param)
+        filter(eval(parse(text = param_var)) == xaxis_param)
       # ensure that there are records at visit to process based on the constraint vatriable selection
       visitFreq <- unique(scale_data$AVISITCD)
       if (input$constraint_var == "BASE2" & visitFreq[1] == "SCR" | 
@@ -329,10 +339,11 @@ srv_g_scatterplot <- function(input, output, session, datasets, dataname,
     }
   })
   
-  output$scatterplot <- renderPlot({
+  output$correlationplot <- renderPlot({
     ALB <- filter_ALB()
-    param <- input$param
+    xaxis_param <- input$xaxis_param
     xaxis_var <- input$xaxis_var
+    yaxis_param <- input$yaxis_param
     yaxis_var <- input$yaxis_var
     xmin_scale <- input$xrange_scale[1]
     xmax_scale <- input$xrange_scale[2]
@@ -351,20 +362,27 @@ srv_g_scatterplot <- function(input, output, session, datasets, dataname,
     validate(need(nrow(ALB) > 0 , "No observations left"))
     validate(need(param_var %in% names(ALB),
                   paste("Biomarker parameter variable", param_var, " is not available in data", dataname)))
-    validate(need(param %in% unique(ALB[[param_var]]),
-                  paste("Biomarker", param, " is not available in data", dataname)))
+    validate(need(xaxis_param %in% unique(ALB[[param_var]]),
+                  paste("X-Axis Biomarker", xaxis_param, " is not available in data", dataname)))
+    validate(need(yaxis_param %in% unique(ALB[[param_var]]),
+                  paste("Y-Axis Biomarker", yaxis_param, " is not available in data", dataname)))
     validate(need(trt_group %in% names(ALB),
                   paste("Variable", trt_group, " is not available in data", dataname)))
     validate(need(xaxis_var %in% names(ALB),
                   paste("Variable", xaxis_var, " is not available in data", dataname)))
     validate(need(yaxis_var %in% names(ALB),
                   paste("Variable", yaxis_var, " is not available in data", dataname)))
-
-    p <- goshawk:::g_scatterplot(
+    
+    print(paste("PARAMCD Values:", unique(ALB$PARAMCD)))
+    print(paste("X-Axis Biomarker is:", xaxis_param, "Y-Axis Biomarker is:", yaxis_param))
+    
+    
+    p <- goshawk:::g_correlationplot(
       data = ALB,
       param_var = param_var,
-      param = param,
+      xaxis_param = xaxis_param,
       xaxis_var = xaxis_var,
+      yaxis_param = yaxis_param,
       yaxis_var = yaxis_var,
       trt_group = trt_group,
       xmin = xmin_scale,
@@ -388,4 +406,3 @@ srv_g_scatterplot <- function(input, output, session, datasets, dataname,
   })
   
 }
- 

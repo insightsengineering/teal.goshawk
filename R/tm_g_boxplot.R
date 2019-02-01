@@ -314,7 +314,7 @@ srv_g_boxplot <- function(input, output, session, datasets
   })
   
   output$brush_data <- renderPrint({
-    brushedPoints(select(filter_ALB(), "STUDYID", "USUBJID", "ARM", "AVISITCD", "PARAMCD", xaxis_var, yaxis_var, "LOQFL"), input$boxplot_brush)
+    brushedPoints(select(filter_ALB(), "STUDYID", "USUBJID", "ARM", "AVISITCD", "PARAMCD", input$xaxis_var, input$yaxis_var, "LOQFL"), input$boxplot_brush)
   })
   
   # filter data by param and the xmin and xmax values from the filter slider.
