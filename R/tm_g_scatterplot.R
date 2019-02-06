@@ -193,7 +193,7 @@ srv_g_scatterplot <- function(input, output, session, datasets, dataname,
     })
   
   output$brush_data <- renderPrint({
-    brushedPoints(select(filter_ALB(),"STUDYID", "USUBJID", "ARM", "AVISITCD", "PARAMCD", xaxis_var, yaxis_var, "LOQFL"), input$scatterplot_brush)
+    brushedPoints(select(filter_ALB(),"STUDYID", "USUBJID", "ARM", "AVISITCD", "PARAMCD", input$xaxis_var, input$yaxis_var, "LOQFL"), input$scatterplot_brush)
   })  
   
   # dynamic slider for x-axis

@@ -6,13 +6,12 @@
 \usage{
 tm_g_boxplot(label, dataname, param_var, param_choices = param, param,
   yaxis_var = "AVAL", yaxis_var_choices = c("AVAL", "CHG"),
-  xaxis_var = "AVISITCD", xaxis_var_choices = NULL,
-  facet_var = "ARM", facet_var_choices = NULL,
-  filter_vars = c("BASE2", "BASE"), filter_labs = c("Screening",
-  "Baseline"), trt_group = "ARM", color_manual = NULL,
-  shape_manual = NULL, hline = NULL, facet_ncol = NULL,
-  rotate_xlab = FALSE, pre_output = NULL, post_output = NULL,
-  armlabel = NULL, plot_height = c(600, 200, 2000),
+  xaxis_var = "AVISITCD", xaxis_var_choices = NULL, facet_var = "ARM",
+  facet_var_choices = NULL, filter_vars = c("BASE2", "BASE"),
+  filter_labs = c("Screening", "Baseline"), trt_group = "ARM",
+  color_manual = NULL, shape_manual = NULL, hline = NULL,
+  facet_ncol = NULL, rotate_xlab = FALSE, pre_output = NULL,
+  post_output = NULL, armlabel = NULL, plot_height = c(600, 200, 2000),
   code_data_processing = NULL)
 }
 \arguments{

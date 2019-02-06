@@ -36,6 +36,7 @@
 #' @import goshawk
 #' @import shiny
 #' @import teal
+#' @import tidyr
 #'
 #' @details This module displays a correlation plot.
 #'
@@ -47,7 +48,7 @@
 #' # Example using ADaM structure analysis dataset.
 #' # ALB refers to biomarker data stored in expected laboratory structure.
 #'
-#' param_choices <- c("CRP", "ADIGG", "CCL20")
+#' param_choices <- c("CRP", "ADIGG", "CCL3", "CCL20")
 #' xaxis_param_choices <- param_choices
 #' yaxis_param_choices <- param_choices
 #' 
@@ -143,13 +144,13 @@ ui_g_correlationplot <- function(id, ...) {
     output = div(
       fluidRow(
              uiOutput(ns("plot_ui"))
-      ),
-      fluidRow(
-        column(width = 12,
-               h4("Selected Data Points"),
-               verbatimTextOutput(ns("brush_data"))
-        )
       )
+      # fluidRow(
+      #   column(width = 12,
+      #          h4("Selected Data Points"),
+      #          verbatimTextOutput(ns("brush_data"))
+      #   )
+      # )
     ),
     encoding =  div(
       tags$label(a$dataname, "Data Settings", class="text-primary"),
@@ -196,14 +197,14 @@ srv_g_correlationplot <- function(input, output, session, datasets, dataname,
     plot_height <- input$plot_height
     validate(need(plot_height, "need valid plot height"))
     
-    plotOutput(ns("correlationplot"), height = plot_height,
-               brush = brushOpts(id = ns("correlationplot_brush"))
+    plotOutput(ns("correlationplot"), height = plot_height
+               #brush = brushOpts(id = ns("correlationplot_brush"))
                )
     })
   
-  output$brush_data <- renderPrint({
-    brushedPoints(select(filter_ALB(),"STUDYID", "USUBJID", "ARM", "AVISITCD", "PARAMCD", input$xaxis_var, input$yaxis_var, "LOQFL"), input$correlationplot_brush)
-  })  
+  # output$brush_data <- renderPrint({
+  #   brushedPoints(select(filter_ALB(),"STUDYID", "USUBJID", "ARM", "AVISITCD", "PARAMCD", input$xaxis_var, input$yaxis_var, "LOQFL"), input$correlationplot_brush)
+  # })  
   
   # dynamic slider for x-axis
   output$xaxis_zoom <- renderUI({
