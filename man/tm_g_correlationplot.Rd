@@ -4,15 +4,16 @@
 \alias{tm_g_correlationplot}
 \title{Correlation Plot}
 \usage{
-tm_g_correlationplot(label, dataname, param_var, xaxis_param = xaxis_param,
-  xaxis_param_choices = xaxis_param, xaxis_var = xaxis_var,
-  xaxis_var_choices = xaxis_var, yaxis_param = yaxis_param,
-  yaxis_param_choices = yaxis_param, yaxis_var = yaxis_var,
-  yaxis_var_choices = yaxis_var, trt_group = "ARM", color_manual = NULL,
-  shape_manual = NULL, facet_ncol = 2, facet = FALSE, reg_line = FALSE,
+tm_g_correlationplot(label, dataname, param_var,
+  xaxis_param = xaxis_param, xaxis_param_choices = xaxis_param,
+  xaxis_var = xaxis_var, xaxis_var_choices = xaxis_var,
+  yaxis_param = yaxis_param, yaxis_param_choices = yaxis_param,
+  yaxis_var = yaxis_var, yaxis_var_choices = yaxis_var,
+  trt_group = "ARM", color_manual = NULL, shape_manual = NULL,
+  facet_ncol = 2, facet = FALSE, reg_line = FALSE,
   rotate_xlab = FALSE, hline = NULL, plot_height = c(500, 200, 2000),
-  font_size = c(12, 8, 20), dot_size = c(1, 1, 12), reg_text_size = c(3,
-  3, 10), pre_output = NULL, post_output = NULL,
+  font_size = c(12, 8, 20), dot_size = c(1, 1, 12),
+  reg_text_size = c(3, 3, 10), pre_output = NULL, post_output = NULL,
   code_data_processing = NULL)
 }
 \arguments{
@@ -22,9 +23,17 @@ tm_g_correlationplot(label, dataname, param_var, xaxis_param = xaxis_param,
 
 \item{param_var}{name of variable containing biomarker codes e.g. PARAMCD.}
 
+\item{xaxis_param}{biomarker selected.}
+
+\item{xaxis_param_choices}{list of biomarkers of interest.}
+
 \item{xaxis_var}{name of variable containing biomarker results displayed on x-axis e.g. BASE.}
 
 \item{xaxis_var_choices}{list of variables containing biomarker results choices.}
+
+\item{yaxis_param}{biomarker selected.}
+
+\item{yaxis_param_choices}{list of biomarkers of interest.}
 
 \item{yaxis_var}{name of variable containing biomarker results displayed on y-axis e.g. AVAL.}
 
@@ -63,10 +72,6 @@ output to put the output into context. For example the
 \code{\link[shiny]{helpText}} elements are useful.}
 
 \item{code_data_processing}{TODO}
-
-\item{param_choices}{list of biomarkers of interest.}
-
-\item{param}{biomarker selected.}
 }
 \description{
 This teal module renders the UI and calls the function that creates a correlation plot.
@@ -94,11 +99,11 @@ x <- teal::init(
        xaxis_param_choices = param_choices,
        xaxis_param = param_choices[1],
        xaxis_var = "BASE",
-       xaxis_var_choices = c("AVAL", "BASE", "CHG", "PCHG", "AVALL2"),
+       xaxis_var_choices = c("AVAL", "BASE", "CHG", "PCHG", "BASE2", "AVALL2"),
        yaxis_param_choices = param_choices,
        yaxis_param = param_choices[2],
        yaxis_var = "AVAL",
-       yaxis_var_choices = c("AVAL", "BASE", "CHG", "PCHG", "AVALL2"),
+       yaxis_var_choices = c("AVAL", "BASE", "CHG", "PCHG", "BASE2", "AVALL2"),
        trt_group = "ARM",
        color_manual = color_manual,
        shape_manual = shape_manual,

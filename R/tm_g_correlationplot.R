@@ -5,8 +5,10 @@
 #' @param label menu item label of the module in the teal app.
 #' @param dataname analysis data passed to the data argument of teal init. E.g. ADaM structured laboratory data frame ALB.
 #' @param param_var name of variable containing biomarker codes e.g. PARAMCD.
-#' @param param_choices list of biomarkers of interest.
-#' @param param biomarker selected.
+#' @param xaxis_param_choices list of biomarkers of interest.
+#' @param xaxis_param biomarker selected.
+#' @param yaxis_param_choices list of biomarkers of interest.
+#' @param yaxis_param biomarker selected.
 #' @param xaxis_var name of variable containing biomarker results displayed on x-axis e.g. BASE.
 #' @param xaxis_var_choices list of variables containing biomarker results choices.
 #' @param yaxis_var name of variable containing biomarker results displayed on y-axis e.g. AVAL.
@@ -62,11 +64,11 @@
 #'        xaxis_param_choices = param_choices,
 #'        xaxis_param = param_choices[1],
 #'        xaxis_var = "BASE",
-#'        xaxis_var_choices = c("AVAL", "BASE", "CHG", "PCHG", "AVALL2"),
+#'        xaxis_var_choices = c("AVAL", "BASE", "CHG", "PCHG", "BASE2", "AVALL2"),
 #'        yaxis_param_choices = param_choices,
 #'        yaxis_param = param_choices[2],
 #'        yaxis_var = "AVAL",
-#'        yaxis_var_choices = c("AVAL", "BASE", "CHG", "PCHG", "AVALL2"),
+#'        yaxis_var_choices = c("AVAL", "BASE", "CHG", "PCHG", "BASE2", "AVALL2"),
 #'        trt_group = "ARM",
 #'        color_manual = color_manual,
 #'        shape_manual = shape_manual,
@@ -80,7 +82,7 @@
 #'    )
 #'   )
 #' )
-#'
+#' 
 #' shinyApp(x$ui, x$server)
 #'
 #'}
@@ -144,13 +146,14 @@ ui_g_correlationplot <- function(id, ...) {
     output = div(
       fluidRow(
              uiOutput(ns("plot_ui"))
+      ),
+      fluidRow(
+        column(width = 12,
+               br(), hr(),
+               h4("Selected Data Points"),
+               tableOutput(ns("brush_data"))
+        )
       )
-      # fluidRow(
-      #   column(width = 12,
-      #          h4("Selected Data Points"),
-      #          verbatimTextOutput(ns("brush_data"))
-      #   )
-      # )
     ),
     encoding =  div(
       tags$label(a$dataname, "Data Settings", class="text-primary"),
@@ -191,20 +194,80 @@ srv_g_correlationplot <- function(input, output, session, datasets, dataname,
                               code_data_processing) {
 
   ns <- session$ns
+
+  # filter data to selected params
+  filter_ALB <- reactive({
+    xaxis_param <- input$xaxis_param
+    yaxis_param <- input$yaxis_param
+    datasets$get_data(dataname, filtered = TRUE, reactive = TRUE) %>%
+      filter((eval(parse(text = param_var)) == xaxis_param | eval(parse(text = param_var)) == yaxis_param))
+  })  
+  
+  # create the transformed variable names for ease of reference elsewhere 
+  xvar <- reactive(paste0(input$xaxis_var, ".", input$xaxis_param))
+  yvar <- reactive(paste0(input$yaxis_var, ".", input$yaxis_param))
+  xloqfl <- reactive(paste0("LOQFL_", input$xaxis_param))
+  yloqfl <- reactive(paste0("LOQFL_", input$yaxis_param))
+
+  plot_data_transpose <- reactive({
+    # given the 2 param and 2 analysis vars we need to transform the data
+    plot_data_t1 <- filter_ALB() %>% gather(ANLVARS, ANLVALS, BASE2, BASE, xaxis_var, yaxis_var, LOQFL) %>%
+      mutate(ANL.PARAM = ifelse(ANLVARS == "LOQFL", paste0(ANLVARS, "_", PARAMCD), paste0(ANLVARS, ".", PARAMCD))) %>%
+      select(USUBJID, ARM, ARMCD, AVISITN, AVISITCD, ANL.PARAM, ANLVALS) %>%
+      spread(ANL.PARAM, ANLVALS)
+    
+    # the transformed analysis value variables are character and need to be converted to numeric for ggplot
+    # remove records where either of the analysis variables are NA since they will not appear on the plot and
+    # will ensure that LOQFL = NA level is removed
+    plot_data_t2 <- plot_data_t1 %>%
+      subset(!is.na(.[[xvar()]]) & !is.na(.[[yvar()]])) %>%
+      mutate_at(vars(contains(".")), as.numeric) %>%
+      mutate(LOQFL_COMB = ifelse(.[[xloqfl()]] == "Y" | .[[yloqfl()]] == "Y", "Y", "N"))
+
+    constraint_var <- input$constraint_var
+    
+    if (constraint_var != "NONE"){
+      constraint_min_range <- -Inf
+      constraint_max_range <- Inf
+      
+      if (length(input$constraint_min)){
+        constraint_min_range <- input$constraint_min
+      }
+      
+      if (length(input$constraint_max)){
+        constraint_max_range <- input$constraint_max
+      }
+      
+      plot_data_t3 <- plot_data_t2 %>%
+        filter(constraint_min_range <= .[[xvar()]] & .[[xvar()]] <= constraint_max_range |
+                 is.na(.[[xvar()]])
+        )
+    } else{
+      plot_data_t3 <- plot_data_t2
+    }
+    
+  })
   
   # dynamic plot height and brushing
   output$plot_ui <- renderUI({
     plot_height <- input$plot_height
     validate(need(plot_height, "need valid plot height"))
     
-    plotOutput(ns("correlationplot"), height = plot_height
-               #brush = brushOpts(id = ns("correlationplot_brush"))
+    plotOutput(ns("correlationplot"), height = plot_height,
+               brush = brushOpts(id = ns("correlationplot_brush"), resetOnNew=T)
                )
     })
-  
-  # output$brush_data <- renderPrint({
-  #   brushedPoints(select(filter_ALB(),"STUDYID", "USUBJID", "ARM", "AVISITCD", "PARAMCD", input$xaxis_var, input$yaxis_var, "LOQFL"), input$correlationplot_brush)
-  # })  
+
+  output$brush_data <- renderTable({
+    plot_data_t3 <- plot_data_transpose()
+    if (nrow(plot_data_t3) > 0 ){
+    brushedPoints(select(plot_data_t3, "USUBJID", "ARM", "AVISITCD", xvar(), yvar(), LOQFL_COMB),
+                  input$correlationplot_brush)
+    } else{
+      NULL
+    }
+      
+  })
   
   # dynamic slider for x-axis
   output$xaxis_zoom <- renderUI({
@@ -250,35 +313,6 @@ srv_g_correlationplot <- function(input, output, session, datasets, dataname,
                   value = c(floor(ymin_scale), ceiling(ymax_scale)))
     })
     
-  })
-  
-  # filter data by param and the constraint_min and constraint_max values
-  filter_ALB <- reactive({
-    xaxis_param <- input$xaxis_param
-    yaxis_param <- input$yaxis_param
-    constraint_var <- input$constraint_var
-    
-    if (constraint_var != "NONE"){
-      constraint_min_range <- -Inf
-      constraint_max_range <- Inf
-      
-      if (length(input$constraint_min)){
-        constraint_min_range <- input$constraint_min
-      }
-      
-      if (length(input$constraint_max)){
-        constraint_max_range <- input$constraint_max
-      }
-      datasets$get_data(dataname, filtered = TRUE, reactive = TRUE) %>%
-        filter((eval(parse(text = param_var)) == xaxis_param | eval(parse(text = param_var)) == yaxis_param) &
-                 constraint_min_range <= eval(parse(text = constraint_var)) &
-                 eval(parse(text = constraint_var)) <= constraint_max_range |
-                 is.na(constraint_var)
-        )
-    } else{
-      datasets$get_data(dataname, filtered = TRUE, reactive = TRUE) %>%
-        filter(eval(parse(text = param_var)) == xaxis_param | eval(parse(text = param_var)) == yaxis_param)
-    }
   })
   
   # minimum data constraint value
@@ -358,7 +392,7 @@ srv_g_correlationplot <- function(input, output, session, datasets, dataname,
     facet <- input$facet
     reg_line <- input$reg_line
     rotate_xlab <- input$rotate_xlab
-
+    
     validate(need(!is.null(ALB) && is.data.frame(ALB), "No data left"))
     validate(need(nrow(ALB) > 0 , "No observations left"))
     validate(need(param_var %in% names(ALB),
@@ -374,22 +408,61 @@ srv_g_correlationplot <- function(input, output, session, datasets, dataname,
     validate(need(yaxis_var %in% names(ALB),
                   paste("Variable", yaxis_var, " is not available in data", dataname)))
     
-    print(paste("PARAMCD Values:", unique(ALB$PARAMCD)))
-    print(paste("X-Axis Biomarker is:", xaxis_param, "Y-Axis Biomarker is:", yaxis_param))
+    param_lookup <- unique(ALB[c("PARAMCD", "PARAM")])
+    unit_lookup <- unique(ALB[c("PARAMCD", "AVALU")])
+    lookups <- inner_join(param_lookup, unit_lookup, by=c("PARAMCD"))
+
+    xparam_meta <- lookups %>%
+      filter(PARAMCD == xaxis_param)
+    xparam <- xparam_meta$PARAM
+    xunit <- xparam_meta$AVALU
+
+    yparam_meta <- lookups %>%
+      filter(PARAMCD == yaxis_param)
+    yparam <- yparam_meta$PARAM
+    yunit <- yparam_meta$AVALU
+
+    # setup the ggtitle label.  Combine the biomarker and the units (if available)
+    title_text <- ifelse(is.null(ALB$AVALU), paste(xparam, "and", yparam, "@ Visits"),
+                           ifelse(ALB[["AVALU"]] == "", paste(xparam, "and", yparam, "@ Visits"),
+                                  paste0(xparam, " (", xunit,") and ", yparam,  " (", yunit,") @ Visits"))
+    )
+
+    # setup the x-axis label.  Combine the biomarker and the units (if available)
+    xaxis_lab <- ifelse(is.null(ALB$AVALU), paste(xparam, xaxis_var, "Values"),
+                         ifelse(ALB[["AVALU"]] == "", paste(xparam, xaxis_var, "Values"),
+                                paste0(xparam," (", xunit, ") ", xaxis_var, " Values"))
+    )
+
+    # setup the y-axis label.  Combine the biomarker and the units (if available)
+    yaxis_lab <- ifelse(is.null(ALB$AVALU), paste(yparam, yaxis_var, "Values"),
+                         ifelse(ALB[["AVALU"]] == "", paste(yparam, yaxis_var, "Values"),
+                                paste0(yparam," (", yunit,") ", yaxis_var, " Values"))
+    )
+
+    plot_data_t3 <- plot_data_transpose()
+    validate(need(nrow(plot_data_t3) > 0 , "No observations left"))
+    
+    # plot_data_t2 <- filter_tran()
     
     
     p <- goshawk:::g_correlationplot(
-      data = ALB,
+      data = plot_data_t3,
       param_var = param_var,
       xaxis_param = xaxis_param,
       xaxis_var = xaxis_var,
+      xvar = xvar(),
       yaxis_param = yaxis_param,
       yaxis_var = yaxis_var,
+      yvar = yvar(),
       trt_group = trt_group,
       xmin = xmin_scale,
       xmax = xmax_scale,
       ymin = ymin_scale,
       ymax = ymax_scale,
+      title_text = title_text,
+      xaxis_lab = xaxis_lab,
+      yaxis_lab = yaxis_lab,
       color_manual = color_manual,
       shape_manual = shape_manual,
       facet_ncol = facet_ncol,

@@ -111,7 +111,18 @@ ui_g_density_distribution_plot <- function(id, ...) {
   a <- list(...)
 
   standard_layout(
-    output = div(tagList(uiOutput(ns("plot_ui")), uiOutput(ns("table_ui")))),
+    output = div(
+      fluidRow(
+        uiOutput(ns("plot_ui"))
+        ),
+      fluidRow(
+        column(width = 12,
+               br(), hr(),
+               h4("Descriptive Statistics"),
+               uiOutput(ns("table_ui"))
+        )
+      )
+    ),
     encoding =  div(
       tags$label(a$dataname, "Data Settings", class="text-primary"),
       optionalSelectInput(ns("param"), "Select a Biomarker", a$param_choices, a$param, multiple = FALSE),

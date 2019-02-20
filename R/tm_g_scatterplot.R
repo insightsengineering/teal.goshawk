@@ -138,8 +138,9 @@ ui_g_scatterplot <- function(id, ...) {
       ),
       fluidRow(
         column(width = 12,
+               br(), hr(),
                h4("Selected Data Points"),
-               verbatimTextOutput(ns("brush_data"))
+               tableOutput(ns("brush_data"))
         )
       )
     ),
@@ -188,14 +189,18 @@ srv_g_scatterplot <- function(input, output, session, datasets, dataname,
     validate(need(plot_height, "need valid plot height"))
     
     plotOutput(ns("scatterplot"), height = plot_height,
-               brush = brushOpts(id = ns("scatterplot_brush"))
+               brush = brushOpts(id = ns("scatterplot_brush"), resetOnNew=T)
                )
     })
   
-  output$brush_data <- renderPrint({
-    brushedPoints(select(filter_ALB(),"STUDYID", "USUBJID", "ARM", "AVISITCD", "PARAMCD", input$xaxis_var, input$yaxis_var, "LOQFL"), input$scatterplot_brush)
-  })  
-  
+  output$brush_data <- renderTable({
+    if (nrow(filter_ALB()) > 0 ){
+      brushedPoints(select(filter_ALB(),"USUBJID", "ARM", "AVISITCD", "PARAMCD", input$xaxis_var, input$yaxis_var, "LOQFL"), input$scatterplot_brush)
+    } else{
+      NULL
+    }
+  })
+
   # dynamic slider for x-axis
   output$xaxis_zoom <- renderUI({
     ALB <- datasets$get_data(dataname, reactive = TRUE, filtered = TRUE)

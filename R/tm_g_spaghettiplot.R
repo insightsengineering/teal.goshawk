@@ -57,6 +57,7 @@
 #' ANL$CHG <- rnorm(nrow(ANL), 2, 2)
 #' ANL$CHG[ANL$VISIT == "visit 1"] <- NA
 #' ANL$PCHG <- ANL$CHG/ANL$AVAL*100
+#' ANL$AVALU <- "U"
 #' 
 #' ANL$ARM <- factor(ANL$ARM)
 #' ANL$VISIT <- factor(ANL$VISIT)
@@ -120,7 +121,6 @@ tm_g_spaghettiplot <- function(label,
   
 }
 
-
 ui_spaghettiplot <- function(id, ...) {
   
   ns <- NS(id)
@@ -128,18 +128,17 @@ ui_spaghettiplot <- function(id, ...) {
   
   if (a$plot_height < 200 || a$plot_height > 2000) stop("plot_height must be between 200 and 2000")
   
-  
   standard_layout(
     output = div(
       fluidRow(
         uiOutput(ns("plot_ui"))
       )
-    #   fluidRow(
-    #     column(width = 12,
-    #            h4("Selected Data Points"),
-    #            verbatimTextOutput(ns("brush_data"))
-    #     )
-    #   )
+      # fluidRow(
+      #   column(width = 12,
+      #          h4("Selected Data Points"),
+      #          dataTableOutput(ns("brush_data"))
+      #   )
+      # )
     ),
     # output = uiOutput(ns("plot_ui")),
     encoding = div(
@@ -198,11 +197,15 @@ srv_spaghettiplot <- function(input, output, session, datasets, dataname, idvar,
                # )
   })
   
-  # output$brush_data <- renderPrint({
-  #   # brushedPoints(select(filter_ANL(),"USUBJID", "ARM", "AVISITCD", "PARAMCD", yvar, "LOQFL"), input$spaghettiplot_brush)
-  #   brushedPoints(select(filter_ANL(),"USUBJID", "ARM"), input$spaghettiplot_brush)
-  # })  
-  
+  # output$brush_data <- renderDataTable({
+  #   # brush_results <- brushedPoints(select(filter_ANL(), "USUBJID", "ARM", "AVISITCD", "PARAMCD", yvar, "LOQFL"), input$spaghettiplot_brush)
+  #   brush_results <- brushedPoints(select(filter_ANL(), "USUBJID", "ARM"), input$spaghettiplot_brush)
+  #   if (nrow(brush_results) > 0) {
+  #     datatable(na.omit(brush_results))
+  #   }  else {
+  #     NULL
+  #   }
+  # })
   
   # filter data by param and the y-axis range values
   filter_ANL <- reactive({

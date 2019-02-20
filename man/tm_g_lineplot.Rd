@@ -9,8 +9,8 @@ tm_g_lineplot(label, dataname, param_var, param_choices = param, param,
   yvar_choices = yvar, xvar_level = NULL, filter_var = yvar,
   filter_var_choices = filter_var, trt_group, trt_group_level = NULL,
   stat = "mean", hline = NULL, man_color = NULL, xtick = waiver(),
-  xlabel = xtick, rotate_xlab = FALSE, plot_height = c(600, 200, 2000),
-  font_size = c(12, 8, 20), dodge = c(0.4, 0, 1))
+  xlabel = xtick, rotate_xlab = FALSE, plot_height = c(600, 200,
+  2000), font_size = c(12, 8, 20), dodge = c(0.4, 0, 1))
 }
 \arguments{
 \item{label}{menu item label of the module in the teal app.}

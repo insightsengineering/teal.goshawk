@@ -106,7 +106,7 @@ tm_g_boxplot <- function(label,
                          code_data_processing = NULL) {
   
   args <- as.list(environment())
-
+  
   # If there are no choices specified for treatment group/x axis/fact then set the 
   # appropriate choices variable to the treatment group to enable the display of the treatment 
   # group variable on the UI.
@@ -150,27 +150,32 @@ ui_g_boxplot <- function(id, ...) {
       ),
       fluidRow(
         column(width = 12,
+               br(), hr(),
                h4("Selected Data Points"),
-               verbatimTextOutput(ns("brush_data"))
+               tableOutput(ns("brush_data"))
         )
       ),
       fluidRow(
-        uiOutput(ns("table_ui"))
+        column(width = 12,
+               br(), hr(),
+               h4("Descriptive Statistics"),
+               uiOutput(ns("table_ui"))
+        )
       )
     ),
-
+    
     # output = div(tagList(uiOutput(ns("plot_ui")), uiOutput(ns("brush_ui")), uiOutput(ns("table_ui")))),
     encoding =  div(
       tags$label(a$dataname, "Data Settings", class="text-primary"),
       
       optionalSelectInput(inputId = ns("param")
-                         , label = " Select a Biomarker"
-                         , choices = a$param_choices
-                         , selected = a$param
-                         , multiple = FALSE
-                         , width = inpWidth
+                          , label = " Select a Biomarker"
+                          , choices = a$param_choices
+                          , selected = a$param
+                          , multiple = FALSE
+                          , width = inpWidth
       ),
-    
+      
       optionalSelectInput(ns("yaxis_var")
                           , label = "Select a Y-Axis Variable"
                           , choices = a$yaxis_var_choices
@@ -186,7 +191,7 @@ ui_g_boxplot <- function(id, ...) {
                           , multiple = FALSE
                           , width = inpWidth
       ),
-
+      
       optionalSelectInput(ns("facet_var")
                           , label = "Facet by"
                           , choices = a$facet_var_choices
@@ -200,16 +205,16 @@ ui_g_boxplot <- function(id, ...) {
                    inline = FALSE,
                    choiceNames = as.list(c("None", a$filter_labs)),
                    choiceValues = as.list(c("None", a$filter_vars))
-                   ),
-        div(id = ns("y_filter"), style="padding: 0px;",
-            uiOutput(ns("y_select")),
-            div(style="padding: 0px; margin: 0px",
+      ),
+      div(id = ns("y_filter"), style="padding: 0px;",
+          uiOutput(ns("y_select")),
+          div(style="padding: 0px; margin: 0px",
               uiOutput(ns("ymin_value")
-                           , style="display: inline-block; vertical-align:center;"),
+                       , style="display: inline-block; vertical-align:center;"),
               uiOutput(ns("yto"), style="display: inline-block; vertical-align:center;"),
               uiOutput(ns("ymax_value")
-                           , style="display: inline-block; vertical-align:center;")
-            )
+                       , style="display: inline-block; vertical-align:center;")
+          )
       ),
       
       tags$label("Plot Aesthetic Settings", class="text-primary", style="margin-top: 15px;"),
@@ -221,7 +226,7 @@ ui_g_boxplot <- function(id, ...) {
       numericInput(ns("hline"), "Add a Horizontal Line:", a$hline),
       
       uiOutput(ns("yaxis_scale")),
-
+      
       optionalSliderInputValMinMax(ns("plot_height")
                                    , label = "Plot height"
                                    , a$plot_height
@@ -245,7 +250,7 @@ ui_g_boxplot <- function(id, ...) {
                                    , step = 1
                                    , ticks = FALSE
                                    , width = inpWidth
-                                   ),
+      ),
       
       optionalSliderInputValMinMax(ns("alpha")
                                    , label = "Dot Transparency"
@@ -302,21 +307,26 @@ srv_g_boxplot <- function(input, output, session, datasets
     boxsetup = " ",
     tablesetup =  " "
   )
-
+  
   ## dynamic plot height
   output$plot_ui <- renderUI({
     plot_height <- input$plot_height
     validate(need(plot_height, "need valid plot height"))
     
     plotOutput(ns("boxplot"), height = plot_height,
-               brush = brushOpts(id = ns("boxplot_brush"))
-               )
+               brush = brushOpts(id = ns("boxplot_brush"), resetOnNew=T)
+    )
   })
   
-  output$brush_data <- renderPrint({
-    brushedPoints(select(filter_ALB(), "STUDYID", "USUBJID", "ARM", "AVISITCD", "PARAMCD", input$xaxis_var, input$yaxis_var, "LOQFL"), input$boxplot_brush)
+  output$brush_data <- renderTable({
+    if (nrow(filter_ALB()) > 0 ){
+      brushedPoints(select(filter_ALB(), "USUBJID", "ARM", "AVISITCD", "PARAMCD", input$xaxis_var, input$yaxis_var, "LOQFL"),
+                  input$boxplot_brush)
+    } else{
+      NULL
+    }
   })
-  
+
   # filter data by param and the xmin and xmax values from the filter slider.
   filter_ALB <- reactive({
     
@@ -348,7 +358,7 @@ srv_g_boxplot <- function(input, output, session, datasets
       }
     }
     return(alb)
-      
+    
   })
   
   # The current filtered data (by standard Teal filters)
@@ -441,7 +451,7 @@ srv_g_boxplot <- function(input, output, session, datasets
       updateSelectInput(session,"xaxis_var", selected = s)
     }
   })
-
+  
   observeEvent(input$xaxis_var,{
     x <- input$xaxis_var
     f <- input$facet_var
@@ -478,7 +488,7 @@ srv_g_boxplot <- function(input, output, session, datasets
       ymax <- input$ymax
       if (length(ymin) > 0 & !is.null(ymin)) {
         validate(need(ymax >= ymin,
-                    paste("Minimum filter value greater than maximum filter value")))
+                      paste("Minimum filter value greater than maximum filter value")))
       }
     }
     validate(need(!is.null(ALB) && is.data.frame(ALB), "No data left"))
@@ -511,27 +521,27 @@ srv_g_boxplot <- function(input, output, session, datasets
     
     data_name <- paste0("ALB", "_FILTERED")
     assign(data_name, filter_ALB())
-
+    
     chunks$analysis <<- call(
       "g_boxplot",
       data = bquote(.(as.name(data_name))),
-        biomarker = param,
-        yaxis_var = yaxis_var,
-        hline = hline, 
-        facet_ncol = facet_ncol,
-        rotate_xlab = rotate_xlab,
-        trt_group = trt_group,
-        unit = unit,
-        ymin_scale = ymin_scale,
-        ymax_scale = ymax_scale,
-        color_manual = color_manual,
-        shape_manual = shape_manual,
-        alpha = alpha,
-        dot_size = dot_size,
-        font_size = font_size,
-        xaxis_var = xaxis_var,
-        armlabel = armlabel,
-        facet = facet_var
+      biomarker = param,
+      yaxis_var = yaxis_var,
+      hline = hline, 
+      facet_ncol = facet_ncol,
+      rotate_xlab = rotate_xlab,
+      trt_group = trt_group,
+      unit = unit,
+      ymin_scale = ymin_scale,
+      ymax_scale = ymax_scale,
+      color_manual = color_manual,
+      shape_manual = shape_manual,
+      alpha = alpha,
+      dot_size = dot_size,
+      font_size = font_size,
+      xaxis_var = xaxis_var,
+      armlabel = armlabel,
+      facet = facet_var
     )
     
     p <- try(eval(chunks$analysis))
@@ -539,59 +549,59 @@ srv_g_boxplot <- function(input, output, session, datasets
     p
   }
   )
-
-   output$table_ui <- renderTable({
-      ALB <- filter_ALB()
-
-      param <- input$param
-      xaxis_var <- input$yaxis_var
-      font_size <- input$font_size
-      facet <- ifelse(facet_var_choices, input$facet_var, facet_var)
-
-      data_name <- paste0("ALB", "_FILTERED")
-      assign(data_name, ALB)
-      
-      chunks$table <<- call(
-        "t_summarytable",
-        data = bquote(.(as.name(data_name))),
-        trt_group = trt_group,
-        param_var = param_var,
-        param = param,
-        visit_var = facet_var,
-        xaxis_var = xaxis_var, 
-        font_size = font_size
-      )
-      t <- try(eval(chunks$table))
-      if (is(t, "try-error")) validate(need(FALSE, paste0("could not create table for box plot:\n\n", p)))
-      t
-      
+  
+  output$table_ui <- renderTable({
+    ALB <- filter_ALB()
+    
+    param <- input$param
+    xaxis_var <- input$yaxis_var
+    font_size <- input$font_size
+    facet <- ifelse(facet_var_choices, input$facet_var, facet_var)
+    
+    data_name <- paste0("ALB", "_FILTERED")
+    assign(data_name, ALB)
+    
+    chunks$table <<- call(
+      "t_summarytable",
+      data = bquote(.(as.name(data_name))),
+      trt_group = trt_group,
+      param_var = param_var,
+      param = param,
+      visit_var = facet_var,
+      xaxis_var = xaxis_var, 
+      font_size = font_size
+    )
+    t <- try(eval(chunks$table))
+    if (is(t, "try-error")) validate(need(FALSE, paste0("could not create table for box plot:\n\n", p)))
+    t
+    
   })
   
-   observeEvent(input$show_rcode, {
-     
-     header <- teal.tern:::get_rcode_header(
-       title = "Box Plot",
-          datanames = "ALB",
-          datasets = datasets
-       )
-
-     str_rcode <- paste(c(
-       "",
-       header,
-       "",
-       teal.tern:::remove_enclosing_curly_braces(deparse(chunks$boxsetup)),
-       "",
-       deparse(chunks$analysis, width.cutoff = 50),
-       "\n",
-       deparse(chunks$table, width.cutoff = 50)
-       
-     ), collapse = "\n")
-     
-     showModal(modalDialog(
-       title = "R Code for the Current box Plot",
-       tags$pre(tags$code(class="R", str_rcode)),
-       easyClose = TRUE
-     ))
-   })
-   
+  observeEvent(input$show_rcode, {
+    
+    header <- teal.tern:::get_rcode_header(
+      title = "Box Plot",
+      datanames = "ALB",
+      datasets = datasets
+    )
+    
+    str_rcode <- paste(c(
+      "",
+      header,
+      "",
+      teal.tern:::remove_enclosing_curly_braces(deparse(chunks$boxsetup)),
+      "",
+      deparse(chunks$analysis, width.cutoff = 50),
+      "\n",
+      deparse(chunks$table, width.cutoff = 50)
+      
+    ), collapse = "\n")
+    
+    showModal(modalDialog(
+      title = "R Code for the Current box Plot",
+      tags$pre(tags$code(class="R", str_rcode)),
+      easyClose = TRUE
+    ))
+  })
+  
 }
