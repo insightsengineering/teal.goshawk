@@ -210,6 +210,8 @@ srv_g_correlationplot <- function(input, output, session, datasets, dataname,
   yloqfl <- reactive(paste0("LOQFL_", input$yaxis_param))
 
   plot_data_transpose <- reactive({
+    xaxis_var <- input$xaxis_var
+    yaxis_var <- input$yaxis_var
     # given the 2 param and 2 analysis vars we need to transform the data
     plot_data_t1 <- filter_ALB() %>% gather(ANLVARS, ANLVALS, BASE2, BASE, xaxis_var, yaxis_var, LOQFL) %>%
       mutate(ANL.PARAM = ifelse(ANLVARS == "LOQFL", paste0(ANLVARS, "_", PARAMCD), paste0(ANLVARS, ".", PARAMCD))) %>%
@@ -446,7 +448,7 @@ srv_g_correlationplot <- function(input, output, session, datasets, dataname,
     # plot_data_t2 <- filter_tran()
     
     
-    p <- goshawk:::g_correlationplot(
+    p <- goshawk::g_correlationplot(
       data = plot_data_t3,
       param_var = param_var,
       xaxis_param = xaxis_param,
