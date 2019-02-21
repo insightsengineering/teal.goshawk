@@ -321,12 +321,12 @@ srv_g_boxplot <- function(input, output, session, datasets
   output$brush_data <- renderTable({
     if (nrow(filter_ALB()) > 0 ){
       brushedPoints(select(filter_ALB(), "USUBJID", "ARM", "AVISITCD", "PARAMCD", input$xaxis_var, input$yaxis_var, "LOQFL"),
-                  input$boxplot_brush)
+                    input$boxplot_brush)
     } else{
       NULL
     }
   })
-
+  
   # filter data by param and the xmin and xmax values from the filter slider.
   filter_ALB <- reactive({
     
@@ -552,6 +552,7 @@ srv_g_boxplot <- function(input, output, session, datasets
   
   output$table_ui <- renderTable({
     ALB <- filter_ALB()
+    validate(need(nrow(ALB) > 0 , ""))
     
     param <- input$param
     xaxis_var <- input$yaxis_var

@@ -4,16 +4,15 @@
 \alias{tm_g_correlationplot}
 \title{Correlation Plot}
 \usage{
-tm_g_correlationplot(label, dataname, param_var,
-  xaxis_param = xaxis_param, xaxis_param_choices = xaxis_param,
-  xaxis_var = xaxis_var, xaxis_var_choices = xaxis_var,
-  yaxis_param = yaxis_param, yaxis_param_choices = yaxis_param,
-  yaxis_var = yaxis_var, yaxis_var_choices = yaxis_var,
-  trt_group = "ARM", color_manual = NULL, shape_manual = NULL,
-  facet_ncol = 2, facet = FALSE, reg_line = FALSE,
+tm_g_correlationplot(label, dataname, param_var, xaxis_param = xaxis_param,
+  xaxis_param_choices = xaxis_param, xaxis_var = xaxis_var,
+  xaxis_var_choices = xaxis_var, yaxis_param = yaxis_param,
+  yaxis_param_choices = yaxis_param, yaxis_var = yaxis_var,
+  yaxis_var_choices = yaxis_var, trt_group = "ARM", color_manual = NULL,
+  shape_manual = NULL, facet_ncol = 2, facet = FALSE, reg_line = FALSE,
   rotate_xlab = FALSE, hline = NULL, plot_height = c(500, 200, 2000),
-  font_size = c(12, 8, 20), dot_size = c(1, 1, 12),
-  reg_text_size = c(3, 3, 10), pre_output = NULL, post_output = NULL,
+  font_size = c(12, 8, 20), dot_size = c(1, 1, 12), reg_text_size = c(3,
+  3, 10), pre_output = NULL, post_output = NULL,
   code_data_processing = NULL)
 }
 \arguments{

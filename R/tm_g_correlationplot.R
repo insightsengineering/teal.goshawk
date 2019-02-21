@@ -210,8 +210,10 @@ srv_g_correlationplot <- function(input, output, session, datasets, dataname,
   yloqfl <- reactive(paste0("LOQFL_", input$yaxis_param))
 
   plot_data_transpose <- reactive({
+    
     xaxis_var <- input$xaxis_var
     yaxis_var <- input$yaxis_var
+    
     # given the 2 param and 2 analysis vars we need to transform the data
     plot_data_t1 <- filter_ALB() %>% gather(ANLVARS, ANLVALS, BASE2, BASE, xaxis_var, yaxis_var, LOQFL) %>%
       mutate(ANL.PARAM = ifelse(ANLVARS == "LOQFL", paste0(ANLVARS, "_", PARAMCD), paste0(ANLVARS, ".", PARAMCD))) %>%
@@ -229,6 +231,7 @@ srv_g_correlationplot <- function(input, output, session, datasets, dataname,
     constraint_var <- input$constraint_var
     
     if (constraint_var != "NONE"){
+      
       constraint_min_range <- -Inf
       constraint_max_range <- Inf
       
@@ -322,6 +325,8 @@ srv_g_correlationplot <- function(input, output, session, datasets, dataname,
     # conditionally reveal min and max constraint fields
     if (input$constraint_var != "NONE") {
       ALB <- datasets$get_data(dataname, filtered = TRUE, reactive = TRUE)
+      validate(need(nrow(ALB) > 0 , "Waiting For Filter Selection"))
+      
       xaxis_param <- input$xaxis_param
       scale_data <- ALB %>%
         filter(eval(parse(text = param_var)) == xaxis_param)
@@ -352,6 +357,8 @@ srv_g_correlationplot <- function(input, output, session, datasets, dataname,
     # conditionally reveal min and max constraint fields
     if (input$constraint_var != "NONE") {
       ALB <- datasets$get_data(dataname, filtered = TRUE, reactive = TRUE)
+      validate(need(nrow(ALB) > 0 , "Waiting For Filter Selection"))
+      
       xaxis_param <- input$xaxis_param
       scale_data <- ALB %>%
         filter(eval(parse(text = param_var)) == xaxis_param)
@@ -396,7 +403,7 @@ srv_g_correlationplot <- function(input, output, session, datasets, dataname,
     rotate_xlab <- input$rotate_xlab
     
     validate(need(!is.null(ALB) && is.data.frame(ALB), "No data left"))
-    validate(need(nrow(ALB) > 0 , "No observations left"))
+    validate(need(nrow(ALB) > 0 , "ALB Data No Observations Left"))
     validate(need(param_var %in% names(ALB),
                   paste("Biomarker parameter variable", param_var, " is not available in data", dataname)))
     validate(need(xaxis_param %in% unique(ALB[[param_var]]),
@@ -443,7 +450,7 @@ srv_g_correlationplot <- function(input, output, session, datasets, dataname,
     )
 
     plot_data_t3 <- plot_data_transpose()
-    validate(need(nrow(plot_data_t3) > 0 , "No observations left"))
+    validate(need(nrow(plot_data_t3) > 0 , "Plot Data No Observations Left"))
     
     # plot_data_t2 <- filter_tran()
     

@@ -108,14 +108,13 @@
     
     </div>
 
-    <pre class="usage"><span class='fu'>tm_g_spaghettiplot</span>(<span class='no'>label</span>, <span class='no'>dataname</span>, <span class='no'>param_var</span>, <span class='kw'>param_choices</span> <span class='kw'>=</span> <span class='no'>param</span>,
-  <span class='no'>param</span>, <span class='kw'>param_var_label</span> <span class='kw'>=</span> <span class='st'>"PARAM"</span>, <span class='no'>idvar</span>, <span class='no'>xvar</span>, <span class='no'>yvar</span>,
-  <span class='kw'>xvar_choices</span> <span class='kw'>=</span> <span class='no'>xvar</span>, <span class='kw'>yvar_choices</span> <span class='kw'>=</span> <span class='no'>yvar</span>, <span class='kw'>xvar_level</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>filter_var</span> <span class='kw'>=</span> <span class='no'>yvar</span>, <span class='kw'>filter_var_choices</span> <span class='kw'>=</span> <span class='no'>filter_var</span>, <span class='no'>trt_group</span>,
-  <span class='kw'>trt_group_level</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>group_stats</span> <span class='kw'>=</span> <span class='st'>"NONE"</span>, <span class='kw'>hline</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>man_color</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>xtick</span> <span class='kw'>=</span> <span class='fu'>waiver</span>(), <span class='kw'>xlabel</span> <span class='kw'>=</span> <span class='no'>xtick</span>,
-  <span class='kw'>rotate_xlab</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>facet_ncol</span> <span class='kw'>=</span> <span class='fl'>2</span>, <span class='kw'>plot_height</span> <span class='kw'>=</span> <span class='fu'>c</span>(<span class='fl'>600</span>, <span class='fl'>200</span>,
-  <span class='fl'>2000</span>), <span class='kw'>font_size</span> <span class='kw'>=</span> <span class='fu'>c</span>(<span class='fl'>12</span>, <span class='fl'>8</span>, <span class='fl'>20</span>))</pre>
+    <pre class="usage"><span class='fu'>tm_g_spaghettiplot</span>(<span class='no'>label</span>, <span class='no'>dataname</span>, <span class='no'>param_var</span>, <span class='kw'>param_choices</span> <span class='kw'>=</span> <span class='no'>param</span>, <span class='no'>param</span>,
+  <span class='kw'>param_var_label</span> <span class='kw'>=</span> <span class='st'>"PARAM"</span>, <span class='no'>idvar</span>, <span class='no'>xvar</span>, <span class='no'>yvar</span>, <span class='kw'>xvar_choices</span> <span class='kw'>=</span> <span class='no'>xvar</span>,
+  <span class='kw'>yvar_choices</span> <span class='kw'>=</span> <span class='no'>yvar</span>, <span class='kw'>xvar_level</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>filter_var</span> <span class='kw'>=</span> <span class='no'>yvar</span>,
+  <span class='kw'>filter_var_choices</span> <span class='kw'>=</span> <span class='no'>filter_var</span>, <span class='no'>trt_group</span>, <span class='kw'>trt_group_level</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>group_stats</span> <span class='kw'>=</span> <span class='st'>"NONE"</span>, <span class='kw'>hline</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>man_color</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>xtick</span> <span class='kw'>=</span> <span class='fu'>waiver</span>(), <span class='kw'>xlabel</span> <span class='kw'>=</span> <span class='no'>xtick</span>, <span class='kw'>rotate_xlab</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>facet_ncol</span> <span class='kw'>=</span> <span class='fl'>2</span>,
+  <span class='kw'>plot_height</span> <span class='kw'>=</span> <span class='fu'>c</span>(<span class='fl'>600</span>, <span class='fl'>200</span>, <span class='fl'>2000</span>), <span class='kw'>font_size</span> <span class='kw'>=</span> <span class='fu'>c</span>(<span class='fl'>12</span>, <span class='fl'>8</span>, <span class='fl'>20</span>))</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -234,7 +233,7 @@
 
 <span class='fu'>library</span>(<span class='no'>random.cdisc.data</span>)
 
-<span class='no'>ASL</span> <span class='kw'>&lt;-</span> <span class='fu'>radam</span>(<span class='st'>'ASL'</span>, <span class='kw'>N</span> <span class='kw'>=</span> <span class='fl'>100</span>)
+<span class='no'>ASL</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='http://www.rdocumentation.org/packages/random.cdisc.data/topics/radam'>radam</a></span>(<span class='st'>'ASL'</span>, <span class='kw'>N</span> <span class='kw'>=</span> <span class='fl'>100</span>)
 <span class='no'>ANL</span> <span class='kw'>&lt;-</span> <span class='fu'>expand.grid</span>(
   <span class='kw'>STUDYID</span> <span class='kw'>=</span> <span class='st'>"STUDY A"</span>,
   <span class='kw'>USUBJID</span> <span class='kw'>=</span> <span class='fu'>paste0</span>(<span class='st'>"id-"</span>,<span class='fl'>1</span>:<span class='fl'>100</span>),

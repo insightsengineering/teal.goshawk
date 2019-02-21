@@ -218,6 +218,8 @@ srv_g_density_distribution_plot <- function(input, output, session, datasets, da
     # conditionally reveal min and max constraint fields
     if (input$constraint_var != "NONE") {
       ALB <- datasets$get_data(dataname, filtered = TRUE, reactive = TRUE)
+      validate(need(nrow(ALB) > 0 , "Waiting For Filter Selection"))
+      
       param <- input$param
       scale_data <- ALB %>%
         filter(eval(parse(text = param_var)) == param)
@@ -248,6 +250,8 @@ srv_g_density_distribution_plot <- function(input, output, session, datasets, da
     # conditionally reveal min and max constraint fields
     if (input$constraint_var != "NONE") {
       ALB <- datasets$get_data(dataname, filtered = TRUE, reactive = TRUE)
+      validate(need(nrow(ALB) > 0 , "Waiting For Filter Selection"))
+      
       param <- input$param
       scale_data <- ALB %>%
         filter(eval(parse(text = param_var)) == param)
@@ -319,6 +323,8 @@ srv_g_density_distribution_plot <- function(input, output, session, datasets, da
  output$table_ui <- renderTable({
 
    ALB <- filter_ALB()
+   validate(need(nrow(ALB) > 0 , ""))
+   
    param <- input$param
    xaxis_var <- input$xaxis_var
    font_size <- input$font_size

@@ -280,6 +280,8 @@ srv_g_scatterplot <- function(input, output, session, datasets, dataname,
     # conditionally reveal min and max constraint fields
     if (input$constraint_var != "NONE") {
       ALB <- datasets$get_data(dataname, filtered = TRUE, reactive = TRUE)
+      validate(need(nrow(ALB) > 0 , "Waiting For Filter Selection"))
+      
       param <- input$param
       scale_data <- ALB %>%
         filter(eval(parse(text = param_var)) == param)
@@ -310,6 +312,8 @@ srv_g_scatterplot <- function(input, output, session, datasets, dataname,
     # conditionally reveal min and max constraint fields
     if (input$constraint_var != "NONE") {
       ALB <- datasets$get_data(dataname, filtered = TRUE, reactive = TRUE)
+      validate(need(nrow(ALB) > 0 , "Waiting For Filter Selection"))
+      
       param <- input$param
       scale_data <- ALB %>%
         filter(eval(parse(text = param_var)) == param)
