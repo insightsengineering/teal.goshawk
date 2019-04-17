@@ -320,7 +320,7 @@ srv_g_boxplot <- function(input, output, session, datasets
   
   output$brush_data <- renderTable({
     if (nrow(filter_ALB()) > 0 ){
-      brushedPoints(select(filter_ALB(), "USUBJID", "ARM", "AVISITCD", "PARAMCD", input$xaxis_var, input$yaxis_var, "LOQFL"),
+      brushedPoints(select(filter_ALB(), "USUBJID", trt_group, "AVISITCD", "PARAMCD", input$xaxis_var, input$yaxis_var, "LOQFL"),
                     input$boxplot_brush)
     } else{
       NULL
@@ -521,6 +521,13 @@ srv_g_boxplot <- function(input, output, session, datasets
     
     data_name <- paste0("ALB", "_FILTERED")
     assign(data_name, filter_ALB())
+    
+    # re-establish treatment variable label
+    if (trt_group == "ARM"){
+      attributes(ALB_FILTERED$ARM)$label <- "Planned Arm"
+    } else {
+      attributes(ALB_FILTERED$ACTARM)$label <- "Actual Arm"
+    }
     
     chunks$analysis <<- call(
       "g_boxplot",

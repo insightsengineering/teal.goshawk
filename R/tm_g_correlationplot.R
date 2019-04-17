@@ -21,6 +21,7 @@
 #' @param reg_line include regression line and annotations for slope and coefficient in visualization. Use with facet TRUE.
 #' @param rotate_xlab 45 degree rotation of x-axis values.
 #' @param hline y-axis value to position of horizontal line.
+#' @param vline x-axis value to position a vertical line.
 #' @param plot_height controls plot height.
 #' @param font_size font size control for title, x-axis label, y-axis label and legend.
 #' @param dot_size plot dot size.
@@ -69,7 +70,7 @@
 #'        yaxis_param = param_choices[2],
 #'        yaxis_var = "AVAL",
 #'        yaxis_var_choices = c("AVAL", "BASE", "CHG", "PCHG", "BASE2", "AVALL2"),
-#'        trt_group = "ARM",
+#'        trt_group = "ACTARM",
 #'        color_manual = color_manual,
 #'        shape_manual = shape_manual,
 #'        plot_height = c(500, 200, 2000),
@@ -106,6 +107,7 @@ tm_g_correlationplot <- function(label,
                              reg_line = FALSE,
                              rotate_xlab = FALSE,
                              hline = NULL,
+                             vline = NULL,
                              plot_height = c(500, 200, 2000),
                              font_size = c(12, 8, 20),
                              dot_size = c(1, 1, 12),
@@ -157,7 +159,6 @@ ui_g_correlationplot <- function(id, ...) {
     ),
     encoding =  div(
       tags$label(a$dataname, "Data Settings", class="text-primary"),
-      helpText("Analysis data:", tags$code(a$dataname)),
       optionalSelectInput(ns("xaxis_param"), "Select an X-Axis Biomarker", a$xaxis_param_choices, a$xaxis_param, multiple = FALSE),
       optionalSelectInput(ns("xaxis_var"), "Select an X-Axis Variable", a$xaxis_var_choices, a$xaxis_var, multiple = FALSE),
       optionalSelectInput(ns("yaxis_param"), "Select a Y-Axis Biomarker", a$yaxis_param_choices, a$yaxis_param, multiple = FALSE),
@@ -173,6 +174,7 @@ ui_g_correlationplot <- function(id, ...) {
       checkboxInput(ns("reg_line"), "Regression Line", a$reg_line),
       checkboxInput(ns("rotate_xlab"), "Rotate X-axis Label", a$rotate_xlab),
       numericInput(ns("hline"), "Add a horizontal line:", a$hline),
+      numericInput(ns("vline"), "Add a vertical line:", a$vline),
       optionalSliderInputValMinMax(ns("plot_height"), "Plot Height", a$plot_height, ticks = FALSE),
       optionalSliderInputValMinMax(ns("font_size"), "Font Size", a$font_size, ticks = FALSE),
       optionalSliderInputValMinMax(ns("dot_size"), "Dot Size", a$dot_size, ticks = FALSE),
@@ -217,7 +219,7 @@ srv_g_correlationplot <- function(input, output, session, datasets, dataname,
     # given the 2 param and 2 analysis vars we need to transform the data
     plot_data_t1 <- filter_ALB() %>% gather(ANLVARS, ANLVALS, BASE2, BASE, xaxis_var, yaxis_var, LOQFL) %>%
       mutate(ANL.PARAM = ifelse(ANLVARS == "LOQFL", paste0(ANLVARS, "_", PARAMCD), paste0(ANLVARS, ".", PARAMCD))) %>%
-      select(USUBJID, ARM, ARMCD, AVISITN, AVISITCD, ANL.PARAM, ANLVALS) %>%
+      select(USUBJID, trt_group, AVISITN, AVISITCD, ANL.PARAM, ANLVALS) %>%
       spread(ANL.PARAM, ANLVALS)
     
     # the transformed analysis value variables are character and need to be converted to numeric for ggplot
@@ -266,7 +268,7 @@ srv_g_correlationplot <- function(input, output, session, datasets, dataname,
   output$brush_data <- renderTable({
     plot_data_t3 <- plot_data_transpose()
     if (nrow(plot_data_t3) > 0 ){
-    brushedPoints(select(plot_data_t3, "USUBJID", "ARM", "AVISITCD", xvar(), yvar(), LOQFL_COMB),
+    brushedPoints(select(plot_data_t3, "USUBJID", trt_group, "AVISITCD", xvar(), yvar(), LOQFL_COMB),
                   input$correlationplot_brush)
     } else{
       NULL
@@ -397,6 +399,7 @@ srv_g_correlationplot <- function(input, output, session, datasets, dataname,
     dot_size <- input$dot_size
     reg_text_size <- input$reg_text_size
     hline <- as.numeric(input$hline)
+    vline <- as.numeric(input$vline)
     facet_ncol <- input$facet_ncol
     facet <- input$facet
     reg_line <- input$reg_line
@@ -452,7 +455,12 @@ srv_g_correlationplot <- function(input, output, session, datasets, dataname,
     plot_data_t3 <- plot_data_transpose()
     validate(need(nrow(plot_data_t3) > 0 , "Plot Data No Observations Left"))
     
-    # plot_data_t2 <- filter_tran()
+    # re-establish treatment variable label
+    if (trt_group == "ARM"){
+      attributes(plot_data_t3$ARM)$label <- "Planned Arm"
+    } else {
+      attributes(plot_data_t3$ACTARM)$label <- "Actual Arm"
+    }
     
     
     p <- goshawk::g_correlationplot(
@@ -481,7 +489,8 @@ srv_g_correlationplot <- function(input, output, session, datasets, dataname,
       dot_size = dot_size,
       reg_text_size = reg_text_size,
       rotate_xlab = rotate_xlab,
-      hline = hline
+      hline = hline,
+      vline = vline      
     )
 
     p

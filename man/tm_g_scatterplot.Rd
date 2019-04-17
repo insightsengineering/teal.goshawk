@@ -8,9 +8,9 @@ tm_g_scatterplot(label, dataname, param_var, param, param_choices = param,
   xaxis_var, xaxis_var_choices = xaxis_var, yaxis_var,
   yaxis_var_choices = yaxis_var, trt_group = "ARM", color_manual = NULL,
   shape_manual = NULL, facet_ncol = 2, facet = FALSE, reg_line = FALSE,
-  rotate_xlab = FALSE, hline = NULL, plot_height = c(500, 200, 2000),
-  font_size = c(12, 8, 20), dot_size = c(1, 1, 12), reg_text_size = c(3,
-  3, 10), pre_output = NULL, post_output = NULL,
+  rotate_xlab = FALSE, hline = NULL, vline = NULL, plot_height = c(500,
+  200, 2000), font_size = c(12, 8, 20), dot_size = c(1, 1, 12),
+  reg_text_size = c(3, 3, 10), pre_output = NULL, post_output = NULL,
   code_data_processing = NULL)
 }
 \arguments{
@@ -47,6 +47,8 @@ tm_g_scatterplot(label, dataname, param_var, param, param_choices = param,
 \item{rotate_xlab}{45 degree rotation of x-axis values.}
 
 \item{hline}{y-axis value to position of horizontal line.}
+
+\item{vline}{x-axis value to position a vertical line.}
 
 \item{plot_height}{controls plot height.}
 

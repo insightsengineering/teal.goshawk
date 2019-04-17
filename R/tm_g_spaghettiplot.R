@@ -337,6 +337,13 @@ srv_spaghettiplot <- function(input, output, session, datasets, dataname, idvar,
     
     data_name <- paste0(dataname, "_FILTERED")
     assign(data_name, ANL)
+
+    # re-establish treatment variable label
+    if (trt_group == "ARM"){
+      attributes(ANL$ARM)$label <- "Planned Arm"
+    } else {
+      attributes(ANL$ACTARM)$label <- "Actual Arm"
+    }
     
     chunks$analysis <<- call(
       "g_spaghettiplot",

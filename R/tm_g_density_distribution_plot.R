@@ -300,6 +300,13 @@ srv_g_density_distribution_plot <- function(input, output, session, datasets, da
     validate(need(xaxis_var %in% names(ALB),
                   paste("variable", xaxis_var, " is not available in data", dataname)))
 
+    # re-establish treatment variable label
+    if (trt_group == "ARM"){
+      attributes(ALB$ARM)$label <- "Planned Arm"
+    } else {
+      attributes(ALB$ACTARM)$label <- "Actual Arm"
+    }
+    
       p <- goshawk:::g_density_distribution_plot(
         data = ALB,
         param_var = param_var,

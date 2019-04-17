@@ -112,9 +112,9 @@
   <span class='no'>xaxis_var</span>, <span class='kw'>xaxis_var_choices</span> <span class='kw'>=</span> <span class='no'>xaxis_var</span>, <span class='no'>yaxis_var</span>,
   <span class='kw'>yaxis_var_choices</span> <span class='kw'>=</span> <span class='no'>yaxis_var</span>, <span class='kw'>trt_group</span> <span class='kw'>=</span> <span class='st'>"ARM"</span>, <span class='kw'>color_manual</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
   <span class='kw'>shape_manual</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>facet_ncol</span> <span class='kw'>=</span> <span class='fl'>2</span>, <span class='kw'>facet</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>reg_line</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
-  <span class='kw'>rotate_xlab</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>hline</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>plot_height</span> <span class='kw'>=</span> <span class='fu'>c</span>(<span class='fl'>500</span>, <span class='fl'>200</span>, <span class='fl'>2000</span>),
-  <span class='kw'>font_size</span> <span class='kw'>=</span> <span class='fu'>c</span>(<span class='fl'>12</span>, <span class='fl'>8</span>, <span class='fl'>20</span>), <span class='kw'>dot_size</span> <span class='kw'>=</span> <span class='fu'>c</span>(<span class='fl'>1</span>, <span class='fl'>1</span>, <span class='fl'>12</span>), <span class='kw'>reg_text_size</span> <span class='kw'>=</span> <span class='fu'>c</span>(<span class='fl'>3</span>,
-  <span class='fl'>3</span>, <span class='fl'>10</span>), <span class='kw'>pre_output</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>post_output</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>rotate_xlab</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>hline</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>vline</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>plot_height</span> <span class='kw'>=</span> <span class='fu'>c</span>(<span class='fl'>500</span>,
+  <span class='fl'>200</span>, <span class='fl'>2000</span>), <span class='kw'>font_size</span> <span class='kw'>=</span> <span class='fu'>c</span>(<span class='fl'>12</span>, <span class='fl'>8</span>, <span class='fl'>20</span>), <span class='kw'>dot_size</span> <span class='kw'>=</span> <span class='fu'>c</span>(<span class='fl'>1</span>, <span class='fl'>1</span>, <span class='fl'>12</span>),
+  <span class='kw'>reg_text_size</span> <span class='kw'>=</span> <span class='fu'>c</span>(<span class='fl'>3</span>, <span class='fl'>3</span>, <span class='fl'>10</span>), <span class='kw'>pre_output</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>post_output</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
   <span class='kw'>code_data_processing</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
@@ -187,6 +187,10 @@
     <tr>
       <th>hline</th>
       <td><p>y-axis value to position of horizontal line.</p></td>
+    </tr>
+    <tr>
+      <th>vline</th>
+      <td><p>x-axis value to position a vertical line.</p></td>
     </tr>
     <tr>
       <th>plot_height</th>

@@ -19,6 +19,7 @@
 #' @param reg_line include regression line and annotations for slope and coefficient in visualization. Use with facet TRUE.
 #' @param rotate_xlab 45 degree rotation of x-axis values.
 #' @param hline y-axis value to position of horizontal line.
+#' @param vline x-axis value to position a vertical line.
 #' @param plot_height controls plot height.
 #' @param font_size font size control for title, x-axis label, y-axis label and legend.
 #' @param dot_size plot dot size.
@@ -96,6 +97,7 @@ tm_g_scatterplot <- function(label,
                              reg_line = FALSE,
                              rotate_xlab = FALSE,
                              hline = NULL,
+                             vline = NULL,
                              plot_height = c(500, 200, 2000),
                              font_size = c(12, 8, 20),
                              dot_size = c(1, 1, 12),
@@ -146,7 +148,6 @@ ui_g_scatterplot <- function(id, ...) {
     ),
     encoding =  div(
       tags$label(a$dataname, "Data Settings", class="text-primary"),
-      helpText("Analysis data:", tags$code(a$dataname)),
       optionalSelectInput(ns("param"), "Select a Biomarker", a$param_choices, a$param, multiple = FALSE),
       optionalSelectInput(ns("xaxis_var"), "Select an X-Axis Variable", a$xaxis_var_choices, a$xaxis_var, multiple = FALSE),
       optionalSelectInput(ns("yaxis_var"), "Select a Y-Axis Variable", a$yaxis_var_choices, a$yaxis_var, multiple = FALSE),
@@ -161,6 +162,7 @@ ui_g_scatterplot <- function(id, ...) {
       checkboxInput(ns("reg_line"), "Regression Line", a$reg_line),
       checkboxInput(ns("rotate_xlab"), "Rotate X-axis Label", a$rotate_xlab),
       numericInput(ns("hline"), "Add a horizontal line:", a$hline),
+      numericInput(ns("vline"), "Add a vertical line:", a$vline),
       optionalSliderInputValMinMax(ns("plot_height"), "Plot Height", a$plot_height, ticks = FALSE),
       optionalSliderInputValMinMax(ns("font_size"), "Font Size", a$font_size, ticks = FALSE),
       optionalSliderInputValMinMax(ns("dot_size"), "Dot Size", a$dot_size, ticks = FALSE),
@@ -195,7 +197,7 @@ srv_g_scatterplot <- function(input, output, session, datasets, dataname,
   
   output$brush_data <- renderTable({
     if (nrow(filter_ALB()) > 0 ){
-      brushedPoints(select(filter_ALB(),"USUBJID", "ARM", "AVISITCD", "PARAMCD", input$xaxis_var, input$yaxis_var, "LOQFL"), input$scatterplot_brush)
+      brushedPoints(select(filter_ALB(),"USUBJID", trt_group, "AVISITCD", "PARAMCD", input$xaxis_var, input$yaxis_var, "LOQFL"), input$scatterplot_brush)
     } else{
       NULL
     }
@@ -351,6 +353,7 @@ srv_g_scatterplot <- function(input, output, session, datasets, dataname,
     dot_size <- input$dot_size
     reg_text_size <- input$reg_text_size
     hline <- as.numeric(input$hline)
+    vline <- as.numeric(input$vline)
     facet_ncol <- input$facet_ncol
     facet <- input$facet
     reg_line <- input$reg_line
@@ -369,6 +372,13 @@ srv_g_scatterplot <- function(input, output, session, datasets, dataname,
     validate(need(yaxis_var %in% names(ALB),
                   paste("Variable", yaxis_var, " is not available in data", dataname)))
 
+    # re-establish treatment variable label
+    if (trt_group == "ARM"){
+      attributes(ALB$ARM)$label <- "Planned Arm"
+    } else {
+      attributes(ALB$ACTARM)$label <- "Actual Arm"
+    }
+    
     p <- goshawk:::g_scatterplot(
       data = ALB,
       param_var = param_var,
@@ -389,7 +399,8 @@ srv_g_scatterplot <- function(input, output, session, datasets, dataname,
       dot_size = dot_size,
       reg_text_size = reg_text_size,
       rotate_xlab = rotate_xlab,
-      hline = hline
+      hline = hline,
+      vline = vline      
     )
 
     p
