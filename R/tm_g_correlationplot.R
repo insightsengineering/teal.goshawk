@@ -70,7 +70,7 @@
 #'        yaxis_param = param_choices[2],
 #'        yaxis_var = "AVAL",
 #'        yaxis_var_choices = c("AVAL", "BASE", "CHG", "PCHG", "BASE2", "AVALL2"),
-#'        trt_group = "ACTARM",
+#'        trt_group = "ARM",
 #'        color_manual = color_manual,
 #'        shape_manual = shape_manual,
 #'        plot_height = c(500, 200, 2000),
@@ -223,12 +223,18 @@ srv_g_correlationplot <- function(input, output, session, datasets, dataname,
       spread(ANL.PARAM, ANLVALS)
     
     # the transformed analysis value variables are character and need to be converted to numeric for ggplot
-    # remove records where either of the analysis variables are NA since they will not appear on the plot and
-    # will ensure that LOQFL = NA level is removed
+    # remove records where either of the analysis variables are NA since they will not appear on the plot
     plot_data_t2 <- plot_data_t1 %>%
       subset(!is.na(.[[xvar()]]) & !is.na(.[[yvar()]])) %>%
       mutate_at(vars(contains(".")), as.numeric) %>%
-      mutate(LOQFL_COMB = ifelse(.[[xloqfl()]] == "Y" | .[[yloqfl()]] == "Y", "Y", "N"))
+      mutate(LOQFL_COMB = case_when(
+        (.[[xloqfl()]] == "Y" | .[[yloqfl()]] == "Y") ~ "Y",
+        (.[[xloqfl()]] == "N" & .[[yloqfl()]] == "N") ~ "N",
+        (.[[xloqfl()]] == "N" & .[[yloqfl()]] == "NA") ~ "N",
+        (.[[xloqfl()]] == "NA" & .[[yloqfl()]] == "N") ~ "N",
+        (.[[xloqfl()]] == "NA" & .[[yloqfl()]] == "NA") ~ "NA",
+        TRUE ~ as.character(NA)
+      ))
 
     constraint_var <- input$constraint_var
     
