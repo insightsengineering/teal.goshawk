@@ -148,13 +148,13 @@ ui_g_boxplot <- function(id, ...) {
       fluidRow(
         uiOutput(ns("plot_ui"))
       ),
-      fluidRow(
-        column(width = 12,
-               br(), hr(),
-               h4("Selected Data Points"),
-               tableOutput(ns("brush_data"))
-        )
-      ),
+      # fluidRow(
+      #   column(width = 12,
+      #          br(), hr(),
+      #          h4("Selected Data Points"),
+      #          tableOutput(ns("brush_data"))
+      #   )
+      # ),
       fluidRow(
         column(width = 12,
                br(), hr(),
@@ -313,19 +313,19 @@ srv_g_boxplot <- function(input, output, session, datasets
     plot_height <- input$plot_height
     validate(need(plot_height, "need valid plot height"))
     
-    plotOutput(ns("boxplot"), height = plot_height,
-               brush = brushOpts(id = ns("boxplot_brush"), resetOnNew=T)
+    plotOutput(ns("boxplot"), height = plot_height
+               # brush = brushOpts(id = ns("boxplot_brush"), resetOnNew=T)
     )
   })
   
-  output$brush_data <- renderTable({
-    if (nrow(filter_ALB()) > 0 ){
-      brushedPoints(select(filter_ALB(), "USUBJID", trt_group, "AVISITCD", "PARAMCD", input$xaxis_var, input$yaxis_var, "LOQFL"),
-                    input$boxplot_brush)
-    } else{
-      NULL
-    }
-  })
+  # output$brush_data <- renderTable({
+  #   if (nrow(filter_ALB()) > 0 ){
+  #     brushedPoints(select(filter_ALB(), "USUBJID", trt_group, "AVISITCD", "PARAMCD", input$xaxis_var, input$yaxis_var, "LOQFL"),
+  #                   input$boxplot_brush)
+  #   } else{
+  #     NULL
+  #   }
+  # })
   
   # filter data by param and the xmin and xmax values from the filter slider.
   filter_ALB <- reactive({
