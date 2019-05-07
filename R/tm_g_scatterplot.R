@@ -16,6 +16,7 @@
 #' @param shape_manual vector of symbols applied to LOQ values.
 #' @param facet_ncol numeric value indicating number of facets per row.
 #' @param facet set layout to use treatment facetting.
+#' @param facet_var variable to use for treatment facetting.
 #' @param reg_line include regression line and annotations for slope and coefficient in visualization. Use with facet TRUE.
 #' @param rotate_xlab 45 degree rotation of x-axis values.
 #' @param hline y-axis value to position of horizontal line.
@@ -68,6 +69,7 @@
 #'        plot_height = c(500, 200, 2000),
 #'        facet_ncol = 2,
 #'        facet = FALSE,
+#'        facet_var = "ARM",
 #'        reg_line = FALSE,
 #'        font_size = c(12, 8, 20),
 #'        dot_size = c(1, 1, 12),
@@ -94,6 +96,7 @@ tm_g_scatterplot <- function(label,
                              shape_manual = NULL,
                              facet_ncol = 2,
                              facet = FALSE,
+                             facet_var = "ARM",
                              reg_line = FALSE,
                              rotate_xlab = FALSE,
                              hline = NULL,
