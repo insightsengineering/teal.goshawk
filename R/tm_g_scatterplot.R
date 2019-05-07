@@ -49,7 +49,7 @@
 #' # Example using ADaM structure analysis dataset.
 #' # ALB refers to biomarker data stored in expected laboratory structure.
 #'
-#' param_choices <- c("CRP", "ADIGG", "CCL20")
+#' param_choices <- c("CRP", "ADIGG", "CCL20", "ALT")
 #' x <- teal::init(
 #'   data = list(ASL = ASL, ALB = ALB),
 #'   modules = root_modules(
@@ -121,6 +121,7 @@ tm_g_scatterplot <- function(label,
                        xaxis_var = xaxis_var,
                        yaxis_var = yaxis_var,
                        trt_group = trt_group,
+                       facet_var = facet_var,
                        color_manual = color_manual,
                        shape_manual = shape_manual,
                        code_data_processing = code_data_processing
@@ -183,7 +184,7 @@ ui_g_scatterplot <- function(id, ...) {
 
 srv_g_scatterplot <- function(input, output, session, datasets, dataname, 
                               param_var, param, xaxis_var, yaxis_var, 
-                              trt_group, color_manual, shape_manual,
+                              trt_group, facet_var, color_manual, shape_manual,
                               code_data_processing) {
 
   ns <- session$ns
@@ -397,6 +398,7 @@ srv_g_scatterplot <- function(input, output, session, datasets, dataname,
       shape_manual = shape_manual,
       facet_ncol = facet_ncol,
       facet = facet,
+      facet_var = facet_var,
       reg_line = reg_line,
       font_size = font_size,
       dot_size = dot_size,
