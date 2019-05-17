@@ -4,21 +4,18 @@
 \alias{tm_g_lineplot}
 \title{Line plot}
 \usage{
-tm_g_lineplot(label, dataname, aslname = NULL, param_var,
-  param_choices = param, param, param_var_label = "PARAM", xvar, yvar,
-  xvar_choices = xvar, yvar_choices = yvar, xvar_level = NULL,
-  filter_var = yvar, filter_var_choices = filter_var, trt_group,
-  trt_group_level = NULL, lty_choices = NULL, stat = "mean",
-  hline = NULL, man_color = NULL, xtick = waiver(), xlabel = xtick,
-  rotate_xlab = FALSE, plot_height = c(600, 200, 2000),
+tm_g_lineplot(label, dataname, param_var, param_choices = param, param,
+  param_var_label = "PARAM", xvar, yvar, xvar_choices = xvar,
+  yvar_choices = yvar, xvar_level = NULL, filter_var = yvar,
+  filter_var_choices = filter_var, trt_group, trt_group_level = NULL,
+  stat = "mean", hline = NULL, man_color = NULL, xtick = waiver(),
+  xlabel = xtick, rotate_xlab = FALSE, plot_height = c(600, 200, 2000),
   font_size = c(12, 8, 20), dodge = c(0.4, 0, 1))
 }
 \arguments{
 \item{label}{menu item label of the module in the teal app.}
 
 \item{dataname}{analysis data passed to the data argument of teal init. E.g. ADaM structured laboratory data frame ALB.}
-
-\item{aslname}{Name of asl data set from which additional variables will be retrieved}
 
 \item{param_var}{name of variable containing biomarker codes e.g. PARAMCD.}
 
@@ -45,8 +42,6 @@ tm_g_lineplot(label, dataname, aslname = NULL, param_var,
 \item{trt_group}{name of variable representing treatment group e.g. ARM.}
 
 \item{trt_group_level}{vector that can be used to define factor level of trt_group.}
-
-\item{lty_choices}{Vector with names of ASL variables which can be used to split the line}
 
 \item{stat}{string of statistics}
 
@@ -89,11 +84,10 @@ ANL <- expand.grid(
 )
 ANL$VISIT <- paste0("visit ", ANL$VISITN)
 ANL$AVAL <- rnorm(nrow(ANL))
-ANL$AVALU <- "mg"
 ANL$CHG <- rnorm(nrow(ANL), 2, 2)
 ANL$CHG[ANL$VISIT == "visit 1"] <- NA
 ANL$PCHG <- ANL$CHG/ANL$AVAL*100
-ANL$PARAM <- ANL$PARAMCD
+
 ANL$ARM <- factor(ANL$ARM)
 ANL$VISIT <- factor(ANL$VISIT)
 
@@ -103,10 +97,8 @@ x <- teal::init(
     tm_g_lineplot(
       label = "Line Plot",
       dataname = "ALB",
-      aslname = "ASL",
       param_var = "PARAMCD",
       param_choices = c("CRP","IGG","IGM"),
-      lty_choices = c("SEX", "RACE"),
       param = "CRP",
       xvar = "VISIT",
       yvar = "AVAL",
