@@ -6,12 +6,13 @@
 \usage{
 tm_g_boxplot(label, dataname, param_var, param_choices = param, param,
   yaxis_var = "AVAL", yaxis_var_choices = c("AVAL", "CHG"),
-  xaxis_var = "AVISITCD", xaxis_var_choices = NULL, facet_var = "ARM",
-  facet_var_choices = NULL, filter_vars = c("BASE2", "BASE"),
-  filter_labs = c("Screening", "Baseline"), trt_group = "ARM",
-  color_manual = NULL, shape_manual = NULL, hline = NULL,
-  facet_ncol = NULL, rotate_xlab = FALSE, pre_output = NULL,
-  post_output = NULL, armlabel = NULL, plot_height = c(600, 200, 2000),
+  xaxis_var = "AVISITCD", xaxis_var_choices = NULL,
+  facet_var = "ARM", facet_var_choices = NULL,
+  filter_vars = c("BASE2", "BASE"), filter_labs = c("Screening",
+  "Baseline"), trt_group = "ARM", color_manual = NULL,
+  shape_manual = NULL, hline = NULL, facet_ncol = NULL,
+  rotate_xlab = FALSE, pre_output = NULL, post_output = NULL,
+  armlabel = NULL, plot_height = c(600, 200, 2000),
   code_data_processing = NULL)
 }
 \arguments{
@@ -84,12 +85,33 @@ This teal module renders the UI and calls the functions that create a box plot a
 # ALB refers to biomarker data stored in expected laboratory structure.
 
 library(dplyr) 
+library(teal.goshawk)
 
-ASL <- ADSL
-ALB <- ADLB
+library(random.cdisc.data)
+
+ASL <- radam('ASL', N = 100)
+ANL <- expand.grid(
+  STUDYID = "STUDY A",
+  USUBJID = paste0("id-",1:100),
+  VISITN = c(1:10),
+  ARM = c("ARM A", "ARM B"),
+  PARAMCD = c("CRP", "IGG", "IGM")
+)
+ANL$VISIT <- paste0("visit ", ANL$VISITN)
+ANL$AVAL <- rnorm(nrow(ANL))
+ANL$AVALU <- "mg"
+ANL$CHG <- rnorm(nrow(ANL), 2, 2)
+ANL$CHG[ANL$VISIT == "visit 1"] <- NA
+ANL$PCHG <- ANL$CHG/ANL$AVAL*100
+ANL$PARAM <- ANL$PARAMCD
+ANL$ARM <- factor(ANL$ARM)
+ANL$VISIT <- factor(ANL$VISIT)
+ANL <- ANL \%>\% mutate(TRTORD = ifelse(ARM == "ARM A", 1, 2),
+AVISITCD = VISIT,
+LOQFL = NA)
 
 x <- teal::init(
-  data =  list(ASL = ASL, ALB = ALB),
+  data =  list(ASL = ASL, ALB = ANL),
   modules = root_modules(
       tm_g_boxplot(
         label = "Box Plot",
@@ -104,6 +126,8 @@ x <- teal::init(
         xaxis_var_choices = c("ARM", "AVISITCD", "STUDYID"),
         facet_var= "AVISITCD",
         facet_var_choices = c("ARM", "AVISITCD"),
+        filter_vars = c("AVAL"),
+        filter_labs = "AVAL",
         trt_group = "ARM"
       )
   )

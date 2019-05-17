@@ -52,12 +52,33 @@
 #' # ALB refers to biomarker data stored in expected laboratory structure.
 #' 
 #' library(dplyr) 
+#' library(teal.goshawk)
 #' 
-#' ASL <- ADSL
-#' ALB <- ADLB
+#' library(random.cdisc.data)
+#' 
+#' ASL <- radam('ASL', N = 100)
+#' ANL <- expand.grid(
+#'   STUDYID = "STUDY A",
+#'   USUBJID = paste0("id-",1:100),
+#'   VISITN = c(1:10),
+#'   ARM = c("ARM A", "ARM B"),
+#'   PARAMCD = c("CRP", "IGG", "IGM")
+#' )
+#' ANL$VISIT <- paste0("visit ", ANL$VISITN)
+#' ANL$AVAL <- rnorm(nrow(ANL))
+#' ANL$AVALU <- "mg"
+#' ANL$CHG <- rnorm(nrow(ANL), 2, 2)
+#' ANL$CHG[ANL$VISIT == "visit 1"] <- NA
+#' ANL$PCHG <- ANL$CHG/ANL$AVAL*100
+#' ANL$PARAM <- ANL$PARAMCD
+#' ANL$ARM <- factor(ANL$ARM)
+#' ANL$VISIT <- factor(ANL$VISIT)
+#' ANL <- ANL %>% mutate(TRTORD = ifelse(ARM == "ARM A", 1, 2),
+#' AVISITCD = VISIT,
+#' LOQFL = NA)
 #'
 #' x <- teal::init(
-#'   data =  list(ASL = ASL, ALB = ALB),
+#'   data =  list(ASL = ASL, ALB = ANL),
 #'   modules = root_modules(
 #'       tm_g_boxplot(
 #'         label = "Box Plot",
@@ -72,6 +93,8 @@
 #'         xaxis_var_choices = c("ARM", "AVISITCD", "STUDYID"),
 #'         facet_var= "AVISITCD",
 #'         facet_var_choices = c("ARM", "AVISITCD"),
+#'         filter_vars = c("AVAL"),
+#'         filter_labs = "AVAL",
 #'         trt_group = "ARM"
 #'       )
 #'   )
@@ -144,17 +167,19 @@ ui_g_boxplot <- function(id, ...) {
   inpWidth <- NA
   
   standard_layout(
+
+    
     output = div(
       fluidRow(
         uiOutput(ns("plot_ui"))
       ),
-      # fluidRow(
-      #   column(width = 12,
-      #          br(), hr(),
-      #          h4("Selected Data Points"),
-      #          tableOutput(ns("brush_data"))
-      #   )
-      # ),
+      fluidRow(
+        column(width = 12,
+               br(), hr(),
+               h4("Selected Data Points"),
+               tableOutput(ns("brush_data"))
+        )
+      ),
       fluidRow(
         column(width = 12,
                br(), hr(),
@@ -163,8 +188,6 @@ ui_g_boxplot <- function(id, ...) {
         )
       )
     ),
-    
-    # output = div(tagList(uiOutput(ns("plot_ui")), uiOutput(ns("brush_ui")), uiOutput(ns("table_ui")))),
     encoding =  div(
       tags$label(a$dataname, "Data Settings", class="text-primary"),
       
@@ -313,22 +336,54 @@ srv_g_boxplot <- function(input, output, session, datasets
     plot_height <- input$plot_height
     validate(need(plot_height, "need valid plot height"))
     
-    plotOutput(ns("boxplot"), height = plot_height
-               # brush = brushOpts(id = ns("boxplot_brush"), resetOnNew=T)
+    plotOutput(ns("boxplot"), height = plot_height,
+               brush = brushOpts(id = ns("boxplot_brush"), resetOnNew=T)
     )
   })
   
-  # output$brush_data <- renderTable({
-  #   if (nrow(filter_ALB()) > 0 ){
-  #     brushedPoints(select(filter_ALB(), "USUBJID", trt_group, "AVISITCD", "PARAMCD", input$xaxis_var, input$yaxis_var, "LOQFL"),
-  #                   input$boxplot_brush)
-  #   } else{
-  #     NULL
-  #   }
-  # })
+  output$brush_data <- renderTable({
+    if (nrow(filter_ALB()) > 0 ){
+      # brushedPoints(select(filter_ALB(), "USUBJID", trt_group, "AVISITCD", "PARAMCD", input$xaxis_var, input$yaxis_var, "LOQFL"),
+      #               input$boxplot_brush)
+      
+      ##--- identify brushed subset of the mtcars data.frame without brushedPoints
+      req(input$boxplot_brush)
+      # I use shorter variable names for better readability
+      facet.var <- input$boxplot_brush$mapping$panelvar1  # column used for faceting
+      x.axis.var <- input$boxplot_brush$mapping$x  # column used for x-axis
+      y.axis.var <- input$boxplot_brush$mapping$y  # column used fo y-axis
+      facet.value <- input$boxplot_brush$panelvar1  # level of the brushed facet
+      
+      # First, subset the data.frame to those rows that match the brushed facet level
+      datfilt <- select(filter_ALB(), "USUBJID", trt_group, "AVISITCD", "PARAMCD",
+                        input$xaxis_var, input$yaxis_var, "LOQFL") %>% 
+        filter_at(input$facet_var, all_vars(.== facet.value) )
+      
+      # Next, drop levels not used in the current facet
+      datfilt <- droplevels(datfilt)
+      
+      # Finally, within this facet, identify points within the brushed ranges
+      datfilt %>% 
+        filter(
+          # interpret the factor levels as integers, to match how ggplot2
+          # places them on the axes. The 'droplevels' call above ensures that
+          # only levels that are present in the current facet are matched
+          as.integer(datfilt[[x.axis.var]]) < input$boxplot_brush$xmax,
+          as.integer(datfilt[[x.axis.var]]) > input$boxplot_brush$xmin,
+          datfilt[[y.axis.var]] < input$boxplot_brush$ymax,
+          datfilt[[y.axis.var]] > input$boxplot_brush$ymin
+        )
+      
+      
+      
+    } else{
+      NULL
+    }
+  })
   
   # filter data by param and the xmin and xmax values from the filter slider.
   filter_ALB <- reactive({
+    
     
     param <- input$param
     yaxis_var <- input$yaxis_var
@@ -382,6 +437,8 @@ srv_g_boxplot <- function(input, output, session, datasets
   
   # dynamic slider for y-axis - Use ylimits 
   observe({
+   
+    
     if (input$y_filter_by == "None") {
       tagList({
         output$ymin_value <- renderUI({NULL})
