@@ -343,8 +343,39 @@ srv_g_boxplot <- function(input, output, session, datasets
   
   output$brush_data <- renderTable({
     if (nrow(filter_ALB()) > 0 ){
-      brushedPoints(select(filter_ALB(), "USUBJID", trt_group, "AVISITCD", "PARAMCD", input$xaxis_var, input$yaxis_var, "LOQFL"),
-                    input$boxplot_brush)
+      # brushedPoints(select(filter_ALB(), "USUBJID", trt_group, "AVISITCD", "PARAMCD", input$xaxis_var, input$yaxis_var, "LOQFL"),
+      #               input$boxplot_brush)
+      
+      ##--- identify brushed subset of the mtcars data.frame without brushedPoints
+      req(input$boxplot_brush)
+      # I use shorter variable names for better readability
+      facet.var <- input$boxplot_brush$mapping$panelvar1  # column used for faceting
+      x.axis.var <- input$boxplot_brush$mapping$x  # column used for x-axis
+      y.axis.var <- input$boxplot_brush$mapping$y  # column used fo y-axis
+      facet.value <- input$boxplot_brush$panelvar1  # level of the brushed facet
+      
+      # First, subset the data.frame to those rows that match the brushed facet level
+      datfilt <- select(filter_ALB(), "USUBJID", trt_group, "AVISITCD", "PARAMCD",
+                        input$xaxis_var, input$yaxis_var, "LOQFL") %>% 
+        filter_at(input$facet_var, all_vars(.== facet.value) )
+      
+      # Next, drop levels not used in the current facet
+      datfilt <- droplevels(datfilt)
+      
+      # Finally, within this facet, identify points within the brushed ranges
+      datfilt %>% 
+        filter(
+          # interpret the factor levels as integers, to match how ggplot2
+          # places them on the axes. The 'droplevels' call above ensures that
+          # only levels that are present in the current facet are matched
+          as.integer(datfilt[[x.axis.var]]) < input$boxplot_brush$xmax,
+          as.integer(datfilt[[x.axis.var]]) > input$boxplot_brush$xmin,
+          datfilt[[y.axis.var]] < input$boxplot_brush$ymax,
+          datfilt[[y.axis.var]] > input$boxplot_brush$ymin
+        )
+      
+      
+      
     } else{
       NULL
     }
