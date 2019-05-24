@@ -334,7 +334,7 @@ srv_lineplot <- function(input, output, session, datasets, dataname, aslname, pa
     combined <- TRUE
     if (!is.null(input$shape)){
       if ((input$shape)!=""){
-        combined <- FALSE
+        combined <- TRUE
       }
     }
    
