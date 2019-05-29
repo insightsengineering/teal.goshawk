@@ -179,8 +179,7 @@ srv_lineplot <- function(input, output, session, datasets, dataname, aslname, pa
   output$plot_ui <- renderUI({
     plot_height <- input$plot_height
     validate(need(plot_height, "need valid plot height"))
-    tagList(plotOutput(session$ns("lineplot"), height=plot_height),
-    plotOutput(ns("linetable"), height = plot_height))
+    plotOutput(session$ns("lineplot"), height=plot_height)
   })
   
   output$shape_ui <- renderUI({
@@ -331,12 +330,7 @@ srv_lineplot <- function(input, output, session, datasets, dataname, aslname, pa
     hline <- as.numeric(input$hline)
     font_size <- input$font_size
     dodge <- input$dodge
-    combined <- TRUE
-    if (!is.null(input$shape)){
-      if ((input$shape)!=""){
-        combined <- TRUE
-      }
-    }
+    height <- input$plot_height
    
     
     chunks$analysis <<- "# Not Calculated"
@@ -394,7 +388,7 @@ srv_lineplot <- function(input, output, session, datasets, dataname, aslname, pa
       rotate_xlab = rotate_xlab,
       font_size = font_size,
       dodge = dodge,
-      combined = combined
+      plot_height = height
     )
 
     p <- try(eval(chunks$analysis))
@@ -406,20 +400,10 @@ srv_lineplot <- function(input, output, session, datasets, dataname, aslname, pa
   })
   
   output$lineplot <- renderPlot({
-    out <- plotout()
-    if (all(names(plotout) == c("plot", "table"))){
-      return(out$plot)
-    }else{
-      out
-    }
+    plotout()
+
   })
-  
-  output$linetable <- renderPlot({
-    out <- plotout()
-    if (all(names(plotout) == c("plot", "table"))){
-      out$table
-    }
-  })
+
   
   observeEvent(input$show_rcode, {
     
