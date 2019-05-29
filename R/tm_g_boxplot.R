@@ -343,8 +343,6 @@ srv_g_boxplot <- function(input, output, session, datasets
   
   output$brush_data <- renderTable({
     if (nrow(filter_ALB()) > 0 ){
-      # brushedPoints(select(filter_ALB(), "USUBJID", trt_group, "AVISITCD", "PARAMCD", input$xaxis_var, input$yaxis_var, "LOQFL"),
-      #               input$boxplot_brush)
       
       ##--- identify brushed subset of the mtcars data.frame without brushedPoints
       req(input$boxplot_brush)
@@ -357,6 +355,7 @@ srv_g_boxplot <- function(input, output, session, datasets
       # First, subset the data.frame to those rows that match the brushed facet level
       datfilt <- select(filter_ALB(), "USUBJID", trt_group, "AVISITCD", "PARAMCD",
                         input$xaxis_var, input$yaxis_var, "LOQFL") %>% 
+        droplevels() %>% 
         filter_at(input$facet_var, all_vars(.== facet.value) )
       
       # Next, drop levels not used in the current facet
@@ -372,6 +371,9 @@ srv_g_boxplot <- function(input, output, session, datasets
           as.integer(datfilt[[x.axis.var]]) > input$boxplot_brush$xmin,
           datfilt[[y.axis.var]] < input$boxplot_brush$ymax,
           datfilt[[y.axis.var]] > input$boxplot_brush$ymin
+        ) %>% 
+        arrange_at(
+          input$xaxis_var
         )
       
       
