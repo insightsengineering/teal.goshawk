@@ -185,7 +185,7 @@ srv_lineplot <- function(input, output, session, datasets, dataname, aslname, pa
   output$shape_ui <- renderUI({
     if(!is.null(shape_choices)){
       selectInput(ns("shape"), "Select split by line type. Set blank for no split",
-                  choices = c("", shape_choices), selected = "")
+                  choices = c("None", shape_choices), selected = "None")
     }
   })
   
@@ -363,7 +363,7 @@ srv_lineplot <- function(input, output, session, datasets, dataname, aslname, pa
     
     shape <- NULL
     if (!is.null(input$shape)){
-      if (input$shape != ""){
+      if (input$shape != "None"){
         shape <- input$shape
       }
     }
