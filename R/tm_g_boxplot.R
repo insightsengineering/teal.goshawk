@@ -360,7 +360,7 @@ srv_g_boxplot <- function(input, output, session, datasets
         filter_at(input$facet_var, all_vars(.== facet.value) )
       
       # Next, drop levels not used in the current facet
-      datfilt <- droplevels(datfilt)
+      #datfilt <- droplevels(datfilt)
       
       # Finally, within this facet, identify points within the brushed ranges
       datfilt %>% 
