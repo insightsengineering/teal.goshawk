@@ -346,6 +346,7 @@ srv_g_boxplot <- function(input, output, session, datasets
       
       ##--- identify brushed subset of the mtcars data.frame without brushedPoints
       req(input$boxplot_brush)
+      
       # I use shorter variable names for better readability
       facet.var <- input$boxplot_brush$mapping$panelvar1  # column used for faceting
       x.axis.var <- input$boxplot_brush$mapping$x  # column used for x-axis
@@ -357,6 +358,14 @@ srv_g_boxplot <- function(input, output, session, datasets
                         input$xaxis_var, input$yaxis_var, "LOQFL") %>% 
         droplevels() %>% 
         filter_at(input$facet_var, all_vars(.== facet.value) )
+      
+      if (!(is.factor(datfilt[[x.axis.var]])| is.numeric(datfilt[[x.axis.var]]))){
+        datfilt[[x.axis.var]] <- as.factor(datfilt[[x.axis.var]])
+      }
+      
+      if (!(is.factor(datfilt[[y.axis.var]])| is.numeric(datfilt[[y.axis.var]]))){
+        datfilt[[y.axis.var]] <- as.factor(datfilt[[y.axis.var]])
+      }
       
       # Next, drop levels not used in the current facet
       #datfilt <- droplevels(datfilt)
