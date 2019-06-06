@@ -18,7 +18,7 @@
 #' @param yvar_choices vector with variable names that can be used as yvar.
 #' @param trt_group name of variable representing treatment group e.g. ARM.
 #' @param trt_group_level vector that can be used to define factor level of trt_group.
-#' @param lty_choices Vector with names of ASL variables which can be used to split the line
+#' @param shape_choices Vector with names of ASL variables which can be used to change shape
 #' @param man_color string vector representing customized colors
 #' @param stat string of statistics
 #' @param hline numeric value to add horizontal line to plot
@@ -72,7 +72,7 @@
 #'       aslname = "ASL",
 #'       param_var = "PARAMCD",
 #'       param_choices = c("CRP","IGG","IGM"),
-#'       lty_choices = c("SEX", "RACE"),
+#'       shape_choices = c("SEX", "RACE"),
 #'       param = "CRP",
 #'       xvar = "VISIT",
 #'       yvar = "AVAL",
@@ -99,7 +99,7 @@ tm_g_lineplot <- function(label,
                           filter_var_choices = filter_var,
                           trt_group,
                           trt_group_level = NULL,
-                          lty_choices = NULL,
+                          shape_choices = NULL,
                           stat = "mean",
                           hline = NULL,
                           man_color = NULL,
@@ -115,7 +115,7 @@ tm_g_lineplot <- function(label,
     label = label,
     server = srv_lineplot,
     server_args = list(dataname = dataname, aslname = aslname, param_var = param_var, trt_group = trt_group, man_color = man_color,
-                       xvar_level = xvar_level, trt_group_level = trt_group_level, lty_choices = lty_choices, param_var_label = param_var_label,
+                       xvar_level = xvar_level, trt_group_level = trt_group_level, shape_choices = shape_choices, param_var_label = param_var_label,
                        xtick = xtick, xlabel = xlabel),
     ui = ui_lineplot,
     ui_args = args,
@@ -139,7 +139,7 @@ ui_lineplot <- function(id, ...) {
       optionalSelectInput(ns("param"), "Select a Biomarker", a$param_choices, a$param, multiple = FALSE),
       optionalSelectInput(ns("xvar"), "X-Axis Variable", a$xvar_choices, a$xvar, multiple = FALSE),
       optionalSelectInput(ns("yvar"), "Select a Y-Axis Variable", a$yvar_choices, a$yvar, multiple = FALSE),
-      uiOutput(ns("lty_ui")),
+      uiOutput(ns("shape_ui")),
       radioButtons(ns("stat"), "Select a Statistic:", c("mean","median"), a$stat),
       radioButtons(ns("filter_var"), "Data Constraint", a$filter_var_choices, a$filter_var),
       uiOutput(ns("filter_min"), style="display: inline-block; vertical-align:center"),
@@ -171,7 +171,7 @@ ui_lineplot <- function(id, ...) {
 }
 
 srv_lineplot <- function(input, output, session, datasets, dataname, aslname, param_var, trt_group, man_color, xvar_level, 
-                         trt_group_level, lty_choices, param_var_label, xtick, xlabel) {
+                         trt_group_level, shape_choices, param_var_label, xtick, xlabel) {
   
   ns <- session$ns
   
@@ -179,14 +179,13 @@ srv_lineplot <- function(input, output, session, datasets, dataname, aslname, pa
   output$plot_ui <- renderUI({
     plot_height <- input$plot_height
     validate(need(plot_height, "need valid plot height"))
-    tagList(plotOutput(session$ns("lineplot"), height=plot_height),
-    plotOutput(ns("linetable"), height = plot_height))
+    plotOutput(session$ns("lineplot"), height=plot_height)
   })
   
-  output$lty_ui <- renderUI({
-    if(!is.null(lty_choices)){
-      selectInput(ns("lty"), "Select split by line type. Set blank for no split",
-                  choices = c("", lty_choices), selected = "")
+  output$shape_ui <- renderUI({
+    if(!is.null(shape_choices)){
+      selectInput(ns("shape"), "Select split by line type. Set blank for no split",
+                  choices = c("None", shape_choices), selected = "None")
     }
   })
   
@@ -242,12 +241,12 @@ srv_lineplot <- function(input, output, session, datasets, dataname, aslname, pa
     if (!is.null(aslname)){
       ASL <- datasets$get_data(aslname, filtered = TRUE, reactive = TRUE)
     }
-    if(!is.null(lty_choices)){
-      validate(need(aslname, "aslname must be specified when lty_choices is not NULL"))
-      validate(need(all(lty_choices%in%names(ASL)), "lty_choices must be contained in asl!"))
+    if(!is.null(shape_choices)){
+      validate(need(aslname, "aslname must be specified when shape_choices is not NULL"))
+      validate(need(all(shape_choices%in%names(ASL)), "shape_choices must be contained in asl!"))
       ANL <- left_join(
         ANL, 
-        select(ASL, c("STUDYID", "USUBJID",lty_choices)),
+        select(ASL, c("STUDYID", "USUBJID",shape_choices)),
         by = c("STUDYID", "USUBJID")
       )
     }
@@ -331,12 +330,7 @@ srv_lineplot <- function(input, output, session, datasets, dataname, aslname, pa
     hline <- as.numeric(input$hline)
     font_size <- input$font_size
     dodge <- input$dodge
-    combined <- TRUE
-    if (!is.null(input$lty)){
-      if ((input$lty)!=""){
-        combined <- FALSE
-      }
-    }
+    height <- input$plot_height
    
     
     chunks$analysis <<- "# Not Calculated"
@@ -367,10 +361,10 @@ srv_lineplot <- function(input, output, session, datasets, dataname, aslname, pa
       attributes(ANL$ACTARM)$label <- "Actual Arm"
     }
     
-    lty <- NULL
-    if (!is.null(input$lty)){
-      if (input$lty != ""){
-        lty <- input$lty
+    shape <- NULL
+    if (!is.null(input$shape)){
+      if (input$shape != "None"){
+        shape <- input$shape
       }
     }
     chunks$analysis <<- call(
@@ -383,7 +377,7 @@ srv_lineplot <- function(input, output, session, datasets, dataname, aslname, pa
       ylim = ylim,
       trt_group = trt_group,
       trt_group_level = trt_group_level,
-      lty = lty,
+      shape = shape,
       time = xvar,
       time_level = xvar_level,
       color_manual = man_color,
@@ -394,7 +388,7 @@ srv_lineplot <- function(input, output, session, datasets, dataname, aslname, pa
       rotate_xlab = rotate_xlab,
       font_size = font_size,
       dodge = dodge,
-      combined = combined
+      plot_height = height
     )
 
     p <- try(eval(chunks$analysis))
@@ -406,20 +400,10 @@ srv_lineplot <- function(input, output, session, datasets, dataname, aslname, pa
   })
   
   output$lineplot <- renderPlot({
-    out <- plotout()
-    if (all(names(plotout) == c("plot", "table"))){
-      return(out$plot)
-    }else{
-      out
-    }
+    plotout()
+
   })
-  
-  output$linetable <- renderPlot({
-    out <- plotout()
-    if (all(names(plotout) == c("plot", "table"))){
-      out$table
-    }
-  })
+
   
   observeEvent(input$show_rcode, {
     
