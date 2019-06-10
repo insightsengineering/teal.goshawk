@@ -4,7 +4,7 @@
 #'
 #' @param label menu item label of the module in the teal app.
 #' @param dataname analysis data passed to the data argument of teal init. E.g. ADaM structured laboratory data frame ALB.
-#' @param aslname Name of asl data set from which additional variables will be retrieved
+#' @param aslname Name of asl data set from which additional variables will be used for shape_choices
 #' @param param_var name of variable containing biomarker codes e.g. PARAMCD.
 #' @param param_choices list of biomarkers of interest.
 #' @param param biomarker selected.
