@@ -4,16 +4,17 @@
 \alias{tm_g_correlationplot}
 \title{Correlation Plot}
 \usage{
-tm_g_correlationplot(label, dataname, param_var, xaxis_param = xaxis_param,
-  xaxis_param_choices = xaxis_param, xaxis_var = xaxis_var,
-  xaxis_var_choices = xaxis_var, yaxis_param = yaxis_param,
-  yaxis_param_choices = yaxis_param, yaxis_var = yaxis_var,
-  yaxis_var_choices = yaxis_var, trt_group = "ARM", color_manual = NULL,
-  shape_manual = NULL, facet_ncol = 2, facet = FALSE, reg_line = FALSE,
-  rotate_xlab = FALSE, hline = NULL, vline = NULL, plot_height = c(500,
-  200, 2000), font_size = c(12, 8, 20), dot_size = c(1, 1, 12),
-  reg_text_size = c(3, 3, 10), pre_output = NULL, post_output = NULL,
-  code_data_processing = NULL)
+tm_g_correlationplot(label, dataname, param_var,
+  xaxis_param = xaxis_param, xaxis_param_choices = xaxis_param,
+  xaxis_var = xaxis_var, xaxis_var_choices = xaxis_var,
+  yaxis_param = yaxis_param, yaxis_param_choices = yaxis_param,
+  yaxis_var = yaxis_var, yaxis_var_choices = yaxis_var,
+  trt_group = "ARM", color_manual = NULL, shape_manual = NULL,
+  facet_ncol = 2, facet = FALSE, facet_var = "ARM",
+  reg_line = FALSE, rotate_xlab = FALSE, hline = NULL,
+  vline = NULL, plot_height = c(500, 200, 2000), font_size = c(12, 8,
+  20), dot_size = c(1, 1, 12), reg_text_size = c(3, 3, 10),
+  pre_output = NULL, post_output = NULL, code_data_processing = NULL)
 }
 \arguments{
 \item{label}{menu item label of the module in the teal app.}
@@ -47,6 +48,8 @@ tm_g_correlationplot(label, dataname, param_var, xaxis_param = xaxis_param,
 \item{facet_ncol}{numeric value indicating number of facets per row.}
 
 \item{facet}{set layout to use treatment facetting.}
+
+\item{facet_var}{variable to use for treatment facetting.}
 
 \item{reg_line}{include regression line and annotations for slope and coefficient in visualization. Use with facet TRUE.}
 
@@ -86,7 +89,7 @@ This module displays a correlation plot.
 # Example using ADaM structure analysis dataset.
 # ALB refers to biomarker data stored in expected laboratory structure.
 
-param_choices <- c("CRP", "ADIGG", "CCL3", "CCL20")
+param_choices <- c("CRP", "ADIGG", "CCL3", "CCL20", "ALT")
 xaxis_param_choices <- param_choices
 yaxis_param_choices <- param_choices
 
@@ -105,12 +108,13 @@ x <- teal::init(
        yaxis_param = param_choices[2],
        yaxis_var = "AVAL",
        yaxis_var_choices = c("AVAL", "BASE", "CHG", "PCHG", "BASE2", "AVALL2"),
-       trt_group = "ACTARM",
+       trt_group = "ARM",
        color_manual = color_manual,
        shape_manual = shape_manual,
        plot_height = c(500, 200, 2000),
        facet_ncol = 2,
        facet = FALSE,
+       facet_var = "ARM",
        reg_line = FALSE,
        font_size = c(12, 8, 20),
        dot_size = c(1, 1, 12),

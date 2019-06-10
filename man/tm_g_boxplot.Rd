@@ -6,12 +6,13 @@
 \usage{
 tm_g_boxplot(label, dataname, param_var, param_choices = param, param,
   yaxis_var = "AVAL", yaxis_var_choices = c("AVAL", "CHG"),
-  xaxis_var = "AVISITCD", xaxis_var_choices = NULL, facet_var = "ARM",
-  facet_var_choices = NULL, filter_vars = c("BASE2", "BASE"),
-  filter_labs = c("Screening", "Baseline"), trt_group = "ARM",
-  color_manual = NULL, shape_manual = NULL, hline = NULL,
-  facet_ncol = NULL, rotate_xlab = FALSE, pre_output = NULL,
-  post_output = NULL, armlabel = NULL, plot_height = c(600, 200, 2000),
+  xaxis_var = "AVISITCD", xaxis_var_choices = NULL,
+  facet_var = "ARM", facet_var_choices = NULL,
+  filter_vars = c("BASE2", "BASE"), filter_labs = c("Screening",
+  "Baseline"), trt_group = "ARM", color_manual = NULL,
+  shape_manual = NULL, hline = NULL, facet_ncol = NULL,
+  rotate_xlab = FALSE, pre_output = NULL, post_output = NULL,
+  armlabel = NULL, plot_height = c(600, 200, 2000),
   code_data_processing = NULL)
 }
 \arguments{
@@ -37,10 +38,10 @@ tm_g_boxplot(label, dataname, param_var, param_choices = param, param,
 
 \item{facet_var_choices}{variable choices with which to facet the plots.}
 
-\item{filter_vars}{Variables to be used for filtering the data.  The default 
+\item{filter_vars}{variables to be used for filtering the data.  The default 
 is BASE2 and BASE}
 
-\item{filter_labs}{Labels for the radio buttons for the \code{filter_vars}.
+\item{filter_labs}{labels for the radio buttons for the \code{filter_vars}.
 The defaults are "Screening" for BASE2 and "Baseline" for BASE.}
 
 \item{trt_group}{name of variable representing treatment group e.g. ARM.}
@@ -81,12 +82,30 @@ This teal module renders the UI and calls the functions that create a box plot a
 
 \dontrun{
 # Example using ADaM structure analysis dataset.
-# ALB refers to biomarker data stored in expected laboratory structure.
 
-library(dplyr) 
+# original ARM value = dose value
+arm_mapping <- list("A: Drug X" = "150mg QD", "B: Placebo" = "Placebo", "C: Combination" = "Combination")
+color_manual <-  c("150mg QD" = "#000000", "Placebo" = "#3498DB", "Combination" = "#E74C3C")
+# assign LOQ flag symbols: circles for "N" and triangles for "Y", squares for "NA"
+shape_manual <-  c("N"  = 1, "Y"  = 2, "NA" = 0)
 
-ASL <- ADSL
-ALB <- ADLB
+library(random.cdisc.data)
+ASL <- radsl(N = 20, seed = 1)
+ALB <- radlb(ASL, visit_format = "WEEK", n_assessments = 7, seed = 2)
+ALB <- ALB \%>\% 
+mutate(AVISITCD = case_when(
+AVISIT == "SCREENING" ~ "SCR",
+AVISIT == "BASELINE" ~ "BL", grepl("WEEK", AVISIT) ~ paste("W",trimws(substr(AVISIT, start=6, 
+stop=str_locate(AVISIT, "DAY")-1))),
+TRUE ~ as.character(NA))) \%>\%
+mutate(AVISITCDN = case_when(AVISITCD == "SCR" ~ -2,
+AVISITCD == "BL" ~ 0, grepl("W", AVISITCD) ~ as.numeric(gsub("\\\\D+", "", AVISITCD)), TRUE ~ as.numeric(NA))) \%>\%
+# use ARMCD values to order treatment in visualization legend
+mutate(TRTORD = ifelse(grepl("C", ARMCD), 1,
+ifelse(grepl("B", ARMCD), 2,
+ifelse(grepl("A", ARMCD), 3, NA)))) \%>\%
+mutate(ARM = as.character(arm_mapping[match(ARM, names(arm_mapping))])) \%>\%
+mutate(ARM = factor(ARM) \%>\% reorder(TRTORD))
 
 x <- teal::init(
   data =  list(ASL = ASL, ALB = ALB),
