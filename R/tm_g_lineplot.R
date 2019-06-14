@@ -4,6 +4,7 @@
 #'
 #' @param label menu item label of the module in the teal app.
 #' @param dataname analysis data passed to the data argument of teal init. E.g. ADaM structured laboratory data frame ALB.
+#' @param aslname Name of asl data set from which additional variables will be used for shape_choices
 #' @param param_var name of variable containing biomarker codes e.g. PARAMCD.
 #' @param param_choices list of biomarkers of interest.
 #' @param param biomarker selected.
@@ -54,10 +55,11 @@
 #' )
 #' ANL$VISIT <- paste0("visit ", ANL$VISITN)
 #' ANL$AVAL <- rnorm(nrow(ANL))
+#' ANL$AVALU <- "mg"
 #' ANL$CHG <- rnorm(nrow(ANL), 2, 2)
 #' ANL$CHG[ANL$VISIT == "visit 1"] <- NA
 #' ANL$PCHG <- ANL$CHG/ANL$AVAL*100
-#' 
+#' ANL$PARAM <- ANL$PARAMCD
 #' ANL$ARM <- factor(ANL$ARM)
 #' ANL$VISIT <- factor(ANL$VISIT)
 #' 
@@ -67,6 +69,7 @@
 #'     tm_g_lineplot(
 #'       label = "Line Plot",
 #'       dataname = "ALB",
+#'       aslname = "ASL",
 #'       param_var = "PARAMCD",
 #'       param_choices = c("CRP","IGG","IGM"),
 #'       shape_choices = c("SEX", "RACE"),
@@ -84,6 +87,7 @@
 
 tm_g_lineplot <- function(label,
                           dataname,
+                          aslname  = NULL,
                           param_var,
                           param_choices = param,
                           param,
@@ -168,6 +172,7 @@ ui_lineplot <- function(id, ...) {
 
 srv_lineplot <- function(input, output, session, datasets, dataname, aslname, param_var, trt_group, man_color, xvar_level, 
                          trt_group_level, shape_choices, param_var_label, xtick, xlabel) {
+  
   ns <- session$ns
   
   ## dynamic plot height
@@ -313,7 +318,7 @@ srv_lineplot <- function(input, output, session, datasets, dataname, aslname, pa
     analysis = "# Not Calculated"
   )
   
-  output$lineplot <- renderPlot({
+  plotout <- reactive({
     
     ANL <- filter_ANL()
     param <- input$param
@@ -326,6 +331,7 @@ srv_lineplot <- function(input, output, session, datasets, dataname, aslname, pa
     font_size <- input$font_size
     dodge <- input$dodge
     height <- input$plot_height
+   
     
     chunks$analysis <<- "# Not Calculated"
     
@@ -397,6 +403,7 @@ srv_lineplot <- function(input, output, session, datasets, dataname, aslname, pa
     plotout()
 
   })
+
   
   observeEvent(input$show_rcode, {
     
