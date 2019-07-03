@@ -3,18 +3,23 @@
 #' This teal module renders the UI and calls the function that creates a line plot.
 #'
 #' @param label menu item label of the module in the teal app.
-#' @param dataname analysis data passed to the data argument of teal init. E.g. ADaM structured laboratory data frame ALB.
-#' @param aslname Name of asl data set from which additional variables will be used for shape_choices
+#' @param dataname analysis data passed to the data argument of teal init. E.g. ADaM structured 
+#' laboratory data frame ALB.
+#' @param aslname Name of asl data set from which additional variables will be used for 
+#' shape_choices
 #' @param param_var name of variable containing biomarker codes e.g. PARAMCD.
 #' @param param_choices list of biomarkers of interest.
 #' @param param biomarker selected.
 #' @param param_var_label single name of variable in analysis data that includes parameter labels.
-#' @param xvar single name of variable in analysis data that is used as x-axis in the plot for the respective goshawk function.
+#' @param xvar single name of variable in analysis data that is used as x-axis in the plot for the 
+#' respective goshawk function.
 #' @param xvar_choices vector with variable names that can be used as xvar.
-#' @param xvar_level vector that can be used to define the factor level of xvar. Only use it when xvar is character or factor.
+#' @param xvar_level vector that can be used to define the factor level of xvar. Only use it when 
+#' xvar is character or factor.
 #' @param filter_var data constraint variable.
 #' @param filter_var_choices data constraint variable choices.
-#' @param yvar single name of variable in analysis data that is used as summary variable in the respective gshawk function.
+#' @param yvar single name of variable in analysis data that is used as summary variable in the 
+#' respective gshawk function.
 #' @param yvar_choices vector with variable names that can be used as yvar.
 #' @param trt_group name of variable representing treatment group e.g. ARM.
 #' @param trt_group_level vector that can be used to define factor level of trt_group.
@@ -22,8 +27,10 @@
 #' @param man_color string vector representing customized colors
 #' @param stat string of statistics
 #' @param hline numeric value to add horizontal line to plot
-#' @param xtick numeric vector to define the tick values of x-axis when x variable is numeric. Default value is waive().
-#' @param xlabel vector with same length of xtick to define the label of x-axis tick values. Default value is waive().
+#' @param xtick numeric vector to define the tick values of x-axis when x variable is numeric. 
+#' Default value is waive().
+#' @param xlabel vector with same length of xtick to define the label of x-axis tick values. 
+#' Default value is waive().
 #' @param rotate_xlab boolean value indicating whether to rotate x-axis labels.
 #' @param plot_height numeric vectors to define the plot height.
 #' @param font_size control font size for title, x-axis, y-axis and legend font.
@@ -43,28 +50,39 @@
 #'\dontrun{
 #' # EXAMPLE
 #' 
+#' library(dplyr)
+#' library(ggplot)
 #' library(random.cdisc.data)
 #' 
-#' ASL <- radam('ASL', N = 100)
-#' ANL <- expand.grid(
-#'   STUDYID = "STUDY A",
-#'   USUBJID = paste0("id-",1:100),
-#'   VISITN = c(1:10),
-#'   ARM = c("ARM A", "ARM B"),
-#'   PARAMCD = c("CRP", "IGG", "IGM")
-#' )
-#' ANL$VISIT <- paste0("visit ", ANL$VISITN)
-#' ANL$AVAL <- rnorm(nrow(ANL))
-#' ANL$AVALU <- "mg"
-#' ANL$CHG <- rnorm(nrow(ANL), 2, 2)
-#' ANL$CHG[ANL$VISIT == "visit 1"] <- NA
-#' ANL$PCHG <- ANL$CHG/ANL$AVAL*100
-#' ANL$PARAM <- ANL$PARAMCD
-#' ANL$ARM <- factor(ANL$ARM)
-#' ANL$VISIT <- factor(ANL$VISIT)
+#' # original ARM value = dose value
+#' arm_mapping <- list("A: Drug X" = "150mg QD", "B: Placebo" = "Placebo", 
+#' "C: Combination" = "Combination")
+#' color_manual <-  c("150mg QD" = "#000000", "Placebo" = "#3498DB", "Combination" = "#E74C3C")
+#' # assign LOQ flag symbols: circles for "N" and triangles for "Y", squares for "NA"
+#' shape_manual <-  c("N"  = 1, "Y"  = 2, "NA" = 0)
+#' 
+#' ASL <- radsl(N = 20, seed = 1)
+#' ALB <- radlb(ASL, visit_format = "WEEK", n_assessments = 7, seed = 2)
+#' ALB <- ALB %>% 
+#' mutate(AVISITCD = case_when(
+#' AVISIT == "SCREENING" ~ "SCR",
+#' AVISIT == "BASELINE" ~ "BL", grepl("WEEK", AVISIT) ~ paste("W",trimws(substr(AVISIT, start=6, 
+#' stop=str_locate(AVISIT, "DAY")-1))),
+#' TRUE ~ as.character(NA))) %>%
+#' mutate(AVISITCDN = case_when(AVISITCD == "SCR" ~ -2,
+#' AVISITCD == "BL" ~ 0, grepl("W", AVISITCD) ~ as.numeric(gsub("\\D+", "", AVISITCD)), 
+#' TRUE ~ as.numeric(NA))) %>%
+#' # use ARMCD values to order treatment in visualization legend
+#' mutate(TRTORD = ifelse(grepl("C", ARMCD), 1,
+#' ifelse(grepl("B", ARMCD), 2,
+#' ifelse(grepl("A", ARMCD), 3, NA)))) %>%
+#' mutate(ARM = as.character(arm_mapping[match(ARM, names(arm_mapping))])) %>%
+#' mutate(ARM = factor(ARM) %>% reorder(TRTORD))
+#' 
+#' param_choices = c("ALT", "CRP", "IGA")
 #' 
 #' x <- teal::init(
-#'   data = list(ASL = ASL, ALB = ANL),
+#'   data = list(ASL = ASL, ALB = ALB),
 #'   modules = root_modules(
 #'     tm_g_lineplot(
 #'       label = "Line Plot",
@@ -74,7 +92,7 @@
 #'       param_choices = c("CRP","IGG","IGM"),
 #'       shape_choices = c("SEX", "RACE"),
 #'       param = "CRP",
-#'       xvar = "VISIT",
+#'       xvar = "AVISITCD",
 #'       yvar = "AVAL",
 #'       yvar_choices = c("AVAL","CHG","PCGH"),
 #'       trt_group = "ARM"
@@ -228,11 +246,11 @@ srv_lineplot <- function(input, output, session, datasets, dataname, aslname, pa
       })
     }
   })
-
-
+  
+  
   # filter data by param and the y-axis range values
   filter_ANL <- reactive({
-
+    
     param <- input$param
     filter_var <- input$filter_var
     ANL <- datasets$get_data(dataname, filtered = TRUE, reactive = TRUE) %>%
@@ -250,7 +268,7 @@ srv_lineplot <- function(input, output, session, datasets, dataname, aslname, pa
         by = c("STUDYID", "USUBJID")
       )
     }
-
+    
     ymin_scale <- -Inf
     ymax_scale <- Inf
     
@@ -272,8 +290,8 @@ srv_lineplot <- function(input, output, session, datasets, dataname, aslname, pa
     } else {
       return(ANL)
     }
-      
-      
+    
+    
   })
   
   # dynamic slider for y-axis
@@ -282,7 +300,7 @@ srv_lineplot <- function(input, output, session, datasets, dataname, aslname, pa
     value_var <- input$yvar
     median <- ifelse(input$stat=='median',TRUE, FALSE)
     ANL <- filter_ANL() 
-
+    
     scale_data <- ANL %>%
       group_by(eval(parse(text = xvar)),
                eval(parse(text = trt_group))) %>%
@@ -331,7 +349,7 @@ srv_lineplot <- function(input, output, session, datasets, dataname, aslname, pa
     font_size <- input$font_size
     dodge <- input$dodge
     height <- input$plot_height
-   
+    
     
     chunks$analysis <<- "# Not Calculated"
     
@@ -390,9 +408,9 @@ srv_lineplot <- function(input, output, session, datasets, dataname, aslname, pa
       dodge = dodge,
       plot_height = height
     )
-
+    
     p <- try(eval(chunks$analysis))
-
+    
     if (is(p, "try-error")) validate(need(FALSE, paste0("could not create the line plot:\n\n", p)))
     
     p
@@ -401,9 +419,9 @@ srv_lineplot <- function(input, output, session, datasets, dataname, aslname, pa
   
   output$lineplot <- renderPlot({
     plotout()
-
+    
   })
-
+  
   
   observeEvent(input$show_rcode, {
     

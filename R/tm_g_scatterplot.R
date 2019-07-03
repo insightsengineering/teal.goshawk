@@ -3,7 +3,8 @@
 #' This teal module renders the UI and calls the function that creates a scatter plot.
 #'
 #' @param label menu item label of the module in the teal app.
-#' @param dataname analysis data passed to the data argument of teal init. E.g. ADaM structured laboratory data frame ALB.
+#' @param dataname analysis data passed to the data argument of teal init. E.g. ADaM structured 
+#' laboratory data frame ALB.
 #' @param param_var name of variable containing biomarker codes e.g. PARAMCD.
 #' @param param_choices list of biomarkers of interest.
 #' @param param biomarker selected.
@@ -17,7 +18,8 @@
 #' @param facet_ncol numeric value indicating number of facets per row.
 #' @param facet set layout to use treatment facetting.
 #' @param facet_var variable to use for treatment facetting.
-#' @param reg_line include regression line and annotations for slope and coefficient in visualization. Use with facet TRUE.
+#' @param reg_line include regression line and annotations for slope and coefficient in 
+#' visualization. Use with facet TRUE.
 #' @param rotate_xlab 45 degree rotation of x-axis values.
 #' @param hline y-axis value to position of horizontal line.
 #' @param vline x-axis value to position a vertical line.
@@ -47,9 +49,38 @@
 #' 
 #'\dontrun{
 #' # Example using ADaM structure analysis dataset.
-#' # ALB refers to biomarker data stored in expected laboratory structure.
-#'
-#' param_choices <- c("CRP", "ADIGG", "CCL20", "ALT")
+#' 
+#' library(dplyr)
+#' library(ggplot)
+#' library(random.cdisc.data)
+#' 
+#' # original ARM value = dose value
+#' arm_mapping <- list("A: Drug X" = "150mg QD", "B: Placebo" = "Placebo", 
+#' "C: Combination" = "Combination")
+#' color_manual <-  c("150mg QD" = "#000000", "Placebo" = "#3498DB", "Combination" = "#E74C3C")
+#' # assign LOQ flag symbols: circles for "N" and triangles for "Y", squares for "NA"
+#' shape_manual <-  c("N"  = 1, "Y"  = 2, "NA" = 0)
+#' 
+#' ASL <- radsl(N = 20, seed = 1)
+#' ALB <- radlb(ASL, visit_format = "WEEK", n_assessments = 7, seed = 2)
+#' ALB <- ALB %>% 
+#' mutate(AVISITCD = case_when(
+#' AVISIT == "SCREENING" ~ "SCR",
+#' AVISIT == "BASELINE" ~ "BL", grepl("WEEK", AVISIT) ~ paste("W",trimws(substr(AVISIT, start=6, 
+#' stop=str_locate(AVISIT, "DAY")-1))),
+#' TRUE ~ as.character(NA))) %>%
+#' mutate(AVISITCDN = case_when(AVISITCD == "SCR" ~ -2,
+#' AVISITCD == "BL" ~ 0, grepl("W", AVISITCD) ~ as.numeric(gsub("\\D+", "", AVISITCD)), 
+#' TRUE ~ as.numeric(NA))) %>%
+#' # use ARMCD values to order treatment in visualization legend
+#' mutate(TRTORD = ifelse(grepl("C", ARMCD), 1,
+#' ifelse(grepl("B", ARMCD), 2,
+#' ifelse(grepl("A", ARMCD), 3, NA)))) %>%
+#' mutate(ARM = as.character(arm_mapping[match(ARM, names(arm_mapping))])) %>%
+#' mutate(ARM = factor(ARM) %>% reorder(TRTORD))
+#' 
+#' param_choices = c("ALT", "CRP", "IGA")
+#' 
 #' x <- teal::init(
 #'   data = list(ASL = ASL, ALB = ALB),
 #'   modules = root_modules(
@@ -108,9 +139,9 @@ tm_g_scatterplot <- function(label,
                              pre_output = NULL,
                              post_output = NULL,
                              code_data_processing = NULL) {
-
+  
   args <- as.list(environment())
-
+  
   module(
     label = label,
     filters = dataname,
@@ -125,7 +156,7 @@ tm_g_scatterplot <- function(label,
                        color_manual = color_manual,
                        shape_manual = shape_manual,
                        code_data_processing = code_data_processing
-                       ),
+    ),
     ui = ui_g_scatterplot,
     ui_args = args
   )
@@ -133,14 +164,14 @@ tm_g_scatterplot <- function(label,
 }
 
 ui_g_scatterplot <- function(id, ...) {
-
+  
   ns <- NS(id)
   a <- list(...)
-
+  
   standard_layout(
     output = div(
       fluidRow(
-             uiOutput(ns("plot_ui"))
+        uiOutput(ns("plot_ui"))
       ),
       fluidRow(
         column(width = 12,
@@ -179,14 +210,14 @@ ui_g_scatterplot <- function(id, ...) {
     pre_output = a$pre_output,
     post_output = a$post_output
   )
-
+  
 }
 
 srv_g_scatterplot <- function(input, output, session, datasets, dataname, 
                               param_var, param, xaxis_var, yaxis_var, 
                               trt_group, facet_var, color_manual, shape_manual,
                               code_data_processing) {
-
+  
   ns <- session$ns
   
   # dynamic plot height and brushing
@@ -196,8 +227,8 @@ srv_g_scatterplot <- function(input, output, session, datasets, dataname,
     
     plotOutput(ns("scatterplot"), height = plot_height,
                brush = brushOpts(id = ns("scatterplot_brush"), resetOnNew=T)
-               )
-    })
+    )
+  })
   
   output$brush_data <- renderTable({
     if (nrow(filter_ALB()) > 0 ){
@@ -206,7 +237,7 @@ srv_g_scatterplot <- function(input, output, session, datasets, dataname,
       NULL
     }
   })
-
+  
   # dynamic slider for x-axis
   output$xaxis_zoom <- renderUI({
     ALB <- datasets$get_data(dataname, reactive = TRUE, filtered = TRUE)
@@ -229,7 +260,7 @@ srv_g_scatterplot <- function(input, output, session, datasets, dataname,
     })
     
   })
-
+  
   # dynamic slider for y-axis
   output$yaxis_zoom <- renderUI({
     ALB <- datasets$get_data(dataname, reactive = TRUE, filtered = TRUE)
@@ -362,7 +393,7 @@ srv_g_scatterplot <- function(input, output, session, datasets, dataname,
     facet <- input$facet
     reg_line <- input$reg_line
     rotate_xlab <- input$rotate_xlab
-
+    
     validate(need(!is.null(ALB) && is.data.frame(ALB), "No data left"))
     validate(need(nrow(ALB) > 0 , "No observations left"))
     validate(need(param_var %in% names(ALB),
@@ -375,7 +406,7 @@ srv_g_scatterplot <- function(input, output, session, datasets, dataname,
                   paste("Variable", xaxis_var, " is not available in data", dataname)))
     validate(need(yaxis_var %in% names(ALB),
                   paste("Variable", yaxis_var, " is not available in data", dataname)))
-
+    
     # re-establish treatment variable label
     if (trt_group == "ARM"){
       attributes(ALB$ARM)$label <- "Planned Arm"
@@ -407,10 +438,9 @@ srv_g_scatterplot <- function(input, output, session, datasets, dataname,
       hline = hline,
       vline = vline      
     )
-
+    
     p
-
+    
   })
   
 }
- 

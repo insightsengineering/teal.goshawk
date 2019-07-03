@@ -3,7 +3,8 @@
 #' This teal module renders the UI and calls the function that creates a correlation plot.
 #'
 #' @param label menu item label of the module in the teal app.
-#' @param dataname analysis data passed to the data argument of teal init. E.g. ADaM structured laboratory data frame ALB.
+#' @param dataname analysis data passed to the data argument of teal init. E.g. ADaM structured 
+#' laboratory data frame ALB.
 #' @param param_var name of variable containing biomarker codes e.g. PARAMCD.
 #' @param xaxis_param_choices list of biomarkers of interest.
 #' @param xaxis_param biomarker selected.
@@ -19,7 +20,8 @@
 #' @param facet_ncol numeric value indicating number of facets per row.
 #' @param facet set layout to use treatment facetting.
 #' @param facet_var variable to use for treatment facetting.
-#' @param reg_line include regression line and annotations for slope and coefficient in visualization. Use with facet TRUE.
+#' @param reg_line include regression line and annotations for slope and coefficient in 
+#' visualization. Use with facet TRUE.
 #' @param rotate_xlab 45 degree rotation of x-axis values.
 #' @param hline y-axis value to position of horizontal line.
 #' @param vline x-axis value to position a vertical line.
@@ -50,11 +52,37 @@
 #' 
 #'\dontrun{
 #' # Example using ADaM structure analysis dataset.
-#' # ALB refers to biomarker data stored in expected laboratory structure.
-#'
-#' param_choices <- c("CRP", "ADIGG", "CCL3", "CCL20", "ALT")
-#' xaxis_param_choices <- param_choices
-#' yaxis_param_choices <- param_choices
+#' 
+#' library(dplyr)
+#' library(ggplot)
+#' library(random.cdisc.data)
+#' 
+#' # original ARM value = dose value
+#' arm_mapping <- list("A: Drug X" = "150mg QD", "B: Placebo" = "Placebo", 
+#' "C: Combination" = "Combination")
+#' color_manual <-  c("150mg QD" = "#000000", "Placebo" = "#3498DB", "Combination" = "#E74C3C")
+#' # assign LOQ flag symbols: circles for "N" and triangles for "Y", squares for "NA"
+#' shape_manual <-  c("N"  = 1, "Y"  = 2, "NA" = 0)
+#' 
+#' ASL <- radsl(N = 20, seed = 1)
+#' ALB <- radlb(ASL, visit_format = "WEEK", n_assessments = 7, seed = 2)
+#' ALB <- ALB %>% 
+#' mutate(AVISITCD = case_when(
+#' AVISIT == "SCREENING" ~ "SCR",
+#' AVISIT == "BASELINE" ~ "BL", grepl("WEEK", AVISIT) ~ paste("W",trimws(substr(AVISIT, start=6, 
+#' stop=str_locate(AVISIT, "DAY")-1))),
+#' TRUE ~ as.character(NA))) %>%
+#' mutate(AVISITCDN = case_when(AVISITCD == "SCR" ~ -2,
+#' AVISITCD == "BL" ~ 0, grepl("W", AVISITCD) ~ as.numeric(gsub("\\D+", "", AVISITCD)), 
+#' TRUE ~ as.numeric(NA))) %>%
+#' # use ARMCD values to order treatment in visualization legend
+#' mutate(TRTORD = ifelse(grepl("C", ARMCD), 1,
+#' ifelse(grepl("B", ARMCD), 2,
+#' ifelse(grepl("A", ARMCD), 3, NA)))) %>%
+#' mutate(ARM = as.character(arm_mapping[match(ARM, names(arm_mapping))])) %>%
+#' mutate(ARM = factor(ARM) %>% reorder(TRTORD))
+#' 
+#' param_choices = c("ALT", "CRP", "IGA")
 #' 
 #' x <- teal::init(
 #'   data = list(ASL = ASL, ALB = ALB),
@@ -91,36 +119,36 @@
 #'}
 
 tm_g_correlationplot <- function(label,
-                             dataname,
-                             param_var,
-                             xaxis_param = xaxis_param,
-                             xaxis_param_choices = xaxis_param,
-                             xaxis_var = xaxis_var,
-                             xaxis_var_choices = xaxis_var,
-                             yaxis_param = yaxis_param,
-                             yaxis_param_choices = yaxis_param,
-                             yaxis_var = yaxis_var, 
-                             yaxis_var_choices = yaxis_var,
-                             trt_group = "ARM",
-                             color_manual = NULL,
-                             shape_manual = NULL,
-                             facet_ncol = 2,
-                             facet = FALSE,
-                             facet_var = "ARM",
-                             reg_line = FALSE,
-                             rotate_xlab = FALSE,
-                             hline = NULL,
-                             vline = NULL,
-                             plot_height = c(500, 200, 2000),
-                             font_size = c(12, 8, 20),
-                             dot_size = c(1, 1, 12),
-                             reg_text_size = c(3, 3, 10),
-                             pre_output = NULL,
-                             post_output = NULL,
-                             code_data_processing = NULL) {
-
+                                 dataname,
+                                 param_var,
+                                 xaxis_param = xaxis_param,
+                                 xaxis_param_choices = xaxis_param,
+                                 xaxis_var = xaxis_var,
+                                 xaxis_var_choices = xaxis_var,
+                                 yaxis_param = yaxis_param,
+                                 yaxis_param_choices = yaxis_param,
+                                 yaxis_var = yaxis_var, 
+                                 yaxis_var_choices = yaxis_var,
+                                 trt_group = "ARM",
+                                 color_manual = NULL,
+                                 shape_manual = NULL,
+                                 facet_ncol = 2,
+                                 facet = FALSE,
+                                 facet_var = "ARM",
+                                 reg_line = FALSE,
+                                 rotate_xlab = FALSE,
+                                 hline = NULL,
+                                 vline = NULL,
+                                 plot_height = c(500, 200, 2000),
+                                 font_size = c(12, 8, 20),
+                                 dot_size = c(1, 1, 12),
+                                 reg_text_size = c(3, 3, 10),
+                                 pre_output = NULL,
+                                 post_output = NULL,
+                                 code_data_processing = NULL) {
+  
   args <- as.list(environment())
-
+  
   module(
     label = label,
     filters = dataname,
@@ -136,7 +164,7 @@ tm_g_correlationplot <- function(label,
                        color_manual = color_manual,
                        shape_manual = shape_manual,
                        code_data_processing = code_data_processing
-                       ),
+    ),
     ui = ui_g_correlationplot,
     ui_args = args
   )
@@ -144,14 +172,14 @@ tm_g_correlationplot <- function(label,
 }
 
 ui_g_correlationplot <- function(id, ...) {
-
+  
   ns <- NS(id)
   a <- list(...)
-
+  
   standard_layout(
     output = div(
       fluidRow(
-             uiOutput(ns("plot_ui"))
+        uiOutput(ns("plot_ui"))
       ),
       fluidRow(
         column(width = 12,
@@ -191,16 +219,16 @@ ui_g_correlationplot <- function(id, ...) {
     pre_output = a$pre_output,
     post_output = a$post_output
   )
-
+  
 }
 
 srv_g_correlationplot <- function(input, output, session, datasets, dataname, 
-                              param_var, xaxis_param, xaxis_var, yaxis_param, yaxis_var, 
-                              trt_group, facet_var, color_manual, shape_manual,
-                              code_data_processing) {
-
+                                  param_var, xaxis_param, xaxis_var, yaxis_param, yaxis_var, 
+                                  trt_group, facet_var, color_manual, shape_manual,
+                                  code_data_processing) {
+  
   ns <- session$ns
-
+  
   # filter data to selected params
   filter_ALB <- reactive({
     xaxis_param <- input$xaxis_param
@@ -214,7 +242,7 @@ srv_g_correlationplot <- function(input, output, session, datasets, dataname,
   yvar <- reactive(paste0(input$yaxis_var, ".", input$yaxis_param))
   xloqfl <- reactive(paste0("LOQFL_", input$xaxis_param))
   yloqfl <- reactive(paste0("LOQFL_", input$yaxis_param))
-
+  
   plot_data_transpose <- reactive({
     
     xaxis_var <- input$xaxis_var
@@ -239,7 +267,7 @@ srv_g_correlationplot <- function(input, output, session, datasets, dataname,
         (.[[xloqfl()]] == "NA" & .[[yloqfl()]] == "NA") ~ "NA",
         TRUE ~ as.character(NA)
       ))
-
+    
     constraint_var <- input$constraint_var
     
     if (constraint_var != "NONE"){
@@ -272,18 +300,18 @@ srv_g_correlationplot <- function(input, output, session, datasets, dataname,
     
     plotOutput(ns("correlationplot"), height = plot_height,
                brush = brushOpts(id = ns("correlationplot_brush"), resetOnNew=T)
-               )
-    })
-
+    )
+  })
+  
   output$brush_data <- renderTable({
     plot_data_t3 <- plot_data_transpose()
     if (nrow(plot_data_t3) > 0 ){
-    brushedPoints(select(plot_data_t3, "USUBJID", trt_group, "AVISITCD", xvar(), yvar(), LOQFL_COMB),
-                  input$correlationplot_brush)
+      brushedPoints(select(plot_data_t3, "USUBJID", trt_group, "AVISITCD", xvar(), yvar(), LOQFL_COMB),
+                    input$correlationplot_brush)
     } else{
       NULL
     }
-      
+    
   })
   
   # dynamic slider for x-axis
@@ -308,7 +336,7 @@ srv_g_correlationplot <- function(input, output, session, datasets, dataname,
     })
     
   })
-
+  
   # dynamic slider for y-axis
   output$yaxis_zoom <- renderUI({
     ALB <- datasets$get_data(dataname, reactive = TRUE, filtered = TRUE)
@@ -433,35 +461,35 @@ srv_g_correlationplot <- function(input, output, session, datasets, dataname,
     param_lookup <- unique(ALB[c("PARAMCD", "PARAM")])
     unit_lookup <- unique(ALB[c("PARAMCD", "AVALU")])
     lookups <- inner_join(param_lookup, unit_lookup, by=c("PARAMCD"))
-
+    
     xparam_meta <- lookups %>%
       filter(PARAMCD == xaxis_param)
     xparam <- xparam_meta$PARAM
     xunit <- xparam_meta$AVALU
-
+    
     yparam_meta <- lookups %>%
       filter(PARAMCD == yaxis_param)
     yparam <- yparam_meta$PARAM
     yunit <- yparam_meta$AVALU
-
+    
     # setup the ggtitle label.  Combine the biomarker and the units (if available)
     title_text <- ifelse(is.null(ALB$AVALU), paste(xparam, "and", yparam, "@ Visits"),
-                           ifelse(ALB[["AVALU"]] == "", paste(xparam, "and", yparam, "@ Visits"),
-                                  paste0(xparam, " (", xunit,") and ", yparam,  " (", yunit,") @ Visits"))
+                         ifelse(ALB[["AVALU"]] == "", paste(xparam, "and", yparam, "@ Visits"),
+                                paste0(xparam, " (", xunit,") and ", yparam,  " (", yunit,") @ Visits"))
     )
-
+    
     # setup the x-axis label.  Combine the biomarker and the units (if available)
     xaxis_lab <- ifelse(is.null(ALB$AVALU), paste(xparam, xaxis_var, "Values"),
-                         ifelse(ALB[["AVALU"]] == "", paste(xparam, xaxis_var, "Values"),
-                                paste0(xparam," (", xunit, ") ", xaxis_var, " Values"))
+                        ifelse(ALB[["AVALU"]] == "", paste(xparam, xaxis_var, "Values"),
+                               paste0(xparam," (", xunit, ") ", xaxis_var, " Values"))
     )
-
+    
     # setup the y-axis label.  Combine the biomarker and the units (if available)
     yaxis_lab <- ifelse(is.null(ALB$AVALU), paste(yparam, yaxis_var, "Values"),
-                         ifelse(ALB[["AVALU"]] == "", paste(yparam, yaxis_var, "Values"),
-                                paste0(yparam," (", yunit,") ", yaxis_var, " Values"))
+                        ifelse(ALB[["AVALU"]] == "", paste(yparam, yaxis_var, "Values"),
+                               paste0(yparam," (", yunit,") ", yaxis_var, " Values"))
     )
-
+    
     plot_data_t3 <- plot_data_transpose()
     validate(need(nrow(plot_data_t3) > 0 , "Plot Data No Observations Left"))
     
@@ -503,9 +531,9 @@ srv_g_correlationplot <- function(input, output, session, datasets, dataname,
       hline = hline,
       vline = vline      
     )
-
+    
     p
-
+    
   })
   
 }

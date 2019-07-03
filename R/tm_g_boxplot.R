@@ -1,9 +1,11 @@
 #' Box Plot
 #'
-#' This teal module renders the UI and calls the functions that create a box plot and accompanying summary table.
+#' This teal module renders the UI and calls the functions that create a box plot and accompanying 
+#' summary table.
 #'
 #' @param label menu item label of the module in the teal app.
-#' @param dataname analysis data passed to the data argument of teal init. E.g. ADaM structured laboratory data frame ALB.
+#' @param dataname analysis data passed to the data argument of teal init. E.g. ADaM structured 
+#' laboratory data frame ALB.
 #' @param param_var name of variable containing biomarker codes e.g. PARAMCD.
 #' @param param_choices list of biomarkers of interest.
 #' @param param biomarker selected.
@@ -20,7 +22,8 @@
 #' @param trt_group name of variable representing treatment group e.g. ARM.
 #' @param armlabel label for the treatment symbols in the legend.
 #'        If not specified then the label attribute for trt_group will be used. 
-#'        If there is no label attribute for trt_group, then the name of the parameter (in title case) will be used.
+#'        If there is no label attribute for trt_group, then the name of the parameter (in title 
+#'        case) will be used.
 #' @param color_manual vector of colors applied to treatment values.
 #' @param shape_manual vector of symbols applied to LOQ values.
 #' @param facet_ncol numeric value indicating number of facets per row.
@@ -50,13 +53,17 @@
 #'\dontrun{
 #' # Example using ADaM structure analysis dataset.
 #' 
+#' library(dplyr)
+#' library(ggplot)
+#' library(random.cdisc.data)
+#' 
 #' # original ARM value = dose value
-#' arm_mapping <- list("A: Drug X" = "150mg QD", "B: Placebo" = "Placebo", "C: Combination" = "Combination")
+#' arm_mapping <- list("A: Drug X" = "150mg QD", "B: Placebo" = "Placebo", 
+#' "C: Combination" = "Combination")
 #' color_manual <-  c("150mg QD" = "#000000", "Placebo" = "#3498DB", "Combination" = "#E74C3C")
 #' # assign LOQ flag symbols: circles for "N" and triangles for "Y", squares for "NA"
 #' shape_manual <-  c("N"  = 1, "Y"  = 2, "NA" = 0)
 #' 
-#' library(random.cdisc.data)
 #' ASL <- radsl(N = 20, seed = 1)
 #' ALB <- radlb(ASL, visit_format = "WEEK", n_assessments = 7, seed = 2)
 #' ALB <- ALB %>% 
@@ -66,13 +73,16 @@
 #' stop=str_locate(AVISIT, "DAY")-1))),
 #' TRUE ~ as.character(NA))) %>%
 #' mutate(AVISITCDN = case_when(AVISITCD == "SCR" ~ -2,
-#' AVISITCD == "BL" ~ 0, grepl("W", AVISITCD) ~ as.numeric(gsub("\\D+", "", AVISITCD)), TRUE ~ as.numeric(NA))) %>%
+#' AVISITCD == "BL" ~ 0, grepl("W", AVISITCD) ~ as.numeric(gsub("\\D+", "", AVISITCD)), 
+#' TRUE ~ as.numeric(NA))) %>%
 #' # use ARMCD values to order treatment in visualization legend
 #' mutate(TRTORD = ifelse(grepl("C", ARMCD), 1,
 #' ifelse(grepl("B", ARMCD), 2,
 #' ifelse(grepl("A", ARMCD), 3, NA)))) %>%
 #' mutate(ARM = as.character(arm_mapping[match(ARM, names(arm_mapping))])) %>%
 #' mutate(ARM = factor(ARM) %>% reorder(TRTORD))
+#' 
+#' param_choices = c("ALT", "CRP", "IGA")
 #' 
 #' x <- teal::init(
 #'   data =  list(ASL = ASL, ALB = ALB),
@@ -81,8 +91,8 @@
 #'         label = "Box Plot",
 #'         dataname = "ALB",
 #'         param_var = "PARAMCD",
-#'         param = "CRP",
-#'         param_choices = c("CRP", "IGA", "IGG", "IGM"),
+#'         param_choices = param_choices,
+#'         param = param_choices[1],
 #'         yaxis_var = "AVAL",
 #'         yaxis_var_choices = c("AVAL", "BASE", "CHG"),
 #'         rotate_xlab = FALSE,
@@ -162,7 +172,7 @@ ui_g_boxplot <- function(id, ...) {
   inpWidth <- NA
   
   standard_layout(
-
+    
     
     output = div(
       fluidRow(
@@ -443,7 +453,7 @@ srv_g_boxplot <- function(input, output, session, datasets
   
   # dynamic slider for y-axis - Use ylimits 
   observe({
-   
+    
     
     if (input$y_filter_by == "None") {
       tagList({

@@ -3,25 +3,32 @@
 #' This teal module renders the UI and calls the function that creates a spaghetti plot.
 #'
 #' @param label menu item label of the module in the teal app.
-#' @param dataname analysis data passed to the data argument of teal init. E.g. ADaM structured laboratory data frame ALB.
+#' @param dataname analysis data passed to the data argument of teal init. E.g. ADaM structured 
+#' laboratory data frame ALB.
 #' @param param_var name of variable containing biomarker codes e.g. PARAMCD.
 #' @param param_choices list of biomarkers of interest.
 #' @param param biomarker selected.
 #' @param param_var_label single name of variable in analysis data that includes parameter labels.
 #' @param idvar name of unique subject id variable.
-#' @param xvar single name of variable in analysis data that is used as x-axis in the plot for the respective goshawk function.
+#' @param xvar single name of variable in analysis data that is used as x-axis in the plot for the 
+#' respective goshawk function.
 #' @param xvar_choices vector with variable names that can be used as xvar.
-#' @param xvar_level vector that can be used to define the factor level of xvar. Only use it when xvar is character or factor.
+#' @param xvar_level vector that can be used to define the factor level of xvar. Only use it when 
+#' xvar is character or factor.
 #' @param filter_var data constraint variable.
 #' @param filter_var_choices data constraint variable choices.
-#' @param yvar single name of variable in analysis data that is used as summary variable in the respective gshawk function.
+#' @param yvar single name of variable in analysis data that is used as summary variable in the 
+#' respective gshawk function.
 #' @param yvar_choices vector with variable names that can be used as yvar.
 #' @param trt_group name of variable representing treatment group e.g. ARM.
 #' @param trt_group_level vector that can be used to define factor level of trt_group.
 #' @param man_color string vector representing customized colors
+#' @param color_comb name or hex value for combined treatment color.
 #' @param hline numeric value to add horizontal line to plot
-#' @param xtick numeric vector to define the tick values of x-axis when x variable is numeric. Default value is waive().
-#' @param xlabel vector with same length of xtick to define the label of x-axis tick values. Default value is waive().
+#' @param xtick numeric vector to define the tick values of x-axis when x variable is numeric. 
+#' Default value is waive().
+#' @param xlabel vector with same length of xtick to define the label of x-axis tick values. Default
+#'  value is waive().
 #' @param rotate_xlab boolean value indicating whether to rotate x-axis labels
 #' @param facet_ncol numeric value indicating number of facets per row.
 #' @param plot_height numeric vectors to define the plot height.
@@ -42,40 +49,52 @@
 #'\dontrun{
 #' # EXAMPLE
 #' 
+#' library(dplyr)
+#' library(ggplot)
 #' library(random.cdisc.data)
 #' 
-#' ASL <- radam('ASL', N = 100)
-#' ANL <- expand.grid(
-#'   STUDYID = "STUDY A",
-#'   USUBJID = paste0("id-",1:100),
-#'   VISITN = c(1:10),
-#'   ARM = c("ARM A", "ARM B"),
-#'   PARAMCD = c("CRP", "IGG", "IGM")
-#' )
-#' ANL$VISIT <- paste0("visit ", ANL$VISITN)
-#' ANL$AVAL <- rnorm(nrow(ANL))
-#' ANL$CHG <- rnorm(nrow(ANL), 2, 2)
-#' ANL$CHG[ANL$VISIT == "visit 1"] <- NA
-#' ANL$PCHG <- ANL$CHG/ANL$AVAL*100
-#' ANL$AVALU <- "U"
+#' # original ARM value = dose value
+#' arm_mapping <- list("A: Drug X" = "150mg QD", "B: Placebo" = "Placebo", 
+#' "C: Combination" = "Combination")
+#' color_manual <-  c("150mg QD" = "#000000", "Placebo" = "#3498DB", "Combination" = "#E74C3C")
+#' # assign LOQ flag symbols: circles for "N" and triangles for "Y", squares for "NA"
+#' shape_manual <-  c("N"  = 1, "Y"  = 2, "NA" = 0)
 #' 
-#' ANL$ARM <- factor(ANL$ARM)
-#' ANL$VISIT <- factor(ANL$VISIT)
+#' ASL <- radsl(N = 20, seed = 1)
+#' ALB <- radlb(ASL, visit_format = "WEEK", n_assessments = 7, seed = 2)
+#' ALB <- ALB %>% 
+#' mutate(AVISITCD = case_when(
+#' AVISIT == "SCREENING" ~ "SCR",
+#' AVISIT == "BASELINE" ~ "BL", grepl("WEEK", AVISIT) ~ paste("W",trimws(substr(AVISIT, start=6, 
+#' stop=str_locate(AVISIT, "DAY")-1))),
+#' TRUE ~ as.character(NA))) %>%
+#' mutate(AVISITCDN = case_when(AVISITCD == "SCR" ~ -2,
+#' AVISITCD == "BL" ~ 0, grepl("W", AVISITCD) ~ as.numeric(gsub("\\D+", "", AVISITCD)), 
+#' TRUE ~ as.numeric(NA))) %>%
+#' # use ARMCD values to order treatment in visualization legend
+#' mutate(TRTORD = ifelse(grepl("C", ARMCD), 1,
+#' ifelse(grepl("B", ARMCD), 2,
+#' ifelse(grepl("A", ARMCD), 3, NA)))) %>%
+#' mutate(ARM = as.character(arm_mapping[match(ARM, names(arm_mapping))])) %>%
+#' mutate(ARM = factor(ARM) %>% reorder(TRTORD))
+#' 
+#' param_choices = c("ALT", "CRP", "IGA")
 #' 
 #' x <- teal::init(
-#'   data = list(ASL = ASL, ALB = ANL),
+#'   data = list(ASL = ASL, ALB = ALB),
 #'   modules = root_modules(
 #'     tm_g_spaghettiplot(
 #'       label = "Spaghetti Plot",
 #'       dataname = "ALB",
 #'       param_var = "PARAMCD",
-#'       param = "CRP",
-#'       param_choices = c("CRP","IGG","IGM"),
+#'       param_choices = param_choices,
+#'       param = param_choices[1],
 #'       idvar = "USUBJID",
-#'       xvar = "VISIT",
+#'       xvar = "AVISITCD",
 #'       yvar = "AVAL",
 #'       yvar_choices = c("AVAL","CHG", "PCHG"),
-#'       trt_group = "ARM"
+#'       trt_group = "ARM",
+#'       color_comb = "#39ff14"
 #'     )
 #'   )
 #' )
@@ -100,6 +119,7 @@ tm_g_spaghettiplot <- function(label,
                                group_stats = "NONE",
                                hline = NULL,
                                man_color = NULL,
+                               color_comb = NULL,
                                xtick = waiver(), xlabel = xtick,
                                rotate_xlab = FALSE,
                                facet_ncol = 2,
@@ -113,7 +133,7 @@ tm_g_spaghettiplot <- function(label,
     server = srv_spaghettiplot,
     server_args = list(dataname = dataname, idvar = idvar, param_var = param_var, trt_group = trt_group, yvar = yvar,
                        xvar_level = xvar_level, trt_group_level = trt_group_level, man_color = man_color,
-                       param_var_label = param_var_label, xtick = xtick, xlabel = xlabel),
+                       color_comb = color_comb, param_var_label = param_var_label, xtick = xtick, xlabel = xlabel),
     ui = ui_spaghettiplot,
     ui_args = args,
     filters = dataname
@@ -182,8 +202,8 @@ ui_spaghettiplot <- function(id, ...) {
   
 }
 
-srv_spaghettiplot <- function(input, output, session, datasets, dataname, idvar, param_var, trt_group, man_color, yvar, xvar_level, 
-                              trt_group_level, param_var_label, xtick, xlabel) {
+srv_spaghettiplot <- function(input, output, session, datasets, dataname, idvar, param_var, trt_group, man_color, 
+                              color_comb, yvar, xvar_level, trt_group_level, param_var_label, xtick, xlabel) {
   
   ns <- session$ns
   
@@ -193,8 +213,8 @@ srv_spaghettiplot <- function(input, output, session, datasets, dataname, idvar,
     validate(need(plot_height, "need valid plot height"))
     
     plotOutput(ns("spaghettiplot"), height=plot_height)
-               # brush = brushOpts(id = ns("spaghettiplot_brush"))
-               # )
+    # brush = brushOpts(id = ns("spaghettiplot_brush"))
+    # )
   })
   
   # output$brush_data <- renderDataTable({
@@ -238,8 +258,8 @@ srv_spaghettiplot <- function(input, output, session, datasets, dataname, idvar,
     }
   })
   
-
-    # Filter data based on input filter_var
+  
+  # Filter data based on input filter_var
   observe({
     # derive min max value of input filter_var
     ANL <- datasets$get_data(dataname, filtered = TRUE, reactive = TRUE)
@@ -282,14 +302,14 @@ srv_spaghettiplot <- function(input, output, session, datasets, dataname, idvar,
   # dynamic slider for y-axis
   output$yaxis_scale <- renderUI({
     ANL <- filter_ANL()
-
+    
     ymin_scale <- -Inf
     ymax_scale <- Inf
     
     # identify min and max values of BM range ignoring NA values
     ymin_scale <- min(ANL[[input$yvar]], na.rm = TRUE)
     ymax_scale <- max(ANL[[input$yvar]], na.rm = TRUE)
-     
+    
     tagList({
       sliderInput(ns("yrange_scale"), label="Y-Axis Range Zoom", 
                   floor(ymin_scale), ceiling(ymax_scale), 
@@ -337,7 +357,7 @@ srv_spaghettiplot <- function(input, output, session, datasets, dataname, idvar,
     
     data_name <- paste0(dataname, "_FILTERED")
     assign(data_name, ANL)
-
+    
     # re-establish treatment variable label
     if (trt_group == "ARM"){
       attributes(ANL$ARM)$label <- "Planned Arm"
@@ -358,6 +378,7 @@ srv_spaghettiplot <- function(input, output, session, datasets, dataname, idvar,
       time = xvar,
       time_level = xvar_level,
       color_manual = man_color,
+      color_comb = color_comb,
       ylim = ylim,
       facet_ncol = facet_ncol,
       hline = hline,
