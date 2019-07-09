@@ -51,7 +51,7 @@
 #' # EXAMPLE
 #' 
 #' library(dplyr)
-#' library(ggplot)
+#' library(ggplot2)
 #' library(random.cdisc.data)
 #' 
 #' # original ARM value = dose value
@@ -249,6 +249,8 @@ srv_lineplot <- function(input, output, session, datasets, dataname, aslname, pa
   
   
   # filter data by param and the y-axis range values
+  # neutralized this join to expect that the line splitting ASL variables are in the ALB data set. 
+  # this block needs to be removed during re-factoring
   filter_ANL <- reactive({
     
     param <- input$param
@@ -261,10 +263,10 @@ srv_lineplot <- function(input, output, session, datasets, dataname, aslname, pa
     }
     if(!is.null(shape_choices)){
       validate(need(aslname, "aslname must be specified when shape_choices is not NULL"))
-      validate(need(all(shape_choices%in%names(ASL)), "shape_choices must be contained in asl!"))
+      validate(need(all(shape_choices%in%names(ASL)), "shape_choices must be contained in ASL!"))
       ANL <- left_join(
         ANL, 
-        select(ASL, c("STUDYID", "USUBJID",shape_choices)),
+        select(ASL, c("STUDYID", "USUBJID")), # removed shape_choices from this statement to neutralize
         by = c("STUDYID", "USUBJID")
       )
     }

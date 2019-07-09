@@ -54,7 +54,7 @@
 #' # Example using ADaM structure analysis dataset.
 #' 
 #' library(dplyr)
-#' library(ggplot)
+#' library(ggplot2)
 #' library(random.cdisc.data)
 #' 
 #' # original ARM value = dose value
@@ -99,7 +99,7 @@
 #'         xaxis_var = "ARM",
 #'         xaxis_var_choices = c("ARM", "AVISITCD", "STUDYID"),
 #'         facet_var= "AVISITCD",
-#'         facet_var_choices = c("ARM", "AVISITCD"),
+#'         facet_var_choices = c("ARM", "AVISITCD", "SEX"),
 #'         trt_group = "ARM"
 #'       )
 #'   )
@@ -359,7 +359,7 @@ srv_g_boxplot <- function(input, output, session, datasets
       facet.value <- input$boxplot_brush$panelvar1  # level of the brushed facet
       
       # First, subset the data.frame to those rows that match the brushed facet level
-      datfilt <- select(filter_ALB(), "USUBJID", trt_group, "AVISITCD", "PARAMCD",
+      datfilt <- select(filter_ALB(), "USUBJID", trt_group, input$boxplot_brush$mapping$panelvar1, "AVISITCD", "PARAMCD",
                         input$xaxis_var, input$yaxis_var, "LOQFL") %>% 
         droplevels() %>% 
         filter_at(input$facet_var, all_vars(.== facet.value) )
