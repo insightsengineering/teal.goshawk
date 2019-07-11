@@ -26,9 +26,7 @@
 #' 
 #' @import DescTools
 #' @import dplyr
-#' @import ggplot2
 #' @import goshawk
-#' @import shiny
 #' @import teal
 #'
 #' @author Nick Paszty (npaszty) paszty.nicholas@gene.com
@@ -46,7 +44,8 @@
 #' library(dplyr)
 #' library(ggplot)
 #' library(random.cdisc.data)
-#' 
+#' library(stringr)
+#'  
 #' # original ARM value = dose value
 #' arm_mapping <- list("A: Drug X" = "150mg QD", "B: Placebo" = "Placebo", 
 #' "C: Combination" = "Combination")
@@ -342,7 +341,7 @@ srv_g_density_distribution_plot <- function(input, output, session, datasets, da
       attributes(ALB$ACTARM)$label <- "Actual Arm"
     }
     
-    p <- goshawk:::g_density_distribution_plot(
+    p <- g_density_distribution_plot(
       data = ALB,
       param_var = param_var,
       param = param,
@@ -372,7 +371,7 @@ srv_g_density_distribution_plot <- function(input, output, session, datasets, da
     xaxis_var <- input$xaxis_var
     font_size <- input$font_size
     
-    t <- goshawk:::t_summarytable(
+    t <- t_summarytable(
       data = ALB,
       trt_group = trt_group,
       param_var = param_var,

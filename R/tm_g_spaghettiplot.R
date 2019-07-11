@@ -50,8 +50,9 @@
 #' # EXAMPLE
 #' 
 #' library(dplyr)
-#' library(ggplot)
+#' library(ggplot2)
 #' library(random.cdisc.data)
+#' library(stringr)
 #' 
 #' # original ARM value = dose value
 #' arm_mapping <- list("A: Drug X" = "150mg QD", "B: Placebo" = "Placebo", 
@@ -93,6 +94,8 @@
 #'       xvar = "AVISITCD",
 #'       yvar = "AVAL",
 #'       yvar_choices = c("AVAL","CHG", "PCHG"),
+#'       filter_var = 'NONE',
+#'       filter_var_choices = c("None" = "NONE", "Screening" = "BASE2", "Baseline" = "BASE"),
 #'       trt_group = "ARM",
 #'       color_comb = "#39ff14"
 #'     )
@@ -396,30 +399,6 @@ srv_spaghettiplot <- function(input, output, session, datasets, dataname, idvar,
     
     p
     
-  })
-  
-  observeEvent(input$show_rcode, {
-    
-    header <- teal.tern:::get_rcode_header(
-      title = "Spaghetti Plot",
-      datanames = dataname,
-      datasets = datasets
-    )
-    
-    str_rcode <- paste(c(
-      "",
-      header,
-      "",
-      teal.tern:::remove_enclosing_curly_braces(deparse(chunks$analysis, width.cutoff = 60))
-    ), glue_collapse = "\n")
-    
-    # .log("show R code")
-    showModal(modalDialog(
-      title = "R Code for the Current Spaghetti Plot",
-      tags$pre(tags$code(class="R", str_rcode)),
-      easyClose = TRUE,
-      size = "l"
-    ))
   })
   
 }

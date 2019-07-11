@@ -36,9 +36,7 @@
 #'
 #' @import DescTools
 #' @import dplyr
-#' @import ggplot2
 #' @import goshawk
-#' @import shiny
 #' @import teal
 #'
 #' @details This module displays a scatter plot. link to specification file \url{http://rstudio.com}
@@ -53,6 +51,7 @@
 #' library(dplyr)
 #' library(ggplot)
 #' library(random.cdisc.data)
+#' library(stringr)
 #' 
 #' # original ARM value = dose value
 #' arm_mapping <- list("A: Drug X" = "150mg QD", "B: Placebo" = "Placebo", 
@@ -414,7 +413,7 @@ srv_g_scatterplot <- function(input, output, session, datasets, dataname,
       attributes(ALB$ACTARM)$label <- "Actual Arm"
     }
     
-    p <- goshawk:::g_scatterplot(
+    p <- g_scatterplot(
       data = ALB,
       param_var = param_var,
       param = param,

@@ -19,7 +19,8 @@ tm_g_correlationplot(label, dataname, param_var,
 \arguments{
 \item{label}{menu item label of the module in the teal app.}
 
-\item{dataname}{analysis data passed to the data argument of teal init. E.g. ADaM structured laboratory data frame ALB.}
+\item{dataname}{analysis data passed to the data argument of teal init. E.g. ADaM structured 
+laboratory data frame ALB.}
 
 \item{param_var}{name of variable containing biomarker codes e.g. PARAMCD.}
 
@@ -51,7 +52,8 @@ tm_g_correlationplot(label, dataname, param_var,
 
 \item{facet_var}{variable to use for treatment facetting.}
 
-\item{reg_line}{include regression line and annotations for slope and coefficient in visualization. Use with facet TRUE.}
+\item{reg_line}{include regression line and annotations for slope and coefficient in 
+visualization. Use with facet TRUE.}
 
 \item{rotate_xlab}{45 degree rotation of x-axis values.}
 
@@ -87,11 +89,38 @@ This module displays a correlation plot.
 
 \dontrun{
 # Example using ADaM structure analysis dataset.
-# ALB refers to biomarker data stored in expected laboratory structure.
 
-param_choices <- c("CRP", "ADIGG", "CCL3", "CCL20", "ALT")
-xaxis_param_choices <- param_choices
-yaxis_param_choices <- param_choices
+library(dplyr)
+library(ggplot)
+library(random.cdisc.data)
+library(stringr)
+
+# original ARM value = dose value
+arm_mapping <- list("A: Drug X" = "150mg QD", "B: Placebo" = "Placebo", 
+"C: Combination" = "Combination")
+color_manual <-  c("150mg QD" = "#000000", "Placebo" = "#3498DB", "Combination" = "#E74C3C")
+# assign LOQ flag symbols: circles for "N" and triangles for "Y", squares for "NA"
+shape_manual <-  c("N"  = 1, "Y"  = 2, "NA" = 0)
+
+ASL <- radsl(N = 20, seed = 1)
+ALB <- radlb(ASL, visit_format = "WEEK", n_assessments = 7, seed = 2)
+ALB <- ALB \%>\% 
+mutate(AVISITCD = case_when(
+AVISIT == "SCREENING" ~ "SCR",
+AVISIT == "BASELINE" ~ "BL", grepl("WEEK", AVISIT) ~ paste("W",trimws(substr(AVISIT, start=6, 
+stop=str_locate(AVISIT, "DAY")-1))),
+TRUE ~ as.character(NA))) \%>\%
+mutate(AVISITCDN = case_when(AVISITCD == "SCR" ~ -2,
+AVISITCD == "BL" ~ 0, grepl("W", AVISITCD) ~ as.numeric(gsub("\\\\D+", "", AVISITCD)), 
+TRUE ~ as.numeric(NA))) \%>\%
+# use ARMCD values to order treatment in visualization legend
+mutate(TRTORD = ifelse(grepl("C", ARMCD), 1,
+ifelse(grepl("B", ARMCD), 2,
+ifelse(grepl("A", ARMCD), 3, NA)))) \%>\%
+mutate(ARM = as.character(arm_mapping[match(ARM, names(arm_mapping))])) \%>\%
+mutate(ARM = factor(ARM) \%>\% reorder(TRTORD))
+
+param_choices = c("ALT", "CRP", "IGA")
 
 x <- teal::init(
   data = list(ASL = ASL, ALB = ALB),

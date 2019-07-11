@@ -38,9 +38,7 @@
 #'
 #' @import DescTools
 #' @import dplyr
-#' @import ggplot2
 #' @import goshawk
-#' @import shiny
 #' @import teal
 #' @import tidyr
 #'
@@ -56,6 +54,7 @@
 #' library(dplyr)
 #' library(ggplot)
 #' library(random.cdisc.data)
+#' library(stringr)
 #' 
 #' # original ARM value = dose value
 #' arm_mapping <- list("A: Drug X" = "150mg QD", "B: Placebo" = "Placebo", 

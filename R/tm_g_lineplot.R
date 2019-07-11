@@ -53,6 +53,7 @@
 #' library(dplyr)
 #' library(ggplot2)
 #' library(random.cdisc.data)
+#' library(stringr)
 #' 
 #' # original ARM value = dose value
 #' arm_mapping <- list("A: Drug X" = "150mg QD", "B: Placebo" = "Placebo", 
@@ -95,6 +96,8 @@
 #'       xvar = "AVISITCD",
 #'       yvar = "AVAL",
 #'       yvar_choices = c("AVAL","CHG","PCGH"),
+#'       filter_var = 'NONE',
+#'       filter_var_choices = c("None" = "NONE", "Screening" = "BASE2", "Baseline" = "BASE"),
 #'       trt_group = "ARM"
 #'     )
 #'   )
@@ -258,18 +261,18 @@ srv_lineplot <- function(input, output, session, datasets, dataname, aslname, pa
     ANL <- datasets$get_data(dataname, filtered = TRUE, reactive = TRUE) %>%
       filter(eval(parse(text = param_var)) == param)
     
-    if (!is.null(aslname)){
-      ASL <- datasets$get_data(aslname, filtered = TRUE, reactive = TRUE)
-    }
-    if(!is.null(shape_choices)){
-      validate(need(aslname, "aslname must be specified when shape_choices is not NULL"))
-      validate(need(all(shape_choices%in%names(ASL)), "shape_choices must be contained in ASL!"))
-      ANL <- left_join(
-        ANL, 
-        select(ASL, c("STUDYID", "USUBJID")), # removed shape_choices from this statement to neutralize
-        by = c("STUDYID", "USUBJID")
-      )
-    }
+    # if (!is.null(aslname)){
+    #   ASL <- datasets$get_data(aslname, filtered = TRUE, reactive = TRUE)
+    # }
+    # if(!is.null(shape_choices)){
+    #   validate(need(aslname, "aslname must be specified when shape_choices is not NULL"))
+    #   validate(need(all(shape_choices%in%names(ASL)), "shape_choices must be contained in ASL!"))
+    #   ANL <- left_join(
+    #     ANL, 
+    #     select(ASL, c("STUDYID", "USUBJID")), # removed shape_choices from this statement to neutralize
+    #     by = c("STUDYID", "USUBJID")
+    #   )
+    # }
     
     ymin_scale <- -Inf
     ymax_scale <- Inf
@@ -422,31 +425,6 @@ srv_lineplot <- function(input, output, session, datasets, dataname, aslname, pa
   output$lineplot <- renderPlot({
     plotout()
     
-  })
-  
-  
-  observeEvent(input$show_rcode, {
-    
-    header <- teal.tern:::get_rcode_header(
-      title = "Line Plot",
-      datanames = dataname,
-      datasets = datasets
-    )
-    
-    str_rcode <- paste(c(
-      "",
-      header,
-      "",
-      teal.tern:::remove_enclosing_curly_braces(deparse(chunks$analysis, width.cutoff = 60))
-    ), collapse = "\n")
-    
-    # .log("show R code")
-    showModal(modalDialog(
-      title = "R Code for the Current Line Plot",
-      tags$pre(tags$code(class="R", str_rcode)),
-      easyClose = TRUE,
-      size = "l"
-    ))
   })
   
 }

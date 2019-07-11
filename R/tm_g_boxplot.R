@@ -1,79 +1,78 @@
-#' Box Plot
+#'Box Plot
 #'
-#' This teal module renders the UI and calls the functions that create a box plot and accompanying 
-#' summary table.
+#'This teal module renders the UI and calls the functions that create a box plot and accompanying
+#'summary table.
 #'
-#' @param label menu item label of the module in the teal app.
-#' @param dataname analysis data passed to the data argument of teal init. E.g. ADaM structured 
-#' laboratory data frame ALB.
-#' @param param_var name of variable containing biomarker codes e.g. PARAMCD.
-#' @param param_choices list of biomarkers of interest.
-#' @param param biomarker selected.
-#' @param yaxis_var name of variable containing biomarker results displayed on y-axis e.g. AVAL.
-#' @param yaxis_var_choices list of variables containing biomarker results choices.
-#' @param xaxis_var variable to categorize the x-axis.
-#' @param xaxis_var_choices variable choices with which to categorize x-axis.
-#' @param facet_var variable to facet the plots by.
-#' @param facet_var_choices variable choices with which to facet the plots.
-#' @param filter_vars variables to be used for filtering the data.  The default 
-#'    is BASE2 and BASE
-#' @param filter_labs labels for the radio buttons for the \code{filter_vars}.
-#'    The defaults are "Screening" for BASE2 and "Baseline" for BASE.   
-#' @param trt_group name of variable representing treatment group e.g. ARM.
-#' @param armlabel label for the treatment symbols in the legend.
-#'        If not specified then the label attribute for trt_group will be used. 
-#'        If there is no label attribute for trt_group, then the name of the parameter (in title 
-#'        case) will be used.
-#' @param color_manual vector of colors applied to treatment values.
-#' @param shape_manual vector of symbols applied to LOQ values.
-#' @param facet_ncol numeric value indicating number of facets per row.
-#' @param rotate_xlab 45 degree rotation of x-axis values.
-#' @param hline y-axis value to position a horizontal line.  NULL = No line.
-#' @param plot_height  numeric vectors to define the plot height.
-#' @param code_data_processing TODO
-#' 
-#' @inheritParams teal::standard_layout
-#' 
-#' @import DescTools
-#' @import methods
-#' @import utils
-#' @import dplyr
-#' @import goshawk
-#' @import teal
+#'@param label menu item label of the module in the teal app.
+#'@param dataname analysis data passed to the data argument of teal init. E.g. ADaM structured
+#'  laboratory data frame ALB.
+#'@param param_var name of variable containing biomarker codes e.g. PARAMCD.
+#'@param param_choices list of biomarkers of interest.
+#'@param param biomarker selected.
+#'@param yaxis_var name of variable containing biomarker results displayed on y-axis e.g. AVAL.
+#'@param yaxis_var_choices list of variables containing biomarker results choices.
+#'@param xaxis_var variable to categorize the x-axis.
+#'@param xaxis_var_choices variable choices with which to categorize x-axis.
+#'@param facet_var variable to facet the plots by.
+#'@param facet_var_choices variable choices with which to facet the plots.
+#'@param filter_vars variables to be used for filtering the data.  The default is BASE2 and BASE
+#'@param filter_labs labels for the radio buttons for the \code{filter_vars}. The defaults are
+#'  "Screening" for BASE2 and "Baseline" for BASE.
+#'@param trt_group name of variable representing treatment group e.g. ARM.
+#'@param armlabel label for the treatment symbols in the legend. If not specified then the label
+#'  attribute for trt_group will be used. If there is no label attribute for trt_group, then the
+#'  name of the parameter (in title case) will be used.
+#'@param color_manual vector of colors applied to treatment values.
+#'@param shape_manual vector of symbols applied to LOQ values.
+#'@param facet_ncol numeric value indicating number of facets per row.
+#'@param rotate_xlab 45 degree rotation of x-axis values.
+#'@param hline y-axis value to position a horizontal line.  NULL = No line.
+#'@param plot_height  numeric vectors to define the plot height.
+#'@param code_data_processing TODO
 #'
-#' @author Jeff Tomlinson (tomlinsj) jeffrey.tomlinson@roche.com
-#' @author Balazs Toth (tothb2) toth.balazs@gene.com
+#'@inheritParams teal::standard_layout
 #'
-#' @return an \code{\link[teal]{module}} object#'
+#'@import DescTools
+#'@import methods
+#'@import utils
+#'@import dplyr
+#'@import goshawk
+#'@import teal
 #'
-#' @export
+#'@author Jeff Tomlinson (tomlinsj) jeffrey.tomlinson@roche.com
+#'@author Balazs Toth (tothb2) toth.balazs@gene.com
+#'
+#'@return an \code{\link[teal]{module}} object#'
+#'
+#'@export
 #'
 #' @examples
-#' 
+#'
 #'\dontrun{
 #' # Example using ADaM structure analysis dataset.
-#' 
+#'
 #' library(dplyr)
 #' library(ggplot2)
 #' library(random.cdisc.data)
-#' 
+#' library(stringr)
+#'
 #' # original ARM value = dose value
-#' arm_mapping <- list("A: Drug X" = "150mg QD", "B: Placebo" = "Placebo", 
+#' arm_mapping <- list("A: Drug X" = "150mg QD", "B: Placebo" = "Placebo",
 #' "C: Combination" = "Combination")
 #' color_manual <-  c("150mg QD" = "#000000", "Placebo" = "#3498DB", "Combination" = "#E74C3C")
 #' # assign LOQ flag symbols: circles for "N" and triangles for "Y", squares for "NA"
 #' shape_manual <-  c("N"  = 1, "Y"  = 2, "NA" = 0)
-#' 
+#'
 #' ASL <- radsl(N = 20, seed = 1)
 #' ALB <- radlb(ASL, visit_format = "WEEK", n_assessments = 7, seed = 2)
-#' ALB <- ALB %>% 
+#' ALB <- ALB %>%
 #' mutate(AVISITCD = case_when(
 #' AVISIT == "SCREENING" ~ "SCR",
-#' AVISIT == "BASELINE" ~ "BL", grepl("WEEK", AVISIT) ~ paste("W",trimws(substr(AVISIT, start=6, 
+#' AVISIT == "BASELINE" ~ "BL", grepl("WEEK", AVISIT) ~ paste("W",trimws(substr(AVISIT, start=6,
 #' stop=str_locate(AVISIT, "DAY")-1))),
 #' TRUE ~ as.character(NA))) %>%
 #' mutate(AVISITCDN = case_when(AVISITCD == "SCR" ~ -2,
-#' AVISITCD == "BL" ~ 0, grepl("W", AVISITCD) ~ as.numeric(gsub("\\D+", "", AVISITCD)), 
+#' AVISITCD == "BL" ~ 0, grepl("W", AVISITCD) ~ as.numeric(gsub("\\D+", "", AVISITCD)),
 #' TRUE ~ as.numeric(NA))) %>%
 #' # use ARMCD values to order treatment in visualization legend
 #' mutate(TRTORD = ifelse(grepl("C", ARMCD), 1,
@@ -81,9 +80,9 @@
 #' ifelse(grepl("A", ARMCD), 3, NA)))) %>%
 #' mutate(ARM = as.character(arm_mapping[match(ARM, names(arm_mapping))])) %>%
 #' mutate(ARM = factor(ARM) %>% reorder(TRTORD))
-#' 
+#'
 #' param_choices = c("ALT", "CRP", "IGA")
-#' 
+#'
 #' x <- teal::init(
 #'   data =  list(ASL = ASL, ALB = ALB),
 #'   modules = root_modules(
@@ -656,33 +655,6 @@ srv_g_boxplot <- function(input, output, session, datasets
     if (is(t, "try-error")) validate(need(FALSE, paste0("could not create table for box plot:\n\n", p)))
     t
     
-  })
-  
-  observeEvent(input$show_rcode, {
-    
-    header <- teal.tern:::get_rcode_header(
-      title = "Box Plot",
-      datanames = "ALB",
-      datasets = datasets
-    )
-    
-    str_rcode <- paste(c(
-      "",
-      header,
-      "",
-      teal.tern:::remove_enclosing_curly_braces(deparse(chunks$boxsetup)),
-      "",
-      deparse(chunks$analysis, width.cutoff = 50),
-      "\n",
-      deparse(chunks$table, width.cutoff = 50)
-      
-    ), collapse = "\n")
-    
-    showModal(modalDialog(
-      title = "R Code for the Current box Plot",
-      tags$pre(tags$code(class="R", str_rcode)),
-      easyClose = TRUE
-    ))
   })
   
 }

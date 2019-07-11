@@ -23,3 +23,8 @@ reference:
       - tm_g_lineplot
       - tm_g_scatterplot
       - tm_g_spaghettiplot
+
+  - title: Package Build Related
+    desc: These files facilitate package build.
+    contents:
+      - teal_goshawk_core_packages

@@ -7,15 +7,16 @@
 tm_g_density_distribution_plot(label, dataname, param_var,
   param_choices = param, param, xaxis_var,
   xaxis_var_choices = xaxis_var, trt_group = "ARM",
-  color_manual = NULL, plot_height = c(500, 200, 2000),
-  font_size = c(12, 8, 20), line_size = c(1, 0.25, 3), hline = NULL,
-  facet_ncol = 2, rotate_xlab = FALSE, pre_output = NULL,
-  post_output = NULL, code_data_processing = NULL)
+  color_manual = NULL, color_comb = NULL, plot_height = c(500, 200,
+  2000), font_size = c(12, 8, 20), line_size = c(1, 0.25, 3),
+  hline = NULL, facet_ncol = 2, rotate_xlab = FALSE,
+  pre_output = NULL, post_output = NULL, code_data_processing = NULL)
 }
 \arguments{
 \item{label}{menu item label of the module in the teal app.}
 
-\item{dataname}{analysis data passed to the data argument of teal init. E.g. ADaM structured laboratory data frame ALB.}
+\item{dataname}{analysis data passed to the data argument of teal init. E.g. ADaM structured 
+laboratory data frame ALB.}
 
 \item{param_var}{name of variable containing biomarker codes e.g. PARAMCD.}
 
@@ -30,6 +31,8 @@ tm_g_density_distribution_plot(label, dataname, param_var,
 \item{trt_group}{name of variable representing treatment group e.g. ARM.}
 
 \item{color_manual}{vector of colors applied to treatment values.}
+
+\item{color_comb}{name or hex value for combined treatment color.}
 
 \item{plot_height}{controls plot height.}
 
@@ -54,7 +57,8 @@ output to put the output into context. For example the
 \item{code_data_processing}{TODO}
 }
 \description{
-This teal module renders the UI and calls the functions that create a density distribution plot and an accompanying summary table.
+This teal module renders the UI and calls the functions that create a density distribution plot 
+and an accompanying summary table.
 }
 \details{
 None
@@ -63,9 +67,39 @@ None
 
 \dontrun{
 # Example using ADaM structure analysis dataset.
-# ALB refers to biomarker data stored in expected laboratory structure.
 
-param_choices <- c("ACIGG", "CRP", "ADIGG", "CCL20", "IGG")
+library(dplyr)
+library(ggplot)
+library(random.cdisc.data)
+library(stringr)
+ 
+# original ARM value = dose value
+arm_mapping <- list("A: Drug X" = "150mg QD", "B: Placebo" = "Placebo", 
+"C: Combination" = "Combination")
+color_manual <-  c("150mg QD" = "#000000", "Placebo" = "#3498DB", "Combination" = "#E74C3C")
+# assign LOQ flag symbols: circles for "N" and triangles for "Y", squares for "NA"
+shape_manual <-  c("N"  = 1, "Y"  = 2, "NA" = 0)
+
+ASL <- radsl(N = 20, seed = 1)
+ALB <- radlb(ASL, visit_format = "WEEK", n_assessments = 7, seed = 2)
+ALB <- ALB \%>\% 
+mutate(AVISITCD = case_when(
+AVISIT == "SCREENING" ~ "SCR",
+AVISIT == "BASELINE" ~ "BL", grepl("WEEK", AVISIT) ~ paste("W",trimws(substr(AVISIT, start=6, 
+stop=str_locate(AVISIT, "DAY")-1))),
+TRUE ~ as.character(NA))) \%>\%
+mutate(AVISITCDN = case_when(AVISITCD == "SCR" ~ -2,
+AVISITCD == "BL" ~ 0, grepl("W", AVISITCD) ~ as.numeric(gsub("\\\\D+", "", AVISITCD)), 
+TRUE ~ as.numeric(NA))) \%>\%
+# use ARMCD values to order treatment in visualization legend
+mutate(TRTORD = ifelse(grepl("C", ARMCD), 1,
+ifelse(grepl("B", ARMCD), 2,
+ifelse(grepl("A", ARMCD), 3, NA)))) \%>\%
+mutate(ARM = as.character(arm_mapping[match(ARM, names(arm_mapping))])) \%>\%
+mutate(ARM = factor(ARM) \%>\% reorder(TRTORD))
+
+param_choices = c("ALT", "CRP", "IGA")
+
 x <- teal::init(
   data = list(ASL = ASL, ALB = ALB),
   modules = root_modules(
@@ -79,6 +113,7 @@ x <- teal::init(
        xaxis_var_choices = c("AVAL", "BASE", "CHG", "PCHG", "AVALL2"),
        trt_group = "ARM",
        color_manual = color_manual,
+       color_comb = "#39ff14",
        plot_height = c(500, 200, 2000),
        font_size = c(12, 8, 20),
        line_size = c(1, .25, 3)

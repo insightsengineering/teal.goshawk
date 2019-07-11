@@ -9,14 +9,15 @@ tm_g_spaghettiplot(label, dataname, param_var, param_choices = param,
   xvar_choices = xvar, yvar_choices = yvar, xvar_level = NULL,
   filter_var = yvar, filter_var_choices = filter_var, trt_group,
   trt_group_level = NULL, group_stats = "NONE", hline = NULL,
-  man_color = NULL, xtick = waiver(), xlabel = xtick,
-  rotate_xlab = FALSE, facet_ncol = 2, plot_height = c(600, 200,
-  2000), font_size = c(12, 8, 20))
+  man_color = NULL, color_comb = NULL, xtick = waiver(),
+  xlabel = xtick, rotate_xlab = FALSE, facet_ncol = 2,
+  plot_height = c(600, 200, 2000), font_size = c(12, 8, 20))
 }
 \arguments{
 \item{label}{menu item label of the module in the teal app.}
 
-\item{dataname}{analysis data passed to the data argument of teal init. E.g. ADaM structured laboratory data frame ALB.}
+\item{dataname}{analysis data passed to the data argument of teal init. E.g. ADaM structured 
+laboratory data frame ALB.}
 
 \item{param_var}{name of variable containing biomarker codes e.g. PARAMCD.}
 
@@ -28,15 +29,18 @@ tm_g_spaghettiplot(label, dataname, param_var, param_choices = param,
 
 \item{idvar}{name of unique subject id variable.}
 
-\item{xvar}{single name of variable in analysis data that is used as x-axis in the plot for the respective goshawk function.}
+\item{xvar}{single name of variable in analysis data that is used as x-axis in the plot for the 
+respective goshawk function.}
 
-\item{yvar}{single name of variable in analysis data that is used as summary variable in the respective gshawk function.}
+\item{yvar}{single name of variable in analysis data that is used as summary variable in the 
+respective gshawk function.}
 
 \item{xvar_choices}{vector with variable names that can be used as xvar.}
 
 \item{yvar_choices}{vector with variable names that can be used as yvar.}
 
-\item{xvar_level}{vector that can be used to define the factor level of xvar. Only use it when xvar is character or factor.}
+\item{xvar_level}{vector that can be used to define the factor level of xvar. Only use it when 
+xvar is character or factor.}
 
 \item{filter_var}{data constraint variable.}
 
@@ -52,9 +56,13 @@ tm_g_spaghettiplot(label, dataname, param_var, param_choices = param,
 
 \item{man_color}{string vector representing customized colors}
 
-\item{xtick}{numeric vector to define the tick values of x-axis when x variable is numeric. Default value is waive().}
+\item{color_comb}{name or hex value for combined treatment color.}
 
-\item{xlabel}{vector with same length of xtick to define the label of x-axis tick values. Default value is waive().}
+\item{xtick}{numeric vector to define the tick values of x-axis when x variable is numeric. 
+Default value is waive().}
+
+\item{xlabel}{vector with same length of xtick to define the label of x-axis tick values. Default
+value is waive().}
 
 \item{rotate_xlab}{boolean value indicating whether to rotate x-axis labels}
 
@@ -75,40 +83,55 @@ This teal module renders the UI and calls the function that creates a spaghetti 
 \dontrun{
 # EXAMPLE
 
+library(dplyr)
+library(ggplot2)
 library(random.cdisc.data)
+library(stringr)
 
-ASL <- radam('ASL', N = 100)
-ANL <- expand.grid(
-  STUDYID = "STUDY A",
-  USUBJID = paste0("id-",1:100),
-  VISITN = c(1:10),
-  ARM = c("ARM A", "ARM B"),
-  PARAMCD = c("CRP", "IGG", "IGM")
-)
-ANL$VISIT <- paste0("visit ", ANL$VISITN)
-ANL$AVAL <- rnorm(nrow(ANL))
-ANL$CHG <- rnorm(nrow(ANL), 2, 2)
-ANL$CHG[ANL$VISIT == "visit 1"] <- NA
-ANL$PCHG <- ANL$CHG/ANL$AVAL*100
-ANL$AVALU <- "U"
+# original ARM value = dose value
+arm_mapping <- list("A: Drug X" = "150mg QD", "B: Placebo" = "Placebo", 
+"C: Combination" = "Combination")
+color_manual <-  c("150mg QD" = "#000000", "Placebo" = "#3498DB", "Combination" = "#E74C3C")
+# assign LOQ flag symbols: circles for "N" and triangles for "Y", squares for "NA"
+shape_manual <-  c("N"  = 1, "Y"  = 2, "NA" = 0)
 
-ANL$ARM <- factor(ANL$ARM)
-ANL$VISIT <- factor(ANL$VISIT)
+ASL <- radsl(N = 20, seed = 1)
+ALB <- radlb(ASL, visit_format = "WEEK", n_assessments = 7, seed = 2)
+ALB <- ALB \%>\% 
+mutate(AVISITCD = case_when(
+AVISIT == "SCREENING" ~ "SCR",
+AVISIT == "BASELINE" ~ "BL", grepl("WEEK", AVISIT) ~ paste("W",trimws(substr(AVISIT, start=6, 
+stop=str_locate(AVISIT, "DAY")-1))),
+TRUE ~ as.character(NA))) \%>\%
+mutate(AVISITCDN = case_when(AVISITCD == "SCR" ~ -2,
+AVISITCD == "BL" ~ 0, grepl("W", AVISITCD) ~ as.numeric(gsub("\\\\D+", "", AVISITCD)), 
+TRUE ~ as.numeric(NA))) \%>\%
+# use ARMCD values to order treatment in visualization legend
+mutate(TRTORD = ifelse(grepl("C", ARMCD), 1,
+ifelse(grepl("B", ARMCD), 2,
+ifelse(grepl("A", ARMCD), 3, NA)))) \%>\%
+mutate(ARM = as.character(arm_mapping[match(ARM, names(arm_mapping))])) \%>\%
+mutate(ARM = factor(ARM) \%>\% reorder(TRTORD))
+
+param_choices = c("ALT", "CRP", "IGA")
 
 x <- teal::init(
-  data = list(ASL = ASL, ALB = ANL),
+  data = list(ASL = ASL, ALB = ALB),
   modules = root_modules(
     tm_g_spaghettiplot(
       label = "Spaghetti Plot",
       dataname = "ALB",
       param_var = "PARAMCD",
-      param = "CRP",
-      param_choices = c("CRP","IGG","IGM"),
+      param_choices = param_choices,
+      param = param_choices[1],
       idvar = "USUBJID",
-      xvar = "VISIT",
+      xvar = "AVISITCD",
       yvar = "AVAL",
       yvar_choices = c("AVAL","CHG", "PCHG"),
-      trt_group = "ARM"
+      filter_var = 'NONE',
+      filter_var_choices = c("None" = "NONE", "Screening" = "BASE2", "Baseline" = "BASE"),
+      trt_group = "ARM",
+      color_comb = "#39ff14"
     )
   )
 )

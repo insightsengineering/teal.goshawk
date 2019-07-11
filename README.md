@@ -22,5 +22,4 @@ devtools::install_github(
 
 # TODO
 
-* Scrub code to ensure consistency and expected programming practices
 * Enhancements per https://docs.google.com/spreadsheets/d/1Me5QXt9fmxwAPh3_xPwsh42a6alFlWyXgRJO6-p8EJc/edit#gid=0
