@@ -254,9 +254,12 @@ output to put the output into context. For example the
 <span class='co'># Example using ADaM structure analysis dataset.</span>
 
 <span class='fu'>library</span>(<span class='no'>dplyr</span>)
-<span class='fu'>library</span>(<span class='no'>ggplot</span>)
+<span class='fu'>library</span>(<span class='no'>ggplot2</span>)
+<span class='fu'>library</span>(<span class='no'>goshawk</span>)
 <span class='fu'>library</span>(<span class='no'>random.cdisc.data</span>)
 <span class='fu'>library</span>(<span class='no'>stringr</span>)
+<span class='fu'>library</span>(<span class='no'>teal</span>)
+<span class='fu'>library</span>(<span class='no'>teal.goshawk</span>)
 
 <span class='co'># original ARM value = dose value</span>
 <span class='no'>arm_mapping</span> <span class='kw'>&lt;-</span> <span class='fu'>list</span>(<span class='st'>"A: Drug X"</span> <span class='kw'>=</span> <span class='st'>"150mg QD"</span>, <span class='st'>"B: Placebo"</span> <span class='kw'>=</span> <span class='st'>"Placebo"</span>,
@@ -287,7 +290,7 @@ output to put the output into context. For example the
 
 <span class='no'>x</span> <span class='kw'>&lt;-</span> <span class='kw pkg'>teal</span><span class='kw ns'>::</span><span class='fu'><a href='http://www.rdocumentation.org/packages/teal/topics/init'>init</a></span>(
   <span class='kw'>data</span> <span class='kw'>=</span> <span class='fu'>list</span>(<span class='kw'>ASL</span> <span class='kw'>=</span> <span class='no'>ASL</span>, <span class='kw'>ALB</span> <span class='kw'>=</span> <span class='no'>ALB</span>),
-  <span class='kw'>modules</span> <span class='kw'>=</span> <span class='fu'>root_modules</span>(
+  <span class='kw'>modules</span> <span class='kw'>=</span> <span class='fu'><a href='http://www.rdocumentation.org/packages/teal/topics/root_modules'>root_modules</a></span>(
     <span class='fu'>tm_g_correlationplot</span>(
        <span class='kw'>label</span> <span class='kw'>=</span> <span class='st'>"Correlation Plot"</span>,
        <span class='kw'>dataname</span> <span class='kw'>=</span> <span class='st'>"ALB"</span>,

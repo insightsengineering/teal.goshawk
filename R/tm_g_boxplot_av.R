@@ -90,7 +90,7 @@
 #' x <- teal::init(
 #'   data =  list(ASL = ASL, ALB = ALB),
 #'   modules = root_modules(
-#'       tm_g_boxplot(
+#'       tm_g_boxplot_av(
 #'         label = "Box Plot",
 #'         dataname = "ALB",
 #'         param_var = "PARAMCD",
@@ -102,7 +102,7 @@
 #'         xaxis_var = "ARM",
 #'         xaxis_var_choices = c("ARM", "AVISITCD", "STUDYID"),
 #'         facet_var= "AVISITCD",
-#'         facet_var_choices = c("ARM", "AVISITCD", "SEX"),
+#'         facet_var_choices = c("ARM", "AVISITCD", "SEX", "STUDYID"),
 #'         trt_group = "ARM"
 #'       )
 #'   )
@@ -111,7 +111,7 @@
 #'
 #'}
 
-tm_g_boxplot <- function(label,
+tm_g_boxplot_av <- function(label,
                          dataname,
                          param_var,
                          param_choices = param,
@@ -641,17 +641,18 @@ srv_g_boxplot <- function(input, output, session, datasets
     xaxis_var <- input$yaxis_var
     font_size <- input$font_size
     facet <- ifelse(facet_var_choices, input$facet_var, facet_var)
+    facet_var <- input$facet_var
     
     data_name <- paste0("ALB", "_FILTERED")
     assign(data_name, ALB)
     
     chunks$table <<- call(
-      "t_summarytable",
+      "t_summarytable_av",
       data = bquote(.(as.name(data_name))),
       trt_group = trt_group,
       param_var = param_var,
       param = param,
-      visit_var = facet_var,
+      facet_var = facet_var,
       xaxis_var = xaxis_var, 
       font_size = font_size
     )

@@ -1,4 +1,4 @@
-#' Correlation Plot
+#' Correlation Plot without AVISIT facetting. Presents all data points.
 #'
 #' This teal module renders the UI and calls the function that creates a correlation plot.
 #'
@@ -18,7 +18,7 @@
 #' @param color_manual vector of colors applied to treatment values.
 #' @param shape_manual vector of symbols applied to LOQ values.
 #' @param facet_ncol numeric value indicating number of facets per row.
-#' @param facet set layout to use treatment facetting.
+#' #@param facet set layout to use treatment facetting.
 #' @param facet_var variable to use for treatment facetting.
 #' @param reg_line include regression line and annotations for slope and coefficient in 
 #' visualization. Use with facet TRUE.
@@ -90,7 +90,7 @@
 #' x <- teal::init(
 #'   data = list(ASL = ASL, ALB = ALB),
 #'   modules = root_modules(
-#'     tm_g_correlationplot(
+#'     tm_g_correlationplot_av(
 #'        label = "Correlation Plot",
 #'        dataname = "ALB",
 #'        param_var = "PARAMCD",
@@ -102,13 +102,13 @@
 #'        yaxis_param = param_choices[2],
 #'        yaxis_var = "AVAL",
 #'        yaxis_var_choices = c("AVAL", "BASE", "CHG", "PCHG", "BASE2", "AVALL2"),
-#'        trt_group = "ARM",
+#'        trt_group = "ACTARM",
 #'        color_manual = color_manual,
 #'        shape_manual = shape_manual,
 #'        plot_height = c(500, 200, 2000),
 #'        facet_ncol = 2,
-#'        facet = FALSE,
-#'        facet_var = "ARM",
+#'        #facet = FALSE,
+#'        facet_var = "ACTARM",
 #'        reg_line = FALSE,
 #'        font_size = c(12, 8, 20),
 #'        dot_size = c(1, 1, 12),
@@ -121,7 +121,7 @@
 #'
 #'}
 
-tm_g_correlationplot <- function(label,
+tm_g_correlationplot_av <- function(label,
                                  dataname,
                                  param_var,
                                  xaxis_param = xaxis_param,
@@ -205,7 +205,7 @@ ui_g_correlationplot <- function(id, ...) {
       uiOutput(ns("xaxis_zoom")),
       uiOutput(ns("yaxis_zoom")),
       numericInput(ns("facet_ncol"), "Number of Plots Per Row:", a$facet_ncol, min = 1),
-      checkboxInput(ns("facet"), "Treatment Facetting", a$facet),
+      #checkboxInput(ns("facet"), "Treatment Facetting", a$facet),
       checkboxInput(ns("reg_line"), "Regression Line", a$reg_line),
       checkboxInput(ns("rotate_xlab"), "Rotate X-axis Label", a$rotate_xlab),
       numericInput(ns("hline"), "Add a horizontal line:", a$hline),
@@ -251,11 +251,18 @@ srv_g_correlationplot <- function(input, output, session, datasets, dataname,
     xaxis_var <- input$xaxis_var
     yaxis_var <- input$yaxis_var
     
-    # given the 2 param and 2 analysis vars we need to transform the data
-    plot_data_t1 <- filter_ALB() %>% gather(ANLVARS, ANLVALS, BASE2, BASE, xaxis_var, yaxis_var, LOQFL) %>%
+    # # given the 2 param and 2 analysis vars we need to transform the data
+    # plot_data_t1 <- filter_ALB() %>% gather(ANLVARS, ANLVALS, BASE2, BASE, xaxis_var, yaxis_var, LOQFL) %>%
+    #   mutate(ANL.PARAM = ifelse(ANLVARS == "LOQFL", paste0(ANLVARS, "_", PARAMCD), paste0(ANLVARS, ".", PARAMCD))) %>%
+    #   select(USUBJID, trt_group, AVISITN, AVISITCD, ANL.PARAM, ANLVALS) %>%
+    #   spread(ANL.PARAM, ANLVALS)
+    plot_data_t1 <- filter_ALB() %>% gather(ANLVARS, ANLVALS, BASE2, BASE, xaxis_var, yaxis_var, LOQFL) %>% 
       mutate(ANL.PARAM = ifelse(ANLVARS == "LOQFL", paste0(ANLVARS, "_", PARAMCD), paste0(ANLVARS, ".", PARAMCD))) %>%
-      select(USUBJID, trt_group, AVISITN, AVISITCD, ANL.PARAM, ANLVALS) %>%
-      spread(ANL.PARAM, ANLVALS)
+      select(USUBJID, ADY, AVISITCD, ACTARM, ANL.PARAM, ANLVALS) %>%
+      group_by(USUBJID, ADY, ANL.PARAM) %>% 
+      mutate(RECID = row_number()) %>% 
+      ungroup() %>% 
+      spread(key = ANL.PARAM, value = ANLVALS)
     
     # the transformed analysis value variables are character and need to be converted to numeric for ggplot
     # remove records where either of the analysis variables are NA since they will not appear on the plot
@@ -442,7 +449,7 @@ srv_g_correlationplot <- function(input, output, session, datasets, dataname,
     hline <- as.numeric(input$hline)
     vline <- as.numeric(input$vline)
     facet_ncol <- input$facet_ncol
-    facet <- input$facet
+    #facet <- input$facet
     reg_line <- input$reg_line
     rotate_xlab <- input$rotate_xlab
     
@@ -504,7 +511,7 @@ srv_g_correlationplot <- function(input, output, session, datasets, dataname,
     }
     
     
-    p <- goshawk::g_correlationplot(
+    p <- goshawk::g_correlationplot_av(
       data = plot_data_t3,
       param_var = param_var,
       xaxis_param = xaxis_param,
@@ -524,7 +531,7 @@ srv_g_correlationplot <- function(input, output, session, datasets, dataname,
       color_manual = color_manual,
       shape_manual = shape_manual,
       facet_ncol = facet_ncol,
-      facet = facet,
+      #facet = facet,
       facet_var = facet_var,
       reg_line = reg_line,
       font_size = font_size,

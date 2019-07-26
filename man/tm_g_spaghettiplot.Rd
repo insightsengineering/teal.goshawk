@@ -81,12 +81,16 @@ This teal module renders the UI and calls the function that creates a spaghetti 
 \examples{
 
 \dontrun{
-# EXAMPLE
+
+# Example using ADaM structure analysis dataset.
 
 library(dplyr)
 library(ggplot2)
+library(goshawk)
 library(random.cdisc.data)
 library(stringr)
+library(teal)
+library(teal.goshawk)
 
 # original ARM value = dose value
 arm_mapping <- list("A: Drug X" = "150mg QD", "B: Placebo" = "Placebo", 

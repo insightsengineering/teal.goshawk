@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Density Distribution Plot — tm_g_density_distribution_plot • teal.goshawk</title>
+<title>Correlation Plot without AVISIT facetting. Presents all data points. — tm_g_correlationplot_av • teal.goshawk</title>
 
 <!-- jquery -->
 <script src="https://code.jquery.com/jquery-3.1.0.min.js" integrity="sha384-nrOSfDHtoPMzJHjVTdCopGqIqeYETSXhZDFyniQ8ZHcVy08QesyHcnOUpMpqnmWq" crossorigin="anonymous"></script>
@@ -30,10 +30,9 @@
 
 
 
-<meta property="og:title" content="Density Distribution Plot — tm_g_density_distribution_plot" />
+<meta property="og:title" content="Correlation Plot without AVISIT facetting. Presents all data points. — tm_g_correlationplot_av" />
 
-<meta property="og:description" content="This teal module renders the UI and calls the functions that create a density distribution plot 
-and an accompanying summary table." />
+<meta property="og:description" content="This teal module renders the UI and calls the function that creates a correlation plot." />
 <meta name="twitter:card" content="summary" />
 
 <meta name="robots" content="noindex">
@@ -98,24 +97,27 @@ and an accompanying summary table." />
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Density Distribution Plot</h1>
+    <h1>Correlation Plot without AVISIT facetting. Presents all data points.</h1>
     
-    <div class="hidden name"><code>tm_g_density_distribution_plot.Rd</code></div>
+    <div class="hidden name"><code>tm_g_correlationplot_av.Rd</code></div>
     </div>
 
     <div class="ref-description">
     
-    <p>This teal module renders the UI and calls the functions that create a density distribution plot 
-and an accompanying summary table.</p>
+    <p>This teal module renders the UI and calls the function that creates a correlation plot.</p>
     
     </div>
 
-    <pre class="usage"><span class='fu'>tm_g_density_distribution_plot</span>(<span class='no'>label</span>, <span class='no'>dataname</span>, <span class='no'>param_var</span>,
-  <span class='kw'>param_choices</span> <span class='kw'>=</span> <span class='no'>param</span>, <span class='no'>param</span>, <span class='no'>xaxis_var</span>,
-  <span class='kw'>xaxis_var_choices</span> <span class='kw'>=</span> <span class='no'>xaxis_var</span>, <span class='kw'>trt_group</span> <span class='kw'>=</span> <span class='st'>"ARM"</span>,
-  <span class='kw'>color_manual</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>color_comb</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>plot_height</span> <span class='kw'>=</span> <span class='fu'>c</span>(<span class='fl'>500</span>, <span class='fl'>200</span>,
-  <span class='fl'>2000</span>), <span class='kw'>font_size</span> <span class='kw'>=</span> <span class='fu'>c</span>(<span class='fl'>12</span>, <span class='fl'>8</span>, <span class='fl'>20</span>), <span class='kw'>line_size</span> <span class='kw'>=</span> <span class='fu'>c</span>(<span class='fl'>1</span>, <span class='fl'>0.25</span>, <span class='fl'>3</span>),
-  <span class='kw'>hline</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>facet_ncol</span> <span class='kw'>=</span> <span class='fl'>2</span>, <span class='kw'>rotate_xlab</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
+    <pre class="usage"><span class='fu'>tm_g_correlationplot_av</span>(<span class='no'>label</span>, <span class='no'>dataname</span>, <span class='no'>param_var</span>,
+  <span class='kw'>xaxis_param</span> <span class='kw'>=</span> <span class='no'>xaxis_param</span>, <span class='kw'>xaxis_param_choices</span> <span class='kw'>=</span> <span class='no'>xaxis_param</span>,
+  <span class='kw'>xaxis_var</span> <span class='kw'>=</span> <span class='no'>xaxis_var</span>, <span class='kw'>xaxis_var_choices</span> <span class='kw'>=</span> <span class='no'>xaxis_var</span>,
+  <span class='kw'>yaxis_param</span> <span class='kw'>=</span> <span class='no'>yaxis_param</span>, <span class='kw'>yaxis_param_choices</span> <span class='kw'>=</span> <span class='no'>yaxis_param</span>,
+  <span class='kw'>yaxis_var</span> <span class='kw'>=</span> <span class='no'>yaxis_var</span>, <span class='kw'>yaxis_var_choices</span> <span class='kw'>=</span> <span class='no'>yaxis_var</span>,
+  <span class='kw'>trt_group</span> <span class='kw'>=</span> <span class='st'>"ARM"</span>, <span class='kw'>color_manual</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>shape_manual</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>facet_ncol</span> <span class='kw'>=</span> <span class='fl'>2</span>, <span class='kw'>facet</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>facet_var</span> <span class='kw'>=</span> <span class='st'>"ARM"</span>,
+  <span class='kw'>reg_line</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>rotate_xlab</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>hline</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>vline</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>plot_height</span> <span class='kw'>=</span> <span class='fu'>c</span>(<span class='fl'>500</span>, <span class='fl'>200</span>, <span class='fl'>2000</span>), <span class='kw'>font_size</span> <span class='kw'>=</span> <span class='fu'>c</span>(<span class='fl'>12</span>, <span class='fl'>8</span>,
+  <span class='fl'>20</span>), <span class='kw'>dot_size</span> <span class='kw'>=</span> <span class='fu'>c</span>(<span class='fl'>1</span>, <span class='fl'>1</span>, <span class='fl'>12</span>), <span class='kw'>reg_text_size</span> <span class='kw'>=</span> <span class='fu'>c</span>(<span class='fl'>3</span>, <span class='fl'>3</span>, <span class='fl'>10</span>),
   <span class='kw'>pre_output</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>post_output</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>code_data_processing</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
@@ -135,19 +137,35 @@ laboratory data frame ALB.</p></td>
       <td><p>name of variable containing biomarker codes e.g. PARAMCD.</p></td>
     </tr>
     <tr>
-      <th>param_choices</th>
-      <td><p>list of biomarkers of interest.</p></td>
-    </tr>
-    <tr>
-      <th>param</th>
+      <th>xaxis_param</th>
       <td><p>biomarker selected.</p></td>
     </tr>
     <tr>
+      <th>xaxis_param_choices</th>
+      <td><p>list of biomarkers of interest.</p></td>
+    </tr>
+    <tr>
       <th>xaxis_var</th>
-      <td><p>name of variable containing biomarker results displayed on x-axis e.g. AVAL.</p></td>
+      <td><p>name of variable containing biomarker results displayed on x-axis e.g. BASE.</p></td>
     </tr>
     <tr>
       <th>xaxis_var_choices</th>
+      <td><p>list of variables containing biomarker results choices.</p></td>
+    </tr>
+    <tr>
+      <th>yaxis_param</th>
+      <td><p>biomarker selected.</p></td>
+    </tr>
+    <tr>
+      <th>yaxis_param_choices</th>
+      <td><p>list of biomarkers of interest.</p></td>
+    </tr>
+    <tr>
+      <th>yaxis_var</th>
+      <td><p>name of variable containing biomarker results displayed on y-axis e.g. AVAL.</p></td>
+    </tr>
+    <tr>
+      <th>yaxis_var_choices</th>
       <td><p>list of variables containing biomarker results choices.</p></td>
     </tr>
     <tr>
@@ -159,8 +177,34 @@ laboratory data frame ALB.</p></td>
       <td><p>vector of colors applied to treatment values.</p></td>
     </tr>
     <tr>
-      <th>color_comb</th>
-      <td><p>name or hex value for combined treatment color.</p></td>
+      <th>shape_manual</th>
+      <td><p>vector of symbols applied to LOQ values.</p></td>
+    </tr>
+    <tr>
+      <th>facet_ncol</th>
+      <td><p>numeric value indicating number of facets per row.
+#@param facet set layout to use treatment facetting.</p></td>
+    </tr>
+    <tr>
+      <th>facet_var</th>
+      <td><p>variable to use for treatment facetting.</p></td>
+    </tr>
+    <tr>
+      <th>reg_line</th>
+      <td><p>include regression line and annotations for slope and coefficient in 
+visualization. Use with facet TRUE.</p></td>
+    </tr>
+    <tr>
+      <th>rotate_xlab</th>
+      <td><p>45 degree rotation of x-axis values.</p></td>
+    </tr>
+    <tr>
+      <th>hline</th>
+      <td><p>y-axis value to position of horizontal line.</p></td>
+    </tr>
+    <tr>
+      <th>vline</th>
+      <td><p>x-axis value to position a vertical line.</p></td>
     </tr>
     <tr>
       <th>plot_height</th>
@@ -171,20 +215,12 @@ laboratory data frame ALB.</p></td>
       <td><p>font size control for title, x-axis label, y-axis label and legend.</p></td>
     </tr>
     <tr>
-      <th>line_size</th>
-      <td><p>plot line thickness.</p></td>
+      <th>dot_size</th>
+      <td><p>plot dot size.</p></td>
     </tr>
     <tr>
-      <th>hline</th>
-      <td><p>y-axis value to position a horizontal line.</p></td>
-    </tr>
-    <tr>
-      <th>facet_ncol</th>
-      <td><p>numeric value indicating number of facets per row.</p></td>
-    </tr>
-    <tr>
-      <th>rotate_xlab</th>
-      <td><p>45 degree rotation of x-axis values.</p></td>
+      <th>reg_text_size</th>
+      <td><p>font size control for regression line annotations.</p></td>
     </tr>
     <tr>
       <th>pre_output</th>
@@ -206,7 +242,7 @@ output to put the output into context. For example the
     
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
-    <p>None</p>
+    <p>This module displays a correlation plot.</p>
     
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
@@ -252,20 +288,29 @@ output to put the output into context. For example the
 <span class='no'>x</span> <span class='kw'>&lt;-</span> <span class='kw pkg'>teal</span><span class='kw ns'>::</span><span class='fu'><a href='http://www.rdocumentation.org/packages/teal/topics/init'>init</a></span>(
   <span class='kw'>data</span> <span class='kw'>=</span> <span class='fu'>list</span>(<span class='kw'>ASL</span> <span class='kw'>=</span> <span class='no'>ASL</span>, <span class='kw'>ALB</span> <span class='kw'>=</span> <span class='no'>ALB</span>),
   <span class='kw'>modules</span> <span class='kw'>=</span> <span class='fu'><a href='http://www.rdocumentation.org/packages/teal/topics/root_modules'>root_modules</a></span>(
-    <span class='fu'>tm_g_density_distribution_plot</span>(
-       <span class='kw'>label</span> <span class='kw'>=</span> <span class='st'>"Density Distribution Plot"</span>,
+    <span class='fu'>tm_g_correlationplot_av</span>(
+       <span class='kw'>label</span> <span class='kw'>=</span> <span class='st'>"Correlation Plot"</span>,
        <span class='kw'>dataname</span> <span class='kw'>=</span> <span class='st'>"ALB"</span>,
        <span class='kw'>param_var</span> <span class='kw'>=</span> <span class='st'>"PARAMCD"</span>,
-       <span class='kw'>param_choices</span> <span class='kw'>=</span> <span class='no'>param_choices</span>,
-       <span class='kw'>param</span> <span class='kw'>=</span> <span class='no'>param_choices</span>[<span class='fl'>1</span>],
-       <span class='kw'>xaxis_var</span> <span class='kw'>=</span> <span class='st'>"AVAL"</span>,
-       <span class='kw'>xaxis_var_choices</span> <span class='kw'>=</span> <span class='fu'>c</span>(<span class='st'>"AVAL"</span>, <span class='st'>"BASE"</span>, <span class='st'>"CHG"</span>, <span class='st'>"PCHG"</span>, <span class='st'>"AVALL2"</span>),
-       <span class='kw'>trt_group</span> <span class='kw'>=</span> <span class='st'>"ARM"</span>,
+       <span class='kw'>xaxis_param_choices</span> <span class='kw'>=</span> <span class='no'>param_choices</span>,
+       <span class='kw'>xaxis_param</span> <span class='kw'>=</span> <span class='no'>param_choices</span>[<span class='fl'>1</span>],
+       <span class='kw'>xaxis_var</span> <span class='kw'>=</span> <span class='st'>"BASE"</span>,
+       <span class='kw'>xaxis_var_choices</span> <span class='kw'>=</span> <span class='fu'>c</span>(<span class='st'>"AVAL"</span>, <span class='st'>"BASE"</span>, <span class='st'>"CHG"</span>, <span class='st'>"PCHG"</span>, <span class='st'>"BASE2"</span>, <span class='st'>"AVALL2"</span>),
+       <span class='kw'>yaxis_param_choices</span> <span class='kw'>=</span> <span class='no'>param_choices</span>,
+       <span class='kw'>yaxis_param</span> <span class='kw'>=</span> <span class='no'>param_choices</span>[<span class='fl'>2</span>],
+       <span class='kw'>yaxis_var</span> <span class='kw'>=</span> <span class='st'>"AVAL"</span>,
+       <span class='kw'>yaxis_var_choices</span> <span class='kw'>=</span> <span class='fu'>c</span>(<span class='st'>"AVAL"</span>, <span class='st'>"BASE"</span>, <span class='st'>"CHG"</span>, <span class='st'>"PCHG"</span>, <span class='st'>"BASE2"</span>, <span class='st'>"AVALL2"</span>),
+       <span class='kw'>trt_group</span> <span class='kw'>=</span> <span class='st'>"ACTARM"</span>,
        <span class='kw'>color_manual</span> <span class='kw'>=</span> <span class='no'>color_manual</span>,
-       <span class='kw'>color_comb</span> <span class='kw'>=</span> <span class='st'>"#39ff14"</span>,
+       <span class='kw'>shape_manual</span> <span class='kw'>=</span> <span class='no'>shape_manual</span>,
        <span class='kw'>plot_height</span> <span class='kw'>=</span> <span class='fu'>c</span>(<span class='fl'>500</span>, <span class='fl'>200</span>, <span class='fl'>2000</span>),
+       <span class='kw'>facet_ncol</span> <span class='kw'>=</span> <span class='fl'>2</span>,
+       <span class='co'>#facet = FALSE,</span>
+       <span class='kw'>facet_var</span> <span class='kw'>=</span> <span class='st'>"ACTARM"</span>,
+       <span class='kw'>reg_line</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
        <span class='kw'>font_size</span> <span class='kw'>=</span> <span class='fu'>c</span>(<span class='fl'>12</span>, <span class='fl'>8</span>, <span class='fl'>20</span>),
-       <span class='kw'>line_size</span> <span class='kw'>=</span> <span class='fu'>c</span>(<span class='fl'>1</span>, <span class='fl'>.25</span>, <span class='fl'>3</span>)
+       <span class='kw'>dot_size</span> <span class='kw'>=</span> <span class='fu'>c</span>(<span class='fl'>1</span>, <span class='fl'>1</span>, <span class='fl'>12</span>),
+       <span class='kw'>reg_text_size</span> <span class='kw'>=</span> <span class='fu'>c</span>(<span class='fl'>3</span>, <span class='fl'>3</span>, <span class='fl'>10</span>)
    )
   )
 )
