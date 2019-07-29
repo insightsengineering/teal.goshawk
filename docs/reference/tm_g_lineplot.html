@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Box Plot — tm_g_boxplot • teal.goshawk</title>
+<title>Line plot — tm_g_lineplot • teal.goshawk</title>
 
 <!-- jquery -->
 <script src="https://code.jquery.com/jquery-3.1.0.min.js" integrity="sha384-nrOSfDHtoPMzJHjVTdCopGqIqeYETSXhZDFyniQ8ZHcVy08QesyHcnOUpMpqnmWq" crossorigin="anonymous"></script>
@@ -30,10 +30,9 @@
 
 
 
-<meta property="og:title" content="Box Plot — tm_g_boxplot" />
+<meta property="og:title" content="Line plot — tm_g_lineplot" />
 
-<meta property="og:description" content="This teal module renders the UI and calls the functions that create a box plot and accompanying
-summary table." />
+<meta property="og:description" content="This teal module renders the UI and calls the function that creates a line plot." />
 <meta name="twitter:card" content="summary" />
 
 
@@ -98,28 +97,25 @@ summary table." />
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Box Plot</h1>
+    <h1>Line plot</h1>
     
-    <div class="hidden name"><code>tm_g_boxplot.Rd</code></div>
+    <div class="hidden name"><code>tm_g_lineplot.Rd</code></div>
     </div>
 
     <div class="ref-description">
     
-    <p>This teal module renders the UI and calls the functions that create a box plot and accompanying
-summary table.</p>
+    <p>This teal module renders the UI and calls the function that creates a line plot.</p>
     
     </div>
 
-    <pre class="usage"><span class='fu'>tm_g_boxplot</span>(<span class='no'>label</span>, <span class='no'>dataname</span>, <span class='no'>param_var</span>, <span class='kw'>param_choices</span> <span class='kw'>=</span> <span class='no'>param</span>, <span class='no'>param</span>,
-  <span class='kw'>yaxis_var</span> <span class='kw'>=</span> <span class='st'>"AVAL"</span>, <span class='kw'>yaxis_var_choices</span> <span class='kw'>=</span> <span class='fu'>c</span>(<span class='st'>"AVAL"</span>, <span class='st'>"CHG"</span>),
-  <span class='kw'>xaxis_var</span> <span class='kw'>=</span> <span class='st'>"AVISITCD"</span>, <span class='kw'>xaxis_var_choices</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>facet_var</span> <span class='kw'>=</span> <span class='st'>"ARM"</span>, <span class='kw'>facet_var_choices</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>filter_vars</span> <span class='kw'>=</span> <span class='fu'>c</span>(<span class='st'>"BASE2"</span>, <span class='st'>"BASE"</span>), <span class='kw'>filter_labs</span> <span class='kw'>=</span> <span class='fu'>c</span>(<span class='st'>"Screening"</span>,
-  <span class='st'>"Baseline"</span>), <span class='kw'>trt_group</span> <span class='kw'>=</span> <span class='st'>"ARM"</span>, <span class='kw'>color_manual</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>shape_manual</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>hline</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>facet_ncol</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>rotate_xlab</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>pre_output</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>post_output</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>armlabel</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>plot_height</span> <span class='kw'>=</span> <span class='fu'>c</span>(<span class='fl'>600</span>, <span class='fl'>200</span>, <span class='fl'>2000</span>),
-  <span class='kw'>code_data_processing</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)</pre>
+    <pre class="usage"><span class='fu'>tm_g_lineplot</span>(<span class='no'>label</span>, <span class='no'>dataname</span>, <span class='kw'>aslname</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='no'>param_var</span>,
+  <span class='kw'>param_choices</span> <span class='kw'>=</span> <span class='no'>param</span>, <span class='no'>param</span>, <span class='kw'>param_var_label</span> <span class='kw'>=</span> <span class='st'>"PARAM"</span>, <span class='no'>xvar</span>, <span class='no'>yvar</span>,
+  <span class='kw'>xvar_choices</span> <span class='kw'>=</span> <span class='no'>xvar</span>, <span class='kw'>yvar_choices</span> <span class='kw'>=</span> <span class='no'>yvar</span>, <span class='kw'>xvar_level</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>filter_var</span> <span class='kw'>=</span> <span class='no'>yvar</span>, <span class='kw'>filter_var_choices</span> <span class='kw'>=</span> <span class='no'>filter_var</span>, <span class='no'>trt_group</span>,
+  <span class='kw'>trt_group_level</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>shape_choices</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>stat</span> <span class='kw'>=</span> <span class='st'>"mean"</span>,
+  <span class='kw'>hline</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>man_color</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>xtick</span> <span class='kw'>=</span> <span class='fu'>waiver</span>(), <span class='kw'>xlabel</span> <span class='kw'>=</span> <span class='no'>xtick</span>,
+  <span class='kw'>rotate_xlab</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>plot_height</span> <span class='kw'>=</span> <span class='fu'>c</span>(<span class='fl'>600</span>, <span class='fl'>200</span>, <span class='fl'>2000</span>),
+  <span class='kw'>font_size</span> <span class='kw'>=</span> <span class='fu'>c</span>(<span class='fl'>12</span>, <span class='fl'>8</span>, <span class='fl'>20</span>), <span class='kw'>dodge</span> <span class='kw'>=</span> <span class='fu'>c</span>(<span class='fl'>0.4</span>, <span class='fl'>0</span>, <span class='fl'>1</span>))</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -130,8 +126,13 @@ summary table.</p>
     </tr>
     <tr>
       <th>dataname</th>
-      <td><p>analysis data passed to the data argument of teal init. E.g. ADaM structured
+      <td><p>analysis data passed to the data argument of teal init. E.g. ADaM structured 
 laboratory data frame ALB.</p></td>
+    </tr>
+    <tr>
+      <th>aslname</th>
+      <td><p>Name of asl data set from which additional variables will be used for 
+shape_choices</p></td>
     </tr>
     <tr>
       <th>param_var</th>
@@ -146,93 +147,95 @@ laboratory data frame ALB.</p></td>
       <td><p>biomarker selected.</p></td>
     </tr>
     <tr>
-      <th>yaxis_var</th>
-      <td><p>name of variable containing biomarker results displayed on y-axis e.g. AVAL.</p></td>
+      <th>param_var_label</th>
+      <td><p>single name of variable in analysis data that includes parameter labels.</p></td>
     </tr>
     <tr>
-      <th>yaxis_var_choices</th>
-      <td><p>list of variables containing biomarker results choices.</p></td>
+      <th>xvar</th>
+      <td><p>single name of variable in analysis data that is used as x-axis in the plot for the 
+respective goshawk function.</p></td>
     </tr>
     <tr>
-      <th>xaxis_var</th>
-      <td><p>variable to categorize the x-axis.</p></td>
+      <th>yvar</th>
+      <td><p>single name of variable in analysis data that is used as summary variable in the 
+respective gshawk function.</p></td>
     </tr>
     <tr>
-      <th>xaxis_var_choices</th>
-      <td><p>variable choices with which to categorize x-axis.</p></td>
+      <th>xvar_choices</th>
+      <td><p>vector with variable names that can be used as xvar.</p></td>
     </tr>
     <tr>
-      <th>facet_var</th>
-      <td><p>variable to facet the plots by.</p></td>
+      <th>yvar_choices</th>
+      <td><p>vector with variable names that can be used as yvar.</p></td>
     </tr>
     <tr>
-      <th>facet_var_choices</th>
-      <td><p>variable choices with which to facet the plots.</p></td>
+      <th>xvar_level</th>
+      <td><p>vector that can be used to define the factor level of xvar. Only use it when 
+xvar is character or factor.</p></td>
     </tr>
     <tr>
-      <th>filter_vars</th>
-      <td><p>variables to be used for filtering the data.  The default is BASE2 and BASE</p></td>
+      <th>filter_var</th>
+      <td><p>data constraint variable.</p></td>
     </tr>
     <tr>
-      <th>filter_labs</th>
-      <td><p>labels for the radio buttons for the <code>filter_vars</code>. The defaults are
-"Screening" for BASE2 and "Baseline" for BASE.</p></td>
+      <th>filter_var_choices</th>
+      <td><p>data constraint variable choices.</p></td>
     </tr>
     <tr>
       <th>trt_group</th>
       <td><p>name of variable representing treatment group e.g. ARM.</p></td>
     </tr>
     <tr>
-      <th>color_manual</th>
-      <td><p>vector of colors applied to treatment values.</p></td>
+      <th>trt_group_level</th>
+      <td><p>vector that can be used to define factor level of trt_group.</p></td>
     </tr>
     <tr>
-      <th>shape_manual</th>
-      <td><p>vector of symbols applied to LOQ values.</p></td>
+      <th>shape_choices</th>
+      <td><p>Vector with names of ASL variables which can be used to change shape</p></td>
+    </tr>
+    <tr>
+      <th>stat</th>
+      <td><p>string of statistics</p></td>
     </tr>
     <tr>
       <th>hline</th>
-      <td><p>y-axis value to position a horizontal line.  NULL = No line.</p></td>
+      <td><p>numeric value to add horizontal line to plot</p></td>
     </tr>
     <tr>
-      <th>facet_ncol</th>
-      <td><p>numeric value indicating number of facets per row.</p></td>
+      <th>man_color</th>
+      <td><p>string vector representing customized colors</p></td>
+    </tr>
+    <tr>
+      <th>xtick</th>
+      <td><p>numeric vector to define the tick values of x-axis when x variable is numeric. 
+Default value is waive().</p></td>
+    </tr>
+    <tr>
+      <th>xlabel</th>
+      <td><p>vector with same length of xtick to define the label of x-axis tick values. 
+Default value is waive().</p></td>
     </tr>
     <tr>
       <th>rotate_xlab</th>
-      <td><p>45 degree rotation of x-axis values.</p></td>
-    </tr>
-    <tr>
-      <th>pre_output</th>
-      <td><p>optional, <code>shiny.tag</code> with text placed before the
-output to put the output into context. For example the
-<code><a href='http://www.rdocumentation.org/packages/shiny/topics/helpText'>helpText</a></code> elements are useful.</p></td>
-    </tr>
-    <tr>
-      <th>post_output</th>
-      <td><p>optional, <code>shiny.tag</code> with text placed before the
-output to put the output into context. For example the
-<code><a href='http://www.rdocumentation.org/packages/shiny/topics/helpText'>helpText</a></code> elements are useful.</p></td>
-    </tr>
-    <tr>
-      <th>armlabel</th>
-      <td><p>label for the treatment symbols in the legend. If not specified then the label
-attribute for trt_group will be used. If there is no label attribute for trt_group, then the
-name of the parameter (in title case) will be used.</p></td>
+      <td><p>boolean value indicating whether to rotate x-axis labels.</p></td>
     </tr>
     <tr>
       <th>plot_height</th>
       <td><p>numeric vectors to define the plot height.</p></td>
     </tr>
     <tr>
-      <th>code_data_processing</th>
-      <td><p>TODO</p></td>
+      <th>font_size</th>
+      <td><p>control font size for title, x-axis, y-axis and legend font.</p></td>
+    </tr>
+    <tr>
+      <th>dodge</th>
+      <td><p>control the position dodge of error bar</p></td>
     </tr>
     </table>
     
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>an <code><a href='http://www.rdocumentation.org/packages/teal/topics/module'>module</a></code> object#'</p>
+    <p><code>shiny</code> object</p>
     
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
@@ -276,27 +279,27 @@ name of the parameter (in title case) will be used.</p></td>
 <span class='no'>param_choices</span> <span class='kw'>=</span> <span class='fu'>c</span>(<span class='st'>"ALT"</span>, <span class='st'>"CRP"</span>, <span class='st'>"IGA"</span>)
 
 <span class='no'>x</span> <span class='kw'>&lt;-</span> <span class='kw pkg'>teal</span><span class='kw ns'>::</span><span class='fu'><a href='http://www.rdocumentation.org/packages/teal/topics/init'>init</a></span>(
-  <span class='kw'>data</span> <span class='kw'>=</span>  <span class='fu'>list</span>(<span class='kw'>ASL</span> <span class='kw'>=</span> <span class='no'>ASL</span>, <span class='kw'>ALB</span> <span class='kw'>=</span> <span class='no'>ALB</span>),
+  <span class='kw'>data</span> <span class='kw'>=</span> <span class='fu'>list</span>(<span class='kw'>ASL</span> <span class='kw'>=</span> <span class='no'>ASL</span>, <span class='kw'>ALB</span> <span class='kw'>=</span> <span class='no'>ALB</span>),
   <span class='kw'>modules</span> <span class='kw'>=</span> <span class='fu'><a href='http://www.rdocumentation.org/packages/teal/topics/root_modules'>root_modules</a></span>(
-      <span class='fu'>tm_g_boxplot</span>(
-        <span class='kw'>label</span> <span class='kw'>=</span> <span class='st'>"Box Plot"</span>,
-        <span class='kw'>dataname</span> <span class='kw'>=</span> <span class='st'>"ALB"</span>,
-        <span class='kw'>param_var</span> <span class='kw'>=</span> <span class='st'>"PARAMCD"</span>,
-        <span class='kw'>param_choices</span> <span class='kw'>=</span> <span class='no'>param_choices</span>,
-        <span class='kw'>param</span> <span class='kw'>=</span> <span class='no'>param_choices</span>[<span class='fl'>1</span>],
-        <span class='kw'>yaxis_var</span> <span class='kw'>=</span> <span class='st'>"AVAL"</span>,
-        <span class='kw'>yaxis_var_choices</span> <span class='kw'>=</span> <span class='fu'>c</span>(<span class='st'>"AVAL"</span>, <span class='st'>"BASE"</span>, <span class='st'>"CHG"</span>),
-        <span class='kw'>rotate_xlab</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
-        <span class='kw'>xaxis_var</span> <span class='kw'>=</span> <span class='st'>"ARM"</span>,
-        <span class='kw'>xaxis_var_choices</span> <span class='kw'>=</span> <span class='fu'>c</span>(<span class='st'>"ARM"</span>, <span class='st'>"AVISITCD"</span>, <span class='st'>"STUDYID"</span>),
-        <span class='kw'>facet_var</span><span class='kw'>=</span> <span class='st'>"AVISITCD"</span>,
-        <span class='kw'>facet_var_choices</span> <span class='kw'>=</span> <span class='fu'>c</span>(<span class='st'>"ARM"</span>, <span class='st'>"AVISITCD"</span>, <span class='st'>"SEX"</span>),
-        <span class='kw'>trt_group</span> <span class='kw'>=</span> <span class='st'>"ARM"</span>
-      )
+    <span class='fu'>tm_g_lineplot</span>(
+      <span class='kw'>label</span> <span class='kw'>=</span> <span class='st'>"Line Plot"</span>,
+      <span class='kw'>dataname</span> <span class='kw'>=</span> <span class='st'>"ALB"</span>,
+      <span class='kw'>aslname</span> <span class='kw'>=</span> <span class='st'>"ASL"</span>,
+      <span class='kw'>param_var</span> <span class='kw'>=</span> <span class='st'>"PARAMCD"</span>,
+      <span class='kw'>param_choices</span> <span class='kw'>=</span> <span class='fu'>c</span>(<span class='st'>"CRP"</span>,<span class='st'>"IGG"</span>,<span class='st'>"IGM"</span>),
+      <span class='kw'>shape_choices</span> <span class='kw'>=</span> <span class='fu'>c</span>(<span class='st'>"SEX"</span>, <span class='st'>"RACE"</span>),
+      <span class='kw'>param</span> <span class='kw'>=</span> <span class='st'>"CRP"</span>,
+      <span class='kw'>xvar</span> <span class='kw'>=</span> <span class='st'>"AVISITCD"</span>,
+      <span class='kw'>yvar</span> <span class='kw'>=</span> <span class='st'>"AVAL"</span>,
+      <span class='kw'>yvar_choices</span> <span class='kw'>=</span> <span class='fu'>c</span>(<span class='st'>"AVAL"</span>,<span class='st'>"CHG"</span>,<span class='st'>"PCGH"</span>),
+      <span class='kw'>filter_var</span> <span class='kw'>=</span> <span class='st'>'NONE'</span>,
+      <span class='kw'>filter_var_choices</span> <span class='kw'>=</span> <span class='fu'>c</span>(<span class='st'>"None"</span> <span class='kw'>=</span> <span class='st'>"NONE"</span>, <span class='st'>"Screening"</span> <span class='kw'>=</span> <span class='st'>"BASE2"</span>, <span class='st'>"Baseline"</span> <span class='kw'>=</span> <span class='st'>"BASE"</span>),
+      <span class='kw'>trt_group</span> <span class='kw'>=</span> <span class='st'>"ARM"</span>
+    )
   )
 )
-<span class='fu'>shinyApp</span>(<span class='no'>x</span>$<span class='no'>ui</span>, <span class='no'>x</span>$<span class='no'>server</span>)
 
+<span class='fu'>shinyApp</span>(<span class='no'>x</span>$<span class='no'>ui</span>, <span class='no'>x</span>$<span class='no'>server</span>)
 <span class='co'># }</span></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
@@ -311,7 +314,7 @@ name of the parameter (in title case) will be used.</p></td>
 
     <h2>Author</h2>
     
-Jeff Tomlinson (tomlinsj) jeffrey.tomlinson@roche.com
+Wenyi Liu (luiw2) wenyi.liu@roche.com
 
 Balazs Toth (tothb2) toth.balazs@gene.com
 

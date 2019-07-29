@@ -9,7 +9,7 @@ navbar:
     - icon: fa-github
       href: https://github.roche.com/Rpackages/teal.goshawk
 
-development:
+#development:
   mode: devel
 
 reference:

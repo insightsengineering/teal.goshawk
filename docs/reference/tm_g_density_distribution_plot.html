@@ -6,13 +6,13 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Teal Module: density distribution plot — tm_g_density_distribution_plot • teal.goshawk</title>
+<title>Density Distribution Plot — tm_g_density_distribution_plot • teal.goshawk</title>
 
 <!-- jquery -->
 <script src="https://code.jquery.com/jquery-3.1.0.min.js" integrity="sha384-nrOSfDHtoPMzJHjVTdCopGqIqeYETSXhZDFyniQ8ZHcVy08QesyHcnOUpMpqnmWq" crossorigin="anonymous"></script>
 <!-- Bootstrap -->
+<link href="https://maxcdn.bootstrapcdn.com/bootswatch/3.3.7/cerulean/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
 
-<link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
 
 <!-- Font Awesome icons -->
@@ -30,10 +30,10 @@
 
 
 
-<meta property="og:title" content="Teal Module: density distribution plot — tm_g_density_distribution_plot" />
+<meta property="og:title" content="Density Distribution Plot — tm_g_density_distribution_plot" />
 
-<meta property="og:description" content="This module displays the web user interface and calls the functions that create 
-a density distribution plot and an accompanying summary table." />
+<meta property="og:description" content="This teal module renders the UI and calls the functions that create a density distribution plot 
+and an accompanying summary table." />
 <meta name="twitter:card" content="summary" />
 
 
@@ -80,7 +80,12 @@ a density distribution plot and an accompanying summary table." />
       </ul>
       
       <ul class="nav navbar-nav navbar-right">
-        
+        <li>
+  <a href="https://github.roche.com/Rpackages/teal.goshawk">
+    <span class="fa fa-github"></span>
+     
+  </a>
+</li>
       </ul>
       
     </div><!--/.nav-collapse -->
@@ -93,25 +98,25 @@ a density distribution plot and an accompanying summary table." />
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Teal Module: density distribution plot</h1>
+    <h1>Density Distribution Plot</h1>
     
     <div class="hidden name"><code>tm_g_density_distribution_plot.Rd</code></div>
     </div>
 
     <div class="ref-description">
     
-    <p>This module displays the web user interface and calls the functions that create 
-a density distribution plot and an accompanying summary table.</p>
+    <p>This teal module renders the UI and calls the functions that create a density distribution plot 
+and an accompanying summary table.</p>
     
     </div>
 
     <pre class="usage"><span class='fu'>tm_g_density_distribution_plot</span>(<span class='no'>label</span>, <span class='no'>dataname</span>, <span class='no'>param_var</span>,
-  <span class='kw'>param_choices</span> <span class='kw'>=</span> <span class='no'>param</span>, <span class='no'>param</span>, <span class='no'>xaxis_var</span>, <span class='kw'>xaxis_var_choices</span> <span class='kw'>=</span> <span class='no'>xaxis_var</span>,
-  <span class='kw'>trt_group</span> <span class='kw'>=</span> <span class='st'>"ARM"</span>, <span class='kw'>color_manual</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>loq_flag_var</span> <span class='kw'>=</span> <span class='st'>"LOQFL"</span>,
-  <span class='kw'>plot_height</span> <span class='kw'>=</span> <span class='fu'>c</span>(<span class='fl'>500</span>, <span class='fl'>200</span>, <span class='fl'>2000</span>), <span class='kw'>font_size</span> <span class='kw'>=</span> <span class='fu'>c</span>(<span class='fl'>12</span>, <span class='fl'>8</span>, <span class='fl'>20</span>),
-  <span class='kw'>line_size</span> <span class='kw'>=</span> <span class='fu'>c</span>(<span class='fl'>1</span>, <span class='fl'>0.25</span>, <span class='fl'>3</span>), <span class='kw'>hline</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>facet_ncol</span> <span class='kw'>=</span> <span class='fl'>2</span>,
-  <span class='kw'>rotate_xlab</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>pre_output</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>post_output</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>code_data_processing</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)</pre>
+  <span class='kw'>param_choices</span> <span class='kw'>=</span> <span class='no'>param</span>, <span class='no'>param</span>, <span class='no'>xaxis_var</span>,
+  <span class='kw'>xaxis_var_choices</span> <span class='kw'>=</span> <span class='no'>xaxis_var</span>, <span class='kw'>trt_group</span> <span class='kw'>=</span> <span class='st'>"ARM"</span>,
+  <span class='kw'>color_manual</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>color_comb</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>plot_height</span> <span class='kw'>=</span> <span class='fu'>c</span>(<span class='fl'>500</span>, <span class='fl'>200</span>,
+  <span class='fl'>2000</span>), <span class='kw'>font_size</span> <span class='kw'>=</span> <span class='fu'>c</span>(<span class='fl'>12</span>, <span class='fl'>8</span>, <span class='fl'>20</span>), <span class='kw'>line_size</span> <span class='kw'>=</span> <span class='fu'>c</span>(<span class='fl'>1</span>, <span class='fl'>0.25</span>, <span class='fl'>3</span>),
+  <span class='kw'>hline</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>facet_ncol</span> <span class='kw'>=</span> <span class='fl'>2</span>, <span class='kw'>rotate_xlab</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
+  <span class='kw'>pre_output</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>post_output</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>code_data_processing</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -122,7 +127,8 @@ a density distribution plot and an accompanying summary table.</p>
     </tr>
     <tr>
       <th>dataname</th>
-      <td><p>ADaM structured analysis laboratory data frame e.g. ALB.</p></td>
+      <td><p>analysis data passed to the data argument of teal init. E.g. ADaM structured 
+laboratory data frame ALB.</p></td>
     </tr>
     <tr>
       <th>param_var</th>
@@ -138,7 +144,7 @@ a density distribution plot and an accompanying summary table.</p>
     </tr>
     <tr>
       <th>xaxis_var</th>
-      <td><p>name of variable containing biomarker results displayed on X-axis e.g. AVAL.</p></td>
+      <td><p>name of variable containing biomarker results displayed on x-axis e.g. AVAL.</p></td>
     </tr>
     <tr>
       <th>xaxis_var_choices</th>
@@ -153,8 +159,8 @@ a density distribution plot and an accompanying summary table.</p>
       <td><p>vector of colors applied to treatment values.</p></td>
     </tr>
     <tr>
-      <th>loq_flag_var</th>
-      <td><p>name of variable containing LOQ flag e.g. LBLOQFL.</p></td>
+      <th>color_comb</th>
+      <td><p>name or hex value for combined treatment color.</p></td>
     </tr>
     <tr>
       <th>plot_height</th>
@@ -207,12 +213,45 @@ output to put the output into context. For example the
     <pre class="examples"><div class='input'>
 </div><span class='co'># NOT RUN {</span>
 <span class='co'># Example using ADaM structure analysis dataset.</span>
-<span class='co'># ALB refers to biomarker data stored in expected laboratory structure.</span>
 
-<span class='no'>param_choices</span> <span class='kw'>&lt;-</span> <span class='fu'>c</span>(<span class='st'>"ACIGG"</span>, <span class='st'>"CRP"</span>, <span class='st'>"ADIGG"</span>, <span class='st'>"CCL20"</span>, <span class='st'>"IGG"</span>)
+<span class='fu'>library</span>(<span class='no'>dplyr</span>)
+<span class='fu'>library</span>(<span class='no'>ggplot2</span>)
+<span class='fu'>library</span>(<span class='no'>goshawk</span>)
+<span class='fu'>library</span>(<span class='no'>random.cdisc.data</span>)
+<span class='fu'>library</span>(<span class='no'>stringr</span>)
+<span class='fu'>library</span>(<span class='no'>teal</span>)
+<span class='fu'>library</span>(<span class='no'>teal.goshawk</span>)
+
+<span class='co'># original ARM value = dose value</span>
+<span class='no'>arm_mapping</span> <span class='kw'>&lt;-</span> <span class='fu'>list</span>(<span class='st'>"A: Drug X"</span> <span class='kw'>=</span> <span class='st'>"150mg QD"</span>, <span class='st'>"B: Placebo"</span> <span class='kw'>=</span> <span class='st'>"Placebo"</span>,
+<span class='st'>"C: Combination"</span> <span class='kw'>=</span> <span class='st'>"Combination"</span>)
+<span class='no'>color_manual</span> <span class='kw'>&lt;-</span>  <span class='fu'>c</span>(<span class='st'>"150mg QD"</span> <span class='kw'>=</span> <span class='st'>"#000000"</span>, <span class='st'>"Placebo"</span> <span class='kw'>=</span> <span class='st'>"#3498DB"</span>, <span class='st'>"Combination"</span> <span class='kw'>=</span> <span class='st'>"#E74C3C"</span>)
+<span class='co'># assign LOQ flag symbols: circles for "N" and triangles for "Y", squares for "NA"</span>
+<span class='no'>shape_manual</span> <span class='kw'>&lt;-</span>  <span class='fu'>c</span>(<span class='st'>"N"</span>  <span class='kw'>=</span> <span class='fl'>1</span>, <span class='st'>"Y"</span>  <span class='kw'>=</span> <span class='fl'>2</span>, <span class='st'>"NA"</span> <span class='kw'>=</span> <span class='fl'>0</span>)
+
+<span class='no'>ASL</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='http://www.rdocumentation.org/packages/random.cdisc.data/topics/radsl'>radsl</a></span>(<span class='kw'>N</span> <span class='kw'>=</span> <span class='fl'>20</span>, <span class='kw'>seed</span> <span class='kw'>=</span> <span class='fl'>1</span>)
+<span class='no'>ALB</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='http://www.rdocumentation.org/packages/random.cdisc.data/topics/radlb'>radlb</a></span>(<span class='no'>ASL</span>, <span class='kw'>visit_format</span> <span class='kw'>=</span> <span class='st'>"WEEK"</span>, <span class='kw'>n_assessments</span> <span class='kw'>=</span> <span class='fl'>7</span>, <span class='kw'>seed</span> <span class='kw'>=</span> <span class='fl'>2</span>)
+<span class='no'>ALB</span> <span class='kw'>&lt;-</span> <span class='no'>ALB</span> <span class='kw'>%&gt;%</span>
+<span class='fu'><a href='https://dplyr.tidyverse.org/reference/mutate.html'>mutate</a></span>(<span class='kw'>AVISITCD</span> <span class='kw'>=</span> <span class='fu'><a href='https://dplyr.tidyverse.org/reference/case_when.html'>case_when</a></span>(
+<span class='no'>AVISIT</span> <span class='kw'>==</span> <span class='st'>"SCREENING"</span> ~ <span class='st'>"SCR"</span>,
+<span class='no'>AVISIT</span> <span class='kw'>==</span> <span class='st'>"BASELINE"</span> ~ <span class='st'>"BL"</span>, <span class='fu'>grepl</span>(<span class='st'>"WEEK"</span>, <span class='no'>AVISIT</span>) ~ <span class='fu'>paste</span>(<span class='st'>"W"</span>,<span class='fu'>trimws</span>(<span class='fu'>substr</span>(<span class='no'>AVISIT</span>, <span class='kw'>start</span><span class='kw'>=</span><span class='fl'>6</span>,
+<span class='kw'>stop</span><span class='kw'>=</span><span class='fu'><a href='https://stringr.tidyverse.org/reference/str_locate.html'>str_locate</a></span>(<span class='no'>AVISIT</span>, <span class='st'>"DAY"</span>)-<span class='fl'>1</span>))),
+<span class='fl'>TRUE</span> ~ <span class='fu'>as.character</span>(<span class='fl'>NA</span>))) <span class='kw'>%&gt;%</span>
+<span class='fu'><a href='https://dplyr.tidyverse.org/reference/mutate.html'>mutate</a></span>(<span class='kw'>AVISITCDN</span> <span class='kw'>=</span> <span class='fu'><a href='https://dplyr.tidyverse.org/reference/case_when.html'>case_when</a></span>(<span class='no'>AVISITCD</span> <span class='kw'>==</span> <span class='st'>"SCR"</span> ~ -<span class='fl'>2</span>,
+<span class='no'>AVISITCD</span> <span class='kw'>==</span> <span class='st'>"BL"</span> ~ <span class='fl'>0</span>, <span class='fu'>grepl</span>(<span class='st'>"W"</span>, <span class='no'>AVISITCD</span>) ~ <span class='fu'>as.numeric</span>(<span class='fu'>gsub</span>(<span class='st'>"\\D+"</span>, <span class='st'>""</span>, <span class='no'>AVISITCD</span>)),
+<span class='fl'>TRUE</span> ~ <span class='fu'>as.numeric</span>(<span class='fl'>NA</span>))) <span class='kw'>%&gt;%</span>
+<span class='co'># use ARMCD values to order treatment in visualization legend</span>
+<span class='fu'><a href='https://dplyr.tidyverse.org/reference/mutate.html'>mutate</a></span>(<span class='kw'>TRTORD</span> <span class='kw'>=</span> <span class='fu'>ifelse</span>(<span class='fu'>grepl</span>(<span class='st'>"C"</span>, <span class='no'>ARMCD</span>), <span class='fl'>1</span>,
+<span class='fu'>ifelse</span>(<span class='fu'>grepl</span>(<span class='st'>"B"</span>, <span class='no'>ARMCD</span>), <span class='fl'>2</span>,
+<span class='fu'>ifelse</span>(<span class='fu'>grepl</span>(<span class='st'>"A"</span>, <span class='no'>ARMCD</span>), <span class='fl'>3</span>, <span class='fl'>NA</span>)))) <span class='kw'>%&gt;%</span>
+<span class='fu'><a href='https://dplyr.tidyverse.org/reference/mutate.html'>mutate</a></span>(<span class='kw'>ARM</span> <span class='kw'>=</span> <span class='fu'>as.character</span>(<span class='no'>arm_mapping</span>[<span class='fu'>match</span>(<span class='no'>ARM</span>, <span class='fu'>names</span>(<span class='no'>arm_mapping</span>))])) <span class='kw'>%&gt;%</span>
+<span class='fu'><a href='https://dplyr.tidyverse.org/reference/mutate.html'>mutate</a></span>(<span class='kw'>ARM</span> <span class='kw'>=</span> <span class='fu'>factor</span>(<span class='no'>ARM</span>) <span class='kw'>%&gt;%</span> <span class='fu'>reorder</span>(<span class='no'>TRTORD</span>))
+
+<span class='no'>param_choices</span> <span class='kw'>=</span> <span class='fu'>c</span>(<span class='st'>"ALT"</span>, <span class='st'>"CRP"</span>, <span class='st'>"IGA"</span>)
+
 <span class='no'>x</span> <span class='kw'>&lt;-</span> <span class='kw pkg'>teal</span><span class='kw ns'>::</span><span class='fu'><a href='http://www.rdocumentation.org/packages/teal/topics/init'>init</a></span>(
   <span class='kw'>data</span> <span class='kw'>=</span> <span class='fu'>list</span>(<span class='kw'>ASL</span> <span class='kw'>=</span> <span class='no'>ASL</span>, <span class='kw'>ALB</span> <span class='kw'>=</span> <span class='no'>ALB</span>),
-  <span class='kw'>modules</span> <span class='kw'>=</span> <span class='fu'>root_modules</span>(
+  <span class='kw'>modules</span> <span class='kw'>=</span> <span class='fu'><a href='http://www.rdocumentation.org/packages/teal/topics/root_modules'>root_modules</a></span>(
     <span class='fu'>tm_g_density_distribution_plot</span>(
        <span class='kw'>label</span> <span class='kw'>=</span> <span class='st'>"Density Distribution Plot"</span>,
        <span class='kw'>dataname</span> <span class='kw'>=</span> <span class='st'>"ALB"</span>,
@@ -220,10 +259,10 @@ output to put the output into context. For example the
        <span class='kw'>param_choices</span> <span class='kw'>=</span> <span class='no'>param_choices</span>,
        <span class='kw'>param</span> <span class='kw'>=</span> <span class='no'>param_choices</span>[<span class='fl'>1</span>],
        <span class='kw'>xaxis_var</span> <span class='kw'>=</span> <span class='st'>"AVAL"</span>,
-       <span class='kw'>xaxis_var_choices</span> <span class='kw'>=</span> <span class='fu'>c</span>(<span class='st'>"AVAL"</span>, <span class='st'>"BASE"</span>, <span class='st'>"CHG"</span>, <span class='st'>"PCHG"</span>, <span class='st'>"BASE2"</span>, <span class='st'>"CHG2"</span>, <span class='st'>"PCHG2"</span>, <span class='st'>"AVALL2"</span>, <span class='st'>"BASEL2"</span>, <span class='st'>"BASE2L2"</span>),
+       <span class='kw'>xaxis_var_choices</span> <span class='kw'>=</span> <span class='fu'>c</span>(<span class='st'>"AVAL"</span>, <span class='st'>"BASE"</span>, <span class='st'>"CHG"</span>, <span class='st'>"PCHG"</span>, <span class='st'>"AVALL2"</span>),
        <span class='kw'>trt_group</span> <span class='kw'>=</span> <span class='st'>"ARM"</span>,
        <span class='kw'>color_manual</span> <span class='kw'>=</span> <span class='no'>color_manual</span>,
-       <span class='kw'>loq_flag_var</span> <span class='kw'>=</span> <span class='st'>'LOQFL'</span>,
+       <span class='kw'>color_comb</span> <span class='kw'>=</span> <span class='st'>"#39ff14"</span>,
        <span class='kw'>plot_height</span> <span class='kw'>=</span> <span class='fu'>c</span>(<span class='fl'>500</span>, <span class='fl'>200</span>, <span class='fl'>2000</span>),
        <span class='kw'>font_size</span> <span class='kw'>=</span> <span class='fu'>c</span>(<span class='fl'>12</span>, <span class='fl'>8</span>, <span class='fl'>20</span>),
        <span class='kw'>line_size</span> <span class='kw'>=</span> <span class='fu'>c</span>(<span class='fl'>1</span>, <span class='fl'>.25</span>, <span class='fl'>3</span>)
@@ -256,7 +295,7 @@ Balazs Toth (tothb2)  toth.balazs@gene.com
 
       <footer>
       <div class="copyright">
-  <p>Developed by Nick Paszty, Jeffrey Tomlinson, Wenyi Liu.</p>
+  <p>Developed by Nick Paszty, Wenyi Liu, Jeffrey Tomlinson, Balazs Toth.</p>
 </div>
 
 <div class="pkgdown">

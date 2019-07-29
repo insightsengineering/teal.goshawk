@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Box Plot — tm_g_boxplot • teal.goshawk</title>
+<title>Box Plot — tm_g_boxplot_av • teal.goshawk</title>
 
 <!-- jquery -->
 <script src="https://code.jquery.com/jquery-3.1.0.min.js" integrity="sha384-nrOSfDHtoPMzJHjVTdCopGqIqeYETSXhZDFyniQ8ZHcVy08QesyHcnOUpMpqnmWq" crossorigin="anonymous"></script>
@@ -30,7 +30,7 @@
 
 
 
-<meta property="og:title" content="Box Plot — tm_g_boxplot" />
+<meta property="og:title" content="Box Plot — tm_g_boxplot_av" />
 
 <meta property="og:description" content="This teal module renders the UI and calls the functions that create a box plot and accompanying
 summary table." />
@@ -100,7 +100,7 @@ summary table." />
     <div class="page-header">
     <h1>Box Plot</h1>
     
-    <div class="hidden name"><code>tm_g_boxplot.Rd</code></div>
+    <div class="hidden name"><code>tm_g_boxplot_av.Rd</code></div>
     </div>
 
     <div class="ref-description">
@@ -110,7 +110,7 @@ summary table.</p>
     
     </div>
 
-    <pre class="usage"><span class='fu'>tm_g_boxplot</span>(<span class='no'>label</span>, <span class='no'>dataname</span>, <span class='no'>param_var</span>, <span class='kw'>param_choices</span> <span class='kw'>=</span> <span class='no'>param</span>, <span class='no'>param</span>,
+    <pre class="usage"><span class='fu'>tm_g_boxplot_av</span>(<span class='no'>label</span>, <span class='no'>dataname</span>, <span class='no'>param_var</span>, <span class='kw'>param_choices</span> <span class='kw'>=</span> <span class='no'>param</span>, <span class='no'>param</span>,
   <span class='kw'>yaxis_var</span> <span class='kw'>=</span> <span class='st'>"AVAL"</span>, <span class='kw'>yaxis_var_choices</span> <span class='kw'>=</span> <span class='fu'>c</span>(<span class='st'>"AVAL"</span>, <span class='st'>"CHG"</span>),
   <span class='kw'>xaxis_var</span> <span class='kw'>=</span> <span class='st'>"AVISITCD"</span>, <span class='kw'>xaxis_var_choices</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
   <span class='kw'>facet_var</span> <span class='kw'>=</span> <span class='st'>"ARM"</span>, <span class='kw'>facet_var_choices</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
@@ -278,7 +278,7 @@ name of the parameter (in title case) will be used.</p></td>
 <span class='no'>x</span> <span class='kw'>&lt;-</span> <span class='kw pkg'>teal</span><span class='kw ns'>::</span><span class='fu'><a href='http://www.rdocumentation.org/packages/teal/topics/init'>init</a></span>(
   <span class='kw'>data</span> <span class='kw'>=</span>  <span class='fu'>list</span>(<span class='kw'>ASL</span> <span class='kw'>=</span> <span class='no'>ASL</span>, <span class='kw'>ALB</span> <span class='kw'>=</span> <span class='no'>ALB</span>),
   <span class='kw'>modules</span> <span class='kw'>=</span> <span class='fu'><a href='http://www.rdocumentation.org/packages/teal/topics/root_modules'>root_modules</a></span>(
-      <span class='fu'>tm_g_boxplot</span>(
+      <span class='fu'>tm_g_boxplot_av</span>(
         <span class='kw'>label</span> <span class='kw'>=</span> <span class='st'>"Box Plot"</span>,
         <span class='kw'>dataname</span> <span class='kw'>=</span> <span class='st'>"ALB"</span>,
         <span class='kw'>param_var</span> <span class='kw'>=</span> <span class='st'>"PARAMCD"</span>,
@@ -290,7 +290,7 @@ name of the parameter (in title case) will be used.</p></td>
         <span class='kw'>xaxis_var</span> <span class='kw'>=</span> <span class='st'>"ARM"</span>,
         <span class='kw'>xaxis_var_choices</span> <span class='kw'>=</span> <span class='fu'>c</span>(<span class='st'>"ARM"</span>, <span class='st'>"AVISITCD"</span>, <span class='st'>"STUDYID"</span>),
         <span class='kw'>facet_var</span><span class='kw'>=</span> <span class='st'>"AVISITCD"</span>,
-        <span class='kw'>facet_var_choices</span> <span class='kw'>=</span> <span class='fu'>c</span>(<span class='st'>"ARM"</span>, <span class='st'>"AVISITCD"</span>, <span class='st'>"SEX"</span>),
+        <span class='kw'>facet_var_choices</span> <span class='kw'>=</span> <span class='fu'>c</span>(<span class='st'>"ARM"</span>, <span class='st'>"AVISITCD"</span>, <span class='st'>"SEX"</span>, <span class='st'>"STUDYID"</span>),
         <span class='kw'>trt_group</span> <span class='kw'>=</span> <span class='st'>"ARM"</span>
       )
   )
