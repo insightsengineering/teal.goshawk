@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Correlation Plot without AVISIT facetting. Presents all data points. — tm_g_correlationplot_av • teal.goshawk</title>
+<title>Function to create a correlation plot without visit facetting. Presents all visit data based on analysis day. — tm_g_correlationplot_av • teal.goshawk</title>
 
 <!-- jquery -->
 <script src="https://code.jquery.com/jquery-3.1.0.min.js" integrity="sha384-nrOSfDHtoPMzJHjVTdCopGqIqeYETSXhZDFyniQ8ZHcVy08QesyHcnOUpMpqnmWq" crossorigin="anonymous"></script>
@@ -30,7 +30,7 @@
 
 
 
-<meta property="og:title" content="Correlation Plot without AVISIT facetting. Presents all data points. — tm_g_correlationplot_av" />
+<meta property="og:title" content="Function to create a correlation plot without visit facetting. Presents all visit data based on analysis day. — tm_g_correlationplot_av" />
 
 <meta property="og:description" content="This teal module renders the UI and calls the function that creates a correlation plot." />
 <meta name="twitter:card" content="summary" />
@@ -97,7 +97,7 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Correlation Plot without AVISIT facetting. Presents all data points.</h1>
+    <h1>Function to create a correlation plot without visit facetting. Presents all visit data based on analysis day.</h1>
     
     <div class="hidden name"><code>tm_g_correlationplot_av.Rd</code></div>
     </div>
@@ -114,10 +114,10 @@
   <span class='kw'>yaxis_param</span> <span class='kw'>=</span> <span class='no'>yaxis_param</span>, <span class='kw'>yaxis_param_choices</span> <span class='kw'>=</span> <span class='no'>yaxis_param</span>,
   <span class='kw'>yaxis_var</span> <span class='kw'>=</span> <span class='no'>yaxis_var</span>, <span class='kw'>yaxis_var_choices</span> <span class='kw'>=</span> <span class='no'>yaxis_var</span>,
   <span class='kw'>trt_group</span> <span class='kw'>=</span> <span class='st'>"ARM"</span>, <span class='kw'>color_manual</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>shape_manual</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>facet_ncol</span> <span class='kw'>=</span> <span class='fl'>2</span>, <span class='kw'>facet</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>facet_var</span> <span class='kw'>=</span> <span class='st'>"ARM"</span>,
-  <span class='kw'>reg_line</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>rotate_xlab</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>hline</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>vline</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>plot_height</span> <span class='kw'>=</span> <span class='fu'>c</span>(<span class='fl'>500</span>, <span class='fl'>200</span>, <span class='fl'>2000</span>), <span class='kw'>font_size</span> <span class='kw'>=</span> <span class='fu'>c</span>(<span class='fl'>12</span>, <span class='fl'>8</span>,
-  <span class='fl'>20</span>), <span class='kw'>dot_size</span> <span class='kw'>=</span> <span class='fu'>c</span>(<span class='fl'>1</span>, <span class='fl'>1</span>, <span class='fl'>12</span>), <span class='kw'>reg_text_size</span> <span class='kw'>=</span> <span class='fu'>c</span>(<span class='fl'>3</span>, <span class='fl'>3</span>, <span class='fl'>10</span>),
+  <span class='kw'>facet_ncol</span> <span class='kw'>=</span> <span class='fl'>2</span>, <span class='kw'>facet_var</span> <span class='kw'>=</span> <span class='st'>"ACTARM"</span>, <span class='kw'>reg_line</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
+  <span class='kw'>rotate_xlab</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>hline</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>vline</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>plot_height</span> <span class='kw'>=</span> <span class='fu'>c</span>(<span class='fl'>500</span>, <span class='fl'>200</span>, <span class='fl'>2000</span>), <span class='kw'>font_size</span> <span class='kw'>=</span> <span class='fu'>c</span>(<span class='fl'>12</span>, <span class='fl'>8</span>, <span class='fl'>20</span>),
+  <span class='kw'>dot_size</span> <span class='kw'>=</span> <span class='fu'>c</span>(<span class='fl'>1</span>, <span class='fl'>1</span>, <span class='fl'>12</span>), <span class='kw'>reg_text_size</span> <span class='kw'>=</span> <span class='fu'>c</span>(<span class='fl'>3</span>, <span class='fl'>3</span>, <span class='fl'>10</span>),
   <span class='kw'>pre_output</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>post_output</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>code_data_processing</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
@@ -182,8 +182,7 @@ laboratory data frame ALB.</p></td>
     </tr>
     <tr>
       <th>facet_ncol</th>
-      <td><p>numeric value indicating number of facets per row.
-#@param facet set layout to use treatment facetting.</p></td>
+      <td><p>numeric value indicating number of facets per row.</p></td>
     </tr>
     <tr>
       <th>facet_var</th>
@@ -258,7 +257,7 @@ output to put the output into context. For example the
 <span class='fu'>library</span>(<span class='no'>teal</span>)
 <span class='fu'>library</span>(<span class='no'>teal.goshawk</span>)
 
-<span class='co'># original ARM value = dose value</span>
+<span class='co'># original ACTARM value = dose value</span>
 <span class='no'>arm_mapping</span> <span class='kw'>&lt;-</span> <span class='fu'>list</span>(<span class='st'>"A: Drug X"</span> <span class='kw'>=</span> <span class='st'>"150mg QD"</span>, <span class='st'>"B: Placebo"</span> <span class='kw'>=</span> <span class='st'>"Placebo"</span>,
 <span class='st'>"C: Combination"</span> <span class='kw'>=</span> <span class='st'>"Combination"</span>)
 <span class='no'>color_manual</span> <span class='kw'>&lt;-</span>  <span class='fu'>c</span>(<span class='st'>"150mg QD"</span> <span class='kw'>=</span> <span class='st'>"#000000"</span>, <span class='st'>"Placebo"</span> <span class='kw'>=</span> <span class='st'>"#3498DB"</span>, <span class='st'>"Combination"</span> <span class='kw'>=</span> <span class='st'>"#E74C3C"</span>)
@@ -276,12 +275,13 @@ output to put the output into context. For example the
 <span class='fu'><a href='https://dplyr.tidyverse.org/reference/mutate.html'>mutate</a></span>(<span class='kw'>AVISITCDN</span> <span class='kw'>=</span> <span class='fu'><a href='https://dplyr.tidyverse.org/reference/case_when.html'>case_when</a></span>(<span class='no'>AVISITCD</span> <span class='kw'>==</span> <span class='st'>"SCR"</span> ~ -<span class='fl'>2</span>,
 <span class='no'>AVISITCD</span> <span class='kw'>==</span> <span class='st'>"BL"</span> ~ <span class='fl'>0</span>, <span class='fu'>grepl</span>(<span class='st'>"W"</span>, <span class='no'>AVISITCD</span>) ~ <span class='fu'>as.numeric</span>(<span class='fu'>gsub</span>(<span class='st'>"\\D+"</span>, <span class='st'>""</span>, <span class='no'>AVISITCD</span>)),
 <span class='fl'>TRUE</span> ~ <span class='fu'>as.numeric</span>(<span class='fl'>NA</span>))) <span class='kw'>%&gt;%</span>
-<span class='co'># use ARMCD values to order treatment in visualization legend</span>
+<span class='co'># use ACTARMCD values to order treatment in visualization legend</span>
 <span class='fu'><a href='https://dplyr.tidyverse.org/reference/mutate.html'>mutate</a></span>(<span class='kw'>TRTORD</span> <span class='kw'>=</span> <span class='fu'>ifelse</span>(<span class='fu'>grepl</span>(<span class='st'>"C"</span>, <span class='no'>ARMCD</span>), <span class='fl'>1</span>,
-<span class='fu'>ifelse</span>(<span class='fu'>grepl</span>(<span class='st'>"B"</span>, <span class='no'>ARMCD</span>), <span class='fl'>2</span>,
-<span class='fu'>ifelse</span>(<span class='fu'>grepl</span>(<span class='st'>"A"</span>, <span class='no'>ARMCD</span>), <span class='fl'>3</span>, <span class='fl'>NA</span>)))) <span class='kw'>%&gt;%</span>
-<span class='fu'><a href='https://dplyr.tidyverse.org/reference/mutate.html'>mutate</a></span>(<span class='kw'>ARM</span> <span class='kw'>=</span> <span class='fu'>as.character</span>(<span class='no'>arm_mapping</span>[<span class='fu'>match</span>(<span class='no'>ARM</span>, <span class='fu'>names</span>(<span class='no'>arm_mapping</span>))])) <span class='kw'>%&gt;%</span>
-<span class='fu'><a href='https://dplyr.tidyverse.org/reference/mutate.html'>mutate</a></span>(<span class='kw'>ARM</span> <span class='kw'>=</span> <span class='fu'>factor</span>(<span class='no'>ARM</span>) <span class='kw'>%&gt;%</span> <span class='fu'>reorder</span>(<span class='no'>TRTORD</span>))
+<span class='fu'>ifelse</span>(<span class='fu'>grepl</span>(<span class='st'>"B"</span>, <span class='no'>ACTARMCD</span>), <span class='fl'>2</span>,
+<span class='fu'>ifelse</span>(<span class='fu'>grepl</span>(<span class='st'>"A"</span>, <span class='no'>ACTARMCD</span>), <span class='fl'>3</span>, <span class='fl'>NA</span>)))) <span class='kw'>%&gt;%</span>
+<span class='fu'><a href='https://dplyr.tidyverse.org/reference/mutate.html'>mutate</a></span>(<span class='kw'>ACTARM</span> <span class='kw'>=</span> <span class='fu'>as.character</span>(<span class='no'>arm_mapping</span>[<span class='fu'>match</span>(<span class='no'>ACTARM</span>, <span class='fu'>names</span>(<span class='no'>arm_mapping</span>))])) <span class='kw'>%&gt;%</span>
+<span class='fu'><a href='https://dplyr.tidyverse.org/reference/mutate.html'>mutate</a></span>(<span class='kw'>ACTARM</span> <span class='kw'>=</span> <span class='fu'>factor</span>(<span class='no'>ACTARM</span>) <span class='kw'>%&gt;%</span> <span class='fu'>reorder</span>(<span class='no'>TRTORD</span>)) <span class='kw'>%&gt;%</span>
+<span class='fu'><a href='https://dplyr.tidyverse.org/reference/mutate.html'>mutate</a></span>(<span class='kw'>ADY</span> <span class='kw'>=</span> <span class='no'>AVISITCDN</span>)
 
 <span class='no'>param_choices</span> <span class='kw'>=</span> <span class='fu'>c</span>(<span class='st'>"ALT"</span>, <span class='st'>"CRP"</span>, <span class='st'>"IGA"</span>)
 
@@ -305,8 +305,7 @@ output to put the output into context. For example the
        <span class='kw'>shape_manual</span> <span class='kw'>=</span> <span class='no'>shape_manual</span>,
        <span class='kw'>plot_height</span> <span class='kw'>=</span> <span class='fu'>c</span>(<span class='fl'>500</span>, <span class='fl'>200</span>, <span class='fl'>2000</span>),
        <span class='kw'>facet_ncol</span> <span class='kw'>=</span> <span class='fl'>2</span>,
-       <span class='co'>#facet = FALSE,</span>
-       <span class='kw'>facet_var</span> <span class='kw'>=</span> <span class='st'>"ACTARM"</span>,
+       <span class='kw'>facet_var</span> <span class='kw'>=</span> <span class='st'>"ADY"</span>,
        <span class='kw'>reg_line</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
        <span class='kw'>font_size</span> <span class='kw'>=</span> <span class='fu'>c</span>(<span class='fl'>12</span>, <span class='fl'>8</span>, <span class='fl'>20</span>),
        <span class='kw'>dot_size</span> <span class='kw'>=</span> <span class='fu'>c</span>(<span class='fl'>1</span>, <span class='fl'>1</span>, <span class='fl'>12</span>),

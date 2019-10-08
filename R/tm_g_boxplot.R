@@ -375,9 +375,6 @@ srv_g_boxplot <- function(input, output, session, datasets
         datfilt[[y.axis.var]] <- as.factor(datfilt[[y.axis.var]])
       }
       
-      # Next, drop levels not used in the current facet
-      #datfilt <- droplevels(datfilt)
-      
       # Finally, within this facet, identify points within the brushed ranges
       datfilt %>% 
         filter(
@@ -593,6 +590,7 @@ srv_g_boxplot <- function(input, output, session, datasets
         top_n(1,1) %>% 
         as.character()
     })
+
     eval(chunks$boxsetup)
     
     data_name <- paste0("ALB", "_FILTERED")

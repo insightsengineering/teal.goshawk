@@ -1,4 +1,4 @@
-#' Correlation Plot without AVISIT facetting. Presents all data points.
+#' Function to create a correlation plot without visit facetting. Presents all visit data based on analysis day.
 #'
 #' This teal module renders the UI and calls the function that creates a correlation plot.
 #'
@@ -18,7 +18,6 @@
 #' @param color_manual vector of colors applied to treatment values.
 #' @param shape_manual vector of symbols applied to LOQ values.
 #' @param facet_ncol numeric value indicating number of facets per row.
-#' #@param facet set layout to use treatment facetting.
 #' @param facet_var variable to use for treatment facetting.
 #' @param reg_line include regression line and annotations for slope and coefficient in 
 #' visualization. Use with facet TRUE.
@@ -60,7 +59,7 @@
 #' library(teal)
 #' library(teal.goshawk)
 #' 
-#' # original ARM value = dose value
+#' # original ACTARM value = dose value
 #' arm_mapping <- list("A: Drug X" = "150mg QD", "B: Placebo" = "Placebo", 
 #' "C: Combination" = "Combination")
 #' color_manual <-  c("150mg QD" = "#000000", "Placebo" = "#3498DB", "Combination" = "#E74C3C")
@@ -78,12 +77,13 @@
 #' mutate(AVISITCDN = case_when(AVISITCD == "SCR" ~ -2,
 #' AVISITCD == "BL" ~ 0, grepl("W", AVISITCD) ~ as.numeric(gsub("\\D+", "", AVISITCD)), 
 #' TRUE ~ as.numeric(NA))) %>%
-#' # use ARMCD values to order treatment in visualization legend
+#' # use ACTARMCD values to order treatment in visualization legend
 #' mutate(TRTORD = ifelse(grepl("C", ARMCD), 1,
-#' ifelse(grepl("B", ARMCD), 2,
-#' ifelse(grepl("A", ARMCD), 3, NA)))) %>%
-#' mutate(ARM = as.character(arm_mapping[match(ARM, names(arm_mapping))])) %>%
-#' mutate(ARM = factor(ARM) %>% reorder(TRTORD))
+#' ifelse(grepl("B", ACTARMCD), 2,
+#' ifelse(grepl("A", ACTARMCD), 3, NA)))) %>%
+#' mutate(ACTARM = as.character(arm_mapping[match(ACTARM, names(arm_mapping))])) %>%
+#' mutate(ACTARM = factor(ACTARM) %>% reorder(TRTORD)) %>% 
+#' mutate(ADY = AVISITCDN)
 #' 
 #' param_choices = c("ALT", "CRP", "IGA")
 #' 
@@ -107,8 +107,7 @@
 #'        shape_manual = shape_manual,
 #'        plot_height = c(500, 200, 2000),
 #'        facet_ncol = 2,
-#'        #facet = FALSE,
-#'        facet_var = "ACTARM",
+#'        facet_var = "ADY",
 #'        reg_line = FALSE,
 #'        font_size = c(12, 8, 20),
 #'        dot_size = c(1, 1, 12),
@@ -136,8 +135,7 @@ tm_g_correlationplot_av <- function(label,
                                  color_manual = NULL,
                                  shape_manual = NULL,
                                  facet_ncol = 2,
-                                 facet = FALSE,
-                                 facet_var = "ARM",
+                                 facet_var = "ACTARM",
                                  reg_line = FALSE,
                                  rotate_xlab = FALSE,
                                  hline = NULL,
@@ -155,7 +153,7 @@ tm_g_correlationplot_av <- function(label,
   module(
     label = label,
     filters = dataname,
-    server = srv_g_correlationplot,
+    server = srv_g_correlationplot_av,
     server_args = list(dataname = dataname,
                        param_var = param_var,
                        xaxis_param = xaxis_param,
@@ -168,13 +166,13 @@ tm_g_correlationplot_av <- function(label,
                        shape_manual = shape_manual,
                        code_data_processing = code_data_processing
     ),
-    ui = ui_g_correlationplot,
+    ui = ui_g_correlationplot_av,
     ui_args = args
   )
   
 }
 
-ui_g_correlationplot <- function(id, ...) {
+ui_g_correlationplot_av <- function(id, ...) {
   
   ns <- NS(id)
   a <- list(...)
@@ -205,7 +203,6 @@ ui_g_correlationplot <- function(id, ...) {
       uiOutput(ns("xaxis_zoom")),
       uiOutput(ns("yaxis_zoom")),
       numericInput(ns("facet_ncol"), "Number of Plots Per Row:", a$facet_ncol, min = 1),
-      #checkboxInput(ns("facet"), "Treatment Facetting", a$facet),
       checkboxInput(ns("reg_line"), "Regression Line", a$reg_line),
       checkboxInput(ns("rotate_xlab"), "Rotate X-axis Label", a$rotate_xlab),
       numericInput(ns("hline"), "Add a horizontal line:", a$hline),
@@ -225,7 +222,7 @@ ui_g_correlationplot <- function(id, ...) {
   
 }
 
-srv_g_correlationplot <- function(input, output, session, datasets, dataname, 
+srv_g_correlationplot_av <- function(input, output, session, datasets, dataname, 
                                   param_var, xaxis_param, xaxis_var, yaxis_param, yaxis_var, 
                                   trt_group, facet_var, color_manual, shape_manual,
                                   code_data_processing) {
@@ -251,11 +248,6 @@ srv_g_correlationplot <- function(input, output, session, datasets, dataname,
     xaxis_var <- input$xaxis_var
     yaxis_var <- input$yaxis_var
     
-    # # given the 2 param and 2 analysis vars we need to transform the data
-    # plot_data_t1 <- filter_ALB() %>% gather(ANLVARS, ANLVALS, BASE2, BASE, xaxis_var, yaxis_var, LOQFL) %>%
-    #   mutate(ANL.PARAM = ifelse(ANLVARS == "LOQFL", paste0(ANLVARS, "_", PARAMCD), paste0(ANLVARS, ".", PARAMCD))) %>%
-    #   select(USUBJID, trt_group, AVISITN, AVISITCD, ANL.PARAM, ANLVALS) %>%
-    #   spread(ANL.PARAM, ANLVALS)
     plot_data_t1 <- filter_ALB() %>% gather(ANLVARS, ANLVALS, BASE2, BASE, xaxis_var, yaxis_var, LOQFL) %>% 
       mutate(ANL.PARAM = ifelse(ANLVARS == "LOQFL", paste0(ANLVARS, "_", PARAMCD), paste0(ANLVARS, ".", PARAMCD))) %>%
       select(USUBJID, ADY, AVISITCD, ACTARM, ANL.PARAM, ANLVALS) %>%
@@ -277,7 +269,7 @@ srv_g_correlationplot <- function(input, output, session, datasets, dataname,
         (.[[xloqfl()]] == "NA" & .[[yloqfl()]] == "NA") ~ "NA",
         TRUE ~ as.character(NA)
       ))
-    
+
     constraint_var <- input$constraint_var
     
     if (constraint_var != "NONE"){
@@ -449,7 +441,6 @@ srv_g_correlationplot <- function(input, output, session, datasets, dataname,
     hline <- as.numeric(input$hline)
     vline <- as.numeric(input$vline)
     facet_ncol <- input$facet_ncol
-    #facet <- input$facet
     reg_line <- input$reg_line
     rotate_xlab <- input$rotate_xlab
     
@@ -531,7 +522,6 @@ srv_g_correlationplot <- function(input, output, session, datasets, dataname,
       color_manual = color_manual,
       shape_manual = shape_manual,
       facet_ncol = facet_ncol,
-      #facet = facet,
       facet_var = facet_var,
       reg_line = reg_line,
       font_size = font_size,

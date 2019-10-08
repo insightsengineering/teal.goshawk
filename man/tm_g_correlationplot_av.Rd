@@ -2,7 +2,7 @@
 % Please edit documentation in R/tm_g_correlationplot_av.R
 \name{tm_g_correlationplot_av}
 \alias{tm_g_correlationplot_av}
-\title{Correlation Plot without AVISIT facetting. Presents all data points.}
+\title{Function to create a correlation plot without visit facetting. Presents all visit data based on analysis day.}
 \usage{
 tm_g_correlationplot_av(label, dataname, param_var,
   xaxis_param = xaxis_param, xaxis_param_choices = xaxis_param,
@@ -10,10 +10,10 @@ tm_g_correlationplot_av(label, dataname, param_var,
   yaxis_param = yaxis_param, yaxis_param_choices = yaxis_param,
   yaxis_var = yaxis_var, yaxis_var_choices = yaxis_var,
   trt_group = "ARM", color_manual = NULL, shape_manual = NULL,
-  facet_ncol = 2, facet = FALSE, facet_var = "ARM",
-  reg_line = FALSE, rotate_xlab = FALSE, hline = NULL,
-  vline = NULL, plot_height = c(500, 200, 2000), font_size = c(12, 8,
-  20), dot_size = c(1, 1, 12), reg_text_size = c(3, 3, 10),
+  facet_ncol = 2, facet_var = "ACTARM", reg_line = FALSE,
+  rotate_xlab = FALSE, hline = NULL, vline = NULL,
+  plot_height = c(500, 200, 2000), font_size = c(12, 8, 20),
+  dot_size = c(1, 1, 12), reg_text_size = c(3, 3, 10),
   pre_output = NULL, post_output = NULL, code_data_processing = NULL)
 }
 \arguments{
@@ -46,8 +46,7 @@ laboratory data frame ALB.}
 
 \item{shape_manual}{vector of symbols applied to LOQ values.}
 
-\item{facet_ncol}{numeric value indicating number of facets per row.
-#@param facet set layout to use treatment facetting.}
+\item{facet_ncol}{numeric value indicating number of facets per row.}
 
 \item{facet_var}{variable to use for treatment facetting.}
 
@@ -98,7 +97,7 @@ library(stringr)
 library(teal)
 library(teal.goshawk)
 
-# original ARM value = dose value
+# original ACTARM value = dose value
 arm_mapping <- list("A: Drug X" = "150mg QD", "B: Placebo" = "Placebo", 
 "C: Combination" = "Combination")
 color_manual <-  c("150mg QD" = "#000000", "Placebo" = "#3498DB", "Combination" = "#E74C3C")
@@ -116,12 +115,13 @@ TRUE ~ as.character(NA))) \%>\%
 mutate(AVISITCDN = case_when(AVISITCD == "SCR" ~ -2,
 AVISITCD == "BL" ~ 0, grepl("W", AVISITCD) ~ as.numeric(gsub("\\\\D+", "", AVISITCD)), 
 TRUE ~ as.numeric(NA))) \%>\%
-# use ARMCD values to order treatment in visualization legend
+# use ACTARMCD values to order treatment in visualization legend
 mutate(TRTORD = ifelse(grepl("C", ARMCD), 1,
-ifelse(grepl("B", ARMCD), 2,
-ifelse(grepl("A", ARMCD), 3, NA)))) \%>\%
-mutate(ARM = as.character(arm_mapping[match(ARM, names(arm_mapping))])) \%>\%
-mutate(ARM = factor(ARM) \%>\% reorder(TRTORD))
+ifelse(grepl("B", ACTARMCD), 2,
+ifelse(grepl("A", ACTARMCD), 3, NA)))) \%>\%
+mutate(ACTARM = as.character(arm_mapping[match(ACTARM, names(arm_mapping))])) \%>\%
+mutate(ACTARM = factor(ACTARM) \%>\% reorder(TRTORD)) \%>\% 
+mutate(ADY = AVISITCDN)
 
 param_choices = c("ALT", "CRP", "IGA")
 
@@ -145,8 +145,7 @@ x <- teal::init(
        shape_manual = shape_manual,
        plot_height = c(500, 200, 2000),
        facet_ncol = 2,
-       #facet = FALSE,
-       facet_var = "ACTARM",
+       facet_var = "ADY",
        reg_line = FALSE,
        font_size = c(12, 8, 20),
        dot_size = c(1, 1, 12),

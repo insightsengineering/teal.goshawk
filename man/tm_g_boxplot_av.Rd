@@ -2,7 +2,7 @@
 % Please edit documentation in R/tm_g_boxplot_av.R
 \name{tm_g_boxplot_av}
 \alias{tm_g_boxplot_av}
-\title{Box Plot}
+\title{Function to create a box plot without visit facetting. Presents all visit data based on analysis day.}
 \usage{
 tm_g_boxplot_av(label, dataname, param_var, param_choices = param, param,
   yaxis_var = "AVAL", yaxis_var_choices = c("AVAL", "CHG"),
@@ -111,12 +111,13 @@ TRUE ~ as.character(NA))) \%>\%
 mutate(AVISITCDN = case_when(AVISITCD == "SCR" ~ -2,
 AVISITCD == "BL" ~ 0, grepl("W", AVISITCD) ~ as.numeric(gsub("\\\\D+", "", AVISITCD)),
 TRUE ~ as.numeric(NA))) \%>\%
-# use ARMCD values to order treatment in visualization legend
-mutate(TRTORD = ifelse(grepl("C", ARMCD), 1,
-ifelse(grepl("B", ARMCD), 2,
-ifelse(grepl("A", ARMCD), 3, NA)))) \%>\%
-mutate(ARM = as.character(arm_mapping[match(ARM, names(arm_mapping))])) \%>\%
-mutate(ARM = factor(ARM) \%>\% reorder(TRTORD))
+# use ACTARMCD values to order treatment in visualization legend
+mutate(TRTORD = ifelse(grepl("C", ACTARMCD), 1,
+ifelse(grepl("B", ACTARMCD), 2,
+ifelse(grepl("A", ACTARMCD), 3, NA)))) \%>\%
+mutate(ACTARM = as.character(arm_mapping[match(ACTARM, names(arm_mapping))])) \%>\%
+mutate(ACTARM = factor(ARM) \%>\% reorder(TRTORD)) \%>\% 
+mutate(ADY = AVISITCDN)
 
 param_choices = c("ALT", "CRP", "IGA")
 
@@ -132,11 +133,11 @@ x <- teal::init(
         yaxis_var = "AVAL",
         yaxis_var_choices = c("AVAL", "BASE", "CHG"),
         rotate_xlab = FALSE,
-        xaxis_var = "ARM",
-        xaxis_var_choices = c("ARM", "AVISITCD", "STUDYID"),
-        facet_var= "AVISITCD",
-        facet_var_choices = c("ARM", "AVISITCD", "SEX", "STUDYID"),
-        trt_group = "ARM"
+        xaxis_var = "ACTARM",
+        xaxis_var_choices = c("ACTARM", "ADY", "AVISITCD", "STUDYID"),
+        facet_var= "ADY",
+        facet_var_choices = c("ACTARM", "ADY", "AVISITCD", "SEX", "STUDYID"),
+        trt_group = "ACTARM"
       )
   )
 )

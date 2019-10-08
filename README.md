@@ -3,12 +3,14 @@ The teal.goshawk package renders the UI and calls the respective biomarker visua
 
 The modules included are:
 
- - Box Plot
- - Correlation Plot
- - Density Distribution Plot
- - Line Plot
- - Scatter Plot
- - Spaghetti Plot
+- tm_g_boxplot
+- tm_g_boxplot_av
+- tm_g_correlationplot
+- tm_g_correlationplot_av
+- tm_g_density_distribution_plot
+- tm_g_lineplot
+- tm_g_scatterplot
+- tm_g_spaghettiplot
 
 # Installation
 
@@ -19,7 +21,3 @@ devtools::install_github(
   upgrade_dependencies = FALSE
 )
 ```
-
-# TODO
-
-* Enhancements per https://docs.google.com/spreadsheets/d/1Me5QXt9fmxwAPh3_xPwsh42a6alFlWyXgRJO6-p8EJc/edit#gid=0

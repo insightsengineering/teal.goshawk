@@ -1,4 +1,4 @@
-#'Box Plot
+#'Function to create a box plot without visit facetting. Presents all visit data based on analysis day.
 #'
 #'This teal module renders the UI and calls the functions that create a box plot and accompanying
 #'summary table.
@@ -78,12 +78,13 @@
 #' mutate(AVISITCDN = case_when(AVISITCD == "SCR" ~ -2,
 #' AVISITCD == "BL" ~ 0, grepl("W", AVISITCD) ~ as.numeric(gsub("\\D+", "", AVISITCD)),
 #' TRUE ~ as.numeric(NA))) %>%
-#' # use ARMCD values to order treatment in visualization legend
-#' mutate(TRTORD = ifelse(grepl("C", ARMCD), 1,
-#' ifelse(grepl("B", ARMCD), 2,
-#' ifelse(grepl("A", ARMCD), 3, NA)))) %>%
-#' mutate(ARM = as.character(arm_mapping[match(ARM, names(arm_mapping))])) %>%
-#' mutate(ARM = factor(ARM) %>% reorder(TRTORD))
+#' # use ACTARMCD values to order treatment in visualization legend
+#' mutate(TRTORD = ifelse(grepl("C", ACTARMCD), 1,
+#' ifelse(grepl("B", ACTARMCD), 2,
+#' ifelse(grepl("A", ACTARMCD), 3, NA)))) %>%
+#' mutate(ACTARM = as.character(arm_mapping[match(ACTARM, names(arm_mapping))])) %>%
+#' mutate(ACTARM = factor(ARM) %>% reorder(TRTORD)) %>% 
+#' mutate(ADY = AVISITCDN)
 #'
 #' param_choices = c("ALT", "CRP", "IGA")
 #'
@@ -99,11 +100,11 @@
 #'         yaxis_var = "AVAL",
 #'         yaxis_var_choices = c("AVAL", "BASE", "CHG"),
 #'         rotate_xlab = FALSE,
-#'         xaxis_var = "ARM",
-#'         xaxis_var_choices = c("ARM", "AVISITCD", "STUDYID"),
-#'         facet_var= "AVISITCD",
-#'         facet_var_choices = c("ARM", "AVISITCD", "SEX", "STUDYID"),
-#'         trt_group = "ARM"
+#'         xaxis_var = "ACTARM",
+#'         xaxis_var_choices = c("ACTARM", "ADY", "AVISITCD", "STUDYID"),
+#'         facet_var= "ADY",
+#'         facet_var_choices = c("ACTARM", "ADY", "AVISITCD", "SEX", "STUDYID"),
+#'         trt_group = "ACTARM"
 #'       )
 #'   )
 #' )
@@ -147,7 +148,7 @@ tm_g_boxplot_av <- function(label,
   module(
     label = label,
     filters = dataname,
-    server = srv_g_boxplot,
+    server = srv_g_boxplot_av,
     server_args = list(dataname = dataname,
                        facet_var = facet_var,
                        facet_var_choices = facet_var_choices,
@@ -163,12 +164,12 @@ tm_g_boxplot_av <- function(label,
                        filter_labs = filter_labs,
                        code_data_processing = code_data_processing
     ),
-    ui = ui_g_boxplot,
+    ui = ui_g_boxplot_av,
     ui_args = args
   )
 }
 
-ui_g_boxplot <- function(id, ...) {
+ui_g_boxplot_av <- function(id, ...) {
   
   ns <- NS(id)
   a <- list(...)
@@ -298,7 +299,7 @@ ui_g_boxplot <- function(id, ...) {
   
 }
 
-srv_g_boxplot <- function(input, output, session, datasets
+srv_g_boxplot_av <- function(input, output, session, datasets
                           , facet_var, facet_var_choices
                           , xaxis_var, xaxis_var_choices
                           , param_var, yaxis_var

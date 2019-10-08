@@ -64,9 +64,9 @@
 #' # assign LOQ flag symbols: circles for "N" and triangles for "Y", squares for "NA"
 #' shape_manual <-  c("N"  = 1, "Y"  = 2, "NA" = 0)
 #' 
-#' ASL <- radsl(N = 20, seed = 1)
-#' ALB <- radlb(ASL, visit_format = "WEEK", n_assessments = 7, seed = 2)
-#' ALB <- ALB %>% 
+#' ADSL <- radsl(N = 20, seed = 1)
+#' ADLB <- radlb(ADSL, visit_format = "WEEK", n_assessments = 7L, seed = 2)
+#' ADLB <- ADLB %>% 
 #' mutate(AVISITCD = case_when(
 #' AVISIT == "SCREENING" ~ "SCR",
 #' AVISIT == "BASELINE" ~ "BL", grepl("WEEK", AVISIT) ~ paste("W",trimws(substr(AVISIT, start=6, 
@@ -85,11 +85,11 @@
 #' param_choices = c("ALT", "CRP", "IGA")
 #' 
 #' x <- teal::init(
-#'   data = list(ASL = ASL, ALB = ALB),
+#'   data = list(ADSL = ADSL, ADLB = ADLB),
 #'   modules = root_modules(
 #'     tm_g_scatterplot(
 #'        label = "Scatter Plot",
-#'        dataname = "ALB",
+#'        dataname = "ADLB",
 #'        param_var = "PARAMCD",
 #'        param_choices = param_choices,
 #'        param = param_choices[1],

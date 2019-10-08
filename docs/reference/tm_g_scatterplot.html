@@ -258,9 +258,9 @@ output to put the output into context. For example the
 <span class='co'># assign LOQ flag symbols: circles for "N" and triangles for "Y", squares for "NA"</span>
 <span class='no'>shape_manual</span> <span class='kw'>&lt;-</span>  <span class='fu'>c</span>(<span class='st'>"N"</span>  <span class='kw'>=</span> <span class='fl'>1</span>, <span class='st'>"Y"</span>  <span class='kw'>=</span> <span class='fl'>2</span>, <span class='st'>"NA"</span> <span class='kw'>=</span> <span class='fl'>0</span>)
 
-<span class='no'>ASL</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='http://www.rdocumentation.org/packages/random.cdisc.data/topics/radsl'>radsl</a></span>(<span class='kw'>N</span> <span class='kw'>=</span> <span class='fl'>20</span>, <span class='kw'>seed</span> <span class='kw'>=</span> <span class='fl'>1</span>)
-<span class='no'>ALB</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='http://www.rdocumentation.org/packages/random.cdisc.data/topics/radlb'>radlb</a></span>(<span class='no'>ASL</span>, <span class='kw'>visit_format</span> <span class='kw'>=</span> <span class='st'>"WEEK"</span>, <span class='kw'>n_assessments</span> <span class='kw'>=</span> <span class='fl'>7</span>, <span class='kw'>seed</span> <span class='kw'>=</span> <span class='fl'>2</span>)
-<span class='no'>ALB</span> <span class='kw'>&lt;-</span> <span class='no'>ALB</span> <span class='kw'>%&gt;%</span>
+<span class='no'>ADSL</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='http://www.rdocumentation.org/packages/random.cdisc.data/topics/radsl'>radsl</a></span>(<span class='kw'>N</span> <span class='kw'>=</span> <span class='fl'>20</span>, <span class='kw'>seed</span> <span class='kw'>=</span> <span class='fl'>1</span>)
+<span class='no'>ADLB</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='http://www.rdocumentation.org/packages/random.cdisc.data/topics/radlb'>radlb</a></span>(<span class='no'>ADSL</span>, <span class='kw'>visit_format</span> <span class='kw'>=</span> <span class='st'>"WEEK"</span>, <span class='kw'>n_assessments</span> <span class='kw'>=</span> <span class='fl'>7L</span>, <span class='kw'>seed</span> <span class='kw'>=</span> <span class='fl'>2</span>)
+<span class='no'>ADLB</span> <span class='kw'>&lt;-</span> <span class='no'>ADLB</span> <span class='kw'>%&gt;%</span>
 <span class='fu'><a href='https://dplyr.tidyverse.org/reference/mutate.html'>mutate</a></span>(<span class='kw'>AVISITCD</span> <span class='kw'>=</span> <span class='fu'><a href='https://dplyr.tidyverse.org/reference/case_when.html'>case_when</a></span>(
 <span class='no'>AVISIT</span> <span class='kw'>==</span> <span class='st'>"SCREENING"</span> ~ <span class='st'>"SCR"</span>,
 <span class='no'>AVISIT</span> <span class='kw'>==</span> <span class='st'>"BASELINE"</span> ~ <span class='st'>"BL"</span>, <span class='fu'>grepl</span>(<span class='st'>"WEEK"</span>, <span class='no'>AVISIT</span>) ~ <span class='fu'>paste</span>(<span class='st'>"W"</span>,<span class='fu'>trimws</span>(<span class='fu'>substr</span>(<span class='no'>AVISIT</span>, <span class='kw'>start</span><span class='kw'>=</span><span class='fl'>6</span>,
@@ -279,11 +279,11 @@ output to put the output into context. For example the
 <span class='no'>param_choices</span> <span class='kw'>=</span> <span class='fu'>c</span>(<span class='st'>"ALT"</span>, <span class='st'>"CRP"</span>, <span class='st'>"IGA"</span>)
 
 <span class='no'>x</span> <span class='kw'>&lt;-</span> <span class='kw pkg'>teal</span><span class='kw ns'>::</span><span class='fu'><a href='http://www.rdocumentation.org/packages/teal/topics/init'>init</a></span>(
-  <span class='kw'>data</span> <span class='kw'>=</span> <span class='fu'>list</span>(<span class='kw'>ASL</span> <span class='kw'>=</span> <span class='no'>ASL</span>, <span class='kw'>ALB</span> <span class='kw'>=</span> <span class='no'>ALB</span>),
+  <span class='kw'>data</span> <span class='kw'>=</span> <span class='fu'>list</span>(<span class='kw'>ADSL</span> <span class='kw'>=</span> <span class='no'>ADSL</span>, <span class='kw'>ADLB</span> <span class='kw'>=</span> <span class='no'>ADLB</span>),
   <span class='kw'>modules</span> <span class='kw'>=</span> <span class='fu'><a href='http://www.rdocumentation.org/packages/teal/topics/root_modules'>root_modules</a></span>(
     <span class='fu'>tm_g_scatterplot</span>(
        <span class='kw'>label</span> <span class='kw'>=</span> <span class='st'>"Scatter Plot"</span>,
-       <span class='kw'>dataname</span> <span class='kw'>=</span> <span class='st'>"ALB"</span>,
+       <span class='kw'>dataname</span> <span class='kw'>=</span> <span class='st'>"ADLB"</span>,
        <span class='kw'>param_var</span> <span class='kw'>=</span> <span class='st'>"PARAMCD"</span>,
        <span class='kw'>param_choices</span> <span class='kw'>=</span> <span class='no'>param_choices</span>,
        <span class='kw'>param</span> <span class='kw'>=</span> <span class='no'>param_choices</span>[<span class='fl'>1</span>],
