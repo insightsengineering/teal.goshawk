@@ -4,7 +4,7 @@
 #'
 #' @param label menu item label of the module in the teal app.
 #' @param dataname analysis data passed to the data argument of teal init. E.g. ADaM structured 
-#' laboratory data frame ALB.
+#' laboratory data frame ADLB.
 #' @param param_var name of variable containing biomarker codes e.g. PARAMCD.
 #' @param param_choices list of biomarkers of interest.
 #' @param param biomarker selected.
@@ -29,7 +29,7 @@
 #' @param reg_text_size font size control for regression line annotations.
 #' @param code_data_processing TODO
 #'
-#' @inheritParams teal::standard_layout
+#' @inheritParams teal.devel::standard_layout
 #'
 #' @author Nick Paszty (npaszty) paszty.nicholas@gene.com
 #' @author Balazs Toth (tothb2)  toth.balazs@gene.com
@@ -38,6 +38,7 @@
 #' @import dplyr
 #' @import goshawk
 #' @import teal
+#' @import teal.devel
 #'
 #' @details This module displays a scatter plot. link to specification file \url{http://rstudio.com}
 #'
@@ -55,7 +56,10 @@
 #' library(random.cdisc.data)
 #' library(stringr)
 #' library(teal)
+#' library(teal.devel)
 #' library(teal.goshawk)
+#' 
+#' # code>
 #' 
 #' # original ARM value = dose value
 #' arm_mapping <- list("A: Drug X" = "150mg QD", "B: Placebo" = "Placebo", 
@@ -82,10 +86,17 @@
 #' mutate(ARM = as.character(arm_mapping[match(ARM, names(arm_mapping))])) %>%
 #' mutate(ARM = factor(ARM) %>% reorder(TRTORD))
 #' 
+#' # <code
+#' 
 #' param_choices = c("ALT", "CRP", "IGA")
 #' 
 #' x <- teal::init(
-#'   data = list(ADSL = ADSL, ADLB = ADLB),
+#'   data = cdisc_data(
+#'   cdisc_dataset("ADSL", ADSL),
+#'   cdisc_dataset("ADLB", ADLB),
+#'   code = get_code("tm_g_scatterplot.R", exclude_comments = TRUE, read_sources = TRUE),
+#'   check = TRUE
+#'   ),
 #'   modules = root_modules(
 #'     tm_g_scatterplot(
 #'        label = "Scatter Plot",
@@ -142,7 +153,7 @@ tm_g_scatterplot <- function(label,
                              pre_output = NULL,
                              post_output = NULL,
                              code_data_processing = NULL) {
-  
+
   args <- as.list(environment())
   
   module(
@@ -206,10 +217,10 @@ ui_g_scatterplot <- function(id, ...) {
       optionalSliderInputValMinMax(ns("dot_size"), "Dot Size", a$dot_size, ticks = FALSE),
       optionalSliderInputValMinMax(ns("reg_text_size"), "Regression Annotations Size", a$reg_text_size, ticks = FALSE)
     ),
-    # forms = tags$div(
-    #   actionButton(ns("show_rcode"), "Show R Code", width = "100%")#,
-    #   # downloadButton(ns("export_plot"), "Export Image", width = "100%")
-    # ),
+    forms = tags$div(
+      actionButton(ns("show_rcode"), "Show R Code", width = "100%")#,
+      # downloadButton(ns("export_plot"), "Export Image", width = "100%")
+    ),
     pre_output = a$pre_output,
     post_output = a$post_output
   )
@@ -220,75 +231,12 @@ srv_g_scatterplot <- function(input, output, session, datasets, dataname,
                               param_var, param, xaxis_var, yaxis_var, 
                               trt_group, facet_var, color_manual, shape_manual,
                               code_data_processing) {
-  
   ns <- session$ns
   
-  # dynamic plot height and brushing
-  output$plot_ui <- renderUI({
-    plot_height <- input$plot_height
-    validate(need(plot_height, "need valid plot height"))
-    
-    plotOutput(ns("scatterplot"), height = plot_height,
-               brush = brushOpts(id = ns("scatterplot_brush"), resetOnNew=T)
-    )
-  })
-  
-  output$brush_data <- renderTable({
-    if (nrow(filter_ALB()) > 0 ){
-      brushedPoints(select(filter_ALB(),"USUBJID", trt_group, "AVISITCD", "PARAMCD", input$xaxis_var, input$yaxis_var, "LOQFL"), input$scatterplot_brush)
-    } else{
-      NULL
-    }
-  })
-  
-  # dynamic slider for x-axis
-  output$xaxis_zoom <- renderUI({
-    ALB <- datasets$get_data(dataname, reactive = TRUE, filtered = TRUE)
-    param <- input$param 
-    scale_data <- ALB %>%
-      filter(eval(parse(text = param_var)) == param)
-    
-    # establish default value during reaction and prior to value being available
-    xmin_scale <- -Inf
-    xmax_scale <- Inf
-    
-    # identify min and max values of BM range ignoring NA values
-    xmin_scale <- min(scale_data[[input$xaxis_var]], na.rm = TRUE)
-    xmax_scale <- max(scale_data[[input$xaxis_var]], na.rm = TRUE)
-    
-    tagList({
-      sliderInput(ns("xrange_scale"), label="X-Axis Range Zoom", 
-                  floor(xmin_scale), ceiling(xmax_scale), 
-                  value = c(floor(xmin_scale), ceiling(xmax_scale)))
-    })
-    
-  })
-  
-  # dynamic slider for y-axis
-  output$yaxis_zoom <- renderUI({
-    ALB <- datasets$get_data(dataname, reactive = TRUE, filtered = TRUE)
-    param <- input$param 
-    scale_data <- ALB %>%
-      filter(eval(parse(text = param_var)) == param)
-    
-    # establish default value during reaction and prior to value being available
-    ymin_scale <- -Inf
-    ymax_scale <- Inf
-    
-    # identify min and max values of BM range ignoring NA values
-    ymin_scale <- min(scale_data[[input$yaxis_var]], na.rm = TRUE)
-    ymax_scale <- max(scale_data[[input$yaxis_var]], na.rm = TRUE)
-    
-    tagList({
-      sliderInput(ns("yrange_scale"), label="Y-Axis Range Zoom", 
-                  floor(ymin_scale), ceiling(ymax_scale), 
-                  value = c(floor(ymin_scale), ceiling(ymax_scale)))
-    })
-    
-  })
-  
-  # filter data by param and the constraint_min and constraint_max values
-  filter_ALB <- reactive({
+  init_chunks(session)
+  chunks_reset()
+
+  filter_ANL <- reactive({
     param <- input$param
     constraint_var <- input$constraint_var
     
@@ -314,24 +262,123 @@ srv_g_scatterplot <- function(input, output, session, datasets, dataname,
         filter(eval(parse(text = param_var)) == param)
     }
   })
+
+  # filter data by param and the constraint_min and constraint_max values
+    # filter_ANL <- reactive({
+    # chunks_push(bquote({  
+    #     
+    # param <- .(input$param)
+    # param
+    # constraint_var <- .(input$constraint_var)
+    # constraint_var
+    # 
+    # print(paste("param is:", param, "and constraint var is:", constraint_var))
+    # 
+    # if (constraint_var != "NONE"){
+    #   constraint_min_range <- -Inf
+    #   constraint_max_range <- Inf
+    #   
+    #   if (length(.(as.name(input$constraint_min)))){
+    #     constraint_min_range <- .(input$constraint_min)
+    #   }
+    #   
+    #   if (length(.(input$constraint_max))){
+    #     constraint_max_range <- .(input$constraint_max)
+    #   }
+    #   datasets$get_data(dataname, filtered = TRUE, reactive = TRUE) %>%
+    #     filter(.(as.name(param_var)) == .(param) &
+    #              constraint_min_range <= .(constraint_var) &
+    #              .(constraint_var) <= .(constraint_max_range) |
+    #              is.na(.(constraint_var))
+    #     )
+    # } else{
+    #   datasets$get_data(dataname, filtered = TRUE, reactive = TRUE) %>%
+    #     filter(.(as.name(param_var)) == .(param))
+    # }
+    #   }))
+    # })
+    
+  # dynamic plot height and brushing
+  output$plot_ui <- renderUI({
+    plot_height <- input$plot_height
+    validate(need(plot_height, "need valid plot height"))
+    
+    plotOutput(ns("scatterplot"), height = plot_height,
+               brush = brushOpts(id = ns("scatterplot_brush"), resetOnNew=T)
+    )
+  })
+  
+  output$brush_data <- renderTable({
+    if (nrow(filter_ANL()) > 0 ){
+      brushedPoints(select(filter_ANL(),"USUBJID", trt_group, "AVISITCD", "PARAMCD", input$xaxis_var, input$yaxis_var, "LOQFL"), input$scatterplot_brush)
+    } else{
+      NULL
+    }
+  })
+  
+  # dynamic slider for x-axis
+  output$xaxis_zoom <- renderUI({
+    ANL <- datasets$get_data(dataname, reactive = TRUE, filtered = TRUE)
+    param <- input$param 
+    scale_data <- ANL %>%
+      filter(eval(parse(text = param_var)) == param)
+    
+    # establish default value during reaction and prior to value being available
+    xmin_scale <- -Inf
+    xmax_scale <- Inf
+    
+    # identify min and max values of BM range ignoring NA values
+    xmin_scale <- min(scale_data[[input$xaxis_var]], na.rm = TRUE)
+    xmax_scale <- max(scale_data[[input$xaxis_var]], na.rm = TRUE)
+    
+    tagList({
+      sliderInput(ns("xrange_scale"), label="X-Axis Range Zoom", 
+                  floor(xmin_scale), ceiling(xmax_scale), 
+                  value = c(floor(xmin_scale), ceiling(xmax_scale)))
+    })
+    
+  })
+  
+  # dynamic slider for y-axis
+  output$yaxis_zoom <- renderUI({
+    ANL <- datasets$get_data(dataname, reactive = TRUE, filtered = TRUE)
+    param <- input$param 
+    scale_data <- ANL %>%
+      filter(eval(parse(text = param_var)) == param)
+    
+    # establish default value during reaction and prior to value being available
+    ymin_scale <- -Inf
+    ymax_scale <- Inf
+    
+    # identify min and max values of BM range ignoring NA values
+    ymin_scale <- min(scale_data[[input$yaxis_var]], na.rm = TRUE)
+    ymax_scale <- max(scale_data[[input$yaxis_var]], na.rm = TRUE)
+    
+    tagList({
+      sliderInput(ns("yrange_scale"), label="Y-Axis Range Zoom", 
+                  floor(ymin_scale), ceiling(ymax_scale), 
+                  value = c(floor(ymin_scale), ceiling(ymax_scale)))
+    })
+    
+  })
   
   # minimum data constraint value
   output$constraint_min_value <- renderUI({
     # conditionally reveal min and max constraint fields
     if (input$constraint_var != "NONE") {
-      ALB <- datasets$get_data(dataname, filtered = TRUE, reactive = TRUE)
-      validate(need(nrow(ALB) > 0 , "Waiting For Filter Selection"))
+      ANL <- datasets$get_data(dataname, filtered = TRUE, reactive = TRUE)
+      validate(need(nrow(ANL) > 0 , "Waiting For Filter Selection"))
       
       param <- input$param
-      scale_data <- ALB %>%
+      scale_data <- ANL %>%
         filter(eval(parse(text = param_var)) == param)
       # ensure that there are records at visit to process based on the constraint vatriable selection
       visitFreq <- unique(scale_data$AVISITCD)
       if (input$constraint_var == "BASE2" & visitFreq[1] == "SCR" | 
           input$constraint_var == "BASE" & (visitFreq[1] == "BL" | visitFreq[2] == "BL")){
         # identify min and max values of constraint var range ignoring NA values
-        constraint_min_range <- min(scale_data[[input$constraint_var]], na.rm = TRUE)
-        constraint_max_range <- max(scale_data[[input$constraint_var]], na.rm = TRUE)
+        constraint_min_range <- round(min(scale_data[[input$constraint_var]], na.rm = TRUE), 3)
+        constraint_max_range <- round(max(scale_data[[input$constraint_var]], na.rm = TRUE), 3)
         
         tagList({
           numericInput(ns("constraint_min"), 
@@ -351,19 +398,19 @@ srv_g_scatterplot <- function(input, output, session, datasets, dataname,
   output$constraint_max_value <- renderUI({
     # conditionally reveal min and max constraint fields
     if (input$constraint_var != "NONE") {
-      ALB <- datasets$get_data(dataname, filtered = TRUE, reactive = TRUE)
-      validate(need(nrow(ALB) > 0 , "Waiting For Filter Selection"))
+      ANL <- datasets$get_data(dataname, filtered = TRUE, reactive = TRUE)
+      validate(need(nrow(ANL) > 0 , "Waiting For Filter Selection"))
       
       param <- input$param
-      scale_data <- ALB %>%
+      scale_data <- ANL %>%
         filter(eval(parse(text = param_var)) == param)
       # ensure that there are records at visit to process based on the constraint vatriable selection
       visitFreq <- unique(scale_data$AVISITCD)
       if (input$constraint_var == "BASE2" & visitFreq[1] == "SCR" | 
           input$constraint_var == "BASE" & (visitFreq[1] == "BL" | visitFreq[2] == "BL")){
         # identify min and max values of constraint var range ignoring NA values
-        constraint_min_range <- min(scale_data[[input$constraint_var]], na.rm = TRUE)
-        constraint_max_range <- max(scale_data[[input$constraint_var]], na.rm = TRUE)
+        constraint_min_range <- round(min(scale_data[[input$constraint_var]], na.rm = TRUE), 3)
+        constraint_max_range <- round(max(scale_data[[input$constraint_var]], na.rm = TRUE), 3)
         
         tagList({
           numericInput(ns("constraint_max"), 
@@ -379,46 +426,54 @@ srv_g_scatterplot <- function(input, output, session, datasets, dataname,
   })
   
   output$scatterplot <- renderPlot({
-    ALB <- filter_ALB()
-    param <- input$param
-    xaxis_var <- input$xaxis_var
-    yaxis_var <- input$yaxis_var
-    xmin_scale <- input$xrange_scale[1]
-    xmax_scale <- input$xrange_scale[2]
-    ymin_scale <- input$yrange_scale[1]
-    ymax_scale <- input$yrange_scale[2]
-    font_size <- input$font_size
-    dot_size <- input$dot_size
-    reg_text_size <- input$reg_text_size
-    hline <- as.numeric(input$hline)
-    vline <- as.numeric(input$vline)
-    facet_ncol <- input$facet_ncol
-    facet <- input$facet
-    reg_line <- input$reg_line
-    rotate_xlab <- input$rotate_xlab
+
+    #chunks_push(quote({
+      ANL <- filter_ANL()
+    #}))
     
-    validate(need(!is.null(ALB) && is.data.frame(ALB), "No data left"))
-    validate(need(nrow(ALB) > 0 , "No observations left"))
-    validate(need(param_var %in% names(ALB),
-                  paste("Biomarker parameter variable", param_var, " is not available in data", dataname)))
-    validate(need(param %in% unique(ALB[[param_var]]),
-                  paste("Biomarker", param, " is not available in data", dataname)))
-    validate(need(trt_group %in% names(ALB),
-                  paste("Variable", trt_group, " is not available in data", dataname)))
-    validate(need(xaxis_var %in% names(ALB),
-                  paste("Variable", xaxis_var, " is not available in data", dataname)))
-    validate(need(yaxis_var %in% names(ALB),
-                  paste("Variable", yaxis_var, " is not available in data", dataname)))
+    chunks_push(bquote({
+      
+    param <- .(input$param)
+    xaxis_var <- .(input$xaxis_var)
+    yaxis_var <- .(input$yaxis_var)
+    xmin_scale <- .(input$xrange_scale[1])
+    xmax_scale <- .(input$xrange_scale[2])
+    ymin_scale <- .(input$yrange_scale[1])
+    ymax_scale <- .(input$yrange_scale[2])
+    font_size <- .(input$font_size)
+    dot_size <- .(input$dot_size)
+    reg_text_size <- .(input$reg_text_size)
+    hline <- as.numeric(.(input$hline))
+    vline <- as.numeric(.(input$vline))
+    facet_ncol <- .(input$facet_ncol)
+    facet <- .(input$facet)
+    reg_line <- .(input$reg_line)
+    rotate_xlab <- .(input$rotate_xlab)
+  }))
+    #validate(need(!is.null(ANL) && is.data.frame(ANL), "No data left"))
+    # validate(need(nrow(ANL) > 0 , "No observations left"))
+    # validate(need(param_var %in% names(ANL),
+    #               paste("Biomarker parameter variable", param_var, " is not available in data", dataname)))
+    # validate(need(param %in% unique(ANL[[param_var]]),
+    #               paste("Biomarker", param, " is not available in data", dataname)))
+    # validate(need(trt_group %in% names(ANL),
+    #               paste("Variable", trt_group, " is not available in data", dataname)))
+    # validate(need(xaxis_var %in% names(ANL),
+    #               paste("Variable", xaxis_var, " is not available in data", dataname)))
+    # validate(need(yaxis_var %in% names(ANL),
+    #               paste("Variable", yaxis_var, " is not available in data", dataname)))
     
     # re-establish treatment variable label
-    if (trt_group == "ARM"){
-      attributes(ALB$ARM)$label <- "Planned Arm"
-    } else {
-      attributes(ALB$ACTARM)$label <- "Actual Arm"
-    }
+    chunks_push(quote({
+      
+      if (trt_group == "ARM"){
+        attributes(ANL$ARM)$label <- "Planned Arm"
+      } else {
+        attributes(ANL$ACTARM)$label <- "Actual Arm"
+      }
     
     p <- g_scatterplot(
-      data = ALB,
+      data = ANL,
       param_var = param_var,
       param = param,
       xaxis_var = xaxis_var,
@@ -442,8 +497,22 @@ srv_g_scatterplot <- function(input, output, session, datasets, dataname,
       vline = vline      
     )
     
+    }))
+    
+    chunks_safe_eval()
+    
     p
     
+  })
+
+  observeEvent(input$show_rcode, {
+    show_rcode_modal(
+      title = "Scatter Plot", 
+      rcode = get_rcode(
+        datasets = datasets,
+        title = "Scatter Plot"
+      )
+    )
   })
   
 }
