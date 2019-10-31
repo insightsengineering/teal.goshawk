@@ -63,7 +63,7 @@
 #' 
 #' # original ARM value = dose value
 #' arm_mapping <- list("A: Drug X" = "150mg QD", "B: Placebo" = "Placebo", 
-#' "C: Combination" = "Combination")
+#'                     "C: Combination" = "Combination")
 #' color_manual <-  c("150mg QD" = "#000000", "Placebo" = "#3498DB", "Combination" = "#E74C3C")
 #' # assign LOQ flag symbols: circles for "N" and triangles for "Y", squares for "NA"
 #' shape_manual <-  c("N"  = 1, "Y"  = 2, "NA" = 0)
@@ -71,20 +71,20 @@
 #' ADSL <- radsl(N = 20, seed = 1)
 #' ADLB <- radlb(ADSL, visit_format = "WEEK", n_assessments = 7L, seed = 2)
 #' ADLB <- ADLB %>% 
-#' mutate(AVISITCD = case_when(
-#' AVISIT == "SCREENING" ~ "SCR",
-#' AVISIT == "BASELINE" ~ "BL", grepl("WEEK", AVISIT) ~ paste("W",trimws(substr(AVISIT, start=6, 
-#' stop=str_locate(AVISIT, "DAY")-1))),
-#' TRUE ~ as.character(NA))) %>%
-#' mutate(AVISITCDN = case_when(AVISITCD == "SCR" ~ -2,
-#' AVISITCD == "BL" ~ 0, grepl("W", AVISITCD) ~ as.numeric(gsub("\\D+", "", AVISITCD)), 
-#' TRUE ~ as.numeric(NA))) %>%
-#' # use ARMCD values to order treatment in visualization legend
-#' mutate(TRTORD = ifelse(grepl("C", ARMCD), 1,
-#' ifelse(grepl("B", ARMCD), 2,
-#' ifelse(grepl("A", ARMCD), 3, NA)))) %>%
-#' mutate(ARM = as.character(arm_mapping[match(ARM, names(arm_mapping))])) %>%
-#' mutate(ARM = factor(ARM) %>% reorder(TRTORD))
+#'   mutate(AVISITCD = case_when(
+#'     AVISIT == "SCREENING" ~ "SCR",
+#'     AVISIT == "BASELINE" ~ "BL", grepl("WEEK", AVISIT) ~ paste("W",trimws(substr(AVISIT, start=6, 
+#'                                                                                  stop=str_locate(AVISIT, "DAY")-1))),
+#'     TRUE ~ as.character(NA))) %>%
+#'   mutate(AVISITCDN = case_when(AVISITCD == "SCR" ~ -2,
+#'                                AVISITCD == "BL" ~ 0, grepl("W", AVISITCD) ~ as.numeric(gsub("\\D+", "", AVISITCD)), 
+#'                                TRUE ~ as.numeric(NA))) %>%
+#'   # use ARMCD values to order treatment in visualization legend
+#'   mutate(TRTORD = ifelse(grepl("C", ARMCD), 1,
+#'                          ifelse(grepl("B", ARMCD), 2,
+#'                                 ifelse(grepl("A", ARMCD), 3, NA)))) %>%
+#'   mutate(ARM = as.character(arm_mapping[match(ARM, names(arm_mapping))])) %>%
+#'   mutate(ARM = factor(ARM) %>% reorder(TRTORD))
 #' 
 #' # <code
 #' 
@@ -92,10 +92,9 @@
 #' 
 #' x <- teal::init(
 #'   data = cdisc_data(
-#'   cdisc_dataset("ADSL", ADSL),
-#'   cdisc_dataset("ADLB", ADLB),
-#'   code = get_code("tm_g_scatterplot.R", exclude_comments = TRUE, read_sources = TRUE),
-#'   check = TRUE
+#'     cdisc_dataset("ADSL", ADSL),
+#'     cdisc_dataset("ADLB", ADLB),
+#'     check = FALSE
 #'   ),
 #'   modules = root_modules(
 #'     tm_g_scatterplot(
@@ -153,7 +152,7 @@ tm_g_scatterplot <- function(label,
                              pre_output = NULL,
                              post_output = NULL,
                              code_data_processing = NULL) {
-
+  
   args <- as.list(environment())
   
   module(
@@ -231,73 +230,158 @@ srv_g_scatterplot <- function(input, output, session, datasets, dataname,
                               param_var, param, xaxis_var, yaxis_var, 
                               trt_group, facet_var, color_manual, shape_manual,
                               code_data_processing) {
-  ns <- session$ns
   
-  init_chunks(session)
-  chunks_reset()
-
+  
+  init_chunks()
+  count <- 1
+  
   filter_ANL <- reactive({
+    
+    # resolve reacticity
+    ADLB_FILTERED <- datasets$get_data(dataname, filtered = TRUE, reactive = TRUE)
     param <- input$param
     constraint_var <- input$constraint_var
+    constraint_min <- input$constraint_min
+    constraint_max <- input$constraint_max
     
-    if (constraint_var != "NONE"){
-      constraint_min_range <- -Inf
-      constraint_max_range <- Inf
+    # validate your stuff
+    validate(need(nrow(ADLB_FILTERED) > 10, "need at least 10 observations"))
+    
+    # now collect code
+    
+    chunks_reset(as.environment(list(ADLB_FILTERED = ADLB_FILTERED)))
+    
+    chunks_push(bquote({
+      constraint_var <- .(constraint_var)
+      constraint_min <- .(constraint_min)
+      constraint_max <- .(constraint_max)
+      param <- .(param)
       
-      if (length(input$constraint_min)){
-        constraint_min_range <- input$constraint_min
-      }
       
-      if (length(input$constraint_max)){
-        constraint_max_range <- input$constraint_max
+      ANL <- if (constraint_var != "NONE") {
+        constraint_min_range <- -Inf
+        constraint_max_range <- Inf
+        
+        if (length(constraint_min)) {
+          constraint_min_range <- constraint_min
+        }
+        
+        if (length(constraint_max)) {
+          constraint_max_range <- constraint_max
+        }
+        
+        ADLB_FILTERED %>%
+          filter(
+            .(param_var) == param &
+              constraint_min_range <= .(as.name(constraint_var)) &
+              .(as.name(constraint_var)) <= constraint_max_range |
+              is.na(.(as.name(constraint_var)))
+          )
+        
+      } else {
+        ADLB_FILTERED %>%
+          filter(.(as.name(param_var)) == param)
       }
-      datasets$get_data(dataname, filtered = TRUE, reactive = TRUE) %>%
-        filter(eval(parse(text = param_var)) == param &
-                 constraint_min_range <= eval(parse(text = constraint_var)) &
-                 eval(parse(text = constraint_var)) <= constraint_max_range |
-                 is.na(constraint_var)
-        )
-    } else{
-      datasets$get_data(dataname, filtered = TRUE, reactive = TRUE) %>%
-        filter(eval(parse(text = param_var)) == param)
-    }
+    }))
+    
+    
+    count <<- count + 1
+    count # ensure reactivity works
   })
-
-  # filter data by param and the constraint_min and constraint_max values
-    # filter_ANL <- reactive({
-    # chunks_push(bquote({  
-    #     
-    # param <- .(input$param)
-    # param
-    # constraint_var <- .(input$constraint_var)
-    # constraint_var
-    # 
-    # print(paste("param is:", param, "and constraint var is:", constraint_var))
-    # 
-    # if (constraint_var != "NONE"){
-    #   constraint_min_range <- -Inf
-    #   constraint_max_range <- Inf
-    #   
-    #   if (length(.(as.name(input$constraint_min)))){
-    #     constraint_min_range <- .(input$constraint_min)
-    #   }
-    #   
-    #   if (length(.(input$constraint_max))){
-    #     constraint_max_range <- .(input$constraint_max)
-    #   }
-    #   datasets$get_data(dataname, filtered = TRUE, reactive = TRUE) %>%
-    #     filter(.(as.name(param_var)) == .(param) &
-    #              constraint_min_range <= .(constraint_var) &
-    #              .(constraint_var) <= .(constraint_max_range) |
-    #              is.na(.(constraint_var))
-    #     )
-    # } else{
-    #   datasets$get_data(dataname, filtered = TRUE, reactive = TRUE) %>%
-    #     filter(.(as.name(param_var)) == .(param))
-    # }
-    #   }))
-    # })
-    
+  
+  
+  
+  output$scatterplot <- renderPlot({
+      ANL <- filter_ANL()
+  
+      chunks_push(bquote({
+          param <- .(input$param)
+          xaxis_var <- .(input$xaxis_var)
+          yaxis_var <- .(input$yaxis_var)
+          xmin_scale <- .(input$xrange_scale[1])
+          xmax_scale <- .(input$xrange_scale[2])
+          ymin_scale <- .(input$yrange_scale[1])
+          ymax_scale <- .(input$yrange_scale[2])
+          font_size <- .(input$font_size)
+          dot_size <- .(input$dot_size)
+          reg_text_size <- .(input$reg_text_size)
+          hline <- as.numeric(.(input$hline))
+          vline <- as.numeric(.(input$vline))
+          facet_ncol <- .(input$facet_ncol)
+          facet <- .(input$facet)
+          reg_line <- .(input$reg_line)
+          rotate_xlab <- .(input$rotate_xlab)
+        }))
+      
+      
+      # you can now run
+      # chunks_eval()
+      # ANL <- chunks_get("ANL")
+      # ...
+      #
+      # to do validate(need(...))
+      
+      
+      #validate(need(!is.null(ANL) && is.data.frame(ANL), "No data left"))
+      # validate(need(nrow(ANL) > 0 , "No observations left"))
+      # validate(need(param_var %in% names(ANL),
+      #               paste("Biomarker parameter variable", param_var, " is not available in data", dataname)))
+      # validate(need(param %in% unique(ANL[[param_var]]),
+      #               paste("Biomarker", param, " is not available in data", dataname)))
+      # validate(need(trt_group %in% names(ANL),
+      #               paste("Variable", trt_group, " is not available in data", dataname)))
+      # validate(need(xaxis_var %in% names(ANL),
+      #               paste("Variable", xaxis_var, " is not available in data", dataname)))
+      # validate(need(yaxis_var %in% names(ANL),
+      #               paste("Variable", yaxis_var, " is not available in data", dataname)))
+      
+      # re-establish treatment variable label
+      chunks_push(quote({
+        
+        if (trt_group == "ARM"){
+          attributes(ANL$ARM)$label <- "Planned Arm"
+        } else {
+          attributes(ANL$ACTARM)$label <- "Actual Arm"
+        }
+        
+        p <- g_scatterplot(
+          data = ANL,
+          param_var = param_var,
+          param = param,
+          xaxis_var = xaxis_var,
+          yaxis_var = yaxis_var,
+          trt_group = trt_group,
+          xmin = xmin_scale,
+          xmax = xmax_scale,
+          ymin = ymin_scale,
+          ymax = ymax_scale,
+          color_manual = color_manual,
+          shape_manual = shape_manual,
+          facet_ncol = facet_ncol,
+          facet = facet,
+          facet_var = facet_var,
+          reg_line = reg_line,
+          font_size = font_size,
+          dot_size = dot_size,
+          reg_text_size = reg_text_size,
+          rotate_xlab = rotate_xlab,
+          hline = hline,
+          vline = vline      
+        )
+        
+      }))
+      
+      #chunks_safe_eval()
+      
+      #p
+      
+      filter_ANL()
+      plot(1,1)
+      
+    })
+  
+  
+  ns <- session$ns
   # dynamic plot height and brushing
   output$plot_ui <- renderUI({
     plot_height <- input$plot_height
@@ -309,17 +393,20 @@ srv_g_scatterplot <- function(input, output, session, datasets, dataname,
   })
   
   output$brush_data <- renderTable({
-    if (nrow(filter_ANL()) > 0 ){
-      brushedPoints(select(filter_ANL(),"USUBJID", trt_group, "AVISITCD", "PARAMCD", input$xaxis_var, input$yaxis_var, "LOQFL"), input$scatterplot_brush)
-    } else{
-      NULL
-    }
+    #    if (nrow(filter_ANL()) > 0 ){
+    #      brushedPoints(select(filter_ANL(),"USUBJID", trt_group, "AVISITCD", "PARAMCD", input$xaxis_var, input$yaxis_var, "LOQFL"), input$scatterplot_brush)
+    #    } else{
+    #      NULL
+    #    }
+    
+    NULL
   })
   
   # dynamic slider for x-axis
   output$xaxis_zoom <- renderUI({
     ANL <- datasets$get_data(dataname, reactive = TRUE, filtered = TRUE)
     param <- input$param 
+    
     scale_data <- ANL %>%
       filter(eval(parse(text = param_var)) == param)
     
@@ -343,6 +430,7 @@ srv_g_scatterplot <- function(input, output, session, datasets, dataname,
   output$yaxis_zoom <- renderUI({
     ANL <- datasets$get_data(dataname, reactive = TRUE, filtered = TRUE)
     param <- input$param 
+    
     scale_data <- ANL %>%
       filter(eval(parse(text = param_var)) == param)
     
@@ -387,8 +475,7 @@ srv_g_scatterplot <- function(input, output, session, datasets, dataname,
                        min = constraint_min_range, max = constraint_max_range)
         })
       }
-    }
-    else {
+    } else {
       return(NULL)
     }
     
@@ -419,92 +506,11 @@ srv_g_scatterplot <- function(input, output, session, datasets, dataname,
                        min = constraint_min_range, max = constraint_max_range)
         })
       }
-    }
-    else {
+    } else {
       return(NULL)
     }
   })
   
-  output$scatterplot <- renderPlot({
-
-    #chunks_push(quote({
-      ANL <- filter_ANL()
-    #}))
-    
-    chunks_push(bquote({
-      
-    param <- .(input$param)
-    xaxis_var <- .(input$xaxis_var)
-    yaxis_var <- .(input$yaxis_var)
-    xmin_scale <- .(input$xrange_scale[1])
-    xmax_scale <- .(input$xrange_scale[2])
-    ymin_scale <- .(input$yrange_scale[1])
-    ymax_scale <- .(input$yrange_scale[2])
-    font_size <- .(input$font_size)
-    dot_size <- .(input$dot_size)
-    reg_text_size <- .(input$reg_text_size)
-    hline <- as.numeric(.(input$hline))
-    vline <- as.numeric(.(input$vline))
-    facet_ncol <- .(input$facet_ncol)
-    facet <- .(input$facet)
-    reg_line <- .(input$reg_line)
-    rotate_xlab <- .(input$rotate_xlab)
-  }))
-    #validate(need(!is.null(ANL) && is.data.frame(ANL), "No data left"))
-    # validate(need(nrow(ANL) > 0 , "No observations left"))
-    # validate(need(param_var %in% names(ANL),
-    #               paste("Biomarker parameter variable", param_var, " is not available in data", dataname)))
-    # validate(need(param %in% unique(ANL[[param_var]]),
-    #               paste("Biomarker", param, " is not available in data", dataname)))
-    # validate(need(trt_group %in% names(ANL),
-    #               paste("Variable", trt_group, " is not available in data", dataname)))
-    # validate(need(xaxis_var %in% names(ANL),
-    #               paste("Variable", xaxis_var, " is not available in data", dataname)))
-    # validate(need(yaxis_var %in% names(ANL),
-    #               paste("Variable", yaxis_var, " is not available in data", dataname)))
-    
-    # re-establish treatment variable label
-    chunks_push(quote({
-      
-      if (trt_group == "ARM"){
-        attributes(ANL$ARM)$label <- "Planned Arm"
-      } else {
-        attributes(ANL$ACTARM)$label <- "Actual Arm"
-      }
-    
-    p <- g_scatterplot(
-      data = ANL,
-      param_var = param_var,
-      param = param,
-      xaxis_var = xaxis_var,
-      yaxis_var = yaxis_var,
-      trt_group = trt_group,
-      xmin = xmin_scale,
-      xmax = xmax_scale,
-      ymin = ymin_scale,
-      ymax = ymax_scale,
-      color_manual = color_manual,
-      shape_manual = shape_manual,
-      facet_ncol = facet_ncol,
-      facet = facet,
-      facet_var = facet_var,
-      reg_line = reg_line,
-      font_size = font_size,
-      dot_size = dot_size,
-      reg_text_size = reg_text_size,
-      rotate_xlab = rotate_xlab,
-      hline = hline,
-      vline = vline      
-    )
-    
-    }))
-    
-    chunks_safe_eval()
-    
-    p
-    
-  })
-
   observeEvent(input$show_rcode, {
     show_rcode_modal(
       title = "Scatter Plot", 
