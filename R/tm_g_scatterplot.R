@@ -217,8 +217,7 @@ ui_g_scatterplot <- function(id, ...) {
       optionalSliderInputValMinMax(ns("reg_text_size"), "Regression Annotations Size", a$reg_text_size, ticks = FALSE)
     ),
     forms = tags$div(
-      actionButton(ns("show_rcode"), "Show R Code", width = "100%")#,
-      # downloadButton(ns("export_plot"), "Export Image", width = "100%")
+      actionButton(ns("show_rcode"), "Show R Code", width = "100%")
     ),
     pre_output = a$pre_output,
     post_output = a$post_output
@@ -231,34 +230,33 @@ srv_g_scatterplot <- function(input, output, session, datasets, dataname,
                               trt_group, facet_var, color_manual, shape_manual,
                               code_data_processing) {
   
-  
+  # initialize the code chunk container in the app environment
   init_chunks()
-  count <- 1
-  
+
+  # create a reactive data object 
   filter_ANL <- reactive({
     
-    # resolve reacticity
-    ADLB_FILTERED <- datasets$get_data(dataname, filtered = TRUE, reactive = TRUE)
+    # capture data in current filtered state as reflected in right hand panel filter
+    ANL_FILTERED <- datasets$get_data(dataname, filtered = TRUE, reactive = TRUE)
+    
+    # assign input values to local reactive environment
     param <- input$param
     constraint_var <- input$constraint_var
     constraint_min <- input$constraint_min
     constraint_max <- input$constraint_max
     
-    # validate your stuff
-    validate(need(nrow(ADLB_FILTERED) > 10, "need at least 10 observations"))
+    # clear code chunk container and prime container with ANL_FILTERED data object
+    chunks_reset(as.environment(list(ANL_FILTERED = ANL_FILTERED)))
     
-    # now collect code
-    
-    chunks_reset(as.environment(list(ADLB_FILTERED = ADLB_FILTERED)))
-    
+    # add code chunk to chunk container
     chunks_push(bquote({
+      param <- .(param)
       constraint_var <- .(constraint_var)
       constraint_min <- .(constraint_min)
       constraint_max <- .(constraint_max)
-      param <- .(param)
       
-      
-      ANL <- if (constraint_var != "NONE") {
+      # create code chunk "ANL" in chunk container 
+      encoding_filter <- if (constraint_var != "NONE") {
         constraint_min_range <- -Inf
         constraint_max_range <- Inf
         
@@ -270,7 +268,7 @@ srv_g_scatterplot <- function(input, output, session, datasets, dataname,
           constraint_max_range <- constraint_max
         }
         
-        ADLB_FILTERED %>%
+        ANL_FILTERED %>%
           filter(
             .(param_var) == param &
               constraint_min_range <= .(as.name(constraint_var)) &
@@ -279,25 +277,43 @@ srv_g_scatterplot <- function(input, output, session, datasets, dataname,
           )
         
       } else {
-        ADLB_FILTERED %>%
+        ANL_FILTERED %>%
           filter(.(as.name(param_var)) == param)
       }
+      
     }))
+
+    # evaluate unevaluated code chunks in container
+    chunks_safe_eval()
     
+    # run code stored in "encoding_filter" code chunk
+    ANL <- chunks_get_var("encoding_filter")
     
-    count <<- count + 1
-    count # ensure reactivity works
+    # validate resulting data object for minimum requirements
+    validate(need(!is.null(ANL) && is.data.frame(ANL), 
+                  paste("Analysis dataset (ANL) is not available in app environment.")))
+    validate(need(nrow(ANL) > 0, 
+                  "Minimum number of records not met: > 0 records required."))
+    
+    # ensure ANL data object is returned by this reactive block
+    ANL
+
   })
   
-  
-  
   output$scatterplot <- renderPlot({
-      ANL <- filter_ANL()
-  
+
+    # create ANL data object in local renderPlot environment
+    ANL <- filter_ANL()
+    print(paste("Records in ANL:", nrow(ANL)))
+    
       chunks_push(bquote({
+          param_var <- .(param_var)
           param <- .(input$param)
           xaxis_var <- .(input$xaxis_var)
           yaxis_var <- .(input$yaxis_var)
+          trt_group <- .(trt_group)
+          color_manual <- .(color_manual)
+          shape_manual <- .(shape_manual)
           xmin_scale <- .(input$xrange_scale[1])
           xmax_scale <- .(input$xrange_scale[2])
           ymin_scale <- .(input$yrange_scale[1])
@@ -309,41 +325,21 @@ srv_g_scatterplot <- function(input, output, session, datasets, dataname,
           vline <- as.numeric(.(input$vline))
           facet_ncol <- .(input$facet_ncol)
           facet <- .(input$facet)
+          facet_var <- .(facet_var)
           reg_line <- .(input$reg_line)
           rotate_xlab <- .(input$rotate_xlab)
         }))
+
       
-      
-      # you can now run
-      # chunks_eval()
-      # ANL <- chunks_get("ANL")
-      # ...
-      #
-      # to do validate(need(...))
-      
-      
-      #validate(need(!is.null(ANL) && is.data.frame(ANL), "No data left"))
-      # validate(need(nrow(ANL) > 0 , "No observations left"))
-      # validate(need(param_var %in% names(ANL),
-      #               paste("Biomarker parameter variable", param_var, " is not available in data", dataname)))
-      # validate(need(param %in% unique(ANL[[param_var]]),
-      #               paste("Biomarker", param, " is not available in data", dataname)))
-      # validate(need(trt_group %in% names(ANL),
-      #               paste("Variable", trt_group, " is not available in data", dataname)))
-      # validate(need(xaxis_var %in% names(ANL),
-      #               paste("Variable", xaxis_var, " is not available in data", dataname)))
-      # validate(need(yaxis_var %in% names(ANL),
-      #               paste("Variable", yaxis_var, " is not available in data", dataname)))
-      
+      # ADRIAN: PROBLEM HERE THAT CAN NOT FIND OBJECT ANL DESPITE IT BEING CREATED IN RENDERPLOT  
       # re-establish treatment variable label
       chunks_push(quote({
-        
         if (trt_group == "ARM"){
           attributes(ANL$ARM)$label <- "Planned Arm"
         } else {
           attributes(ANL$ACTARM)$label <- "Actual Arm"
         }
-        
+
         p <- g_scatterplot(
           data = ANL,
           param_var = param_var,
@@ -368,18 +364,14 @@ srv_g_scatterplot <- function(input, output, session, datasets, dataname,
           hline = hline,
           vline = vline      
         )
-        
+      p 
+      
       }))
       
-      #chunks_safe_eval()
-      
-      #p
-      
-      filter_ANL()
-      plot(1,1)
+      # evaluate the code chunk so that it is available in app environment as well
+      chunks_safe_eval()
       
     })
-  
   
   ns <- session$ns
   # dynamic plot height and brushing
@@ -393,18 +385,17 @@ srv_g_scatterplot <- function(input, output, session, datasets, dataname,
   })
   
   output$brush_data <- renderTable({
-    #    if (nrow(filter_ANL()) > 0 ){
-    #      brushedPoints(select(filter_ANL(),"USUBJID", trt_group, "AVISITCD", "PARAMCD", input$xaxis_var, input$yaxis_var, "LOQFL"), input$scatterplot_brush)
-    #    } else{
-    #      NULL
-    #    }
-    
-    NULL
+    ANL <- filter_ANL()
+    if (nrow(ANL) > 0 ){
+      brushedPoints(select(ANL,"USUBJID", trt_group, "AVISITCD", "PARAMCD", input$xaxis_var, input$yaxis_var, "LOQFL"), input$scatterplot_brush)
+    } else{
+      NULL
+    }
   })
   
   # dynamic slider for x-axis
   output$xaxis_zoom <- renderUI({
-    ANL <- datasets$get_data(dataname, reactive = TRUE, filtered = TRUE)
+    ANL <- filter_ANL()
     param <- input$param 
     
     scale_data <- ANL %>%
@@ -428,7 +419,7 @@ srv_g_scatterplot <- function(input, output, session, datasets, dataname,
   
   # dynamic slider for y-axis
   output$yaxis_zoom <- renderUI({
-    ANL <- datasets$get_data(dataname, reactive = TRUE, filtered = TRUE)
+    ANL <- filter_ANL()
     param <- input$param 
     
     scale_data <- ANL %>%
@@ -452,9 +443,9 @@ srv_g_scatterplot <- function(input, output, session, datasets, dataname,
   
   # minimum data constraint value
   output$constraint_min_value <- renderUI({
+    ANL <- filter_ANL()
     # conditionally reveal min and max constraint fields
     if (input$constraint_var != "NONE") {
-      ANL <- datasets$get_data(dataname, filtered = TRUE, reactive = TRUE)
       validate(need(nrow(ANL) > 0 , "Waiting For Filter Selection"))
       
       param <- input$param
@@ -483,9 +474,9 @@ srv_g_scatterplot <- function(input, output, session, datasets, dataname,
   
   # maximum data constraint value
   output$constraint_max_value <- renderUI({
+    ANL <- filter_ANL()
     # conditionally reveal min and max constraint fields
     if (input$constraint_var != "NONE") {
-      ANL <- datasets$get_data(dataname, filtered = TRUE, reactive = TRUE)
       validate(need(nrow(ANL) > 0 , "Waiting For Filter Selection"))
       
       param <- input$param
