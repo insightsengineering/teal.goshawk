@@ -232,12 +232,12 @@ srv_g_scatterplot <- function(input, output, session, datasets, dataname,
   
   # initialize the code chunk container in the app environment
   init_chunks()
-
+  
   # create a reactive data object 
   filter_ANL <- reactive({
     
     # capture data in current filtered state as reflected in right hand panel filter
-    ANL_FILTERED <- datasets$get_data(dataname, filtered = TRUE, reactive = TRUE)
+    ADLB_FILTERED <- datasets$get_data(dataname, filtered = TRUE, reactive = TRUE)
     
     # assign input values to local reactive environment
     param <- input$param
@@ -245,20 +245,21 @@ srv_g_scatterplot <- function(input, output, session, datasets, dataname,
     constraint_min <- input$constraint_min
     constraint_max <- input$constraint_max
     
-    # clear code chunk container and prime container with ANL_FILTERED data object
-    chunks_reset(as.environment(list(ANL_FILTERED = ANL_FILTERED)))
+    # clear code chunk container and prime container with ADLB_FILTERED data object
+    chunks_reset(as.environment(list(ADLB_FILTERED = ADLB_FILTERED)))
     
-    # add code chunk to chunk container
-    chunks_push(bquote({
-      param <- .(param)
-      constraint_var <- .(constraint_var)
-      constraint_min <- .(constraint_min)
-      constraint_max <- .(constraint_max)
-      
-      # create code chunk "ANL" in chunk container 
-      encoding_filter <- if (constraint_var != "NONE") {
+    # create code chunk "ANL" in chunk container 
+      if (constraint_var != "NONE") {
+        
         constraint_min_range <- -Inf
         constraint_max_range <- Inf
+
+        # add code chunk to chunk container
+        chunks_push(bquote({
+        param <- .(param)
+        constraint_var <- .(constraint_var)
+        constraint_min <- .(constraint_min)
+        constraint_max <- .(constraint_max)
         
         if (length(constraint_min)) {
           constraint_min_range <- constraint_min
@@ -268,26 +269,30 @@ srv_g_scatterplot <- function(input, output, session, datasets, dataname,
           constraint_max_range <- constraint_max
         }
         
-        ANL_FILTERED %>%
+        ANL <- ADLB_FILTERED %>%
           filter(
-            .(param_var) == param &
+            .(as.name(param_var)) == param &
               constraint_min_range <= .(as.name(constraint_var)) &
               .(as.name(constraint_var)) <= constraint_max_range |
               is.na(.(as.name(constraint_var)))
           )
-        
-      } else {
-        ANL_FILTERED %>%
+      }))
+    
+    } else {
+      # add code chunk to chunk container
+      chunks_push(bquote({
+        param <- .(param)
+        ANL <- ADLB_FILTERED %>%
           filter(.(as.name(param_var)) == param)
-      }
-      
-    }))
-
+      }))
+    }
+    
     # evaluate unevaluated code chunks in container
     chunks_safe_eval()
     
     # run code stored in "encoding_filter" code chunk
-    ANL <- chunks_get_var("encoding_filter")
+    ANL <- chunks_get_var("ANL")
+    
     
     # validate resulting data object for minimum requirements
     validate(need(!is.null(ANL) && is.data.frame(ANL), 
@@ -297,81 +302,81 @@ srv_g_scatterplot <- function(input, output, session, datasets, dataname,
     
     # ensure ANL data object is returned by this reactive block
     ANL
-
+    
   })
   
   output$scatterplot <- renderPlot({
-
-    # create ANL data object in local renderPlot environment
-    ANL <- filter_ANL()
-    print(paste("Records in ANL:", nrow(ANL)))
     
-      chunks_push(bquote({
-          param_var <- .(param_var)
-          param <- .(input$param)
-          xaxis_var <- .(input$xaxis_var)
-          yaxis_var <- .(input$yaxis_var)
-          trt_group <- .(trt_group)
-          color_manual <- .(color_manual)
-          shape_manual <- .(shape_manual)
-          xmin_scale <- .(input$xrange_scale[1])
-          xmax_scale <- .(input$xrange_scale[2])
-          ymin_scale <- .(input$yrange_scale[1])
-          ymax_scale <- .(input$yrange_scale[2])
-          font_size <- .(input$font_size)
-          dot_size <- .(input$dot_size)
-          reg_text_size <- .(input$reg_text_size)
-          hline <- as.numeric(.(input$hline))
-          vline <- as.numeric(.(input$vline))
-          facet_ncol <- .(input$facet_ncol)
-          facet <- .(input$facet)
-          facet_var <- .(facet_var)
-          reg_line <- .(input$reg_line)
-          rotate_xlab <- .(input$rotate_xlab)
-        }))
-
+    # create ANL data object in local renderPlot environment
+    filter_ANL()
+    
+    chunks_push(bquote({
+      param_var <- .(param_var)
+      param <- .(input$param)
+      xaxis_var <- .(input$xaxis_var)
+      yaxis_var <- .(input$yaxis_var)
+      trt_group <- .(trt_group)
+      color_manual <- .(color_manual)
+      shape_manual <- .(shape_manual)
+      xmin_scale <- .(input$xrange_scale[1])
+      xmax_scale <- .(input$xrange_scale[2])
+      ymin_scale <- .(input$yrange_scale[1])
+      ymax_scale <- .(input$yrange_scale[2])
+      font_size <- .(input$font_size)
+      dot_size <- .(input$dot_size)
+      reg_text_size <- .(input$reg_text_size)
+      hline <- as.numeric(.(input$hline))
+      vline <- as.numeric(.(input$vline))
+      facet_ncol <- .(input$facet_ncol)
+      facet <- .(input$facet)
+      facet_var <- .(facet_var)
+      reg_line <- .(input$reg_line)
+      rotate_xlab <- .(input$rotate_xlab)
+    }))
+    
+    
+    # ADRIAN: PROBLEM HERE THAT CAN NOT FIND OBJECT ANL DESPITE IT BEING CREATED IN RENDERPLOT  
+    # re-establish treatment variable label
+    chunks_push(quote({
       
-      # ADRIAN: PROBLEM HERE THAT CAN NOT FIND OBJECT ANL DESPITE IT BEING CREATED IN RENDERPLOT  
-      # re-establish treatment variable label
-      chunks_push(quote({
-        if (trt_group == "ARM"){
-          attributes(ANL$ARM)$label <- "Planned Arm"
-        } else {
-          attributes(ANL$ACTARM)$label <- "Actual Arm"
-        }
-
-        p <- g_scatterplot(
-          data = ANL,
-          param_var = param_var,
-          param = param,
-          xaxis_var = xaxis_var,
-          yaxis_var = yaxis_var,
-          trt_group = trt_group,
-          xmin = xmin_scale,
-          xmax = xmax_scale,
-          ymin = ymin_scale,
-          ymax = ymax_scale,
-          color_manual = color_manual,
-          shape_manual = shape_manual,
-          facet_ncol = facet_ncol,
-          facet = facet,
-          facet_var = facet_var,
-          reg_line = reg_line,
-          font_size = font_size,
-          dot_size = dot_size,
-          reg_text_size = reg_text_size,
-          rotate_xlab = rotate_xlab,
-          hline = hline,
-          vline = vline      
-        )
+      if (trt_group == "ARM"){
+        attributes(ANL$ARM)$label <- "Planned Arm"
+      } else {
+        attributes(ANL$ACTARM)$label <- "Actual Arm"
+      }
+      
+      p <- g_scatterplot(
+        data = ANL,
+        param_var = param_var,
+        param = param,
+        xaxis_var = xaxis_var,
+        yaxis_var = yaxis_var,
+        trt_group = trt_group,
+        xmin = xmin_scale,
+        xmax = xmax_scale,
+        ymin = ymin_scale,
+        ymax = ymax_scale,
+        color_manual = color_manual,
+        shape_manual = shape_manual,
+        facet_ncol = facet_ncol,
+        facet = facet,
+        facet_var = facet_var,
+        reg_line = reg_line,
+        font_size = font_size,
+        dot_size = dot_size,
+        reg_text_size = reg_text_size,
+        rotate_xlab = rotate_xlab,
+        hline = hline,
+        vline = vline      
+      )
       p 
       
-      }))
-      
-      # evaluate the code chunk so that it is available in app environment as well
-      chunks_safe_eval()
-      
-    })
+    }))
+    
+    # evaluate the code chunk so that it is available in app environment as well
+    chunks_safe_eval()
+    
+  })
   
   ns <- session$ns
   # dynamic plot height and brushing
@@ -447,18 +452,16 @@ srv_g_scatterplot <- function(input, output, session, datasets, dataname,
     # conditionally reveal min and max constraint fields
     if (input$constraint_var != "NONE") {
       validate(need(nrow(ANL) > 0 , "Waiting For Filter Selection"))
-      
       param <- input$param
       scale_data <- ANL %>%
         filter(eval(parse(text = param_var)) == param)
-      # ensure that there are records at visit to process based on the constraint vatriable selection
+      # ensure that there are records at visit to process based on the constraint variable selection
       visitFreq <- unique(scale_data$AVISITCD)
-      if (input$constraint_var == "BASE2" & visitFreq[1] == "SCR" | 
-          input$constraint_var == "BASE" & (visitFreq[1] == "BL" | visitFreq[2] == "BL")){
+      if (input$constraint_var == "BASE2" & any(grepl("SCR", visitFreq)) | 
+          input$constraint_var == "BASE" & any(grepl("BL", visitFreq))){
         # identify min and max values of constraint var range ignoring NA values
         constraint_min_range <- round(min(scale_data[[input$constraint_var]], na.rm = TRUE), 3)
         constraint_max_range <- round(max(scale_data[[input$constraint_var]], na.rm = TRUE), 3)
-        
         tagList({
           numericInput(ns("constraint_min"), 
                        paste0("Min (", constraint_min_range, ")"), 
@@ -478,18 +481,16 @@ srv_g_scatterplot <- function(input, output, session, datasets, dataname,
     # conditionally reveal min and max constraint fields
     if (input$constraint_var != "NONE") {
       validate(need(nrow(ANL) > 0 , "Waiting For Filter Selection"))
-      
       param <- input$param
       scale_data <- ANL %>%
         filter(eval(parse(text = param_var)) == param)
-      # ensure that there are records at visit to process based on the constraint vatriable selection
+      # ensure that there are records at visit to process based on the constraint variable selection
       visitFreq <- unique(scale_data$AVISITCD)
-      if (input$constraint_var == "BASE2" & visitFreq[1] == "SCR" | 
-          input$constraint_var == "BASE" & (visitFreq[1] == "BL" | visitFreq[2] == "BL")){
+      if (input$constraint_var == "BASE2" & any(grepl("SCR", visitFreq)) | 
+          input$constraint_var == "BASE" & any(grepl("BL", visitFreq))){
         # identify min and max values of constraint var range ignoring NA values
         constraint_min_range <- round(min(scale_data[[input$constraint_var]], na.rm = TRUE), 3)
         constraint_max_range <- round(max(scale_data[[input$constraint_var]], na.rm = TRUE), 3)
-        
         tagList({
           numericInput(ns("constraint_max"), 
                        paste0("Max (", constraint_max_range, ")"),
