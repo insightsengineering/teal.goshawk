@@ -234,7 +234,7 @@ srv_g_scatterplot <- function(input, output, session, datasets, dataname,
   init_chunks()
   
   dataset_var <- paste0(dataname, "_FILTERED")
-  filter_ANL <- reactiveValues(data = radsl(cached = TRUE))
+  filter_ANL <- reactiveValues(data = NULL)
   
   
   output$scatterplot <- renderPlot({
@@ -375,7 +375,7 @@ srv_g_scatterplot <- function(input, output, session, datasets, dataname,
   
   output$brush_data <- renderTable({
     ANL <- filter_ANL$data
-    if (nrow(ANL) > 0 ){
+    if (!is.null(ANL) && nrow(ANL) > 0 ){
       brushedPoints(select(ANL,"USUBJID", trt_group, "AVISITCD", "PARAMCD", input$xaxis_var, input$yaxis_var, "LOQFL"), input$scatterplot_brush)
     } else{
       NULL
@@ -385,6 +385,11 @@ srv_g_scatterplot <- function(input, output, session, datasets, dataname,
   # dynamic slider for x-axis
   output$xaxis_zoom <- renderUI({
     ANL <- filter_ANL$data
+    
+    if (is.null(ANL)) {
+      return(NULL)
+    }
+    
     param <- input$param 
     
     scale_data <- ANL %>%
@@ -409,6 +414,11 @@ srv_g_scatterplot <- function(input, output, session, datasets, dataname,
   # dynamic slider for y-axis
   output$yaxis_zoom <- renderUI({
     ANL <- filter_ANL$data
+    if (is.null(ANL)) {
+      return(NULL)
+    }
+    
+    
     param <- input$param 
     
     scale_data <- ANL %>%
@@ -433,6 +443,11 @@ srv_g_scatterplot <- function(input, output, session, datasets, dataname,
   # minimum data constraint value
   output$constraint_min_value <- renderUI({
     ANL <- filter_ANL$data
+    
+    if (is.null(ANL)) {
+      return(NULL)
+    }
+    
     # conditionally reveal min and max constraint fields
     if (input$constraint_var != "NONE") {
       validate(need(nrow(ANL) > 0 , "Waiting For Filter Selection"))
@@ -462,6 +477,12 @@ srv_g_scatterplot <- function(input, output, session, datasets, dataname,
   # maximum data constraint value
   output$constraint_max_value <- renderUI({
     ANL <- filter_ANL$data
+    
+    if (is.null(ANL)) {
+      return(NULL)
+    }
+    
+    
     # conditionally reveal min and max constraint fields
     if (input$constraint_var != "NONE") {
       validate(need(nrow(ANL) > 0 , "Waiting For Filter Selection"))
