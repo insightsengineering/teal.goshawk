@@ -232,12 +232,13 @@ srv_g_scatterplot <- function(input, output, session, datasets, dataname,
   
   # initialize the code chunk container in the app environment
   init_chunks()
+  dataset_var <- paste0(dataname, "_FILTERED")
   
   # create a reactive data object 
   filter_ANL <- reactive({
     
     # capture data in current filtered state as reflected in right hand panel filter
-    ADLB_FILTERED <- datasets$get_data(dataname, filtered = TRUE, reactive = TRUE)
+    ANL_FILTERED <- datasets$get_data(dataname, filtered = TRUE, reactive = TRUE)
     
     # assign input values to local reactive environment
     param <- input$param
@@ -246,20 +247,13 @@ srv_g_scatterplot <- function(input, output, session, datasets, dataname,
     constraint_max <- input$constraint_max
     
     # clear code chunk container and prime container with ADLB_FILTERED data object
-    chunks_reset(as.environment(list(ADLB_FILTERED = ADLB_FILTERED)))
-    
+    chunks_reset(as.environment(setNames(list(ANL_FILTERED), dataset_var)))
+
     # create code chunk "ANL" in chunk container 
       if (constraint_var != "NONE") {
         
         constraint_min_range <- -Inf
         constraint_max_range <- Inf
-
-        # add code chunk to chunk container
-        chunks_push(bquote({
-        param <- .(param)
-        constraint_var <- .(constraint_var)
-        constraint_min <- .(constraint_min)
-        constraint_max <- .(constraint_max)
         
         if (length(constraint_min)) {
           constraint_min_range <- constraint_min
@@ -269,11 +263,13 @@ srv_g_scatterplot <- function(input, output, session, datasets, dataname,
           constraint_max_range <- constraint_max
         }
         
-        ANL <- ADLB_FILTERED %>%
+        # add code chunk to chunk container
+        chunks_push(bquote({
+          ANL <- .(as.name(dataset_var)) %>%
           filter(
-            .(as.name(param_var)) == param &
-              constraint_min_range <= .(as.name(constraint_var)) &
-              .(as.name(constraint_var)) <= constraint_max_range |
+            .(as.name(param_var)) == .(param) &
+              .(constraint_min_range) <= .(as.name(constraint_var)) &
+              .(as.name(constraint_var)) <= .(constraint_max_range) |
               is.na(.(as.name(constraint_var)))
           )
       }))
@@ -281,9 +277,8 @@ srv_g_scatterplot <- function(input, output, session, datasets, dataname,
     } else {
       # add code chunk to chunk container
       chunks_push(bquote({
-        param <- .(param)
-        ANL <- ADLB_FILTERED %>%
-          filter(.(as.name(param_var)) == param)
+        ANL <- .(as.name(dataset_var)) %>%
+          filter(.(as.name(param_var)) == .(param))
       }))
     }
     
@@ -307,38 +302,36 @@ srv_g_scatterplot <- function(input, output, session, datasets, dataname,
   
   output$scatterplot <- renderPlot({
     
-    # create ANL data object in local renderPlot environment
-    filter_ANL()
+    # clears code chunks and creates ANL data object in local renderPlot environment
+    ANL <- filter_ANL()
     
     chunks_push(bquote({
       param_var <- .(param_var)
-      param <- .(input$param)
-      xaxis_var <- .(input$xaxis_var)
-      yaxis_var <- .(input$yaxis_var)
       trt_group <- .(trt_group)
-      color_manual <- .(color_manual)
-      shape_manual <- .(shape_manual)
-      xmin_scale <- .(input$xrange_scale[1])
-      xmax_scale <- .(input$xrange_scale[2])
-      ymin_scale <- .(input$yrange_scale[1])
-      ymax_scale <- .(input$yrange_scale[2])
-      font_size <- .(input$font_size)
-      dot_size <- .(input$dot_size)
-      reg_text_size <- .(input$reg_text_size)
-      hline <- as.numeric(.(input$hline))
-      vline <- as.numeric(.(input$vline))
-      facet_ncol <- .(input$facet_ncol)
-      facet <- .(input$facet)
-      facet_var <- .(facet_var)
-      reg_line <- .(input$reg_line)
-      rotate_xlab <- .(input$rotate_xlab)
     }))
     
+    param <- input$param
+    xaxis_var <- input$xaxis_var
+    yaxis_var <- input$yaxis_var
+    color_manual <- color_manual
+    shape_manual <- shape_manual
+    xmin_scale <- input$xrange_scale[1]
+    xmax_scale <- input$xrange_scale[2]
+    ymin_scale <- input$yrange_scale[1]
+    ymax_scale <- input$yrange_scale[2]
+    font_size <- input$font_size
+    dot_size <- input$dot_size
+    reg_text_size <- input$reg_text_size
+    hline <- as.numeric(input$hline)
+    vline <- as.numeric(input$vline)
+    facet_ncol <- input$facet_ncol
+    facet <- input$facet
+    facet_var <- facet_var
+    reg_line <- input$reg_line
+    rotate_xlab <- input$rotate_xlab
     
-    # ADRIAN: PROBLEM HERE THAT CAN NOT FIND OBJECT ANL DESPITE IT BEING CREATED IN RENDERPLOT  
-    # re-establish treatment variable label
-    chunks_push(quote({
-      
+    chunks_push(bquote({
+      # re-establish treatment variable label
       if (trt_group == "ARM"){
         attributes(ANL$ARM)$label <- "Planned Arm"
       } else {
@@ -347,29 +340,30 @@ srv_g_scatterplot <- function(input, output, session, datasets, dataname,
       
       p <- g_scatterplot(
         data = ANL,
-        param_var = param_var,
-        param = param,
-        xaxis_var = xaxis_var,
-        yaxis_var = yaxis_var,
-        trt_group = trt_group,
-        xmin = xmin_scale,
-        xmax = xmax_scale,
-        ymin = ymin_scale,
-        ymax = ymax_scale,
-        color_manual = color_manual,
-        shape_manual = shape_manual,
-        facet_ncol = facet_ncol,
-        facet = facet,
-        facet_var = facet_var,
-        reg_line = reg_line,
-        font_size = font_size,
-        dot_size = dot_size,
-        reg_text_size = reg_text_size,
-        rotate_xlab = rotate_xlab,
-        hline = hline,
-        vline = vline      
+        param_var = .(param_var),
+        param = .(param),
+        xaxis_var = .(xaxis_var),
+        yaxis_var = .(yaxis_var),
+        trt_group = .(trt_group),
+        xmin = .(xmin_scale),
+        xmax = .(xmax_scale),
+        ymin = .(ymin_scale),
+        ymax = .(ymax_scale),
+        color_manual = .(color_manual),
+        shape_manual = .(shape_manual),
+        facet_ncol = .(facet_ncol),
+        facet = .(facet),
+        facet_var = .(facet_var),
+        reg_line = .(reg_line),
+        font_size = .(font_size),
+        dot_size = .(dot_size),
+        reg_text_size = .(reg_text_size),
+        rotate_xlab = .(rotate_xlab),
+        hline = .(hline),
+        vline = .(vline)      
       )
-      p 
+      
+      p
       
     }))
     
