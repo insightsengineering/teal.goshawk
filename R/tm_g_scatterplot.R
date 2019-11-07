@@ -250,7 +250,7 @@ srv_g_scatterplot <- function(input, output, session, datasets, dataname,
     chunks_reset(as.environment(setNames(list(ANL_FILTERED), dataset_var)))
 
     # create code chunk "ANL" in chunk container 
-      if (constraint_var != "NONE") {
+    anl_call <- if (constraint_var != "NONE") {
         
         constraint_min_range <- -Inf
         constraint_max_range <- Inf
@@ -264,7 +264,7 @@ srv_g_scatterplot <- function(input, output, session, datasets, dataname,
         }
         
         # add code chunk to chunk container
-        chunks_push(bquote({
+       bquote({
           ANL <- .(as.name(dataset_var)) %>%
           filter(
             .(as.name(param_var)) == .(param) &
@@ -272,20 +272,21 @@ srv_g_scatterplot <- function(input, output, session, datasets, dataname,
               .(as.name(constraint_var)) <= .(constraint_max_range) |
               is.na(.(as.name(constraint_var)))
           )
-      }))
+      })
     
     } else {
       # add code chunk to chunk container
-      chunks_push(bquote({
+      bquote({
         ANL <- .(as.name(dataset_var)) %>%
           filter(.(as.name(param_var)) == .(param))
-      }))
+      })
     }
     
     # evaluate unevaluated code chunks in container
     chunks_safe_eval()
     
     # run code stored in "encoding_filter" code chunk
+    
     ANL <- chunks_get_var("ANL")
     
     
@@ -296,14 +297,19 @@ srv_g_scatterplot <- function(input, output, session, datasets, dataname,
                   "Minimum number of records not met: > 0 records required."))
     
     # ensure ANL data object is returned by this reactive block
-    ANL
+    attr(ANL, "call") <- anl_call
     
+    ANL
   })
   
   output$scatterplot <- renderPlot({
     
     # clears code chunks and creates ANL data object in local renderPlot environment
     ANL <- filter_ANL()
+    
+    chunks_reset(as.environment(setNames(list(ANL), dataset_var)))
+    
+    chunk_push(attr(ANL, "call"))
     
     chunks_push(bquote({
       param_var <- .(param_var)
