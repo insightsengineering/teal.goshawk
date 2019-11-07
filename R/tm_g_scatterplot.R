@@ -234,7 +234,7 @@ srv_g_scatterplot <- function(input, output, session, datasets, dataname,
   init_chunks()
   
   dataset_var <- paste0(dataname, "_FILTERED")
-  filter_ANL <- reactiveValues(data = NULL)
+  filter_ANL <- reactiveValues(data = radsl(cached = TRUE))
   
   
   output$scatterplot <- renderPlot({
@@ -374,7 +374,7 @@ srv_g_scatterplot <- function(input, output, session, datasets, dataname,
   })
   
   output$brush_data <- renderTable({
-    ANL <- filter_ANL()
+    ANL <- filter_ANL$data
     if (nrow(ANL) > 0 ){
       brushedPoints(select(ANL,"USUBJID", trt_group, "AVISITCD", "PARAMCD", input$xaxis_var, input$yaxis_var, "LOQFL"), input$scatterplot_brush)
     } else{
