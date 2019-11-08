@@ -375,8 +375,8 @@ srv_g_correlationplot <- function(input, output, session, datasets, dataname,
         filter(eval(parse(text = param_var)) == xaxis_param)
       # ensure that there are records at visit to process based on the constraint vatriable selection
       visitFreq <- unique(scale_data$AVISITCD)
-      if (input$constraint_var == "BASE2" & visitFreq[1] == "SCR" | 
-          input$constraint_var == "BASE" & (visitFreq[1] == "BL" | visitFreq[2] == "BL")){
+      if (input$constraint_var == "BASE2" & any(grepl("SCR", visitFreq)) | 
+          input$constraint_var == "BASE" & any(grepl("BL", visitFreq))){
         # identify min and max values of constraint var range ignoring NA values
         constraint_min_range <- min(scale_data[[input$constraint_var]], na.rm = TRUE)
         constraint_max_range <- max(scale_data[[input$constraint_var]], na.rm = TRUE)
@@ -407,8 +407,8 @@ srv_g_correlationplot <- function(input, output, session, datasets, dataname,
         filter(eval(parse(text = param_var)) == xaxis_param)
       # ensure that there are records at visit to process based on the constraint vatriable selection
       visitFreq <- unique(scale_data$AVISITCD)
-      if (input$constraint_var == "BASE2" & visitFreq[1] == "SCR" | 
-          input$constraint_var == "BASE" & (visitFreq[1] == "BL" | visitFreq[2] == "BL")){
+      if (input$constraint_var == "BASE2" & any(grepl("SCR", visitFreq)) | 
+          input$constraint_var == "BASE" & any(grepl("BL", visitFreq))){
         # identify min and max values of constraint var range ignoring NA values
         constraint_min_range <- min(scale_data[[input$constraint_var]], na.rm = TRUE)
         constraint_max_range <- max(scale_data[[input$constraint_var]], na.rm = TRUE)
