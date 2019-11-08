@@ -18,7 +18,7 @@ tm_g_scatterplot(label, dataname, param_var, param,
 \item{label}{menu item label of the module in the teal app.}
 
 \item{dataname}{analysis data passed to the data argument of teal init. E.g. ADaM structured 
-laboratory data frame ALB.}
+laboratory data frame ADLB.}
 
 \item{param_var}{name of variable containing biomarker codes e.g. PARAMCD.}
 
@@ -91,11 +91,14 @@ library(goshawk)
 library(random.cdisc.data)
 library(stringr)
 library(teal)
+library(teal.devel)
 library(teal.goshawk)
+
+# code>
 
 # original ARM value = dose value
 arm_mapping <- list("A: Drug X" = "150mg QD", "B: Placebo" = "Placebo", 
-"C: Combination" = "Combination")
+                    "C: Combination" = "Combination")
 color_manual <-  c("150mg QD" = "#000000", "Placebo" = "#3498DB", "Combination" = "#E74C3C")
 # assign LOQ flag symbols: circles for "N" and triangles for "Y", squares for "NA"
 shape_manual <-  c("N"  = 1, "Y"  = 2, "NA" = 0)
@@ -103,25 +106,31 @@ shape_manual <-  c("N"  = 1, "Y"  = 2, "NA" = 0)
 ADSL <- radsl(N = 20, seed = 1)
 ADLB <- radlb(ADSL, visit_format = "WEEK", n_assessments = 7L, seed = 2)
 ADLB <- ADLB \%>\% 
-mutate(AVISITCD = case_when(
-AVISIT == "SCREENING" ~ "SCR",
-AVISIT == "BASELINE" ~ "BL", grepl("WEEK", AVISIT) ~ paste("W",trimws(substr(AVISIT, start=6, 
-stop=str_locate(AVISIT, "DAY")-1))),
-TRUE ~ as.character(NA))) \%>\%
-mutate(AVISITCDN = case_when(AVISITCD == "SCR" ~ -2,
-AVISITCD == "BL" ~ 0, grepl("W", AVISITCD) ~ as.numeric(gsub("\\\\D+", "", AVISITCD)), 
-TRUE ~ as.numeric(NA))) \%>\%
-# use ARMCD values to order treatment in visualization legend
-mutate(TRTORD = ifelse(grepl("C", ARMCD), 1,
-ifelse(grepl("B", ARMCD), 2,
-ifelse(grepl("A", ARMCD), 3, NA)))) \%>\%
-mutate(ARM = as.character(arm_mapping[match(ARM, names(arm_mapping))])) \%>\%
-mutate(ARM = factor(ARM) \%>\% reorder(TRTORD))
+  mutate(AVISITCD = case_when(
+    AVISIT == "SCREENING" ~ "SCR",
+    AVISIT == "BASELINE" ~ "BL", grepl("WEEK", AVISIT) ~ paste("W",trimws(substr(AVISIT, start=6, 
+                                                                                 stop=str_locate(AVISIT, "DAY")-1))),
+    TRUE ~ as.character(NA))) \%>\%
+  mutate(AVISITCDN = case_when(AVISITCD == "SCR" ~ -2,
+                               AVISITCD == "BL" ~ 0, grepl("W", AVISITCD) ~ as.numeric(gsub("\\\\D+", "", AVISITCD)), 
+                               TRUE ~ as.numeric(NA))) \%>\%
+  # use ARMCD values to order treatment in visualization legend
+  mutate(TRTORD = ifelse(grepl("C", ARMCD), 1,
+                         ifelse(grepl("B", ARMCD), 2,
+                                ifelse(grepl("A", ARMCD), 3, NA)))) \%>\%
+  mutate(ARM = as.character(arm_mapping[match(ARM, names(arm_mapping))])) \%>\%
+  mutate(ARM = factor(ARM) \%>\% reorder(TRTORD))
+
+# <code
 
 param_choices = c("ALT", "CRP", "IGA")
 
 x <- teal::init(
-  data = list(ADSL = ADSL, ADLB = ADLB),
+  data = cdisc_data(
+    cdisc_dataset("ADSL", ADSL),
+    cdisc_dataset("ADLB", ADLB),
+    check = FALSE
+  ),
   modules = root_modules(
     tm_g_scatterplot(
        label = "Scatter Plot",

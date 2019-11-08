@@ -284,6 +284,7 @@ srv_g_scatterplot <- function(input, output, session, datasets, dataname,
     
     chunks_reset(as.environment(setNames(list(ANL_FILTERED), dataset_var)))
     chunks_push(anl_call)
+    chunks_safe_eval()
     
     ANL <- chunks_get_var("ANL")
     filter_ANL$data <- ANL # to trigger other reactive endpoints

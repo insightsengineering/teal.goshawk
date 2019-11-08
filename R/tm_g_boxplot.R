@@ -30,7 +30,7 @@
 #'@param plot_height  numeric vectors to define the plot height.
 #'@param code_data_processing TODO
 #'
-#'@inheritParams teal::standard_layout
+#'@inheritParams teal.devel::standard_layout
 #'
 #'@import DescTools
 #'@import methods
@@ -67,9 +67,9 @@
 #' # assign LOQ flag symbols: circles for "N" and triangles for "Y", squares for "NA"
 #' shape_manual <-  c("N"  = 1, "Y"  = 2, "NA" = 0)
 #'
-#' ASL <- radsl(N = 20, seed = 1)
-#' ALB <- radlb(ASL, visit_format = "WEEK", n_assessments = 7, seed = 2)
-#' ALB <- ALB %>%
+#' ADSL <- radsl(N = 20, seed = 1)
+#' ADLB <- radlb(ADSL, visit_format = "WEEK", n_assessments = 7L, seed = 2)
+#' ADLB <- ADLB %>%
 #' mutate(AVISITCD = case_when(
 #' AVISIT == "SCREENING" ~ "SCR",
 #' AVISIT == "BASELINE" ~ "BL", grepl("WEEK", AVISIT) ~ paste("W",trimws(substr(AVISIT, start=6,
@@ -88,11 +88,15 @@
 #' param_choices = c("ALT", "CRP", "IGA")
 #'
 #' x <- teal::init(
-#'   data =  list(ASL = ASL, ALB = ALB),
+#'   data = cdisc_data(
+#'     cdisc_dataset("ADSL", ADSL),
+#'     cdisc_dataset("ADLB", ADLB),
+#'     check = FALSE
+#'   ),
 #'   modules = root_modules(
 #'       tm_g_boxplot(
 #'         label = "Box Plot",
-#'         dataname = "ALB",
+#'         dataname = "ADLB",
 #'         param_var = "PARAMCD",
 #'         param_choices = param_choices,
 #'         param = param_choices[1],
@@ -204,7 +208,6 @@ ui_g_boxplot <- function(id, ...) {
                           , choices = a$param_choices
                           , selected = a$param
                           , multiple = FALSE
-                          , width = inpWidth
       ),
       
       optionalSelectInput(ns("yaxis_var")
@@ -212,7 +215,6 @@ ui_g_boxplot <- function(id, ...) {
                           , choices = a$yaxis_var_choices
                           , selected = a$yaxis_var
                           , multiple = FALSE
-                          , width = inpWidth
       ),
       
       optionalSelectInput(ns("xaxis_var")
@@ -220,7 +222,6 @@ ui_g_boxplot <- function(id, ...) {
                           , choices = a$xaxis_var_choices
                           , selected = a$xaxis_var
                           , multiple = FALSE
-                          , width = inpWidth
       ),
       
       optionalSelectInput(ns("facet_var")
@@ -228,7 +229,6 @@ ui_g_boxplot <- function(id, ...) {
                           , choices = a$facet_var_choices
                           , selected = a$facet_var
                           , multiple = FALSE
-                          , width = inpWidth
       ),
       
       radioButtons(ns("y_filter_by"), 
@@ -550,7 +550,7 @@ srv_g_boxplot <- function(input, output, session, datasets
     facet_var <- input$facet_var
     
     # Get the filtered data - Filter by both the right an left filters. 
-    ASL_FILTERED <- datasets$get_data("ASL", reactive = TRUE, filtered = TRUE)
+    ASL_FILTERED <- datasets$get_data(dataname, reactive = TRUE, filtered = TRUE)
     ALB <- filter_ALB()
     
     ymin_scale <- input$yrange_scale[1]
@@ -606,7 +606,7 @@ srv_g_boxplot <- function(input, output, session, datasets
     chunks$analysis <<- call(
       "g_boxplot",
       data = bquote(.(as.name(data_name))),
-      biomarker = param,
+      param = param,
       yaxis_var = yaxis_var,
       hline = hline, 
       facet_ncol = facet_ncol,

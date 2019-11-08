@@ -30,7 +30,7 @@
 #' @param reg_text_size font size control for regression line annotations.
 #' @param code_data_processing TODO
 #'
-#' @inheritParams teal::standard_layout
+#' @inheritParams teal.devel::standard_layout
 #'
 #' @author Nick Paszty (npaszty) paszty.nicholas@gene.com
 #' @author Balazs Toth (tothb2)  toth.balazs@gene.com

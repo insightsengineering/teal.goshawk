@@ -5,7 +5,7 @@
 #'
 #' @param label menu item label of the module in the teal app.
 #' @param dataname analysis data passed to the data argument of teal init. E.g. ADaM structured 
-#' laboratory data frame ALB.
+#' laboratory data frame ADLB.
 #' @param param_var name of variable containing biomarker codes e.g. PARAMCD.
 #' @param param_choices list of biomarkers of interest.
 #' @param param biomarker selected.
@@ -22,7 +22,7 @@
 #' @param rotate_xlab 45 degree rotation of x-axis values.
 #' @param code_data_processing TODO
 #'
-#' @inheritParams teal::standard_layout
+#' @inheritParams teal.devel::standard_layout
 #' 
 #' @import DescTools
 #' @import dplyr
@@ -57,9 +57,9 @@
 #' # assign LOQ flag symbols: circles for "N" and triangles for "Y", squares for "NA"
 #' shape_manual <-  c("N"  = 1, "Y"  = 2, "NA" = 0)
 #' 
-#' ASL <- radsl(N = 20, seed = 1)
-#' ALB <- radlb(ASL, visit_format = "WEEK", n_assessments = 7, seed = 2)
-#' ALB <- ALB %>% 
+#' ADSL <- radsl(N = 20, seed = 1)
+#' ADLB <- radlb(ADSL, visit_format = "WEEK", n_assessments = 7, seed = 2)
+#' ADLB <- ADLB %>% 
 #' mutate(AVISITCD = case_when(
 #' AVISIT == "SCREENING" ~ "SCR",
 #' AVISIT == "BASELINE" ~ "BL", grepl("WEEK", AVISIT) ~ paste("W",trimws(substr(AVISIT, start=6, 
@@ -78,11 +78,15 @@
 #' param_choices = c("ALT", "CRP", "IGA")
 #' 
 #' x <- teal::init(
-#'   data = list(ASL = ASL, ALB = ALB),
+#'   data = cdisc_data(
+#'     cdisc_dataset("ADSL", ADSL),
+#'     cdisc_dataset("ADLB", ADLB),
+#'     check = FALSE
+#'   ),
 #'   modules = root_modules(
 #'     tm_g_density_distribution_plot(
 #'        label = "Density Distribution Plot",
-#'        dataname = "ALB",
+#'        dataname = "ADLB",
 #'        param_var = "PARAMCD",
 #'        param_choices = param_choices,
 #'        param = param_choices[1],
@@ -178,10 +182,9 @@ ui_g_density_distribution_plot <- function(id, ...) {
       optionalSliderInputValMinMax(ns("font_size"), "Font Size", a$font_size, ticks = FALSE),
       optionalSliderInputValMinMax(ns("line_size"), "Line Size", a$line_size, value_min_max = c(1, .25, 3), step = .25, ticks = FALSE)
     ),
-    # forms = tags$div(
-    #   actionButton(ns("show_rcode"), "Show R Code", width = "100%")#,
-    #   # downloadButton(ns("export_plot"), "Export Image", width = "100%")
-    # ),
+    forms = tags$div(
+      actionButton(ns("show_rcode"), "Show R Code", width = "100%")
+    ),
     pre_output = a$pre_output,
     post_output = a$post_output
   )
@@ -191,6 +194,190 @@ srv_g_density_distribution_plot <- function(input, output, session, datasets, da
                                             xaxis_var, trt_group, color_manual, color_comb, code_data_processing) {
   
   ns <- session$ns # must add for the dynamic ui.range_scale field
+  # initialize the code chunk container in the app environment
+  init_chunks()
+  dataset_var <- paste0(dataname, "_FILTERED")
+  
+  # create a reactive data object 
+  filter_ANL <- reactive({
+    
+    # capture data in current filtered state as reflected in right hand panel filter
+    ANL_FILTERED <- datasets$get_data(dataname, filtered = TRUE, reactive = TRUE)
+    
+    # assign input values to local reactive environment
+    param <- input$param
+    constraint_var <- input$constraint_var
+    constraint_min <- input$constraint_min
+    constraint_max <- input$constraint_max
+    
+    # clear code chunk container and prime container with ADLB_FILTERED data object
+    chunks_reset(as.environment(setNames(list(ANL_FILTERED), dataset_var)))
+    
+    # create code chunk "ANL" in chunk container 
+    if (constraint_var != "NONE") {
+      
+      constraint_min_range <- -Inf
+      constraint_max_range <- Inf
+      
+      if (length(constraint_min)) {
+        constraint_min_range <- constraint_min
+      }
+      
+      if (length(constraint_max)) {
+        constraint_max_range <- constraint_max
+      }
+      
+      # add code chunk to chunk container
+      chunks_push(bquote({
+        ANL <- .(as.name(dataset_var)) %>%
+          filter(
+            .(as.name(param_var)) == .(param) &
+              .(constraint_min_range) <= .(as.name(constraint_var)) &
+              .(as.name(constraint_var)) <= .(constraint_max_range) |
+              is.na(.(as.name(constraint_var)))
+          )
+      }))
+      
+    } else {
+      # add code chunk to chunk container
+      chunks_push(bquote({
+        ANL <- .(as.name(dataset_var)) %>%
+          filter(.(as.name(param_var)) == .(param))
+      }))
+    }
+    
+    # evaluate unevaluated code chunks in container
+    chunks_safe_eval()
+    
+    # run code stored in "encoding_filter" code chunk
+    ANL <- chunks_get_var("ANL")
+    
+    
+    # validate resulting data object for minimum requirements
+    validate(need(!is.null(ANL) && is.data.frame(ANL), 
+                  paste("Analysis dataset (ANL) is not available in app environment.")))
+    validate(need(nrow(ANL) > 0, 
+                  "Minimum number of records not met: > 0 records required."))
+    
+    # ensure ANL data object is returned by this reactive block
+    ANL
+    
+  })
+  
+  # # filter data by param and the constraint_min and constraint_max values
+  # filter_ALB <- reactive({
+  #   param <- input$param
+  #   constraint_var <- input$constraint_var
+  #   
+  #   if (constraint_var != "NONE"){
+  #     constraint_min_range <- -Inf
+  #     constraint_max_range <- Inf
+  #     
+  #     if (length(input$constraint_min)){
+  #       constraint_min_range <- input$constraint_min
+  #     }
+  #     
+  #     if (length(input$constraint_max)){
+  #       constraint_max_range <- input$constraint_max
+  #     }
+  #     datasets$get_data(dataname, filtered = TRUE, reactive = TRUE) %>%
+  #       filter(eval(parse(text = param_var)) == param &
+  #                constraint_min_range <= eval(parse(text = constraint_var)) &
+  #                eval(parse(text = constraint_var)) <= constraint_max_range |
+  #                is.na(constraint_var)
+  #       )
+  #   } else{
+  #     datasets$get_data(dataname, filtered = TRUE, reactive = TRUE) %>%
+  #       filter(eval(parse(text = param_var)) == param)
+  #   }
+  # })
+  
+  output$density_distribution_plot <- renderPlot({
+    
+    # clears code chunks and creates ANL data object in local renderPlot environment
+    ANL <- filter_ANL()
+    
+    chunks_push(bquote({
+      param_var <- .(param_var)
+      trt_group <- .(trt_group)
+    }))
+    
+    param <- input$param
+    xaxis_var <- input$xaxis_var
+    xmin_scale <- input$xrange_scale[1]
+    xmax_scale <- input$xrange_scale[2]
+    font_size <- input$font_size
+    line_size <- input$line_size
+    hline <- as.numeric(input$hline)
+    facet_ncol <- input$facet_ncol
+    rotate_xlab <- input$rotate_xlab
+    
+    chunks_push(bquote({
+    # re-establish treatment variable label
+    if (trt_group == "ARM"){
+      attributes(ANL$ARM)$label <- "Planned Arm"
+    } else {
+      attributes(ANL$ACTARM)$label <- "Actual Arm"
+    }
+    
+    p <- g_density_distribution_plot(
+      data = ANL,
+      param_var = .(param_var),
+      param = .(param),
+      xaxis_var = .(xaxis_var),
+      trt_group = .(trt_group),
+      xmin = .(xmin_scale),
+      xmax = .(xmax_scale),
+      color_manual = .(color_manual),
+      color_comb = .(color_comb),
+      font_size = .(font_size),
+      line_size = .(line_size),
+      facet_ncol = .(facet_ncol),
+      rotate_xlab = .(rotate_xlab),
+      hline = .(hline)
+    )
+    
+    p
+    
+    }))
+    
+    # evaluate the code chunk so that it is available in app environment as well
+    chunks_safe_eval()
+    
+  })
+  
+  output$table_ui <- renderTable({
+    
+    # clears code chunks and creates ANL data object in local renderPlot environment
+    ANL <- filter_ANL()
+    
+    chunks_push(bquote({
+      param_var <- .(param_var)
+      trt_group <- .(trt_group)
+    }))
+    
+    param <- input$param
+    xaxis_var <- input$xaxis_var
+    font_size <- input$font_size
+    
+    chunks_push(bquote({
+    t <- t_summarytable(
+      data = ANL,
+      trt_group = .(trt_group),
+      param_var = .(param_var),
+      param = .(param),
+      xaxis_var = .(xaxis_var),
+      font_size = .(font_size)
+    )
+    
+    t
+    
+    }))
+    
+    # evaluate the code chunk so that it is available in app environment as well
+    chunks_safe_eval()
+    
+  })
   
   # dynamic plot width
   output$plot_ui <- renderUI({
@@ -202,9 +389,9 @@ srv_g_density_distribution_plot <- function(input, output, session, datasets, da
   
   # dynamic slider for x-axis
   output$xaxis_zoom <- renderUI({
-    ALB <- datasets$get_data(dataname, reactive = TRUE, filtered = TRUE)
+    ANL <- filter_ANL()
     param <- input$param 
-    scale_data <- ALB %>%
+    scale_data <- ANL %>%
       filter(eval(parse(text = param_var)) == param)
     
     # establish default value during reaction and prior to value being available
@@ -223,43 +410,14 @@ srv_g_density_distribution_plot <- function(input, output, session, datasets, da
     
   })
   
-  # filter data by param and the constraint_min and constraint_max values
-  filter_ALB <- reactive({
-    param <- input$param
-    constraint_var <- input$constraint_var
-    
-    if (constraint_var != "NONE"){
-      constraint_min_range <- -Inf
-      constraint_max_range <- Inf
-      
-      if (length(input$constraint_min)){
-        constraint_min_range <- input$constraint_min
-      }
-      
-      if (length(input$constraint_max)){
-        constraint_max_range <- input$constraint_max
-      }
-      datasets$get_data(dataname, filtered = TRUE, reactive = TRUE) %>%
-        filter(eval(parse(text = param_var)) == param &
-                 constraint_min_range <= eval(parse(text = constraint_var)) &
-                 eval(parse(text = constraint_var)) <= constraint_max_range |
-                 is.na(constraint_var)
-        )
-    } else{
-      datasets$get_data(dataname, filtered = TRUE, reactive = TRUE) %>%
-        filter(eval(parse(text = param_var)) == param)
-    }
-  })
-  
   # minimum data constraint value
   output$constraint_min_value <- renderUI({
+    ANL <- filter_ANL()
     # conditionally reveal min and max constraint fields
     if (input$constraint_var != "NONE") {
-      ALB <- datasets$get_data(dataname, filtered = TRUE, reactive = TRUE)
-      validate(need(nrow(ALB) > 0 , "Waiting For Filter Selection"))
-      
+      validate(need(nrow(ANL) > 0 , "Waiting For Filter Selection"))
       param <- input$param
-      scale_data <- ALB %>%
+      scale_data <- ANL %>%
         filter(eval(parse(text = param_var)) == param)
       # ensure that there are records at visit to process based on the constraint vatriable selection
       visitFreq <- unique(scale_data$AVISITCD)
@@ -285,13 +443,13 @@ srv_g_density_distribution_plot <- function(input, output, session, datasets, da
   
   # maximum data constraint value
   output$constraint_max_value <- renderUI({
+    ANL <- filter_ANL()
     # conditionally reveal min and max constraint fields
     if (input$constraint_var != "NONE") {
-      ALB <- datasets$get_data(dataname, filtered = TRUE, reactive = TRUE)
-      validate(need(nrow(ALB) > 0 , "Waiting For Filter Selection"))
+      validate(need(nrow(ANL) > 0 , "Waiting For Filter Selection"))
       
       param <- input$param
-      scale_data <- ALB %>%
+      scale_data <- ANL %>%
         filter(eval(parse(text = param_var)) == param)
       # ensure that there are records at visit to process based on the constraint vatriable selection
       visitFreq <- unique(scale_data$AVISITCD)
@@ -314,78 +472,14 @@ srv_g_density_distribution_plot <- function(input, output, session, datasets, da
     }
   })
   
-  output$density_distribution_plot <- renderPlot({
-    ALB <- filter_ALB()
-    param <- input$param
-    xaxis_var <- input$xaxis_var
-    xmin_scale <- input$xrange_scale[1]
-    xmax_scale <- input$xrange_scale[2]
-    font_size <- input$font_size
-    line_size <- input$line_size
-    hline <- as.numeric(input$hline)
-    facet_ncol <- input$facet_ncol
-    rotate_xlab <- input$rotate_xlab
-    
-    validate(need(!is.null(ALB) && is.data.frame(ALB), "No Data Left"))
-    validate(need(nrow(ALB) > 0 , "No Observations Left"))
-    validate(need(param_var %in% names(ALB),
-                  paste("Biomarker parameter variable", param_var, " is not available in data", dataname)))
-    validate(need(param %in% unique(ALB[[param_var]]),
-                  paste("Biomarker", param, " is not available in data", dataname)))
-    validate(need(xaxis_var, "No Valid X-Axis Variable Selected"))
-    validate(need(trt_group %in% names(ALB),
-                  paste("variable", trt_group, " is not available in data", dataname)))
-    validate(need(xaxis_var %in% names(ALB),
-                  paste("variable", xaxis_var, " is not available in data", dataname)))
-    
-    # re-establish treatment variable label
-    if (trt_group == "ARM"){
-      attributes(ALB$ARM)$label <- "Planned Arm"
-    } else {
-      attributes(ALB$ACTARM)$label <- "Actual Arm"
-    }
-    
-    p <- g_density_distribution_plot(
-      data = ALB,
-      param_var = param_var,
-      param = param,
-      xaxis_var = xaxis_var,
-      trt_group = trt_group,
-      xmin = xmin_scale,
-      xmax = xmax_scale,
-      color_manual = color_manual,
-      color_comb = color_comb,
-      font_size = font_size,
-      line_size = line_size,
-      facet_ncol = facet_ncol,
-      rotate_xlab = rotate_xlab,
-      hline = hline
+  observeEvent(input$show_rcode, {
+    show_rcode_modal(
+      title = "Scatter Plot", 
+      rcode = get_rcode(
+        datasets = datasets,
+        title = "Scatter Plot"
+      )
     )
-    
-    p
-    
-  })
-  
-  output$table_ui <- renderTable({
-    
-    ALB <- filter_ALB()
-    validate(need(nrow(ALB) > 0 , ""))
-    
-    param <- input$param
-    xaxis_var <- input$xaxis_var
-    font_size <- input$font_size
-    
-    t <- t_summarytable(
-      data = ALB,
-      trt_group = trt_group,
-      param_var = param_var,
-      param = param,
-      xaxis_var = xaxis_var,
-      font_size = font_size
-    )
-    
-    t
-    
   })
   
 }

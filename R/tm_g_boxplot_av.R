@@ -30,7 +30,7 @@
 #'@param plot_height  numeric vectors to define the plot height.
 #'@param code_data_processing TODO
 #'
-#'@inheritParams teal::standard_layout
+#'@inheritParams teal.devel::standard_layout
 #'
 #'@import DescTools
 #'@import methods
@@ -205,7 +205,6 @@ ui_g_boxplot_av <- function(id, ...) {
                           , choices = a$param_choices
                           , selected = a$param
                           , multiple = FALSE
-                          , width = inpWidth
       ),
       
       optionalSelectInput(ns("yaxis_var")
@@ -213,7 +212,6 @@ ui_g_boxplot_av <- function(id, ...) {
                           , choices = a$yaxis_var_choices
                           , selected = a$yaxis_var
                           , multiple = FALSE
-                          , width = inpWidth
       ),
       
       optionalSelectInput(ns("xaxis_var")
@@ -221,7 +219,6 @@ ui_g_boxplot_av <- function(id, ...) {
                           , choices = a$xaxis_var_choices
                           , selected = a$xaxis_var
                           , multiple = FALSE
-                          , width = inpWidth
       ),
       
       optionalSelectInput(ns("facet_var")
@@ -229,7 +226,6 @@ ui_g_boxplot_av <- function(id, ...) {
                           , choices = a$facet_var_choices
                           , selected = a$facet_var
                           , multiple = FALSE
-                          , width = inpWidth
       ),
       
       radioButtons(ns("y_filter_by"), 
