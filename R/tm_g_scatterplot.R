@@ -150,8 +150,7 @@ tm_g_scatterplot <- function(label,
                              dot_size = c(1, 1, 12),
                              reg_text_size = c(3, 3, 10),
                              pre_output = NULL,
-                             post_output = NULL,
-                             code_data_processing = NULL) {
+                             post_output = NULL) {
   
   args <- as.list(environment())
   
@@ -161,14 +160,10 @@ tm_g_scatterplot <- function(label,
     server = srv_g_scatterplot,
     server_args = list(dataname = dataname,
                        param_var = param_var,
-                       param = param,
-                       xaxis_var = xaxis_var,
-                       yaxis_var = yaxis_var,
                        trt_group = trt_group,
                        facet_var = facet_var,
                        color_manual = color_manual,
-                       shape_manual = shape_manual,
-                       code_data_processing = code_data_processing
+                       shape_manual = shape_manual
     ),
     ui = ui_g_scatterplot,
     ui_args = args
@@ -231,16 +226,12 @@ ui_g_scatterplot <- function(id, ...) {
 }
 
 srv_g_scatterplot <- function(input, output, session, datasets, dataname, 
-                              param_var, param, xaxis_var, yaxis_var, 
-                              trt_group, facet_var, color_manual, shape_manual,
-                              code_data_processing) {
+                              param_var, trt_group, facet_var, color_manual, shape_manual) {
   
   ns <- session$ns
   init_chunks()
   
   dataset_var <- paste0(dataname, "_FILTERED")
-  filter_ANL <- reactiveValues(data = NULL)
-  
   filter_data <- reactive({
     ANL_FILTERED <- datasets$get_data(dataname, filtered = TRUE, reactive = TRUE)
     
@@ -276,22 +267,88 @@ srv_g_scatterplot <- function(input, output, session, datasets, dataname,
     chunks_get_var("ANL")
   })
   
+  # min/max data constraint value
+  observe({
+    ANL <- filter_data()
+    if (input$constraint_var != "NONE") {
+      
+      visitFreq <- unique(ANL$AVISITCD)
+      if (input$constraint_var == "BASE2" & any(grepl("SCR", visitFreq)) | 
+          input$constraint_var == "BASE" & any(grepl("BL", visitFreq))) {
+        constraint_min_range <- round(min(ANL[[input$constraint_var]], na.rm = TRUE), 3)
+        constraint_max_range <- round(max(ANL[[input$constraint_var]], na.rm = TRUE), 3)
+        output$constraint_min_value <- renderUI({
+          tagList({
+            numericInput(ns("constraint_min"), 
+                         paste0("Min (", constraint_min_range, ")"), 
+                         value = constraint_min_range, 
+                         min = constraint_min_range, 
+                         max = constraint_max_range)
+          })
+        })
+        
+        output$constraint_max_value <- renderUI({
+          tagList({
+            numericInput(ns("constraint_max"), 
+                         paste0("Max (", constraint_max_range, ")"),
+                         value = constraint_max_range, 
+                         min = constraint_min_range, max = constraint_max_range)
+          })
+        })
+      }
+    } else {
+      output$constraint_max_value <- renderUI(NULL)
+      output$constraint_min_value <- renderUI(NULL)
+    }
+    
+    # dynamic slider for x-axis
+    output$xaxis_zoom <- renderUI({
+      ANL <- filter_data()
+      
+      # identify min and max values of BM range ignoring NA values
+      xmin_scale <- min(ANL[[input$xaxis_var]], na.rm = TRUE)
+      xmax_scale <- max(ANL[[input$xaxis_var]], na.rm = TRUE)
+      
+      tagList({
+        optionalSliderInput(ns("xrange_scale"), 
+                            label = "X-Axis Range Zoom", 
+                            min = floor(xmin_scale), 
+                            max = ceiling(xmax_scale), 
+                            value = c(floor(xmin_scale), ceiling(xmax_scale)))
+      })
+    })
+    
+    # dynamic slider for y-axis
+    output$yaxis_zoom <- renderUI({
+      ANL <- filter_data()
+      
+      #
+      ymin_scale <- min(ANL[[input$yaxis_var]], na.rm = TRUE)
+      ymax_scale <- max(ANL[[input$yaxis_var]], na.rm = TRUE)
+      
+      tagList({
+        optionalSliderInput(ns("yrange_scale"), 
+                            label = "Y-Axis Range Zoom", 
+                            min = floor(ymin_scale), 
+                            max = ceiling(ymax_scale), 
+                            value = c(floor(ymin_scale), ceiling(ymax_scale)))
+      })
+      
+    })
+    
+  })
+  
+  # plot 
   output$scatterplot <- renderPlot({
     # capture data in current filtered state as reflected in right hand panel filter
     ANL <- filter_data()
     validate_has_data(ANL, 3)
-    
+
     # assign input values to local reactive environment
     param <- input$param
-    constraint_var <- input$constraint_var
     constraint_min <- input$constraint_min
     constraint_max <- input$constraint_max
-    
-    chunks_push(bquote({
-      param_var <- .(param_var)
-      trt_group <- .(trt_group)
-    }))
-    
+    constraint_var <- isolate(input$constraint_var)
     param <- input$param
     xaxis_var <- isolate(input$xaxis_var)
     yaxis_var <- isolate(input$yaxis_var)
@@ -312,14 +369,14 @@ srv_g_scatterplot <- function(input, output, session, datasets, dataname,
     reg_line <- input$reg_line
     rotate_xlab <- input$rotate_xlab
     
+    if (trt_group == "ARM"){
+      chunks_push(bquote(attributes(ANL$ARM)$label <- "Planned Arm"))
+    } else {
+      chunks_push(bquote(attributes(ANL$ACTARM)$label <- "Actual Arm"))
+    }
+
     chunks_push(bquote({
       # re-establish treatment variable label
-      if (trt_group == "ARM"){
-        attributes(ANL$ARM)$label <- "Planned Arm"
-      } else {
-        attributes(ANL$ACTARM)$label <- "Actual Arm"
-      }
-      
       p <- g_scatterplot(
         data = ANL,
         param_var = .(param_var),
@@ -367,7 +424,9 @@ srv_g_scatterplot <- function(input, output, session, datasets, dataname,
   output$brush_data <- renderTable({
     ANL <- filter_data()
     if (!is.null(ANL) && nrow(ANL) > 0 ){
-      brushedPoints(select(ANL,"USUBJID", trt_group, "AVISITCD", "PARAMCD", input$xaxis_var, input$yaxis_var, "LOQFL"), input$scatterplot_brush)
+      brushedPoints(select(ANL, "USUBJID", trt_group, "AVISITCD", "PARAMCD", 
+                           input$xaxis_var, input$yaxis_var, "LOQFL"), 
+                    input$scatterplot_brush)
     } else{
       NULL
     }
@@ -376,127 +435,36 @@ srv_g_scatterplot <- function(input, output, session, datasets, dataname,
   # dynamic slider for x-axis
   output$xaxis_zoom <- renderUI({
     ANL <- filter_data()
-    
-    if (is.null(ANL)) {
-      return(NULL)
-    }
-    
-    param <- input$param 
-    
-    scale_data <- ANL %>%
-      filter(eval(parse(text = param_var)) == param)
-    
-    # establish default value during reaction and prior to value being available
-    xmin_scale <- -Inf
-    xmax_scale <- Inf
-    
+
     # identify min and max values of BM range ignoring NA values
-    xmin_scale <- min(scale_data[[input$xaxis_var]], na.rm = TRUE)
-    xmax_scale <- max(scale_data[[input$xaxis_var]], na.rm = TRUE)
+    xmin_scale <- min(ANL[[input$xaxis_var]], na.rm = TRUE)
+    xmax_scale <- max(ANL[[input$xaxis_var]], na.rm = TRUE)
     
     tagList({
-      sliderInput(ns("xrange_scale"), label="X-Axis Range Zoom", 
-                  floor(xmin_scale), ceiling(xmax_scale), 
-                  value = c(floor(xmin_scale), ceiling(xmax_scale)))
+      optionalSliderInput(ns("xrange_scale"), 
+                          label = "X-Axis Range Zoom", 
+                          min = floor(xmin_scale), 
+                          max = ceiling(xmax_scale), 
+                          value = c(floor(xmin_scale), ceiling(xmax_scale)))
     })
-    
   })
   
   # dynamic slider for y-axis
   output$yaxis_zoom <- renderUI({
     ANL <- filter_data()
-    if (is.null(ANL)) {
-      return(NULL)
-    }
-    
-    
-    param <- input$param 
-    
-    scale_data <- ANL %>%
-      filter(eval(parse(text = param_var)) == param)
-    
-    # establish default value during reaction and prior to value being available
-    ymin_scale <- -Inf
-    ymax_scale <- Inf
-    
-    # identify min and max values of BM range ignoring NA values
-    ymin_scale <- min(scale_data[[input$yaxis_var]], na.rm = TRUE)
-    ymax_scale <- max(scale_data[[input$yaxis_var]], na.rm = TRUE)
+   
+    #
+    ymin_scale <- min(ANL[[input$yaxis_var]], na.rm = TRUE)
+    ymax_scale <- max(ANL[[input$yaxis_var]], na.rm = TRUE)
     
     tagList({
-      sliderInput(ns("yrange_scale"), label="Y-Axis Range Zoom", 
-                  floor(ymin_scale), ceiling(ymax_scale), 
-                  value = c(floor(ymin_scale), ceiling(ymax_scale)))
+      optionalSliderInput(ns("yrange_scale"), 
+                          label = "Y-Axis Range Zoom", 
+                          min = floor(ymin_scale), 
+                          max = ceiling(ymax_scale), 
+                          value = c(floor(ymin_scale), ceiling(ymax_scale)))
     })
     
-  })
-  
-  # minimum data constraint value
-  output$constraint_min_value <- renderUI({
-    ANL <- filter_data()
-    
-    if (is.null(ANL)) {
-      return(NULL)
-    }
-    
-    # conditionally reveal min and max constraint fields
-    if (input$constraint_var != "NONE") {
-      validate(need(nrow(ANL) > 0 , "Waiting For Filter Selection"))
-      param <- input$param
-      scale_data <- ANL %>%
-        filter(eval(parse(text = param_var)) == param)
-      # ensure that there are records at visit to process based on the constraint variable selection
-      visitFreq <- unique(scale_data$AVISITCD)
-      if (input$constraint_var == "BASE2" & any(grepl("SCR", visitFreq)) | 
-          input$constraint_var == "BASE" & any(grepl("BL", visitFreq))){
-        # identify min and max values of constraint var range ignoring NA values
-        constraint_min_range <- round(min(scale_data[[input$constraint_var]], na.rm = TRUE), 3)
-        constraint_max_range <- round(max(scale_data[[input$constraint_var]], na.rm = TRUE), 3)
-        tagList({
-          numericInput(ns("constraint_min"), 
-                       paste0("Min (", constraint_min_range, ")"), 
-                       value = constraint_min_range, 
-                       min = constraint_min_range, max = constraint_max_range)
-        })
-      }
-    } else {
-      return(NULL)
-    }
-    
-  })
-  
-  # maximum data constraint value
-  output$constraint_max_value <- renderUI({
-    ANL <- filter_data()
-    
-    if (is.null(ANL)) {
-      return(NULL)
-    }
-    
-    
-    # conditionally reveal min and max constraint fields
-    if (input$constraint_var != "NONE") {
-      validate(need(nrow(ANL) > 0 , "Waiting For Filter Selection"))
-      param <- input$param
-      scale_data <- ANL %>%
-        filter(eval(parse(text = param_var)) == param)
-      # ensure that there are records at visit to process based on the constraint variable selection
-      visitFreq <- unique(scale_data$AVISITCD)
-      if (input$constraint_var == "BASE2" & any(grepl("SCR", visitFreq)) | 
-          input$constraint_var == "BASE" & any(grepl("BL", visitFreq))){
-        # identify min and max values of constraint var range ignoring NA values
-        constraint_min_range <- round(min(scale_data[[input$constraint_var]], na.rm = TRUE), 3)
-        constraint_max_range <- round(max(scale_data[[input$constraint_var]], na.rm = TRUE), 3)
-        tagList({
-          numericInput(ns("constraint_max"), 
-                       paste0("Max (", constraint_max_range, ")"),
-                       value = constraint_max_range, 
-                       min = constraint_min_range, max = constraint_max_range)
-        })
-      }
-    } else {
-      return(NULL)
-    }
   })
   
   observeEvent(input$show_rcode, {
