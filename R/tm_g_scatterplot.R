@@ -121,7 +121,7 @@
 #'    )
 #'   )
 #' )
-#'
+#' 
 #' shinyApp(x$ui, x$server)
 #'
 #'}
@@ -211,10 +211,15 @@ ui_g_scatterplot <- function(id, ...) {
       checkboxInput(ns("rotate_xlab"), "Rotate X-axis Label", a$rotate_xlab),
       numericInput(ns("hline"), "Add a horizontal line:", a$hline),
       numericInput(ns("vline"), "Add a vertical line:", a$vline),
-      optionalSliderInputValMinMax(ns("plot_height"), "Plot Height", a$plot_height, ticks = FALSE),
-      optionalSliderInputValMinMax(ns("font_size"), "Font Size", a$font_size, ticks = FALSE),
-      optionalSliderInputValMinMax(ns("dot_size"), "Dot Size", a$dot_size, ticks = FALSE),
-      optionalSliderInputValMinMax(ns("reg_text_size"), "Regression Annotations Size", a$reg_text_size, ticks = FALSE)
+      panel_group(
+        panel_item(
+          title = "Plot settings",
+          optionalSliderInputValMinMax(ns("plot_height"), "Plot Height", a$plot_height, ticks = FALSE),
+          optionalSliderInputValMinMax(ns("font_size"), "Font Size", a$font_size, ticks = FALSE),
+          optionalSliderInputValMinMax(ns("dot_size"), "Dot Size", a$dot_size, ticks = FALSE),
+          optionalSliderInputValMinMax(ns("reg_text_size"), "Regression Annotations Size", a$reg_text_size, ticks = FALSE)
+        )
+      )
     ),
     forms = tags$div(
       actionButton(ns("show_rcode"), "Show R Code", width = "100%")
@@ -230,37 +235,21 @@ srv_g_scatterplot <- function(input, output, session, datasets, dataname,
                               trt_group, facet_var, color_manual, shape_manual,
                               code_data_processing) {
   
-  # initialize the code chunk container in the app environment
+  ns <- session$ns
   init_chunks()
   
   dataset_var <- paste0(dataname, "_FILTERED")
   filter_ANL <- reactiveValues(data = NULL)
   
-  
-  output$scatterplot <- renderPlot({
-    
-    # capture data in current filtered state as reflected in right hand panel filter
+  filter_data <- reactive({
     ANL_FILTERED <- datasets$get_data(dataname, filtered = TRUE, reactive = TRUE)
     
-    # assign input values to local reactive environment
     param <- input$param
     constraint_var <- input$constraint_var
-    constraint_min <- input$constraint_min
-    constraint_max <- input$constraint_max
-    
-    # create code chunk "ANL" in chunk container 
     anl_call <- if (constraint_var != "NONE") {
       
-      constraint_min_range <- -Inf
-      constraint_max_range <- Inf
-      
-      if (length(constraint_min)) {
-        constraint_min_range <- constraint_min
-      }
-      
-      if (length(constraint_max)) {
-        constraint_max_range <- constraint_max
-      }
+      constraint_min_range <- if_null(input$constraint_min, -Inf)
+      constraint_max_range <- if_null(input$constraint_max, Inf)
       
       # add code chunk to chunk container
       bquote({
@@ -280,21 +269,23 @@ srv_g_scatterplot <- function(input, output, session, datasets, dataname,
           filter(.(as.name(param_var)) == .(param))
       })
     }
-    
-    
     chunks_reset(as.environment(setNames(list(ANL_FILTERED), dataset_var)))
     chunks_push(anl_call)
     chunks_safe_eval()
     
-    ANL <- chunks_get_var("ANL")
-    filter_ANL$data <- ANL # to trigger other reactive endpoints
+    chunks_get_var("ANL")
+  })
+  
+  output$scatterplot <- renderPlot({
+    # capture data in current filtered state as reflected in right hand panel filter
+    ANL <- filter_data()
+    validate_has_data(ANL, 3)
     
-    # validate resulting data object for minimum requirements
-    validate(need(!is.null(ANL) && is.data.frame(ANL), 
-                  paste("Analysis dataset (ANL) is not available in app environment.")))
-    validate(need(nrow(ANL) > 0, 
-                  "Minimum number of records not met: > 0 records required."))
-    
+    # assign input values to local reactive environment
+    param <- input$param
+    constraint_var <- input$constraint_var
+    constraint_min <- input$constraint_min
+    constraint_max <- input$constraint_max
     
     chunks_push(bquote({
       param_var <- .(param_var)
@@ -302,8 +293,8 @@ srv_g_scatterplot <- function(input, output, session, datasets, dataname,
     }))
     
     param <- input$param
-    xaxis_var <- input$xaxis_var
-    yaxis_var <- input$yaxis_var
+    xaxis_var <- isolate(input$xaxis_var)
+    yaxis_var <- isolate(input$yaxis_var)
     color_manual <- color_manual
     shape_manual <- shape_manual
     xmin_scale <- input$xrange_scale[1]
@@ -363,7 +354,6 @@ srv_g_scatterplot <- function(input, output, session, datasets, dataname,
     
   })
   
-  ns <- session$ns
   # dynamic plot height and brushing
   output$plot_ui <- renderUI({
     plot_height <- input$plot_height
@@ -375,7 +365,7 @@ srv_g_scatterplot <- function(input, output, session, datasets, dataname,
   })
   
   output$brush_data <- renderTable({
-    ANL <- filter_ANL$data
+    ANL <- filter_data()
     if (!is.null(ANL) && nrow(ANL) > 0 ){
       brushedPoints(select(ANL,"USUBJID", trt_group, "AVISITCD", "PARAMCD", input$xaxis_var, input$yaxis_var, "LOQFL"), input$scatterplot_brush)
     } else{
@@ -385,7 +375,7 @@ srv_g_scatterplot <- function(input, output, session, datasets, dataname,
   
   # dynamic slider for x-axis
   output$xaxis_zoom <- renderUI({
-    ANL <- filter_ANL$data
+    ANL <- filter_data()
     
     if (is.null(ANL)) {
       return(NULL)
@@ -414,7 +404,7 @@ srv_g_scatterplot <- function(input, output, session, datasets, dataname,
   
   # dynamic slider for y-axis
   output$yaxis_zoom <- renderUI({
-    ANL <- filter_ANL$data
+    ANL <- filter_data()
     if (is.null(ANL)) {
       return(NULL)
     }
@@ -443,7 +433,7 @@ srv_g_scatterplot <- function(input, output, session, datasets, dataname,
   
   # minimum data constraint value
   output$constraint_min_value <- renderUI({
-    ANL <- filter_ANL$data
+    ANL <- filter_data()
     
     if (is.null(ANL)) {
       return(NULL)
@@ -477,7 +467,7 @@ srv_g_scatterplot <- function(input, output, session, datasets, dataname,
   
   # maximum data constraint value
   output$constraint_max_value <- renderUI({
-    ANL <- filter_ANL$data
+    ANL <- filter_data()
     
     if (is.null(ANL)) {
       return(NULL)
