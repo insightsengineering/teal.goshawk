@@ -4,8 +4,8 @@
 #'
 #' @param label menu item label of the module in the teal app.
 #' @param dataname analysis data passed to the data argument of teal init. E.g. ADaM structured 
-#' laboratory data frame ALB.
-#' @param aslname Name of asl data set from which additional variables will be used for 
+#' laboratory data frame ADLB.
+#' @param adslname Name of ADSL data set from which additional variables will be used for 
 #' shape_choices
 #' @param param_var name of variable containing biomarker codes e.g. PARAMCD.
 #' @param param_choices list of biomarkers of interest.
@@ -23,7 +23,7 @@
 #' @param yvar_choices vector with variable names that can be used as yvar.
 #' @param trt_group name of variable representing treatment group e.g. ARM.
 #' @param trt_group_level vector that can be used to define factor level of trt_group.
-#' @param shape_choices Vector with names of ASL variables which can be used to change shape
+#' @param shape_choices Vector with names of ADSL variables which can be used to change shape
 #' @param man_color string vector representing customized colors
 #' @param stat string of statistics
 #' @param hline numeric value to add horizontal line to plot
@@ -36,7 +36,7 @@
 #' @param font_size control font size for title, x-axis, y-axis and legend font.
 #' @param dodge control the position dodge of error bar
 #' 
-#' @import goshawk
+#' @importFrom ggplot2 waiver
 #'
 #' @author Wenyi Liu (luiw2) wenyi.liu@roche.com
 #' @author Balazs Toth (tothb2) toth.balazs@gene.com
@@ -51,48 +51,70 @@
 #'
 #' # Example using ADaM structure analysis dataset.
 #' 
-#' library(dplyr)
-#' library(ggplot2)
-#' library(goshawk)
 #' library(random.cdisc.data)
-#' library(stringr)
-#' library(teal)
-#' library(teal.goshawk)
 #' 
 #' # original ARM value = dose value
-#' arm_mapping <- list("A: Drug X" = "150mg QD", "B: Placebo" = "Placebo", 
-#' "C: Combination" = "Combination")
-#' color_manual <-  c("150mg QD" = "#000000", "Placebo" = "#3498DB", "Combination" = "#E74C3C")
-#' # assign LOQ flag symbols: circles for "N" and triangles for "Y", squares for "NA"
-#' shape_manual <-  c("N"  = 1, "Y"  = 2, "NA" = 0)
+#' arm_mapping <- list("A: Drug X" = "150mg QD",
+#'                     "B: Placebo" = "Placebo",
+#'                     "C: Combination" = "Combination")
 #' 
-#' ASL <- radsl(N = 20, seed = 1)
-#' ALB <- radlb(ASL, visit_format = "WEEK", n_assessments = 7, seed = 2)
-#' ALB <- ALB %>% 
-#' mutate(AVISITCD = case_when(
-#' AVISIT == "SCREENING" ~ "SCR",
-#' AVISIT == "BASELINE" ~ "BL", grepl("WEEK", AVISIT) ~ paste("W",trimws(substr(AVISIT, start=6, 
-#' stop=str_locate(AVISIT, "DAY")-1))),
-#' TRUE ~ as.character(NA))) %>%
-#' mutate(AVISITCDN = case_when(AVISITCD == "SCR" ~ -2,
-#' AVISITCD == "BL" ~ 0, grepl("W", AVISITCD) ~ as.numeric(gsub("\\D+", "", AVISITCD)), 
-#' TRUE ~ as.numeric(NA))) %>%
-#' # use ARMCD values to order treatment in visualization legend
-#' mutate(TRTORD = ifelse(grepl("C", ARMCD), 1,
-#' ifelse(grepl("B", ARMCD), 2,
-#' ifelse(grepl("A", ARMCD), 3, NA)))) %>%
-#' mutate(ARM = as.character(arm_mapping[match(ARM, names(arm_mapping))])) %>%
-#' mutate(ARM = factor(ARM) %>% reorder(TRTORD))
+#' ADSL <- radsl(N = 20, seed = 1)
+#' ADLB <- radlb(ADSL, visit_format = "WEEK", n_assessments = 7L, seed = 2)
+#' ADLB <- ADLB %>%
+#'   mutate(AVISITCD = case_when(
+#'     AVISIT == "SCREENING" ~ "SCR",
+#'     AVISIT == "BASELINE" ~ "BL",
+#'     grepl("WEEK", AVISIT) ~ gsub("^WEEK ([0-9]+) .+$" , "W \\1", AVISIT),
+#'     TRUE ~ as.character(NA)),
+#'     AVISITCDN = case_when(
+#'       AVISITCD == "SCR" ~ -2,
+#'       AVISITCD == "BL" ~ 0,
+#'       grepl("W", AVISITCD) ~ as.numeric(gsub("[^0-9]*", "", AVISITCD)),
+#'       TRUE ~ as.numeric(NA)),
+#'     TRTORD = case_when(
+#'       ARMCD == "ARM C" ~ 1,
+#'       ARMCD == "ARM B" ~ 2,
+#'       ARMCD == "ARM A" ~ 3),
+#'     ARM = as.character(arm_mapping[match(ARM, names(arm_mapping))]),
+#'     ARM = factor(ARM) %>% reorder(TRTORD))
 #' 
-#' param_choices = c("ALT", "CRP", "IGA")
 #' 
 #' x <- teal::init(
-#'   data = list(ASL = ASL, ALB = ALB),
+#'   data = cdisc_data(
+#'     cdisc_dataset("ADSL", ADSL),
+#'     cdisc_dataset("ADLB", ADLB),
+#'     code = {'
+#'       arm_mapping <- list("A: Drug X" = "150mg QD",
+#'                           "B: Placebo" = "Placebo",
+#'                           "C: Combination" = "Combination")
+#' 
+#'       ADSL <- radsl(N = 20, seed = 1)
+#'       ADLB <- radlb(ADSL, visit_format = "WEEK", n_assessments = 7L, seed = 2)
+#'       ADLB <- ADLB %>%
+#'         mutate(AVISITCD = case_when(
+#'             AVISIT == "SCREENING" ~ "SCR",
+#'             AVISIT == "BASELINE" ~ "BL",
+#'             grepl("WEEK", AVISIT) ~ gsub("^WEEK ([0-9]+) .+$" , "W \\1", AVISIT),
+#'             TRUE ~ as.character(NA)),
+#'           AVISITCDN = case_when(
+#'             AVISITCD == "SCR" ~ -2,
+#'             AVISITCD == "BL" ~ 0,
+#'             grepl("W", AVISITCD) ~ as.numeric(gsub("[^0-9]*", "", AVISITCD)),
+#'             TRUE ~ as.numeric(NA)),
+#'           TRTORD = case_when(
+#'             ARMCD == "ARM C" ~ 1,
+#'             ARMCD == "ARM B" ~ 2,
+#'             ARMCD == "ARM A" ~ 3),
+#'           ARM = as.character(arm_mapping[match(ARM, names(arm_mapping))]),
+#'           ARM = factor(ARM) %>% reorder(TRTORD))
+#'           '},
+#'     check = FALSE
+#'   ),
 #'   modules = root_modules(
 #'     tm_g_lineplot(
 #'       label = "Line Plot",
-#'       dataname = "ALB",
-#'       aslname = "ASL",
+#'       dataname = "ADLB",
+#'       adslname = "ADSL",
 #'       param_var = "PARAMCD",
 #'       param_choices = c("CRP","IGG","IGM"),
 #'       shape_choices = c("SEX", "RACE"),
@@ -112,11 +134,11 @@
 
 tm_g_lineplot <- function(label,
                           dataname,
-                          aslname  = NULL,
+                          adslname  = NULL,
                           param_var,
                           param_choices = param,
                           param,
-                          param_var_label = 'PARAM',
+                          param_var_label = "PARAM",
                           xvar, yvar,
                           xvar_choices = xvar, yvar_choices = yvar,
                           xvar_level = NULL,
@@ -128,7 +150,8 @@ tm_g_lineplot <- function(label,
                           stat = "mean",
                           hline = NULL,
                           man_color = NULL,
-                          xtick = waiver(), xlabel = xtick,
+                          xtick = waiver(), 
+                          xlabel = xtick,
                           rotate_xlab = FALSE,
                           plot_height = c(600, 200, 2000),
                           font_size = c(12, 8, 20),
@@ -139,7 +162,7 @@ tm_g_lineplot <- function(label,
   module(
     label = label,
     server = srv_lineplot,
-    server_args = list(dataname = dataname, aslname = aslname, param_var = param_var, trt_group = trt_group, man_color = man_color,
+    server_args = list(dataname = dataname, adslname = adslname, param_var = param_var, trt_group = trt_group, man_color = man_color,
                        xvar_level = xvar_level, trt_group_level = trt_group_level, shape_choices = shape_choices, param_var_label = param_var_label,
                        xtick = xtick, xlabel = xlabel),
     ui = ui_lineplot,
@@ -195,7 +218,7 @@ ui_lineplot <- function(id, ...) {
   
 }
 
-srv_lineplot <- function(input, output, session, datasets, dataname, aslname, param_var, trt_group, man_color, xvar_level, 
+srv_lineplot <- function(input, output, session, datasets, dataname, adslname, param_var, trt_group, man_color, xvar_level, 
                          trt_group_level, shape_choices, param_var_label, xtick, xlabel) {
   
   ns <- session$ns
@@ -256,7 +279,7 @@ srv_lineplot <- function(input, output, session, datasets, dataname, aslname, pa
   
   
   # filter data by param and the y-axis range values
-  # neutralized this join to expect that the line splitting ASL variables are in the ALB data set. 
+  # neutralized this join to expect that the line splitting ADSL variables are in the ADLB data set. 
   # this block needs to be removed during re-factoring
   filter_ANL <- reactive({
     
@@ -265,15 +288,15 @@ srv_lineplot <- function(input, output, session, datasets, dataname, aslname, pa
     ANL <- datasets$get_data(dataname, filtered = TRUE, reactive = TRUE) %>%
       filter(eval(parse(text = param_var)) == param)
     
-    # if (!is.null(aslname)){
-    #   ASL <- datasets$get_data(aslname, filtered = TRUE, reactive = TRUE)
+    # if (!is.null(adslname)){
+    #   ADSL <- datasets$get_data(adslname, filtered = TRUE, reactive = TRUE)
     # }
     # if(!is.null(shape_choices)){
-    #   validate(need(aslname, "aslname must be specified when shape_choices is not NULL"))
-    #   validate(need(all(shape_choices%in%names(ASL)), "shape_choices must be contained in ASL!"))
+    #   validate(need(adslname, "adslname must be specified when shape_choices is not NULL"))
+    #   validate(need(all(shape_choices%in%names(ADSL)), "shape_choices must be contained in ADSL!"))
     #   ANL <- left_join(
     #     ANL, 
-    #     select(ASL, c("STUDYID", "USUBJID")), # removed shape_choices from this statement to neutralize
+    #     select(ADSL, c("STUDYID", "USUBJID")), # removed shape_choices from this statement to neutralize
     #     by = c("STUDYID", "USUBJID")
     #   )
     # }

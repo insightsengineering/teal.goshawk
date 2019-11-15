@@ -42,7 +42,7 @@
 #' # Example using ADaM structure analysis dataset.
 #' library(random.cdisc.data)
 #' 
-#' original ARM value = dose value
+#' # original ARM value = dose value
 #' arm_mapping <- list("A: Drug X" = "150mg QD",
 #'                     "B: Placebo" = "Placebo", 
 #'                     "C: Combination" = "Combination")
@@ -149,6 +149,10 @@ tm_g_scatterplot <- function(label,
                              reg_text_size = c(3, 3, 10),
                              pre_output = NULL,
                              post_output = NULL) {
+  
+  stopifnot(is.choices_selected(param))
+  stopifnot(is.choices_selected(xaxis_var))
+  stopifnot(is.choices_selected(yaxis_var))
   
   args <- as.list(environment())
   

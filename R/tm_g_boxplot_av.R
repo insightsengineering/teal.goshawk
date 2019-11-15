@@ -5,7 +5,7 @@
 #'
 #'@param label menu item label of the module in the teal app.
 #'@param dataname analysis data passed to the data argument of teal init. E.g. ADaM structured
-#'  laboratory data frame ALB.
+#'  laboratory data frame ADLB.
 #'@param param_var name of variable containing biomarker codes e.g. PARAMCD.
 #'@param param_choices list of biomarkers of interest.
 #'@param param biomarker selected.
@@ -32,13 +32,9 @@
 #'
 #'@inheritParams teal.devel::standard_layout
 #'
-#'@import DescTools
-#'@import methods
-#'@import utils
-#'@import dplyr
-#'@import goshawk
-#'@import teal
-#'
+#' @importFrom utils head tail
+#' @importFrom rlang .data
+#' 
 #'@author Jeff Tomlinson (tomlinsj) jeffrey.tomlinson@roche.com
 #'@author Balazs Toth (tothb2) toth.balazs@gene.com
 #'
@@ -52,51 +48,74 @@
 #'
 #' # Example using ADaM structure analysis dataset.
 #'
-#' library(dplyr)
-#' library(ggplot2)
-#' library(goshawk)
 #' library(random.cdisc.data)
-#' library(stringr)
-#' library(teal)
-#' library(teal.goshawk)
-#'
+#' 
 #' # original ARM value = dose value
-#' arm_mapping <- list("A: Drug X" = "150mg QD", "B: Placebo" = "Placebo",
-#' "C: Combination" = "Combination")
-#' color_manual <-  c("150mg QD" = "#000000", "Placebo" = "#3498DB", "Combination" = "#E74C3C")
-#' # assign LOQ flag symbols: circles for "N" and triangles for "Y", squares for "NA"
-#' shape_manual <-  c("N"  = 1, "Y"  = 2, "NA" = 0)
-#'
-#' ASL <- radsl(N = 20, seed = 1)
-#' ALB <- radlb(ASL, visit_format = "WEEK", n_assessments = 7, seed = 2)
-#' ALB <- ALB %>%
-#' mutate(AVISITCD = case_when(
-#' AVISIT == "SCREENING" ~ "SCR",
-#' AVISIT == "BASELINE" ~ "BL", grepl("WEEK", AVISIT) ~ paste("W",trimws(substr(AVISIT, start=6,
-#' stop=str_locate(AVISIT, "DAY")-1))),
-#' TRUE ~ as.character(NA))) %>%
-#' mutate(AVISITCDN = case_when(AVISITCD == "SCR" ~ -2,
-#' AVISITCD == "BL" ~ 0, grepl("W", AVISITCD) ~ as.numeric(gsub("\\D+", "", AVISITCD)),
-#' TRUE ~ as.numeric(NA))) %>%
-#' # use ACTARMCD values to order treatment in visualization legend
-#' mutate(TRTORD = ifelse(grepl("C", ACTARMCD), 1,
-#' ifelse(grepl("B", ACTARMCD), 2,
-#' ifelse(grepl("A", ACTARMCD), 3, NA)))) %>%
-#' mutate(ACTARM = as.character(arm_mapping[match(ACTARM, names(arm_mapping))])) %>%
-#' mutate(ACTARM = factor(ARM) %>% reorder(TRTORD)) %>% 
-#' mutate(ADY = AVISITCDN)
-#'
-#' param_choices = c("ALT", "CRP", "IGA")
-#'
+#' arm_mapping <- list("A: Drug X" = "150mg QD",
+#'                     "B: Placebo" = "Placebo",
+#'                     "C: Combination" = "Combination")
+#' 
+#' ADSL <- radsl(N = 20, seed = 1)
+#' ADLB <- radlb(ADSL, visit_format = "WEEK", n_assessments = 7L, seed = 2)
+#' ADLB <- ADLB %>%
+#'   mutate(AVISITCD = case_when(
+#'     AVISIT == "SCREENING" ~ "SCR",
+#'     AVISIT == "BASELINE" ~ "BL",
+#'     grepl("WEEK", AVISIT) ~ gsub("^WEEK ([0-9]+) .+$" , "W \\1", AVISIT),
+#'     TRUE ~ as.character(NA)),
+#'     AVISITCDN = case_when(
+#'       AVISITCD == "SCR" ~ -2,
+#'       AVISITCD == "BL" ~ 0,
+#'       grepl("W", AVISITCD) ~ as.numeric(gsub("[^0-9]*", "", AVISITCD)),
+#'       TRUE ~ as.numeric(NA)),
+#'     TRTORD = case_when(
+#'       ARMCD == "ARM C" ~ 1,
+#'       ARMCD == "ARM B" ~ 2,
+#'       ARMCD == "ARM A" ~ 3),
+#'     ARM = as.character(arm_mapping[match(ARM, names(arm_mapping))]),
+#'     ARM = factor(ARM) %>% reorder(TRTORD),
+#'     ADY = AVISITCDN)
+#' 
+#' 
 #' x <- teal::init(
-#'   data =  list(ASL = ASL, ALB = ALB),
+#'   data = cdisc_data(
+#'     cdisc_dataset("ADSL", ADSL),
+#'     cdisc_dataset("ADLB", ADLB),
+#'     code = {'
+#'       arm_mapping <- list("A: Drug X" = "150mg QD",
+#'                           "B: Placebo" = "Placebo",
+#'                           "C: Combination" = "Combination")
+#' 
+#'       ADSL <- radsl(N = 20, seed = 1)
+#'       ADLB <- radlb(ADSL, visit_format = "WEEK", n_assessments = 7L, seed = 2)
+#'       ADLB <- ADLB %>%
+#'         mutate(AVISITCD = case_when(
+#'             AVISIT == "SCREENING" ~ "SCR",
+#'             AVISIT == "BASELINE" ~ "BL",
+#'             grepl("WEEK", AVISIT) ~ gsub("^WEEK ([0-9]+) .+$" , "W \\1", AVISIT),
+#'             TRUE ~ as.character(NA)),
+#'           AVISITCDN = case_when(
+#'             AVISITCD == "SCR" ~ -2,
+#'             AVISITCD == "BL" ~ 0,
+#'             grepl("W", AVISITCD) ~ as.numeric(gsub("[^0-9]*", "", AVISITCD)),
+#'             TRUE ~ as.numeric(NA)),
+#'           TRTORD = case_when(
+#'             ARMCD == "ARM C" ~ 1,
+#'             ARMCD == "ARM B" ~ 2,
+#'             ARMCD == "ARM A" ~ 3),
+#'           ARM = as.character(arm_mapping[match(ARM, names(arm_mapping))]),
+#'           ARM = factor(ARM) %>% reorder(TRTORD),
+#'           ADY = AVISITCDN)
+#'           '},
+#'     check = FALSE
+#'   ),
 #'   modules = root_modules(
 #'       tm_g_boxplot_av(
 #'         label = "Box Plot",
-#'         dataname = "ALB",
+#'         dataname = "ADLB",
 #'         param_var = "PARAMCD",
-#'         param_choices = param_choices,
-#'         param = param_choices[1],
+#'         param_choices = c("ALT", "CRP", "IGA"),
+#'         param = "ALT",
 #'         yaxis_var = "AVAL",
 #'         yaxis_var_choices = c("AVAL", "BASE", "CHG"),
 #'         rotate_xlab = FALSE,
@@ -347,7 +366,7 @@ srv_g_boxplot_av <- function(input, output, session, datasets
   })
   
   output$brush_data <- renderTable({
-    if (nrow(filter_ALB()) > 0 ){
+    if (nrow(filter_ADLB()) > 0 ){
       
       ##--- identify brushed subset of the mtcars data.frame without brushedPoints
       req(input$boxplot_brush)
@@ -359,10 +378,10 @@ srv_g_boxplot_av <- function(input, output, session, datasets
       facet.value <- input$boxplot_brush$panelvar1  # level of the brushed facet
       
       # First, subset the data.frame to those rows that match the brushed facet level
-      datfilt <- select(filter_ALB(), "USUBJID", trt_group, input$boxplot_brush$mapping$panelvar1, "AVISITCD", "PARAMCD",
+      datfilt <- select(filter_ADLB(), "USUBJID", trt_group, input$boxplot_brush$mapping$panelvar1, "AVISITCD", "PARAMCD",
                         input$xaxis_var, input$yaxis_var, "LOQFL") %>% 
         droplevels() %>% 
-        filter_at(input$facet_var, all_vars(.== facet.value) )
+        filter_at(input$facet_var, all_vars(.data== facet.value) )
       
       if (!(is.factor(datfilt[[x.axis.var]])| is.numeric(datfilt[[x.axis.var]]))){
         datfilt[[x.axis.var]] <- as.factor(datfilt[[x.axis.var]])
@@ -398,14 +417,14 @@ srv_g_boxplot_av <- function(input, output, session, datasets
   })
   
   # filter data by param and the xmin and xmax values from the filter slider.
-  filter_ALB <- reactive({
+  filter_ADLB <- reactive({
     
     
     param <- input$param
     yaxis_var <- input$yaxis_var
     
     # Select all of the data for the parameter.
-    alb <- datasets$get_data(dataname, filtered = TRUE, reactive = TRUE) %>%
+    ADLB <- datasets$get_data(dataname, filtered = TRUE, reactive = TRUE) %>%
       filter( eval(parse(text = param_var)) == param )
     
     # Only consider filtering on value if there is data to filter, the filter
@@ -414,7 +433,7 @@ srv_g_boxplot_av <- function(input, output, session, datasets
     # values.  Only if all of these conditions have been met, filter on
     # the values.
     filt_var <- input$y_filter_by
-    if (length(alb) & filt_var != "None" &
+    if (length(ADLB) & filt_var != "None" &
         is_finite(input$ymin) & is_finite(ylimits()$low)) {
       ymin_scale <- input$ymin
       ymax_scale <- input$ymax
@@ -424,11 +443,11 @@ srv_g_boxplot_av <- function(input, output, session, datasets
       if (!axlim$eqt & is_finite(ymin_scale) & is_finite(ymax_scale) & 
           ( ymin_scale != axlim$min | ymax_scale != axlim$max)){
         
-        alb <- alb %>% 
+        ADLB <- ADLB %>% 
           filter(ymin_scale <= eval(parse(text = filt_var)) & eval(parse(text = filt_var)) <= ymax_scale)
       }
     }
-    return(alb)
+    return(ADLB)
     
   })
   
@@ -550,8 +569,8 @@ srv_g_boxplot_av <- function(input, output, session, datasets
     facet_var <- input$facet_var
     
     # Get the filtered data - Filter by both the right an left filters. 
-    ASL_FILTERED <- datasets$get_data("ASL", reactive = TRUE, filtered = TRUE)
-    ALB <- filter_ALB()
+    ADSL_FILTERED <- datasets$get_data("ADSL", reactive = TRUE, filtered = TRUE)
+    ADLB <- filter_ADLB()
     
     ymin_scale <- input$yrange_scale[1]
     ymax_scale <- input$yrange_scale[2]
@@ -564,26 +583,26 @@ srv_g_boxplot_av <- function(input, output, session, datasets
                       paste("Minimum filter value greater than maximum filter value")))
       }
     }
-    validate(need(!is.null(ALB) && is.data.frame(ALB), "No data left"))
-    validate(need(nrow(ALB) > 0 , "No observations left"))
-    validate(need(param_var %in% names(ALB),
+    validate(need(!is.null(ADLB) && is.data.frame(ADLB), "No data left"))
+    validate(need(nrow(ADLB) > 0 , "No observations left"))
+    validate(need(param_var %in% names(ADLB),
                   paste("Biomarker parameter variable", param_var, " is not available in data", dataname)))
-    validate(need(param %in% unique(ALB[[param_var]]),
+    validate(need(param %in% unique(ADLB[[param_var]]),
                   paste("Biomarker", param, " is not available in data", dataname)))
-    validate(need(trt_group %in% names(ALB),
+    validate(need(trt_group %in% names(ADLB),
                   paste("Variable", trt_group, " is not available in data", dataname)))
-    validate(need(yaxis_var %in% names(ALB),
+    validate(need(yaxis_var %in% names(ADLB),
                   paste("Variable", yaxis_var, " is not available in data", dataname)))
-    validate(need(xaxis_var %in% names(ALB),
+    validate(need(xaxis_var %in% names(ADLB),
                   paste("Variable", xaxis_var, " is not available in data", dataname)))
-    validate(need(facet_var %in% names(ALB),
+    validate(need(facet_var %in% names(ADLB),
                   paste("Variable", facet_var, " is not available in data", dataname)))
-    validate(need(filter_vars %in% names(ALB),
+    validate(need(filter_vars %in% names(ADLB),
                   paste("Variable", filter_var, " is not available in data", dataname)))
     
     chunks$boxsetup <<- bquote({
       # Units to display, just take the first if there multiples.
-      unit <- ALB %>% 
+      unit <- ADLB %>% 
         filter(eval(parse(text = param_var)) == param) %>% 
         select("AVALU") %>% 
         unique() %>% 
@@ -592,14 +611,14 @@ srv_g_boxplot_av <- function(input, output, session, datasets
     })
     eval(chunks$boxsetup)
     
-    data_name <- paste0("ALB", "_FILTERED")
-    assign(data_name, filter_ALB())
+    data_name <- paste0("ADLB", "_FILTERED")
+    assign(data_name, filter_ADLB())
     
     # re-establish treatment variable label
     if (trt_group == "ARM"){
-      attributes(ALB_FILTERED$ARM)$label <- "Planned Arm"
+      attributes(ADLB_FILTERED$ARM)$label <- "Planned Arm"
     } else {
-      attributes(ALB_FILTERED$ACTARM)$label <- "Actual Arm"
+      attributes(ADLB_FILTERED$ACTARM)$label <- "Actual Arm"
     }
     
     chunks$analysis <<- call(
@@ -631,8 +650,8 @@ srv_g_boxplot_av <- function(input, output, session, datasets
   )
   
   output$table_ui <- renderTable({
-    ALB <- filter_ALB()
-    validate(need(nrow(ALB) > 0 , ""))
+    ADLB <- filter_ADLB()
+    validate(need(nrow(ADLB) > 0 , ""))
     
     param <- input$param
     xaxis_var <- input$yaxis_var
@@ -640,8 +659,8 @@ srv_g_boxplot_av <- function(input, output, session, datasets
     facet <- ifelse(facet_var_choices, input$facet_var, facet_var)
     facet_var <- input$facet_var
     
-    data_name <- paste0("ALB", "_FILTERED")
-    assign(data_name, ALB)
+    data_name <- paste0("ADLB", "_FILTERED")
+    assign(data_name, ADLB)
     
     chunks$table <<- call(
       "t_summarytable_av",

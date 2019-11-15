@@ -4,7 +4,7 @@
 #'
 #' @param label menu item label of the module in the teal app.
 #' @param dataname analysis data passed to the data argument of teal init. E.g. ADaM structured 
-#' laboratory data frame ALB.
+#' laboratory data frame ADLB.
 #' @param param_var name of variable containing biomarker codes e.g. PARAMCD.
 #' @param xaxis_param_choices list of biomarkers of interest.
 #' @param xaxis_param biomarker selected.
@@ -32,6 +32,8 @@
 #' @param code_data_processing TODO
 #'
 #' @inheritParams teal.devel::standard_layout
+#' 
+#' @importFrom rlang .data
 #'
 #' @author Nick Paszty (npaszty) paszty.nicholas@gene.com
 #' @author Balazs Toth (tothb2)  toth.balazs@gene.com
@@ -52,68 +54,92 @@
 #'
 #' # Example using ADaM structure analysis dataset.
 #' 
-#' library(dplyr)
-#' library(ggplot2)
-#' library(goshawk)
 #' library(random.cdisc.data)
-#' library(stringr)
-#' library(teal)
-#' library(teal.goshawk)
 #' 
 #' # original ARM value = dose value
-#' arm_mapping <- list("A: Drug X" = "150mg QD", "B: Placebo" = "Placebo", 
-#' "C: Combination" = "Combination")
-#' color_manual <-  c("150mg QD" = "#000000", "Placebo" = "#3498DB", "Combination" = "#E74C3C")
-#' # assign LOQ flag symbols: circles for "N" and triangles for "Y", squares for "NA"
-#' shape_manual <-  c("N"  = 1, "Y"  = 2, "NA" = 0)
+#' arm_mapping <- list("A: Drug X" = "150mg QD",
+#'                     "B: Placebo" = "Placebo",
+#'                     "C: Combination" = "Combination")
 #' 
-#' ASL <- radsl(N = 20, seed = 1)
-#' ALB <- radlb(ASL, visit_format = "WEEK", n_assessments = 7L, seed = 2)
-#' ALB <- ALB %>% 
-#' mutate(AVISITCD = case_when(
-#' AVISIT == "SCREENING" ~ "SCR",
-#' AVISIT == "BASELINE" ~ "BL", grepl("WEEK", AVISIT) ~ paste("W",trimws(substr(AVISIT, start=6, 
-#' stop=str_locate(AVISIT, "DAY")-1))),
-#' TRUE ~ as.character(NA))) %>%
-#' mutate(AVISITCDN = case_when(AVISITCD == "SCR" ~ -2,
-#' AVISITCD == "BL" ~ 0, grepl("W", AVISITCD) ~ as.numeric(gsub("\\D+", "", AVISITCD)), 
-#' TRUE ~ as.numeric(NA))) %>%
-#' # use ARMCD values to order treatment in visualization legend
-#' mutate(TRTORD = ifelse(grepl("C", ARMCD), 1,
-#' ifelse(grepl("B", ARMCD), 2,
-#' ifelse(grepl("A", ARMCD), 3, NA)))) %>%
-#' mutate(ARM = as.character(arm_mapping[match(ARM, names(arm_mapping))])) %>%
-#' mutate(ARM = factor(ARM) %>% reorder(TRTORD))
+#' ADSL <- radsl(N = 20, seed = 1)
+#' ADLB <- radlb(ADSL, visit_format = "WEEK", n_assessments = 7L, seed = 2)
+#' ADLB <- ADLB %>%
+#'   mutate(AVISITCD = case_when(
+#'     AVISIT == "SCREENING" ~ "SCR",
+#'     AVISIT == "BASELINE" ~ "BL",
+#'     grepl("WEEK", AVISIT) ~ gsub("^WEEK ([0-9]+) .+$" , "W \\1", AVISIT),
+#'     TRUE ~ as.character(NA)),
+#'     AVISITCDN = case_when(
+#'       AVISITCD == "SCR" ~ -2,
+#'       AVISITCD == "BL" ~ 0,
+#'       grepl("W", AVISITCD) ~ as.numeric(gsub("[^0-9]*", "", AVISITCD)),
+#'       TRUE ~ as.numeric(NA)),
+#'     TRTORD = case_when(
+#'       ARMCD == "ARM C" ~ 1,
+#'       ARMCD == "ARM B" ~ 2,
+#'       ARMCD == "ARM A" ~ 3),
+#'     ARM = as.character(arm_mapping[match(ARM, names(arm_mapping))]),
+#'     ARM = factor(ARM) %>% reorder(TRTORD))
 #' 
-#' param_choices = c("ALT", "CRP", "IGA")
 #' 
 #' x <- teal::init(
-#'   data = list(ASL = ASL, ALB = ALB),
+#'   data = cdisc_data(
+#'     cdisc_dataset("ADSL", ADSL),
+#'     cdisc_dataset("ADLB", ADLB),
+#'     code = {'
+#'       arm_mapping <- list("A: Drug X" = "150mg QD",
+#'                           "B: Placebo" = "Placebo",
+#'                           "C: Combination" = "Combination")
+#' 
+#'       ADSL <- radsl(N = 20, seed = 1)
+#'       ADLB <- radlb(ADSL, visit_format = "WEEK", n_assessments = 7L, seed = 2)
+#'       ADLB <- ADLB %>%
+#'         mutate(AVISITCD = case_when(
+#'             AVISIT == "SCREENING" ~ "SCR",
+#'             AVISIT == "BASELINE" ~ "BL",
+#'             grepl("WEEK", AVISIT) ~ gsub("^WEEK ([0-9]+) .+$" , "W \\1", AVISIT),
+#'             TRUE ~ as.character(NA)),
+#'           AVISITCDN = case_when(
+#'             AVISITCD == "SCR" ~ -2,
+#'             AVISITCD == "BL" ~ 0,
+#'             grepl("W", AVISITCD) ~ as.numeric(gsub("[^0-9]*", "", AVISITCD)),
+#'             TRUE ~ as.numeric(NA)),
+#'           TRTORD = case_when(
+#'             ARMCD == "ARM C" ~ 1,
+#'             ARMCD == "ARM B" ~ 2,
+#'             ARMCD == "ARM A" ~ 3),
+#'           ARM = as.character(arm_mapping[match(ARM, names(arm_mapping))]),
+#'           ARM = factor(ARM) %>% reorder(TRTORD))
+#'           '},
+#'     check = FALSE
+#'   ),
 #'   modules = root_modules(
 #'     tm_g_correlationplot(
-#'        label = "Correlation Plot",
-#'        dataname = "ALB",
-#'        param_var = "PARAMCD",
-#'        xaxis_param_choices = param_choices,
-#'        xaxis_param = param_choices[1],
-#'        xaxis_var = "BASE",
-#'        xaxis_var_choices = c("AVAL", "BASE", "CHG", "PCHG", "BASE2", "AVALL2"),
-#'        yaxis_param_choices = param_choices,
-#'        yaxis_param = param_choices[2],
-#'        yaxis_var = "AVAL",
-#'        yaxis_var_choices = c("AVAL", "BASE", "CHG", "PCHG", "BASE2", "AVALL2"),
-#'        trt_group = "ARM",
-#'        color_manual = color_manual,
-#'        shape_manual = shape_manual,
-#'        plot_height = c(500, 200, 2000),
-#'        facet_ncol = 2,
-#'        facet = FALSE,
-#'        facet_var = "ARM",
-#'        reg_line = FALSE,
-#'        font_size = c(12, 8, 20),
-#'        dot_size = c(1, 1, 12),
-#'        reg_text_size = c(3, 3, 10)
-#'    )
+#'       label = "Correlation Plot",
+#'       dataname = "ADLB",
+#'       param_var = "PARAMCD",
+#'       xaxis_param_choices = c("ALT", "CRP", "IGA"),
+#'       xaxis_param = "ALT",
+#'       xaxis_var = "BASE",
+#'       xaxis_var_choices = c("AVAL", "BASE", "CHG", "PCHG", "BASE2", "AVALL2"),
+#'       yaxis_param_choices = c("ALT", "CRP", "IGA"),
+#'       yaxis_param = "CRP",
+#'       yaxis_var = "AVAL",
+#'       yaxis_var_choices = c("AVAL", "BASE", "CHG", "PCHG", "BASE2", "AVALL2"),
+#'       trt_group = "ARM",
+#'       color_manual = c("150mg QD" = "#000000", 
+#'                        "Placebo" = "#3498DB",
+#'                        "Combination" = "#E74C3C"),
+#'       shape_manual = c("N"  = 1, "Y"  = 2, "NA" = 0),
+#'       plot_height = c(500, 200, 2000),
+#'       facet_ncol = 2,
+#'       facet = FALSE,
+#'       facet_var = "ARM",
+#'       reg_line = FALSE,
+#'       font_size = c(12, 8, 20),
+#'       dot_size = c(1, 1, 12),
+#'       reg_text_size = c(3, 3, 10)
+#'     )
 #'   )
 #' )
 #' 
@@ -233,7 +259,7 @@ srv_g_correlationplot <- function(input, output, session, datasets, dataname,
   ns <- session$ns
   
   # filter data to selected params
-  filter_ALB <- reactive({
+  filter_ADLB <- reactive({
     xaxis_param <- input$xaxis_param
     yaxis_param <- input$yaxis_param
     datasets$get_data(dataname, filtered = TRUE, reactive = TRUE) %>%
@@ -252,22 +278,25 @@ srv_g_correlationplot <- function(input, output, session, datasets, dataname,
     yaxis_var <- input$yaxis_var
     
     # given the 2 param and 2 analysis vars we need to transform the data
-    plot_data_t1 <- filter_ALB() %>% gather(ANLVARS, ANLVALS, BASE2, BASE, xaxis_var, yaxis_var, LOQFL) %>%
-      mutate(ANL.PARAM = ifelse(ANLVARS == "LOQFL", paste0(ANLVARS, "_", PARAMCD), paste0(ANLVARS, ".", PARAMCD))) %>%
-      select(USUBJID, trt_group, AVISITN, AVISITCD, ANL.PARAM, ANLVALS) %>%
-      spread(ANL.PARAM, ANLVALS)
+    plot_data_t1 <- filter_ADLB() %>% 
+      gather(key = "ANLVARS", value = "ANLVALS", .data$BASE2, .data$BASE, xaxis_var, yaxis_var, .data$LOQFL) %>%
+      mutate(ANL.PARAM = ifelse(.data$ANLVARS == "LOQFL", 
+                                paste0(.data$ANLVARS, "_", .data$PARAMCD), 
+                                paste0(.data$ANLVARS, ".", .data$PARAMCD))) %>%
+      select(.data$USUBJID, trt_group, .data$AVISITN, .data$AVISITCD, .data$ANL.PARAM, .data$ANLVALS) %>%
+      spread(.data$ANL.PARAM, .data$ANLVALS)
     
     # the transformed analysis value variables are character and need to be converted to numeric for ggplot
     # remove records where either of the analysis variables are NA since they will not appear on the plot
     plot_data_t2 <- plot_data_t1 %>%
-      subset(!is.na(.[[xvar()]]) & !is.na(.[[yvar()]])) %>%
+      filter(!is.na(.data[[xvar()]]) & !is.na(.data[[yvar()]])) %>%
       mutate_at(vars(contains(".")), as.numeric) %>%
       mutate(LOQFL_COMB = case_when(
-        (.[[xloqfl()]] == "Y" | .[[yloqfl()]] == "Y") ~ "Y",
-        (.[[xloqfl()]] == "N" & .[[yloqfl()]] == "N") ~ "N",
-        (.[[xloqfl()]] == "N" & .[[yloqfl()]] == "NA") ~ "N",
-        (.[[xloqfl()]] == "NA" & .[[yloqfl()]] == "N") ~ "N",
-        (.[[xloqfl()]] == "NA" & .[[yloqfl()]] == "NA") ~ "NA",
+        (.data[[xloqfl()]] == "Y" | .data[[yloqfl()]] == "Y") ~ "Y",
+        (.data[[xloqfl()]] == "N" & .data[[yloqfl()]] == "N") ~ "N",
+        (.data[[xloqfl()]] == "N" & .data[[yloqfl()]] == "NA") ~ "N",
+        (.data[[xloqfl()]] == "NA" & .data[[yloqfl()]] == "N") ~ "N",
+        (.data[[xloqfl()]] == "NA" & .data[[yloqfl()]] == "NA") ~ "NA",
         TRUE ~ as.character(NA)
       ))
 
@@ -287,8 +316,8 @@ srv_g_correlationplot <- function(input, output, session, datasets, dataname,
       }
       
       plot_data_t3 <- plot_data_t2 %>%
-        filter(constraint_min_range <= .[[xvar()]] & .[[xvar()]] <= constraint_max_range |
-                 is.na(.[[xvar()]])
+        filter(constraint_min_range <= .data[[xvar()]] & .data[[xvar()]] <= constraint_max_range |
+                 is.na(.data[[xvar()]])
         )
     } else{
       plot_data_t3 <- plot_data_t2
@@ -309,7 +338,7 @@ srv_g_correlationplot <- function(input, output, session, datasets, dataname,
   output$brush_data <- renderTable({
     plot_data_t3 <- plot_data_transpose()
     if (nrow(plot_data_t3) > 0 ){
-      brushedPoints(select(plot_data_t3, "USUBJID", trt_group, "AVISITCD", xvar(), yvar(), LOQFL_COMB),
+      brushedPoints(select(plot_data_t3, "USUBJID", trt_group, "AVISITCD", xvar(), yvar(), "LOQFL_COMB"),
                     input$correlationplot_brush)
     } else{
       NULL
@@ -319,9 +348,9 @@ srv_g_correlationplot <- function(input, output, session, datasets, dataname,
   
   # dynamic slider for x-axis
   output$xaxis_zoom <- renderUI({
-    ALB <- datasets$get_data(dataname, reactive = TRUE, filtered = TRUE)
+    ADLB <- datasets$get_data(dataname, reactive = TRUE, filtered = TRUE)
     xaxis_param <- input$xaxis_param
-    scale_data <- ALB %>%
+    scale_data <- ADLB %>%
       filter(eval(parse(text = param_var)) == xaxis_param)
     
     # establish default value during reaction and prior to value being available
@@ -342,9 +371,9 @@ srv_g_correlationplot <- function(input, output, session, datasets, dataname,
   
   # dynamic slider for y-axis
   output$yaxis_zoom <- renderUI({
-    ALB <- datasets$get_data(dataname, reactive = TRUE, filtered = TRUE)
+    ADLB <- datasets$get_data(dataname, reactive = TRUE, filtered = TRUE)
     yaxis_param <- input$yaxis_param 
-    scale_data <- ALB %>%
+    scale_data <- ADLB %>%
       filter(eval(parse(text = param_var)) == yaxis_param)
     
     # establish default value during reaction and prior to value being available
@@ -367,11 +396,11 @@ srv_g_correlationplot <- function(input, output, session, datasets, dataname,
   output$constraint_min_value <- renderUI({
     # conditionally reveal min and max constraint fields
     if (input$constraint_var != "NONE") {
-      ALB <- datasets$get_data(dataname, filtered = TRUE, reactive = TRUE)
-      validate(need(nrow(ALB) > 0 , "Waiting For Filter Selection"))
+      ADLB <- datasets$get_data(dataname, filtered = TRUE, reactive = TRUE)
+      validate(need(nrow(ADLB) > 0 , "Waiting For Filter Selection"))
       
       xaxis_param <- input$xaxis_param
-      scale_data <- ALB %>%
+      scale_data <- ADLB %>%
         filter(eval(parse(text = param_var)) == xaxis_param)
       # ensure that there are records at visit to process based on the constraint vatriable selection
       visitFreq <- unique(scale_data$AVISITCD)
@@ -399,11 +428,11 @@ srv_g_correlationplot <- function(input, output, session, datasets, dataname,
   output$constraint_max_value <- renderUI({
     # conditionally reveal min and max constraint fields
     if (input$constraint_var != "NONE") {
-      ALB <- datasets$get_data(dataname, filtered = TRUE, reactive = TRUE)
-      validate(need(nrow(ALB) > 0 , "Waiting For Filter Selection"))
+      ADLB <- datasets$get_data(dataname, filtered = TRUE, reactive = TRUE)
+      validate(need(nrow(ADLB) > 0 , "Waiting For Filter Selection"))
       
       xaxis_param <- input$xaxis_param
-      scale_data <- ALB %>%
+      scale_data <- ADLB %>%
         filter(eval(parse(text = param_var)) == xaxis_param)
       # ensure that there are records at visit to process based on the constraint vatriable selection
       visitFreq <- unique(scale_data$AVISITCD)
@@ -427,7 +456,7 @@ srv_g_correlationplot <- function(input, output, session, datasets, dataname,
   })
   
   output$correlationplot <- renderPlot({
-    ALB <- filter_ALB()
+    ADLB <- filter_ADLB()
     xaxis_param <- input$xaxis_param
     xaxis_var <- input$xaxis_var
     yaxis_param <- input$yaxis_param
@@ -446,50 +475,50 @@ srv_g_correlationplot <- function(input, output, session, datasets, dataname,
     reg_line <- input$reg_line
     rotate_xlab <- input$rotate_xlab
     
-    validate(need(!is.null(ALB) && is.data.frame(ALB), "No data left"))
-    validate(need(nrow(ALB) > 0 , "ALB Data No Observations Left"))
-    validate(need(param_var %in% names(ALB),
+    validate(need(!is.null(ADLB) && is.data.frame(ADLB), "No data left"))
+    validate(need(nrow(ADLB) > 0 , "ADLB Data No Observations Left"))
+    validate(need(param_var %in% names(ADLB),
                   paste("Biomarker parameter variable", param_var, " is not available in data", dataname)))
-    validate(need(xaxis_param %in% unique(ALB[[param_var]]),
+    validate(need(xaxis_param %in% unique(ADLB[[param_var]]),
                   paste("X-Axis Biomarker", xaxis_param, " is not available in data", dataname)))
-    validate(need(yaxis_param %in% unique(ALB[[param_var]]),
+    validate(need(yaxis_param %in% unique(ADLB[[param_var]]),
                   paste("Y-Axis Biomarker", yaxis_param, " is not available in data", dataname)))
-    validate(need(trt_group %in% names(ALB),
+    validate(need(trt_group %in% names(ADLB),
                   paste("Variable", trt_group, " is not available in data", dataname)))
-    validate(need(xaxis_var %in% names(ALB),
+    validate(need(xaxis_var %in% names(ADLB),
                   paste("Variable", xaxis_var, " is not available in data", dataname)))
-    validate(need(yaxis_var %in% names(ALB),
+    validate(need(yaxis_var %in% names(ADLB),
                   paste("Variable", yaxis_var, " is not available in data", dataname)))
     
-    param_lookup <- unique(ALB[c("PARAMCD", "PARAM")])
-    unit_lookup <- unique(ALB[c("PARAMCD", "AVALU")])
+    param_lookup <- unique(ADLB[c("PARAMCD", "PARAM")])
+    unit_lookup <- unique(ADLB[c("PARAMCD", "AVALU")])
     lookups <- inner_join(param_lookup, unit_lookup, by=c("PARAMCD"))
     
     xparam_meta <- lookups %>%
-      filter(PARAMCD == xaxis_param)
+      filter(.data$PARAMCD == xaxis_param)
     xparam <- xparam_meta$PARAM
     xunit <- xparam_meta$AVALU
     
     yparam_meta <- lookups %>%
-      filter(PARAMCD == yaxis_param)
+      filter(.data$PARAMCD == yaxis_param)
     yparam <- yparam_meta$PARAM
     yunit <- yparam_meta$AVALU
     
     # setup the ggtitle label.  Combine the biomarker and the units (if available)
-    title_text <- ifelse(is.null(ALB$AVALU), paste(xparam, "and", yparam, "@ Visits"),
-                         ifelse(ALB[["AVALU"]] == "", paste(xparam, "and", yparam, "@ Visits"),
+    title_text <- ifelse(is.null(ADLB$AVALU), paste(xparam, "and", yparam, "@ Visits"),
+                         ifelse(ADLB[["AVALU"]] == "", paste(xparam, "and", yparam, "@ Visits"),
                                 paste0(xparam, " (", xunit,") and ", yparam,  " (", yunit,") @ Visits"))
     )
     
     # setup the x-axis label.  Combine the biomarker and the units (if available)
-    xaxis_lab <- ifelse(is.null(ALB$AVALU), paste(xparam, xaxis_var, "Values"),
-                        ifelse(ALB[["AVALU"]] == "", paste(xparam, xaxis_var, "Values"),
+    xaxis_lab <- ifelse(is.null(ADLB$AVALU), paste(xparam, xaxis_var, "Values"),
+                        ifelse(ADLB[["AVALU"]] == "", paste(xparam, xaxis_var, "Values"),
                                paste0(xparam," (", xunit, ") ", xaxis_var, " Values"))
     )
     
     # setup the y-axis label.  Combine the biomarker and the units (if available)
-    yaxis_lab <- ifelse(is.null(ALB$AVALU), paste(yparam, yaxis_var, "Values"),
-                        ifelse(ALB[["AVALU"]] == "", paste(yparam, yaxis_var, "Values"),
+    yaxis_lab <- ifelse(is.null(ADLB$AVALU), paste(yparam, yaxis_var, "Values"),
+                        ifelse(ADLB[["AVALU"]] == "", paste(yparam, yaxis_var, "Values"),
                                paste0(yparam," (", yunit,") ", yaxis_var, " Values"))
     )
     

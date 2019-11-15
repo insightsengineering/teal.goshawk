@@ -93,7 +93,7 @@ This module displays a scatter plot. link to specification file \url{http://rstu
 # Example using ADaM structure analysis dataset.
 library(random.cdisc.data)
 
-original ARM value = dose value
+# original ARM value = dose value
 arm_mapping <- list("A: Drug X" = "150mg QD",
                     "B: Placebo" = "Placebo", 
                     "C: Combination" = "Combination")

@@ -25,9 +25,11 @@ Imports:
   dplyr, 
   ggplot2,
   methods,
+  rlang,
   stats,
   teal.devel (>= 0.2.2),
   tidyr,
+  utils,
   utils.nest (>= 0.2.0)
 Suggests: 
   knitr,
