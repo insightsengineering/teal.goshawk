@@ -9,9 +9,11 @@
 #' 
 #' @import DescTools
 #' @import dplyr
-#' @import goshawk
+#' @importFrom ggplot2 waiver
 #' @import methods
-#' @import teal
+#' @import shiny
+#' @rawNamespace import(stats, except = c(filter, lag))
+#' @import teal.devel
 #' @import tidyr
 #' @import utils.nest
 #' 
