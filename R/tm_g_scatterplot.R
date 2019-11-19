@@ -343,8 +343,38 @@ srv_g_scatterplot <- function(input, output, session, datasets, dataname,
     
     return(chunks_get_var("ANL"))
   })
-
-  plot <- reactive({
+  
+  # dynamic slider for axes
+  output$xaxis_zoom <- renderUI({
+    ANL <- get_data()
+    req(ANL, cancelOutput = TRUE)
+    xmin_scale <- min(ANL[[input$xaxis_var]], na.rm = TRUE)
+    xmax_scale <- max(ANL[[input$xaxis_var]], na.rm = TRUE)
+    
+    tagList({
+      optionalSliderInput(ns("xrange_scale"), 
+                          label = "X-Axis Range Zoom", 
+                          min = floor(xmin_scale), 
+                          max = ceiling(xmax_scale), 
+                          value = c(floor(xmin_scale), ceiling(xmax_scale)))
+    })
+  })
+  output$yaxis_zoom <- renderUI({
+    ANL <- get_data()
+    ymin_scale <- min(ANL[[input$yaxis_var]], na.rm = TRUE)
+    ymax_scale <- max(ANL[[input$yaxis_var]], na.rm = TRUE)
+    
+    tagList({
+      optionalSliderInput(ns("yrange_scale"), 
+                          label = "Y-Axis Range Zoom", 
+                          min = floor(ymin_scale), 
+                          max = ceiling(ymax_scale), 
+                          value = c(floor(ymin_scale), ceiling(ymax_scale)))
+    })    
+  })
+  
+  # plot 
+  output$scatterplot <- renderPlot({
     ANL <- get_data()
     isolate({
       param <- input$param
@@ -382,40 +412,6 @@ srv_g_scatterplot <- function(input, output, session, datasets, dataname,
     
     # evaluate the code chunk so that it is available in app environment as well
     chunks_safe_eval()
-  })
-  
-  # dynamic slider for axes
-  output$xaxis_zoom <- renderUI({
-    ANL <- get_data()
-    req(ANL, cancelOutput = TRUE)
-    xmin_scale <- min(ANL[[input$xaxis_var]], na.rm = TRUE)
-    xmax_scale <- max(ANL[[input$xaxis_var]], na.rm = TRUE)
-    
-    tagList({
-      optionalSliderInput(ns("xrange_scale"), 
-                          label = "X-Axis Range Zoom", 
-                          min = floor(xmin_scale), 
-                          max = ceiling(xmax_scale), 
-                          value = c(floor(xmin_scale), ceiling(xmax_scale)))
-    })
-  })
-  output$yaxis_zoom <- renderUI({
-    ANL <- get_data()
-    ymin_scale <- min(ANL[[input$yaxis_var]], na.rm = TRUE)
-    ymax_scale <- max(ANL[[input$yaxis_var]], na.rm = TRUE)
-    
-    tagList({
-      optionalSliderInput(ns("yrange_scale"), 
-                          label = "Y-Axis Range Zoom", 
-                          min = floor(ymin_scale), 
-                          max = ceiling(ymax_scale), 
-                          value = c(floor(ymin_scale), ceiling(ymax_scale)))
-    })    
-  })
-  
-  # plot 
-  output$scatterplot <- renderPlot({
-    plot()
   })
   
   # dynamic plot height and brushing
