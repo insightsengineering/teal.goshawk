@@ -214,8 +214,12 @@ ui_g_scatterplot <- function(id, ...) {
                    c("None" = "NONE", "Screening" = "BASE2", "Baseline" = "BASE")),
       conditionalPanel(
         condition = paste0("input[\'", ns("constraint_var"), "\'] != \'NONE\'"),
-        uiOutput(ns("constraint_range"))
-        ),
+        shinyWidgets::numericRangeInput(
+          ns("constraint_range"),
+          label = "Range",
+          value = c(-Inf, Inf),
+          separator = " : ")
+      ),
       tags$label("Plot Aesthetic Settings", class="text-primary", style="margin-top: 15px;"),
       uiOutput(ns("xaxis_zoom")),
       uiOutput(ns("yaxis_zoom")),
@@ -265,43 +269,36 @@ srv_g_scatterplot <- function(input, output, session, datasets, dataname,
   init_chunks()
   dataset_var <- paste0(dataname, "_FILTERED")
   
-  filtered_ANL <- eventReactive(c(input$constraint_var, input$param), {
+  # min/max data constraint value
+  observeEvent(c(input$constraint_var, input$param), {
     ANL <- datasets$get_data(dataname, filtered = TRUE, reactive = TRUE) %>%
       dplyr::filter_(sprintf("%s == '%s'", param_var, input$param))
     
-    constraint_min_range <- floor(min(ANL[[input$constraint_var]], na.rm = TRUE) * 1000) / 1000
-    constraint_max_range <- ceiling(max(ANL[[input$constraint_var]], na.rm = TRUE) * 1000) / 1000
-    
-    list(range = c(constraint_min_range, constraint_max_range),
-         ANL = ANL)
-  })
-  
-  # min/max data constraint value
-  output$constraint_range <- renderUI({
     constraint_var <- input$constraint_var
     if (constraint_var != "NONE") {
-      visitFreq <- unique(filtered_ANL()$ANL$AVISITCD)
+      visitFreq <- unique(ANL$AVISITCD)
       if ((constraint_var == "BASE2" & any(grepl("SCR", visitFreq))) ||  
           (constraint_var == "BASE" & any(grepl("BL", visitFreq)))) {
         
-        shinyWidgets::numericRangeInput(
-          inputId = ns("constraint_range"), 
-          label = sprintf("Range of '%s' [%s-%s]", constraint_var, filtered_ANL()$range[1], filtered_ANL()$range[2]), 
-          value = c(filtered_ANL()$range[1], filtered_ANL()$range[2]),
-          separator = " : "
-          )
+        constraint_min_range <- floor(min(ANL[[constraint_var]], na.rm = TRUE) * 1000) / 1000
+        constraint_max_range <- ceiling(max(ANL[[constraint_var]], na.rm = TRUE) * 1000) / 1000
+        
+        shinyWidgets::updateNumericRangeInput(
+          session = session,
+          inputId = "constraint_range", 
+          label = sprintf("Range of '%s' [%s-%s]", constraint_var, constraint_min_range, constraint_max_range), 
+          value = c(constraint_min_range, constraint_max_range))
         
       } else {
-        shinyWidgets::numericRangeInput(
-          inputId = ns("constraint_range"), 
+        shinyWidgets::updateNumericRangeInput(
+          session = session,
+          inputId = "constraint_range", 
           label = "Range", 
-          value = c(-Inf, Inf),
-          separator = " : "
-        )
+          value = c(-Inf, Inf))
       }
     }
   })
-
+  
   # filters
   get_data <- reactive({
     constraint_var <- input$constraint_var
@@ -332,8 +329,8 @@ srv_g_scatterplot <- function(input, output, session, datasets, dataname,
             ANL <- ANL %>%
               dplyr::filter(
                 (.(input$constraint_range[1]) <= .(as.name(constraint_var)) &&
-                 .(as.name(constraint_var)) <= .(input$constraint_range[2])) ||
-                is.na(.(as.name(constraint_var)))
+                   .(as.name(constraint_var)) <= .(input$constraint_range[2])) ||
+                  is.na(.(as.name(constraint_var)))
               )
           }))
         chunks_safe_eval()
@@ -445,7 +442,7 @@ srv_g_scatterplot <- function(input, output, session, datasets, dataname,
       NULL
     }
   })
-
+  
   observeEvent(input$show_rcode, {
     chunks_ids <- get_chunks_object()$.__enclos_env__$private$id
     show_rcode_modal(
