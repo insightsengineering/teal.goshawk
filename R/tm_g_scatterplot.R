@@ -212,7 +212,10 @@ ui_g_scatterplot <- function(id, ...) {
       radioButtons(ns("constraint_var"), 
                    "Data Constraint", 
                    c("None" = "NONE", "Screening" = "BASE2", "Baseline" = "BASE")),
-      uiOutput(ns("constraint_range"), style="display: inline-block; vertical-align:center"),
+      conditionalPanel(
+        condition = paste0("input[\'", ns("constraint_var"), "\'] != \'NONE\'"),
+        uiOutput(ns("constraint_range"))
+        ),
       tags$label("Plot Aesthetic Settings", class="text-primary", style="margin-top: 15px;"),
       uiOutput(ns("xaxis_zoom")),
       uiOutput(ns("yaxis_zoom")),
@@ -261,42 +264,48 @@ srv_g_scatterplot <- function(input, output, session, datasets, dataname,
   ns <- session$ns
   init_chunks()
   dataset_var <- paste0(dataname, "_FILTERED")
-  values <- reactiveValues(curr_constr = "NONE")
   
-  # min/max data constraint value an xlim, ylim
-  observeEvent(input$constraint_var, {
+  filtered_ANL <- eventReactive(c(input$constraint_var, input$param), {
     ANL <- datasets$get_data(dataname, filtered = TRUE, reactive = TRUE) %>%
       dplyr::filter_(sprintf("%s == '%s'", param_var, input$param))
     
+    constraint_min_range <- floor(min(ANL[[input$constraint_var]], na.rm = TRUE) * 1000) / 1000
+    constraint_max_range <- ceiling(max(ANL[[input$constraint_var]], na.rm = TRUE) * 1000) / 1000
+    
+    list(range = c(constraint_min_range, constraint_max_range),
+         ANL = ANL)
+  })
+  
+  # min/max data constraint value
+  output$constraint_range <- renderUI({
     constraint_var <- input$constraint_var
     if (constraint_var != "NONE") {
-      visitFreq <- unique(ANL$AVISITCD)
+      visitFreq <- unique(filtered_ANL()$ANL$AVISITCD)
       if ((constraint_var == "BASE2" & any(grepl("SCR", visitFreq))) ||  
           (constraint_var == "BASE" & any(grepl("BL", visitFreq)))) {
         
-        constraint_min_range <- floor(min(ANL[[constraint_var]], na.rm = TRUE) * 1000) / 1000
-        constraint_max_range <- ceiling(max(ANL[[constraint_var]], na.rm = TRUE) * 1000) / 1000
+        shinyWidgets::numericRangeInput(
+          inputId = ns("constraint_range"), 
+          label = sprintf("Range of '%s' [%s-%s]", constraint_var, filtered_ANL()$range[1], filtered_ANL()$range[2]), 
+          value = c(filtered_ANL()$range[1], filtered_ANL()$range[2]),
+          separator = " : "
+          )
         
-        output$constraint_range <- renderUI({
-          shinyWidgets::numericRangeInput(
-            ns("constraint_range"), 
-            sprintf("Range of '%s' [%s-%s]", constraint_var, constraint_min_range, constraint_max_range), 
-            c(constraint_min_range, constraint_max_range), 
-            width = NULL, separator = " to ")
-        })
+      } else {
+        shinyWidgets::numericRangeInput(
+          inputId = ns("constraint_range"), 
+          label = "Range", 
+          value = c(-Inf, Inf),
+          separator = " : "
+        )
       }
-      values$curr_constr <- constraint_var
-    } else {
-      output$constraint_range <- renderUI(NULL)
-      values$curr_constr <- constraint_var
     }
   })
-  
+
   # filters
   get_data <- reactive({
-    constraint_var <- isolate(input$constraint_var)
-    req((constraint_var == "NONE" || !is.null(input$constraint_range)) &&
-        constraint_var == values$curr_constr)
+    constraint_var <- input$constraint_var
+    req(constraint_var == "NONE" || !is.null(input$constraint_range))
     
     ANL_FILTERED <- datasets$get_data(dataname, filtered = TRUE, reactive = TRUE)
     chunks_reset(as.environment(setNames(list(ANL_FILTERED), dataset_var)))
@@ -316,6 +325,7 @@ srv_g_scatterplot <- function(input, output, session, datasets, dataname,
     if (constraint_var != "NONE") {
       if ((floor(min(ANL[[constraint_var]], na.rm = TRUE) * 1000) / 1000) < input$constraint_range[1] ||
           (ceiling(max(ANL[[constraint_var]], na.rm = TRUE) * 1000) / 1000) > input$constraint_range[2]) {
+        
         chunks_push(
           id = "filter_constraint",
           bquote({
