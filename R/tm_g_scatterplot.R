@@ -266,13 +266,11 @@ srv_g_scatterplot <- function(input, output, session, datasets, dataname,
                               param_var, trt_group, facet_var, color_manual, shape_manual) {
   
   ns <- session$ns
-  init_chunks()
   dataset_var <- paste0(dataname, "_FILTERED")
   
   # min/max data constraint value
-  observeEvent(c(input$constraint_var, input$param), {
-    ANL <- datasets$get_data(dataname, filtered = TRUE, reactive = TRUE) %>%
-      dplyr::filter_(sprintf("%s == '%s'", param_var, input$param))
+  observe({
+    ANL <- chunks_get_var("ANL", filter_biomarker())
     
     constraint_var <- input$constraint_var
     if (constraint_var != "NONE") {
@@ -299,31 +297,35 @@ srv_g_scatterplot <- function(input, output, session, datasets, dataname,
     }
   })
   
-  # filters
-  get_data <- reactive({
-    constraint_var <- input$constraint_var
-    req(constraint_var == "NONE" || !is.null(input$constraint_range))
-    
+  filter_biomarker <- reactive({
+    c <- chunks$new()
     ANL_FILTERED <- datasets$get_data(dataname, filtered = TRUE, reactive = TRUE)
-    chunks_reset(as.environment(setNames(list(ANL_FILTERED), dataset_var)))
+    c$reset(as.environment(setNames(list(ANL_FILTERED), dataset_var)))
     
     # filter biomarker
     param <- input$param
-    chunks_push(
+    c$push(
       id = "filter_biomarker",
       bquote({
         ANL <- .(as.name(dataset_var)) %>%
           dplyr::filter(.(as.name(param_var)) == .(param))
       }))
-    chunks_safe_eval()
     
-    # filter constraint
-    ANL <- chunks_get_var("ANL")
+    chunks_safe_eval(c)
+    return(c)
+  })
+  
+  filter_constraint <- reactive({
+    c <- filter_biomarker()$clone()
+    constraint_var <- input$constraint_var
+    req(constraint_var == "NONE" || !is.null(input$constraint_range))
+    
+    ANL <- chunks_get_var("ANL", c)
     if (constraint_var != "NONE") {
       if ((floor(min(ANL[[constraint_var]], na.rm = TRUE) * 1000) / 1000) < input$constraint_range[1] ||
           (ceiling(max(ANL[[constraint_var]], na.rm = TRUE) * 1000) / 1000) > input$constraint_range[2]) {
         
-        chunks_push(
+        c$push(
           id = "filter_constraint",
           bquote({
             ANL <- ANL %>%
@@ -333,23 +335,29 @@ srv_g_scatterplot <- function(input, output, session, datasets, dataname,
                   is.na(.(as.name(constraint_var)))
               )
           }))
-        chunks_safe_eval()
+        return(c)
       }
-    }
+    } 
+    return(filter_biomarker())
+  })
+  
+  # filters
+  add_attr <- reactive({
+    c <- filter_constraint()$clone()
     
     # Check data size and add attributes
-    ANL <- chunks_get_var("ANL")
+    ANL <- chunks_get_var("ANL", c)
     validate_has_data(ANL, 3)
     
     if (trt_group == "ARM") {
-      chunks_push(id = "change_attr", bquote(attributes(ANL$ARM)$label <- "Planned Arm"))
+      c$push(id = "change_attr", bquote(attributes(ANL$ARM)$label <- "Planned Arm"))
     } else {
-      chunks_push(id = "change_attr", bquote(attributes(ANL$ACTARM)$label <- "Actual Arm"))
+      c$push(id = "change_attr", bquote(attributes(ANL$ACTARM)$label <- "Actual Arm"))
     }
-    chunks_push_new_line()
-    
-    return(chunks_get_var("ANL"))
+    return(c)
   })
+  
+  get_data <- reactive(chunks_get_var("ANL", add_attr()))
   
   # dynamic slider for axes
   output$xaxis_zoom <- renderUI({
@@ -381,17 +389,17 @@ srv_g_scatterplot <- function(input, output, session, datasets, dataname,
   })
   
   # plot 
-  output$scatterplot <- renderPlot({
-    ANL <- get_data()
+  plot <- reactive({
+    c <- add_attr()$clone()
     isolate({
       param <- input$param
       xaxis <- input$xaxis_var
       yaxis <- input$yaxis_var
     })
-    chunks_push(
+    c$push(
       bquote({
         # re-establish treatment variable label
-        g_scatterplot(
+        p <- g_scatterplot(
           data = ANL,
           param_var = .(param_var),
           param = .(param),
@@ -415,10 +423,18 @@ srv_g_scatterplot <- function(input, output, session, datasets, dataname,
           hline = .(as.numeric(input$hline)),
           vline = .(as.numeric(input$vline))      
         )
+        
+        p
       }))
     
     # evaluate the code chunk so that it is available in app environment as well
-    chunks_safe_eval()
+    chunks_safe_eval(c)
+    
+    return(c)
+  })
+  
+  output$scatterplot <- renderPlot({
+    chunks_get_var("p", plot())
   })
   
   # dynamic plot height and brushing
@@ -444,12 +460,12 @@ srv_g_scatterplot <- function(input, output, session, datasets, dataname,
   })
   
   observeEvent(input$show_rcode, {
-    chunks_ids <- get_chunks_object()$.__enclos_env__$private$id
+
     show_rcode_modal(
-      title = "Scatter Plot", 
+      title = "Scatter Plot",
       rcode = get_rcode(
-        datasets = datasets, 
-        selected_chunk_ids = chunks_ids[c(grep("filter|attr", chunks_ids), length(chunks_ids))], 
+        chunks = plot(),
+        datasets = datasets,
         title = "Scatter Plot"
       )
     )
