@@ -25,7 +25,7 @@ tm_g_scatterplot(
   font_size = c(12, 8, 20),
   dot_size = c(1, 1, 12),
   reg_text_size = c(3, 3, 10),
-  pre_output = helpText("graph needs to be of a certain width to be displayed"),
+  pre_output = NULL,
   post_output = NULL
 )
 }
@@ -85,96 +85,6 @@ This teal module renders the UI and calls the function that creates a scatter pl
 }
 \details{
 This module displays a scatter plot. link to specification file \url{http://rstudio.com}
-}
-\examples{
-# Example using ADaM structure analysis dataset.
-library(random.cdisc.data)
-
-# original ARM value = dose value
-arm_mapping <- list("A: Drug X" = "150mg QD",
-                    "B: Placebo" = "Placebo", 
-                    "C: Combination" = "Combination")
-
-ADSL <- radsl(N = 20, seed = 1)
-ADLB <- radlb(ADSL, visit_format = "WEEK", n_assessments = 7L, seed = 2)
-ADLB <- ADLB \%>\%
-  mutate(AVISITCD = case_when(
-      AVISIT == "SCREENING" ~ "SCR",
-      AVISIT == "BASELINE" ~ "BL", 
-      grepl("WEEK", AVISIT) ~ gsub("^WEEK ([0-9]+) .+$" , "W \\\\1", AVISIT),
-      TRUE ~ as.character(NA)),
-    AVISITCDN = case_when(
-      AVISITCD == "SCR" ~ -2,
-      AVISITCD == "BL" ~ 0, 
-      grepl("W", AVISITCD) ~ as.numeric(gsub("[^0-9]*", "", AVISITCD)),
-      TRUE ~ as.numeric(NA)),
-    TRTORD = case_when(
-      ARMCD == "ARM C" ~ 1,
-      ARMCD == "ARM B" ~ 2,
-      ARMCD == "ARM A" ~ 3),
-    ARM = as.character(arm_mapping[match(ARM, names(arm_mapping))]),
-    ARM = factor(ARM) \%>\% reorder(TRTORD))
-
-
-app <- init(
-  data = cdisc_data(
-    cdisc_dataset("ADSL", ADSL),
-    cdisc_dataset("ADLB", ADLB),
-    code = {'
-      arm_mapping <- list("A: Drug X" = "150mg QD", 
-                          "B: Placebo" = "Placebo",
-                          "C: Combination" = "Combination")
-
-      ADSL <- radsl(N = 20, seed = 1)
-      ADLB <- radlb(ADSL, visit_format = "WEEK", n_assessments = 7L, seed = 2)
-      ADLB <- ADLB \%>\%
-        mutate(AVISITCD = case_when(
-            AVISIT == "SCREENING" ~ "SCR",
-            AVISIT == "BASELINE" ~ "BL", 
-            grepl("WEEK", AVISIT) ~ gsub("^WEEK ([0-9]+) .+$" , "W \\\\1", AVISIT),
-            TRUE ~ as.character(NA)),
-          AVISITCDN = case_when(
-            AVISITCD == "SCR" ~ -2,
-            AVISITCD == "BL" ~ 0, 
-            grepl("W", AVISITCD) ~ as.numeric(gsub("[^0-9]*", "", AVISITCD)),
-            TRUE ~ as.numeric(NA)),
-          TRTORD = case_when(
-            ARMCD == "ARM C" ~ 1,
-            ARMCD == "ARM B" ~ 2,
-            ARMCD == "ARM A" ~ 3),
-          ARM = as.character(arm_mapping[match(ARM, names(arm_mapping))]),
-          ARM = factor(ARM) \%>\% reorder(TRTORD))
-          '},
-    check = FALSE
-  ),
-  modules = root_modules(
-    tm_g_scatterplot(
-       label = "Scatter Plot",
-       dataname = "ADLB",
-       param_var = "PARAMCD",
-       param = choices_selected(c("ALT", "CRP", "IGA"), "ALT"),
-       xaxis_var = choices_selected(c("AVAL", "BASE", "CHG", "PCHG", "AVAL2"), "BASE"),
-       yaxis_var = choices_selected(c("AVAL", "BASE", "CHG", "PCHG", "AVAL2"), "AVAL"),
-       trt_group = "ARM",
-       color_manual = c("150mg QD" = "#000000", 
-                        "Placebo" = "#3498DB",
-                        "Combination" = "#E74C3C"),
-       shape_manual = c("N"  = 1, "Y"  = 2, "NA" = 0),
-       plot_height = c(500, 200, 2000),
-       facet_ncol = 2,
-       facet = FALSE,
-       facet_var = "ARM",
-       reg_line = FALSE,
-       font_size = c(12, 8, 20),
-       dot_size = c(1, 1, 12),
-       reg_text_size = c(3, 3, 10)
-   )
-  )
-)
-
-\dontrun{
-shinyApp(app$ui, app$server)
-}
 }
 \author{
 Nick Paszty (npaszty) paszty.nicholas@gene.com
