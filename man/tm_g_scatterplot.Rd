@@ -25,7 +25,7 @@ tm_g_scatterplot(
   font_size = c(12, 8, 20),
   dot_size = c(1, 1, 12),
   reg_text_size = c(3, 3, 10),
-  pre_output = NULL,
+  pre_output = helpText("graph needs to be of a certain width to be displayed"),
   post_output = NULL
 )
 }
@@ -87,9 +87,6 @@ This teal module renders the UI and calls the function that creates a scatter pl
 This module displays a scatter plot. link to specification file \url{http://rstudio.com}
 }
 \examples{
-
-\dontrun{
-
 # Example using ADaM structure analysis dataset.
 library(random.cdisc.data)
 
@@ -100,11 +97,11 @@ arm_mapping <- list("A: Drug X" = "150mg QD",
 
 ADSL <- radsl(N = 20, seed = 1)
 ADLB <- radlb(ADSL, visit_format = "WEEK", n_assessments = 7L, seed = 2)
-ADLB <- ADLB %>%
+ADLB <- ADLB \%>\%
   mutate(AVISITCD = case_when(
       AVISIT == "SCREENING" ~ "SCR",
       AVISIT == "BASELINE" ~ "BL", 
-      grepl("WEEK", AVISIT) ~ gsub("^WEEK ([0-9]+) .+$" , "W \\1", AVISIT),
+      grepl("WEEK", AVISIT) ~ gsub("^WEEK ([0-9]+) .+$" , "W \\\\1", AVISIT),
       TRUE ~ as.character(NA)),
     AVISITCDN = case_when(
       AVISITCD == "SCR" ~ -2,
@@ -116,10 +113,10 @@ ADLB <- ADLB %>%
       ARMCD == "ARM B" ~ 2,
       ARMCD == "ARM A" ~ 3),
     ARM = as.character(arm_mapping[match(ARM, names(arm_mapping))]),
-    ARM = factor(ARM) %>% reorder(TRTORD))
+    ARM = factor(ARM) \%>\% reorder(TRTORD))
 
 
-x <- teal::init(
+app <- init(
   data = cdisc_data(
     cdisc_dataset("ADSL", ADSL),
     cdisc_dataset("ADLB", ADLB),
@@ -130,11 +127,11 @@ x <- teal::init(
 
       ADSL <- radsl(N = 20, seed = 1)
       ADLB <- radlb(ADSL, visit_format = "WEEK", n_assessments = 7L, seed = 2)
-      ADLB <- ADLB %>%
+      ADLB <- ADLB \%>\%
         mutate(AVISITCD = case_when(
             AVISIT == "SCREENING" ~ "SCR",
             AVISIT == "BASELINE" ~ "BL", 
-            grepl("WEEK", AVISIT) ~ gsub("^WEEK ([0-9]+) .+$" , "W \\1", AVISIT),
+            grepl("WEEK", AVISIT) ~ gsub("^WEEK ([0-9]+) .+$" , "W \\\\1", AVISIT),
             TRUE ~ as.character(NA)),
           AVISITCDN = case_when(
             AVISITCD == "SCR" ~ -2,
@@ -146,7 +143,7 @@ x <- teal::init(
             ARMCD == "ARM B" ~ 2,
             ARMCD == "ARM A" ~ 3),
           ARM = as.character(arm_mapping[match(ARM, names(arm_mapping))]),
-          ARM = factor(ARM) %>% reorder(TRTORD))
+          ARM = factor(ARM) \%>\% reorder(TRTORD))
           '},
     check = FALSE
   ),
@@ -175,7 +172,8 @@ x <- teal::init(
   )
 )
 
-shinyApp(x$ui, x$server)
+\dontrun{
+shinyApp(app$ui, app$server)
 }
 }
 \author{
