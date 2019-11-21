@@ -193,7 +193,8 @@ ui_g_scatterplot <- function(id, ...) {
       )
     ),
     encoding =  div(
-      tags$label(a$dataname, "Data Settings", class="text-primary"),
+      tags$label(a$dataname, "Data Settings", class = "text-primary"),
+      actionButton(ns("browser"), "browser"), #TODO: to remove
       optionalSelectInput(ns("param"), 
                           "Select a Biomarker",
                           a$param$choices,
@@ -212,13 +213,20 @@ ui_g_scatterplot <- function(id, ...) {
       radioButtons(ns("constraint_var"), 
                    "Data Constraint", 
                    c("None" = "NONE", "Screening" = "BASE2", "Baseline" = "BASE")),
-      conditionalPanel(
-        condition = paste0("input[\'", ns("constraint_var"), "\'] != \'NONE\'"),
-        uiOutput(ns("constraint_range"))
-        ),
-      tags$label("Plot Aesthetic Settings", class="text-primary", style="margin-top: 15px;"),
-      uiOutput(ns("xaxis_zoom")),
-      uiOutput(ns("yaxis_zoom")),
+      shinyjs::disabled(shinyWidgets::numericRangeInput(inputId = ns("constraint_range"), label = "Range", value = c(-Inf, Inf))),
+      tags$label("Plot Aesthetic Settings", class = "text-primary", style = "margin-top: 15px;"),
+      sliderInput(
+        ns("xrange_scale"), 
+        label = "X-Axis Range Zoom", 
+        min = 0, 
+        max = 1, 
+        value = c(0, 1)),
+      sliderInput(
+        ns("yrange_scale"), 
+        label = "Y-Axis Range Zoom", 
+        min = 0, 
+        max = 1, 
+        value = c(0, 1)),
       numericInput(ns("facet_ncol"), "Number of Plots Per Row:", a$facet_ncol, min = 1),
       checkboxInput(ns("facet"), "Treatment Facetting", a$facet),
       checkboxInput(ns("reg_line"), "Regression Line", a$reg_line),
@@ -262,78 +270,96 @@ srv_g_scatterplot <- function(input, output, session, datasets, dataname,
                               param_var, trt_group, facet_var, color_manual, shape_manual) {
   
   ns <- session$ns
+  shinyjs::useShinyjs()
   init_chunks()
   dataset_var <- paste0(dataname, "_FILTERED")
   
-  filtered_ANL <- eventReactive(c(input$constraint_var, input$param), {
-    ANL <- datasets$get_data(dataname, filtered = TRUE, reactive = TRUE) %>%
-      dplyr::filter_(sprintf("%s == '%s'", param_var, input$param))
-    
-    constraint_min_range <- floor(min(ANL[[input$constraint_var]], na.rm = TRUE) * 1000) / 1000
-    constraint_max_range <- ceiling(max(ANL[[input$constraint_var]], na.rm = TRUE) * 1000) / 1000
-    
-    list(range = c(constraint_min_range, constraint_max_range),
-         ANL = ANL)
+  #TODO: to remove
+  observeEvent(input$browser, {
+    browser()
   })
   
   # min/max data constraint value
-  output$constraint_range <- renderUI({
+  observe({
+    print("update min max") #TODO: to remove
+    
     constraint_var <- input$constraint_var
+    param <- input$param
+    
+    ANL <- datasets$get_data(dataname, filtered = TRUE, reactive = TRUE) %>%
+      dplyr::filter_(sprintf("%s == '%s'", param_var, param))
+    
+    constraint_min_range <- floor(min(ANL[[constraint_var]], na.rm = TRUE) * 1000) / 1000
+    constraint_max_range <- ceiling(max(ANL[[constraint_var]], na.rm = TRUE) * 1000) / 1000
+    
     if (constraint_var != "NONE") {
-      visitFreq <- unique(filtered_ANL()$ANL$AVISITCD)
+      visitFreq <- unique(ANL$AVISITCD)
+      
       if ((constraint_var == "BASE2" & any(grepl("SCR", visitFreq))) ||  
           (constraint_var == "BASE" & any(grepl("BL", visitFreq)))) {
+        shinyjs::enable("constraint_range")
         
-        shinyWidgets::numericRangeInput(
-          inputId = ns("constraint_range"), 
-          label = sprintf("Range of '%s' [%s-%s]", constraint_var, filtered_ANL()$range[1], filtered_ANL()$range[2]), 
-          value = c(filtered_ANL()$range[1], filtered_ANL()$range[2]),
-          separator = " : "
-          )
+        label <- sprintf("Range of '%s' [%s-%s]", constraint_var, constraint_min_range, constraint_max_range)
+        value <- c(constraint_min_range, constraint_max_range)
         
-      } else {
-        shinyWidgets::numericRangeInput(
-          inputId = ns("constraint_range"), 
-          label = "Range", 
-          value = c(-Inf, Inf),
-          separator = " : "
+        shinyWidgets::updateNumericRangeInput(
+          session = session,
+          inputId = "constraint_range",
+          label = label, 
+          value = value
         )
+        
+        return()
       }
     }
-  })
-
-  # filters
-  get_data <- reactive({
-    constraint_var <- input$constraint_var
-    req(constraint_var == "NONE" || !is.null(input$constraint_range))
     
-    ANL_FILTERED <- datasets$get_data(dataname, filtered = TRUE, reactive = TRUE)
+    shinyjs::disable("constraint_range")
+    
+    shinyWidgets::updateNumericRangeInput(
+      session = session,
+      inputId = "constraint_range",
+      label = "Range", 
+      value = c(-Inf, Inf)
+    )
+  })
+  
+  # filters
+  anl_data <- eventReactive(c(input$constraint_range, input$param), {
+    print("observe anl_data") #TODO: to remove
+    
+    constraint_var <- isolate(input$constraint_var) #it is assumed that constraint_var should first trigger constraint_range
+    constraint_range <- input$constraint_range
+    param <- input$param
+    
+    req(constraint_var == "NONE" || !is.null(constraint_range))
+    
+    ANL_FILTERED <- datasets$get_data(dataname, filtered = TRUE, reactive = FALSE) # reactive dataset should first update range and then this observe
     chunks_reset(as.environment(setNames(list(ANL_FILTERED), dataset_var)))
     
     # filter biomarker
-    param <- input$param
     chunks_push(
       id = "filter_biomarker",
       bquote({
         ANL <- .(as.name(dataset_var)) %>%
           dplyr::filter(.(as.name(param_var)) == .(param))
-      }))
+      })
+    )
     chunks_safe_eval()
     
     # filter constraint
     ANL <- chunks_get_var("ANL")
     if (constraint_var != "NONE") {
-      if ((floor(min(ANL[[constraint_var]], na.rm = TRUE) * 1000) / 1000) < input$constraint_range[1] ||
-          (ceiling(max(ANL[[constraint_var]], na.rm = TRUE) * 1000) / 1000) > input$constraint_range[2]) {
+      if ((floor(min(ANL[[constraint_var]], na.rm = TRUE) * 1000) / 1000) < constraint_range[1] ||
+          (ceiling(max(ANL[[constraint_var]], na.rm = TRUE) * 1000) / 1000) > constraint_range[2]) {
         
         chunks_push(
           id = "filter_constraint",
           bquote({
             ANL <- ANL %>%
               dplyr::filter(
-                (.(input$constraint_range[1]) <= .(as.name(constraint_var)) &&
-                 .(as.name(constraint_var)) <= .(input$constraint_range[2])) ||
-                is.na(.(as.name(constraint_var)))
+                (.(constraint_range[1]) <= .(as.name(constraint_var)) &&
+                   .(as.name(constraint_var)) <= .(constraint_range[2])) ||
+                  is.na(.(as.name(constraint_var)))
               )
           }))
         chunks_safe_eval()
@@ -353,45 +379,54 @@ srv_g_scatterplot <- function(input, output, session, datasets, dataname,
     
     return(chunks_get_var("ANL"))
   })
-  
+
   # dynamic slider for axes
-  output$xaxis_zoom <- renderUI({
-    ANL <- get_data()
-    req(ANL, cancelOutput = TRUE)
-    xmin_scale <- min(ANL[[input$xaxis_var]], na.rm = TRUE)
-    xmax_scale <- max(ANL[[input$xaxis_var]], na.rm = TRUE)
+  observe({
+    print("observe update xrange") #TODO: to remove
     
-    tagList({
-      optionalSliderInput(ns("xrange_scale"), 
-                          label = "X-Axis Range Zoom", 
-                          min = floor(xmin_scale), 
-                          max = ceiling(xmax_scale), 
-                          value = c(floor(xmin_scale), ceiling(xmax_scale)))
-    })
+    ANL <- anl_data()
+    
+    xmin_scale <- floor(min(ANL[[input$xaxis_var]], na.rm = TRUE))
+    xmax_scale <- ceiling(max(ANL[[input$xaxis_var]], na.rm = TRUE))
+    
+    updateSliderInput(
+      session = session,
+      inputId = "xrange_scale",
+      min = xmin_scale, 
+      max = xmax_scale, 
+      value = c(xmin_scale, xmax_scale)
+    )
   })
-  output$yaxis_zoom <- renderUI({
-    ANL <- get_data()
-    ymin_scale <- min(ANL[[input$yaxis_var]], na.rm = TRUE)
-    ymax_scale <- max(ANL[[input$yaxis_var]], na.rm = TRUE)
+  observe({
+    print("observe update yrange") #TODO: to remove
     
-    tagList({
-      optionalSliderInput(ns("yrange_scale"), 
-                          label = "Y-Axis Range Zoom", 
-                          min = floor(ymin_scale), 
-                          max = ceiling(ymax_scale), 
-                          value = c(floor(ymin_scale), ceiling(ymax_scale)))
-    })    
+    ANL <- anl_data()
+    ymin_scale <- floor(min(ANL[[input$yaxis_var]], na.rm = TRUE))
+    ymax_scale <- ceiling(max(ANL[[input$yaxis_var]], na.rm = TRUE))
+    
+    updateSliderInput(
+      session = session,
+      inputId = "yrange_scale",
+      min = ymin_scale, 
+      max = ymax_scale, 
+      value = c(ymin_scale, ymax_scale)
+    )
   })
   
   # plot 
   output$scatterplot <- renderPlot({
-    ANL <- get_data()
+    print("renderPlot") #TODO: to remove
+    
+    ANL <- anl_data()
+    
     isolate({
       param <- input$param
       xaxis <- input$xaxis_var
       yaxis <- input$yaxis_var
     })
+    
     chunks_push(
+      id = "scatterplot",
       bquote({
         # re-establish treatment variable label
         g_scatterplot(
@@ -436,7 +471,7 @@ srv_g_scatterplot <- function(input, output, session, datasets, dataname,
   
   # highlight plot area
   output$brush_data <- renderTable({
-    ANL <- get_data()
+    ANL <- anl_data()
     if (!is.null(ANL) && nrow(ANL) > 0 ){
       brushedPoints(select(ANL, "USUBJID", trt_group, "AVISITCD", "PARAMCD", 
                            input$xaxis_var, input$yaxis_var, "LOQFL"), 
