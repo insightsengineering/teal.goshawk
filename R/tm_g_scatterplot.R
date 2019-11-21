@@ -123,9 +123,9 @@
 #'   )
 #' )
 #'  
-#'  \dontrun{
-#'  shinyApp(app$ui, app$server)
-#'}
+#' \dontrun{
+#' shinyApp(app$ui, app$server)
+#' }
 tm_g_scatterplot <- function(label,
                              dataname,
                              param_var,
@@ -479,14 +479,7 @@ srv_g_scatterplot <- function(input,
     p <- chunks_safe_eval(private_chunks)
     
     # promote chunks to be visible in the sessionData by other modules
-    #TODO: to be implemented in teal.devel - "chunks" arg is missing
-    init_chunks2 <- function(chunks = chunks$new(), session = teal.devel:::get_session_object()) {
-      session$userData[[session$ns(character(0))]]$chunks <- "A"
-      suppressWarnings(rm(envir = session$userData, list = session$ns(character(0))))
-      session$userData[[session$ns(character(0))]]$chunks <- chunks
-      return(invisible(NULL))
-    }
-    init_chunks2(private_chunks)
+    init_chunks(private_chunks)
     
     p
   })
