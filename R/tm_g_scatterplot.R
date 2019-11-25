@@ -318,9 +318,12 @@ srv_g_scatterplot <- function(input,
       
       if ((constraint_var() == "BASE2" & any(grepl("SCR", visitFreq))) ||  
           (constraint_var() == "BASE" & any(grepl("BL", visitFreq)))) {
-        constraint_range_min <- floor(min(ANL[[constraint_var()]], na.rm = TRUE) * 1000) / 1000
+        
+        anl_constraint_var <- ANL[[constraint_var()]]
+        
+        constraint_range_min <- floor(min(anl_constraint_var, na.rm = TRUE) * 1000) / 1000
         label_min <- sprintf("Min (%s)", constraint_range_min)
-        constraint_range_max <- ceiling(max(ANL[[constraint_var()]], na.rm = TRUE) * 1000) / 1000
+        constraint_range_max <- ceiling(max(anl_constraint_var, na.rm = TRUE) * 1000) / 1000
         label_max <- sprintf("Max (%s)", constraint_range_max)
         
         updateSliderInput(
@@ -369,15 +372,16 @@ srv_g_scatterplot <- function(input,
   })
   
   # code chunk for ANL
-  anl_data_chunks <- eventReactive(c(input$constraint_range_min, input$constraint_range_max, input$param), {
+  anl_data_chunks <- reactive({
     # it is assumed that constraint_var is triggering constraint_range which then trigger this clause
     # that's why it's not listed in triggers
     
     constraint_range_min <- input$constraint_range_min
     constraint_range_max <- input$constraint_range_max
     param <- input$param
+    constraint_var <- isolate(constraint_var())
     
-    ANL_FILTERED <- datasets$get_data(dataname, filtered = TRUE, reactive = FALSE)
+    ANL_FILTERED <- datasets$get_data(dataname, filtered = TRUE, reactive = TRUE)
     
     private_chunks <- chunks$new()
     chunks_reset(as.environment(setNames(list(ANL_FILTERED), dataset_var)), private_chunks)
@@ -396,16 +400,16 @@ srv_g_scatterplot <- function(input,
     # filter constraint
     ANL <- chunks_get_var("ANL", private_chunks)
     if (constraint_var() != "NONE") {
-      if ((floor(min(ANL[[constraint_var()]], na.rm = TRUE) * 1000) / 1000) < constraint_range_min ||
-          (ceiling(max(ANL[[constraint_var()]], na.rm = TRUE) * 1000) / 1000) > constraint_range_max) {
+      if ((floor(min(ANL[[constraint_var]], na.rm = TRUE) * 1000) / 1000) < constraint_range_min ||
+          (ceiling(max(ANL[[constraint_var]], na.rm = TRUE) * 1000) / 1000) > constraint_range_max) {
         chunks_push(
           id = "filter_constraint",
           expression = bquote({
             ANL <- ANL %>%
               dplyr::filter(
-                (.(constraint_range_min) <= .(as.name(constraint_var())) &
-                   .(as.name(constraint_var())) <= .(constraint_range_max)) |
-                  is.na(.(as.name(constraint_var())))
+                (.(constraint_range_min) <= .(as.name(constraint_var)) &
+                   .(as.name(constraint_var)) <= .(constraint_range_max)) |
+                  is.na(.(as.name(constraint_var)))
               )
           }),
           chunks = private_chunks
