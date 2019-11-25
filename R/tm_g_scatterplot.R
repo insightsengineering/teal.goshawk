@@ -211,14 +211,28 @@ ui_g_scatterplot <- function(id, ...) {
                    "Data Constraint", 
                    c("None", "Screening", "Baseline")),
       shinyjs::hidden(
-        sliderInput(
-          ns("constraint_range"), 
-          label = "Range", 
-          # some sample float numbers to properly automatically set ticks
-          min = -12.34, 
-          max = 12.34, 
-          value = c(-12.34, 12.34),
-          ticks = TRUE
+        div(
+          id = ns("constraint_range"),
+          div(
+            style = "display: inline-block; vertical-align:center",
+            numericInput(
+              ns("constraint_range_min"),
+              label = "Min",
+              value = 0,
+              min = 0,
+              max = 0
+            )
+          ),
+          div(
+            style = "display: inline-block; vertical-align:center",
+            numericInput(
+              ns("constraint_range_max"),
+              label = "Min",
+              value = 0,
+              min = 0,
+              max = 0
+            )
+          )
         )
       ),
       panel_group(
@@ -304,18 +318,27 @@ srv_g_scatterplot <- function(input,
       
       if ((constraint_var() == "BASE2" & any(grepl("SCR", visitFreq))) ||  
           (constraint_var() == "BASE" & any(grepl("BL", visitFreq)))) {
-        constraint_min_range <- floor(min(ANL[[constraint_var()]], na.rm = TRUE) * 1000) / 1000
-        constraint_max_range <- ceiling(max(ANL[[constraint_var()]], na.rm = TRUE) * 1000) / 1000
-        label <- sprintf("Range of '%s' [%s-%s]", input$constraint_var_label, constraint_min_range, constraint_max_range)
-        range <- c(constraint_min_range, constraint_max_range)
+        constraint_range_min <- floor(min(ANL[[constraint_var()]], na.rm = TRUE) * 1000) / 1000
+        label_min <- sprintf("Min (%s)", constraint_range_min)
+        constraint_range_max <- ceiling(max(ANL[[constraint_var()]], na.rm = TRUE) * 1000) / 1000
+        label_max <- sprintf("Max (%s)", constraint_range_max)
         
         updateSliderInput(
           session = session,
-          inputId = "constraint_range",
-          label = label, 
-          min = constraint_min_range,
-          max = constraint_max_range,
-          value = range
+          inputId = "constraint_range_min",
+          label = label_min,
+          min = constraint_range_min,
+          max = constraint_range_max,
+          value = constraint_range_min
+        )
+        
+        updateSliderInput(
+          session = session,
+          inputId = "constraint_range_max",
+          label = label_max,
+          min = constraint_range_min,
+          max = constraint_range_max,
+          value = constraint_range_max
         )
         
         shinyjs::show("constraint_range")
@@ -328,23 +351,31 @@ srv_g_scatterplot <- function(input,
     
     updateSliderInput(
       session = session,
-      inputId = "constraint_range",
-      label = "Range", 
-      min = -12.34, 
-      max = 12.34, 
-      value = c(-12.34, 12.34)
+      inputId = "constraint_range_min",
+      label = "Min",
+      min = 0,
+      max = 0,
+      value = 0
+    )
+    
+    updateSliderInput(
+      session = session,
+      inputId = "constraint_range_max",
+      label = "Max",
+      min = 0,
+      max = 0,
+      value = 0
     )
   })
   
   # code chunk for ANL
-  anl_data_chunks <- eventReactive(c(input$constraint_range, input$param), {
+  anl_data_chunks <- eventReactive(c(input$constraint_range_min, input$constraint_range_max, input$param), {
     # it is assumed that constraint_var is triggering constraint_range which then trigger this clause
     # that's why it's not listed in triggers
     
-    constraint_range <- input$constraint_range
+    constraint_range_min <- input$constraint_range_min
+    constraint_range_max <- input$constraint_range_max
     param <- input$param
-    
-    req(constraint_var() == "NONE" || !is.null(constraint_range))
     
     ANL_FILTERED <- datasets$get_data(dataname, filtered = TRUE, reactive = FALSE)
     
@@ -365,15 +396,15 @@ srv_g_scatterplot <- function(input,
     # filter constraint
     ANL <- chunks_get_var("ANL", private_chunks)
     if (constraint_var() != "NONE") {
-      if ((floor(min(ANL[[constraint_var()]], na.rm = TRUE) * 1000) / 1000) < constraint_range[1] ||
-          (ceiling(max(ANL[[constraint_var()]], na.rm = TRUE) * 1000) / 1000) > constraint_range[2]) {
+      if ((floor(min(ANL[[constraint_var()]], na.rm = TRUE) * 1000) / 1000) < constraint_range_min ||
+          (ceiling(max(ANL[[constraint_var()]], na.rm = TRUE) * 1000) / 1000) > constraint_range_max) {
         chunks_push(
           id = "filter_constraint",
           expression = bquote({
             ANL <- ANL %>%
               dplyr::filter(
-                (.(constraint_range[1]) <= .(as.name(constraint_var())) &
-                   .(as.name(constraint_var())) <= .(constraint_range[2])) |
+                (.(constraint_range_min) <= .(as.name(constraint_var())) &
+                   .(as.name(constraint_var())) <= .(constraint_range_max)) |
                   is.na(.(as.name(constraint_var())))
               )
           }),
