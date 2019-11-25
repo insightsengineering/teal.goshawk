@@ -35,6 +35,7 @@ Suggests:
   knitr,
   random.cdisc.data (>= 0.3.0),
   rmarkdown,
+  stringr,
   tern (>= 0.6.3),
   test.nest (>= 0.2.0),
   testthat (>= 2.1.0)
