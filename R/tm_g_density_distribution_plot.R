@@ -51,7 +51,7 @@
 #'   mutate(AVISITCD = case_when(
 #'     AVISIT == "SCREENING" ~ "SCR",
 #'     AVISIT == "BASELINE" ~ "BL",
-#'     grepl("WEEK", AVISIT) ~ stringr::str_extract(AVISIT, "(?<=(WEEK ))[0-9]+"),
+#'     grepl("WEEK", AVISIT) ~ paste("W", stringr::str_extract(AVISIT, "(?<=(WEEK ))[0-9]+")),
 #'     TRUE ~ as.character(NA)),
 #'     AVISITCDN = case_when(
 #'       AVISITCD == "SCR" ~ -2,
@@ -81,7 +81,7 @@
 #'         mutate(AVISITCD = case_when(
 #'             AVISIT == "SCREENING" ~ "SCR",
 #'             AVISIT == "BASELINE" ~ "BL",
-#'             grepl("WEEK", AVISIT) ~ stringr::str_extract(AVISIT, "(?<=(WEEK ))[0-9]+"),
+#'             grepl("WEEK", AVISIT) ~ paste("W", stringr::str_extract(AVISIT, "(?<=(WEEK ))[0-9]+")),
 #'             TRUE ~ as.character(NA)),
 #'           AVISITCDN = case_when(
 #'             AVISITCD == "SCR" ~ -2,

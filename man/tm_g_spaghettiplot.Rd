@@ -117,7 +117,7 @@ ADLB <- ADLB %>%
   mutate(AVISITCD = case_when(
     AVISIT == "SCREENING" ~ "SCR",
     AVISIT == "BASELINE" ~ "BL",
-    grepl("WEEK", AVISIT) ~ gsub("^WEEK ([0-9]+) .+$" , "W \\1", AVISIT),
+    grepl("WEEK", AVISIT) ~ paste("W", stringr::str_extract(AVISIT, "(?<=(WEEK ))[0-9]+")),
     TRUE ~ as.character(NA)),
     AVISITCDN = case_when(
       AVISITCD == "SCR" ~ -2,
@@ -147,7 +147,7 @@ x <- teal::init(
         mutate(AVISITCD = case_when(
             AVISIT == "SCREENING" ~ "SCR",
             AVISIT == "BASELINE" ~ "BL",
-            grepl("WEEK", AVISIT) ~ gsub("^WEEK ([0-9]+) .+$" , "W \\1", AVISIT),
+            grepl("WEEK", AVISIT) ~ paste("W", stringr::str_extract(AVISIT, "(?<=(WEEK ))[0-9]+")),
             TRUE ~ as.character(NA)),
           AVISITCDN = case_when(
             AVISITCD == "SCR" ~ -2,
