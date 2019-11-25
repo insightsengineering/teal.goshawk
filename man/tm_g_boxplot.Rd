@@ -4,32 +4,16 @@
 \alias{tm_g_boxplot}
 \title{Box Plot}
 \usage{
-tm_g_boxplot(
-  label,
-  dataname,
-  param_var,
-  param_choices = param,
-  param,
-  yaxis_var = "AVAL",
-  yaxis_var_choices = c("AVAL", "CHG"),
-  xaxis_var = "AVISITCD",
-  xaxis_var_choices = NULL,
-  facet_var = "ARM",
-  facet_var_choices = NULL,
-  filter_vars = c("BASE2", "BASE"),
-  filter_labs = c("Screening", "Baseline"),
-  trt_group = "ARM",
-  color_manual = NULL,
-  shape_manual = NULL,
-  hline = NULL,
-  facet_ncol = NULL,
-  rotate_xlab = FALSE,
-  pre_output = NULL,
-  post_output = NULL,
-  armlabel = NULL,
-  plot_height = c(600, 200, 2000),
-  code_data_processing = NULL
-)
+tm_g_boxplot(label, dataname, param_var, param_choices = param, param,
+  yaxis_var = "AVAL", yaxis_var_choices = c("AVAL", "CHG"),
+  xaxis_var = "AVISITCD", xaxis_var_choices = NULL,
+  facet_var = "ARM", facet_var_choices = NULL,
+  filter_vars = c("BASE2", "BASE"), filter_labs = c("Screening",
+  "Baseline"), trt_group = "ARM", color_manual = NULL,
+  shape_manual = NULL, hline = NULL, facet_ncol = NULL,
+  rotate_xlab = FALSE, pre_output = NULL, post_output = NULL,
+  armlabel = NULL, plot_height = c(600, 200, 2000),
+  code_data_processing = NULL)
 }
 \arguments{
 \item{label}{menu item label of the module in the teal app.}
@@ -110,7 +94,7 @@ arm_mapping <- list("A: Drug X" = "150mg QD",
 
 ADSL <- radsl(N = 20, seed = 1)
 ADLB <- radlb(ADSL, visit_format = "WEEK", n_assessments = 7L, seed = 2)
-ADLB <- ADLB %>%
+ADLB <- ADLB \%>\%
   mutate(AVISITCD = case_when(
     AVISIT == "SCREENING" ~ "SCR",
     AVISIT == "BASELINE" ~ "BL",
@@ -126,7 +110,7 @@ ADLB <- ADLB %>%
       ARMCD == "ARM B" ~ 2,
       ARMCD == "ARM A" ~ 3),
     ARM = as.character(arm_mapping[match(ARM, names(arm_mapping))]),
-    ARM = factor(ARM) %>% reorder(TRTORD))
+    ARM = factor(ARM) \%>\% reorder(TRTORD))
 
 
 x <- teal::init(
@@ -140,7 +124,7 @@ x <- teal::init(
 
       ADSL <- radsl(N = 20, seed = 1)
       ADLB <- radlb(ADSL, visit_format = "WEEK", n_assessments = 7L, seed = 2)
-      ADLB <- ADLB %>%
+      ADLB <- ADLB \%>\%
         mutate(AVISITCD = case_when(
             AVISIT == "SCREENING" ~ "SCR",
             AVISIT == "BASELINE" ~ "BL",
@@ -156,7 +140,7 @@ x <- teal::init(
             ARMCD == "ARM B" ~ 2,
             ARMCD == "ARM A" ~ 3),
           ARM = as.character(arm_mapping[match(ARM, names(arm_mapping))]),
-          ARM = factor(ARM) %>% reorder(TRTORD))
+          ARM = factor(ARM) \%>\% reorder(TRTORD))
           '},
     check = FALSE
   ),

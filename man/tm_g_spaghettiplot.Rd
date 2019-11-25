@@ -4,34 +4,14 @@
 \alias{tm_g_spaghettiplot}
 \title{Spaghetti Plot}
 \usage{
-tm_g_spaghettiplot(
-  label,
-  dataname,
-  param_var,
-  param_choices = param,
-  param,
-  param_var_label = "PARAM",
-  idvar,
-  xvar,
-  yvar,
-  xvar_choices = xvar,
-  yvar_choices = yvar,
-  xvar_level = NULL,
-  filter_var = yvar,
-  filter_var_choices = filter_var,
-  trt_group,
-  trt_group_level = NULL,
-  group_stats = "NONE",
-  hline = NULL,
-  man_color = NULL,
-  color_comb = NULL,
-  xtick = waiver(),
-  xlabel = xtick,
-  rotate_xlab = FALSE,
-  facet_ncol = 2,
-  plot_height = c(600, 200, 2000),
-  font_size = c(12, 8, 20)
-)
+tm_g_spaghettiplot(label, dataname, param_var, param_choices = param,
+  param, param_var_label = "PARAM", idvar, xvar, yvar,
+  xvar_choices = xvar, yvar_choices = yvar, xvar_level = NULL,
+  filter_var = yvar, filter_var_choices = filter_var, trt_group,
+  trt_group_level = NULL, group_stats = "NONE", hline = NULL,
+  man_color = NULL, color_comb = NULL, xtick = waiver(),
+  xlabel = xtick, rotate_xlab = FALSE, facet_ncol = 2,
+  plot_height = c(600, 200, 2000), font_size = c(12, 8, 20))
 }
 \arguments{
 \item{label}{menu item label of the module in the teal app.}
@@ -113,7 +93,7 @@ arm_mapping <- list("A: Drug X" = "150mg QD",
 
 ADSL <- radsl(N = 20, seed = 1)
 ADLB <- radlb(ADSL, visit_format = "WEEK", n_assessments = 7L, seed = 2)
-ADLB <- ADLB %>%
+ADLB <- ADLB \%>\%
   mutate(AVISITCD = case_when(
     AVISIT == "SCREENING" ~ "SCR",
     AVISIT == "BASELINE" ~ "BL",
@@ -129,7 +109,7 @@ ADLB <- ADLB %>%
       ARMCD == "ARM B" ~ 2,
       ARMCD == "ARM A" ~ 3),
     ARM = as.character(arm_mapping[match(ARM, names(arm_mapping))]),
-    ARM = factor(ARM) %>% reorder(TRTORD))
+    ARM = factor(ARM) \%>\% reorder(TRTORD))
 
 
 x <- teal::init(
@@ -143,7 +123,7 @@ x <- teal::init(
 
       ADSL <- radsl(N = 20, seed = 1)
       ADLB <- radlb(ADSL, visit_format = "WEEK", n_assessments = 7L, seed = 2)
-      ADLB <- ADLB %>%
+      ADLB <- ADLB \%>\%
         mutate(AVISITCD = case_when(
             AVISIT == "SCREENING" ~ "SCR",
             AVISIT == "BASELINE" ~ "BL",
@@ -159,7 +139,7 @@ x <- teal::init(
             ARMCD == "ARM B" ~ 2,
             ARMCD == "ARM A" ~ 3),
           ARM = as.character(arm_mapping[match(ARM, names(arm_mapping))]),
-          ARM = factor(ARM) %>% reorder(TRTORD))
+          ARM = factor(ARM) \%>\% reorder(TRTORD))
           '},
     check = FALSE
   ),

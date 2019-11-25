@@ -10,7 +10,7 @@
 #' @import DescTools
 #' @import dplyr
 #' @importFrom ggplot2 waiver
-#' @import methods
+#' @rawNamespace import(methods, except = show)
 #' @import shiny
 #' @rawNamespace import(stats, except = c(filter, lag))
 #' @import teal.devel

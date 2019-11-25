@@ -4,27 +4,13 @@
 \alias{tm_g_density_distribution_plot}
 \title{Density Distribution Plot}
 \usage{
-tm_g_density_distribution_plot(
-  label,
-  dataname,
-  param_var,
-  param_choices = param,
-  param,
-  xaxis_var,
-  xaxis_var_choices = xaxis_var,
-  trt_group = "ARM",
-  color_manual = NULL,
-  color_comb = NULL,
-  plot_height = c(500, 200, 2000),
-  font_size = c(12, 8, 20),
-  line_size = c(1, 0.25, 3),
-  hline = NULL,
-  facet_ncol = 2,
-  rotate_xlab = FALSE,
-  pre_output = NULL,
-  post_output = NULL,
-  code_data_processing = NULL
-)
+tm_g_density_distribution_plot(label, dataname, param_var,
+  param_choices = param, param, xaxis_var,
+  xaxis_var_choices = xaxis_var, trt_group = "ARM",
+  color_manual = NULL, color_comb = NULL, plot_height = c(500, 200,
+  2000), font_size = c(12, 8, 20), line_size = c(1, 0.25, 3),
+  hline = NULL, facet_ncol = 2, rotate_xlab = FALSE,
+  pre_output = NULL, post_output = NULL, code_data_processing = NULL)
 }
 \arguments{
 \item{label}{menu item label of the module in the teal app.}
@@ -92,7 +78,7 @@ arm_mapping <- list("A: Drug X" = "150mg QD",
 
 ADSL <- radsl(N = 20, seed = 1)
 ADLB <- radlb(ADSL, visit_format = "WEEK", n_assessments = 7L, seed = 2)
-ADLB <- ADLB %>%
+ADLB <- ADLB \%>\%
   mutate(AVISITCD = case_when(
     AVISIT == "SCREENING" ~ "SCR",
     AVISIT == "BASELINE" ~ "BL",
@@ -108,7 +94,7 @@ ADLB <- ADLB %>%
       ARMCD == "ARM B" ~ 2,
       ARMCD == "ARM A" ~ 3),
     ARM = as.character(arm_mapping[match(ARM, names(arm_mapping))]),
-    ARM = factor(ARM) %>% reorder(TRTORD))
+    ARM = factor(ARM) \%>\% reorder(TRTORD))
 
 
 x <- teal::init(
@@ -122,7 +108,7 @@ x <- teal::init(
 
       ADSL <- radsl(N = 20, seed = 1)
       ADLB <- radlb(ADSL, visit_format = "WEEK", n_assessments = 7L, seed = 2)
-      ADLB <- ADLB %>%
+      ADLB <- ADLB \%>\%
         mutate(AVISITCD = case_when(
             AVISIT == "SCREENING" ~ "SCR",
             AVISIT == "BASELINE" ~ "BL",
@@ -138,7 +124,7 @@ x <- teal::init(
             ARMCD == "ARM B" ~ 2,
             ARMCD == "ARM A" ~ 3),
           ARM = as.character(arm_mapping[match(ARM, names(arm_mapping))]),
-          ARM = factor(ARM) %>% reorder(TRTORD))
+          ARM = factor(ARM) \%>\% reorder(TRTORD))
           '},
     check = FALSE
   ),

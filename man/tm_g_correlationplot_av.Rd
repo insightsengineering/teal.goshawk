@@ -4,35 +4,17 @@
 \alias{tm_g_correlationplot_av}
 \title{Function to create a correlation plot without visit facetting. Presents all visit data based on analysis day.}
 \usage{
-tm_g_correlationplot_av(
-  label,
-  dataname,
-  param_var,
-  xaxis_param = xaxis_param,
-  xaxis_param_choices = xaxis_param,
-  xaxis_var = xaxis_var,
-  xaxis_var_choices = xaxis_var,
-  yaxis_param = yaxis_param,
-  yaxis_param_choices = yaxis_param,
-  yaxis_var = yaxis_var,
-  yaxis_var_choices = yaxis_var,
-  trt_group = "ARM",
-  color_manual = NULL,
-  shape_manual = NULL,
-  facet_ncol = 2,
-  facet_var = "ACTARM",
-  reg_line = FALSE,
-  rotate_xlab = FALSE,
-  hline = NULL,
-  vline = NULL,
-  plot_height = c(500, 200, 2000),
-  font_size = c(12, 8, 20),
-  dot_size = c(1, 1, 12),
-  reg_text_size = c(3, 3, 10),
-  pre_output = NULL,
-  post_output = NULL,
-  code_data_processing = NULL
-)
+tm_g_correlationplot_av(label, dataname, param_var,
+  xaxis_param = xaxis_param, xaxis_param_choices = xaxis_param,
+  xaxis_var = xaxis_var, xaxis_var_choices = xaxis_var,
+  yaxis_param = yaxis_param, yaxis_param_choices = yaxis_param,
+  yaxis_var = yaxis_var, yaxis_var_choices = yaxis_var,
+  trt_group = "ARM", color_manual = NULL, shape_manual = NULL,
+  facet_ncol = 2, facet_var = "ACTARM", reg_line = FALSE,
+  rotate_xlab = FALSE, hline = NULL, vline = NULL,
+  plot_height = c(500, 200, 2000), font_size = c(12, 8, 20),
+  dot_size = c(1, 1, 12), reg_text_size = c(3, 3, 10),
+  pre_output = NULL, post_output = NULL, code_data_processing = NULL)
 }
 \arguments{
 \item{label}{menu item label of the module in the teal app.}
@@ -116,7 +98,7 @@ arm_mapping <- list("A: Drug X" = "150mg QD",
 
 ADSL <- radsl(N = 20, seed = 1)
 ADLB <- radlb(ADSL, visit_format = "WEEK", n_assessments = 7L, seed = 2)
-ADLB <- ADLB %>%
+ADLB <- ADLB \%>\%
   mutate(AVISITCD = case_when(
     AVISIT == "SCREENING" ~ "SCR",
     AVISIT == "BASELINE" ~ "BL",
@@ -132,7 +114,7 @@ ADLB <- ADLB %>%
       ARMCD == "ARM B" ~ 2,
       ARMCD == "ARM A" ~ 3),
     ARM = as.character(arm_mapping[match(ARM, names(arm_mapping))]),
-    ARM = factor(ARM) %>% reorder(TRTORD),
+    ARM = factor(ARM) \%>\% reorder(TRTORD),
     ADY = AVISITCDN)
 
 
@@ -147,7 +129,7 @@ x <- teal::init(
 
       ADSL <- radsl(N = 20, seed = 1)
       ADLB <- radlb(ADSL, visit_format = "WEEK", n_assessments = 7L, seed = 2)
-      ADLB <- ADLB %>%
+      ADLB <- ADLB \%>\%
         mutate(AVISITCD = case_when(
             AVISIT == "SCREENING" ~ "SCR",
             AVISIT == "BASELINE" ~ "BL",
@@ -163,7 +145,7 @@ x <- teal::init(
             ARMCD == "ARM B" ~ 2,
             ARMCD == "ARM A" ~ 3),
           ARM = as.character(arm_mapping[match(ARM, names(arm_mapping))]),
-          ARM = factor(ARM) %>% reorder(TRTORD),
+          ARM = factor(ARM) \%>\% reorder(TRTORD),
           ADY = AVISITCDN)
           '},
     check = FALSE

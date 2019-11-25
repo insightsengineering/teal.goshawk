@@ -33,7 +33,6 @@
 #'@inheritParams teal.devel::standard_layout
 #'
 #'@import DescTools
-#'@import methods
 #'@import utils
 #'@import dplyr
 #'@import goshawk
