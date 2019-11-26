@@ -104,8 +104,8 @@
 #'        dataname = "ADLB",
 #'        param_var = "PARAMCD",
 #'        param = choices_selected(c("ALT", "CRP", "IGA"), "ALT"),
-#'        xaxis_var = choices_selected(c("AVAL", "BASE", "CHG", "PCHG", "AVAL2"), "BASE"),
-#'        yaxis_var = choices_selected(c("AVAL", "BASE", "CHG", "PCHG", "AVAL2"), "AVAL"),
+#'        xaxis_var = choices_selected(c("AVAL", "BASE", "CHG", "PCHG"), "BASE"),
+#'        yaxis_var = choices_selected(c("AVAL", "BASE", "CHG", "PCHG"), "AVAL"),
 #'        trt_group = "ARM",
 #'        color_manual = c("150mg QD" = "#000000",
 #'                         "Placebo" = "#3498DB",
@@ -302,31 +302,54 @@ srv_g_scatterplot <- function(input,
   ns <- session$ns
   dataset_var <- paste0(dataname, "_FILTERED")
   
+  chunks_anl_step1 <- reactive({
+    param <- input$param
+    req(param)
+    
+    ANL_FILTERED <- datasets$get_data(dataname, filtered = TRUE, reactive = TRUE) # nolint
+    
+    private_chunks <- chunks$new()
+    chunks_reset(as.environment(setNames(list(ANL_FILTERED), dataset_var)), private_chunks)
+    
+    # filter biomarker
+    chunks_push(
+      id = "filter_biomarker",
+      expression = bquote({
+        ANL <- .(as.name(dataset_var)) %>% # nolint
+          dplyr::filter(.(as.name(param_var)) == .(param))
+      }),
+      chunks = private_chunks
+    )
+    
+    chunks_safe_eval(private_chunks)
+    
+    return(private_chunks)
+  })
+  
   constraint_var <- reactive({
     c("None" = "NONE", "Screening" = "BASE2", "Baseline" = "BASE")[input$constraint_var_label]
   })
   
   # update min/max data constraint value
-  observe({
-    param <- input$param
+  observeEvent(c(chunks_anl_step1(), constraint_var()), {
+    constraint_var <- constraint_var()
     
-    ANL <- datasets$get_data(dataname, filtered = TRUE, reactive = TRUE) %>%
-      dplyr::filter_(sprintf("%s == '%s'", param_var, param))
+    ANL <- chunks_get_var("ANL", chunks_anl_step1()) # nolint
     
-    if (constraint_var() != "NONE") {
-      visitFreq <- unique(ANL$AVISITCD)
+    if (constraint_var != "NONE") {
+      visit_freq <- unique(ANL$AVISITCD)
       
-      if ((constraint_var() == "BASE2" & any(grepl("SCR", visitFreq))) ||  
-          (constraint_var() == "BASE" & any(grepl("BL", visitFreq)))) {
+      if ((constraint_var == "BASE2" & any(grepl("SCR", visit_freq))) ||  
+          (constraint_var == "BASE" & any(grepl("BL", visit_freq)))) {
         
-        anl_constraint_var <- ANL[[constraint_var()]]
+        anl_constraint_var <- ANL[[constraint_var]]
         
         constraint_range_min <- floor(min(anl_constraint_var, na.rm = TRUE) * 1000) / 1000
         label_min <- sprintf("Min (%s)", constraint_range_min)
         constraint_range_max <- ceiling(max(anl_constraint_var, na.rm = TRUE) * 1000) / 1000
         label_max <- sprintf("Max (%s)", constraint_range_max)
         
-        updateSliderInput(
+        updateNumericInput(
           session = session,
           inputId = "constraint_range_min",
           label = label_min,
@@ -335,7 +358,7 @@ srv_g_scatterplot <- function(input,
           value = constraint_range_min
         )
         
-        updateSliderInput(
+        updateNumericInput(
           session = session,
           inputId = "constraint_range_max",
           label = label_max,
@@ -352,7 +375,7 @@ srv_g_scatterplot <- function(input,
     
     shinyjs::hide("constraint_range")
     
-    updateSliderInput(
+    updateNumericInput(
       session = session,
       inputId = "constraint_range_min",
       label = "Min",
@@ -361,7 +384,7 @@ srv_g_scatterplot <- function(input,
       value = 0
     )
     
-    updateSliderInput(
+    updateNumericInput(
       session = session,
       inputId = "constraint_range_max",
       label = "Max",
@@ -372,40 +395,25 @@ srv_g_scatterplot <- function(input,
   })
   
   # code chunk for ANL
-  anl_data_chunks <- reactive({
+  chunks_anl_step2 <- eventReactive(c(input$constraint_range_min, input$constraint_range_max, chunks_anl_step1()), {
     # it is assumed that constraint_var is triggering constraint_range which then trigger this clause
     # that's why it's not listed in triggers
     
     constraint_range_min <- input$constraint_range_min
     constraint_range_max <- input$constraint_range_max
-    param <- input$param
     constraint_var <- isolate(constraint_var())
     
-    ANL_FILTERED <- datasets$get_data(dataname, filtered = TRUE, reactive = TRUE)
-    
-    private_chunks <- chunks$new()
-    chunks_reset(as.environment(setNames(list(ANL_FILTERED), dataset_var)), private_chunks)
-    
-    # filter biomarker
-    chunks_push(
-      id = "filter_biomarker",
-      expression = bquote({
-        ANL <- .(as.name(dataset_var)) %>%
-          dplyr::filter(.(as.name(param_var)) == .(param))
-      }),
-      chunks = private_chunks
-    )
-    chunks_safe_eval(private_chunks)
+    private_chunks <- chunks_anl_step1()$clone(deep = TRUE)
+    ANL <- chunks_get_var("ANL", private_chunks) # nolint
     
     # filter constraint
-    ANL <- chunks_get_var("ANL", private_chunks)
-    if (constraint_var() != "NONE") {
-      if ((floor(min(ANL[[constraint_var]], na.rm = TRUE) * 1000) / 1000) < constraint_range_min ||
-          (ceiling(max(ANL[[constraint_var]], na.rm = TRUE) * 1000) / 1000) > constraint_range_max) {
+    if (constraint_var != "NONE") {
+      if ((floor(min(if_empty(na.omit(ANL[[constraint_var]]), -Inf)) * 1000) / 1000) < constraint_range_min ||
+          (ceiling(max(if_empty(na.omit(ANL[[constraint_var]]), Inf)) * 1000) / 1000) > constraint_range_max) {
         chunks_push(
           id = "filter_constraint",
           expression = bquote({
-            ANL <- ANL %>%
+            ANL <- ANL %>% # nolint
               dplyr::filter(
                 (.(constraint_range_min) <= .(as.name(constraint_var)) &
                    .(as.name(constraint_var)) <= .(constraint_range_max)) |
@@ -419,7 +427,7 @@ srv_g_scatterplot <- function(input,
     }
     
     # Check data size and add attributes
-    ANL <- chunks_get_var("ANL", private_chunks)
+    ANL <- chunks_get_var("ANL", private_chunks) # nolint
     validate_has_data(ANL, 3)
     
     chunks_push(
@@ -440,10 +448,12 @@ srv_g_scatterplot <- function(input,
   })
 
   # update sliders for axes
-  observe({
-    ANL <- chunks_get_var("ANL", anl_data_chunks())
-    xmin_scale <- floor(min(ANL[[input$xaxis_var]], na.rm = TRUE))
-    xmax_scale <- ceiling(max(ANL[[input$xaxis_var]], na.rm = TRUE))
+  observeEvent(c(input$xaxis_var, chunks_anl_step2()), {
+    validate(need(input$xaxis_var, "Please select X axis variable"))
+    
+    ANL <- chunks_get_var("ANL", chunks_anl_step2()) # nolint
+    xmin_scale <- floor(min(if_empty(na.omit(ANL[[input$xaxis_var]]), 0)))
+    xmax_scale <- ceiling(max(if_empty(na.omit(ANL[[input$xaxis_var]]), 0)))
     
     updateSliderInput(
       session = session,
@@ -453,10 +463,10 @@ srv_g_scatterplot <- function(input,
       value = c(xmin_scale, xmax_scale)
     )
   })
-  observe({
-    ANL <- chunks_get_var("ANL", anl_data_chunks())
-    ymin_scale <- floor(min(ANL[[input$yaxis_var]], na.rm = TRUE))
-    ymax_scale <- ceiling(max(ANL[[input$yaxis_var]], na.rm = TRUE))
+  observeEvent(c(input$yaxis_var, chunks_anl_step2()), {
+    ANL <- chunks_get_var("ANL", chunks_anl_step2()) # nolint
+    ymin_scale <- floor(min(if_empty(na.omit(ANL[[input$yaxis_var]]), 0)))
+    ymax_scale <- ceiling(max(if_empty(na.omit(ANL[[input$yaxis_var]]), 0)))
     
     updateSliderInput(
       session = session,
@@ -467,17 +477,20 @@ srv_g_scatterplot <- function(input,
     )
   })
   
+  
   # plot 
   output$scatterplot <- renderPlot({
-    private_chunks <- anl_data_chunks()$clone()
-    
-    ANL <- chunks_get_var("ANL", private_chunks)
-    
     isolate({
       param <- input$param
       xaxis <- input$xaxis_var
       yaxis <- input$yaxis_var
+      
+      req(param)
     })
+    
+    private_chunks <- chunks_anl_step2()$clone(deep = TRUE)
+    
+    ANL <- chunks_get_var("ANL", private_chunks) # nolint
     
     chunks_push(
       id = "scatterplot",
@@ -532,15 +545,17 @@ srv_g_scatterplot <- function(input,
   
   # highlight plot area
   output$brush_data <- renderTable({
-    ANL <- chunks_get_var("ANL", anl_data_chunks())
-    if (!is.null(ANL) && nrow(ANL) > 0 ) {
-      brushedPoints(
-        select(ANL, "USUBJID", trt_group, "AVISITCD", "PARAMCD",  input$xaxis_var, input$yaxis_var, "LOQFL"), 
-        input$scatterplot_brush
-      )
-    } else {
-      NULL
-    }
+    ANL <- chunks_get_var("ANL", isolate(chunks_anl_step2())) # nolint
+    xvar <- isolate(input$xaxis_var)
+    yvar <- isolate(input$yaxis_var)
+    
+    req(ANL)
+    req(all(c(xvar, yvar) %in% names(ANL)))
+    
+    brushedPoints(
+      select(ANL, "USUBJID", trt_group, "AVISITCD", "PARAMCD", xvar, yvar, "LOQFL"), 
+      input$scatterplot_brush
+    )
   })
 
   callModule(
