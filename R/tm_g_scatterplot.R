@@ -186,7 +186,7 @@ ui_g_scatterplot <- function(id, ...) {
         column(width = 12,
                br(), hr(),
                h4("Selected Data Points"),
-               tableOutput(ns("brush_data"))
+               DT::dataTableOutput(ns("brush_data"))
         )
       )
     ),
@@ -545,7 +545,9 @@ srv_g_scatterplot <- function(input,
   })
   
   # highlight plot area
-  output$brush_data <- renderTable({
+  output$brush_data <- DT::renderDataTable({
+    req(input$scatterplot_brush)
+    
     ANL <- chunks_get_var("ANL", isolate(chunks_anl_step2())) # nolint
     xvar <- isolate(input$xaxis_var)
     yvar <- isolate(input$yaxis_var)
@@ -553,9 +555,11 @@ srv_g_scatterplot <- function(input,
     req(ANL)
     req(all(c(xvar, yvar) %in% names(ANL)))
     
-    brushedPoints(
-      select(ANL, "USUBJID", trt_group, "AVISITCD", "PARAMCD", xvar, yvar, "LOQFL"), 
-      input$scatterplot_brush
+    DT::datatable(
+      brushedPoints(
+        select(ANL, "USUBJID", trt_group, "AVISITCD", "PARAMCD", xvar, yvar, "LOQFL"), 
+        input$scatterplot_brush
+      )
     )
   })
 
