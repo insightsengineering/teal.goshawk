@@ -304,7 +304,7 @@ srv_g_scatterplot <- function(input,
   
   chunks_anl_step1 <- reactive({
     param <- input$param
-    req(param)
+    validate(need(param, "Please select biomarker"))
     
     ANL_FILTERED <- datasets$get_data(dataname, filtered = TRUE, reactive = TRUE) # nolint
     
@@ -403,6 +403,9 @@ srv_g_scatterplot <- function(input,
     constraint_range_max <- input$constraint_range_max
     constraint_var <- isolate(constraint_var())
     
+    validate(need(constraint_range_min, "please select proper constraint minimum value"))
+    validate(need(constraint_range_max, "please select proper constraint maximum value"))
+    
     private_chunks <- chunks_anl_step1()$clone(deep = TRUE)
     ANL <- chunks_get_var("ANL", private_chunks) # nolint
     
@@ -484,8 +487,6 @@ srv_g_scatterplot <- function(input,
       param <- input$param
       xaxis <- input$xaxis_var
       yaxis <- input$yaxis_var
-      
-      req(param)
     })
     
     private_chunks <- chunks_anl_step2()$clone(deep = TRUE)
