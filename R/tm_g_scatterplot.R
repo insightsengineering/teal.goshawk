@@ -1,22 +1,23 @@
-#' #' Scatter Plot
+#' Scatter Plot Teal Module For Biomarker Analysis
+#' 
+#' @description TODO: a bit more info why the module is needed
 #'
-#' This teal module renders the UI and calls the function that creates a scatter plot.
-#'
+#' @inheritParams teal.devel::standard_layout
 #' @param label menu item label of the module in the teal app.
-#' @param dataname analysis data passed to the data argument of teal init. E.g. ADaM structured 
-#' laboratory data frame ADLB.
-#' @param param_var name of variable containing biomarker codes e.g. PARAMCD.
+#' @param dataname analysis data passed to the data argument of teal init. E.g. ADaM structured laboratory data frame
+#'   \code{ADLB}.
+#' @param param_var name of variable containing biomarker codes e.g. \code{PARAMCD}.
 #' @param param biomarker selected.
-#' @param xaxis_var name of variable containing biomarker results displayed on x-axis e.g. BASE.
-#' @param yaxis_var name of variable containing biomarker results displayed on y-axis e.g. AVAL.
-#' @param trt_group name of variable representing treatment group e.g. ARM.
+#' @param xaxis_var name of variable containing biomarker results displayed on x-axis e.g. \code{BASE}.
+#' @param yaxis_var name of variable containing biomarker results displayed on y-axis e.g. \code{AVAL}.
+#' @param trt_group name of variable representing treatment group e.g. \code{ARM}.
 #' @param color_manual vector of colors applied to treatment values.
 #' @param shape_manual vector of symbols applied to LOQ values.
 #' @param facet_ncol numeric value indicating number of facets per row.
 #' @param facet set layout to use treatment facetting.
 #' @param facet_var variable to use for treatment facetting.
-#' @param reg_line include regression line and annotations for slope and coefficient in 
-#' visualization. Use with facet TRUE.
+#' @param reg_line include regression line and annotations for slope and coefficient in visualization. Use with facet
+#'   TRUE.
 #' @param rotate_xlab 45 degree rotation of x-axis values.
 #' @param hline y-axis value to position of horizontal line.
 #' @param vline x-axis value to position a vertical line.
@@ -25,15 +26,11 @@
 #' @param dot_size plot dot size.
 #' @param reg_text_size font size control for regression line annotations.
 #'
-#' @inheritParams teal.devel::standard_layout
-#'
-#' @author Nick Paszty (npaszty) paszty.nicholas@gene.com
-#' @author Balazs Toth (tothb2)  toth.balazs@gene.com
-#'
-#'
-#' @details This module displays a scatter plot. link to specification file \url{http://rstudio.com}
 #'
 #' @export
+#' 
+#' @author Nick Paszty (npaszty) paszty.nicholas@gene.com
+#' @author Balazs Toth (tothb2)  toth.balazs@gene.com
 #'
 #' @examples
 #' # Example using ADaM structure analysis dataset.
@@ -192,64 +189,31 @@ ui_g_scatterplot <- function(id, ...) {
     ),
     encoding =  div(
       tags$label(a$dataname, "Data Settings", class = "text-primary"),
-      optionalSelectInput(ns("param"), 
-                          "Select a Biomarker",
-                          a$param$choices,
-                          a$param$selected,
+      optionalSelectInput(ns("param"), "Select a Biomarker", a$param$choices, a$param$selected, multiple = FALSE),
+      optionalSelectInput(ns("xaxis_var"),  "Select an X-Axis Variable",  a$xaxis_var$choices,  a$xaxis_var$selected, 
                           multiple = FALSE),
-      optionalSelectInput(ns("xaxis_var"), 
-                          "Select an X-Axis Variable", 
-                          a$xaxis_var$choices, 
-                          a$xaxis_var$selected, 
+      optionalSelectInput(ns("yaxis_var"), "Select a Y-Axis Variable", a$yaxis_var$choices, a$yaxis_var$selected,
                           multiple = FALSE),
-      optionalSelectInput(ns("yaxis_var"),
-                          "Select a Y-Axis Variable", 
-                          a$yaxis_var$choices,
-                          a$yaxis_var$selected,
-                          multiple = FALSE),
-      radioButtons(ns("constraint_var_label"), 
-                   "Data Constraint", 
-                   c("None", "Screening", "Baseline")),
+      radioButtons(ns("constraint_var"),  "Data Constraint",
+                   c("None" = "NONE", "Screening" = "BASE2", "Baseline" = "BASE")),
       shinyjs::hidden(
         div(
           id = ns("constraint_range"),
           div(
             style = "display: inline-block; vertical-align:center",
-            numericInput(
-              ns("constraint_range_min"),
-              label = "Min",
-              value = 0,
-              min = 0,
-              max = 0
-            )
+            numericInput(ns("constraint_range_min"), label = "Min", value = 0,  min = 0,  max = 0)
           ),
           div(
             style = "display: inline-block; vertical-align:center",
-            numericInput(
-              ns("constraint_range_max"),
-              label = "Min",
-              value = 0,
-              min = 0,
-              max = 0
-            )
+            numericInput(ns("constraint_range_max"), label = "Min", value = 0, min = 0, max = 0)
           )
         )
       ),
       panel_group(
         panel_item(
           title = "Plot Aesthetic Settings",
-          sliderInput(
-            ns("xrange_scale"), 
-            label = "X-Axis Range Zoom", 
-            min = 0, 
-            max = 1, 
-            value = c(0, 1)),
-          sliderInput(
-            ns("yrange_scale"), 
-            label = "Y-Axis Range Zoom", 
-            min = 0, 
-            max = 1, 
-            value = c(0, 1)),
+          sliderInput(ns("xrange_scale"), label = "X-Axis Range Zoom", min = 0, max = 1, value = c(0, 1)),
+          sliderInput(ns("yrange_scale"), label = "Y-Axis Range Zoom", min = 0, max = 1, value = c(0, 1)),
           numericInput(ns("facet_ncol"), "Number of Plots Per Row:", a$facet_ncol, min = 1),
           checkboxInput(ns("facet"), "Treatment Facetting", a$facet),
           checkboxInput(ns("reg_line"), "Regression Line", a$reg_line),
@@ -259,21 +223,10 @@ ui_g_scatterplot <- function(id, ...) {
         ),
         panel_item(
           title = "Plot settings",
-          optionalSliderInputValMinMax(ns("plot_height"), 
-                                       "Plot Height", 
-                                       a$plot_height, 
-                                       ticks = FALSE),
-          optionalSliderInputValMinMax(ns("font_size"), 
-                                       "Font Size",
-                                       a$font_size, 
-                                       ticks = FALSE),
-          optionalSliderInputValMinMax(ns("dot_size"),
-                                       "Dot Size",
-                                       a$dot_size,
-                                       ticks = FALSE),
-          optionalSliderInputValMinMax(ns("reg_text_size"), 
-                                       "Regression Annotations Size", 
-                                       a$reg_text_size, 
+          optionalSliderInputValMinMax(ns("plot_height"), "Plot Height", a$plot_height, ticks = FALSE),
+          optionalSliderInputValMinMax(ns("font_size"),  "Font Size", a$font_size, ticks = FALSE),
+          optionalSliderInputValMinMax(ns("dot_size"), "Dot Size", a$dot_size, ticks = FALSE),
+          optionalSliderInputValMinMax(ns("reg_text_size"), "Regression Annotations Size", a$reg_text_size, 
                                        ticks = FALSE)
         )
       )
@@ -302,12 +255,16 @@ srv_g_scatterplot <- function(input,
   ns <- session$ns
   dataset_var <- paste0(dataname, "_FILTERED")
   
+  
+  # filter for biomarker ----
   chunks_anl_step1 <- reactive({
-    param <- input$param
-    validate(need(param, "Please select biomarker"))
     
+    param <- input$param
     ANL_FILTERED <- datasets$get_data(dataname, filtered = TRUE, reactive = TRUE) # nolint
     
+    validate(need(param, "Please select a biomarker"))
+    validate_has_data(ANL_FILTERED, 5)
+  
     private_chunks <- chunks$new()
     chunks_reset(as.environment(setNames(list(ANL_FILTERED), dataset_var)), private_chunks)
     
@@ -326,17 +283,15 @@ srv_g_scatterplot <- function(input,
     return(private_chunks)
   })
   
-  constraint_var <- reactive({
-    c("None" = "NONE", "Screening" = "BASE2", "Baseline" = "BASE")[input$constraint_var_label]
-  })
-  
   # update min/max data constraint value
-  observeEvent(c(chunks_anl_step1(), constraint_var()), {
-    constraint_var <- constraint_var()
+  observeEvent(c(chunks_anl_step1(), input$constraint_var), {
+    
+    constraint_var <- input$constraint_var
     
     ANL <- chunks_get_var("ANL", chunks_anl_step1()) # nolint
     
     if (constraint_var != "NONE") {
+      
       visit_freq <- unique(ANL$AVISITCD)
       
       if ((constraint_var == "BASE2" & any(grepl("SCR", visit_freq))) ||  
@@ -401,7 +356,7 @@ srv_g_scatterplot <- function(input,
     
     constraint_range_min <- input$constraint_range_min
     constraint_range_max <- input$constraint_range_max
-    constraint_var <- isolate(constraint_var())
+    constraint_var <- isolate(input$constraint_var)
     
     validate(need(constraint_range_min, "please select proper constraint minimum value"))
     validate(need(constraint_range_max, "please select proper constraint maximum value"))
@@ -466,6 +421,7 @@ srv_g_scatterplot <- function(input,
       value = c(xmin_scale, xmax_scale)
     )
   })
+  
   observeEvent(c(input$yaxis_var, chunks_anl_step2()), {
     ANL <- chunks_get_var("ANL", chunks_anl_step2()) # nolint
     ymin_scale <- floor(min(if_empty(na.omit(ANL[[input$yaxis_var]]), 0)))
@@ -483,6 +439,7 @@ srv_g_scatterplot <- function(input,
   
   # plot 
   output$scatterplot <- renderPlot({
+    
     isolate({
       param <- input$param
       xaxis <- input$xaxis_var
@@ -535,6 +492,7 @@ srv_g_scatterplot <- function(input,
   
   # dynamic plot height and brushing
   output$plot_ui <- renderUI({
+    
     plot_height <- input$plot_height
     validate(need(plot_height, "need valid plot height"))
     
