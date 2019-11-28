@@ -86,6 +86,31 @@ keep_range_slider_updated <- function(session, input, id_slider, id_var, reactiv
   })
 }
 
+
+templ_ui_param <- function(ns, choices, selected) {
+  selectInput(ns("param"), "Select a Biomarker", choices, selected, multiple = FALSE)
+}
+
+
+templ_ui_constraint <- function(ns) {
+  div(
+    radioButtons(ns("constraint_var"),  "Data Constraint",
+                 c("None" = "NONE", "Screening" = "BASE2", "Baseline" = "BASE")),
+    shinyjs::hidden(div(
+      id = ns("constraint_range"),
+      div(
+        style = "display: inline-block; vertical-align:center",
+        numericInput(ns("constraint_range_min"), label = "Min", value = 0,  min = 0,  max = 0)
+      ),
+      div(
+        style = "display: inline-block; vertical-align:center",
+        numericInput(ns("constraint_range_max"), label = "Min", value = 0, min = 0, max = 0)
+      )
+    ))  
+  )
+}
+
+
 constr_anl_chunks <- function(session, input, datasets, dataname, param_var, trt_group) {
   
   

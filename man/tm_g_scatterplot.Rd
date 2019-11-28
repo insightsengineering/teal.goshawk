@@ -2,7 +2,7 @@
 % Please edit documentation in R/tm_g_scatterplot.R
 \name{tm_g_scatterplot}
 \alias{tm_g_scatterplot}
-\title{#' Scatter Plot}
+\title{Scatter Plot Teal Module For Biomarker Analysis}
 \usage{
 tm_g_scatterplot(label, dataname, param_var, param, xaxis_var, yaxis_var,
   trt_group = "ARM", color_manual = NULL, shape_manual = NULL,
@@ -15,18 +15,18 @@ tm_g_scatterplot(label, dataname, param_var, param, xaxis_var, yaxis_var,
 \arguments{
 \item{label}{menu item label of the module in the teal app.}
 
-\item{dataname}{analysis data passed to the data argument of teal init. E.g. ADaM structured 
-laboratory data frame ADLB.}
+\item{dataname}{analysis data passed to the data argument of teal init. E.g. ADaM structured laboratory data frame
+\code{ADLB}.}
 
-\item{param_var}{name of variable containing biomarker codes e.g. PARAMCD.}
+\item{param_var}{name of variable containing biomarker codes e.g. \code{PARAMCD}.}
 
 \item{param}{biomarker selected.}
 
-\item{xaxis_var}{name of variable containing biomarker results displayed on x-axis e.g. BASE.}
+\item{xaxis_var}{name of variable containing biomarker results displayed on x-axis e.g. \code{BASE}.}
 
-\item{yaxis_var}{name of variable containing biomarker results displayed on y-axis e.g. AVAL.}
+\item{yaxis_var}{name of variable containing biomarker results displayed on y-axis e.g. \code{AVAL}.}
 
-\item{trt_group}{name of variable representing treatment group e.g. ARM.}
+\item{trt_group}{name of variable representing treatment group e.g. \code{ARM}.}
 
 \item{color_manual}{vector of colors applied to treatment values.}
 
@@ -38,8 +38,8 @@ laboratory data frame ADLB.}
 
 \item{facet_var}{variable to use for treatment facetting.}
 
-\item{reg_line}{include regression line and annotations for slope and coefficient in 
-visualization. Use with facet TRUE.}
+\item{reg_line}{include regression line and annotations for slope and coefficient in visualization. Use with facet
+TRUE.}
 
 \item{rotate_xlab}{45 degree rotation of x-axis values.}
 
@@ -64,10 +64,7 @@ output to put the output into context. For example the
 \code{\link[shiny]{helpText}} elements are useful.}
 }
 \description{
-This teal module renders the UI and calls the function that creates a scatter plot.
-}
-\details{
-This module displays a scatter plot. link to specification file \url{http://rstudio.com}
+TODO: a bit more info why the module is needed
 }
 \examples{
 # Example using ADaM structure analysis dataset.
