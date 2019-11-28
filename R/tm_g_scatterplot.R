@@ -555,12 +555,15 @@ srv_g_scatterplot <- function(input,
     req(ANL)
     req(all(c(xvar, yvar) %in% names(ANL)))
     
-    DT::datatable(
-      brushedPoints(
-        select(ANL, "USUBJID", trt_group, "AVISITCD", "PARAMCD", xvar, yvar, "LOQFL"), 
-        input$scatterplot_brush
-      )
+    df <- brushedPoints(
+      select(ANL, "USUBJID", trt_group, "AVISITCD", "PARAMCD", xvar, yvar, "LOQFL"), 
+      input$scatterplot_brush
     )
+    
+    numeric_cols <- names(select_if(df, is.numeric))
+    
+    DT::datatable(df, rownames = FALSE) %>% 
+      DT::formatRound(numeric_cols, 4)
   })
 
   callModule(
