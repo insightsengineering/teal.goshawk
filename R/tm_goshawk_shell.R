@@ -2,15 +2,10 @@
 
 #' A simple module that allows for constraining
 #' 
-#' 
 #' @noRd
 #' 
-#' @export
-#' 
 #' @examples 
-#' 
-#' 
-#' dat <- goshawk_data()
+#' dat <- teal.goshawk:::goshawk_data()
 #' 
 #' app <- teal::init(
 #'    data = cdisc_data(
@@ -19,14 +14,13 @@
 #'     code = dat$code
 #'    ),
 #'    modules = root_modules(
-#'       tm_goshawk_shell("demo", "ADLB", "PARAMCD", choices_selected(c("ALT", "CRP", "IGA"), "ALT"))
+#'      teal.goshawk:::tm_goshawk_shell("demo", "ADLB", "PARAMCD", choices_selected(c("ALT", "CRP", "IGA"), "ALT"))
 #'    )
 #' )
 #' 
 #' \dontrun{
 #' shinyApp(app$ui, app$server)
 #' }
-#' 
 tm_goshawk_shell <- function(label, dataname, param_var, param, trt_group = "ARM") {
   
   stopifnot(is.choices_selected(param))
