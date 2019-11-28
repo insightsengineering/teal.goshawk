@@ -189,26 +189,12 @@ ui_g_scatterplot <- function(id, ...) {
     ),
     encoding =  div(
       tags$label(a$dataname, "Data Settings", class = "text-primary"),
-      selectInput(ns("param"), "Select a Biomarker", a$param$choices, a$param$selected, multiple = FALSE),
+      templ_ui_param(ns, a$param$choices, a$param$selected), # required by constr_anl_chunks
       selectInput(ns("xaxis_var"),  "Select an X-Axis Variable",  a$xaxis_var$choices,  a$xaxis_var$selected, 
                           multiple = FALSE),
       selectInput(ns("yaxis_var"), "Select a Y-Axis Variable", a$yaxis_var$choices, a$yaxis_var$selected,
                           multiple = FALSE),
-      radioButtons(ns("constraint_var"),  "Data Constraint",
-                   c("None" = "NONE", "Screening" = "BASE2", "Baseline" = "BASE")),
-      shinyjs::hidden(
-        div(
-          id = ns("constraint_range"),
-          div(
-            style = "display: inline-block; vertical-align:center",
-            numericInput(ns("constraint_range_min"), label = "Min", value = 0,  min = 0,  max = 0)
-          ),
-          div(
-            style = "display: inline-block; vertical-align:center",
-            numericInput(ns("constraint_range_max"), label = "Min", value = 0, min = 0, max = 0)
-          )
-        )
-      ),
+      templ_ui_constraint(ns), # required by constr_anl_chunks
       panel_group(
         panel_item(
           title = "Plot Aesthetic Settings",
@@ -253,112 +239,19 @@ srv_g_scatterplot <- function(input,
                               shape_manual) {
   
   ns <- session$ns
-  dataset_var <- paste0(dataname, "_FILTERED")
   
-  
-  # filter for biomarker ----
-  ANL_biomarker <- reactive({
-    
-    # resolve reactive values
-    param <- input$param
-    ANL_FILTERED <- datasets$get_data(dataname, filtered = TRUE, reactive = TRUE) # nolint
-    
-    # validate
-    validate(need(param, "Please select a biomarker"))
-    validate_has_data(ANL_FILTERED, 5)
-    
-    validate_has_variable(ANL_FILTERED, "AVISITCD") # should have BL and SCR levels
-    validate_has_variable(ANL_FILTERED, "PARAMCD")
-    validate_has_variable(ANL_FILTERED, "BASE")
-    validate_has_variable(ANL_FILTERED, "BASE2")
-    
-    # analysis
-    private_chunks <- chunks$new()
-    chunks_reset(as.environment(setNames(list(ANL_FILTERED), dataset_var)), private_chunks)
-    
-    # filter biomarker
-    chunks_push(
-      chunks = private_chunks,
-      id = "filter_biomarker",
-      expression = bquote({
-        ANL <- .(as.name(dataset_var)) %>% # nolint
-          dplyr::filter(.(as.name(param_var)) == .(param))
-      }) 
-    )
-    
-    ANL <- chunks_safe_eval(private_chunks) # to get ANL
-    validate_has_data(ANL, 5)
-    
-    list(ANL = ANL, chunks = private_chunks)
-  })
-  
-  update_baseline_screening_max_max(session, input, "constraint_var",
-                                    "constraint_range_min", "constraint_range_max", ANL_biomarker)
-  
-  # code chunk for ANL
-  ANL_data <- reactive({
-    
-    # it is assumed that constraint_var is triggering constraint_range which then trigger this clause
-    # that's why it's not listed in triggers
-    
-    constraint_var <- isolate(input$constraint_var)
-    constraint_range_min <- input$constraint_range_min
-    constraint_range_max <- input$constraint_range_max
-    ANL_biomarker <- ANL_biomarker()
-    
-    ANL <- ANL_biomarker$ANL
-    private_chunks <- ANL_biomarker$chunks$clone(deep = TRUE)
-    
-    validate(need(constraint_range_min, "please select proper constraint minimum value"))
-    validate(need(constraint_range_max, "please select proper constraint maximum value"))
-    
-    # filter constraint
-    if (constraint_var != "NONE") {
-      
-      validate(need(constraint_range_min < constraint_range_max, "constraint min needs to be smaller than max"))
-      
-      chunks_push(
-        chunks = private_chunks,
-        id = "filter_constraint",
-        expression = bquote({
-          ANL <- ANL %>% # nolint
-            dplyr::filter(
-              (.(constraint_range_min) <= .(as.name(constraint_var)) &
-                 .(as.name(constraint_var)) <= .(constraint_range_max)) |
-                is.na(.(as.name(constraint_var)))
-            )
-        })
-      )
-        
-      ANL <- chunks_safe_eval(private_chunks)
-    }
-    
-    validate_has_data(ANL, 5)
-    
-    
-    arm_label <- if (trt_group == "ARM") "Planned Arm" else "Actual Arm"
-    
-    chunks_push(
-      chunks = private_chunks,
-      id = "change_attr", 
-      expression = bquote(attr(ANL$ARM, "label") <- .(arm_label))
-    )
-      
-    chunks_push_new_line(private_chunks)
-    chunks_safe_eval(private_chunks)
-    
-    list(ANL = chunks_get_var("ANL", private_chunks), chunks = private_chunks)
-  })
+  # reused in all modules
+  anl_chunks <- constr_anl_chunks(session, input, datasets, dataname, param_var, trt_group)
 
   # update sliders for axes
-  keep_range_slider_updated(session, input, "xrange_scale", "xaxis_var", ANL_data)
-  keep_range_slider_updated(session, input, "yrange_scale", "yaxis_var", ANL_data)
+  keep_range_slider_updated(session, input, "xrange_scale", "xaxis_var", anl_chunks)
+  keep_range_slider_updated(session, input, "yrange_scale", "yaxis_var", anl_chunks)
   
   # plot 
   output$scatterplot <- renderPlot({
     
-    ANL_data <- ANL_data()
-    private_chunks <- ANL_data$chunks$clone(deep = TRUE)
+    ac <- anl_chunks()
+    private_chunks <- ac$chunks$clone(deep = TRUE)
     
     xrange_scale <- input$xrange_scale
     yrange_scale <- input$yrange_scale
@@ -371,9 +264,7 @@ srv_g_scatterplot <- function(input,
     rotate_xlab <- input$rotate_xlab
     hline <- input$hline
     vline <- input$vline
-    
 
-    
     # Why are those isolated?
     param <- isolate(input$param)
     xaxis <- isolate(input$xaxis_var)
@@ -435,7 +326,9 @@ srv_g_scatterplot <- function(input,
   output$brush_data <- DT::renderDataTable({
     req(input$scatterplot_brush)
     
-    ANL <- isolate(ANL_data()$ANL)  
+    ANL <- isolate(anl_chunks()$ANL)  
+    validate_has_data(ANL, 5)
+    
     xvar <- isolate(input$xaxis_var)
     yvar <- isolate(input$yaxis_var)
     
