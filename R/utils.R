@@ -1,5 +1,3 @@
-
-
 #' @export
 goshawk_data <- function() {
 
@@ -58,15 +56,12 @@ goshawk_data <- function() {
 }
 
 
-
 keep_range_slider_updated <- function(session, input, id_slider, id_var, reactive_ANL) {
-  
   observe({
-    ANL <- reactive_ANL()$ANL
     varname <- input[[id_var]]
-    
-    
     validate(need(varname, "Please select variable"))
+    
+    ANL <- reactive_ANL()$ANL
     validate_has_variable(ANL, varname, paste("variable", varname, "does not exist"))
     
     vals <- ANL[[varname]]
@@ -112,18 +107,13 @@ templ_ui_constraint <- function(ns) {
 
 
 constr_anl_chunks <- function(session, input, datasets, dataname, param_var, trt_group) {
-  
-  
   dataset_var <- paste0(dataname, "_FILTERED")
   
-  ANL_param <- reactive({
-    
-    # resolve reactive values
+  anl_param <- reactive({
     param <- input$param
-    ANL_FILTERED <- datasets$get_data(dataname, filtered = TRUE, reactive = TRUE) # nolint
-    
-    # validate
     validate(need(param, "Please select a biomarker"))
+    
+    ANL_FILTERED <- datasets$get_data(dataname, filtered = TRUE, reactive = TRUE) # nolint
     validate_has_data(ANL_FILTERED, 5)
     
     validate_has_variable(ANL_FILTERED, "AVISITCD") # should have BL and SCR levels
@@ -150,76 +140,82 @@ constr_anl_chunks <- function(session, input, datasets, dataname, param_var, trt
     ANL <- chunks_safe_eval(private_chunks) # to get ANL
     validate_has_data(ANL, 5)
     
-    list(ANL = ANL, chunks = private_chunks)
+    return(list(ANL = ANL, chunks = private_chunks))
   })
   
   
   observe({
-    
     constraint_var <- input$constraint_var
-    ANL <- ANL_param()$ANL
+    ANL <- anl_param()$ANL
     
     validate(need(constraint_var, "select a constraint variable"))
     
+    update_min_max <- function(args) {
+      do.call("updateNumericInput", c(list(session = session, inputId = "constraint_range_min"), args$min))
+      do.call("updateNumericInput", c(list(session = session, inputId = "constraint_range_max"), args$max))
+    }
+    
+    visit_freq <- unique(ANL$AVISITCD)
+    
     # get min max values
-    args <- if (constraint_var == "NONE") {
+    if ((constraint_var == "BASE2" & any(grepl("SCR", visit_freq))) ||
+        (constraint_var == "BASE" & any(grepl("BL", visit_freq)))) {
       
-      shinyjs::hide("constraint_range")
-      
-      list(
-        min = list(label = "Min", min = 0, max = 0, value = 0),
-        max = list(label = "Max", min = 0, max = 0, value = 0)
-      )
-      
-    } else {  # BASE or BASE2
-      
-      shinyjs::show("constraint_range")
-      
-      rng <- switch(
+      val <- na.omit(switch(
         constraint_var,
-        "BASE" = range(ANL$BASE[ANL$AVISITCD == "BL"], na.rm = TRUE),
-        "BASE2" = range(ANL$BASE2[ANL$AVISITCD == "SCR"], na.rm = TRUE),
+        "BASE" = ANL$BASE[ANL$AVISITCD == "BL"],
+        "BASE2" = ANL$BASE2[ANL$AVISITCD == "SCR"],
         stop(paste(constraint_var, "not allowed"))
-      ) 
+      ))
       
-      minmax <- c( floor(rng[1] * 1000) / 1000,  ceiling(rng[2] * 1000) / 1000) 
+      validate_has_elements(val, "filtered data has no rows")
+      
+      rng <- range(val)
+      
+      minmax <- c(floor(rng[1] * 1000) / 1000,  ceiling(rng[2] * 1000) / 1000) 
       
       label_min <- sprintf("Min (%s)", minmax[1])
       label_max <- sprintf("Max (%s)", minmax[2])
       
-      list(
+      args <- list(
         min = list(label = label_min, min = minmax[1], max = minmax[2], value = minmax[1]),
         max = list(label = label_max, min = minmax[1], max = minmax[2], value = minmax[2])
       )
+      
+      update_min_max(args)
+      
+      shinyjs::show("constraint_range")
+      
+    } else {
+      
+      shinyjs::hide("constraint_range")
+      
+      args <- list(
+        min = list(label = "Min", min = 0, max = 0, value = 0),
+        max = list(label = "Max", min = 0, max = 0, value = 0)
+      )
+      
+      update_min_max(args)
     }
-    
-    do.call("updateNumericInput", c(list(session = session, inputId = "constraint_range_min"), args$min))
-    do.call("updateNumericInput", c(list(session = session, inputId = "constraint_range_max"), args$max))
-    
   })
   
-  anl <- reactive({
-    
+  anl_constraint <- reactive({
     # it is assumed that constraint_var is triggering constraint_range which then trigger this clause
-    # that's why it's not listed in triggers
-    
     constraint_var <- isolate(input$constraint_var)
     constraint_range_min <- input$constraint_range_min
     constraint_range_max <- input$constraint_range_max
     
-    ANL_param <- ANL_param()
-    
-    ANL <- ANL_param$ANL
-    private_chunks <- ANL_param$chunks$clone(deep = TRUE)
-    
     validate(need(constraint_range_min, "please select proper constraint minimum value"))
     validate(need(constraint_range_max, "please select proper constraint maximum value"))
+    validate(need(constraint_range_min <= constraint_range_max, "constraint min needs to be smaller than max"))
+    
+    
+    anl_param <- anl_param()
+    
+    private_chunks <- anl_param$chunks$clone(deep = TRUE)
     
     # filter constraint
     if (constraint_var != "NONE") {
-      
-      validate(need(constraint_range_min < constraint_range_max, "constraint min needs to be smaller than max"))
-      
       chunks_push(
         chunks = private_chunks,
         id = "filter_constraint",
@@ -234,9 +230,9 @@ constr_anl_chunks <- function(session, input, datasets, dataname, param_var, trt
       )
       
       ANL <- chunks_safe_eval(private_chunks)
+      validate_has_data(ANL, 5)
     }
     
-    validate_has_data(ANL, 5)
     
     arm_label <- if (trt_group == "ARM") "Planned Arm" else "Actual Arm"
     
@@ -249,9 +245,8 @@ constr_anl_chunks <- function(session, input, datasets, dataname, param_var, trt
     chunks_push_new_line(private_chunks)
     chunks_safe_eval(private_chunks)
     
-    list(ANL = chunks_get_var("ANL", private_chunks), chunks = private_chunks)
+    return(list(ANL = chunks_get_var("ANL", private_chunks), chunks = private_chunks))
   })
   
-  anl
-  
+  return(anl_constraint)
 }

@@ -265,7 +265,7 @@ srv_g_scatterplot <- function(input,
     hline <- input$hline
     vline <- input$vline
 
-    # Why are those isolated?
+    # Below inputs should trigger plot via updates of other reactive objects (i.e. anl_chunk()) and some inputs
     param <- isolate(input$param)
     xaxis <- isolate(input$xaxis_var)
     yaxis <- isolate(input$yaxis_var)
@@ -332,7 +332,6 @@ srv_g_scatterplot <- function(input,
     xvar <- isolate(input$xaxis_var)
     yvar <- isolate(input$yaxis_var)
     
-    req(ANL)
     req(all(c(xvar, yvar) %in% names(ANL)))
     
     DT::datatable(
