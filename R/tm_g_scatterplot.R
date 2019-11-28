@@ -1,22 +1,23 @@
-#' #' Scatter Plot
+#' Scatter Plot Teal Module For Biomarker Analysis
+#' 
+#' @description TODO: a bit more info why the module is needed
 #'
-#' This teal module renders the UI and calls the function that creates a scatter plot.
-#'
+#' @inheritParams teal.devel::standard_layout
 #' @param label menu item label of the module in the teal app.
-#' @param dataname analysis data passed to the data argument of teal init. E.g. ADaM structured 
-#' laboratory data frame ADLB.
-#' @param param_var name of variable containing biomarker codes e.g. PARAMCD.
+#' @param dataname analysis data passed to the data argument of teal init. E.g. ADaM structured laboratory data frame
+#'   \code{ADLB}.
+#' @param param_var name of variable containing biomarker codes e.g. \code{PARAMCD}.
 #' @param param biomarker selected.
-#' @param xaxis_var name of variable containing biomarker results displayed on x-axis e.g. BASE.
-#' @param yaxis_var name of variable containing biomarker results displayed on y-axis e.g. AVAL.
-#' @param trt_group name of variable representing treatment group e.g. ARM.
+#' @param xaxis_var name of variable containing biomarker results displayed on x-axis e.g. \code{BASE}.
+#' @param yaxis_var name of variable containing biomarker results displayed on y-axis e.g. \code{AVAL}.
+#' @param trt_group name of variable representing treatment group e.g. \code{ARM}.
 #' @param color_manual vector of colors applied to treatment values.
 #' @param shape_manual vector of symbols applied to LOQ values.
 #' @param facet_ncol numeric value indicating number of facets per row.
 #' @param facet set layout to use treatment facetting.
 #' @param facet_var variable to use for treatment facetting.
-#' @param reg_line include regression line and annotations for slope and coefficient in 
-#' visualization. Use with facet TRUE.
+#' @param reg_line include regression line and annotations for slope and coefficient in visualization. Use with facet
+#'   TRUE.
 #' @param rotate_xlab 45 degree rotation of x-axis values.
 #' @param hline y-axis value to position of horizontal line.
 #' @param vline x-axis value to position a vertical line.
@@ -25,15 +26,11 @@
 #' @param dot_size plot dot size.
 #' @param reg_text_size font size control for regression line annotations.
 #'
-#' @inheritParams teal.devel::standard_layout
-#'
-#' @author Nick Paszty (npaszty) paszty.nicholas@gene.com
-#' @author Balazs Toth (tothb2)  toth.balazs@gene.com
-#'
-#'
-#' @details This module displays a scatter plot. link to specification file \url{http://rstudio.com}
 #'
 #' @export
+#' 
+#' @author Nick Paszty (npaszty) paszty.nicholas@gene.com
+#' @author Balazs Toth (tothb2)  toth.balazs@gene.com
 #'
 #' @examples
 #' # Example using ADaM structure analysis dataset.
@@ -192,64 +189,17 @@ ui_g_scatterplot <- function(id, ...) {
     ),
     encoding =  div(
       tags$label(a$dataname, "Data Settings", class = "text-primary"),
-      optionalSelectInput(ns("param"), 
-                          "Select a Biomarker",
-                          a$param$choices,
-                          a$param$selected,
+      templ_ui_param(ns, a$param$choices, a$param$selected), # required by constr_anl_chunks
+      selectInput(ns("xaxis_var"),  "Select an X-Axis Variable",  a$xaxis_var$choices,  a$xaxis_var$selected, 
                           multiple = FALSE),
-      optionalSelectInput(ns("xaxis_var"), 
-                          "Select an X-Axis Variable", 
-                          a$xaxis_var$choices, 
-                          a$xaxis_var$selected, 
+      selectInput(ns("yaxis_var"), "Select a Y-Axis Variable", a$yaxis_var$choices, a$yaxis_var$selected,
                           multiple = FALSE),
-      optionalSelectInput(ns("yaxis_var"),
-                          "Select a Y-Axis Variable", 
-                          a$yaxis_var$choices,
-                          a$yaxis_var$selected,
-                          multiple = FALSE),
-      radioButtons(ns("constraint_var_label"), 
-                   "Data Constraint", 
-                   c("None", "Screening", "Baseline")),
-      shinyjs::hidden(
-        div(
-          id = ns("constraint_range"),
-          div(
-            style = "display: inline-block; vertical-align:center",
-            numericInput(
-              ns("constraint_range_min"),
-              label = "Min",
-              value = 0,
-              min = 0,
-              max = 0
-            )
-          ),
-          div(
-            style = "display: inline-block; vertical-align:center",
-            numericInput(
-              ns("constraint_range_max"),
-              label = "Min",
-              value = 0,
-              min = 0,
-              max = 0
-            )
-          )
-        )
-      ),
+      templ_ui_constraint(ns), # required by constr_anl_chunks
       panel_group(
         panel_item(
           title = "Plot Aesthetic Settings",
-          sliderInput(
-            ns("xrange_scale"), 
-            label = "X-Axis Range Zoom", 
-            min = 0, 
-            max = 1, 
-            value = c(0, 1)),
-          sliderInput(
-            ns("yrange_scale"), 
-            label = "Y-Axis Range Zoom", 
-            min = 0, 
-            max = 1, 
-            value = c(0, 1)),
+          sliderInput(ns("xrange_scale"), label = "X-Axis Range Zoom", min = 0, max = 1, value = c(0, 1)),
+          sliderInput(ns("yrange_scale"), label = "Y-Axis Range Zoom", min = 0, max = 1, value = c(0, 1)),
           numericInput(ns("facet_ncol"), "Number of Plots Per Row:", a$facet_ncol, min = 1),
           checkboxInput(ns("facet"), "Treatment Facetting", a$facet),
           checkboxInput(ns("reg_line"), "Regression Line", a$reg_line),
@@ -259,21 +209,10 @@ ui_g_scatterplot <- function(id, ...) {
         ),
         panel_item(
           title = "Plot settings",
-          optionalSliderInputValMinMax(ns("plot_height"), 
-                                       "Plot Height", 
-                                       a$plot_height, 
-                                       ticks = FALSE),
-          optionalSliderInputValMinMax(ns("font_size"), 
-                                       "Font Size",
-                                       a$font_size, 
-                                       ticks = FALSE),
-          optionalSliderInputValMinMax(ns("dot_size"),
-                                       "Dot Size",
-                                       a$dot_size,
-                                       ticks = FALSE),
-          optionalSliderInputValMinMax(ns("reg_text_size"), 
-                                       "Regression Annotations Size", 
-                                       a$reg_text_size, 
+          optionalSliderInputValMinMax(ns("plot_height"), "Plot Height", a$plot_height, ticks = FALSE),
+          optionalSliderInputValMinMax(ns("font_size"),  "Font Size", a$font_size, ticks = FALSE),
+          optionalSliderInputValMinMax(ns("dot_size"), "Dot Size", a$dot_size, ticks = FALSE),
+          optionalSliderInputValMinMax(ns("reg_text_size"), "Regression Annotations Size", a$reg_text_size, 
                                        ticks = FALSE)
         )
       )
@@ -300,200 +239,39 @@ srv_g_scatterplot <- function(input,
                               shape_manual) {
   
   ns <- session$ns
-  dataset_var <- paste0(dataname, "_FILTERED")
   
-  chunks_anl_step1 <- reactive({
-    param <- input$param
-    validate(need(param, "Please select biomarker"))
-    
-    ANL_FILTERED <- datasets$get_data(dataname, filtered = TRUE, reactive = TRUE) # nolint
-    
-    private_chunks <- chunks$new()
-    chunks_reset(as.environment(setNames(list(ANL_FILTERED), dataset_var)), private_chunks)
-    
-    # filter biomarker
-    chunks_push(
-      id = "filter_biomarker",
-      expression = bquote({
-        ANL <- .(as.name(dataset_var)) %>% # nolint
-          dplyr::filter(.(as.name(param_var)) == .(param))
-      }),
-      chunks = private_chunks
-    )
-    
-    chunks_safe_eval(private_chunks)
-    
-    return(private_chunks)
-  })
-  
-  constraint_var <- reactive({
-    c("None" = "NONE", "Screening" = "BASE2", "Baseline" = "BASE")[input$constraint_var_label]
-  })
-  
-  # update min/max data constraint value
-  observeEvent(c(chunks_anl_step1(), constraint_var()), {
-    constraint_var <- constraint_var()
-    
-    ANL <- chunks_get_var("ANL", chunks_anl_step1()) # nolint
-    
-    if (constraint_var != "NONE") {
-      visit_freq <- unique(ANL$AVISITCD)
-      
-      if ((constraint_var == "BASE2" & any(grepl("SCR", visit_freq))) ||  
-          (constraint_var == "BASE" & any(grepl("BL", visit_freq)))) {
-        
-        anl_constraint_var <- ANL[[constraint_var]]
-        
-        constraint_range_min <- floor(min(anl_constraint_var, na.rm = TRUE) * 1000) / 1000
-        label_min <- sprintf("Min (%s)", constraint_range_min)
-        constraint_range_max <- ceiling(max(anl_constraint_var, na.rm = TRUE) * 1000) / 1000
-        label_max <- sprintf("Max (%s)", constraint_range_max)
-        
-        updateNumericInput(
-          session = session,
-          inputId = "constraint_range_min",
-          label = label_min,
-          min = constraint_range_min,
-          max = constraint_range_max,
-          value = constraint_range_min
-        )
-        
-        updateNumericInput(
-          session = session,
-          inputId = "constraint_range_max",
-          label = label_max,
-          min = constraint_range_min,
-          max = constraint_range_max,
-          value = constraint_range_max
-        )
-        
-        shinyjs::show("constraint_range")
-        
-        return()
-      }
-    }
-    
-    shinyjs::hide("constraint_range")
-    
-    updateNumericInput(
-      session = session,
-      inputId = "constraint_range_min",
-      label = "Min",
-      min = 0,
-      max = 0,
-      value = 0
-    )
-    
-    updateNumericInput(
-      session = session,
-      inputId = "constraint_range_max",
-      label = "Max",
-      min = 0,
-      max = 0,
-      value = 0
-    )
-  })
-  
-  # code chunk for ANL
-  chunks_anl_step2 <- eventReactive(c(input$constraint_range_min, input$constraint_range_max, chunks_anl_step1()), {
-    # it is assumed that constraint_var is triggering constraint_range which then trigger this clause
-    # that's why it's not listed in triggers
-    
-    constraint_range_min <- input$constraint_range_min
-    constraint_range_max <- input$constraint_range_max
-    constraint_var <- isolate(constraint_var())
-    
-    validate(need(constraint_range_min, "please select proper constraint minimum value"))
-    validate(need(constraint_range_max, "please select proper constraint maximum value"))
-    
-    private_chunks <- chunks_anl_step1()$clone(deep = TRUE)
-    ANL <- chunks_get_var("ANL", private_chunks) # nolint
-    
-    # filter constraint
-    if (constraint_var != "NONE") {
-      if ((floor(min(if_empty(na.omit(ANL[[constraint_var]]), -Inf)) * 1000) / 1000) < constraint_range_min ||
-          (ceiling(max(if_empty(na.omit(ANL[[constraint_var]]), Inf)) * 1000) / 1000) > constraint_range_max) {
-        chunks_push(
-          id = "filter_constraint",
-          expression = bquote({
-            ANL <- ANL %>% # nolint
-              dplyr::filter(
-                (.(constraint_range_min) <= .(as.name(constraint_var)) &
-                   .(as.name(constraint_var)) <= .(constraint_range_max)) |
-                  is.na(.(as.name(constraint_var)))
-              )
-          }),
-          chunks = private_chunks
-        )
-        chunks_safe_eval(private_chunks)
-      }
-    }
-    
-    # Check data size and add attributes
-    ANL <- chunks_get_var("ANL", private_chunks) # nolint
-    validate_has_data(ANL, 3)
-    
-    chunks_push(
-      id = "change_attr", 
-      expression = if (trt_group == "ARM") {
-        bquote(attributes(ANL$ARM)$label <- "Planned Arm")
-      } else {
-        bquote(attributes(ANL$ACTARM)$label <- "Actual Arm")
-      },
-      chunks = private_chunks
-    )
-      
-    chunks_push_new_line(private_chunks)
-    
-    chunks_safe_eval(private_chunks)
-    
-    return(private_chunks)
-  })
+  # reused in all modules
+  anl_chunks <- constr_anl_chunks(session, input, datasets, dataname, param_var, trt_group)
 
   # update sliders for axes
-  observeEvent(c(input$xaxis_var, chunks_anl_step2()), {
-    validate(need(input$xaxis_var, "Please select X axis variable"))
-    
-    ANL <- chunks_get_var("ANL", chunks_anl_step2()) # nolint
-    xmin_scale <- floor(min(if_empty(na.omit(ANL[[input$xaxis_var]]), 0)))
-    xmax_scale <- ceiling(max(if_empty(na.omit(ANL[[input$xaxis_var]]), 0)))
-    
-    updateSliderInput(
-      session = session,
-      inputId = "xrange_scale",
-      min = xmin_scale, 
-      max = xmax_scale, 
-      value = c(xmin_scale, xmax_scale)
-    )
-  })
-  observeEvent(c(input$yaxis_var, chunks_anl_step2()), {
-    ANL <- chunks_get_var("ANL", chunks_anl_step2()) # nolint
-    ymin_scale <- floor(min(if_empty(na.omit(ANL[[input$yaxis_var]]), 0)))
-    ymax_scale <- ceiling(max(if_empty(na.omit(ANL[[input$yaxis_var]]), 0)))
-    
-    updateSliderInput(
-      session = session,
-      inputId = "yrange_scale",
-      min = ymin_scale, 
-      max = ymax_scale, 
-      value = c(ymin_scale, ymax_scale)
-    )
-  })
-  
+  keep_range_slider_updated(session, input, "xrange_scale", "xaxis_var", anl_chunks)
+  keep_range_slider_updated(session, input, "yrange_scale", "yaxis_var", anl_chunks)
   
   # plot 
   output$scatterplot <- renderPlot({
-    isolate({
-      param <- input$param
-      xaxis <- input$xaxis_var
-      yaxis <- input$yaxis_var
-    })
     
-    private_chunks <- chunks_anl_step2()$clone(deep = TRUE)
+    ac <- anl_chunks()
+    private_chunks <- ac$chunks$clone(deep = TRUE)
     
-    ANL <- chunks_get_var("ANL", private_chunks) # nolint
-    
+    xrange_scale <- input$xrange_scale
+    yrange_scale <- input$yrange_scale
+    facet_ncol <- input$facet_ncol
+    facet <- input$facet
+    reg_line <- input$reg_line
+    font_size <- input$font_size
+    dot_size <- input$dot_size
+    reg_text_size <- input$reg_text_size
+    rotate_xlab <- input$rotate_xlab
+    hline <- input$hline
+    vline <- input$vline
+
+    # Below inputs should trigger plot via updates of other reactive objects (i.e. anl_chunk()) and some inputs
+    param <- isolate(input$param)
+    xaxis <- isolate(input$xaxis_var)
+    yaxis <- isolate(input$yaxis_var)
+        
     chunks_push(
+      chunks = private_chunks, 
       id = "scatterplot",
       expression = bquote({
         # re-establish treatment variable label
@@ -504,25 +282,24 @@ srv_g_scatterplot <- function(input,
           xaxis_var = .(xaxis),
           yaxis_var = .(yaxis),
           trt_group = .(trt_group),
-          xmin = .(input$xrange_scale[1]),
-          xmax = .(input$xrange_scale[2]),
-          ymin = .(input$yrange_scale[1]),
-          ymax = .(input$yrange_scale[2]),
+          xmin = .(xrange_scale[1]),
+          xmax = .(xrange_scale[2]),
+          ymin = .(yrange_scale[1]),
+          ymax = .(yrange_scale[2]),
           color_manual = .(color_manual),
           shape_manual = .(shape_manual),
-          facet_ncol = .(input$facet_ncol),
-          facet = .(input$facet),
+          facet_ncol = .(facet_ncol),
+          facet = .(facet),
           facet_var = .(facet_var),
-          reg_line = .(input$reg_line),
-          font_size = .(input$font_size),
-          dot_size = .(input$dot_size),
-          reg_text_size = .(input$reg_text_size),
-          rotate_xlab = .(input$rotate_xlab),
-          hline = .(`if`(is.na(input$hline), NULL, as.numeric(input$hline))),
-          vline = .(`if`(is.na(input$vline), NULL, as.numeric(input$vline)))
+          reg_line = .(reg_line),
+          font_size = .(font_size),
+          dot_size = .(dot_size),
+          reg_text_size = .(reg_text_size),
+          rotate_xlab = .(rotate_xlab),
+          hline = .(`if`(is.na(hline), NULL, as.numeric(hline))),
+          vline = .(`if`(is.na(vline), NULL, as.numeric(vline)))
         )
-      }),
-      chunks = private_chunks
+      })
     )
     
     p <- chunks_safe_eval(private_chunks)
@@ -535,6 +312,7 @@ srv_g_scatterplot <- function(input,
   
   # dynamic plot height and brushing
   output$plot_ui <- renderUI({
+    
     plot_height <- input$plot_height
     validate(need(plot_height, "need valid plot height"))
     
@@ -548,11 +326,12 @@ srv_g_scatterplot <- function(input,
   output$brush_data <- DT::renderDataTable({
     req(input$scatterplot_brush)
     
-    ANL <- chunks_get_var("ANL", isolate(chunks_anl_step2())) # nolint
+    ANL <- isolate(anl_chunks()$ANL)  
+    validate_has_data(ANL, 5)
+    
     xvar <- isolate(input$xaxis_var)
     yvar <- isolate(input$yaxis_var)
     
-    req(ANL)
     req(all(c(xvar, yvar) %in% names(ANL)))
     
     df <- brushedPoints(
