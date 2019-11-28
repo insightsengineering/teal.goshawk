@@ -252,19 +252,28 @@ srv_g_scatterplot <- function(input,
                               color_manual, 
                               shape_manual) {
   
+  ## check if variables exist
+  ## AVISITCD needs BL and SCR
+  ## BASE
+  ## BASE2
+  
+  
+  
   ns <- session$ns
   dataset_var <- paste0(dataname, "_FILTERED")
-  
   
   # filter for biomarker ----
   chunks_anl_step1 <- reactive({
     
+    # resolve reactive values
     param <- input$param
     ANL_FILTERED <- datasets$get_data(dataname, filtered = TRUE, reactive = TRUE) # nolint
     
+    # validate
     validate(need(param, "Please select a biomarker"))
     validate_has_data(ANL_FILTERED, 5)
-  
+    
+    # analysis
     private_chunks <- chunks$new()
     chunks_reset(as.environment(setNames(list(ANL_FILTERED), dataset_var)), private_chunks)
     
@@ -278,76 +287,60 @@ srv_g_scatterplot <- function(input,
       chunks = private_chunks
     )
     
-    chunks_safe_eval(private_chunks)
+    chunks_safe_eval(private_chunks) # to get ANL
     
     return(private_chunks)
   })
   
   # update min/max data constraint value
-  observeEvent(c(chunks_anl_step1(), input$constraint_var), {
+  observe({
     
     constraint_var <- input$constraint_var
+    chunks_with_anl <- chunks_anl_step1()
     
-    ANL <- chunks_get_var("ANL", chunks_anl_step1()) # nolint
+    validate(need(constraint_var, "select a constraint variable"))    
     
-    if (constraint_var != "NONE") {
+    ANL <- chunks_get_var("ANL", chunks_with_anl) # nolint
+    validate_has_data(ANL, 5)
+    
+    
+    # get min max values
+    args <- if (constraint_var == "NONE") {
       
-      visit_freq <- unique(ANL$AVISITCD)
+      shinyjs::hide("constraint_range")
       
-      if ((constraint_var == "BASE2" & any(grepl("SCR", visit_freq))) ||  
-          (constraint_var == "BASE" & any(grepl("BL", visit_freq)))) {
-        
-        anl_constraint_var <- ANL[[constraint_var]]
-        
-        constraint_range_min <- floor(min(anl_constraint_var, na.rm = TRUE) * 1000) / 1000
-        label_min <- sprintf("Min (%s)", constraint_range_min)
-        constraint_range_max <- ceiling(max(anl_constraint_var, na.rm = TRUE) * 1000) / 1000
-        label_max <- sprintf("Max (%s)", constraint_range_max)
-        
-        updateNumericInput(
-          session = session,
-          inputId = "constraint_range_min",
-          label = label_min,
-          min = constraint_range_min,
-          max = constraint_range_max,
-          value = constraint_range_min
-        )
-        
-        updateNumericInput(
-          session = session,
-          inputId = "constraint_range_max",
-          label = label_max,
-          min = constraint_range_min,
-          max = constraint_range_max,
-          value = constraint_range_max
-        )
-        
-        shinyjs::show("constraint_range")
-        
-        return()
-      }
+      list(
+        min = list(label = "Min", min = 0, max = 0, value = 0),
+        max = list(label = "Max", min = 0, max = 0, value = 0)
+      )
+      
+    } else {  # BASE or BASE2
+      
+      shinyjs::show("constraint_range")
+      
+      rng <- switch(
+        constraint_var,
+        "BASE" = range(ANL$BASE[ANL$AVISITCD == "BL"], na.rm = TRUE),
+        "BASE2" = range(ANL$BASE2[ANL$AVISITCD == "SCR"], na.rm = TRUE),
+        stop(paste(constraint_var, "not allowed"))
+      ) 
+      
+      minmax <- c( floor(rng[1] * 1000) / 1000,  ceiling(rng[2] * 1000) / 1000) 
+      
+      label_min <- sprintf("Min (%s)", minmax[1])
+      label_max <- sprintf("Max (%s)", minmax[2])
+      
+      list(
+        min = list(label = label_min, min = minmax[1], max = minmax[2], value = minmax[1]),
+        max = list(label = label_max, min = minmax[1], max = minmax[2], value = minmax[2])
+      )
     }
     
-    shinyjs::hide("constraint_range")
+    do.call("updateNumericInput", c(list(session = session, inputId = "constraint_range_min"), args$min))
+    do.call("updateNumericInput", c(list(session = session, inputId = "constraint_range_max"), args$max))
     
-    updateNumericInput(
-      session = session,
-      inputId = "constraint_range_min",
-      label = "Min",
-      min = 0,
-      max = 0,
-      value = 0
-    )
-    
-    updateNumericInput(
-      session = session,
-      inputId = "constraint_range_max",
-      label = "Max",
-      min = 0,
-      max = 0,
-      value = 0
-    )
   })
+  
   
   # code chunk for ANL
   chunks_anl_step2 <- eventReactive(c(input$constraint_range_min, input$constraint_range_max, chunks_anl_step1()), {
