@@ -55,10 +55,10 @@ srv_goshawk_shell <- function(input, output, session, datasets, dataname, param_
 
   output$txt <- renderText({
 
-    ANL_chunks <- anl_chunks()
+    anl_chunks <- anl_chunks()
 
-    ANL <- ANL_chunks$ANL
-    private_chunks <- ANL_chunks$chunks$clone(deep = TRUE)
+    ANL <- anl_chunks$ANL # nolint
+    private_chunks <- anl_chunks$chunks$clone(deep = TRUE)
 
     init_chunks(private_chunks)
 

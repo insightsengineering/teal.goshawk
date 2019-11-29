@@ -8,9 +8,9 @@ goshawk_data <- function() {
                       "B: Placebo" = "Placebo",
                       "C: Combination" = "Combination")
 
-  ADSL <- random.cdisc.data::radsl(N = 20, seed = 1)
-  ADLB <- random.cdisc.data::radlb(ADSL, visit_format = "WEEK", n_assessments = 7L, seed = 2)
-  ADLB <- ADLB %>%
+  ADSL <- random.cdisc.data::radsl(N = 20, seed = 1) # nolint
+  ADLB <- random.cdisc.data::radlb(ADSL, visit_format = "WEEK", n_assessments = 7L, seed = 2) # nolint
+  ADLB <- ADLB %>% # nolint
     mutate(AVISITCD = case_when(
       .data$AVISIT == "SCREENING" ~ "SCR",
       .data$AVISIT == "BASELINE" ~ "BL",
@@ -54,7 +54,7 @@ goshawk_data <- function() {
         ARMCD == "ARM A" ~ 3),
       ARM = as.character(arm_mapping[match(ARM, names(arm_mapping))]),
       ARM = factor(ARM) %>% reorder(TRTORD))
-       ' )
+       ')
 }
 
 
@@ -82,12 +82,12 @@ templ_ui_constraint <- function(ns) {
 }
 
 
-keep_range_slider_updated <- function(session, input, id_slider, id_var, reactive_ANL) {
+keep_range_slider_updated <- function(session, input, id_slider, id_var, reactive_ANL) { # nolint
   observe({
     varname <- input[[id_var]]
     validate(need(varname, "Please select variable"))
 
-    ANL <- reactive_ANL()$ANL
+    ANL <- reactive_ANL()$ANL # nolint
     validate_has_variable(ANL, varname, paste("variable", varname, "does not exist"))
 
     vals <- ANL[[varname]]
@@ -141,7 +141,7 @@ constr_anl_chunks <- function(session, input, datasets, dataname, param_var, trt
       })
     )
 
-    ANL <- chunks_safe_eval(private_chunks) # to get ANL
+    ANL <- chunks_safe_eval(private_chunks) # nolint
     validate_has_data(ANL, 5)
 
     return(list(ANL = ANL, chunks = private_chunks))
@@ -150,7 +150,7 @@ constr_anl_chunks <- function(session, input, datasets, dataname, param_var, trt
 
   observe({
     constraint_var <- input$constraint_var
-    ANL <- anl_param()$ANL
+    ANL <- anl_param()$ANL # nolint
 
     validate(need(constraint_var, "select a constraint variable"))
 
@@ -234,7 +234,7 @@ constr_anl_chunks <- function(session, input, datasets, dataname, param_var, trt
         })
       )
 
-      ANL <- chunks_safe_eval(private_chunks)
+      ANL <- chunks_safe_eval(private_chunks) # nolint
       validate_has_data(ANL, 5)
     }
 
