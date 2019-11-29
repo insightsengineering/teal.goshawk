@@ -189,7 +189,7 @@ ui_g_scatterplot <- function(id, ...) {
     ),
     encoding =  div(
       tags$label(a$dataname, "Data Settings", class = "text-primary"),
-      templ_ui_param(ns, a$param$choices, a$param$selected), # required by constr_anl_chunks
+      templ_ui_param(ns("param"), a$param$choices, a$param$selected), # required by constr_anl_chunks
       selectInput(ns("xaxis_var"),  "Select an X-Axis Variable",  a$xaxis_var$choices,  a$xaxis_var$selected,
                           multiple = FALSE),
       selectInput(ns("yaxis_var"), "Select a Y-Axis Variable", a$yaxis_var$choices, a$yaxis_var$selected,
@@ -239,7 +239,7 @@ srv_g_scatterplot <- function(input,
   ns <- session$ns
 
   # reused in all modules
-  anl_chunks <- constr_anl_chunks(session, input, datasets, dataname, param_var, trt_group)
+  anl_chunks <- constr_anl_chunks(session, input, datasets, dataname, "param", param_var, trt_group)
 
   # update sliders for axes
   keep_range_slider_updated(session, input, "xrange_scale", "xaxis_var", anl_chunks)

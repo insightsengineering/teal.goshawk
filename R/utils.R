@@ -58,8 +58,8 @@ goshawk_data <- function() {
 }
 
 
-templ_ui_param <- function(ns, choices, selected) {
-  selectInput(ns("param"), "Select a Biomarker", choices, selected, multiple = FALSE)
+templ_ui_param <- function(id, choices, selected) {
+  selectInput(id, "Select a Biomarker", choices, selected, multiple = FALSE)
 }
 
 #' @importFrom shinyjs hidden
@@ -110,11 +110,11 @@ keep_range_slider_updated <- function(session, input, id_slider, id_var, reactiv
 #' @importFrom dplyr filter
 #' @importFrom digest digest2int
 #' @importFrom shinyjs hide show
-constr_anl_chunks <- function(session, input, datasets, dataname, param_var, trt_group) {
+constr_anl_chunks <- function(session, input, datasets, dataname, param_id, param_var, trt_group) {
   dataset_var <- paste0(dataname, "_FILTERED")
 
   anl_param <- reactive({
-    param <- input$param
+    param <- input[[param_id]]
     validate(need(param, "Please select a biomarker"))
 
     ANL_FILTERED <- datasets$get_data(dataname, filtered = TRUE, reactive = TRUE) # nolint
