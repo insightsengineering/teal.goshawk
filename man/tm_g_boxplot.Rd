@@ -4,16 +4,15 @@
 \alias{tm_g_boxplot}
 \title{Box Plot}
 \usage{
-tm_g_boxplot(label, dataname, param_var, param_choices = param, param,
-  yaxis_var = "AVAL", yaxis_var_choices = c("AVAL", "CHG"),
-  xaxis_var = "AVISITCD", xaxis_var_choices = NULL,
-  facet_var = "ARM", facet_var_choices = NULL,
-  filter_vars = c("BASE2", "BASE"), filter_labs = c("Screening",
-  "Baseline"), trt_group = "ARM", color_manual = NULL,
-  shape_manual = NULL, hline = NULL, facet_ncol = NULL,
-  rotate_xlab = FALSE, pre_output = NULL, post_output = NULL,
-  armlabel = NULL, plot_height = c(600, 200, 2000),
-  code_data_processing = NULL)
+tm_g_boxplot(label, dataname, param,
+  yaxis_var = choices_selected(c("AVAL", "CHG"), "AVAL"),
+  xaxis_var = choices_selected("AVISITCD", "AVISITCD"),
+  facet_var = choices_selected("ARM", "ARM"), filter_vars = c("BASE2",
+  "BASE"), filter_labs = c("Screening", "Baseline"), trt_group = "ARM",
+  color_manual = NULL, shape_manual = NULL, hline = NULL,
+  facet_ncol = NULL, rotate_xlab = FALSE, armlabel = NULL,
+  plot_height = c(600, 200, 2000), pre_output = NULL,
+  post_output = NULL)
 }
 \arguments{
 \item{label}{menu item label of the module in the teal app.}
@@ -21,23 +20,13 @@ tm_g_boxplot(label, dataname, param_var, param_choices = param, param,
 \item{dataname}{analysis data passed to the data argument of teal init. E.g. ADaM structured
 laboratory data frame ALB.}
 
-\item{param_var}{name of variable containing biomarker codes e.g. PARAMCD.}
-
-\item{param_choices}{list of biomarkers of interest.}
-
 \item{param}{biomarker selected.}
 
 \item{yaxis_var}{name of variable containing biomarker results displayed on y-axis e.g. AVAL.}
 
-\item{yaxis_var_choices}{list of variables containing biomarker results choices.}
-
 \item{xaxis_var}{variable to categorize the x-axis.}
 
-\item{xaxis_var_choices}{variable choices with which to categorize x-axis.}
-
 \item{facet_var}{variable to facet the plots by.}
-
-\item{facet_var_choices}{variable choices with which to facet the plots.}
 
 \item{filter_vars}{variables to be used for filtering the data.  The default is BASE2 and BASE}
 
@@ -56,6 +45,12 @@ laboratory data frame ALB.}
 
 \item{rotate_xlab}{45 degree rotation of x-axis values.}
 
+\item{armlabel}{label for the treatment symbols in the legend. If not specified then the label
+attribute for trt_group will be used. If there is no label attribute for trt_group, then the
+name of the parameter (in title case) will be used.}
+
+\item{plot_height}{numeric vectors to define the plot height.}
+
 \item{pre_output}{optional, \code{shiny.tag} with text placed before the
 output to put the output into context. For example the
 \code{\link[shiny]{helpText}} elements are useful.}
@@ -64,11 +59,15 @@ output to put the output into context. For example the
 output to put the output into context. For example the
 \code{\link[shiny]{helpText}} elements are useful.}
 
-\item{armlabel}{label for the treatment symbols in the legend. If not specified then the label
-attribute for trt_group will be used. If there is no label attribute for trt_group, then the
-name of the parameter (in title case) will be used.}
+\item{param_var}{name of variable containing biomarker codes e.g. PARAMCD.}
 
-\item{plot_height}{numeric vectors to define the plot height.}
+\item{param_choices}{list of biomarkers of interest.}
+
+\item{yaxis_var_choices}{list of variables containing biomarker results choices.}
+
+\item{xaxis_var_choices}{variable choices with which to categorize x-axis.}
+
+\item{facet_var_choices}{variable choices with which to facet the plots.}
 
 \item{code_data_processing}{TODO}
 }
@@ -85,52 +84,72 @@ summary table.
 
 # Example using ADaM structure analysis dataset.
 
-library(dplyr)
-library(ggplot2)
-library(goshawk)
 library(random.cdisc.data)
-library(stringr)
-library(teal)
-library(teal.goshawk)
 
 # original ARM value = dose value
-arm_mapping <- list("A: Drug X" = "150mg QD", "B: Placebo" = "Placebo",
-"C: Combination" = "Combination")
-color_manual <-  c("150mg QD" = "#000000", "Placebo" = "#3498DB", "Combination" = "#E74C3C")
-# assign LOQ flag symbols: circles for "N" and triangles for "Y", squares for "NA"
-shape_manual <-  c("N"  = 1, "Y"  = 2, "NA" = 0)
+arm_mapping <- list("A: Drug X" = "150mg QD",
+                    "B: Placebo" = "Placebo",
+                    "C: Combination" = "Combination")
 
-ASL <- radsl(N = 20, seed = 1)
-ALB <- radlb(ASL, visit_format = "WEEK", n_assessments = 7, seed = 2)
-ALB <- ALB \%>\%
-mutate(AVISITCD = case_when(
-AVISIT == "SCREENING" ~ "SCR",
-AVISIT == "BASELINE" ~ "BL", grepl("WEEK", AVISIT) ~ paste("W",trimws(substr(AVISIT, start=6,
-stop=str_locate(AVISIT, "DAY")-1))),
-TRUE ~ as.character(NA))) \%>\%
-mutate(AVISITCDN = case_when(AVISITCD == "SCR" ~ -2,
-AVISITCD == "BL" ~ 0, grepl("W", AVISITCD) ~ as.numeric(gsub("\\\\D+", "", AVISITCD)),
-TRUE ~ as.numeric(NA))) \%>\%
-# use ARMCD values to order treatment in visualization legend
-mutate(TRTORD = ifelse(grepl("C", ARMCD), 1,
-ifelse(grepl("B", ARMCD), 2,
-ifelse(grepl("A", ARMCD), 3, NA)))) \%>\%
-mutate(ARM = as.character(arm_mapping[match(ARM, names(arm_mapping))])) \%>\%
-mutate(ARM = factor(ARM) \%>\% reorder(TRTORD))
+ADSL <- radsl(N = 20, seed = 1)
+ADLB <- radlb(ADSL, visit_format = "WEEK", n_assessments = 7L, seed = 2)
+ADLB <- ADLB \%>\%
+  mutate(AVISITCD = case_when(
+    AVISIT == "SCREENING" ~ "SCR",
+    AVISIT == "BASELINE" ~ "BL",
+    grepl("WEEK", AVISIT) ~ paste("W", stringr::str_extract(AVISIT, "(?<=(WEEK ))[0-9]+")),
+    TRUE ~ as.character(NA)),
+    AVISITCDN = case_when(
+      AVISITCD == "SCR" ~ -2,
+      AVISITCD == "BL" ~ 0,
+      grepl("W", AVISITCD) ~ as.numeric(gsub("[^0-9]*", "", AVISITCD)),
+      TRUE ~ as.numeric(NA)),
+    TRTORD = case_when(
+      ARMCD == "ARM C" ~ 1,
+      ARMCD == "ARM B" ~ 2,
+      ARMCD == "ARM A" ~ 3),
+    ARM = as.character(arm_mapping[match(ARM, names(arm_mapping))]),
+    ARM = factor(ARM) \%>\% reorder(TRTORD))
 
-param_choices = c("ALT", "CRP", "IGA")
 
 x <- teal::init(
-  data =  list(ASL = ASL, ALB = ALB),
+  data = cdisc_data(
+    cdisc_dataset("ADSL", ADSL),
+    cdisc_dataset("ADLB", ADLB),
+    code = {'
+      arm_mapping <- list("A: Drug X" = "150mg QD",
+                          "B: Placebo" = "Placebo",
+                          "C: Combination" = "Combination")
+
+      ADSL <- radsl(N = 20, seed = 1)
+      ADLB <- radlb(ADSL, visit_format = "WEEK", n_assessments = 7L, seed = 2)
+      ADLB <- ADLB \%>\%
+        mutate(AVISITCD = case_when(
+            AVISIT == "SCREENING" ~ "SCR",
+            AVISIT == "BASELINE" ~ "BL",
+            grepl("WEEK", AVISIT) ~ paste("W", stringr::str_extract(AVISIT, "(?<=(WEEK ))[0-9]+")),
+            TRUE ~ as.character(NA)),
+          AVISITCDN = case_when(
+            AVISITCD == "SCR" ~ -2,
+            AVISITCD == "BL" ~ 0,
+            grepl("W", AVISITCD) ~ as.numeric(gsub("[^0-9]*", "", AVISITCD)),
+            TRUE ~ as.numeric(NA)),
+          TRTORD = case_when(
+            ARMCD == "ARM C" ~ 1,
+            ARMCD == "ARM B" ~ 2,
+            ARMCD == "ARM A" ~ 3),
+          ARM = as.character(arm_mapping[match(ARM, names(arm_mapping))]),
+          ARM = factor(ARM) \%>\% reorder(TRTORD))
+          '},
+    check = FALSE
+  ),
   modules = root_modules(
       tm_g_boxplot(
         label = "Box Plot",
-        dataname = "ALB",
+        dataname = "ADLB",
         param_var = "PARAMCD",
-        param_choices = param_choices,
-        param = param_choices[1],
-        yaxis_var = "AVAL",
-        yaxis_var_choices = c("AVAL", "BASE", "CHG"),
+        param = choices_selected(c("ALT", "CRP", "IGA"), "ALT"),
+        yaxis_var = choices_selected(c("AVAL", "BASE", "CHG"), "AVAL"),
         rotate_xlab = FALSE,
         xaxis_var = "ARM",
         xaxis_var_choices = c("ARM", "AVISITCD", "STUDYID"),

@@ -3,21 +3,21 @@
 #' This teal module renders the UI and calls the function that creates a spaghetti plot.
 #'
 #' @param label menu item label of the module in the teal app.
-#' @param dataname analysis data passed to the data argument of teal init. E.g. ADaM structured 
-#' laboratory data frame ALB.
+#' @param dataname analysis data passed to the data argument of teal init. E.g. ADaM structured
+#' laboratory data frame ADLB.
 #' @param param_var name of variable containing biomarker codes e.g. PARAMCD.
 #' @param param_choices list of biomarkers of interest.
 #' @param param biomarker selected.
 #' @param param_var_label single name of variable in analysis data that includes parameter labels.
 #' @param idvar name of unique subject id variable.
-#' @param xvar single name of variable in analysis data that is used as x-axis in the plot for the 
+#' @param xvar single name of variable in analysis data that is used as x-axis in the plot for the
 #' respective goshawk function.
 #' @param xvar_choices vector with variable names that can be used as xvar.
-#' @param xvar_level vector that can be used to define the factor level of xvar. Only use it when 
+#' @param xvar_level vector that can be used to define the factor level of xvar. Only use it when
 #' xvar is character or factor.
 #' @param filter_var data constraint variable.
 #' @param filter_var_choices data constraint variable choices.
-#' @param yvar single name of variable in analysis data that is used as summary variable in the 
+#' @param yvar single name of variable in analysis data that is used as summary variable in the
 #' respective gshawk function.
 #' @param yvar_choices vector with variable names that can be used as yvar.
 #' @param trt_group name of variable representing treatment group e.g. ARM.
@@ -25,7 +25,7 @@
 #' @param man_color string vector representing customized colors
 #' @param color_comb name or hex value for combined treatment color.
 #' @param hline numeric value to add horizontal line to plot
-#' @param xtick numeric vector to define the tick values of x-axis when x variable is numeric. 
+#' @param xtick numeric vector to define the tick values of x-axis when x variable is numeric.
 #' Default value is waive().
 #' @param xlabel vector with same length of xtick to define the label of x-axis tick values. Default
 #'  value is waive().
@@ -34,12 +34,12 @@
 #' @param plot_height numeric vectors to define the plot height.
 #' @param font_size control font size for title, x-axis, y-axis and legend font.
 #' @param group_stats control group mean or median overlay.
-#' 
+#'
 #' @import goshawk
 #'
 #' @author Wenyi Liu (luiw2) wenyi.liu@roche.com
 #' @author Balazs Toth (tothb2) toth.balazs@gene.com
-#' 
+#'
 #' @return \code{shiny} object
 #'
 #' @export
@@ -49,51 +49,73 @@
 #'\dontrun{
 #'
 #' # Example using ADaM structure analysis dataset.
-#' 
-#' library(dplyr)
-#' library(ggplot2)
-#' library(goshawk)
+#'
 #' library(random.cdisc.data)
-#' library(stringr)
-#' library(teal)
-#' library(teal.goshawk)
-#' 
+#'
 #' # original ARM value = dose value
-#' arm_mapping <- list("A: Drug X" = "150mg QD", "B: Placebo" = "Placebo", 
-#' "C: Combination" = "Combination")
-#' color_manual <-  c("150mg QD" = "#000000", "Placebo" = "#3498DB", "Combination" = "#E74C3C")
-#' # assign LOQ flag symbols: circles for "N" and triangles for "Y", squares for "NA"
-#' shape_manual <-  c("N"  = 1, "Y"  = 2, "NA" = 0)
-#' 
-#' ASL <- radsl(N = 20, seed = 1)
-#' ALB <- radlb(ASL, visit_format = "WEEK", n_assessments = 7, seed = 2)
-#' ALB <- ALB %>% 
-#' mutate(AVISITCD = case_when(
-#' AVISIT == "SCREENING" ~ "SCR",
-#' AVISIT == "BASELINE" ~ "BL", grepl("WEEK", AVISIT) ~ paste("W",trimws(substr(AVISIT, start=6, 
-#' stop=str_locate(AVISIT, "DAY")-1))),
-#' TRUE ~ as.character(NA))) %>%
-#' mutate(AVISITCDN = case_when(AVISITCD == "SCR" ~ -2,
-#' AVISITCD == "BL" ~ 0, grepl("W", AVISITCD) ~ as.numeric(gsub("\\D+", "", AVISITCD)), 
-#' TRUE ~ as.numeric(NA))) %>%
-#' # use ARMCD values to order treatment in visualization legend
-#' mutate(TRTORD = ifelse(grepl("C", ARMCD), 1,
-#' ifelse(grepl("B", ARMCD), 2,
-#' ifelse(grepl("A", ARMCD), 3, NA)))) %>%
-#' mutate(ARM = as.character(arm_mapping[match(ARM, names(arm_mapping))])) %>%
-#' mutate(ARM = factor(ARM) %>% reorder(TRTORD))
-#' 
-#' param_choices = c("ALT", "CRP", "IGA")
-#' 
+#' arm_mapping <- list("A: Drug X" = "150mg QD",
+#'                     "B: Placebo" = "Placebo",
+#'                     "C: Combination" = "Combination")
+#'
+#' ADSL <- radsl(N = 20, seed = 1)
+#' ADLB <- radlb(ADSL, visit_format = "WEEK", n_assessments = 7L, seed = 2)
+#' ADLB <- ADLB %>%
+#'   mutate(AVISITCD = case_when(
+#'     AVISIT == "SCREENING" ~ "SCR",
+#'     AVISIT == "BASELINE" ~ "BL",
+#'     grepl("WEEK", AVISIT) ~ paste("W", stringr::str_extract(AVISIT, "(?<=(WEEK ))[0-9]+")),
+#'     TRUE ~ as.character(NA)),
+#'     AVISITCDN = case_when(
+#'       AVISITCD == "SCR" ~ -2,
+#'       AVISITCD == "BL" ~ 0,
+#'       grepl("W", AVISITCD) ~ as.numeric(gsub("[^0-9]*", "", AVISITCD)),
+#'       TRUE ~ as.numeric(NA)),
+#'     TRTORD = case_when(
+#'       ARMCD == "ARM C" ~ 1,
+#'       ARMCD == "ARM B" ~ 2,
+#'       ARMCD == "ARM A" ~ 3),
+#'     ARM = as.character(arm_mapping[match(ARM, names(arm_mapping))]),
+#'     ARM = factor(ARM) %>% reorder(TRTORD))
+#'
+#'
 #' x <- teal::init(
-#'   data = list(ASL = ASL, ALB = ALB),
+#'   data = cdisc_data(
+#'     cdisc_dataset("ADSL", ADSL),
+#'     cdisc_dataset("ADLB", ADLB),
+#'     code = {'
+#'       arm_mapping <- list("A: Drug X" = "150mg QD",
+#'                           "B: Placebo" = "Placebo",
+#'                           "C: Combination" = "Combination")
+#'
+#'       ADSL <- radsl(N = 20, seed = 1)
+#'       ADLB <- radlb(ADSL, visit_format = "WEEK", n_assessments = 7L, seed = 2)
+#'       ADLB <- ADLB %>%
+#'         mutate(AVISITCD = case_when(
+#'             AVISIT == "SCREENING" ~ "SCR",
+#'             AVISIT == "BASELINE" ~ "BL",
+#'             grepl("WEEK", AVISIT) ~ paste("W", stringr::str_extract(AVISIT, "(?<=(WEEK ))[0-9]+")),
+#'             TRUE ~ as.character(NA)),
+#'           AVISITCDN = case_when(
+#'             AVISITCD == "SCR" ~ -2,
+#'             AVISITCD == "BL" ~ 0,
+#'             grepl("W", AVISITCD) ~ as.numeric(gsub("[^0-9]*", "", AVISITCD)),
+#'             TRUE ~ as.numeric(NA)),
+#'           TRTORD = case_when(
+#'             ARMCD == "ARM C" ~ 1,
+#'             ARMCD == "ARM B" ~ 2,
+#'             ARMCD == "ARM A" ~ 3),
+#'           ARM = as.character(arm_mapping[match(ARM, names(arm_mapping))]),
+#'           ARM = factor(ARM) %>% reorder(TRTORD))
+#'           '},
+#'     check = FALSE
+#'   ),
 #'   modules = root_modules(
 #'     tm_g_spaghettiplot(
 #'       label = "Spaghetti Plot",
-#'       dataname = "ALB",
+#'       dataname = "ADLB",
 #'       param_var = "PARAMCD",
-#'       param_choices = param_choices,
-#'       param = param_choices[1],
+#'       param_choices = c("ALT", "CRP", "IGA"),
+#'       param = "ALT",
 #'       idvar = "USUBJID",
 #'       xvar = "AVISITCD",
 #'       yvar = "AVAL",
@@ -105,7 +127,7 @@
 #'     )
 #'   )
 #' )
-#' 
+#'
 #' shinyApp(x$ui, x$server)
 #' }
 
@@ -113,7 +135,7 @@ tm_g_spaghettiplot <- function(label,
                                dataname,
                                param_var,
                                param_choices = param,
-                               param, 
+                               param,
                                param_var_label = 'PARAM',
                                idvar,
                                xvar, yvar,
@@ -132,9 +154,9 @@ tm_g_spaghettiplot <- function(label,
                                facet_ncol = 2,
                                plot_height = c(600, 200, 2000),
                                font_size = c(12, 8, 20)) {
-  
+
   args <- as.list(environment())
-  
+
   module(
     label = label,
     server = srv_spaghettiplot,
@@ -145,16 +167,16 @@ tm_g_spaghettiplot <- function(label,
     ui_args = args,
     filters = dataname
   )
-  
+
 }
 
 ui_spaghettiplot <- function(id, ...) {
-  
+
   ns <- NS(id)
   a <- list(...)
-  
+
   if (a$plot_height < 200 || a$plot_height > 2000) stop("plot_height must be between 200 and 2000")
-  
+
   standard_layout(
     output = div(
       fluidRow(
@@ -178,7 +200,7 @@ ui_spaghettiplot <- function(id, ...) {
       uiOutput(ns("filter_min"), style="display: inline-block; vertical-align:center"),
       uiOutput(ns("filter_max"), style="display: inline-block; vertical-align:center"),
       uiOutput(ns("yaxis_scale")),
-      
+
       if (all(c(
         length(a$plot_height) == 1
       ))) {
@@ -206,24 +228,24 @@ ui_spaghettiplot <- function(id, ...) {
     # ,
     # forms = actionButton(ns("show_rcode"), "Show R Code", width = "100%")
   )
-  
+
 }
 
-srv_spaghettiplot <- function(input, output, session, datasets, dataname, idvar, param_var, trt_group, man_color, 
+srv_spaghettiplot <- function(input, output, session, datasets, dataname, idvar, param_var, trt_group, man_color,
                               color_comb, yvar, xvar_level, trt_group_level, param_var_label, xtick, xlabel) {
-  
+
   ns <- session$ns
-  
+
   ## dynamic plot height and brushing
   output$plot_ui <- renderUI({
     plot_height <- input$plot_height
     validate(need(plot_height, "need valid plot height"))
-    
+
     plotOutput(ns("spaghettiplot"), height=plot_height)
     # brush = brushOpts(id = ns("spaghettiplot_brush"))
     # )
   })
-  
+
   # output$brush_data <- renderDataTable({
   #   # brush_results <- brushedPoints(select(filter_ANL(), "USUBJID", "ARM", "AVISITCD", "PARAMCD", yvar, "LOQFL"), input$spaghettiplot_brush)
   #   brush_results <- brushedPoints(select(filter_ANL(), "USUBJID", "ARM"), input$spaghettiplot_brush)
@@ -233,39 +255,39 @@ srv_spaghettiplot <- function(input, output, session, datasets, dataname, idvar,
   #     NULL
   #   }
   # })
-  
+
   # filter data by param and the y-axis range values
   filter_ANL <- reactive({
-    
+
     param <- input$param
     filter_var <- input$filter_var
     ANL <- datasets$get_data(dataname, filtered = TRUE, reactive = TRUE) %>%
       filter(eval(parse(text = param_var)) == param )
-    
+
     ymin_scale <- -Inf
     ymax_scale <- Inf
-    
+
     if(filter_var != "NONE"){
       if (length(input$filtermin)){
         ymin_scale <- input$filtermin
       }
-      
+
       if (length(input$filtermax)){
         ymax_scale <- input$filtermax
       }
-      
+
       ANL1 <- ANL %>%
         filter((ymin_scale <= eval(parse(text = filter_var)) &
                   eval(parse(text = filter_var)) <= ymax_scale) |
                  (is.na(filter_var)))
-      
+
       return(ANL1)
     } else {
       return(ANL)
     }
   })
-  
-  
+
+
   # Filter data based on input filter_var
   observe({
     # derive min max value of input filter_var
@@ -273,7 +295,7 @@ srv_spaghettiplot <- function(input, output, session, datasets, dataname, idvar,
     param <- input$param
     value_var <- input$filter_var
     scale_data <- filter(ANL, eval(parse(text = param_var)) == param)
-    
+
     if(value_var == "NONE"){
       output$filter_max <- NULL
       output$filter_min <- NULL
@@ -282,55 +304,55 @@ srv_spaghettiplot <- function(input, output, session, datasets, dataname, idvar,
       # identify min and max values of BM range ignoring NA values
       min_scale <- min(scale_data[,value_var], na.rm = TRUE)
       max_scale <- max(scale_data[,value_var], na.rm = TRUE)
-      
+
       # Output variable UI
       output$filter_min <- renderUI({
         tagList({
           numericInput(session$ns("filtermin"), label = paste0("Min (", min_scale, ")"), value = min_scale, min = min_scale, max = max_scale)
         })
       })
-      
+
       output$filter_max <- renderUI({
         tagList({
           numericInput(session$ns("filtermax"), label = paste0("Min (", max_scale, ")"), value = max_scale, min = min_scale, max = max_scale)
         })
       })
-      
+
       output$filter_val_scale <- renderUI({
         tagList({
-          sliderInput(ns("filter_scale"), label=paste0("Select Data for ", value_var), 
+          sliderInput(ns("filter_scale"), label=paste0("Select Data for ", value_var),
                       floor(min_scale), ceiling(max_scale),
                       value = c(floor(min_scale), ceiling(max_scale)))
         })
       })
     }
   })
-  
+
   # dynamic slider for y-axis
   output$yaxis_scale <- renderUI({
     ANL <- filter_ANL()
-    
+
     ymin_scale <- -Inf
     ymax_scale <- Inf
-    
+
     # identify min and max values of BM range ignoring NA values
     ymin_scale <- min(ANL[[input$yvar]], na.rm = TRUE)
     ymax_scale <- max(ANL[[input$yvar]], na.rm = TRUE)
-    
+
     tagList({
-      sliderInput(ns("yrange_scale"), label="Y-Axis Range Zoom", 
-                  floor(ymin_scale), ceiling(ymax_scale), 
+      sliderInput(ns("yrange_scale"), label="Y-Axis Range Zoom",
+                  floor(ymin_scale), ceiling(ymax_scale),
                   value = c(floor(ymin_scale), ceiling(ymax_scale)))
     })
-    
+
   })
-  
+
   chunks <- list(
     analysis = "# Not Calculated"
   )
-  
+
   output$spaghettiplot <- renderPlot({
-    
+
     ANL <- filter_ANL()
     param <- input$param
     xvar <- input$xvar
@@ -342,10 +364,10 @@ srv_spaghettiplot <- function(input, output, session, datasets, dataname, idvar,
     group_stats <- input$group_stats
     font_size <- input$font_size
     alpha <- input$alpha
-    
-    
+
+
     chunks$analysis <<- "# Not Calculated"
-    
+
     validate(need(!is.null(ANL) && is.data.frame(ANL), "no data left"))
     validate(need(nrow(ANL) > 0 , "no observations left"))
     validate(need(param_var %in% names(ANL),
@@ -360,18 +382,18 @@ srv_spaghettiplot <- function(input, output, session, datasets, dataname, idvar,
                   paste("variable", yvar, " is not available in data", dataname)))
     validate(need(trt_group %in% names(ANL),
                   paste("variable", trt_group, " is not available in data", dataname)))
-    
-    
+
+
     data_name <- paste0(dataname, "_FILTERED")
     assign(data_name, ANL)
-    
+
     # re-establish treatment variable label
     if (trt_group == "ARM"){
       attributes(ANL$ARM)$label <- "Planned Arm"
     } else {
       attributes(ANL$ACTARM)$label <- "Actual Arm"
     }
-    
+
     chunks$analysis <<- call(
       "g_spaghettiplot",
       data = bquote(.(as.name(data_name))),
@@ -396,13 +418,13 @@ srv_spaghettiplot <- function(input, output, session, datasets, dataname, idvar,
       alpha = alpha,
       group_stats = group_stats
     )
-    
+
     p <- try(eval(chunks$analysis))
-    
+
     if (is(p, "try-error")) validate(need(FALSE, paste0("could not create the line plot:\n\n", p)))
-    
+
     p
-    
+
   })
-  
+
 }
