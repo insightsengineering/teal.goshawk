@@ -224,9 +224,7 @@ ui_g_scatterplot <- function(id, ...) {
   
 }
 
-#' @importFrom dplyr filter filter_
 #' @importFrom goshawk g_scatterplot
-#' @importFrom shinyjs hide show
 srv_g_scatterplot <- function(input, 
                               output, 
                               session, 

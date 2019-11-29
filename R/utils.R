@@ -58,6 +58,30 @@ goshawk_data <- function() {
 }
 
 
+templ_ui_param <- function(ns, choices, selected) {
+  selectInput(ns("param"), "Select a Biomarker", choices, selected, multiple = FALSE)
+}
+
+#' @importFrom shinyjs hidden
+templ_ui_constraint <- function(ns) {
+  div(
+    radioButtons(ns("constraint_var"),  "Data Constraint",
+                 c("None" = "NONE", "Screening" = "BASE2", "Baseline" = "BASE")),
+    shinyjs::hidden(div(
+      id = ns("constraint_range"),
+      div(
+        style = "display: inline-block; vertical-align:center",
+        numericInput(ns("constraint_range_min"), label = "Min", value = 0,  min = 0,  max = 0)
+      ),
+      div(
+        style = "display: inline-block; vertical-align:center",
+        numericInput(ns("constraint_range_max"), label = "Min", value = 0, min = 0, max = 0)
+      )
+    ))  
+  )
+}
+
+
 keep_range_slider_updated <- function(session, input, id_slider, id_var, reactive_ANL) {
   observe({
     varname <- input[[id_var]]
@@ -83,31 +107,9 @@ keep_range_slider_updated <- function(session, input, id_slider, id_var, reactiv
   })
 }
 
-
-templ_ui_param <- function(ns, choices, selected) {
-  selectInput(ns("param"), "Select a Biomarker", choices, selected, multiple = FALSE)
-}
-
-
-templ_ui_constraint <- function(ns) {
-  div(
-    radioButtons(ns("constraint_var"),  "Data Constraint",
-                 c("None" = "NONE", "Screening" = "BASE2", "Baseline" = "BASE")),
-    shinyjs::hidden(div(
-      id = ns("constraint_range"),
-      div(
-        style = "display: inline-block; vertical-align:center",
-        numericInput(ns("constraint_range_min"), label = "Min", value = 0,  min = 0,  max = 0)
-      ),
-      div(
-        style = "display: inline-block; vertical-align:center",
-        numericInput(ns("constraint_range_max"), label = "Min", value = 0, min = 0, max = 0)
-      )
-    ))  
-  )
-}
-
-
+#' @importFrom dplyr filter
+#' @importFrom digest digest2int
+#' @importFrom shinyjs hide show
 constr_anl_chunks <- function(session, input, datasets, dataname, param_var, trt_group) {
   dataset_var <- paste0(dataname, "_FILTERED")
   
@@ -186,15 +188,16 @@ constr_anl_chunks <- function(session, input, datasets, dataname, param_var, trt
       
       update_min_max(args)
       
-      shinyjs::show("constraint_range")
+      shinyjs::show("constraint_range") # update before show
       
     } else {
       
-      shinyjs::hide("constraint_range")
+      shinyjs::hide("constraint_range") # hide before update
       
+      # force update (and thus refresh) on different constraint_var -> pass unique value for each constraint_var name
       args <- list(
-        min = list(label = "Min", min = 0, max = 0, value = 0),
-        max = list(label = "Max", min = 0, max = 0, value = 0)
+        min = list(label = "Min", min = 0, max = 0, value = digest::digest2int(constraint_var)),
+        max = list(label = "Max", min = 0, max = 0, value = digest::digest2int(constraint_var))
       )
       
       update_min_max(args)
