@@ -19,7 +19,7 @@ tm_g_correlationplot_av(label, dataname, param_var,
 \arguments{
 \item{label}{menu item label of the module in the teal app.}
 
-\item{dataname}{analysis data passed to the data argument of teal init. E.g. ADaM structured 
+\item{dataname}{analysis data passed to the data argument of teal init. E.g. ADaM structured
 laboratory data frame ADLB.}
 
 \item{param_var}{name of variable containing biomarker codes e.g. PARAMCD.}
@@ -50,7 +50,7 @@ laboratory data frame ADLB.}
 
 \item{facet_var}{variable to use for treatment facetting.}
 
-\item{reg_line}{include regression line and annotations for slope and coefficient in 
+\item{reg_line}{include regression line and annotations for slope and coefficient in
 visualization. Use with facet TRUE.}
 
 \item{rotate_xlab}{45 degree rotation of x-axis values.}

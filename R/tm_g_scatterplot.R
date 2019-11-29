@@ -175,25 +175,12 @@ ui_g_scatterplot <- function(id, ...) {
   a <- list(...)
 
   standard_layout(
-    output = div(
-      fluidRow(
-        uiOutput(ns("plot_ui"))
-      ),
-      fluidRow(
-        column(width = 12,
-               br(), hr(),
-               h4("Selected Data Points"),
-               DT::dataTableOutput(ns("brush_data"))
-        )
-      )
-    ),
+    output = templ_ui_output_datatable(ns),
     encoding =  div(
-      tags$label(a$dataname, "Data Settings", class = "text-primary"),
-      templ_ui_param(ns("param"), a$param$choices, a$param$selected), # required by constr_anl_chunks
-      selectInput(ns("xaxis_var"),  "Select an X-Axis Variable",  a$xaxis_var$choices,  a$xaxis_var$selected,
-                          multiple = FALSE),
-      selectInput(ns("yaxis_var"), "Select a Y-Axis Variable", a$yaxis_var$choices, a$yaxis_var$selected,
-                          multiple = FALSE),
+      templ_ui_dataname(a$dataname),
+      templ_ui_param(ns, a$param$choices, a$param$selected), # required by constr_anl_chunks
+      templ_ui_xy_vars(ns, a$xaxis_var$choices, a$xaxis_var$selected,
+                       a$yaxis_var$choices, a$yaxis_var$selected),
       templ_ui_constraint(ns), # required by constr_anl_chunks
       panel_group(
         panel_item(

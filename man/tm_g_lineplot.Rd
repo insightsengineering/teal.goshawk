@@ -16,10 +16,10 @@ tm_g_lineplot(label, dataname, adslname = NULL, param_var,
 \arguments{
 \item{label}{menu item label of the module in the teal app.}
 
-\item{dataname}{analysis data passed to the data argument of teal init. E.g. ADaM structured 
+\item{dataname}{analysis data passed to the data argument of teal init. E.g. ADaM structured
 laboratory data frame ADLB.}
 
-\item{adslname}{Name of ADSL data set from which additional variables will be used for 
+\item{adslname}{Name of ADSL data set from which additional variables will be used for
 shape_choices}
 
 \item{param_var}{name of variable containing biomarker codes e.g. PARAMCD.}
@@ -30,17 +30,17 @@ shape_choices}
 
 \item{param_var_label}{single name of variable in analysis data that includes parameter labels.}
 
-\item{xvar}{single name of variable in analysis data that is used as x-axis in the plot for the 
+\item{xvar}{single name of variable in analysis data that is used as x-axis in the plot for the
 respective goshawk function.}
 
-\item{yvar}{single name of variable in analysis data that is used as summary variable in the 
+\item{yvar}{single name of variable in analysis data that is used as summary variable in the
 respective gshawk function.}
 
 \item{xvar_choices}{vector with variable names that can be used as xvar.}
 
 \item{yvar_choices}{vector with variable names that can be used as yvar.}
 
-\item{xvar_level}{vector that can be used to define the factor level of xvar. Only use it when 
+\item{xvar_level}{vector that can be used to define the factor level of xvar. Only use it when
 xvar is character or factor.}
 
 \item{filter_var}{data constraint variable.}
@@ -59,10 +59,10 @@ xvar is character or factor.}
 
 \item{man_color}{string vector representing customized colors}
 
-\item{xtick}{numeric vector to define the tick values of x-axis when x variable is numeric. 
+\item{xtick}{numeric vector to define the tick values of x-axis when x variable is numeric.
 Default value is waive().}
 
-\item{xlabel}{vector with same length of xtick to define the label of x-axis tick values. 
+\item{xlabel}{vector with same length of xtick to define the label of x-axis tick values.
 Default value is waive().}
 
 \item{rotate_xlab}{boolean value indicating whether to rotate x-axis labels.}

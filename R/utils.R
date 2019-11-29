@@ -58,9 +58,29 @@ goshawk_data <- function() {
 }
 
 
-templ_ui_param <- function(id, choices, selected) {
-  selectInput(id, "Select a Biomarker", choices, selected, multiple = FALSE)
+templ_ui_output_datatable <- function(ns) {
+  div(
+    uiOutput(ns("plot_ui")),
+    br(), hr(),
+    h4("Selected Data Points"),
+    DT::dataTableOutput(ns("brush_data"))
+  )
 }
+
+templ_ui_dataname <- function(dataname) {
+  tags$label(dataname, "Data Settings", class="text-primary")
+}
+templ_ui_param <- function(ns, choices, selected) {
+  selectInput(ns("param"), "Select a Biomarker", choices, selected, multiple = FALSE)
+}
+
+templ_ui_xy_vars <- function(ns, xchoices, xselected, ychoices, yselected, multiple = FALSE) {
+  tagList(
+    selectInput(ns("xaxis_var"), "Select an X-Axis Variable",  xchoices,  xselected, multiple = multiple),
+    selectInput(ns("yaxis_var"), "Select a Y-Axis Variable", ychoices, yselected, multiple = multiple)
+  )
+}
+
 
 #' @importFrom shinyjs hidden
 templ_ui_constraint <- function(ns) {

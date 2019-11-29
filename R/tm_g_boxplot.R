@@ -115,10 +115,8 @@
 #'         label = "Box Plot",
 #'         dataname = "ADLB",
 #'         param_var = "PARAMCD",
-#'         param_choices = param_choices,
-#'         param = param_choices[1],
-#'         yaxis_var = "AVAL",
-#'         yaxis_var_choices = c("AVAL", "BASE", "CHG"),
+#'         param = choices_selected(c("ALT", "CRP", "IGA"), "ALT"),
+#'         yaxis_var = choices_selected(c("AVAL", "BASE", "CHG"), "AVAL"),
 #'         rotate_xlab = FALSE,
 #'         xaxis_var = "ARM",
 #'         xaxis_var_choices = c("ARM", "AVISITCD", "STUDYID"),
@@ -134,15 +132,10 @@
 
 tm_g_boxplot <- function(label,
                          dataname,
-                         param_var,
-                         param_choices = param,
                          param,
-                         yaxis_var = "AVAL",
-                         yaxis_var_choices = c("AVAL", "CHG"),
-                         xaxis_var = "AVISITCD",
-                         xaxis_var_choices = NULL,
-                         facet_var = "ARM",
-                         facet_var_choices = NULL,
+                         yaxis_var = choices_selected(c("AVAL", "CHG"), "AVAL"),
+                         xaxis_var = choices_selected("AVISITCD", "AVISITCD"),
+                         facet_var = choices_selected("ARM", "ARM"),
                          filter_vars = c("BASE2", "BASE"),
                          filter_labs = c("Screening", "Baseline"),
                          trt_group = "ARM",
@@ -151,11 +144,10 @@ tm_g_boxplot <- function(label,
                          hline = NULL,
                          facet_ncol = NULL,
                          rotate_xlab = FALSE,
-                         pre_output = NULL,
-                         post_output = NULL,
                          armlabel = NULL,
                          plot_height = c(600, 200, 2000),
-                         code_data_processing = NULL) {
+                         pre_output = NULL,
+                         post_output = NULL) {
 
   args <- as.list(environment())
 
@@ -196,47 +188,22 @@ ui_g_boxplot <- function(id, ...) {
   inpWidth <- NA
 
   standard_layout(
+    output = templ_ui_output_datatable(ns),
 
-
-    output = div(
-      fluidRow(
-        uiOutput(ns("plot_ui"))
-      ),
-      fluidRow(
-        column(width = 12,
-               br(), hr(),
-               h4("Selected Data Points"),
-               tableOutput(ns("brush_data"))
-        )
-      ),
-      fluidRow(
-        column(width = 12,
-               br(), hr(),
-               h4("Descriptive Statistics"),
-               uiOutput(ns("table_ui"))
-        )
-      )
-    ),
     encoding =  div(
-      tags$label(a$dataname, "Data Settings", class="text-primary"),
+      templ_ui_dataname(a$dataname),
+      templ_ui_param(ns("param"), a$param$choices, a$param$selected),
 
-      optionalSelectInput(inputId = ns("param")
-                          , label = " Select a Biomarker"
-                          , choices = a$param_choices
-                          , selected = a$param
-                          , multiple = FALSE
+      optionalSelectInput(ns("yaxis_var"),
+                          label = "Select a Y-Axis Variable",
+                          choices = a$yaxis_var_choices,
+                          selected = a$yaxis_var,
+                          multiple = FALSE
       ),
 
-      optionalSelectInput(ns("yaxis_var")
-                          , label = "Select a Y-Axis Variable"
-                          , choices = a$yaxis_var_choices
-                          , selected = a$yaxis_var
-                          , multiple = FALSE
-      ),
-
-      optionalSelectInput(ns("xaxis_var")
-                          , label = "Select an X-Axis Variable"
-                          , choices = a$xaxis_var_choices
+      optionalSelectInput(ns("xaxis_var"),
+                          label = "Select an X-Axis Variable",
+                          choices = a$xaxis_var_choices
                           , selected = a$xaxis_var
                           , multiple = FALSE
       ),
@@ -315,15 +282,27 @@ ui_g_boxplot <- function(id, ...) {
 
 }
 
-srv_g_boxplot <- function(input, output, session, datasets
-                          , facet_var, facet_var_choices
-                          , xaxis_var, xaxis_var_choices
-                          , param_var, yaxis_var
-                          , trt_group
-                          , color_manual, shape_manual
-                          , armlabel
-                          , filter_vars, filter_labs
-                          , dataname, code_data_processing) {
+
+
+srv_g_boxplot_old <- function(input, output, session, datasets,
+                              facet_var, facet_var_choices,
+                              xaxis_var, xaxis_var_choices,
+                              param_var, yaxis_var, trt_group,
+                              color_manual, shape_manua,
+                              armlabel,
+                              filter_vars, filter_labs,
+                              dataname, code_data_processing) {
+
+}
+
+srv_g_boxplot_old <- function(input, output, session, datasets,
+                          facet_var, facet_var_choices,
+                          xaxis_var, xaxis_var_choices,
+                          param_var, yaxis_var, trt_group,
+                          color_manual, shape_manua,
+                          armlabel,
+                          filter_vars, filter_labs,
+                          dataname, code_data_processing) {
 
   ns <- session$ns
 

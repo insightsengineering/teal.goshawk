@@ -15,7 +15,7 @@ tm_g_density_distribution_plot(label, dataname, param_var,
 \arguments{
 \item{label}{menu item label of the module in the teal app.}
 
-\item{dataname}{analysis data passed to the data argument of teal init. E.g. ADaM structured 
+\item{dataname}{analysis data passed to the data argument of teal init. E.g. ADaM structured
 laboratory data frame ADLB.}
 
 \item{param_var}{name of variable containing biomarker codes e.g. PARAMCD.}
@@ -57,7 +57,7 @@ output to put the output into context. For example the
 \item{code_data_processing}{TODO}
 }
 \description{
-This teal module renders the UI and calls the functions that create a density distribution plot 
+This teal module renders the UI and calls the functions that create a density distribution plot
 and an accompanying summary table.
 }
 \details{
