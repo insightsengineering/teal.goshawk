@@ -1,5 +1,5 @@
 #' Scatter Plot Teal Module For Biomarker Analysis
-#' 
+#'
 #' @description TODO: a bit more info why the module is needed
 #'
 #' @inheritParams teal.devel::standard_layout
@@ -28,19 +28,19 @@
 #'
 #'
 #' @export
-#' 
+#'
 #' @author Nick Paszty (npaszty) paszty.nicholas@gene.com
 #' @author Balazs Toth (tothb2)  toth.balazs@gene.com
 #'
 #' @examples
 #' # Example using ADaM structure analysis dataset.
 #' library(random.cdisc.data)
-#' 
+#'
 #' # original ARM value = dose value
 #' arm_mapping <- list("A: Drug X" = "150mg QD",
 #'                     "B: Placebo" = "Placebo",
 #'                     "C: Combination" = "Combination")
-#' 
+#'
 #' ADSL <- radsl(N = 20, seed = 1)
 #' ADLB <- radlb(ADSL, visit_format = "WEEK", n_assessments = 7L, seed = 2)
 #' ADLB <- ADLB %>%
@@ -61,8 +61,8 @@
 #'       ARMCD == "ARM A" ~ 3),
 #'     ARM = as.character(arm_mapping[match(ARM, names(arm_mapping))]),
 #'     ARM = factor(ARM) %>% reorder(TRTORD))
-#' 
-#' 
+#'
+#'
 #' app <- init(
 #'   data = cdisc_data(
 #'     cdisc_dataset("ADSL", ADSL),
@@ -71,7 +71,7 @@
 #'       arm_mapping <- list("A: Drug X" = "150mg QD",
 #'                           "B: Placebo" = "Placebo",
 #'                           "C: Combination" = "Combination")
-#' 
+#'
 #'       ADSL <- radsl(N = 20, seed = 1)
 #'       ADLB <- radlb(ADSL, visit_format = "WEEK", n_assessments = 7L, seed = 2)
 #'       ADLB <- ADLB %>%
@@ -119,7 +119,7 @@
 #'    )
 #'   )
 #' )
-#'  
+#'
 #' \dontrun{
 #' shinyApp(app$ui, app$server)
 #' }
@@ -145,13 +145,13 @@ tm_g_scatterplot <- function(label,
                              reg_text_size = c(3, 3, 10),
                              pre_output = NULL,
                              post_output = NULL) {
-  
+
   stopifnot(is.choices_selected(param))
   stopifnot(is.choices_selected(xaxis_var))
   stopifnot(is.choices_selected(yaxis_var))
-  
+
   args <- as.list(environment())
-  
+
   module(
     label = label,
     filters = dataname,
@@ -166,14 +166,14 @@ tm_g_scatterplot <- function(label,
     ui = ui_g_scatterplot,
     ui_args = args
   )
-  
+
 }
 
 #' @importFrom shinyjs hidden
 ui_g_scatterplot <- function(id, ...) {
   ns <- NS(id)
   a <- list(...)
-  
+
   standard_layout(
     output = div(
       fluidRow(
@@ -190,7 +190,7 @@ ui_g_scatterplot <- function(id, ...) {
     encoding =  div(
       tags$label(a$dataname, "Data Settings", class = "text-primary"),
       templ_ui_param(ns, a$param$choices, a$param$selected), # required by constr_anl_chunks
-      selectInput(ns("xaxis_var"),  "Select an X-Axis Variable",  a$xaxis_var$choices,  a$xaxis_var$selected, 
+      selectInput(ns("xaxis_var"),  "Select an X-Axis Variable",  a$xaxis_var$choices,  a$xaxis_var$selected,
                           multiple = FALSE),
       selectInput(ns("yaxis_var"), "Select a Y-Axis Variable", a$yaxis_var$choices, a$yaxis_var$selected,
                           multiple = FALSE),
@@ -212,7 +212,7 @@ ui_g_scatterplot <- function(id, ...) {
           optionalSliderInputValMinMax(ns("plot_height"), "Plot Height", a$plot_height, ticks = FALSE),
           optionalSliderInputValMinMax(ns("font_size"),  "Font Size", a$font_size, ticks = FALSE),
           optionalSliderInputValMinMax(ns("dot_size"), "Dot Size", a$dot_size, ticks = FALSE),
-          optionalSliderInputValMinMax(ns("reg_text_size"), "Regression Annotations Size", a$reg_text_size, 
+          optionalSliderInputValMinMax(ns("reg_text_size"), "Regression Annotations Size", a$reg_text_size,
                                        ticks = FALSE)
         )
       )
@@ -221,36 +221,36 @@ ui_g_scatterplot <- function(id, ...) {
     pre_output = a$pre_output,
     post_output = a$post_output
   )
-  
+
 }
 
 #' @importFrom goshawk g_scatterplot
-srv_g_scatterplot <- function(input, 
-                              output, 
-                              session, 
-                              datasets, 
-                              dataname, 
-                              param_var, 
-                              trt_group, 
-                              facet_var, 
-                              color_manual, 
+srv_g_scatterplot <- function(input,
+                              output,
+                              session,
+                              datasets,
+                              dataname,
+                              param_var,
+                              trt_group,
+                              facet_var,
+                              color_manual,
                               shape_manual) {
-  
+
   ns <- session$ns
-  
+
   # reused in all modules
   anl_chunks <- constr_anl_chunks(session, input, datasets, dataname, param_var, trt_group)
 
   # update sliders for axes
   keep_range_slider_updated(session, input, "xrange_scale", "xaxis_var", anl_chunks)
   keep_range_slider_updated(session, input, "yrange_scale", "yaxis_var", anl_chunks)
-  
-  # plot 
+
+  # plot
   output$scatterplot <- renderPlot({
-    
+
     ac <- anl_chunks()
     private_chunks <- ac$chunks$clone(deep = TRUE)
-    
+
     xrange_scale <- input$xrange_scale
     yrange_scale <- input$yrange_scale
     facet_ncol <- input$facet_ncol
@@ -267,9 +267,9 @@ srv_g_scatterplot <- function(input,
     param <- isolate(input$param)
     xaxis <- isolate(input$xaxis_var)
     yaxis <- isolate(input$yaxis_var)
-        
+
     chunks_push(
-      chunks = private_chunks, 
+      chunks = private_chunks,
       id = "scatterplot",
       expression = bquote({
         # re-establish treatment variable label
@@ -299,47 +299,47 @@ srv_g_scatterplot <- function(input,
         )
       })
     )
-    
+
     p <- chunks_safe_eval(private_chunks)
-    
+
     # promote chunks to be visible in the sessionData by other modules
     init_chunks(private_chunks)
-    
+
     p
   })
-  
+
   # dynamic plot height and brushing
   output$plot_ui <- renderUI({
-    
+
     plot_height <- input$plot_height
     validate(need(plot_height, "need valid plot height"))
-    
-    plotOutput(ns("scatterplot"), 
+
+    plotOutput(ns("scatterplot"),
                height = plot_height,
                brush = brushOpts(id = ns("scatterplot_brush"), resetOnNew = T)
     )
   })
-  
+
   # highlight plot area
   output$brush_data <- DT::renderDataTable({
     req(input$scatterplot_brush)
-    
-    ANL <- isolate(anl_chunks()$ANL)  
+
+    ANL <- isolate(anl_chunks()$ANL)
     validate_has_data(ANL, 5)
-    
+
     xvar <- isolate(input$xaxis_var)
     yvar <- isolate(input$yaxis_var)
-    
+
     req(all(c(xvar, yvar) %in% names(ANL)))
-    
+
     df <- brushedPoints(
-      select(ANL, "USUBJID", trt_group, "AVISITCD", "PARAMCD", xvar, yvar, "LOQFL"), 
+      select(ANL, "USUBJID", trt_group, "AVISITCD", "PARAMCD", xvar, yvar, "LOQFL"),
       input$scatterplot_brush
     )
-    
+
     numeric_cols <- names(select_if(df, is.numeric))
-    
-    DT::datatable(df, rownames = FALSE) %>% 
+
+    DT::datatable(df, rownames = FALSE) %>%
       DT::formatRound(numeric_cols, 4)
   })
 

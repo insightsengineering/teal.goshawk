@@ -3,7 +3,7 @@
 #' This teal module renders the UI and calls the function that creates a correlation plot.
 #'
 #' @param label menu item label of the module in the teal app.
-#' @param dataname analysis data passed to the data argument of teal init. E.g. ADaM structured 
+#' @param dataname analysis data passed to the data argument of teal init. E.g. ADaM structured
 #' laboratory data frame ADLB.
 #' @param param_var name of variable containing biomarker codes e.g. PARAMCD.
 #' @param xaxis_param_choices list of biomarkers of interest.
@@ -20,7 +20,7 @@
 #' @param facet_ncol numeric value indicating number of facets per row.
 #' @param facet set layout to use treatment facetting.
 #' @param facet_var variable to use for treatment facetting.
-#' @param reg_line include regression line and annotations for slope and coefficient in 
+#' @param reg_line include regression line and annotations for slope and coefficient in
 #' visualization. Use with facet TRUE.
 #' @param rotate_xlab 45 degree rotation of x-axis values.
 #' @param hline y-axis value to position of horizontal line.
@@ -32,7 +32,7 @@
 #' @param code_data_processing TODO
 #'
 #' @inheritParams teal.devel::standard_layout
-#' 
+#'
 #' @importFrom rlang .data
 #'
 #' @author Nick Paszty (npaszty) paszty.nicholas@gene.com
@@ -49,18 +49,18 @@
 #' @export
 #'
 #' @examples
-#' 
+#'
 #'\dontrun{
 #'
 #' # Example using ADaM structure analysis dataset.
-#' 
+#'
 #' library(random.cdisc.data)
-#' 
+#'
 #' # original ARM value = dose value
 #' arm_mapping <- list("A: Drug X" = "150mg QD",
 #'                     "B: Placebo" = "Placebo",
 #'                     "C: Combination" = "Combination")
-#' 
+#'
 #' ADSL <- radsl(N = 20, seed = 1)
 #' ADLB <- radlb(ADSL, visit_format = "WEEK", n_assessments = 7L, seed = 2)
 #' ADLB <- ADLB %>%
@@ -80,8 +80,8 @@
 #'       ARMCD == "ARM A" ~ 3),
 #'     ARM = as.character(arm_mapping[match(ARM, names(arm_mapping))]),
 #'     ARM = factor(ARM) %>% reorder(TRTORD))
-#' 
-#' 
+#'
+#'
 #' x <- teal::init(
 #'   data = cdisc_data(
 #'     cdisc_dataset("ADSL", ADSL),
@@ -90,7 +90,7 @@
 #'       arm_mapping <- list("A: Drug X" = "150mg QD",
 #'                           "B: Placebo" = "Placebo",
 #'                           "C: Combination" = "Combination")
-#' 
+#'
 #'       ADSL <- radsl(N = 20, seed = 1)
 #'       ADLB <- radlb(ADSL, visit_format = "WEEK", n_assessments = 7L, seed = 2)
 #'       ADLB <- ADLB %>%
@@ -127,7 +127,7 @@
 #'       yaxis_var = "AVAL",
 #'       yaxis_var_choices = c("AVAL", "BASE", "CHG", "PCHG", "BASE2", "AVALL2"),
 #'       trt_group = "ARM",
-#'       color_manual = c("150mg QD" = "#000000", 
+#'       color_manual = c("150mg QD" = "#000000",
 #'                        "Placebo" = "#3498DB",
 #'                        "Combination" = "#E74C3C"),
 #'       shape_manual = c("N"  = 1, "Y"  = 2, "NA" = 0),
@@ -142,7 +142,7 @@
 #'     )
 #'   )
 #' )
-#' 
+#'
 #' shinyApp(x$ui, x$server)
 #'
 #'}
@@ -156,7 +156,7 @@ tm_g_correlationplot <- function(label,
                                  xaxis_var_choices = xaxis_var,
                                  yaxis_param = yaxis_param,
                                  yaxis_param_choices = yaxis_param,
-                                 yaxis_var = yaxis_var, 
+                                 yaxis_var = yaxis_var,
                                  yaxis_var_choices = yaxis_var,
                                  trt_group = "ARM",
                                  color_manual = NULL,
@@ -175,9 +175,9 @@ tm_g_correlationplot <- function(label,
                                  pre_output = NULL,
                                  post_output = NULL,
                                  code_data_processing = NULL) {
-  
+
   args <- as.list(environment())
-  
+
   module(
     label = label,
     filters = dataname,
@@ -197,14 +197,14 @@ tm_g_correlationplot <- function(label,
     ui = ui_g_correlationplot,
     ui_args = args
   )
-  
+
 }
 
 ui_g_correlationplot <- function(id, ...) {
-  
+
   ns <- NS(id)
   a <- list(...)
-  
+
   standard_layout(
     output = div(
       fluidRow(
@@ -248,44 +248,44 @@ ui_g_correlationplot <- function(id, ...) {
     pre_output = a$pre_output,
     post_output = a$post_output
   )
-  
+
 }
 
-srv_g_correlationplot <- function(input, output, session, datasets, dataname, 
-                                  param_var, xaxis_param, xaxis_var, yaxis_param, yaxis_var, 
+srv_g_correlationplot <- function(input, output, session, datasets, dataname,
+                                  param_var, xaxis_param, xaxis_var, yaxis_param, yaxis_var,
                                   trt_group, facet_var, color_manual, shape_manual,
                                   code_data_processing) {
-  
+
   ns <- session$ns
-  
+
   # filter data to selected params
   filter_ADLB <- reactive({
     xaxis_param <- input$xaxis_param
     yaxis_param <- input$yaxis_param
     datasets$get_data(dataname, filtered = TRUE, reactive = TRUE) %>%
       filter((eval(parse(text = param_var)) == xaxis_param | eval(parse(text = param_var)) == yaxis_param))
-  })  
-  
-  # create the transformed variable names for ease of reference elsewhere 
+  })
+
+  # create the transformed variable names for ease of reference elsewhere
   xvar <- reactive(paste0(input$xaxis_var, ".", input$xaxis_param))
   yvar <- reactive(paste0(input$yaxis_var, ".", input$yaxis_param))
   xloqfl <- reactive(paste0("LOQFL_", input$xaxis_param))
   yloqfl <- reactive(paste0("LOQFL_", input$yaxis_param))
-  
+
   plot_data_transpose <- reactive({
-    
+
     xaxis_var <- input$xaxis_var
     yaxis_var <- input$yaxis_var
-    
+
     # given the 2 param and 2 analysis vars we need to transform the data
-    plot_data_t1 <- filter_ADLB() %>% 
+    plot_data_t1 <- filter_ADLB() %>%
       gather(key = "ANLVARS", value = "ANLVALS", .data$BASE2, .data$BASE, xaxis_var, yaxis_var, .data$LOQFL) %>%
-      mutate(ANL.PARAM = ifelse(.data$ANLVARS == "LOQFL", 
-                                paste0(.data$ANLVARS, "_", .data$PARAMCD), 
+      mutate(ANL.PARAM = ifelse(.data$ANLVARS == "LOQFL",
+                                paste0(.data$ANLVARS, "_", .data$PARAMCD),
                                 paste0(.data$ANLVARS, ".", .data$PARAMCD))) %>%
       select(.data$USUBJID, trt_group, .data$AVISITN, .data$AVISITCD, .data$ANL.PARAM, .data$ANLVALS) %>%
       spread(.data$ANL.PARAM, .data$ANLVALS)
-    
+
     # the transformed analysis value variables are character and need to be converted to numeric for ggplot
     # remove records where either of the analysis variables are NA since they will not appear on the plot
     plot_data_t2 <- plot_data_t1 %>%
@@ -301,20 +301,20 @@ srv_g_correlationplot <- function(input, output, session, datasets, dataname,
       ))
 
     constraint_var <- input$constraint_var
-    
+
     if (constraint_var != "NONE"){
-      
+
       constraint_min_range <- -Inf
       constraint_max_range <- Inf
-      
+
       if (length(input$constraint_min)){
         constraint_min_range <- input$constraint_min
       }
-      
+
       if (length(input$constraint_max)){
         constraint_max_range <- input$constraint_max
       }
-      
+
       plot_data_t3 <- plot_data_t2 %>%
         filter(constraint_min_range <= .data[[xvar()]] & .data[[xvar()]] <= constraint_max_range |
                  is.na(.data[[xvar()]])
@@ -322,19 +322,19 @@ srv_g_correlationplot <- function(input, output, session, datasets, dataname,
     } else{
       plot_data_t3 <- plot_data_t2
     }
-    
+
   })
-  
+
   # dynamic plot height and brushing
   output$plot_ui <- renderUI({
     plot_height <- input$plot_height
     validate(need(plot_height, "need valid plot height"))
-    
+
     plotOutput(ns("correlationplot"), height = plot_height,
                brush = brushOpts(id = ns("correlationplot_brush"), resetOnNew=T)
     )
   })
-  
+
   output$brush_data <- renderTable({
     plot_data_t3 <- plot_data_transpose()
     if (nrow(plot_data_t3) > 0 ){
@@ -345,75 +345,75 @@ srv_g_correlationplot <- function(input, output, session, datasets, dataname,
     }
 
   })
-  
+
   # dynamic slider for x-axis
   output$xaxis_zoom <- renderUI({
     ADLB <- datasets$get_data(dataname, reactive = TRUE, filtered = TRUE)
     xaxis_param <- input$xaxis_param
     scale_data <- ADLB %>%
       filter(eval(parse(text = param_var)) == xaxis_param)
-    
+
     # establish default value during reaction and prior to value being available
     xmin_scale <- -Inf
     xmax_scale <- Inf
-    
+
     # identify min and max values of BM range ignoring NA values
     xmin_scale <- min(scale_data[[input$xaxis_var]], na.rm = TRUE)
     xmax_scale <- max(scale_data[[input$xaxis_var]], na.rm = TRUE)
-    
+
     tagList({
-      sliderInput(ns("xrange_scale"), label="X-Axis Range Zoom", 
-                  floor(xmin_scale), ceiling(xmax_scale), 
+      sliderInput(ns("xrange_scale"), label="X-Axis Range Zoom",
+                  floor(xmin_scale), ceiling(xmax_scale),
                   value = c(floor(xmin_scale), ceiling(xmax_scale)))
     })
-    
+
   })
-  
+
   # dynamic slider for y-axis
   output$yaxis_zoom <- renderUI({
     ADLB <- datasets$get_data(dataname, reactive = TRUE, filtered = TRUE)
-    yaxis_param <- input$yaxis_param 
+    yaxis_param <- input$yaxis_param
     scale_data <- ADLB %>%
       filter(eval(parse(text = param_var)) == yaxis_param)
-    
+
     # establish default value during reaction and prior to value being available
     ymin_scale <- -Inf
     ymax_scale <- Inf
-    
+
     # identify min and max values of BM range ignoring NA values
     ymin_scale <- min(scale_data[[input$yaxis_var]], na.rm = TRUE)
     ymax_scale <- max(scale_data[[input$yaxis_var]], na.rm = TRUE)
-    
+
     tagList({
-      sliderInput(ns("yrange_scale"), label="Y-Axis Range Zoom", 
-                  floor(ymin_scale), ceiling(ymax_scale), 
+      sliderInput(ns("yrange_scale"), label="Y-Axis Range Zoom",
+                  floor(ymin_scale), ceiling(ymax_scale),
                   value = c(floor(ymin_scale), ceiling(ymax_scale)))
     })
-    
+
   })
-  
+
   # minimum data constraint value
   output$constraint_min_value <- renderUI({
     # conditionally reveal min and max constraint fields
     if (input$constraint_var != "NONE") {
       ADLB <- datasets$get_data(dataname, filtered = TRUE, reactive = TRUE)
       validate(need(nrow(ADLB) > 0 , "Waiting For Filter Selection"))
-      
+
       xaxis_param <- input$xaxis_param
       scale_data <- ADLB %>%
         filter(eval(parse(text = param_var)) == xaxis_param)
       # ensure that there are records at visit to process based on the constraint vatriable selection
       visitFreq <- unique(scale_data$AVISITCD)
-      if (input$constraint_var == "BASE2" & any(grepl("SCR", visitFreq)) | 
+      if (input$constraint_var == "BASE2" & any(grepl("SCR", visitFreq)) |
           input$constraint_var == "BASE" & any(grepl("BL", visitFreq))){
         # identify min and max values of constraint var range ignoring NA values
         constraint_min_range <- min(scale_data[[input$constraint_var]], na.rm = TRUE)
         constraint_max_range <- max(scale_data[[input$constraint_var]], na.rm = TRUE)
-        
+
         tagList({
-          numericInput(ns("constraint_min"), 
-                       paste0("Min (", constraint_min_range, ")"), 
-                       value = constraint_min_range, 
+          numericInput(ns("constraint_min"),
+                       paste0("Min (", constraint_min_range, ")"),
+                       value = constraint_min_range,
                        min = constraint_min_range, max = constraint_max_range)
         })
       }
@@ -421,31 +421,31 @@ srv_g_correlationplot <- function(input, output, session, datasets, dataname,
     else {
       return(NULL)
     }
-    
+
   })
-  
+
   # maximum data constraint value
   output$constraint_max_value <- renderUI({
     # conditionally reveal min and max constraint fields
     if (input$constraint_var != "NONE") {
       ADLB <- datasets$get_data(dataname, filtered = TRUE, reactive = TRUE)
       validate(need(nrow(ADLB) > 0 , "Waiting For Filter Selection"))
-      
+
       xaxis_param <- input$xaxis_param
       scale_data <- ADLB %>%
         filter(eval(parse(text = param_var)) == xaxis_param)
       # ensure that there are records at visit to process based on the constraint vatriable selection
       visitFreq <- unique(scale_data$AVISITCD)
-      if (input$constraint_var == "BASE2" & any(grepl("SCR", visitFreq)) | 
+      if (input$constraint_var == "BASE2" & any(grepl("SCR", visitFreq)) |
           input$constraint_var == "BASE" & any(grepl("BL", visitFreq))){
         # identify min and max values of constraint var range ignoring NA values
         constraint_min_range <- min(scale_data[[input$constraint_var]], na.rm = TRUE)
         constraint_max_range <- max(scale_data[[input$constraint_var]], na.rm = TRUE)
-        
+
         tagList({
-          numericInput(ns("constraint_max"), 
+          numericInput(ns("constraint_max"),
                        paste0("Max (", constraint_max_range, ")"),
-                       value = constraint_max_range, 
+                       value = constraint_max_range,
                        min = constraint_min_range, max = constraint_max_range)
         })
       }
@@ -454,7 +454,7 @@ srv_g_correlationplot <- function(input, output, session, datasets, dataname,
       return(NULL)
     }
   })
-  
+
   output$correlationplot <- renderPlot({
     ADLB <- filter_ADLB()
     xaxis_param <- input$xaxis_param
@@ -474,7 +474,7 @@ srv_g_correlationplot <- function(input, output, session, datasets, dataname,
     facet <- input$facet
     reg_line <- input$reg_line
     rotate_xlab <- input$rotate_xlab
-    
+
     validate(need(!is.null(ADLB) && is.data.frame(ADLB), "No data left"))
     validate(need(nrow(ADLB) > 0 , "ADLB Data No Observations Left"))
     validate(need(param_var %in% names(ADLB),
@@ -489,49 +489,49 @@ srv_g_correlationplot <- function(input, output, session, datasets, dataname,
                   paste("Variable", xaxis_var, " is not available in data", dataname)))
     validate(need(yaxis_var %in% names(ADLB),
                   paste("Variable", yaxis_var, " is not available in data", dataname)))
-    
+
     param_lookup <- unique(ADLB[c("PARAMCD", "PARAM")])
     unit_lookup <- unique(ADLB[c("PARAMCD", "AVALU")])
     lookups <- inner_join(param_lookup, unit_lookup, by=c("PARAMCD"))
-    
+
     xparam_meta <- lookups %>%
       filter(.data$PARAMCD == xaxis_param)
     xparam <- xparam_meta$PARAM
     xunit <- xparam_meta$AVALU
-    
+
     yparam_meta <- lookups %>%
       filter(.data$PARAMCD == yaxis_param)
     yparam <- yparam_meta$PARAM
     yunit <- yparam_meta$AVALU
-    
+
     # setup the ggtitle label.  Combine the biomarker and the units (if available)
     title_text <- ifelse(is.null(ADLB$AVALU), paste(xparam, "and", yparam, "@ Visits"),
                          ifelse(ADLB[["AVALU"]] == "", paste(xparam, "and", yparam, "@ Visits"),
                                 paste0(xparam, " (", xunit,") and ", yparam,  " (", yunit,") @ Visits"))
     )
-    
+
     # setup the x-axis label.  Combine the biomarker and the units (if available)
     xaxis_lab <- ifelse(is.null(ADLB$AVALU), paste(xparam, xaxis_var, "Values"),
                         ifelse(ADLB[["AVALU"]] == "", paste(xparam, xaxis_var, "Values"),
                                paste0(xparam," (", xunit, ") ", xaxis_var, " Values"))
     )
-    
+
     # setup the y-axis label.  Combine the biomarker and the units (if available)
     yaxis_lab <- ifelse(is.null(ADLB$AVALU), paste(yparam, yaxis_var, "Values"),
                         ifelse(ADLB[["AVALU"]] == "", paste(yparam, yaxis_var, "Values"),
                                paste0(yparam," (", yunit,") ", yaxis_var, " Values"))
     )
-    
+
     plot_data_t3 <- plot_data_transpose()
     validate(need(nrow(plot_data_t3) > 0 , "Plot Data No Observations Left"))
-    
+
     # re-establish treatment variable label
     if (trt_group == "ARM"){
       attributes(plot_data_t3$ARM)$label <- "Planned Arm"
     } else {
       attributes(plot_data_t3$ACTARM)$label <- "Actual Arm"
     }
-    
+
     p <- goshawk::g_correlationplot(
       data = plot_data_t3,
       param_var = param_var,
@@ -560,11 +560,11 @@ srv_g_correlationplot <- function(input, output, session, datasets, dataname,
       reg_text_size = reg_text_size,
       rotate_xlab = rotate_xlab,
       hline = hline,
-      vline = vline      
+      vline = vline
     )
-    
+
     p
-    
+
   })
-  
+
 }

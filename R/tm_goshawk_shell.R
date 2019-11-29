@@ -1,12 +1,10 @@
-
-
 #' A simple module that allows for constraining
-#' 
+#'
 #' @noRd
-#' 
-#' @examples 
+#'
+#' @examples
 #' dat <- teal.goshawk:::goshawk_data()
-#' 
+#'
 #' app <- teal::init(
 #'    data = cdisc_data(
 #'     cdisc_dataset("ADSL", dat$ADSL),
@@ -17,14 +15,14 @@
 #'      teal.goshawk:::tm_goshawk_shell("demo", "ADLB", "PARAMCD", choices_selected(c("ALT", "CRP", "IGA"), "ALT"))
 #'    )
 #' )
-#' 
+#'
 #' \dontrun{
 #' shinyApp(app$ui, app$server)
 #' }
 tm_goshawk_shell <- function(label, dataname, param_var, param, trt_group = "ARM") {
-  
+
   stopifnot(is.choices_selected(param))
-  
+
   module(
     label = label,
     server = srv_goshawk_shell,
@@ -33,13 +31,13 @@ tm_goshawk_shell <- function(label, dataname, param_var, param, trt_group = "ARM
     ui_args = list(param_var = param_var, param = param),
     filters = dataname
   )
-  
+
 }
 
 ui_goshawk_shell <- function(id, datasets, ...) {
   ns <- NS(id)
   a <- list(...)
-  
+
   standard_layout(
     output = textOutput(ns("txt")),
     encoding =  div(
@@ -52,30 +50,26 @@ ui_goshawk_shell <- function(id, datasets, ...) {
 }
 
 srv_goshawk_shell <- function(input, output, session, datasets, dataname, param_var, trt_group) {
-  
-  
+
   anl_chunks <- constr_anl_chunks(session, input, datasets, dataname, param_var, trt_group)
-  
+
   output$txt <- renderText({
-    
+
     ANL_chunks <- anl_chunks()
-    
-    
+
     ANL <- ANL_chunks$ANL
     private_chunks <- ANL_chunks$chunks$clone(deep = TRUE)
-    
+
     init_chunks(private_chunks)
-    
+
     dim(ANL)
   })
-  
-  
+
+
   callModule(
     get_rcode_srv,
     id = "rcode",
     datasets = datasets,
     modal_title = "Scatter Plot"
   )
-  
-  
 }
