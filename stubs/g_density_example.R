@@ -8,8 +8,6 @@ arm_mapping <- list("A: Drug X" = "150mg QD",
                     "B: Placebo" = "Placebo",
                     "C: Combination" = "Combination")
 
-#ADSL <- radsl(N = 20, seed = 1)
-#ADLB <- radlb(ADSL, visit_format = "WEEK", n_assessments = 7L, seed = 2)
 ADSL <- radsl(cached = TRUE)
 ADLB <- radlb(cached = TRUE)
 ADLB <- ADLB %>%

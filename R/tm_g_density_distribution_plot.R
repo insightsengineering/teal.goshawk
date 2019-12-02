@@ -32,38 +32,44 @@
 #' library(random.cdisc.data)
 #'
 #' # original ARM value = dose value
-#' arm_mapping <- list("A: Drug X" = "150mg QD",
-#'                     "B: Placebo" = "Placebo",
-#'                     "C: Combination" = "Combination")
+#' arm_mapping <- list(
+#'   "A: Drug X" = "150mg QD",
+#'   "B: Placebo" = "Placebo",
+#'   "C: Combination" = "Combination"
+#' )
 #'
-#' #ADSL <- radsl(N = 20, seed = 1)
-#' #ADLB <- radlb(ADSL, visit_format = "WEEK", n_assessments = 7L, seed = 2)
 #' ADSL <- radsl(cached = TRUE)
 #' ADLB <- radlb(cached = TRUE)
 #' ADLB <- ADLB %>%
-#'   mutate(AVISITCD = case_when(
-#'     AVISIT == "SCREENING" ~ "SCR",
-#'     AVISIT == "BASELINE" ~ "BL",
-#'     grepl("WEEK", AVISIT) ~ paste("W", stringr::str_extract(AVISIT, "(?<=(WEEK ))[0-9]+")),
-#'     TRUE ~ as.character(NA)),
+#'   mutate(
+#'     AVISITCD = case_when(
+#'       AVISIT == "SCREENING" ~ "SCR",
+#'       AVISIT == "BASELINE" ~ "BL",
+#'       grepl("WEEK", AVISIT) ~ paste("W", stringr::str_extract(AVISIT, "(?<=(WEEK ))[0-9]+")),
+#'       TRUE ~ as.character(NA)
+#'     ),
 #'     AVISITCDN = case_when(
 #'       AVISITCD == "SCR" ~ -2,
 #'       AVISITCD == "BL" ~ 0,
 #'       grepl("W", AVISITCD) ~ as.numeric(gsub("[^0-9]*", "", AVISITCD)),
-#'       TRUE ~ as.numeric(NA)),
+#'       TRUE ~ as.numeric(NA)
+#'     ),
 #'     TRTORD = case_when(
 #'       ARMCD == "ARM C" ~ 1,
 #'       ARMCD == "ARM B" ~ 2,
-#'       ARMCD == "ARM A" ~ 3),
+#'       ARMCD == "ARM A" ~ 3
+#'     ),
 #'     ARM = as.character(arm_mapping[match(ARM, names(arm_mapping))]),
-#'     ARM = factor(ARM) %>% reorder(TRTORD))
+#'     ARM = factor(ARM) %>% reorder(TRTORD)
+#'   )
 #'
 #'
 #' app <- teal::init(
 #'   data = cdisc_data(
 #'     cdisc_dataset("ADSL", ADSL),
 #'     cdisc_dataset("ADLB", ADLB),
-#'     code = {'
+#'     code = {
+#'       '
 #'       arm_mapping <- list("A: Drug X" = "150mg QD",
 #'                           "B: Placebo" = "Placebo",
 #'                           "C: Combination" = "Combination")
@@ -87,7 +93,8 @@
 #'             ARMCD == "ARM A" ~ 3),
 #'           ARM = as.character(arm_mapping[match(ARM, names(arm_mapping))]),
 #'           ARM = factor(ARM) %>% reorder(TRTORD))
-#'           '},
+#'           '
+#'     },
 #'     check = FALSE
 #'   ),
 #'   modules = root_modules(
@@ -98,9 +105,11 @@
 #'       param = choices_selected(c("ALT", "CRP", "IGA"), "ALT"),
 #'       xaxis_var = choices_selected(c("AVAL", "BASE", "CHG", "PCHG"), "AVAL"),
 #'       trt_group = "ARM",
-#'       color_manual = c("150mg QD" = "#000000",
-#'                        "Placebo" = "#3498DB",
-#'                        "Combination" = "#E74C3C"),
+#'       color_manual = c(
+#'         "150mg QD" = "#000000",
+#'         "Placebo" = "#3498DB",
+#'         "Combination" = "#E74C3C"
+#'       ),
 #'       color_comb = "#39ff14",
 #'       plot_height = c(500, 200, 2000),
 #'       font_size = c(12, 8, 20),
@@ -111,10 +120,6 @@
 #' \dontrun{
 #' shinyApp(app$ui, app$server)
 #' }
-#'
-#'
-#'
-#' #appWorking <- app
 tm_g_density_distribution_plot <- function(label,
                                            dataname,
                                            param_var,
@@ -155,21 +160,20 @@ tm_g_density_distribution_plot <- function(label,
     label = label,
     filters = dataname,
     server = srv_g_density_distribution_plot,
-    server_args = list(dataname = dataname,
-                       param_var = param_var,
-                       param = param,
-                       trt_group = trt_group,
-                       color_manual = color_manual,
-                       color_comb = color_comb
+    server_args = list(
+      dataname = dataname,
+      param_var = param_var,
+      param = param,
+      trt_group = trt_group,
+      color_manual = color_manual,
+      color_comb = color_comb
     ),
     ui = ui_g_density_distribution_plot,
     ui_args = args
   )
-
 }
 
 ui_g_density_distribution_plot <- function(id, ...) {
-
   ns <- NS(id)
   a <- list(...)
 
@@ -182,16 +186,16 @@ ui_g_density_distribution_plot <- function(id, ...) {
         width = 12,
         br(), hr(),
         h4("Descriptive Statistics"),
-        uiOutput(ns("table_ui")
-        )
+        uiOutput(ns("table_ui"))
       ))
     ),
-    encoding =  div(
+    encoding = div(
       templ_ui_dataname(a$dataname),
       templ_ui_param(ns, a$param$choices, a$param$selected), # required by constr_anl_chunks
       templ_ui_xy_vars(ns, a$xaxis_var$choices, a$xaxis_var$selected,
-                       ychoices = NULL, yselected = NULL),
-      templ_ui_constraint(ns), # required by constr_anl_chunks
+        ychoices = NULL, yselected = NULL
+      ),
+      templ_ui_constraint(ns),
       panel_group(
         panel_item(
           title = "Plot Aesthetic Settings",
@@ -203,8 +207,9 @@ ui_g_density_distribution_plot <- function(id, ...) {
         panel_item(
           title = "Plot settings",
           optionalSliderInputValMinMax(ns("plot_height"), "Plot Height", a$plot_height, ticks = FALSE),
-          optionalSliderInputValMinMax(ns("font_size"),  "Font Size", a$font_size, ticks = FALSE),
-          optionalSliderInputValMinMax(ns("line_size"), "Line Size", value_min_max = a$line_size, step = .25, ticks = FALSE)
+          optionalSliderInputValMinMax(ns("font_size"), "Font Size", a$font_size, ticks = FALSE),
+          optionalSliderInputValMinMax(ns("line_size"), "Line Size", value_min_max = a$line_size,
+                                       step = .25, ticks = FALSE)
         )
       )
     ),
@@ -214,19 +219,16 @@ ui_g_density_distribution_plot <- function(id, ...) {
   )
 }
 
-srv_g_density_distribution_plot <- function(input, output, session, datasets, dataname, param_var, param,
+srv_g_density_distribution_plot <- function(input, output, session, datasets, dataname, param_var, param, #nolintr
                                             trt_group, color_manual, color_comb) {
-
   ns <- session$ns
   anl_chunks <- constr_anl_chunks(session, input, datasets, dataname, "param", param_var, trt_group)
   keep_range_slider_updated(session, input, "xrange_scale", "xaxis_var", anl_chunks)
 
   create_plot <- reactive({
-
     private_chunks <- anl_chunks()$chunks$clone(deep = TRUE)
 
-   # browser()
-
+    #nolint start
     param <- input$param
     xaxis_var <- input$xaxis_var
     xmin_scale <- input$xrange_scale[1]
@@ -236,10 +238,7 @@ srv_g_density_distribution_plot <- function(input, output, session, datasets, da
     hline <- as.numeric(input$hline)
     facet_ncol <- as.integer(input$facet_ncol)
     rotate_xlab <- input$rotate_xlab
-
-    # todo: try to remove isolate
-    param <- isolate(input$param)
-    xaxis <- isolate(input$xaxis_var)
+    #nolint end
 
     chunks_push(
       chunks = private_chunks,
@@ -303,7 +302,6 @@ srv_g_density_distribution_plot <- function(input, output, session, datasets, da
 
   main_code <- reactive({
     private_chunks <- create_table()
-    #private_chunks <- create_plot()
     init_chunks(private_chunks)
     private_chunks
   })
@@ -325,5 +323,4 @@ srv_g_density_distribution_plot <- function(input, output, session, datasets, da
     datasets = datasets,
     modal_title = "Scatter Plot"
   )
-
 }
