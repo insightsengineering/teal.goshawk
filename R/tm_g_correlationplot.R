@@ -266,11 +266,6 @@ srv_g_correlationplot <- function(input,
 
     validate(need(constraint_var, "select a constraint variable"))
 
-    update_min_max <- function(args) {
-      do.call("updateNumericInput", c(list(session = session, inputId = "constraint_range_min"), args$min))
-      do.call("updateNumericInput", c(list(session = session, inputId = "constraint_range_max"), args$max))
-    }
-
     visit_freq <- unique(ANL$AVISITCD)
 
     # get min max values
@@ -308,8 +303,8 @@ srv_g_correlationplot <- function(input,
 
       # force update (and thus refresh) on different constraint_var -> pass unique value for each constraint_var name
       args <- list(
-        min = list(label = "Min", min = 0, max = 0, value = digest::digest2int(constraint_var)),
-        max = list(label = "Max", min = 0, max = 0, value = digest::digest2int(constraint_var))
+        min = list(label = "Min", min = 0, max = 0, value = str_to_int(constraint_var)),
+        max = list(label = "Max", min = 0, max = 0, value = str_to_int(constraint_var))
       )
 
       update_min_max(args)
