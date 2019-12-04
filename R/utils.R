@@ -128,7 +128,6 @@ keep_range_slider_updated <- function(session, input, id_slider, id_var, reactiv
 }
 
 #' @importFrom dplyr filter
-#' @importFrom digest digest2int
 #' @importFrom shinyjs hide show
 constr_anl_chunks <- function(session, input, datasets, dataname, param_id, param_var, trt_group) {
   dataset_var <- paste0(dataname, "_FILTERED")
@@ -224,10 +223,12 @@ constr_anl_chunks <- function(session, input, datasets, dataname, param_id, para
 
   anl_constraint <- reactive({
     # it is assumed that constraint_var is triggering constraint_range which then trigger this clause
-    constraint_var <- input$constraint_var
+    constraint_var <- isolate(input$constraint_var)
     constraint_range_min <- input$constraint_range_min
     constraint_range_max <- input$constraint_range_max
     anl_param <- anl_param()
+
+    print("------ AAAAAAAAAAAA")
 
     validate(need(constraint_range_min, "please select proper constraint minimum value"))
     validate(need(constraint_range_max, "please select proper constraint maximum value"))
