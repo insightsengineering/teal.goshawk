@@ -231,6 +231,7 @@ srv_g_correlationplot <- function(input,
 
   ns <- session$ns
 
+  # filter seected biomarkers
   anl_param <- reactive({
     validate(need(input$xaxis_param, "Please select a biomarker"))
 
@@ -263,6 +264,7 @@ srv_g_correlationplot <- function(input,
     return(list(ANL = ANL, chunks = private_chunks))
   })
 
+  # constraints
   observe({
     constraint_var <- input$constraint_var
     ANL <- anl_param()$ANL # nolint
@@ -355,12 +357,13 @@ srv_g_correlationplot <- function(input,
   keep_range_slider_updated(session, input, "xrange_scale", "xaxis_var", anl_constraint)
   keep_range_slider_updated(session, input, "yrange_scale", "yaxis_var", anl_constraint)
 
+  # selector names after transposition
   xvar <- reactive(paste0(input$xaxis_var, ".", input$xaxis_param))
   yvar <- reactive(paste0(input$yaxis_var, ".", input$yaxis_param))
   xloqfl <- reactive(paste0("LOQFL_", input$xaxis_param))
   yloqfl <- reactive(paste0("LOQFL_", input$yaxis_param))
 
-
+  # transpose data to plot
   plot_data_transpose <- reactive({
     private_chunks <- anl_constraint()$chunks$clone(deep = TRUE)
     ANL <- anl_constraint()$ANL
