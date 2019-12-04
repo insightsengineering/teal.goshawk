@@ -123,52 +123,58 @@
 #'
 #'}
 
+
 tm_g_boxplot <- function(label,
                          dataname,
                          param_var,
                          param,
-                         yaxis_var = choices_selected(c("AVAL", "CHG"), "AVAL"),
-                         xaxis_var = choices_selected("AVISITCD", "AVISITCD"),
+                         xaxis_var,
+                         yaxis_var,
                          facet_var = choices_selected("ARM", "ARM"),
-                         filter_vars = c("BASE2", "BASE"),
-                         filter_labs = c("Screening", "Baseline"),
                          trt_group = "ARM",
                          color_manual = NULL,
                          shape_manual = NULL,
-                         hline = NULL,
+
                          facet_ncol = NULL,
+                         hline = NULL,
                          rotate_xlab = FALSE,
+
+                         #TODO: what does this do?
                          armlabel = NULL,
+
                          plot_height = c(600, 200, 2000),
+                         font_size = c(12, 8, 20),
+                         dot_size = c(1, 1, 12),
+                         alpha = c(0.8, 0.0, 1.0),
                          pre_output = NULL,
                          post_output = NULL) {
 
   args <- as.list(environment())
 
+  stopifnot(is.choices_selected(param))
+  stopifnot(is.choices_selected(xaxis_var))
+  stopifnot(is.choices_selected(yaxis_var))
+  stopifnot(is.choices_selected(facet_var))
+
+
+  # TODO: where to do this check?
   # If there are no choices specified for treatment group/x axis/fact then set the
   # appropriate choices variable to the treatment group to enable the display of the treatment
   # group variable on the UI.
-  if (is.null(args$xaxis_var_choices)) args$xaxis_var_choices = args$xaxis_var
-  if (is.null(args$facet_var_choices)) args$facet_var_choices = args$facet_var
+  # if (is.null(args$xaxis_var_choices)) args$xaxis_var_choices = args$xaxis_var
+  # if (is.null(args$facet_var_choices)) args$facet_var_choices = args$facet_var
 
   module(
     label = label,
     filters = dataname,
     server = srv_g_boxplot,
     server_args = list(dataname = dataname,
-                       facet_var = facet_var$selected,
-                       facet_var_choices = facet_var$choices,
-                       xaxis_var = xaxis_var$selected,
-                       xaxis_var_choices = xaxis_var$choices,
                        param_var = param_var,
-                       param = param,
-                       yaxis_var = yaxis_var,
                        trt_group = trt_group,
+                       facet_var = facet_var,
                        color_manual = color_manual,
                        shape_manual = shape_manual,
-                       armlabel = armlabel,
-                       filter_vars = filter_vars,
-                       filter_labs = filter_labs
+                       armlabel = armlabel
     ),
     ui = ui_g_boxplot,
     ui_args = args
@@ -179,107 +185,77 @@ ui_g_boxplot <- function(id, ...) {
 
   ns <- NS(id)
   a <- list(...)
-  inpWidth <- NA
 
   standard_layout(
-    output = templ_ui_output_datatable(ns),
+    output = #templ_ui_output_datatable(ns),
+      textOutput(ns("txt")),
 
     encoding =  div(
       templ_ui_dataname(a$dataname),
       templ_ui_param(ns, a$param$choices, a$param$selected),
-
-      optionalSelectInput(ns("yaxis_var"),
-                          label = "Select a Y-Axis Variable",
-                          choices = a$yaxis_var$choices,
-                          selected = a$yaxis_var$selected,
-                          multiple = FALSE
-      ),
-
-      optionalSelectInput(ns("xaxis_var"),
-                          label = "Select an X-Axis Variable",
-                          choices = a$xaxis_var$choices,
-                          selected = a$xaxis_var$selected,
-                          multiple = FALSE
-      ),
-
+      templ_ui_xy_vars(ns, a$xaxis_var$choices, a$xaxis_var$selected,
+                       a$yaxis_var$choices, a$yaxis_var$selected),
       optionalSelectInput(ns("facet_var"),
                           label = "Facet by",
                           choices = a$facet_var$choices,
                           selected = a$facet_var$selected,
                           multiple = FALSE
       ),
-
-      radioButtons(ns("y_filter_by"),
-                   "Data Constraint:",
-                   inline = FALSE,
-                   choiceNames = as.list(c("None", a$filter_labs)),
-                   choiceValues = as.list(c("None", a$filter_vars))
-      ),
-      div(id = ns("y_filter"), style="padding: 0px;",
-          uiOutput(ns("y_select")),
-          div(style="padding: 0px; margin: 0px",
-              uiOutput(ns("ymin_value"),
-                       style="display: inline-block; vertical-align:center;"),
-              uiOutput(ns("yto"), style="display: inline-block; vertical-align:center;"),
-              uiOutput(ns("ymax_value"),
-                       style="display: inline-block; vertical-align:center;")
-          )
-      ),
-
-      tags$label("Plot Aesthetic Settings", class="text-primary", style="margin-top: 15px;"),
-
-      numericInput(ns("facet_ncol"), "Number of Plots Per Row:", a$facet_ncol, step = 1),
-
-      checkboxInput(ns("rotate_xlab"), "Rotate X-Axis Label", a$rotate_xlab),
-
-      numericInput(ns("hline"), "Add a Horizontal Line:", a$hline),
-
-      uiOutput(ns("yaxis_scale")),
-
-      optionalSliderInputValMinMax(ns("plot_height"),
-                                   label = "Plot height",
-                                   a$plot_height,
-                                   ticks = FALSE,
-                                   step = 50,
-                                   width = inpWidth),
-
-      optionalSliderInputValMinMax(ns("font_size"),
-                                   label = "Font Size",
-                                   a$font_size,
-                                   value_min_max = c(12, 8, 20),
-                                   step = 1,
-                                   ticks = FALSE,
-                                   width = inpWidth
-      ),
-
-      optionalSliderInputValMinMax(ns("dot_size"),
-                                   label = "Dot Size",
-                                   a$dot_size,
-                                   value_min_max = c(2, 1, 12),
-                                   step = 1,
-                                   ticks = FALSE,
-                                   width = inpWidth
-      ),
-
-      optionalSliderInputValMinMax(ns("alpha"),
-                                   label = "Dot Transparency",
-                                   value_min_max = c(0.8, 0.0, 1.0),
-                                   step = 0.1,
-                                   ticks = FALSE,
-                                   width = inpWidth
+      templ_ui_constraint(ns), # required by constr_anl_chunks
+      panel_group(
+        panel_item(
+          title = "Plot Aesthetic Settings",
+          sliderInput(ns("yrange_scale"), label = "Y-Axis Range Zoom", min = 0, max = 1, value = c(0, 1)),
+          numericInput(ns("facet_ncol"), "Number of Plots Per Row:", a$facet_ncol, min = 1),
+          checkboxInput(ns("rotate_xlab"), "Rotate X-axis Label", a$rotate_xlab),
+          numericInput(ns("hline"), "Add a horizontal line:", a$hline)
+        ),
+        panel_item(
+          title = "Plot settings",
+          optionalSliderInputValMinMax(ns("plot_height"), "Plot Height", a$plot_height, ticks = FALSE),
+          optionalSliderInputValMinMax(ns("font_size"),  "Font Size", a$font_size, ticks = FALSE),
+          optionalSliderInputValMinMax(ns("dot_size"), "Dot Size", a$dot_size, ticks = FALSE),
+          optionalSliderInputValMinMax(ns("alpha"), "Dot Transparency", a$alpha, ticks = FALSE)
+        )
       )
-
     )
     # , forms = actionButton(ns("show_rcode"), "Show R Code", width = "100%")
-
   )
-
 }
 
 
-
-
 srv_g_boxplot <- function(input,
+                          output,
+                          session,
+                          datasets,
+                          facet_var,
+                          facet_var_choices,
+                          xaxis_var,
+                          xaxis_var_choices,
+                          param_var,
+                          param,
+                          yaxis_var,
+                          trt_group,
+                          color_manual,
+                          shape_manual,
+                          armlabel,
+                          filter_vars,
+                          filter_labs,
+                          dataname){
+
+  ns <- session$ns
+
+  anl_chunks <- constr_anl_chunks(session, input, datasets, dataname, param_var, trt_group)
+
+  output$txt <- renderText({
+
+    dim(iris)
+  })
+
+
+}
+
+srv_g_boxplot_old <- function(input,
                           output,
                           session,
                           datasets,
