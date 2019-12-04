@@ -11,12 +11,12 @@
 #' @param param_var_label single name of variable in analysis data
 #' that includes parameter labels.
 #' @param idvar name of unique subject id variable.
-#' @param xvar single name of variable in analysis data
+#' @param xaxis_var single name of variable in analysis data
 #' that is used as x-axis in the plot for the respective goshawk function.
-#' @param xvar_level vector that can be used to define the factor level of xvar.
-#' Only use it when xvar is character or factor.
+#' @param xaxis_var_level vector that can be used to define the factor level of xaxis_var.
+#' Only use it when xaxis_var is character or factor.
 #' @param filter_var data constraint variable.
-#' @param yvar single name of variable in analysis data that is used as
+#' @param yaxis_var single name of variable in analysis data that is used as
 #' summary variable in the respective gshawk function.
 #' @param trt_group name of variable representing treatment group e.g. ARM.
 #' @param trt_group_level vector that can be used to define factor
@@ -115,8 +115,8 @@
 #'       param_var = "PARAMCD",
 #'       param = choices_selected(c("ALT", "CRP", "IGA"), "ALT"),
 #'       idvar = "USUBJID",
-#'       xvar = choices_selected(c("AVISITCD", "AVISITCD")),
-#'       yvar = choices_selected(c("AVAL","CHG", "PCHG"), "AVAL"),
+#'       xaxis_var = choices_selected(c("AVISITCD", "AVISITCD")),
+#'       yaxis_var = choices_selected(c("AVAL","CHG", "PCHG"), "AVAL"),
 #'       filter_var = choices_selected(c("None" = "NONE", "Screening" = "BASE2", "Baseline" = "BASE"), "NONE"),
 #'       trt_group = "ARM",
 #'       color_comb = "#39ff14"
@@ -133,10 +133,10 @@ tm_g_spaghettiplot <- function(label,
                                param,
                                param_var_label = "PARAM",
                                idvar,
-                               xvar,
-                               yvar,
-                               xvar_level = NULL,
-                               filter_var = yvar,
+                               xaxis_var,
+                               yaxis_var,
+                               xaxis_var_level = NULL,
+                               filter_var = yaxis_var,
                                trt_group,
                                trt_group_level = NULL,
                                group_stats = "NONE",
@@ -158,8 +158,7 @@ tm_g_spaghettiplot <- function(label,
                        idvar = idvar,
                        param_var = param_var,
                        trt_group = trt_group,
-                       yvar = yvar$selected,
-                       xvar_level = xvar_level,
+                       xaxis_var_level = xaxis_var_level,
                        trt_group_level = trt_group_level,
                        man_color = man_color,
                        color_comb = color_comb,
@@ -185,8 +184,8 @@ g_ui_spaghettiplot <- function(id, ...) {
     encoding = div(
       templ_ui_dataname(a$dataname),
       templ_ui_param(ns, a$param$choices, a$param$selected),
-      templ_ui_xy_vars(ns, a$xvar$choices, a$xvar$selected,
-                       a$yvar$choices, a$yvar$selected),
+      templ_ui_xy_vars(ns, a$xaxis_var$choices, a$xaxis_var$selected,
+                       a$yaxis_var$choices, a$yaxis_var$selected),
       templ_ui_constraint(ns), # required by constr_anl_chunks
       panel_group(
         panel_item(
@@ -240,8 +239,7 @@ srv_g_spaghettiplot <- function(input,
                                 trt_group,
                                 man_color,
                                 color_comb,
-                                yvar,
-                                xvar_level,
+                                xaxis_var_level,
                                 trt_group_level,
                                 param_var_label,
                                 xtick,
@@ -252,14 +250,14 @@ srv_g_spaghettiplot <- function(input,
   # reused in all modules
   anl_chunks <- constr_anl_chunks(session, input, datasets, dataname, "param", param_var, trt_group)
 
-  keep_range_slider_updated(session, input, "yrange_scale", "yvar", anl_chunks)
+  keep_range_slider_updated(session, input, "yrange_scale", "yaxis_var", anl_chunks)
 
   output$spaghettiplot <- renderPlot({
 
     private_chunks <- anl_chunks()$chunks$clone(deep = TRUE)
     param <- input$param
-    xvar <- input$xvar
-    yvar <- input$yvar
+    xaxis_var <- input$xaxis_var
+    yaxis_var <- input$yaxis_var
     ylim <- input$yrange_scale
     facet_ncol <- input$facet_ncol
     rotate_xlab <- input$rotate_xlab
@@ -268,36 +266,21 @@ srv_g_spaghettiplot <- function(input,
     font_size <- input$font_size
     alpha <- input$alpha
 
-    validate(need(!is.null(ANL) && is.data.frame(ANL), "no data left"))
-    validate(need(nrow(ANL) > 0, "no observations left"))
-    validate(need(param_var %in% names(ANL),
-                  paste("Biomarker parameter variable", param_var, " is not available in data", dataname)))
-    validate(need(param %in% unique(ANL[[param_var]]),
-                  paste("Biomarker", param, " is not available in data", dataname)))
-    validate(need(xvar, "no valid x variable selected"))
-    validate(need(yvar, "no valid y variable selected"))
-    validate(need(xvar %in% names(ANL),
-                  paste("variable", xvar, " is not available in data", dataname)))
-    validate(need(yvar %in% names(ANL),
-                  paste("variable", yvar, " is not available in data", dataname)))
-    validate(need(trt_group %in% names(ANL),
-                  paste("variable", trt_group, " is not available in data", dataname)))
-
     chunks_push(
       chunks = private_chunks,
       id = "g_spaghettiplot",
       expression = bquote({
-        g_scatterplot(
+        g_spaghettiplot(
           data = ANL,
           subj_id = .(idvar),
           biomarker_var = .(param_var),
           biomarker_var_label = .(param_var_label),
           biomarker = .(param),
-          value_var = .(yvar),
+          value_var = .(yaxis_var),
           trt_group = .(trt_group),
           trt_group_level = .(trt_group_level),
-          time = .(xvar),
-          time_level = .(xvar_level),
+          time = .(xaxis_var),
+          time_level = .(xaxis_var_level),
           color_manual = .(man_color),
           color_comb = .(color_comb),
           ylim = .(ylim),
