@@ -22,6 +22,7 @@ Depends:
   teal
 Imports:
   DescTools,
+  digest,
   DT,
   dplyr, 
   ggplot2,

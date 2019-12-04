@@ -1,53 +1,48 @@
-#'Box Plot
+#' Box Plot
 #'
-#'This teal module renders the UI and calls the functions that create a box plot and accompanying
-#'summary table.
+#' This teal module renders the UI and calls the functions that create a box plot and accompanying
+#' summary table.
 #'
-#'@param label menu item label of the module in the teal app.
-#'@param dataname analysis data passed to the data argument of teal init. E.g. ADaM structured
+#' @param label menu item label of the module in the teal app.
+#' @param dataname analysis data passed to the data argument of teal init. E.g. ADaM structured
 #'  laboratory data frame ALB.
-#'@param param_var name of variable containing biomarker codes e.g. PARAMCD.
-#'@param param_choices list of biomarkers of interest.
-#'@param param biomarker selected.
-#'@param yaxis_var name of variable containing biomarker results displayed on y-axis e.g. AVAL.
-#'@param yaxis_var_choices list of variables containing biomarker results choices.
-#'@param xaxis_var variable to categorize the x-axis.
-#'@param xaxis_var_choices variable choices with which to categorize x-axis.
-#'@param facet_var variable to facet the plots by.
-#'@param facet_var_choices variable choices with which to facet the plots.
-#'@param filter_vars variables to be used for filtering the data.  The default is BASE2 and BASE
-#'@param filter_labs labels for the radio buttons for the \code{filter_vars}. The defaults are
+#' @param param_var name of variable containing biomarker codes e.g. PARAMCD.
+#' @param param list of biomarkers of interest.
+#' @param yaxis_var name of variable containing biomarker results displayed on y-axis e.g. AVAL.
+#' @param xaxis_var variable to categorize the x-axis.
+#' @param facet_var variable to facet the plots by.
+#' @param filter_vars variables to be used for filtering the data.  The default is BASE2 and BASE
+#' @param filter_labs labels for the radio buttons for the \code{filter_vars}. The defaults are
 #'  "Screening" for BASE2 and "Baseline" for BASE.
-#'@param trt_group name of variable representing treatment group e.g. ARM.
-#'@param armlabel label for the treatment symbols in the legend. If not specified then the label
+#' @param trt_group name of variable representing treatment group e.g. ARM.
+#' @param armlabel label for the treatment symbols in the legend. If not specified then the label
 #'  attribute for trt_group will be used. If there is no label attribute for trt_group, then the
 #'  name of the parameter (in title case) will be used.
-#'@param color_manual vector of colors applied to treatment values.
-#'@param shape_manual vector of symbols applied to LOQ values.
-#'@param facet_ncol numeric value indicating number of facets per row.
-#'@param rotate_xlab 45 degree rotation of x-axis values.
-#'@param hline y-axis value to position a horizontal line.  NULL = No line.
-#'@param plot_height  numeric vectors to define the plot height.
-#'@param code_data_processing TODO
+#' @param color_manual vector of colors applied to treatment values.
+#' @param shape_manual vector of symbols applied to LOQ values.
+#' @param facet_ncol numeric value indicating number of facets per row.
+#' @param rotate_xlab 45 degree rotation of x-axis values.
+#' @param hline y-axis value to position a horizontal line.  NULL = No line.
+#' @param plot_height  numeric vectors to define the plot height.
 #'
-#'@inheritParams teal.devel::standard_layout
+#' @inheritParams teal.devel::standard_layout
 #'
-#'@import DescTools
-#'@import utils
-#'@import dplyr
-#'@import goshawk
-#'@import teal
+#' @import DescTools
+#' @import utils
+#' @import dplyr
+#' @import goshawk
+#' @import teal
 #'
-#'@author Jeff Tomlinson (tomlinsj) jeffrey.tomlinson@roche.com
-#'@author Balazs Toth (tothb2) toth.balazs@gene.com
+#' @author Jeff Tomlinson (tomlinsj) jeffrey.tomlinson@roche.com
+#' @author Balazs Toth (tothb2) toth.balazs@gene.com
 #'
-#'@return an \code{\link[teal]{module}} object#'
+#' @return an \code{\link[teal]{module}} object#'
 #'
-#'@export
+#' @export
 #'
 #' @examples
 #'
-#'\dontrun{
+#' \dontrun{
 #'
 #' # Example using ADaM structure analysis dataset.
 #'
@@ -118,10 +113,8 @@
 #'         param = choices_selected(c("ALT", "CRP", "IGA"), "ALT"),
 #'         yaxis_var = choices_selected(c("AVAL", "BASE", "CHG"), "AVAL"),
 #'         rotate_xlab = FALSE,
-#'         xaxis_var = "ARM",
-#'         xaxis_var_choices = c("ARM", "AVISITCD", "STUDYID"),
-#'         facet_var= "AVISITCD",
-#'         facet_var_choices = c("ARM", "AVISITCD", "SEX"),
+#'         xaxis_var = choices_selected(c("ARM", "AVISITCD", "STUDYID"), "ARM"),
+#'         facet_var = choices_selected(c("ARM", "AVISITCD", "SEX"), "AVISITCD"),
 #'         trt_group = "ARM"
 #'       )
 #'   )
@@ -132,6 +125,7 @@
 
 tm_g_boxplot <- function(label,
                          dataname,
+                         param_var,
                          param,
                          yaxis_var = choices_selected(c("AVAL", "CHG"), "AVAL"),
                          xaxis_var = choices_selected("AVISITCD", "AVISITCD"),
@@ -162,19 +156,19 @@ tm_g_boxplot <- function(label,
     filters = dataname,
     server = srv_g_boxplot,
     server_args = list(dataname = dataname,
-                       facet_var = facet_var,
-                       facet_var_choices = facet_var_choices,
-                       xaxis_var = xaxis_var,
-                       xaxis_var_choices = xaxis_var_choices,
+                       facet_var = facet_var$selected,
+                       facet_var_choices = facet_var$choices,
+                       xaxis_var = xaxis_var$selected,
+                       xaxis_var_choices = xaxis_var$choices,
                        param_var = param_var,
+                       param = param,
                        yaxis_var = yaxis_var,
                        trt_group = trt_group,
                        color_manual = color_manual,
                        shape_manual = shape_manual,
                        armlabel = armlabel,
                        filter_vars = filter_vars,
-                       filter_labs = filter_labs,
-                       code_data_processing = code_data_processing
+                       filter_labs = filter_labs
     ),
     ui = ui_g_boxplot,
     ui_args = args
@@ -192,27 +186,27 @@ ui_g_boxplot <- function(id, ...) {
 
     encoding =  div(
       templ_ui_dataname(a$dataname),
-      templ_ui_param(ns("param"), a$param$choices, a$param$selected),
+      templ_ui_param(ns, a$param$choices, a$param$selected),
 
       optionalSelectInput(ns("yaxis_var"),
                           label = "Select a Y-Axis Variable",
-                          choices = a$yaxis_var_choices,
-                          selected = a$yaxis_var,
+                          choices = a$yaxis_var$choices,
+                          selected = a$yaxis_var$selected,
                           multiple = FALSE
       ),
 
       optionalSelectInput(ns("xaxis_var"),
                           label = "Select an X-Axis Variable",
-                          choices = a$xaxis_var_choices
-                          , selected = a$xaxis_var
-                          , multiple = FALSE
+                          choices = a$xaxis_var$choices,
+                          selected = a$xaxis_var$selected,
+                          multiple = FALSE
       ),
 
-      optionalSelectInput(ns("facet_var")
-                          , label = "Facet by"
-                          , choices = a$facet_var_choices
-                          , selected = a$facet_var
-                          , multiple = FALSE
+      optionalSelectInput(ns("facet_var"),
+                          label = "Facet by",
+                          choices = a$facet_var$choices,
+                          selected = a$facet_var$selected,
+                          multiple = FALSE
       ),
 
       radioButtons(ns("y_filter_by"),
@@ -224,11 +218,11 @@ ui_g_boxplot <- function(id, ...) {
       div(id = ns("y_filter"), style="padding: 0px;",
           uiOutput(ns("y_select")),
           div(style="padding: 0px; margin: 0px",
-              uiOutput(ns("ymin_value")
-                       , style="display: inline-block; vertical-align:center;"),
+              uiOutput(ns("ymin_value"),
+                       style="display: inline-block; vertical-align:center;"),
               uiOutput(ns("yto"), style="display: inline-block; vertical-align:center;"),
-              uiOutput(ns("ymax_value")
-                       , style="display: inline-block; vertical-align:center;")
+              uiOutput(ns("ymax_value"),
+                       style="display: inline-block; vertical-align:center;")
           )
       ),
 
@@ -242,37 +236,37 @@ ui_g_boxplot <- function(id, ...) {
 
       uiOutput(ns("yaxis_scale")),
 
-      optionalSliderInputValMinMax(ns("plot_height")
-                                   , label = "Plot height"
-                                   , a$plot_height
-                                   , ticks = FALSE
-                                   , step = 50
-                                   , width = inpWidth),
+      optionalSliderInputValMinMax(ns("plot_height"),
+                                   label = "Plot height",
+                                   a$plot_height,
+                                   ticks = FALSE,
+                                   step = 50,
+                                   width = inpWidth),
 
-      optionalSliderInputValMinMax(ns("font_size")
-                                   , label = "Font Size"
-                                   , a$font_size
-                                   , value_min_max = c(12, 8, 20)
-                                   , step = 1
-                                   , ticks = FALSE
-                                   , width = inpWidth
+      optionalSliderInputValMinMax(ns("font_size"),
+                                   label = "Font Size",
+                                   a$font_size,
+                                   value_min_max = c(12, 8, 20),
+                                   step = 1,
+                                   ticks = FALSE,
+                                   width = inpWidth
       ),
 
-      optionalSliderInputValMinMax(ns("dot_size")
-                                   , label = "Dot Size"
-                                   , a$dot_size
-                                   , value_min_max = c(2, 1, 12)
-                                   , step = 1
-                                   , ticks = FALSE
-                                   , width = inpWidth
+      optionalSliderInputValMinMax(ns("dot_size"),
+                                   label = "Dot Size",
+                                   a$dot_size,
+                                   value_min_max = c(2, 1, 12),
+                                   step = 1,
+                                   ticks = FALSE,
+                                   width = inpWidth
       ),
 
-      optionalSliderInputValMinMax(ns("alpha")
-                                   , label = "Dot Transparency"
-                                   , value_min_max = c(0.8, 0.0, 1.0)
-                                   , step = 0.1
-                                   , ticks = FALSE
-                                   , width = inpWidth
+      optionalSliderInputValMinMax(ns("alpha"),
+                                   label = "Dot Transparency",
+                                   value_min_max = c(0.8, 0.0, 1.0),
+                                   step = 0.1,
+                                   ticks = FALSE,
+                                   width = inpWidth
       )
 
     )
@@ -284,25 +278,25 @@ ui_g_boxplot <- function(id, ...) {
 
 
 
-srv_g_boxplot_old <- function(input, output, session, datasets,
-                              facet_var, facet_var_choices,
-                              xaxis_var, xaxis_var_choices,
-                              param_var, yaxis_var, trt_group,
-                              color_manual, shape_manua,
-                              armlabel,
-                              filter_vars, filter_labs,
-                              dataname, code_data_processing) {
 
-}
-
-srv_g_boxplot_old <- function(input, output, session, datasets,
-                          facet_var, facet_var_choices,
-                          xaxis_var, xaxis_var_choices,
-                          param_var, yaxis_var, trt_group,
-                          color_manual, shape_manua,
+srv_g_boxplot <- function(input,
+                          output,
+                          session,
+                          datasets,
+                          facet_var,
+                          facet_var_choices,
+                          xaxis_var,
+                          xaxis_var_choices,
+                          param_var,
+                          param,
+                          yaxis_var,
+                          trt_group,
+                          color_manual,
+                          shape_manual,
                           armlabel,
-                          filter_vars, filter_labs,
-                          dataname, code_data_processing) {
+                          filter_vars,
+                          filter_labs,
+                          dataname) {
 
   ns <- session$ns
 
@@ -497,12 +491,12 @@ srv_g_boxplot_old <- function(input, output, session, datasets,
       yax <- get_axis_limits(ylimits()$low, ylimits()$high, req.n = 100)
       if (is_finite(yax$min) & is_finite(yax$max) ) {
         tagList({
-          sliderInput(session$ns("yrange_scale")
-                      , label = paste0("Y-Axis Range Zoom")
-                      , min = yax$min
-                      , max = yax$max
-                      , step = yax$step
-                      , value = c(yax$min, yax$max)
+          sliderInput(session$ns("yrange_scale"),
+                      label = paste0("Y-Axis Range Zoom"),
+                      min = yax$min,
+                      max = yax$max,
+                      step = yax$step,
+                      value = c(yax$min, yax$max)
           )
         })
       }
