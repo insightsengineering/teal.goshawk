@@ -187,19 +187,16 @@ g_ui_spaghettiplot <- function(id, ...) {
       templ_ui_xy_vars(ns, a$xaxis_var$choices, a$xaxis_var$selected,
                        a$yaxis_var$choices, a$yaxis_var$selected),
       templ_ui_constraint(ns), # required by constr_anl_chunks
+      radioButtons(ns("group_stats"),
+                  "Group Statistics",
+                  c("None" = "NONE", "Mean" = "MEAN", "Median" = "MEDIAN"),
+                  inline = TRUE),
+      radioButtons(ns("filter_var"),
+                 "Data Constraint",
+                 a$filter_var$choices,
+                 a$filter_var$selected),
+      sliderInput(ns("yrange_scale"), label = "Y-Axis Range Zoom", min = 0, max = 1, value = c(0, 1)),
       panel_group(
-        panel_item(
-          title = "ALB Data Settings",
-          radioButtons(ns("group_stats"),
-                       "Group Statistics",
-                       c("None" = "NONE", "Mean" = "MEAN", "Median" = "MEDIAN"),
-                       inline = TRUE),
-          radioButtons(ns("filter_var"),
-                       "Data Constraint",
-                       a$filter_var$choices,
-                       a$filter_var$selected),
-          sliderInput(ns("yrange_scale"), label = "Y-Axis Range Zoom", min = 0, max = 1, value = c(0, 1))
-        ),
         panel_item(
           title = "Plot Aesthetic Settings",
           div(style = "padding: 0px;",
@@ -219,11 +216,11 @@ g_ui_spaghettiplot <- function(id, ...) {
           optionalSliderInputValMinMax(ns("font_size"), "Font Size", a$font_size, ticks = FALSE),
           optionalSliderInputValMinMax(ns("alpha"), "Line Transparency", a$alpha, value_min_max =  c(0.8, 0.0, 1.0), step = 0.1, ticks = FALSE)
         )
-      ),
-      forms = get_rcode_ui(ns("rcode")),
-      pre_output = a$pre_output,
-      post_output = a$post_output
-    )
+      )
+    ),
+    forms = get_rcode_ui(ns("rcode")),
+    pre_output = a$pre_output,
+    post_output = a$post_output
   )
 }
 
