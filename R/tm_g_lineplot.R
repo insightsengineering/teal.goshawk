@@ -181,7 +181,7 @@ ui_lineplot <- function(id, ...) {
     output = uiOutput(ns("plot_ui")),
     encoding = div(
       templ_ui_dataname(a$dataname),
-      templ_ui_dataname(a$dataname),
+      templ_ui_param(ns, a$param$choices, a$param$selected), # required by constr_anl_chunks
       templ_ui_xy_vars(ns, a$xaxis_var$choices, a$xaxis_var$selected,
                        a$yaxis_var$choices, a$yaxis_var$selected),
       uiOutput(ns("shape_ui")),
@@ -225,5 +225,11 @@ srv_lineplot <- function(input,
                          xlabel) {
 
   ns <- session$ns
+  output$shape_ui <- renderUI({
+    if(!is.null(shape_choices)){
+      selectInput(ns("shape"), "Select Line Splitting Variable",
+                  choices = c("None", shape_choices), selected = "None")
+    }
+  })
 
 }
