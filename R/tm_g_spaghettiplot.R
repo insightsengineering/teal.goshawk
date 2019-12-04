@@ -114,14 +114,11 @@
 #'       label = "Spaghetti Plot",
 #'       dataname = "ADLB",
 #'       param_var = "PARAMCD",
-#'       param_choices = c("ALT", "CRP", "IGA"),
-#'       param = "ALT",
+#'       param = choices_selected(c("ALT", "CRP", "IGA"), "ALT"),
 #'       idvar = "USUBJID",
-#'       xvar = "AVISITCD",
-#'       yvar = "AVAL",
-#'       yvar_choices = c("AVAL","CHG", "PCHG"),
-#'       filter_var = 'NONE',
-#'       filter_var_choices = c("None" = "NONE", "Screening" = "BASE2", "Baseline" = "BASE"),
+#'       xvar = choices_selected(c("AVISITCD", "AVISITCD")),
+#'       yvar = choices_selected(c("AVAL","CHG", "PCHG"), "AVAL"),
+#'       filter_var = choices_selected(c("None" = "NONE", "Screening" = "BASE2", "Baseline" = "BASE"), "NONE"),
 #'       trt_group = "ARM",
 #'       color_comb = "#39ff14"
 #'     )
@@ -134,15 +131,13 @@
 tm_g_spaghettiplot <- function(label,
                                dataname,
                                param_var,
-                               param_choices = param,
                                param,
                                param_var_label = 'PARAM',
                                idvar,
-                               xvar, yvar,
-                               xvar_choices = xvar, yvar_choices = yvar,
+                               xvar,
+                               yvar,
                                xvar_level = NULL,
                                filter_var = yvar,
-                               filter_var_choices = filter_var,
                                trt_group,
                                trt_group_level = NULL,
                                group_stats = "NONE",
@@ -160,17 +155,26 @@ tm_g_spaghettiplot <- function(label,
   module(
     label = label,
     server = srv_spaghettiplot,
-    server_args = list(dataname = dataname, idvar = idvar, param_var = param_var, trt_group = trt_group, yvar = yvar,
-                       xvar_level = xvar_level, trt_group_level = trt_group_level, man_color = man_color,
-                       color_comb = color_comb, param_var_label = param_var_label, xtick = xtick, xlabel = xlabel),
-    ui = ui_spaghettiplot,
+    server_args = list(dataname = dataname,
+                       idvar = idvar,
+                       param_var = param_var,
+                       trt_group = trt_group,
+                       yvar = yvar$selected,
+                       xvar_level = xvar_level,
+                       trt_group_level = trt_group_level,
+                       man_color = man_color,
+                       color_comb = color_comb,
+                       param_var_label = param_var_label,
+                       xtick = xtick,
+                       xlabel = xlabel),
+    ui = g_ui_spaghettiplot,
     ui_args = args,
     filters = dataname
   )
 
 }
 
-ui_spaghettiplot <- function(id, ...) {
+g_ui_spaghettiplot <- function(id, ...) {
 
   ns <- NS(id)
   a <- list(...)
@@ -178,27 +182,36 @@ ui_spaghettiplot <- function(id, ...) {
   if (a$plot_height < 200 || a$plot_height > 2000) stop("plot_height must be between 200 and 2000")
 
   standard_layout(
-    output = div(
-      fluidRow(
-        uiOutput(ns("plot_ui"))
-      )
-      # fluidRow(
-      #   column(width = 12,
-      #          h4("Selected Data Points"),
-      #          dataTableOutput(ns("brush_data"))
-      #   )
-      # )
-    ),
-    # output = uiOutput(ns("plot_ui")),
+    output = uiOutput(ns("plot_ui")),
     encoding = div(
       tags$label(a$dataname, "Data Settings", class="text-primary"),
-      optionalSelectInput(ns("param"), "Select a Biomarker", a$param_choices, a$param, multiple = FALSE),
-      optionalSelectInput(ns("xvar"), "X-Axis Variable", a$xvar_choices, a$xvar, multiple = FALSE),
-      optionalSelectInput(ns("yvar"), "Select a Y-Axis Variable", a$yvar_choices, a$yvar, multiple = FALSE),
-      radioButtons(ns("group_stats"), "Group Statistics", c("None" = "NONE", "Mean" = "MEAN", "Median" = "MEDIAN"), inline = TRUE),
-      radioButtons(ns("filter_var"), "Data Constraint", a$filter_var_choices, a$filter_var),
-      uiOutput(ns("filter_min"), style="display: inline-block; vertical-align:center"),
-      uiOutput(ns("filter_max"), style="display: inline-block; vertical-align:center"),
+      optionalSelectInput(ns("param"),
+                          "Select a Biomarker",
+                          a$param$choices,
+                          a$param$selected,
+                          multiple = FALSE),
+      optionalSelectInput(ns("xvar"),
+                          "X-Axis Variable",
+                          a$xvar$choices,
+                          a$xvar$selected,
+                          multiple = FALSE),
+      optionalSelectInput(ns("yvar"),
+                          "Select a Y-Axis Variable",
+                          a$yvar$choices,
+                          a$yvar$selected,
+                          multiple = FALSE),
+      radioButtons(ns("group_stats"),
+                   "Group Statistics",
+                   c("None" = "NONE", "Mean" = "MEAN", "Median" = "MEDIAN"),
+                   inline = TRUE),
+      radioButtons(ns("filter_var"),
+                   "Data Constraint",
+                   a$filter_var$choices,
+                   a$filter_var$selected),
+      uiOutput(ns("filter_min"),
+               style="display: inline-block; vertical-align:center"),
+      uiOutput(ns("filter_max"),
+               style="display: inline-block; vertical-align:center"),
       uiOutput(ns("yaxis_scale")),
 
       if (all(c(
@@ -224,9 +237,10 @@ ui_spaghettiplot <- function(id, ...) {
       optionalSliderInputValMinMax(ns("plot_height"), "Plot Height", a$plot_height, ticks = FALSE),
       optionalSliderInputValMinMax(ns("font_size"), "Font Size", a$font_size, ticks = FALSE),
       optionalSliderInputValMinMax(ns("alpha"), "Line Transparency", a$alpha, value_min_max =  c(0.8, 0.0, 1.0), step = 0.1, ticks = FALSE)
-    )
-    # ,
-    # forms = actionButton(ns("show_rcode"), "Show R Code", width = "100%")
+    ),
+    forms = get_rcode_ui(ns("rcode")),
+    pre_output = a$pre_output,
+    post_output = a$post_output
   )
 
 }
