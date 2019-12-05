@@ -85,6 +85,7 @@ This teal module renders the UI and calls the function that creates a line plot.
 # Example using ADaM structure analysis dataset.
 
 library(random.cdisc.data)
+library(stringr)
 
 # original ARM value = dose value
 arm_mapping <- list("A: Drug X" = "150mg QD",

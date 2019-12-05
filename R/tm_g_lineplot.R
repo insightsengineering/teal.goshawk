@@ -48,6 +48,7 @@
 #' # Example using ADaM structure analysis dataset.
 #'
 #' library(random.cdisc.data)
+#' library(stringr)
 #'
 #' # original ARM value = dose value
 #' arm_mapping <- list("A: Drug X" = "150mg QD",
@@ -242,6 +243,57 @@ srv_lineplot <- function(input,
   output$lineplot <- renderPlot({
     ac <- anl_chunks()
     private_chunks <- ac$chunks$clone(deep = TRUE)
+    yrange_scale <- input$yrange_scale
+    font_size <- input$font_size
+    dodge <- input$dodge
+    rotate_xlab <- input$rotate_xlab
+    hline <- input$hline
+    median <- ifelse(input$stat=='median',TRUE, FALSE)
+    plot_height <- input$plot_height
+
+    param <- isolate(input$param)
+    xaxis <- isolate(input$xaxis_var)
+    yaxis <- isolate(input$yaxis_var)
+
+    shape <- NULL
+    if (!is.null(input$shape)){
+      if (input$shape != "None"){
+        shape <- input$shape
+      }
+    }
+
+    chunks_push(
+      chunks = private_chunks,
+      id = "lineplot",
+      expression = bquote({
+        g_lineplot(
+          data = ANL,
+          biomarker_var = .(param_var),
+          biomarker_var_label = .(param_var_label),
+          biomarker = .(param),
+          value_var = .(yaxis),
+          ylim = .(yrange_scale),
+          trt_group = .(trt_group),
+          trt_group_level = .(trt_group_level),
+          shape = .(shape),
+          time = .(xaxis),
+          time_level = .(xvar_level),
+          color_manual = .(color_manual),
+          median = .(median),
+          hline = .(`if`(is.na(hline), NULL, as.numeric(hline))),
+          xtick = .(xtick),
+          xlabel = .(xlabel),
+          rotate_xlab = .(rotate_xlab),
+          font_size = .(font_size),
+          dodge = .(dodge),
+          plot_height = .(plot_height)
+        )
+      })
+    )
+
+    p <- chunks_safe_eval(private_chunks)
+    init_chunks(private_chunks)
+    p
 
   })
 
