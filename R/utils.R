@@ -128,6 +128,7 @@ keep_range_slider_updated <- function(session, input, id_slider, id_var, reactiv
 }
 
 #' @importFrom dplyr filter
+#' @importFrom digest digest
 #' @importFrom shinyjs hide show
 constr_anl_chunks <- function(session, input, datasets, dataname, param_id, param_var, trt_group) {
   dataset_var <- paste0(dataname, "_FILTERED")
@@ -204,7 +205,7 @@ constr_anl_chunks <- function(session, input, datasets, dataname, param_id, para
         max = list(label = label_max, min = minmax[1], max = minmax[2], value = minmax[2])
       )
 
-      update_min_max(args)
+      update_min_max(session, args)
 
       shinyjs::show("constraint_range") # update before show
 
@@ -214,10 +215,11 @@ constr_anl_chunks <- function(session, input, datasets, dataname, param_id, para
 
       # force update (and thus refresh) on different constraint_var -> pass unique value for each constraint_var name
       args <- list(
-        min = list(label = "Min", min = 0, max = 0, value = 0),
-        max = list(label = "Max", min = 0, max = 0, value = 0)
+        min = list(label = "Min", min = 0, max = 0, value = str_to_int(constraint_var)),
+        max = list(label = "Max", min = 0, max = 0, value = str_to_int(constraint_var))
       )
-      update_min_max(args)
+
+      update_min_max(session, args)
     }
   })
 
@@ -271,4 +273,18 @@ constr_anl_chunks <- function(session, input, datasets, dataname, param_id, para
   })
 
   return(anl_constraint)
+}
+
+
+update_min_max <- function(session, args) {
+  do.call("updateNumericInput", c(list(session = session, inputId = "constraint_range_min"), args$min))
+  do.call("updateNumericInput", c(list(session = session, inputId = "constraint_range_max"), args$max))
+}
+
+str_to_int <- function(x) {
+  stopifnot(is_character_single(x))
+
+  # hashing function to convert any string to some integer
+  # we cannot use digest::digest2int function because for some versions it's not available
+  strtoi(substr(digest::digest(x), 28, 32), 16)
 }
