@@ -134,17 +134,13 @@ tm_g_boxplot <- function(label,
                          trt_group = "ARM",
                          color_manual = NULL,
                          shape_manual = NULL,
-
                          facet_ncol = NULL,
                          hline = NULL,
                          rotate_xlab = FALSE,
-
-                         #TODO: what does this do?
                          armlabel = NULL,
-
                          plot_height = c(600, 200, 2000),
                          font_size = c(12, 8, 20),
-                         dot_size = c(1, 1, 12),
+                         dot_size = c(2, 1, 12),
                          alpha = c(0.8, 0.0, 1.0),
                          pre_output = NULL,
                          post_output = NULL) {
@@ -187,9 +183,7 @@ ui_g_boxplot <- function(id, ...) {
   a <- list(...)
 
   standard_layout(
-    output = #templ_ui_output_datatable(ns),
-      textOutput(ns("txt")),
-
+    output = templ_ui_output_datatable(ns),
     encoding =  div(
       templ_ui_dataname(a$dataname),
       templ_ui_param(ns, a$param$choices, a$param$selected),
@@ -218,8 +212,10 @@ ui_g_boxplot <- function(id, ...) {
           optionalSliderInputValMinMax(ns("alpha"), "Dot Transparency", a$alpha, ticks = FALSE)
         )
       )
-    )
-    # , forms = actionButton(ns("show_rcode"), "Show R Code", width = "100%")
+    ),
+    forms = get_rcode_ui(ns("rcode")),
+    pre_output = a$pre_output,
+    post_output = a$post_output
   )
 }
 
@@ -228,29 +224,120 @@ srv_g_boxplot <- function(input,
                           output,
                           session,
                           datasets,
-                          facet_var,
-                          facet_var_choices,
-                          xaxis_var,
-                          xaxis_var_choices,
+                          dataname,
                           param_var,
-                          param,
-                          yaxis_var,
                           trt_group,
+                          facet_var,
                           color_manual,
                           shape_manual,
-                          armlabel,
-                          filter_vars,
-                          filter_labs,
-                          dataname){
+                          armlabel){
 
   ns <- session$ns
 
-  anl_chunks <- constr_anl_chunks(session, input, datasets, dataname, param_var, trt_group)
+  # reused in all modules
+  anl_chunks <- constr_anl_chunks(session, input, datasets, dataname, "param", param_var, trt_group)
 
-  output$txt <- renderText({
+  # update sliders for axes
+  keep_range_slider_updated(session, input, "yrange_scale", "yaxis_var", anl_chunks)
 
-    dim(iris)
+  # plot
+  output$boxplot <- renderPlot({
+
+    ac <- anl_chunks()
+    private_chunks <- ac$chunks$clone(deep = TRUE)
+
+    yrange_scale <- input$yrange_scale
+    facet_ncol <- input$facet_ncol
+    alpha <- input$alpha
+    font_size <- input$font_size
+    dot_size <- input$dot_size
+    rotate_xlab = input$rotate_xlab
+    hline <- input$hline
+
+    # Below inputs should trigger plot via updates of other reactive objects (i.e. anl_chunk()) and some inputs
+    param <- isolate(input$param)
+    xaxis <- isolate(input$xaxis_var)
+    yaxis <- isolate(input$yaxis_var)
+    #facet_var <- isolate(input$facet_var)
+
+
+    chunks_push(
+      chunks = private_chunks,
+      id = "boxplot",
+      expression = bquote({
+        g_boxplot(
+          data = ANL,
+          biomarker = .(param),
+          xaxis_var = .(xaxis),
+          yaxis_var = .(yaxis),
+          hline = .(`if`(is.na(hline), NULL, as.numeric(hline))),
+          facet_ncol = .(facet_ncol),
+          rotate_xlab = .(rotate_xlab),
+          trt_group = .(trt_group),
+          ymin_scale = .(yrange_scale[1]),
+          ymax_scale = .(yrange_scale[2]),
+          color_manual = .(color_manual),
+          shape_manual = .(shape_manual),
+          #facet = NULL, #TODO
+          alpha = .(alpha),
+          dot_size = .(dot_size),
+          font_size = .(font_size),
+          armlabel = .(armlabel)
+          # TODO: add unit
+        )
+      })
+    )
+
+    p <- chunks_safe_eval(private_chunks)
+
+    # promote chunks to be visible in the sessionData by other modules
+    init_chunks(private_chunks)
+
+    p
+
   })
+
+  # dynamic plot height and brushing
+  output$plot_ui <- renderUI({
+
+    plot_height <- input$plot_height
+    validate(need(plot_height, "need valid plot height"))
+
+    plotOutput(ns("boxplot"),
+               height = plot_height,
+               brush = brushOpts(id = ns("boxplot_brush"), resetOnNew = T)
+    )
+  })
+
+  # highlight plot area
+  output$brush_data <- DT::renderDataTable({
+    req(input$boxplot_brush)
+
+    ANL <- isolate(anl_chunks()$ANL) # nolint
+    validate_has_data(ANL, 5)
+
+    xvar <- isolate(input$xaxis_var)
+    yvar <- isolate(input$yaxis_var)
+
+    req(all(c(xvar, yvar) %in% names(ANL)))
+
+    df <- brushedPoints(
+      select(ANL, "USUBJID", trt_group, "AVISITCD", "PARAMCD", xvar, yvar, "LOQFL"),
+      input$boxplot_brush
+    )
+
+    numeric_cols <- names(select_if(df, is.numeric))
+
+    DT::datatable(df, rownames = FALSE) %>%
+      DT::formatRound(numeric_cols, 4)
+  })
+
+  callModule(
+    get_rcode_srv,
+    id = "rcode",
+    datasets = datasets,
+    modal_title = "Box Plot"
+  )
 
 
 }
@@ -276,6 +363,7 @@ srv_g_boxplot_old <- function(input,
 
   ns <- session$ns
 
+  #TODO: check how this is changed.
   # Get "nice" limits for Y axis.
   get_axis_limits <- function(lo_, hi_, req.n = 2000) {
     hi <- signif(max(hi_, lo_), 6)
@@ -292,12 +380,14 @@ srv_g_boxplot_old <- function(input,
     }
   }
 
+  #TODO: check how this is changed.
   # Extend is.infinite to include zero length objects.
   is_finite <- function(x){
     if(length(x) == 0) return(FALSE)
     return(is.finite(x))
   }
 
+  #TODO: check how this is changed.
   chunks <- list(
     analysis = "# Not Calculated",
     table = "# Not calculated",
@@ -315,6 +405,7 @@ srv_g_boxplot_old <- function(input,
     )
   })
 
+  #TODO: in ref this is commented out
   output$brush_data <- renderTable({
     if (nrow(filter_ALB()) > 0 ){
 
