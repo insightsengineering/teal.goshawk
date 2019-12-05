@@ -63,6 +63,14 @@ Default value is waive().}
 \item{font_size}{control font size for title, x-axis, y-axis and legend font.}
 
 \item{dodge}{control the position dodge of error bar}
+
+\item{pre_output}{optional, \code{shiny.tag} with text placed before the
+output to put the output into context. For example the
+\code{\link[shiny]{helpText}} elements are useful.}
+
+\item{post_output}{optional, \code{shiny.tag} with text placed before the
+output to put the output into context. For example the
+\code{\link[shiny]{helpText}} elements are useful.}
 }
 \value{
 \code{shiny} object

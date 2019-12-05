@@ -2,6 +2,7 @@
 #'
 #' This teal module renders the UI and calls the function that creates a line plot.
 #'
+#' @inheritParams teal.devel::standard_layout
 #' @param label menu item label of the module in the teal app.
 #' @param dataname analysis data passed to the data argument of teal init. E.g. ADaM structured
 #' laboratory data frame ADLB.
@@ -232,4 +233,28 @@ srv_lineplot <- function(input,
     }
   })
 
+  anl_chunks <- constr_anl_chunks(session, input, datasets, dataname, "param", param_var, trt_group)
+
+  # update sliders for axes
+  keep_range_slider_updated(session, input, "yrange_scale", "yaxis_var", anl_chunks)
+
+
+  output$lineplot <- renderPlot({
+    ac <- anl_chunks()
+    private_chunks <- ac$chunks$clone(deep = TRUE)
+
+  })
+
+  output$plot_ui <- renderUI({
+    plot_height <- input$plot_height
+    validate(need(plot_height, "need  valid plot height"))
+    plotOutput(ns("lineplot"), height = plot_height)
+  })
+
+  callModule(
+    get_rcode_srv,
+    id = "rcode",
+    datasets = datasets,
+    modal_title = "Line Plot"
+  )
 }
