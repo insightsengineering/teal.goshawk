@@ -68,7 +68,7 @@ templ_ui_output_datatable <- function(ns) {
 }
 
 templ_ui_dataname <- function(dataname) {
-  tags$label(dataname, "Data Settings", class="text-primary")
+  tags$label(dataname, "Data Settings", class = "text-primary")
 }
 templ_ui_param <- function(ns, choices, selected) {
   selectInput(ns("param"), "Select a Biomarker", choices, selected, multiple = FALSE)
@@ -128,7 +128,6 @@ keep_range_slider_updated <- function(session, input, id_slider, id_var, reactiv
 }
 
 #' @importFrom dplyr filter
-#' @importFrom digest digest2int
 #' @importFrom shinyjs hide show
 constr_anl_chunks <- function(session, input, datasets, dataname, param_id, param_var, trt_group) {
   dataset_var <- paste0(dataname, "_FILTERED")
@@ -140,12 +139,11 @@ constr_anl_chunks <- function(session, input, datasets, dataname, param_id, para
     ANL_FILTERED <- datasets$get_data(dataname, filtered = TRUE, reactive = TRUE) # nolint
     validate_has_data(ANL_FILTERED, 5)
 
-    validate_has_variable(ANL_FILTERED, "AVISITCD") # should have BL and SCR levels
-    validate_has_variable(ANL_FILTERED, param_var)
+    validate_has_variable(ANL_FILTERED, "AVISITCD")
     validate_has_variable(ANL_FILTERED, "BASE")
     validate_has_variable(ANL_FILTERED, "BASE2")
+    validate_has_variable(ANL_FILTERED, param_var)
     validate_has_variable(ANL_FILTERED, "ARM")
-
 
     # analysis
     private_chunks <- chunks$new()
@@ -167,17 +165,17 @@ constr_anl_chunks <- function(session, input, datasets, dataname, param_id, para
     return(list(ANL = ANL, chunks = private_chunks))
   })
 
-
   observe({
-    constraint_var <- input$constraint_var
-    ANL <- anl_param()$ANL # nolint
+    param <- input[[param_id]]
+    validate(need(param, "Please select a biomarker"))
 
+    constraint_var <- input$constraint_var
     validate(need(constraint_var, "select a constraint variable"))
 
-    update_min_max <- function(args) {
-      do.call("updateNumericInput", c(list(session = session, inputId = "constraint_range_min"), args$min))
-      do.call("updateNumericInput", c(list(session = session, inputId = "constraint_range_max"), args$max))
-    }
+    ANL <- datasets$get_data(dataname, filtered = FALSE, reactive = TRUE) # nolint
+    validate_has_variable(ANL, "AVISITCD")
+    validate_has_variable(ANL, "BASE")
+    validate_has_variable(ANL, "BASE2")
 
     visit_freq <- unique(ANL$AVISITCD)
 
@@ -206,7 +204,7 @@ constr_anl_chunks <- function(session, input, datasets, dataname, param_id, para
         max = list(label = label_max, min = minmax[1], max = minmax[2], value = minmax[2])
       )
 
-      update_min_max(args)
+      update_min_max(session, args)
 
       shinyjs::show("constraint_range") # update before show
 
@@ -216,11 +214,11 @@ constr_anl_chunks <- function(session, input, datasets, dataname, param_id, para
 
       # force update (and thus refresh) on different constraint_var -> pass unique value for each constraint_var name
       args <- list(
-        min = list(label = "Min", min = 0, max = 0, value = digest::digest2int(constraint_var)),
-        max = list(label = "Max", min = 0, max = 0, value = digest::digest2int(constraint_var))
+        min = list(label = "Min", min = 0, max = 0, value = 0),
+        max = list(label = "Max", min = 0, max = 0, value = 0)
       )
 
-      update_min_max(args)
+      update_min_max(session, args)
     }
   })
 
@@ -234,9 +232,7 @@ constr_anl_chunks <- function(session, input, datasets, dataname, param_id, para
     validate(need(constraint_range_max, "please select proper constraint maximum value"))
     validate(need(constraint_range_min <= constraint_range_max, "constraint min needs to be smaller than max"))
 
-
     anl_param <- anl_param()
-
     private_chunks <- anl_param$chunks$clone(deep = TRUE)
 
     # filter constraint
@@ -274,4 +270,10 @@ constr_anl_chunks <- function(session, input, datasets, dataname, param_id, para
   })
 
   return(anl_constraint)
+}
+
+
+update_min_max <- function(session, args) {
+  do.call("updateNumericInput", c(list(session = session, inputId = "constraint_range_min"), args$min))
+  do.call("updateNumericInput", c(list(session = session, inputId = "constraint_range_max"), args$max))
 }

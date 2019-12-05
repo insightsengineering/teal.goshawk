@@ -4,7 +4,7 @@
 \alias{tm_g_boxplot}
 \title{Box Plot}
 \usage{
-tm_g_boxplot(label, dataname, param,
+tm_g_boxplot(label, dataname, param_var, param,
   yaxis_var = choices_selected(c("AVAL", "CHG"), "AVAL"),
   xaxis_var = choices_selected("AVISITCD", "AVISITCD"),
   facet_var = choices_selected("ARM", "ARM"), filter_vars = c("BASE2",
@@ -20,7 +20,9 @@ tm_g_boxplot(label, dataname, param,
 \item{dataname}{analysis data passed to the data argument of teal init. E.g. ADaM structured
 laboratory data frame ALB.}
 
-\item{param}{biomarker selected.}
+\item{param_var}{name of variable containing biomarker codes e.g. PARAMCD.}
+
+\item{param}{list of biomarkers of interest.}
 
 \item{yaxis_var}{name of variable containing biomarker results displayed on y-axis e.g. AVAL.}
 
@@ -58,18 +60,6 @@ output to put the output into context. For example the
 \item{post_output}{optional, \code{shiny.tag} with text placed before the
 output to put the output into context. For example the
 \code{\link[shiny]{helpText}} elements are useful.}
-
-\item{param_var}{name of variable containing biomarker codes e.g. PARAMCD.}
-
-\item{param_choices}{list of biomarkers of interest.}
-
-\item{yaxis_var_choices}{list of variables containing biomarker results choices.}
-
-\item{xaxis_var_choices}{variable choices with which to categorize x-axis.}
-
-\item{facet_var_choices}{variable choices with which to facet the plots.}
-
-\item{code_data_processing}{TODO}
 }
 \value{
 an \code{\link[teal]{module}} object#'
@@ -151,10 +141,8 @@ x <- teal::init(
         param = choices_selected(c("ALT", "CRP", "IGA"), "ALT"),
         yaxis_var = choices_selected(c("AVAL", "BASE", "CHG"), "AVAL"),
         rotate_xlab = FALSE,
-        xaxis_var = "ARM",
-        xaxis_var_choices = c("ARM", "AVISITCD", "STUDYID"),
-        facet_var= "AVISITCD",
-        facet_var_choices = c("ARM", "AVISITCD", "SEX"),
+        xaxis_var = choices_selected(c("ARM", "AVISITCD", "STUDYID"), "ARM"),
+        facet_var = choices_selected(c("ARM", "AVISITCD", "SEX"), "AVISITCD"),
         trt_group = "ARM"
       )
   )
