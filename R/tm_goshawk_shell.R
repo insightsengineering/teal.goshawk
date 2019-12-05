@@ -51,7 +51,7 @@ ui_goshawk_shell <- function(id, datasets, ...) {
 
 srv_goshawk_shell <- function(input, output, session, datasets, dataname, param_var, trt_group) {
 
-  anl_chunks <- constr_anl_chunks(session, input, datasets, dataname, param_var, trt_group)
+  anl_chunks <- constr_anl_chunks(session, input, datasets, dataname, "param", param_var, trt_group)
 
   output$txt <- renderText({
 
