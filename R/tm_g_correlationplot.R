@@ -436,6 +436,20 @@ srv_g_correlationplot <- function(input,
     validate(need(nrow(ANL_TRANSPOSED) > 0, "Plot Data No Observations Left"))
     validate_has_variable(data = ANL_TRANSPOSED, varname = c(xvar(), yvar(), xloqfl(), yloqfl()))
 
+
+    chunks_push(
+      chunks = private_chunks,
+      id = "ANL_attributes",
+      expression =
+        if (trt_group == "ARM") {
+          bquote(attributes(ANL_TRANSPOSED$ARM)$label <- "Planned Arm")
+        } else {
+          bquote(attributes(ANL_TRANSPOSED[[.(trt_group)]])$label <- "Actual Arm")
+        }
+    )
+    chunks_push_new_line(private_chunks)
+
+
     return(list(ANL_TRANSPOSED = ANL_TRANSPOSED, chunks = private_chunks))
   })
 
@@ -490,20 +504,6 @@ srv_g_correlationplot <- function(input,
     title_text <- plot_labels()$title_text
     xaxis_lab  <- plot_labels()$xaxis_lab
     yaxis_lab  <- plot_labels()$yaxis_lab
-
-    # re-establish treatment variable label
-    chunks_push(
-      chunks = private_chunks,
-      id = "ANL_attributes",
-      expression =
-        if (trt_group == "ARM") {
-          bquote(attributes(ANL_TRANSPOSED$ARM)$label <- "Planned Arm")
-        } else {
-          bquote(attributes(ANL_TRANSPOSED$ACTARM)$label <- "Actual Arm")
-        }
-      )
-
-    chunks_push_new_line(private_chunks)
 
     chunks_push(
       chunks = private_chunks,
