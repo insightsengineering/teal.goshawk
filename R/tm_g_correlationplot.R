@@ -254,7 +254,7 @@ srv_g_correlationplot <- function(input,
       id = "filter_biomarker",
       expression = bquote({
         ANL <- .(as.name(dataset_var)) %>% # nolint
-          dplyr::filter(.(as.name(param_var)) %in% c(.(input$xaxis_param), .(input$yaxis_param)))
+          dplyr::filter(.data[[.(param_var)]] %in% c(.(input$xaxis_param), .(input$yaxis_param)))
       })
     )
 
@@ -298,7 +298,7 @@ srv_g_correlationplot <- function(input,
         max = list(label = label_max, min = minmax[1], max = minmax[2], value = minmax[2])
       )
 
-      update_min_max(args)
+      update_min_max(session, args)
 
       shinyjs::show("constraint_range") # update before show
 
@@ -308,11 +308,11 @@ srv_g_correlationplot <- function(input,
 
       # force update (and thus refresh) on different constraint_var -> pass unique value for each constraint_var name
       args <- list(
-        min = list(label = "Min", min = 0, max = 0, value = str_to_int(constraint_var)),
-        max = list(label = "Max", min = 0, max = 0, value = str_to_int(constraint_var))
+        min = list(label = "Min", min = 0, max = 0, value = 0),
+        max = list(label = "Max", min = 0, max = 0, value = 0)
       )
 
-      update_min_max(args)
+      update_min_max(session, args)
     }
   })
 
@@ -336,9 +336,9 @@ srv_g_correlationplot <- function(input,
         expression = bquote({
           ANL <- ANL %>% # nolint
             dplyr::filter(
-              (.(constraint_range_min) <= .(as.name(constraint_var)) &
-                 .(as.name(constraint_var)) <= .(constraint_range_max)) |
-                is.na(.(as.name(constraint_var)))
+              (.(constraint_range_min) <= .data[[.(constraint_var)]] &
+                 .data[[.(constraint_var)]] <= .(constraint_range_max)) |
+                is.na(.data[[.(constraint_var)]])
             )
         })
       )
@@ -398,12 +398,15 @@ srv_g_correlationplot <- function(input,
       id = "plot_data_transpose",
       expression = bquote({
         ANL_TRANSPOSED <- ANL %>%
-          gather(key = "ANLVARS", value = "ANLVALS", .(xaxis_var), .(yaxis_var), .data$LOQFL) %>%
-          mutate(ANL.PARAM = ifelse(.data$ANLVARS == "LOQFL",
-                                    paste0(.data$ANLVARS, "_", .data$PARAMCD),
-                                    paste0(.data$ANLVARS, ".", .data$PARAMCD))) %>%
-          select(.data$USUBJID, .(trt_group), .data$AVISITN, .data$AVISITCD, .data$ANL.PARAM, .data$ANLVALS) %>%
-          spread(.data$ANL.PARAM, .data$ANLVALS) %>%
+          tidyr::gather(key = "ANLVARS",
+                        value = "ANLVALS",
+                        .data[[.(xaxis_var)]], .data[[.(yaxis_var)]], .data[["LOQFL"]]) %>%
+          mutate(ANL.PARAM = ifelse(.data[["ANLVARS"]] == "LOQFL",
+                                    paste0(.data[["ANLVARS"]], "_", .data[["PARAMCD"]]),
+                                    paste0(.data[["ANLVARS"]], ".", .data[["PARAMCD"]]))) %>%
+          select(.data[["USUBJID"]], .data[[.(trt_group)]], .data[["AVISITN"]], .data[["AVISITCD"]],
+                 .data[["ANL.PARAM"]], .data[["ANLVALS"]]) %>%
+          tidyr::spread(.data[["ANL.PARAM"]], .data[["ANLVALS"]]) %>%
 
           dplyr::filter(!is.na(.data[[.(xvar())]]) & !is.na(.data[[.(yvar())]])) %>%
           mutate_at(vars(contains(".")), as.numeric) %>%
