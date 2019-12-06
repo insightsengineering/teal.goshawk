@@ -115,7 +115,7 @@
 #'       param_var = "PARAMCD",
 #'       param = choices_selected(c("ALT", "CRP", "IGA"), "ALT"),
 #'       idvar = "USUBJID",
-#'       xaxis_var = choices_selected(c("AVISITCD", "AVISITCD")),
+#'       xaxis_var = choices_selected(c("AVISITCDN", "AVISITCDN")),
 #'       yaxis_var = choices_selected(c("AVAL","CHG", "PCHG"), "AVAL"),
 #'       filter_var = choices_selected(c("None" = "NONE", "Screening" = "BASE2", "Baseline" = "BASE"), "NONE"),
 #'       trt_group = "ARM",
@@ -184,17 +184,13 @@ g_ui_spaghettiplot <- function(id, ...) {
     encoding = div(
       templ_ui_dataname(a$dataname),
       templ_ui_param(ns, a$param$choices, a$param$selected),
-      templ_ui_xy_vars(ns, a$xaxis_var$choices, a$xaxis_var$selected,
-                       a$yaxis_var$choices, a$yaxis_var$selected),
-      templ_ui_constraint(ns), # required by constr_anl_chunks
+      optionalSelectInput(ns("xaxis_var"), "X-Axis Variable", a$xaxis_var$choices, a$xaxis_var$selected, multiple = FALSE),
+      optionalSelectInput(ns("yaxis_var"), "Y-Axis Variable", a$yaxis_var$choices, a$yaxis_var$selected, multiple = FALSE),
       radioButtons(ns("group_stats"),
-                  "Group Statistics",
-                  c("None" = "NONE", "Mean" = "MEAN", "Median" = "MEDIAN"),
-                  inline = TRUE),
-      radioButtons(ns("filter_var"),
-                 "Data Constraint",
-                 a$filter_var$choices,
-                 a$filter_var$selected),
+                   "Group Statistics",
+                   c("None" = "NONE", "Mean" = "MEAN", "Median" = "MEDIAN"),
+                   inline = TRUE),
+      templ_ui_constraint(ns), # required by constr_anl_chunks
       sliderInput(ns("yrange_scale"), label = "Y-Axis Range Zoom", min = 0, max = 1, value = c(0, 1)),
       panel_group(
         panel_item(
