@@ -1,6 +1,6 @@
 #' Scatter Plot Teal Module For Biomarker Analysis
 #'
-#' @description TODO: a bit more info why the module is needed
+#' @description Scatter Plot Teal Module For Biomarker Analysis
 #'
 #' @inheritParams teal.devel::standard_layout
 #' @param label menu item label of the module in the teal app.
@@ -301,7 +301,11 @@ srv_g_correlationplot <- function(input,
   # constraints
   observe({
     constraint_var <- input$constraint_var
-    ANL <- anl_param()$ANL # nolint
+    ANL <- datasets$get_data(dataname, filtered = FALSE, reactive = TRUE) # nolint
+
+    validate_has_variable(ANL, "AVISITCD")
+    validate_has_variable(ANL, "BASE")
+    validate_has_variable(ANL, "BASE2")
 
     validate(need(constraint_var, "select a constraint variable"))
 
@@ -420,11 +424,11 @@ srv_g_correlationplot <- function(input,
           dplyr::filter(!is.na(.data[[.(xvar())]]) & !is.na(.data[[.(yvar())]])) %>%
           mutate_at(vars(contains(".")), as.numeric) %>%
           mutate(LOQFL_COMB = case_when(
-            (.data[[.(xloqfl())]] == "Y" | .data[[.(yloqfl())]] == "Y") ~ "Y",
-            (.data[[.(xloqfl())]] == "N" & .data[[.(yloqfl())]] == "N") ~ "N",
-            (.data[[.(xloqfl())]] == "N" & .data[[.(yloqfl())]] == "NA") ~ "N",
-            (.data[[.(xloqfl())]] == "NA" & .data[[.(yloqfl())]] == "N") ~ "N",
-            (.data[[.(xloqfl())]] == "NA" & .data[[.(yloqfl())]] == "NA") ~ "NA",
+            .data[[.(xloqfl())]] == "Y" | .data[[.(yloqfl())]] == "Y" ~ "Y",
+            .data[[.(xloqfl())]] == "N" & .data[[.(yloqfl())]] == "N" ~ "N",
+            .data[[.(xloqfl())]] == "N" & .data[[.(yloqfl())]] == "NA" ~ "N",
+            .data[[.(xloqfl())]] == "NA" & .data[[.(yloqfl())]] == "N" ~ "N",
+            .data[[.(xloqfl())]] == "NA" & .data[[.(yloqfl())]] == "NA" ~ "NA",
             TRUE ~ as.character(NA)
           ))
       })
@@ -440,8 +444,7 @@ srv_g_correlationplot <- function(input,
     chunks_push(
       chunks = private_chunks,
       id = "ANL_attributes",
-      expression =
-        if (trt_group == "ARM") {
+      expression = if (trt_group == "ARM") {
           bquote(attributes(ANL_TRANSPOSED$ARM)$label <- "Planned Arm")
         } else {
           bquote(attributes(ANL_TRANSPOSED[[.(trt_group)]])$label <- "Actual Arm")
