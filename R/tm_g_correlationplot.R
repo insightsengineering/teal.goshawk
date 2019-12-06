@@ -368,30 +368,38 @@ srv_g_correlationplot <- function(input,
     private_chunks <- anl_constraint()$chunks$clone(deep = TRUE)
     ANL <- anl_constraint()$ANL
 
-    xaxis_var <- input$xaxis_var
-    yaxis_var <- input$yaxis_var
+    validate_in(input$xaxis_param, unique(ANL[[param_var]]),
+                sprintf("X-Axis Biomarker %s is not available in data %s", input$xaxis_param, dataname))
 
-    validate(need(xaxis_var %in% names(ANL),
-                  paste("Variable", xaxis_var, " is not available in data", dataname)))
-    validate(need(yaxis_var %in% names(ANL),
-                  paste("Variable", yaxis_var, " is not available in data", dataname)))
+    validate_in(input$yaxis_param, unique(ANL[[param_var]]),
+                sprintf("Y-Axis Biomarker %s is not available in data %s", input$yaxis_param, dataname))
 
-    validate(need(input$xaxis_param %in% unique(ANL[[param_var]]),
-                  paste("X-Axis Biomarker", input$xaxis_param, " is not available in data", dataname)))
-    validate(need(input$yaxis_param %in% unique(ANL[[param_var]]),
-                  paste("Y-Axis Biomarker", input$yaxis_param, " is not available in data", dataname)))
-    validate(need(trt_group %in% names(ANL),
-                  paste("Variable", trt_group, " is not available in data", dataname)))
+    validate_has_variable(ANL, "AVISITCD",
+                          sprintf("Variable AVISITCD is not available in data %s", dataname))
 
-    validate(need("USUBJID" %in% names(ANL),
-                  paste("Variable USUBJID is not available in data", dataname)))
+    validate_has_variable(ANL, "LOQFL",
+                          sprintf("Variable LOQFL is not available in data %s", dataname))
 
-    validate(need("AVISITN" %in% names(ANL),
-          paste("Variable AVISITN is not available in data", dataname)))
+    validate_has_variable(ANL, "AVISITN",
+                          sprintf("Variable AVISITN is not available in data %s", dataname))
 
-    validate(need("AVISITCD" %in% names(ANL),
-          paste("Variable AVISITCD is not available in data", dataname)))
+    validate_has_variable(ANL, "PARAM",
+                          sprintf("Variable PARAM is not available in data %s", dataname))
 
+    validate_has_variable(ANL, "PARAMCD",
+                          sprintf("Variable PARAMCD is not available in data %s", dataname))
+
+    validate_has_variable(ANL, trt_group,
+                          sprintf("Variable %s is not available in data %s", trt_group, dataname))
+
+    validate_has_variable(ANL, "USUBJID",
+                          sprintf("Variable USUBJID is not available in data %s", dataname))
+
+    validate_has_variable(ANL, input$xaxis_var,
+                          sprintf("Variable %s is not available in data %s", input$xaxis_var, dataname))
+
+    validate_has_variable(ANL, input$yaxis_var,
+                          sprintf("Variable %s is not available in data %s", input$yaxis_var, dataname))
 
     chunks_push(
       chunks = private_chunks,
@@ -400,10 +408,10 @@ srv_g_correlationplot <- function(input,
         ANL_TRANSPOSED <- ANL %>%
           tidyr::gather(key = "ANLVARS",
                         value = "ANLVALS",
-                        .data[[.(xaxis_var)]], .data[[.(yaxis_var)]], .data[["LOQFL"]]) %>%
-          mutate(ANL.PARAM = ifelse(.data[["ANLVARS"]] == "LOQFL",
-                                    paste0(.data[["ANLVARS"]], "_", .data[["PARAMCD"]]),
-                                    paste0(.data[["ANLVARS"]], ".", .data[["PARAMCD"]]))) %>%
+                        .data[[.(input$xaxis_var)]], .data[[.(input$yaxis_var)]], .data[["LOQFL"]]) %>%
+          mutate(ANL.PARAM = paste0(.data[["ANLVARS"]],
+                                    ifelse(.data[["ANLVARS"]] == "LOQFL", "_", "."),
+                                    .data[["PARAMCD"]])) %>%
           select(.data[["USUBJID"]], .data[[.(trt_group)]], .data[["AVISITN"]], .data[["AVISITCD"]],
                  .data[["ANL.PARAM"]], .data[["ANLVALS"]]) %>%
           tidyr::spread(.data[["ANL.PARAM"]], .data[["ANLVALS"]]) %>%
@@ -452,12 +460,6 @@ srv_g_correlationplot <- function(input,
     facet <- input$facet
     reg_line <- input$reg_line
     rotate_xlab <- input$rotate_xlab
-
-
-    validate(need("PARAMCD" %in% names(ANL),
-      paste("Variable PARAMCD is not available in data", dataname)))
-    validate(need("PARAM" %in% names(ANL),
-      paste("Variable PARAM is not available in data", dataname)))
 
     lookups <- unique(ANL[names(ANL) %in% c("PARAMCD", "PARAM", "AVALU")])
 
