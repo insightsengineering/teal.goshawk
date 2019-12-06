@@ -4,29 +4,15 @@
 \alias{tm_g_density_distribution_plot}
 \title{Density Distribution Plot}
 \usage{
-tm_g_density_distribution_plot(label, dataname, param_var,
-  param_choices = param, param, xaxis_var,
-  xaxis_var_choices = xaxis_var, trt_group = "ARM",
-  color_manual = NULL, color_comb = NULL, plot_height = c(500, 200,
-  2000), font_size = c(12, 8, 20), line_size = c(1, 0.25, 3),
-  hline = NULL, facet_ncol = 2, rotate_xlab = FALSE,
-  pre_output = NULL, post_output = NULL, code_data_processing = NULL)
+tm_g_density_distribution_plot(label, dataname, param_var, param,
+  xaxis_var, trt_group = "ARM", color_manual = NULL,
+  color_comb = NULL, plot_height = c(500, 200, 2000),
+  font_size = c(12, 8, 20), line_size = c(1, 0.25, 3), hline = NULL,
+  facet_ncol = 2L, rotate_xlab = FALSE, pre_output = NULL,
+  post_output = NULL)
 }
 \arguments{
 \item{label}{menu item label of the module in the teal app.}
-
-\item{dataname}{analysis data passed to the data argument of teal init. E.g. ADaM structured
-laboratory data frame ADLB.}
-
-\item{param_var}{name of variable containing biomarker codes e.g. PARAMCD.}
-
-\item{param_choices}{list of biomarkers of interest.}
-
-\item{param}{biomarker selected.}
-
-\item{xaxis_var}{name of variable containing biomarker results displayed on x-axis e.g. AVAL.}
-
-\item{xaxis_var_choices}{list of variables containing biomarker results choices.}
 
 \item{trt_group}{name of variable representing treatment group e.g. ARM.}
 
@@ -53,8 +39,6 @@ output to put the output into context. For example the
 \item{post_output}{optional, \code{shiny.tag} with text placed before the
 output to put the output into context. For example the
 \code{\link[shiny]{helpText}} elements are useful.}
-
-\item{code_data_processing}{TODO}
 }
 \description{
 This teal module renders the UI and calls the functions that create a density distribution plot
@@ -65,19 +49,56 @@ None
 }
 \examples{
 
-\dontrun{
-
 # Example using ADaM structure analysis dataset.
 
 library(random.cdisc.data)
+library(dplyr)
 
 # original ARM value = dose value
+arm_mapping <- list(
+  "A: Drug X" = "150mg QD",
+  "B: Placebo" = "Placebo",
+  "C: Combination" = "Combination"
+)
+
+ADSL <- radsl(cached = TRUE)
+ADLB <- radlb(cached = TRUE)
+ADLB <- ADLB \%>\%
+  mutate(
+    AVISITCD = case_when(
+      AVISIT == "SCREENING" ~ "SCR",
+      AVISIT == "BASELINE" ~ "BL",
+      grepl("WEEK", AVISIT) ~ paste("W", stringr::str_extract(AVISIT, "(?<=(WEEK ))[0-9]+")),
+      TRUE ~ as.character(NA)
+    ),
+    AVISITCDN = case_when(
+      AVISITCD == "SCR" ~ -2,
+      AVISITCD == "BL" ~ 0,
+      grepl("W", AVISITCD) ~ as.numeric(gsub("[^0-9]*", "", AVISITCD)),
+      TRUE ~ as.numeric(NA)
+    ),
+    TRTORD = case_when(
+      ARMCD == "ARM C" ~ 1,
+      ARMCD == "ARM B" ~ 2,
+      ARMCD == "ARM A" ~ 3
+    ),
+    ARM = as.character(arm_mapping[match(ARM, names(arm_mapping))]),
+    ARM = factor(ARM) \%>\% reorder(TRTORD)
+  )
+
+
+app <- teal::init(
+  data = cdisc_data(
+    cdisc_dataset("ADSL", ADSL),
+    cdisc_dataset("ADLB", ADLB),
+    code = {'
+      # original ARM value = dose value
 arm_mapping <- list("A: Drug X" = "150mg QD",
                     "B: Placebo" = "Placebo",
                     "C: Combination" = "Combination")
 
-ADSL <- radsl(N = 20, seed = 1)
-ADLB <- radlb(ADSL, visit_format = "WEEK", n_assessments = 7L, seed = 2)
+ADSL <- radsl(cached = TRUE)
+ADLB <- radlb(cached = TRUE)
 ADLB <- ADLB \%>\%
   mutate(AVISITCD = case_when(
     AVISIT == "SCREENING" ~ "SCR",
@@ -95,62 +116,29 @@ ADLB <- ADLB \%>\%
       ARMCD == "ARM A" ~ 3),
     ARM = as.character(arm_mapping[match(ARM, names(arm_mapping))]),
     ARM = factor(ARM) \%>\% reorder(TRTORD))
-
-
-x <- teal::init(
-  data = cdisc_data(
-    cdisc_dataset("ADSL", ADSL),
-    cdisc_dataset("ADLB", ADLB),
-    code = {'
-      arm_mapping <- list("A: Drug X" = "150mg QD",
-                          "B: Placebo" = "Placebo",
-                          "C: Combination" = "Combination")
-
-      ADSL <- radsl(N = 20, seed = 1)
-      ADLB <- radlb(ADSL, visit_format = "WEEK", n_assessments = 7L, seed = 2)
-      ADLB <- ADLB \%>\%
-        mutate(AVISITCD = case_when(
-            AVISIT == "SCREENING" ~ "SCR",
-            AVISIT == "BASELINE" ~ "BL",
-            grepl("WEEK", AVISIT) ~ paste("W", stringr::str_extract(AVISIT, "(?<=(WEEK ))[0-9]+")),
-            TRUE ~ as.character(NA)),
-          AVISITCDN = case_when(
-            AVISITCD == "SCR" ~ -2,
-            AVISITCD == "BL" ~ 0,
-            grepl("W", AVISITCD) ~ as.numeric(gsub("[^0-9]*", "", AVISITCD)),
-            TRUE ~ as.numeric(NA)),
-          TRTORD = case_when(
-            ARMCD == "ARM C" ~ 1,
-            ARMCD == "ARM B" ~ 2,
-            ARMCD == "ARM A" ~ 3),
-          ARM = as.character(arm_mapping[match(ARM, names(arm_mapping))]),
-          ARM = factor(ARM) \%>\% reorder(TRTORD))
           '},
-    check = FALSE
+    check = TRUE
   ),
   modules = root_modules(
     tm_g_density_distribution_plot(
-       label = "Density Distribution Plot",
-       dataname = "ADLB",
-       param_var = "PARAMCD",
-       param_choices = c("ALT", "CRP", "IGA"),
-       param = "ALT",
-       xaxis_var = "AVAL",
-       xaxis_var_choices = c("AVAL", "BASE", "CHG", "PCHG", "AVALL2"),
-       trt_group = "ARM",
+      label = "Density Distribution Plot",
+      dataname = "ADLB",
+      param_var = "PARAMCD",
+      param = choices_selected(c("ALT", "CRP", "IGA"), "ALT"),
+      xaxis_var = choices_selected(c("AVAL", "BASE", "CHG", "PCHG"), "AVAL"),
+      trt_group = "ARM",
       color_manual = c("150mg QD" = "#000000",
                        "Placebo" = "#3498DB",
                        "Combination" = "#E74C3C"),
-       color_comb = "#39ff14",
-       plot_height = c(500, 200, 2000),
-       font_size = c(12, 8, 20),
-       line_size = c(1, .25, 3)
-   )
+      color_comb = "#39ff14",
+      plot_height = c(500, 200, 2000),
+      font_size = c(12, 8, 20),
+      line_size = c(1, .25, 3)
+    )
   )
 )
-
-shinyApp(x$ui, x$server)
-
+\dontrun{
+shinyApp(app$ui, app$server)
 }
 }
 \author{

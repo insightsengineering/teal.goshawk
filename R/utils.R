@@ -76,8 +76,8 @@ templ_ui_param <- function(ns, choices, selected) {
 
 templ_ui_xy_vars <- function(ns, xchoices, xselected, ychoices, yselected, multiple = FALSE) {
   tagList(
-    selectInput(ns("xaxis_var"), "Select an X-Axis Variable",  xchoices,  xselected, multiple = multiple),
-    selectInput(ns("yaxis_var"), "Select a Y-Axis Variable", ychoices, yselected, multiple = multiple)
+    if (!is.null(xchoices)) selectInput(ns("xaxis_var"), "Select an X-Axis Variable",  xchoices,  xselected, multiple = multiple),
+    if (!is.null(ychoices)) selectInput(ns("yaxis_var"), "Select an Y-Axis Variable", ychoices, yselected, multiple = multiple)
   )
 }
 

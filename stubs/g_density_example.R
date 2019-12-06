@@ -1,7 +1,11 @@
 #' 1
-# Example using ADaM structure analysis dataset.
+# Example using ADaM structure analysis dataset
+
+#RStudioView <- as.environment("package:utils")$View
+#RStudioView(ANL1)
 
 library(random.cdisc.data)
+library(dplyr)
 
 # original ARM value = dose value
 arm_mapping <- list("A: Drug X" = "150mg QD",
@@ -34,31 +38,32 @@ devtools::load_all(); app <- teal::init(
     cdisc_dataset("ADSL", ADSL),
     cdisc_dataset("ADLB", ADLB),
     code = {'
-      arm_mapping <- list("A: Drug X" = "150mg QD",
-                          "B: Placebo" = "Placebo",
-                          "C: Combination" = "Combination")
+      # original ARM value = dose value
+arm_mapping <- list("A: Drug X" = "150mg QD",
+                    "B: Placebo" = "Placebo",
+                    "C: Combination" = "Combination")
 
-      ADSL <- radsl(N = 20, seed = 1)
-      ADLB <- radlb(ADSL, visit_format = "WEEK", n_assessments = 7L, seed = 2)
-      ADLB <- ADLB %>%
-        mutate(AVISITCD = case_when(
-            AVISIT == "SCREENING" ~ "SCR",
-            AVISIT == "BASELINE" ~ "BL",
-            grepl("WEEK", AVISIT) ~ paste("W", stringr::str_extract(AVISIT, "(?<=(WEEK ))[0-9]+")),
-            TRUE ~ as.character(NA)),
-          AVISITCDN = case_when(
-            AVISITCD == "SCR" ~ -2,
-            AVISITCD == "BL" ~ 0,
-            grepl("W", AVISITCD) ~ as.numeric(gsub("[^0-9]*", "", AVISITCD)),
-            TRUE ~ as.numeric(NA)),
-          TRTORD = case_when(
-            ARMCD == "ARM C" ~ 1,
-            ARMCD == "ARM B" ~ 2,
-            ARMCD == "ARM A" ~ 3),
-          ARM = as.character(arm_mapping[match(ARM, names(arm_mapping))]),
-          ARM = factor(ARM) %>% reorder(TRTORD))
+ADSL <- radsl(cached = TRUE)
+ADLB <- radlb(cached = TRUE)
+ADLB <- ADLB %>%
+  mutate(AVISITCD = case_when(
+    AVISIT == "SCREENING" ~ "SCR",
+    AVISIT == "BASELINE" ~ "BL",
+    grepl("WEEK", AVISIT) ~ paste("W", stringr::str_extract(AVISIT, "(?<=(WEEK ))[0-9]+")),
+    TRUE ~ as.character(NA)),
+    AVISITCDN = case_when(
+      AVISITCD == "SCR" ~ -2,
+      AVISITCD == "BL" ~ 0,
+      grepl("W", AVISITCD) ~ as.numeric(gsub("[^0-9]*", "", AVISITCD)),
+      TRUE ~ as.numeric(NA)),
+    TRTORD = case_when(
+      ARMCD == "ARM C" ~ 1,
+      ARMCD == "ARM B" ~ 2,
+      ARMCD == "ARM A" ~ 3),
+    ARM = as.character(arm_mapping[match(ARM, names(arm_mapping))]),
+    ARM = factor(ARM) %>% reorder(TRTORD))
           '},
-    check = FALSE
+    check = TRUE
   ),
   modules = root_modules(
     tm_g_density_distribution_plot(
