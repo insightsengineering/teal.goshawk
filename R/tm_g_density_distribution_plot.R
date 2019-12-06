@@ -15,7 +15,7 @@
 #' @param rotate_xlab 45 degree rotation of x-axis values.
 #'
 #' @inheritParams teal.devel::standard_layout
-#' @inheritParams tm_g_density_distribution_plot
+#' @inheritParams tm_g_scatterplot
 #'
 #'
 #' @author Nick Paszty (npaszty) paszty.nicholas@gene.com
