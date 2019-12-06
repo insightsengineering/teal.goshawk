@@ -480,8 +480,8 @@ srv_g_correlationplot <- function(input,
     font_size <- input$font_size
     dot_size <- input$dot_size
     reg_text_size <- input$reg_text_size
-    hline <- as.numeric(input$hline)
-    vline <- as.numeric(input$vline)
+    hline <- if (is.na(input$hline)) NULL else as.numeric(input$hline)
+    vline <- if (is.na(input$vline)) NULL else as.numeric(input$vline)
     facet_ncol <- input$facet_ncol
     facet <- input$facet
     reg_line <- input$reg_line
