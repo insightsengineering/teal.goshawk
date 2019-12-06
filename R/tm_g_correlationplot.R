@@ -239,10 +239,47 @@ srv_g_correlationplot <- function(input,
     ANL_FILTERED <- datasets$get_data(dataname, filtered = TRUE, reactive = TRUE) # nolint
     validate_has_data(ANL_FILTERED, 5)
 
-    validate_has_variable(ANL_FILTERED, "AVISITCD") # should have BL and SCR levels
+
     validate_has_variable(ANL_FILTERED, param_var)
-    validate_has_variable(ANL_FILTERED, "BASE")
-    validate_has_variable(ANL_FILTERED, "BASE2")
+
+    validate_in(input$xaxis_param, unique(ANL_FILTERED[[param_var]]),
+                sprintf("X-Axis Biomarker %s is not available in data %s", input$xaxis_param, dataname))
+
+    validate_in(input$yaxis_param, unique(ANL_FILTERED[[param_var]]),
+                sprintf("Y-Axis Biomarker %s is not available in data %s", input$yaxis_param, dataname))
+
+    validate_has_variable(ANL_FILTERED, "AVISITCD",
+                          sprintf("Variable AVISITCD is not available in data %s", dataname))
+
+    validate_has_variable(ANL_FILTERED, "AVISITN",
+                          sprintf("Variable AVISITN is not available in data %s", dataname))
+
+    validate_has_variable(ANL_FILTERED, "BASE",
+                          sprintf("Variable AVISITN is not available in data %s", dataname))
+
+    validate_has_variable(ANL_FILTERED, "BASE2",
+                          sprintf("Variable AVISITN is not available in data %s", dataname))
+
+    validate_has_variable(ANL_FILTERED, "LOQFL",
+                          sprintf("Variable LOQFL is not available in data %s", dataname))
+
+    validate_has_variable(ANL_FILTERED, "PARAM",
+                          sprintf("Variable PARAM is not available in data %s", dataname))
+
+    validate_has_variable(ANL_FILTERED, "PARAMCD",
+                          sprintf("Variable PARAMCD is not available in data %s", dataname))
+
+    validate_has_variable(ANL_FILTERED, trt_group,
+                          sprintf("Variable %s is not available in data %s", trt_group, dataname))
+
+    validate_has_variable(ANL_FILTERED, "USUBJID",
+                          sprintf("Variable USUBJID is not available in data %s", dataname))
+
+    validate_has_variable(ANL_FILTERED, input$xaxis_var,
+                          sprintf("Variable %s is not available in data %s", input$xaxis_var, dataname))
+
+    validate_has_variable(ANL_FILTERED, input$yaxis_var,
+                          sprintf("Variable %s is not available in data %s", input$yaxis_var, dataname))
 
     # analysis
     private_chunks <- chunks$new()
@@ -368,39 +405,6 @@ srv_g_correlationplot <- function(input,
     private_chunks <- anl_constraint()$chunks$clone(deep = TRUE)
     ANL <- anl_constraint()$ANL
 
-    validate_in(input$xaxis_param, unique(ANL[[param_var]]),
-                sprintf("X-Axis Biomarker %s is not available in data %s", input$xaxis_param, dataname))
-
-    validate_in(input$yaxis_param, unique(ANL[[param_var]]),
-                sprintf("Y-Axis Biomarker %s is not available in data %s", input$yaxis_param, dataname))
-
-    validate_has_variable(ANL, "AVISITCD",
-                          sprintf("Variable AVISITCD is not available in data %s", dataname))
-
-    validate_has_variable(ANL, "LOQFL",
-                          sprintf("Variable LOQFL is not available in data %s", dataname))
-
-    validate_has_variable(ANL, "AVISITN",
-                          sprintf("Variable AVISITN is not available in data %s", dataname))
-
-    validate_has_variable(ANL, "PARAM",
-                          sprintf("Variable PARAM is not available in data %s", dataname))
-
-    validate_has_variable(ANL, "PARAMCD",
-                          sprintf("Variable PARAMCD is not available in data %s", dataname))
-
-    validate_has_variable(ANL, trt_group,
-                          sprintf("Variable %s is not available in data %s", trt_group, dataname))
-
-    validate_has_variable(ANL, "USUBJID",
-                          sprintf("Variable USUBJID is not available in data %s", dataname))
-
-    validate_has_variable(ANL, input$xaxis_var,
-                          sprintf("Variable %s is not available in data %s", input$xaxis_var, dataname))
-
-    validate_has_variable(ANL, input$yaxis_var,
-                          sprintf("Variable %s is not available in data %s", input$yaxis_var, dataname))
-
     chunks_push(
       chunks = private_chunks,
       id = "plot_data_transpose",
@@ -438,10 +442,42 @@ srv_g_correlationplot <- function(input,
     return(list(ANL_TRANSPOSED = ANL_TRANSPOSED, chunks = private_chunks))
   })
 
+  plot_labels <- reactive({
+    ANL <- chunks_get_var(var = "ANL", anl_constraint()$chunks)
+
+    lookups <- unique(ANL[names(ANL) %in% c("PARAMCD", "PARAM", "AVALU")])
+
+    xparam <- lookups$PARAM[lookups$PARAMCD == input$xaxis_param]
+    yparam <- lookups$PARAM[lookups$PARAMCD == input$yaxis_param]
+
+    # setup the x-axis label.  Combine the biomarker and the units (if available)
+    if (is.null(lookups$AVALU)) {
+      title_text <- paste(xparam, "and", yparam, "@ Visits")
+      xaxis_lab <- paste(xparam, input$xaxis_var, "Values")
+      yaxis_lab <- paste(yparam, input$yaxis_var, "Values")
+
+    } else if (all(lookups[["AVALU"]] == "")) {
+      title_text <- paste(xparam, "and", yparam, "@ Visits")
+      xaxis_lab <- paste(xparam, input$xaxis_var, "Values")
+      yaxis_lab <- paste(yparam, input$yaxis_var, "Values")
+
+    } else {
+      xunit <- lookups$AVALU[lookups$PARAMCD == input$xaxis_param]
+      yunit <- lookups$AVALU[lookups$PARAMCD == input$yaxis_param]
+
+      title_text <- paste0(xparam, " (", xunit,") and ", yparam,  " (", yunit,") @ Visits")
+      xaxis_lab <- paste0(xparam," (", xunit, ") ", input$xaxis_var, " Values")
+      yaxis_lab <- paste0(yparam," (", yunit,") ", input$yaxis_var, " Values")
+    }
+
+    list(title_text = title_text,
+         xaxis_lab = xaxis_lab,
+         yaxis_lab = yaxis_lab)
+  })
+
   # plot
   output$plot <- renderPlot({
     private_chunks <- plot_data_transpose()$chunks$clone(deep = TRUE)
-    ANL <- chunks_get_var(var = "ANL", private_chunks)
 
     xaxis_param <- input$xaxis_param
     xaxis_var <- input$xaxis_var
@@ -461,30 +497,9 @@ srv_g_correlationplot <- function(input,
     reg_line <- input$reg_line
     rotate_xlab <- input$rotate_xlab
 
-    lookups <- unique(ANL[names(ANL) %in% c("PARAMCD", "PARAM", "AVALU")])
-
-    xparam <- lookups$PARAM[lookups$PARAMCD == xaxis_param]
-    yparam <- lookups$PARAM[lookups$PARAMCD == yaxis_param]
-
-    # setup the x-axis label.  Combine the biomarker and the units (if available)
-    if (is.null(lookups$AVALU)) {
-      title_text <- paste(xparam, "and", yparam, "@ Visits")
-      xaxis_lab <- paste(xparam, xaxis_var, "Values")
-      yaxis_lab <- paste(yparam, yaxis_var, "Values")
-
-    } else if (all(lookups[["AVALU"]] == "")) {
-      title_text <- paste(xparam, "and", yparam, "@ Visits")
-      xaxis_lab <- paste(xparam, xaxis_var, "Values")
-      yaxis_lab <- paste(yparam, yaxis_var, "Values")
-
-    } else {
-      xunit <- lookups$AVALU[lookups$PARAMCD == xaxis_param]
-      yunit <- lookups$AVALU[lookups$PARAMCD == yaxis_param]
-
-      title_text <- paste0(xparam, " (", xunit,") and ", yparam,  " (", yunit,") @ Visits")
-      xaxis_lab <- paste0(xparam," (", xunit, ") ", xaxis_var, " Values")
-      yaxis_lab <- paste0(yparam," (", yunit,") ", yaxis_var, " Values")
-    }
+    title_text <- plot_labels()$title_text
+    xaxis_lab  <- plot_labels()$xaxis_lab
+    yaxis_lab  <- plot_labels()$yaxis_lab
 
     # re-establish treatment variable label
     chunks_push(
