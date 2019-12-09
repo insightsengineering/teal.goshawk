@@ -83,9 +83,9 @@ templ_ui_xy_vars <- function(ns, xchoices, xselected, ychoices, yselected, multi
 
 
 #' @importFrom shinyjs hidden
-templ_ui_constraint <- function(ns) {
+templ_ui_constraint <- function(ns, label =  "Data Constraint") {
   div(
-    radioButtons(ns("constraint_var"),  "Data Constraint",
+    radioButtons(ns("constraint_var"), label,
                  c("None" = "NONE", "Screening" = "BASE2", "Baseline" = "BASE")),
     shinyjs::hidden(div(
       id = ns("constraint_range"),

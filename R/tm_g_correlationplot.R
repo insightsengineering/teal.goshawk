@@ -187,7 +187,7 @@ ui_g_correlationplot <- function(id, ...) {
       selectInput(ns("xaxis_var"), "Select an X-Axis Variable",  a$xaxis_var$choices,  a$xaxis_var$selected, multiple = FALSE),
       selectInput(ns("yaxis_param"), "Select a Y-Axis Biomarker", a$yaxis_param$choices, a$yaxis_param$selected, multiple = FALSE),
       selectInput(ns("yaxis_var"), "Select an Y-Axis Variable",  a$yaxis_var$choices,  a$yaxis_var$selected, multiple = FALSE),
-      templ_ui_constraint(ns), # required by constr_anl_chunks
+      templ_ui_constraint(ns, "X-Axis Data Constraint"), # required by constr_anl_chunks
       panel_group(
         panel_item(
           title = "Plot Aesthetic Settings",
@@ -301,7 +301,7 @@ srv_g_correlationplot <- function(input,
   # constraints
   observe({
     constraint_var <- input$constraint_var
-    ANL <- datasets$get_data(dataname, filtered = FALSE, reactive = TRUE) # nolint
+    ANL <- anl_param()$ANL
 
     validate_has_variable(ANL, "AVISITCD")
     validate_has_variable(ANL, "BASE")
