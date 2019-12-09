@@ -127,7 +127,7 @@ keep_range_slider_updated <- function(session, input, id_slider, id_var, reactiv
   })
 }
 
-#' @importFrom dplyr filter
+#' @importFrom dplyr filter sym
 #' @importFrom shinyjs hide show
 constr_anl_chunks <- function(session, input, datasets, dataname, param_id, param_var, trt_group) {
   dataset_var <- paste0(dataname, "_FILTERED")
@@ -139,10 +139,10 @@ constr_anl_chunks <- function(session, input, datasets, dataname, param_id, para
     ANL_FILTERED <- datasets$get_data(dataname, filtered = TRUE, reactive = TRUE) # nolint
     validate_has_data(ANL_FILTERED, 5)
 
+    validate_has_variable(ANL_FILTERED, param_var)
     validate_has_variable(ANL_FILTERED, "AVISITCD")
     validate_has_variable(ANL_FILTERED, "BASE")
     validate_has_variable(ANL_FILTERED, "BASE2")
-    validate_has_variable(ANL_FILTERED, param_var)
     validate_has_variable(ANL_FILTERED, "ARM")
 
     # analysis
@@ -172,10 +172,15 @@ constr_anl_chunks <- function(session, input, datasets, dataname, param_id, para
     constraint_var <- input$constraint_var
     validate(need(constraint_var, "select a constraint variable"))
 
+    # note that filtered is false thus we cannot use anl_param()$ANL
     ANL <- datasets$get_data(dataname, filtered = FALSE, reactive = TRUE) # nolint
+
+    validate_has_variable(ANL, param_var)
     validate_has_variable(ANL, "AVISITCD")
     validate_has_variable(ANL, "BASE")
     validate_has_variable(ANL, "BASE2")
+
+    ANL <- ANL %>% filter(!!sym(param_var) == param) # nolint
 
     visit_freq <- unique(ANL$AVISITCD)
 
