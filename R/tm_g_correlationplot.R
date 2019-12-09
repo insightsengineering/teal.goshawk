@@ -288,7 +288,7 @@ srv_g_correlationplot <- function(input,
       id = "filter_biomarker",
       expression = bquote({
         ANL <- .(as.name(dataset_var)) %>% # nolint
-          dplyr::filter(.data[[.(param_var)]] %in% c(.(input$xaxis_param), .(input$yaxis_param)))
+          dplyr::filter(.data[[.(param_var)]] %in% union(.(input$xaxis_param), .(input$yaxis_param)))
       })
     )
 
@@ -301,14 +301,17 @@ srv_g_correlationplot <- function(input,
   # constraints
   observe({
     constraint_var <- input$constraint_var
-    ANL <- datasets$get_data(dataname, filtered = FALSE, reactive = TRUE) %>%
-      filter(.data[[param_var]] == input$xaxis_param)
+    validate(need(constraint_var, "select a constraint variable"))
 
+    # note that filtered is false thus we cannot use anl_param()$ANL
+    ANL <- datasets$get_data(dataname, filtered = FALSE, reactive = TRUE) # nolint
+
+    validate_has_variable(ANL, param_var)
     validate_has_variable(ANL, "AVISITCD")
     validate_has_variable(ANL, "BASE")
     validate_has_variable(ANL, "BASE2")
 
-    validate(need(constraint_var, "select a constraint variable"))
+    ANL <- ANL %>% filter(.data[[param_var]] == input$xaxis_param)
 
     visit_freq <- unique(ANL$AVISITCD)
 
@@ -446,9 +449,9 @@ srv_g_correlationplot <- function(input,
       chunks = private_chunks,
       id = "ANL_attributes",
       expression = if (trt_group == "ARM") {
-          bquote(attributes(ANL_TRANSPOSED$ARM)$label <- "Planned Arm")
+          bquote(attr(ANL_TRANSPOSED$ARM, "label") <- "Planned Arm")
         } else {
-          bquote(attributes(ANL_TRANSPOSED[[.(trt_group)]])$label <- "Actual Arm")
+          bquote(attr(ANL_TRANSPOSED[[.(trt_group)]], "label") <- "Actual Arm")
         }
     )
     chunks_push_new_line(private_chunks)
