@@ -69,6 +69,7 @@
 #'       AVISITCD == "BL" ~ 0,
 #'       grepl("W", AVISITCD) ~ as.numeric(gsub("[^0-9]*", "", AVISITCD)),
 #'       TRUE ~ as.numeric(NA)),
+#'     AVISITCD = factor(AVISITCD) %>% reorder(AVISITCDN),
 #'     TRTORD = case_when(
 #'       ARMCD == "ARM C" ~ 1,
 #'       ARMCD == "ARM B" ~ 2,
@@ -99,6 +100,7 @@
 #'             AVISITCD == "BL" ~ 0,
 #'             grepl("W", AVISITCD) ~ as.numeric(gsub("[^0-9]*", "", AVISITCD)),
 #'             TRUE ~ as.numeric(NA)),
+#'           AVISITCD = factor(AVISITCD) %>% reorder(AVISITCDN),
 #'           TRTORD = case_when(
 #'             ARMCD == "ARM C" ~ 1,
 #'             ARMCD == "ARM B" ~ 2,
@@ -259,10 +261,19 @@ srv_g_spaghettiplot <- function(input,
     font_size <- input$font_size
     alpha <- input$alpha
 
+
+
     chunks_push(
       chunks = private_chunks,
       id = "g_spaghettiplot",
       expression = bquote({
+
+        if (.(trt_group) == "ARM"){
+          attributes(ANL$ARM)$label <- "Planned Arm"
+        } else {
+          attributes(ANL$ACTARM)$label <- "Actual Arm"
+        }
+
         g_spaghettiplot(
           data = ANL,
           subj_id = .(idvar),
@@ -278,7 +289,7 @@ srv_g_spaghettiplot <- function(input,
           color_comb = .(color_comb),
           ylim = .(ylim),
           facet_ncol = .(facet_ncol),
-          hline = .(hline),
+          hline = .(`if`(is.na(hline), NULL, as.numeric(hline))),
           xtick = .(xtick),
           xlabel = .(xlabel),
           rotate_xlab = .(rotate_xlab),
@@ -303,7 +314,31 @@ srv_g_spaghettiplot <- function(input,
     plot_height <- input$plot_height
     validate(need(plot_height, "need valid plot height"))
 
-    plotOutput(ns("spaghettiplot"), height = plot_height)
+    plotOutput(ns("spaghettiplot"),
+               height = plot_height,
+               brush = brushOpts(id = ns("spaghettiplot_brush"), resetOnNew = T))
+  })
+
+  output$brush_data <- DT::renderDataTable({
+    req(input$spaghettiplot_brush)
+
+    ANL <- isolate(anl_chunks()$ANL) # nolint
+    validate_has_data(ANL, 5)
+
+    xvar <- isolate(input$xaxis_var)
+    yvar <- isolate(input$yaxis_var)
+
+    req(all(c(xvar, yvar) %in% names(ANL)))
+
+    df <- brushedPoints(
+      select(ANL, "USUBJID", trt_group, "AVISITCD", "PARAMCD", xvar, yvar, "LOQFL"),
+      input$spaghettiplot_brush
+    )
+
+    numeric_cols <- names(select_if(df, is.numeric))
+
+    DT::datatable(df, rownames = FALSE) %>%
+      DT::formatRound(numeric_cols, 4)
   })
 
   callModule(
