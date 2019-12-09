@@ -301,7 +301,7 @@ srv_g_correlationplot <- function(input,
   # constraints
   observe({
     constraint_var <- input$constraint_var
-    ANL <- datasets$get_data(dataname, filtered = TRUE, reactive = TRUE) %>%
+    ANL <- datasets$get_data(dataname, filtered = FALSE, reactive = TRUE) %>%
       filter(.data[[param_var]] == input$xaxis_param)
 
     validate_has_variable(ANL, "AVISITCD")
