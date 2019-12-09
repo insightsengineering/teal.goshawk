@@ -259,7 +259,7 @@ constr_anl_chunks <- function(session, input, datasets, dataname, param_id, para
       validate_has_data(ANL, 5)
     }
 
-
+    # TODO: Why is this done?
     arm_label <- if (trt_group == "ARM") "Planned Arm" else "Actual Arm"
 
     chunks_push(

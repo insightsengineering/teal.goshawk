@@ -11,9 +11,6 @@
 #' @param yaxis_var name of variable containing biomarker results displayed on y-axis e.g. AVAL.
 #' @param xaxis_var variable to categorize the x-axis.
 #' @param facet_var variable to facet the plots by.
-#' @param filter_vars variables to be used for filtering the data.  The default is BASE2 and BASE
-#' @param filter_labs labels for the radio buttons for the \code{filter_vars}. The defaults are
-#'  "Screening" for BASE2 and "Baseline" for BASE.
 #' @param trt_group name of variable representing treatment group e.g. ARM.
 #' @param armlabel label for the treatment symbols in the legend. If not specified then the label
 #'  attribute for trt_group will be used. If there is no label attribute for trt_group, then the
@@ -23,7 +20,10 @@
 #' @param facet_ncol numeric value indicating number of facets per row.
 #' @param rotate_xlab 45 degree rotation of x-axis values.
 #' @param hline y-axis value to position a horizontal line.  NULL = No line.
-#' @param plot_height  numeric vectors to define the plot height.
+#' @param plot_height numeric vectors to define the plot height.
+#' @param font_size font size control for title, x-axis label, y-axis label and legend.
+#' @param dot_size plot dot size.
+#' @param alpha numeric vector to define transparency of plotted points.
 #'
 #' @inheritParams teal.devel::standard_layout
 #'
@@ -128,16 +128,16 @@ tm_g_boxplot <- function(label,
                          dataname,
                          param_var,
                          param,
-                         xaxis_var,
                          yaxis_var,
+                         xaxis_var,
                          facet_var = choices_selected("ARM", "ARM"),
                          trt_group = "ARM",
+                         armlabel = NULL,
                          color_manual = NULL,
                          shape_manual = NULL,
                          facet_ncol = NULL,
-                         hline = NULL,
                          rotate_xlab = FALSE,
-                         armlabel = NULL,
+                         hline = NULL,
                          plot_height = c(600, 200, 2000),
                          font_size = c(12, 8, 20),
                          dot_size = c(2, 1, 12),
@@ -152,6 +152,8 @@ tm_g_boxplot <- function(label,
   stopifnot(is.choices_selected(yaxis_var))
   stopifnot(is.choices_selected(facet_var))
 
+
+  #TODO: f/u on reciptrocal actions of xvar and facet_var
 
   # TODO: where to do this check?
   # If there are no choices specified for treatment group/x axis/fact then set the
@@ -199,10 +201,10 @@ ui_g_boxplot <- function(id, ...) {
       panel_group(
         panel_item(
           title = "Plot Aesthetic Settings",
-          sliderInput(ns("yrange_scale"), label = "Y-Axis Range Zoom", min = 0, max = 1, value = c(0, 1)),
           numericInput(ns("facet_ncol"), "Number of Plots Per Row:", a$facet_ncol, min = 1),
           checkboxInput(ns("rotate_xlab"), "Rotate X-axis Label", a$rotate_xlab),
-          numericInput(ns("hline"), "Add a horizontal line:", a$hline)
+          numericInput(ns("hline"), "Add a horizontal line:", a$hline),
+          sliderInput(ns("yrange_scale"), label = "Y-Axis Range Zoom", min = 0, max = 1, value = c(0, 1))
         ),
         panel_item(
           title = "Plot settings",
@@ -246,6 +248,9 @@ srv_g_boxplot <- function(input,
     ac <- anl_chunks()
     private_chunks <- ac$chunks$clone(deep = TRUE)
 
+    xaxis <- input$xaxis_var
+    facet_var <- input$facet_var
+
     yrange_scale <- input$yrange_scale
     facet_ncol <- input$facet_ncol
     alpha <- input$alpha
@@ -256,10 +261,7 @@ srv_g_boxplot <- function(input,
 
     # Below inputs should trigger plot via updates of other reactive objects (i.e. anl_chunk()) and some inputs
     param <- isolate(input$param)
-    xaxis <- isolate(input$xaxis_var)
     yaxis <- isolate(input$yaxis_var)
-    #facet_var <- isolate(input$facet_var)
-
 
     chunks_push(
       chunks = private_chunks,
@@ -278,12 +280,12 @@ srv_g_boxplot <- function(input,
           ymax_scale = .(yrange_scale[2]),
           color_manual = .(color_manual),
           shape_manual = .(shape_manual),
-          #facet = NULL, #TODO
+          facet = .(facet_var),
           alpha = .(alpha),
           dot_size = .(dot_size),
           font_size = .(font_size),
-          armlabel = .(armlabel)
-          # TODO: add unit
+          armlabel = .(armlabel),
+          unit = .("AVALU") # TODO: check fix at goshawk level
         )
       })
     )
@@ -318,11 +320,13 @@ srv_g_boxplot <- function(input,
 
     xvar <- isolate(input$xaxis_var)
     yvar <- isolate(input$yaxis_var)
+    facetv <- isolate(input$facet_var)
 
-    req(all(c(xvar, yvar) %in% names(ANL)))
+    req(all(c(xvar, yvar, facetv) %in% names(ANL)))
 
+    # TODO: check reactivity
     df <- brushedPoints(
-      select(ANL, "USUBJID", trt_group, "AVISITCD", "PARAMCD", xvar, yvar, "LOQFL"),
+      select(ANL, "USUBJID", trt_group, facetv, "AVISITCD", "PARAMCD", xvar, yvar, "LOQFL"),
       input$boxplot_brush
     )
 
