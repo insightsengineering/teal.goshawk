@@ -105,6 +105,7 @@ ADLB <- ADLB \%>\%
       AVISITCD == "BL" ~ 0,
       grepl("W", AVISITCD) ~ as.numeric(gsub("[^0-9]*", "", AVISITCD)),
       TRUE ~ as.numeric(NA)),
+    AVISITCD = factor(AVISITCD) \%>\% reorder(AVISITCDN),
     TRTORD = case_when(
       ARMCD == "ARM C" ~ 1,
       ARMCD == "ARM B" ~ 2,
@@ -113,7 +114,7 @@ ADLB <- ADLB \%>\%
     ARM = factor(ARM) \%>\% reorder(TRTORD))
 
 
-x <- teal::init(
+app <- teal::init(
   data = cdisc_data(
     cdisc_dataset("ADSL", ADSL),
     cdisc_dataset("ADLB", ADLB),
@@ -135,6 +136,7 @@ x <- teal::init(
             AVISITCD == "BL" ~ 0,
             grepl("W", AVISITCD) ~ as.numeric(gsub("[^0-9]*", "", AVISITCD)),
             TRUE ~ as.numeric(NA)),
+          AVISITCD = factor(AVISITCD) \%>\% reorder(AVISITCDN),
           TRTORD = case_when(
             ARMCD == "ARM C" ~ 1,
             ARMCD == "ARM B" ~ 2,
@@ -151,14 +153,14 @@ x <- teal::init(
        param_var = "PARAMCD",
        param = choices_selected(c("ALT", "CRP", "IGA"), "ALT"),
       shape_choices = c("SEX", "RACE"),
-      xaxis_var =choices_selected(c("AVISITCD"), "AVISITCD"),
+      xaxis_var =choices_selected("AVISITCD", "AVISITCD"),
       yaxis_var = choices_selected(c("AVAL", "BASE", "CHG", "PCHG"), "AVAL"),
       trt_group = "ARM"
     )
   )
 )
 
-shinyApp(x$ui, x$server)
+shinyApp(app$ui, app$server)
 }
 }
 \author{
