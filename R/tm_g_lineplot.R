@@ -249,7 +249,7 @@ srv_lineplot <- function(input,
     font_size <- input$font_size
     dodge <- input$dodge
     rotate_xlab <- input$rotate_xlab
-    hline <- input$hline
+    hline <- if (is.na(input$hline)) NULL else as.numeric(input$hline)
     median <- ifelse(input$stat=='median',TRUE, FALSE)
     plot_height <- input$plot_height
 
@@ -282,7 +282,7 @@ srv_lineplot <- function(input,
           time_level = .(xvar_level),
           color_manual = .(color_manual),
           median = .(median),
-          hline = .(`if`(is.na(hline), NULL, as.numeric(hline))),
+          hline = .(hline),
           xtick = .(xtick),
           xlabel = .(xlabel),
           rotate_xlab = .(rotate_xlab),
