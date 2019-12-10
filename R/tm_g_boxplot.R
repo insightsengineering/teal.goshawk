@@ -66,13 +66,13 @@
 #'       AVISITCD == "BL" ~ 0,
 #'       grepl("W", AVISITCD) ~ as.numeric(gsub("[^0-9]*", "", AVISITCD)),
 #'       TRUE ~ as.numeric(NA)),
+#'             AVISITCD = factor(AVISITCD) %>% reorder(AVISITCDN),
 #'     TRTORD = case_when(
 #'       ARMCD == "ARM C" ~ 1,
 #'       ARMCD == "ARM B" ~ 2,
 #'       ARMCD == "ARM A" ~ 3),
 #'     ARM = as.character(arm_mapping[match(ARM, names(arm_mapping))]),
 #'     ARM = factor(ARM) %>% reorder(TRTORD))
-#'
 #'
 #' x <- teal::init(
 #'   data = cdisc_data(
@@ -96,6 +96,7 @@
 #'             AVISITCD == "BL" ~ 0,
 #'             grepl("W", AVISITCD) ~ as.numeric(gsub("[^0-9]*", "", AVISITCD)),
 #'             TRUE ~ as.numeric(NA)),
+#'           AVISITCD = factor(AVISITCD) %>% reorder(AVISITCDN),
 #'           TRTORD = case_when(
 #'             ARMCD == "ARM C" ~ 1,
 #'             ARMCD == "ARM B" ~ 2,
