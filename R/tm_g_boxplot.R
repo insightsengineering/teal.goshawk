@@ -74,7 +74,7 @@
 #'     ARM = as.character(arm_mapping[match(ARM, names(arm_mapping))]),
 #'     ARM = factor(ARM) %>% reorder(TRTORD))
 #'
-#' x <- teal::init(
+#' app <- teal::init(
 #'   data = cdisc_data(
 #'     cdisc_dataset("ADSL", ADSL),
 #'     cdisc_dataset("ADLB", ADLB),
@@ -120,7 +120,7 @@
 #'       )
 #'   )
 #' )
-#' shinyApp(x$ui, x$server)
+#' shinyApp(app$ui, app$server)
 #'
 #'}
 
@@ -129,8 +129,8 @@ tm_g_boxplot <- function(label,
                          dataname,
                          param_var,
                          param,
-                         yaxis_var,
-                         xaxis_var,
+                         yaxis_var = choices_selected(c("AVAL", "CHG"), "AVAL"),
+                         xaxis_var = choices_selected("AVISITCD", "AVISITCD"),
                          facet_var = choices_selected("ARM", "ARM"),
                          trt_group = "ARM",
                          armlabel = NULL,
@@ -146,13 +146,27 @@ tm_g_boxplot <- function(label,
                          pre_output = NULL,
                          post_output = NULL) {
 
+  stopifnot(
+    is_character_single(label),
+    is_character_single(dataname),
+    is_character_single(param_var),
+    is.choices_selected(param),
+    is.choices_selected(yaxis_var),
+    is.choices_selected(xaxis_var),
+    is.choices_selected(facet_var),
+    is_character_single(trt_group),
+    is.null(armlabel) || is_character_single(armlabel),
+    # TODO: add color_manual, shape_manual
+    is.null(facet_ncol) || is_integer_single(facet_ncol),
+    is_logical_single(rotate_xlab),
+    is.null(hline) || is_numeric_single(hline),
+    is_numeric_vector(plot_height) && length(plot_height) == 3,
+    is_numeric_vector(font_size) && length(font_size) == 3,
+    is_numeric_vector(dot_size) && length(dot_size) == 3,
+    is_numeric_vector(alpha) && length(alpha) == 3
+  )
+
   args <- as.list(environment())
-
-  stopifnot(is.choices_selected(param))
-  stopifnot(is.choices_selected(xaxis_var))
-  stopifnot(is.choices_selected(yaxis_var))
-  stopifnot(is.choices_selected(facet_var))
-
 
   #TODO: f/u on reciptrocal actions of xvar and facet_var
 
