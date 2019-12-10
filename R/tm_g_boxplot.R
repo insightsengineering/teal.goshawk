@@ -185,7 +185,23 @@ ui_g_boxplot <- function(id, ...) {
   a <- list(...)
 
   standard_layout(
-    output = templ_ui_output_datatable(ns),
+    output = div(
+      fluidRow(
+        uiOutput(ns("plot_ui"))
+      ),
+      fluidRow(column(
+        width = 12,
+        br(), hr(),
+        h4("Selected Data Points"),
+        DT::dataTableOutput(ns("brush_data"))
+      )),
+      fluidRow(column(
+        width = 12,
+        br(), hr(),
+        h4("Descriptive Statistics"),
+        uiOutput(ns("table_ui"))
+      ))
+    ),
     encoding =  div(
       templ_ui_dataname(a$dataname),
       templ_ui_param(ns, a$param$choices, a$param$selected),
@@ -242,11 +258,8 @@ srv_g_boxplot <- function(input,
   # update sliders for axes
   keep_range_slider_updated(session, input, "yrange_scale", "yaxis_var", anl_chunks)
 
-  # plot
-  output$boxplot <- renderPlot({
-
-    ac <- anl_chunks()
-    private_chunks <- ac$chunks$clone(deep = TRUE)
+  create_plot <- reactive({
+    private_chunks <- anl_chunks()$chunks$clone(deep = TRUE)
 
     xaxis <- input$xaxis_var
     facet_var <- input$facet_var
@@ -267,7 +280,7 @@ srv_g_boxplot <- function(input,
       chunks = private_chunks,
       id = "boxplot",
       expression = bquote({
-        g_boxplot(
+        plot <- g_boxplot(
           data = ANL,
           biomarker = .(param),
           xaxis_var = .(xaxis),
@@ -290,13 +303,51 @@ srv_g_boxplot <- function(input,
       })
     )
 
-    p <- chunks_safe_eval(private_chunks)
+    chunks_safe_eval(private_chunks)
 
-    # promote chunks to be visible in the sessionData by other modules
+    private_chunks
+  })
+
+  create_table <- reactive({
+    private_chunks <- create_plot()$clone(deep = TRUE)
+
+    param <- input$param
+    xaxis_var <- input$yaxis_var
+    facet_var <- input$facet_var
+    font_size <- input$font_size
+
+    chunks_push(
+      chunks = private_chunks,
+      id = "table",
+      expression = bquote({
+        tbl <- t_summarytable(
+          data = ANL,
+          trt_group = .(trt_group),
+          param_var = .(param_var),
+          param = .(param),
+          xaxis_var = .(xaxis_var),
+          visit_var = .("AVISITCD"),  #TODO: should be?  .(facet_var),
+          font_size = .(font_size)
+        )
+      })
+    )
+
+    chunks_safe_eval(private_chunks)
+    private_chunks
+  })
+
+  main_code <- reactive({
+    private_chunks <- create_table()
     init_chunks(private_chunks)
+    private_chunks
+  })
 
-    p
+  output$boxplot <- renderPlot({
+    main_code()$get("plot")
+  })
 
+  output$table_ui <- renderTable({
+    main_code()$get("tbl")
   })
 
   # dynamic plot height and brushing
