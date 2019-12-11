@@ -121,7 +121,10 @@
 #'       yaxis_var = choices_selected(c("AVAL","CHG", "PCHG"), "AVAL"),
 #'       filter_var = choices_selected(c("None" = "NONE", "Screening" = "BASE2", "Baseline" = "BASE"), "NONE"),
 #'       trt_group = "ARM",
-#'       color_comb = "#39ff14"
+#'       color_comb = "#39ff14",
+#'       man_color = c('Combination' = "#000000",
+#'                    'Placebo' = "#fce300",
+#'                    '150mg QD' = "#5a2f5f")
 #'     )
 #'   )
 #' )
@@ -150,6 +153,10 @@ tm_g_spaghettiplot <- function(label,
                                facet_ncol = 2,
                                plot_height = c(600, 200, 2000),
                                font_size = c(12, 8, 20)) {
+
+  stopifnot(is.choices_selected(param))
+  stopifnot(is.choices_selected(xaxis_var))
+  stopifnot(is.choices_selected(yaxis_var))
 
   args <- as.list(environment())
 
@@ -250,29 +257,23 @@ srv_g_spaghettiplot <- function(input,
   output$spaghettiplot <- renderPlot({
 
     private_chunks <- anl_chunks()$chunks$clone(deep = TRUE)
-    param <- input$param
-    xaxis_var <- input$xaxis_var
-    yaxis_var <- input$yaxis_var
     ylim <- input$yrange_scale
     facet_ncol <- input$facet_ncol
     rotate_xlab <- input$rotate_xlab
-    hline <- as.numeric(input$hline)
+    hline <- input$hline
     group_stats <- input$group_stats
     font_size <- input$font_size
     alpha <- input$alpha
 
-
+    # Below inputs should trigger plot via updates of other reactive objects (i.e. anl_chunk()) and some inputs
+    param <- isolate(input$param)
+    xaxis_var <- isolate(input$xaxis_var)
+    yaxis_var <- isolate(input$yaxis_var)
 
     chunks_push(
       chunks = private_chunks,
       id = "g_spaghettiplot",
       expression = bquote({
-
-        if (.(trt_group) == "ARM"){
-          attributes(ANL$ARM)$label <- "Planned Arm"
-        } else {
-          attributes(ANL$ACTARM)$label <- "Actual Arm"
-        }
 
         g_spaghettiplot(
           data = ANL,
