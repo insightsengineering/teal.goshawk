@@ -2,29 +2,25 @@
 #'
 #' This teal module renders the UI and calls the function that creates a line plot.
 #'
+#' @inheritParams teal.devel::standard_layout
 #' @param label menu item label of the module in the teal app.
 #' @param dataname analysis data passed to the data argument of teal init. E.g. ADaM structured
 #' laboratory data frame ADLB.
-#' @param adslname Name of ADSL data set from which additional variables will be used for
-#' shape_choices
 #' @param param_var name of variable containing biomarker codes e.g. PARAMCD.
-#' @param param_choices list of biomarkers of interest.
 #' @param param biomarker selected.
 #' @param param_var_label single name of variable in analysis data that includes parameter labels.
-#' @param xvar single name of variable in analysis data that is used as x-axis in the plot for the
+#' @param xaxis_var single name of variable in analysis data that is used as x-axis in the plot for the
 #' respective goshawk function.
-#' @param xvar_choices vector with variable names that can be used as xvar.
 #' @param xvar_level vector that can be used to define the factor level of xvar. Only use it when
 #' xvar is character or factor.
 #' @param filter_var data constraint variable.
 #' @param filter_var_choices data constraint variable choices.
-#' @param yvar single name of variable in analysis data that is used as summary variable in the
+#' @param yaxis_var single name of variable in analysis data that is used as summary variable in the
 #' respective gshawk function.
-#' @param yvar_choices vector with variable names that can be used as yvar.
 #' @param trt_group name of variable representing treatment group e.g. ARM.
 #' @param trt_group_level vector that can be used to define factor level of trt_group.
 #' @param shape_choices Vector with names of ADSL variables which can be used to change shape
-#' @param man_color string vector representing customized colors
+#' @param color_manual string vector representing customized colors
 #' @param stat string of statistics
 #' @param hline numeric value to add horizontal line to plot
 #' @param xtick numeric vector to define the tick values of x-axis when x variable is numeric.
@@ -52,6 +48,7 @@
 #' # Example using ADaM structure analysis dataset.
 #'
 #' library(random.cdisc.data)
+#' library(stringr)
 #'
 #' # original ARM value = dose value
 #' arm_mapping <- list("A: Drug X" = "150mg QD",
@@ -71,6 +68,7 @@
 #'       AVISITCD == "BL" ~ 0,
 #'       grepl("W", AVISITCD) ~ as.numeric(gsub("[^0-9]*", "", AVISITCD)),
 #'       TRUE ~ as.numeric(NA)),
+#'     AVISITCD = factor(AVISITCD) %>% reorder(AVISITCDN),
 #'     TRTORD = case_when(
 #'       ARMCD == "ARM C" ~ 1,
 #'       ARMCD == "ARM B" ~ 2,
@@ -79,7 +77,7 @@
 #'     ARM = factor(ARM) %>% reorder(TRTORD))
 #'
 #'
-#' x <- teal::init(
+#' app <- teal::init(
 #'   data = cdisc_data(
 #'     cdisc_dataset("ADSL", ADSL),
 #'     cdisc_dataset("ADLB", ADLB),
@@ -101,6 +99,7 @@
 #'             AVISITCD == "BL" ~ 0,
 #'             grepl("W", AVISITCD) ~ as.numeric(gsub("[^0-9]*", "", AVISITCD)),
 #'             TRUE ~ as.numeric(NA)),
+#'           AVISITCD = factor(AVISITCD) %>% reorder(AVISITCDN),
 #'           TRTORD = case_when(
 #'             ARMCD == "ARM C" ~ 1,
 #'             ARMCD == "ARM B" ~ 2,
@@ -114,57 +113,60 @@
 #'     tm_g_lineplot(
 #'       label = "Line Plot",
 #'       dataname = "ADLB",
-#'       adslname = "ADSL",
-#'       param_var = "PARAMCD",
-#'       param_choices = c("CRP","IGG","IGM"),
+#'        param_var = "PARAMCD",
+#'        param = choices_selected(c("ALT", "CRP", "IGA"), "ALT"),
 #'       shape_choices = c("SEX", "RACE"),
-#'       param = "CRP",
-#'       xvar = "AVISITCD",
-#'       yvar = "AVAL",
-#'       yvar_choices = c("AVAL","CHG","PCGH"),
-#'       filter_var = 'NONE',
-#'       filter_var_choices = c("None" = "NONE", "Screening" = "BASE2", "Baseline" = "BASE"),
+#'       xaxis_var =choices_selected("AVISITCD", "AVISITCD"),
+#'       yaxis_var = choices_selected(c("AVAL", "BASE", "CHG", "PCHG"), "AVAL"),
 #'       trt_group = "ARM"
 #'     )
 #'   )
 #' )
 #'
-#' shinyApp(x$ui, x$server)
+#' shinyApp(app$ui, app$server)
 #' }
 
 tm_g_lineplot <- function(label,
                           dataname,
-                          adslname  = NULL,
                           param_var,
-                          param_choices = param,
                           param,
                           param_var_label = "PARAM",
-                          xvar, yvar,
-                          xvar_choices = xvar, yvar_choices = yvar,
+                          xaxis_var, yaxis_var,
                           xvar_level = NULL,
-                          filter_var = yvar,
+                          filter_var = yaxis_var,
                           filter_var_choices = filter_var,
                           trt_group,
                           trt_group_level = NULL,
                           shape_choices = NULL,
                           stat = "mean",
                           hline = NULL,
-                          man_color = NULL,
+                          color_manual = NULL,
                           xtick = waiver(),
                           xlabel = xtick,
                           rotate_xlab = FALSE,
                           plot_height = c(600, 200, 2000),
                           font_size = c(12, 8, 20),
-                          dodge = c(0.4, 0, 1)) {
+                          dodge = c(0.4, 0, 1),
+                          pre_output = NULL,
+                          post_output = NULL) {
+  stopifnot(is.choices_selected(xaxis_var))
+  stopifnot(is.choices_selected(yaxis_var))
+  stopifnot(is.choices_selected(param))
 
   args <- as.list(environment())
 
   module(
     label = label,
     server = srv_lineplot,
-    server_args = list(dataname = dataname, adslname = adslname, param_var = param_var, trt_group = trt_group, man_color = man_color,
-                       xvar_level = xvar_level, trt_group_level = trt_group_level, shape_choices = shape_choices, param_var_label = param_var_label,
-                       xtick = xtick, xlabel = xlabel),
+    server_args = list(dataname = dataname,
+                       param_var = param_var,
+                       trt_group = trt_group, color_manual = color_manual,
+                       xvar_level = xvar_level,
+                       trt_group_level = trt_group_level,
+                       shape_choices = shape_choices,
+                       param_var_label = param_var_label,
+                       xtick = xtick,
+                       xlabel = xlabel),
     ui = ui_lineplot,
     ui_args = args,
     filters = dataname
@@ -179,57 +181,54 @@ ui_lineplot <- function(id, ...) {
 
   if (a$plot_height < 200 || a$plot_height > 2000) stop("plot_height must be between 200 and 2000")
 
-
   standard_layout(
     output = uiOutput(ns("plot_ui")),
     encoding = div(
-      tags$label(a$dataname, "Data Settings", class="text-primary"),
-      optionalSelectInput(ns("param"), "Select a Biomarker", a$param_choices, a$param, multiple = FALSE),
-      optionalSelectInput(ns("xvar"), "X-Axis Variable", a$xvar_choices, a$xvar, multiple = FALSE),
-      optionalSelectInput(ns("yvar"), "Select a Y-Axis Variable", a$yvar_choices, a$yvar, multiple = FALSE),
+      templ_ui_dataname(a$dataname),
+      templ_ui_param(ns, a$param$choices, a$param$selected), # required by constr_anl_chunks
+      templ_ui_xy_vars(ns, a$xaxis_var$choices, a$xaxis_var$selected,
+                       a$yaxis_var$choices, a$yaxis_var$selected),
       uiOutput(ns("shape_ui")),
       radioButtons(ns("stat"), "Select a Statistic:", c("mean","median"), a$stat),
-      radioButtons(ns("filter_var"), "Data Constraint", a$filter_var_choices, a$filter_var),
-      uiOutput(ns("filter_min"), style="display: inline-block; vertical-align:center"),
-      uiOutput(ns("filter_max"), style="display: inline-block; vertical-align:center"),
-      uiOutput(ns("yaxis_scale")),
-
-      if (all(c(
-        length(a$plot_height) == 1
-      ))) {
-        NULL
-      } else {
-        tags$label("Plot Aesthetic Settings", class="text-primary", style="margin-top: 15px;")
-      },
-      checkboxInput(ns("rotate_xlab"), "Rotate X-Axis Label", a$rotate_xlab),
-      div(style="padding: 0px;",
-          div(style="display: inline-block;vertical-align:moddle; width: 175px;",
-              tags$b("Add a Horizontal Line:")),
-          div(style="display: inline-block;vertical-align:middle; width: 100px;",
-              numericInput(ns("hline"), "", a$hline))
-      ),
-      optionalSliderInputValMinMax(ns("plot_height"), "Plot Height", a$plot_height, ticks = FALSE),
-      optionalSliderInputValMinMax(ns("dodge"), "Error Bar Position Dodge", a$dodge, ticks = FALSE),
-      optionalSliderInputValMinMax(ns("font_size"), "Font Size", a$font_size, ticks = FALSE)
-    )
-    # ,
-    # forms = actionButton(ns("show_rcode"), "Show R Code", width = "100%")
+      templ_ui_constraint(ns), # required by constr_anl_chunks
+      panel_group(
+        panel_item(
+          title = "Plot Aesthetic Settings",
+          sliderInput(ns("yrange_scale"), label = "Y-Axis Range Zoom", min = 0, max = 1, value = c(0, 1)),
+          checkboxInput(ns("rotate_xlab"), "Rotate X-axis Label", a$rotate_xlab),
+          numericInput(ns("hline"), "Add a horizontal line:", a$hline)
+        ),
+        panel_item(
+          title = "Plot settings",
+          optionalSliderInputValMinMax(ns("plot_height"), "Plot Height", a$plot_height, ticks = FALSE),
+          optionalSliderInputValMinMax(ns("dodge"), "Error Bar Position Dodge", a$dodge, ticks = FALSE),
+          optionalSliderInputValMinMax(ns("font_size"),  "Font Size", a$font_size, ticks = FALSE)
+        )
+      )
+    ),
+    forms = get_rcode_ui(ns("rcode")),
+    pre_output = a$pre_output,
+    post_output = a$post_output
   )
 
 }
 
-srv_lineplot <- function(input, output, session, datasets, dataname, adslname, param_var, trt_group, man_color, xvar_level,
-                         trt_group_level, shape_choices, param_var_label, xtick, xlabel) {
+srv_lineplot <- function(input,
+                         output,
+                         session,
+                         datasets,
+                         dataname,
+                         param_var,
+                         trt_group,
+                         color_manual,
+                         xvar_level,
+                         trt_group_level,
+                         shape_choices,
+                         param_var_label,
+                         xtick,
+                         xlabel) {
 
   ns <- session$ns
-
-  ## dynamic plot height
-  output$plot_ui <- renderUI({
-    plot_height <- input$plot_height
-    validate(need(plot_height, "need valid plot height"))
-    plotOutput(session$ns("lineplot"), height=plot_height)
-  })
-
   output$shape_ui <- renderUI({
     if(!is.null(shape_choices)){
       selectInput(ns("shape"), "Select Line Splitting Variable",
@@ -237,179 +236,26 @@ srv_lineplot <- function(input, output, session, datasets, dataname, adslname, p
     }
   })
 
-  # Filter data based on input filter_var
-  observe({
-    # derive min max value of input filter_var
-    ANL <- datasets$get_data(dataname, filtered = TRUE, reactive = TRUE)
-    param <- input$param
-    value_var <- input$filter_var
-    scale_data <- filter(ANL, eval(parse(text = param_var)) == param)
+  anl_chunks <- constr_anl_chunks(session, input, datasets, dataname, "param", param_var, trt_group)
 
-    if(value_var == "NONE"){
-      output$filter_max <- NULL
-      output$filter_min <- NULL
-      output$filter_val_scale <- NULL
-    } else {
-      # identify min and max values of BM range ignoring NA values
-      min_scale <- min(scale_data[,value_var], na.rm = TRUE)
-      max_scale <- max(scale_data[,value_var], na.rm = TRUE)
-
-      # Output variable UI
-      output$filter_min <- renderUI({
-        tagList({
-          numericInput(session$ns("filtermin"), label = paste0("Min (", min_scale, ")"), value = min_scale, min = min_scale, max = max_scale)
-        })
-      })
-
-      output$filter_max <- renderUI({
-        tagList({
-          numericInput(session$ns("filtermax"), label = paste0("Max (", max_scale, ")"), value = max_scale, min = min_scale, max = max_scale)
-        })
-      })
-
-      output$filter_val_scale <- renderUI({
-        tagList({
-          sliderInput(ns("filter_scale"), label=paste0("Select Data for ", value_var),
-                      floor(min_scale), ceiling(max_scale),
-                      value = c(floor(min_scale), ceiling(max_scale)))
-        })
-      })
-    }
-  })
+  # update sliders for axes
+  keep_range_slider_updated(session, input, "yrange_scale", "yaxis_var", anl_chunks)
 
 
-  # filter data by param and the y-axis range values
-  # neutralized this join to expect that the line splitting ADSL variables are in the ADLB data set.
-  # this block needs to be removed during re-factoring
-  filter_ANL <- reactive({
-
-    param <- input$param
-    filter_var <- input$filter_var
-    ANL <- datasets$get_data(dataname, filtered = TRUE, reactive = TRUE) %>%
-      filter(eval(parse(text = param_var)) == param)
-
-    # if (!is.null(adslname)){
-    #   ADSL <- datasets$get_data(adslname, filtered = TRUE, reactive = TRUE)
-    # }
-    # if(!is.null(shape_choices)){
-    #   validate(need(adslname, "adslname must be specified when shape_choices is not NULL"))
-    #   validate(need(all(shape_choices%in%names(ADSL)), "shape_choices must be contained in ADSL!"))
-    #   ANL <- left_join(
-    #     ANL,
-    #     select(ADSL, c("STUDYID", "USUBJID")), # removed shape_choices from this statement to neutralize
-    #     by = c("STUDYID", "USUBJID")
-    #   )
-    # }
-
-    ymin_scale <- -Inf
-    ymax_scale <- Inf
-
-    if(filter_var != "NONE"){
-      if (length(input$filtermin)){
-        ymin_scale <- input$filtermin
-      }
-
-      if (length(input$filtermax)){
-        ymax_scale <- input$filtermax
-      }
-
-      ANL1 <- ANL %>%
-        filter((ymin_scale <= eval(parse(text = filter_var)) &
-                  eval(parse(text = filter_var)) <= ymax_scale) |
-                 (is.na(filter_var)))
-
-      return(ANL1)
-    } else {
-      return(ANL)
-    }
-
-
-  })
-
-  # dynamic slider for y-axis
-  output$yaxis_scale <- renderUI({
-    xvar <- input$xvar
-    value_var <- input$yvar
-    median <- ifelse(input$stat=='median',TRUE, FALSE)
-    ANL <- filter_ANL()
-
-    scale_data <- ANL %>%
-      group_by(eval(parse(text = xvar)),
-               eval(parse(text = trt_group))) %>%
-      summarise(mean = mean(eval(parse(text = value_var)),na.rm = TRUE),
-                CIup = mean(eval(parse(text = value_var)),na.rm = TRUE) + 1.96 * sd(eval(parse(text = value_var)), na.rm = TRUE)/sqrt(n()),
-                CIdown = mean(eval(parse(text = value_var)),na.rm = TRUE) - 1.96 * sd(eval(parse(text = value_var)), na.rm = TRUE)/sqrt(n()),
-                median = median(eval(parse(text = value_var)),na.rm = TRUE),
-                quant25 = quantile(eval(parse(text = value_var)), 0.25, na.rm = TRUE),
-                quant75 = quantile(eval(parse(text = value_var)), 0.75, na.rm = TRUE))
-
-    # identify min and max values of BM range ignoring NA values
-    ymin_scale <- -Inf
-    ymax_scale <- Inf
-
-    if(median){
-      ymin_scale <- min(scale_data[,c('median','quant25','quant75')], na.rm = TRUE)
-      ymax_scale <- max(scale_data[,c('median','quant25','quant75')], na.rm = TRUE)
-    } else {
-      ymin_scale <- min(scale_data[,c('mean','CIup','CIdown')], na.rm = TRUE)
-      ymax_scale <- max(scale_data[,c('mean','CIup','CIdown')], na.rm = TRUE)
-    }
-
-    tagList({
-      sliderInput(ns("yrange_scale"), label="Y-Axis Range Zoom",
-                  round(ymin_scale, digits = 1), round(ymax_scale, digits = 1),
-                  value = c(round(ymin_scale, digits = 1), round(ymax_scale, digits = 1)))
-    })
-
-  })
-
-
-  chunks <- list(
-    analysis = "# Not Calculated"
-  )
-
-  plotout <- reactive({
-
-    ANL <- filter_ANL()
-    param <- input$param
-    xvar <- input$xvar
-    yvar <- input$yvar
-    ylim <- input$yrange_scale
-    median <- ifelse(input$stat=='median',TRUE, FALSE)
-    rotate_xlab <- input$rotate_xlab
-    hline <- as.numeric(input$hline)
+  output$lineplot <- renderPlot({
+    ac <- anl_chunks()
+    private_chunks <- ac$chunks$clone(deep = TRUE)
+    yrange_scale <- input$yrange_scale
     font_size <- input$font_size
     dodge <- input$dodge
-    height <- input$plot_height
+    rotate_xlab <- input$rotate_xlab
+    hline <- if (is.na(input$hline)) NULL else as.numeric(input$hline)
+    median <- ifelse(input$stat=='median',TRUE, FALSE)
+    plot_height <- input$plot_height
 
-
-    chunks$analysis <<- "# Not Calculated"
-
-    validate(need(!is.null(ANL) && is.data.frame(ANL), "no data left"))
-    validate(need(nrow(ANL) > 0 , "no observations left"))
-    validate(need(param_var %in% names(ANL),
-                  paste("Biomarker parameter variable", param_var, " is not available in data", dataname)))
-    validate(need(param %in% unique(ANL[[param_var]]),
-                  paste("Biomarker", param, " is not available in data", dataname)))
-    validate(need(xvar, "no valid x variable selected"))
-    validate(need(yvar, "no valid y variable selected"))
-    validate(need(xvar %in% names(ANL),
-                  paste("variable", xvar, " is not available in data", dataname)))
-    validate(need(yvar %in% names(ANL),
-                  paste("variable", yvar, " is not available in data", dataname)))
-    validate(need(trt_group %in% names(ANL),
-                  paste("variable", trt_group, " is not available in data", dataname)))
-
-
-    data_name <- paste0(dataname, "_FILTERED")
-    assign(data_name, ANL)
-
-    # re-establish treatment variable label
-    if (trt_group == "ARM"){
-      attributes(ANL$ARM)$label <- "Planned Arm"
-    } else {
-      attributes(ANL$ACTARM)$label <- "Actual Arm"
-    }
+    param <- isolate(input$param)
+    xaxis <- isolate(input$xaxis_var)
+    yaxis <- isolate(input$yaxis_var)
 
     shape <- NULL
     if (!is.null(input$shape)){
@@ -417,41 +263,52 @@ srv_lineplot <- function(input, output, session, datasets, dataname, adslname, p
         shape <- input$shape
       }
     }
-    chunks$analysis <<- call(
-      "g_lineplot",
-      data = bquote(.(as.name(data_name))),
-      biomarker_var = param_var,
-      biomarker_var_label = param_var_label,
-      biomarker = param,
-      value_var = yvar,
-      ylim = ylim,
-      trt_group = trt_group,
-      trt_group_level = trt_group_level,
-      shape = shape,
-      time = xvar,
-      time_level = xvar_level,
-      color_manual = man_color,
-      median = median,
-      hline = hline,
-      xtick = xtick,
-      xlabel = xlabel,
-      rotate_xlab = rotate_xlab,
-      font_size = font_size,
-      dodge = dodge,
-      plot_height = height
+
+    chunks_push(
+      chunks = private_chunks,
+      id = "lineplot",
+      expression = bquote({
+        g_lineplot(
+          data = ANL,
+          biomarker_var = .(param_var),
+          biomarker_var_label = .(param_var_label),
+          biomarker = .(param),
+          value_var = .(yaxis),
+          ylim = .(yrange_scale),
+          trt_group = .(trt_group),
+          trt_group_level = .(trt_group_level),
+          shape = .(shape),
+          time = .(xaxis),
+          time_level = .(xvar_level),
+          color_manual = .(color_manual),
+          median = .(median),
+          hline = .(hline),
+          xtick = .(xtick),
+          xlabel = .(xlabel),
+          rotate_xlab = .(rotate_xlab),
+          font_size = .(font_size),
+          dodge = .(dodge),
+          plot_height = .(plot_height)
+        )
+      })
     )
 
-    p <- try(eval(chunks$analysis))
-
-    if (is(p, "try-error")) validate(need(FALSE, paste0("could not create the line plot:\n\n", p)))
-
+    p <- chunks_safe_eval(private_chunks)
+    init_chunks(private_chunks)
     p
 
   })
 
-  output$lineplot <- renderPlot({
-    plotout()
-
+  output$plot_ui <- renderUI({
+    plot_height <- input$plot_height
+    validate(need(plot_height, "need  valid plot height"))
+    plotOutput(ns("lineplot"), height = plot_height)
   })
 
+  callModule(
+    get_rcode_srv,
+    id = "rcode",
+    datasets = datasets,
+    modal_title = "Line Plot"
+  )
 }
