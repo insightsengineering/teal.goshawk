@@ -414,27 +414,29 @@ srv_g_correlationplot <- function(input,
       chunks = private_chunks,
       id = "plot_data_transpose",
       expression = bquote({
-        ANL_TRANSPOSED <- ANL %>%
-          tidyr::gather(key = "ANLVARS",
-                        value = "ANLVALS",
-                        .data[[.(input$xaxis_var)]], .data[[.(input$yaxis_var)]], .data[["LOQFL"]]) %>%
-          mutate(ANL.PARAM = paste0(.data[["ANLVARS"]],
-                                    ifelse(.data[["ANLVARS"]] == "LOQFL", "_", "."),
-                                    .data[[.(param_var)]])) %>%
-          select(.data[["USUBJID"]], .data[[.(trt_group)]], .data[["AVISITCD"]],
-                 .data[["ANL.PARAM"]], .data[["ANLVALS"]]) %>%
-          tidyr::spread(.data[["ANL.PARAM"]], .data[["ANLVALS"]]) %>%
+        ANL_TRANSPOSED1 <- ANL %>%
+          arrange(.data[[.(param_var)]]) %>%
+          tidyr::pivot_wider(id_cols = c("USUBJID", .(trt_group), "AVISITCD"),
+                             names_from = .(param_var),
+                             values_from = c(.(input$xaxis_var), .(input$yaxis_var)), names_sep = ".")
 
-          dplyr::filter(!is.na(.data[[.(xvar())]]) & !is.na(.data[[.(yvar())]])) %>%
-          mutate_at(vars(contains(".")), as.numeric) %>%
+        ANL_TRANSPOSED2 <-  ANL %>%
+          arrange(.data[[.(param_var)]]) %>%
+          tidyr::pivot_wider(id_cols = c("USUBJID", .(trt_group), 'AVISITCD'),
+                             names_from = .(param_var),
+                             values_from = "LOQFL",
+                             names_prefix = paste0("LOQFL_")) %>%
           mutate(LOQFL_COMB = case_when(
-            .data[[.(xloqfl())]] == "Y" | .data[[.(yloqfl())]] == "Y" ~ "Y",
-            .data[[.(xloqfl())]] == "N" & .data[[.(yloqfl())]] == "N" ~ "N",
-            .data[[.(xloqfl())]] == "N" & .data[[.(yloqfl())]] == "NA" ~ "N",
-            .data[[.(xloqfl())]] == "NA" & .data[[.(yloqfl())]] == "N" ~ "N",
-            .data[[.(xloqfl())]] == "NA" & .data[[.(yloqfl())]] == "NA" ~ "NA",
-            TRUE ~ as.character(NA)
-          ))
+            .data[["LOQFL_ALT"]] == "Y" | .data[["LOQFL_CRP"]] == "Y" ~ "Y",
+            .data[["LOQFL_ALT"]] == "N" & .data[["LOQFL_CRP"]] == "N" ~ "N",
+            .data[["LOQFL_ALT"]] == "N" & .data[["LOQFL_CRP"]] == "NA" ~ "N",
+            .data[["LOQFL_ALT"]] == "NA" & .data[["LOQFL_CRP"]] == "N" ~ "N",
+            .data[["LOQFL_ALT"]] == "NA" & .data[["LOQFL_CRP"]] == "NA" ~ "NA",
+            TRUE ~ as.character(NA)))
+
+        ANL_TRANSPOSED <- merge(ANL_TRANSPOSED1, ANL_TRANSPOSED2) %>%
+          dplyr::filter(!is.na(.data[["BASE.ALT"]]) & !is.na(.data[["AVAL.CRP"]]))
+
       })
     )
 
