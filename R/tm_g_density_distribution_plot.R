@@ -55,6 +55,7 @@
 #'       grepl("W", AVISITCD) ~ as.numeric(gsub("[^0-9]*", "", AVISITCD)),
 #'       TRUE ~ as.numeric(NA)
 #'     ),
+#'     AVISITCD = factor(AVISITCD) %>% reorder(AVISITCDN),
 #'     TRTORD = case_when(
 #'       ARMCD == "ARM C" ~ 1,
 #'       ARMCD == "ARM B" ~ 2,
@@ -88,6 +89,7 @@
 #'       AVISITCD == "BL" ~ 0,
 #'       grepl("W", AVISITCD) ~ as.numeric(gsub("[^0-9]*", "", AVISITCD)),
 #'       TRUE ~ as.numeric(NA)),
+#'     AVISITCD = factor(AVISITCD) %>% reorder(AVISITCDN),
 #'     TRTORD = case_when(
 #'       ARMCD == "ARM C" ~ 1,
 #'       ARMCD == "ARM B" ~ 2,
