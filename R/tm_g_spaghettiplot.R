@@ -33,6 +33,7 @@
 #' @param plot_height numeric vectors to define the plot height.
 #' @param font_size control font size for title, x-axis, y-axis and legend font.
 #' @param group_stats control group mean or median overlay.
+#' @inheritParams teal.devel::standard_layout
 #'
 #' @import goshawk
 #'
