@@ -143,7 +143,7 @@ constr_anl_chunks <- function(session, input, datasets, dataname, param_id, para
     validate_has_variable(ANL_FILTERED, "AVISITCD")
     validate_has_variable(ANL_FILTERED, "BASE")
     validate_has_variable(ANL_FILTERED, "BASE2")
-    validate_has_variable(ANL_FILTERED, "ARM")
+    validate_has_variable(ANL_FILTERED, trt_group)
 
     # analysis
     private_chunks <- chunks$new()
@@ -254,19 +254,9 @@ constr_anl_chunks <- function(session, input, datasets, dataname, param_id, para
             )
         })
       )
-
       ANL <- chunks_safe_eval(private_chunks) # nolint
       validate_has_data(ANL, 5)
     }
-
-    # TODO: Why is this done?
-    arm_label <- if (trt_group == "ARM") "Planned Arm" else "Actual Arm"
-
-    chunks_push(
-      chunks = private_chunks,
-      id = "change_attr",
-      expression = bquote(attr(ANL$ARM, "label") <- .(arm_label))
-    )
 
     chunks_push_new_line(private_chunks)
     chunks_safe_eval(private_chunks)

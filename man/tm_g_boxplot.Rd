@@ -7,11 +7,11 @@
 tm_g_boxplot(label, dataname, param_var, param,
   yaxis_var = choices_selected(c("AVAL", "CHG"), "AVAL"),
   xaxis_var = choices_selected("AVISITCD", "AVISITCD"),
-  facet_var = choices_selected("ARM", "ARM"), filter_vars = c("BASE2",
-  "BASE"), filter_labs = c("Screening", "Baseline"), trt_group = "ARM",
-  color_manual = NULL, shape_manual = NULL, hline = NULL,
-  facet_ncol = NULL, rotate_xlab = FALSE, armlabel = NULL,
-  plot_height = c(600, 200, 2000), pre_output = NULL,
+  facet_var = choices_selected("ARM", "ARM"), trt_group = "ARM",
+  armlabel = NULL, color_manual = NULL, shape_manual = NULL,
+  facet_ncol = NULL, rotate_xlab = FALSE, hline = NULL,
+  plot_height = c(600, 200, 2000), font_size = c(12, 8, 20),
+  dot_size = c(2, 1, 12), alpha = c(0.8, 0, 1), pre_output = NULL,
   post_output = NULL)
 }
 \arguments{
@@ -30,28 +30,29 @@ laboratory data frame ALB.}
 
 \item{facet_var}{variable to facet the plots by.}
 
-\item{filter_vars}{variables to be used for filtering the data.  The default is BASE2 and BASE}
-
-\item{filter_labs}{labels for the radio buttons for the \code{filter_vars}. The defaults are
-"Screening" for BASE2 and "Baseline" for BASE.}
-
 \item{trt_group}{name of variable representing treatment group e.g. ARM.}
-
-\item{color_manual}{vector of colors applied to treatment values.}
-
-\item{shape_manual}{vector of symbols applied to LOQ values.}
-
-\item{hline}{y-axis value to position a horizontal line.  NULL = No line.}
-
-\item{facet_ncol}{numeric value indicating number of facets per row.}
-
-\item{rotate_xlab}{45 degree rotation of x-axis values.}
 
 \item{armlabel}{label for the treatment symbols in the legend. If not specified then the label
 attribute for trt_group will be used. If there is no label attribute for trt_group, then the
 name of the parameter (in title case) will be used.}
 
+\item{color_manual}{vector of colors applied to treatment values.}
+
+\item{shape_manual}{vector of symbols applied to LOQ values.}
+
+\item{facet_ncol}{numeric value indicating number of facets per row.}
+
+\item{rotate_xlab}{45 degree rotation of x-axis values.}
+
+\item{hline}{y-axis value to position a horizontal line.  NULL = No line.}
+
 \item{plot_height}{numeric vectors to define the plot height.}
+
+\item{font_size}{font size control for title, x-axis label, y-axis label and legend.}
+
+\item{dot_size}{plot dot size.}
+
+\item{alpha}{numeric vector to define transparency of plotted points.}
 
 \item{pre_output}{optional, \code{shiny.tag} with text placed before the
 output to put the output into context. For example the
@@ -62,7 +63,7 @@ output to put the output into context. For example the
 \code{\link[shiny]{helpText}} elements are useful.}
 }
 \value{
-an \code{\link[teal]{module}} object#'
+an \code{\link[teal]{module}} object
 }
 \description{
 This teal module renders the UI and calls the functions that create a box plot and accompanying
@@ -70,11 +71,10 @@ summary table.
 }
 \examples{
 
-\dontrun{
-
 # Example using ADaM structure analysis dataset.
 
 library(random.cdisc.data)
+library(dplyr)
 
 # original ARM value = dose value
 arm_mapping <- list("A: Drug X" = "150mg QD",
@@ -94,6 +94,7 @@ ADLB <- ADLB \%>\%
       AVISITCD == "BL" ~ 0,
       grepl("W", AVISITCD) ~ as.numeric(gsub("[^0-9]*", "", AVISITCD)),
       TRUE ~ as.numeric(NA)),
+            AVISITCD = factor(AVISITCD) \%>\% reorder(AVISITCDN),
     TRTORD = case_when(
       ARMCD == "ARM C" ~ 1,
       ARMCD == "ARM B" ~ 2,
@@ -101,8 +102,7 @@ ADLB <- ADLB \%>\%
     ARM = as.character(arm_mapping[match(ARM, names(arm_mapping))]),
     ARM = factor(ARM) \%>\% reorder(TRTORD))
 
-
-x <- teal::init(
+app <- teal::init(
   data = cdisc_data(
     cdisc_dataset("ADSL", ADSL),
     cdisc_dataset("ADLB", ADLB),
@@ -124,6 +124,7 @@ x <- teal::init(
             AVISITCD == "BL" ~ 0,
             grepl("W", AVISITCD) ~ as.numeric(gsub("[^0-9]*", "", AVISITCD)),
             TRUE ~ as.numeric(NA)),
+          AVISITCD = factor(AVISITCD) \%>\% reorder(AVISITCDN),
           TRTORD = case_when(
             ARMCD == "ARM C" ~ 1,
             ARMCD == "ARM B" ~ 2,
@@ -140,15 +141,15 @@ x <- teal::init(
         param_var = "PARAMCD",
         param = choices_selected(c("ALT", "CRP", "IGA"), "ALT"),
         yaxis_var = choices_selected(c("AVAL", "BASE", "CHG"), "AVAL"),
-        rotate_xlab = FALSE,
         xaxis_var = choices_selected(c("ARM", "AVISITCD", "STUDYID"), "ARM"),
         facet_var = choices_selected(c("ARM", "AVISITCD", "SEX"), "AVISITCD"),
-        trt_group = "ARM"
+        trt_group = "ARM",
+        rotate_xlab = FALSE
       )
   )
 )
-shinyApp(x$ui, x$server)
-
+\dontrun{
+shinyApp(app$ui, app$server)
 }
 }
 \author{
