@@ -45,8 +45,6 @@
 #'
 #' @examples
 #'
-#'\dontrun{
-#'
 #' # Example using ADaM structure analysis dataset.
 #'
 #' library(random.cdisc.data)
@@ -117,7 +115,7 @@
 #'       param_var = "PARAMCD",
 #'       param = choices_selected(c("ALT", "CRP", "IGA"), "ALT"),
 #'       idvar = "USUBJID",
-#'       xaxis_var = choices_selected(c("AVISITCDN", "AVISITCDN")),
+#'       xaxis_var = choices_selected(c("Analysis Visit Code" = "AVISITCD"), "AVISITCD"),
 #'       yaxis_var = choices_selected(c("AVAL","CHG", "PCHG"), "AVAL"),
 #'       filter_var = choices_selected(c("None" = "NONE", "Screening" = "BASE2", "Baseline" = "BASE"), "NONE"),
 #'       trt_group = "ARM",
@@ -128,7 +126,7 @@
 #'     )
 #'   )
 #' )
-#'
+#' \dontrun{
 #' shinyApp(app$ui, app$server)
 #' }
 
@@ -148,11 +146,14 @@ tm_g_spaghettiplot <- function(label,
                                hline = NULL,
                                man_color = NULL,
                                color_comb = NULL,
-                               xtick = waiver(), xlabel = xtick,
+                               xtick = waiver(),
+                               xlabel = xtick,
                                rotate_xlab = FALSE,
                                facet_ncol = 2,
                                plot_height = c(600, 200, 2000),
-                               font_size = c(12, 8, 20)) {
+                               font_size = c(12, 8, 20),
+                               pre_output = NULL,
+                               post_output = NULL) {
 
   stopifnot(is.choices_selected(param))
   stopifnot(is.choices_selected(xaxis_var))
@@ -302,8 +303,6 @@ srv_g_spaghettiplot <- function(input,
 
     p <- chunks_safe_eval(private_chunks)
 
-    if (is(p, "try-error")) validate(need(FALSE, paste0("could not create the line plot:\n\n", p)))
-
     # promote chunks to be visible in the sessionData by other modules
     init_chunks(private_chunks)
 
@@ -332,10 +331,10 @@ srv_g_spaghettiplot <- function(input,
     req(all(c(xvar, yvar) %in% names(ANL)))
 
     df <- brushedPoints(
-      select(ANL, "USUBJID", trt_group, "AVISITCD", "PARAMCD", xvar, yvar, "LOQFL"),
+      select(ANL, "USUBJID", trt_group, "PARAMCD", xvar, yvar, "LOQFL"),
       input$spaghettiplot_brush
     )
-
+    df <- df[,!(names(df) %in% c(xvar))]
     numeric_cols <- names(select_if(df, is.numeric))
 
     DT::datatable(df, rownames = FALSE) %>%
