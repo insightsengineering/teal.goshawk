@@ -186,7 +186,7 @@ ui_g_density_distribution_plot <- function(id, ...) {
         width = 12,
         br(), hr(),
         h4("Descriptive Statistics"),
-        uiOutput(ns("table_ui"))
+        DT::dataTableOutput(ns("table_ui"))
       ))
     ),
     encoding = div(
@@ -304,8 +304,13 @@ srv_g_density_distribution_plot <- function(input, output, session, datasets, da
   output$density_distribution_plot <- renderPlot({
     main_code()$get("plot")
   })
-  output$table_ui <- renderTable({
-    main_code()$get("tbl")
+  output$table_ui <- DT::renderDataTable({
+    tbl <- main_code()$get("tbl")
+
+    numeric_cols <- names(select_if(tbl, is.numeric))
+
+    DT::datatable(tbl, rownames = FALSE, options = list(scrollX = TRUE)) %>%
+      DT::formatRound(numeric_cols, 2)
   })
 
   # dynamic plot height and brushing
