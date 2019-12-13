@@ -65,6 +65,14 @@ label of x-axis tick values. Default value is waive().}
 \item{plot_height}{numeric vectors to define the plot height.}
 
 \item{font_size}{control font size for title, x-axis, y-axis and legend font.}
+
+\item{pre_output}{optional, \code{shiny.tag} with text placed before the
+output to put the output into context. For example the
+\code{\link[shiny]{helpText}} elements are useful.}
+
+\item{post_output}{optional, \code{shiny.tag} with text placed before the
+output to put the output into context. For example the
+\code{\link[shiny]{helpText}} elements are useful.}
 }
 \value{
 \code{shiny} object
