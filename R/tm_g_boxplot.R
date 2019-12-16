@@ -115,6 +115,7 @@
 #'         xaxis_var = choices_selected(c("ARM", "AVISITCD", "STUDYID"), "ARM"),
 #'         facet_var = choices_selected(c("ARM", "AVISITCD", "SEX"), "AVISITCD"),
 #'         trt_group = "ARM",
+#'         armlabel = "Planned Arm",
 #'         rotate_xlab = FALSE
 #'       )
 #'   )
@@ -261,6 +262,8 @@ srv_g_boxplot <- function(input,
   create_plot <- reactive({
     private_chunks <- anl_chunks()$chunks$clone(deep = TRUE)
 
+    param <- input$param
+    yaxis <- input$yaxis_var
     xaxis <- input$xaxis_var
     facet_var <- input$facet_var
     yrange_scale <- input$yrange_scale
@@ -271,18 +274,12 @@ srv_g_boxplot <- function(input,
     rotate_xlab = input$rotate_xlab
     hline <- input$hline
 
-    # Below inputs should trigger plot via updates of other reactive objects (i.e. anl_chunk()) and some inputs
-    param <- isolate(input$param)
-    yaxis <- isolate(input$yaxis_var)
-
-    ANL <- isolate(anl_chunks()$ANL) # nolint
-    validate(need(yaxis %in% names(ANL),
-                  paste("Variable", yaxis, " is not available in data.")))
-    validate(need(xaxis %in% names(ANL),
-                  paste("Variable", xaxis, " is not available in data.")))
-    validate(need(facet_var %in% names(ANL),
-                  paste("Variable", facet_var, " is not available in data.")))
-
+    validate_has_variable(anl_chunks()$ANL, yaxis,
+                          sprintf("Variable %s is not available in data %s", yaxis, dataname))
+    validate_has_variable(anl_chunks()$ANL, xaxis,
+                          sprintf("Variable %s is not available in data %s", xaxis, dataname))
+    validate_has_variable(anl_chunks()$ANL, facet_var,
+                           sprintf("Variable %s is not available in data %s", facet_var, dataname))
     chunks_push(
       chunks = private_chunks,
       id = "boxplot",
@@ -318,8 +315,8 @@ srv_g_boxplot <- function(input,
   create_table <- reactive({
     private_chunks <- create_plot()$clone(deep = TRUE)
 
-    param <- isolate(input$param)
-    xaxis_var <- isolate(input$yaxis_var)
+    param <- input$param
+    xaxis_var <- input$yaxis_var
     facet_var <- input$facet_var
     font_size <- input$font_size
 
@@ -378,7 +375,7 @@ srv_g_boxplot <- function(input,
   output$brush_data <- DT::renderDataTable({
     req(input$boxplot_brush)
 
-    ANL <- isolate(anl_chunks()$ANL) # nolint
+    ANL <- isolate(anl_chunks()$ANL) %>% droplevels()
     validate_has_data(ANL, 5)
 
     xvar <- isolate(input$xaxis_var)

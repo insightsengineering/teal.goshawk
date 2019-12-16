@@ -144,6 +144,7 @@ app <- teal::init(
         xaxis_var = choices_selected(c("ARM", "AVISITCD", "STUDYID"), "ARM"),
         facet_var = choices_selected(c("ARM", "AVISITCD", "SEX"), "AVISITCD"),
         trt_group = "ARM",
+        armlabel = "Planned Arm",
         rotate_xlab = FALSE
       )
   )
