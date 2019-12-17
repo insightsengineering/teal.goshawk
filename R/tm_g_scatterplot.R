@@ -1,25 +1,23 @@
-#' Scatter Plot
+#' Scatter Plot Teal Module For Biomarker Analysis
 #'
-#' This teal module renders the UI and calls the function that creates a scatter plot.
+#' @description TODO: a bit more info why the module is needed
 #'
+#' @inheritParams teal.devel::standard_layout
 #' @param label menu item label of the module in the teal app.
-#' @param dataname analysis data passed to the data argument of teal init. E.g. ADaM structured 
-#' laboratory data frame ALB.
-#' @param param_var name of variable containing biomarker codes e.g. PARAMCD.
-#' @param param_choices list of biomarkers of interest.
+#' @param dataname analysis data passed to the data argument of teal init. E.g. ADaM structured laboratory data frame
+#'   \code{ADLB}.
+#' @param param_var name of variable containing biomarker codes e.g. \code{PARAMCD}.
 #' @param param biomarker selected.
-#' @param xaxis_var name of variable containing biomarker results displayed on x-axis e.g. BASE.
-#' @param xaxis_var_choices list of variables containing biomarker results choices.
-#' @param yaxis_var name of variable containing biomarker results displayed on y-axis e.g. AVAL.
-#' @param yaxis_var_choices list of variables containing biomarker results choices.
-#' @param trt_group name of variable representing treatment group e.g. ARM.
+#' @param xaxis_var name of variable containing biomarker results displayed on x-axis e.g. \code{BASE}.
+#' @param yaxis_var name of variable containing biomarker results displayed on y-axis e.g. \code{AVAL}.
+#' @param trt_group name of variable representing treatment group e.g. \code{ARM}.
 #' @param color_manual vector of colors applied to treatment values.
 #' @param shape_manual vector of symbols applied to LOQ values.
 #' @param facet_ncol numeric value indicating number of facets per row.
 #' @param facet set layout to use treatment facetting.
 #' @param facet_var variable to use for treatment facetting.
-#' @param reg_line include regression line and annotations for slope and coefficient in 
-#' visualization. Use with facet TRUE.
+#' @param reg_line include regression line and annotations for slope and coefficient in visualization. Use with facet
+#'   TRUE.
 #' @param rotate_xlab 45 degree rotation of x-axis values.
 #' @param hline y-axis value to position of horizontal line.
 #' @param vline x-axis value to position a vertical line.
@@ -27,79 +25,89 @@
 #' @param font_size font size control for title, x-axis label, y-axis label and legend.
 #' @param dot_size plot dot size.
 #' @param reg_text_size font size control for regression line annotations.
-#' @param code_data_processing TODO
 #'
-#' @inheritParams teal::standard_layout
+#'
+#' @export
 #'
 #' @author Nick Paszty (npaszty) paszty.nicholas@gene.com
 #' @author Balazs Toth (tothb2)  toth.balazs@gene.com
 #'
-#' @import DescTools
-#' @import dplyr
-#' @import goshawk
-#' @import teal
-#'
-#' @details This module displays a scatter plot. link to specification file \url{http://rstudio.com}
-#'
-#' @export
-#'
 #' @examples
-#' 
-#'\dontrun{
-#'
 #' # Example using ADaM structure analysis dataset.
-#' 
-#' library(dplyr)
-#' library(ggplot2)
-#' library(goshawk)
 #' library(random.cdisc.data)
-#' library(stringr)
-#' library(teal)
-#' library(teal.goshawk)
-#' 
+#'
 #' # original ARM value = dose value
-#' arm_mapping <- list("A: Drug X" = "150mg QD", "B: Placebo" = "Placebo", 
-#' "C: Combination" = "Combination")
-#' color_manual <-  c("150mg QD" = "#000000", "Placebo" = "#3498DB", "Combination" = "#E74C3C")
-#' # assign LOQ flag symbols: circles for "N" and triangles for "Y", squares for "NA"
-#' shape_manual <-  c("N"  = 1, "Y"  = 2, "NA" = 0)
-#' 
+#' arm_mapping <- list("A: Drug X" = "150mg QD",
+#'                     "B: Placebo" = "Placebo",
+#'                     "C: Combination" = "Combination")
+#'
 #' ADSL <- radsl(N = 20, seed = 1)
 #' ADLB <- radlb(ADSL, visit_format = "WEEK", n_assessments = 7L, seed = 2)
-#' ADLB <- ADLB %>% 
-#' mutate(AVISITCD = case_when(
-#' AVISIT == "SCREENING" ~ "SCR",
-#' AVISIT == "BASELINE" ~ "BL", grepl("WEEK", AVISIT) ~ paste("W",trimws(substr(AVISIT, start=6, 
-#' stop=str_locate(AVISIT, "DAY")-1))),
-#' TRUE ~ as.character(NA))) %>%
-#' mutate(AVISITCDN = case_when(AVISITCD == "SCR" ~ -2,
-#' AVISITCD == "BL" ~ 0, grepl("W", AVISITCD) ~ as.numeric(gsub("\\D+", "", AVISITCD)), 
-#' TRUE ~ as.numeric(NA))) %>%
-#' # use ARMCD values to order treatment in visualization legend
-#' mutate(TRTORD = ifelse(grepl("C", ARMCD), 1,
-#' ifelse(grepl("B", ARMCD), 2,
-#' ifelse(grepl("A", ARMCD), 3, NA)))) %>%
-#' mutate(ARM = as.character(arm_mapping[match(ARM, names(arm_mapping))])) %>%
-#' mutate(ARM = factor(ARM) %>% reorder(TRTORD))
-#' 
-#' param_choices = c("ALT", "CRP", "IGA")
-#' 
-#' x <- teal::init(
-#'   data = list(ADSL = ADSL, ADLB = ADLB),
+#' ADLB <- ADLB %>%
+#'   mutate(AVISITCD = case_when(
+#'       AVISIT == "SCREENING" ~ "SCR",
+#'       AVISIT == "BASELINE" ~ "BL",
+#'       grepl("WEEK", AVISIT) ~ paste("W", stringr::str_extract(AVISIT, "(?<=(WEEK ))[0-9]+")),
+#'       TRUE ~ as.character(NA)),
+#'     AVISITCDN = case_when(
+#'       AVISITCD == "SCR" ~ -2,
+#'       AVISITCD == "BL" ~ 0,
+#'       grepl("W", AVISITCD) ~ as.numeric(gsub("[^0-9]*", "", AVISITCD)),
+#'       TRUE ~ as.numeric(NA)),
+#'     AVISITCD = factor(AVISITCD) %>% reorder(AVISITCDN),
+#'     TRTORD = case_when(
+#'       ARMCD == "ARM C" ~ 1,
+#'       ARMCD == "ARM B" ~ 2,
+#'       ARMCD == "ARM A" ~ 3),
+#'     ARM = as.character(arm_mapping[match(ARM, names(arm_mapping))]),
+#'     ARM = factor(ARM) %>% reorder(TRTORD))
+#'
+#'
+#' app <- init(
+#'   data = cdisc_data(
+#'     cdisc_dataset("ADSL", ADSL),
+#'     cdisc_dataset("ADLB", ADLB),
+#'     code = {'
+#'       arm_mapping <- list("A: Drug X" = "150mg QD",
+#'                           "B: Placebo" = "Placebo",
+#'                           "C: Combination" = "Combination")
+#'
+#'       ADSL <- radsl(N = 20, seed = 1)
+#'       ADLB <- radlb(ADSL, visit_format = "WEEK", n_assessments = 7L, seed = 2)
+#'       ADLB <- ADLB %>%
+#'         mutate(AVISITCD = case_when(
+#'             AVISIT == "SCREENING" ~ "SCR",
+#'             AVISIT == "BASELINE" ~ "BL",
+#'             grepl("WEEK", AVISIT) ~ paste("W", stringr::str_extract(AVISIT, "(?<=(WEEK ))[0-9]+")),
+#'             TRUE ~ as.character(NA)),
+#'           AVISITCDN = case_when(
+#'             AVISITCD == "SCR" ~ -2,
+#'             AVISITCD == "BL" ~ 0,
+#'             grepl("W", AVISITCD) ~ as.numeric(gsub("[^0-9]*", "", AVISITCD)),
+#'             TRUE ~ as.numeric(NA)),
+#'             AVISITCD = factor(AVISITCD) %>% reorder(AVISITCDN),
+#'           TRTORD = case_when(
+#'             ARMCD == "ARM C" ~ 1,
+#'             ARMCD == "ARM B" ~ 2,
+#'             ARMCD == "ARM A" ~ 3),
+#'           ARM = as.character(arm_mapping[match(ARM, names(arm_mapping))]),
+#'           ARM = factor(ARM) %>% reorder(TRTORD))
+#'           '},
+#'     check = FALSE
+#'   ),
 #'   modules = root_modules(
 #'     tm_g_scatterplot(
 #'        label = "Scatter Plot",
 #'        dataname = "ADLB",
 #'        param_var = "PARAMCD",
-#'        param_choices = param_choices,
-#'        param = param_choices[1],
-#'        xaxis_var = "BASE",
-#'        xaxis_var_choices = c("AVAL", "BASE", "CHG", "PCHG", "AVALL2"),
-#'        yaxis_var = "AVAL",
-#'        yaxis_var_choices = c("AVAL", "BASE", "CHG", "PCHG", "AVALL2"),
+#'        param = choices_selected(c("ALT", "CRP", "IGA"), "ALT"),
+#'        xaxis_var = choices_selected(c("AVAL", "BASE", "CHG", "PCHG"), "BASE"),
+#'        yaxis_var = choices_selected(c("AVAL", "BASE", "CHG", "PCHG"), "AVAL"),
 #'        trt_group = "ARM",
-#'        color_manual = color_manual,
-#'        shape_manual = shape_manual,
+#'        color_manual = c("150mg QD" = "#000000",
+#'                         "Placebo" = "#3498DB",
+#'                         "Combination" = "#E74C3C"),
+#'        shape_manual = c("N"  = 1, "Y"  = 2, "NA" = 0),
 #'        plot_height = c(500, 200, 2000),
 #'        facet_ncol = 2,
 #'        facet = FALSE,
@@ -112,19 +120,15 @@
 #'   )
 #' )
 #'
-#' shinyApp(x$ui, x$server)
-#'
-#'}
-
+#' \dontrun{
+#' shinyApp(app$ui, app$server)
+#' }
 tm_g_scatterplot <- function(label,
                              dataname,
                              param_var,
                              param,
-                             param_choices = param,
                              xaxis_var,
-                             xaxis_var_choices = xaxis_var,
-                             yaxis_var, 
-                             yaxis_var_choices = yaxis_var,
+                             yaxis_var,
                              trt_group = "ARM",
                              color_manual = NULL,
                              shape_manual = NULL,
@@ -140,310 +144,196 @@ tm_g_scatterplot <- function(label,
                              dot_size = c(1, 1, 12),
                              reg_text_size = c(3, 3, 10),
                              pre_output = NULL,
-                             post_output = NULL,
-                             code_data_processing = NULL) {
-  
+                             post_output = NULL) {
+
+  stopifnot(is.choices_selected(param))
+  stopifnot(is.choices_selected(xaxis_var))
+  stopifnot(is.choices_selected(yaxis_var))
+
   args <- as.list(environment())
-  
+
   module(
     label = label,
     filters = dataname,
     server = srv_g_scatterplot,
     server_args = list(dataname = dataname,
                        param_var = param_var,
-                       param = param,
-                       xaxis_var = xaxis_var,
-                       yaxis_var = yaxis_var,
                        trt_group = trt_group,
                        facet_var = facet_var,
                        color_manual = color_manual,
-                       shape_manual = shape_manual,
-                       code_data_processing = code_data_processing
+                       shape_manual = shape_manual
     ),
     ui = ui_g_scatterplot,
     ui_args = args
   )
-  
+
 }
 
+#' @importFrom shinyjs hidden
 ui_g_scatterplot <- function(id, ...) {
-  
   ns <- NS(id)
   a <- list(...)
-  
+
   standard_layout(
-    output = div(
-      fluidRow(
-        uiOutput(ns("plot_ui"))
-      ),
-      fluidRow(
-        column(width = 12,
-               br(), hr(),
-               h4("Selected Data Points"),
-               tableOutput(ns("brush_data"))
+    output = templ_ui_output_datatable(ns),
+    encoding =  div(
+      templ_ui_dataname(a$dataname),
+      templ_ui_param(ns, a$param$choices, a$param$selected), # required by constr_anl_chunks
+      templ_ui_xy_vars(ns, a$xaxis_var$choices, a$xaxis_var$selected,
+                       a$yaxis_var$choices, a$yaxis_var$selected),
+      templ_ui_constraint(ns), # required by constr_anl_chunks
+      panel_group(
+        panel_item(
+          title = "Plot Aesthetic Settings",
+          sliderInput(ns("xrange_scale"), label = "X-Axis Range Zoom", min = 0, max = 1, value = c(0, 1)),
+          sliderInput(ns("yrange_scale"), label = "Y-Axis Range Zoom", min = 0, max = 1, value = c(0, 1)),
+          numericInput(ns("facet_ncol"), "Number of Plots Per Row:", a$facet_ncol, min = 1),
+          checkboxInput(ns("facet"), "Treatment Facetting", a$facet),
+          checkboxInput(ns("reg_line"), "Regression Line", a$reg_line),
+          checkboxInput(ns("rotate_xlab"), "Rotate X-axis Label", a$rotate_xlab),
+          numericInput(ns("hline"), "Add a horizontal line:", a$hline),
+          numericInput(ns("vline"), "Add a vertical line:", a$vline)
+        ),
+        panel_item(
+          title = "Plot settings",
+          optionalSliderInputValMinMax(ns("plot_height"), "Plot Height", a$plot_height, ticks = FALSE),
+          optionalSliderInputValMinMax(ns("font_size"),  "Font Size", a$font_size, ticks = FALSE),
+          optionalSliderInputValMinMax(ns("dot_size"), "Dot Size", a$dot_size, ticks = FALSE),
+          optionalSliderInputValMinMax(ns("reg_text_size"), "Regression Annotations Size", a$reg_text_size,
+                                       ticks = FALSE)
         )
       )
     ),
-    encoding =  div(
-      tags$label(a$dataname, "Data Settings", class="text-primary"),
-      optionalSelectInput(ns("param"), "Select a Biomarker", a$param_choices, a$param, multiple = FALSE),
-      optionalSelectInput(ns("xaxis_var"), "Select an X-Axis Variable", a$xaxis_var_choices, a$xaxis_var, multiple = FALSE),
-      optionalSelectInput(ns("yaxis_var"), "Select a Y-Axis Variable", a$yaxis_var_choices, a$yaxis_var, multiple = FALSE),
-      radioButtons(ns("constraint_var"), "Data Constraint", c("None" = "NONE", "Screening" = "BASE2", "Baseline" = "BASE")),
-      uiOutput(ns("constraint_min_value"), style="display: inline-block; vertical-align:center"),
-      uiOutput(ns("constraint_max_value"), style="display: inline-block; vertical-align:center"),
-      tags$label("Plot Aesthetic Settings", class="text-primary", style="margin-top: 15px;"),
-      uiOutput(ns("xaxis_zoom")),
-      uiOutput(ns("yaxis_zoom")),
-      numericInput(ns("facet_ncol"), "Number of Plots Per Row:", a$facet_ncol, min = 1),
-      checkboxInput(ns("facet"), "Treatment Facetting", a$facet),
-      checkboxInput(ns("reg_line"), "Regression Line", a$reg_line),
-      checkboxInput(ns("rotate_xlab"), "Rotate X-axis Label", a$rotate_xlab),
-      numericInput(ns("hline"), "Add a horizontal line:", a$hline),
-      numericInput(ns("vline"), "Add a vertical line:", a$vline),
-      optionalSliderInputValMinMax(ns("plot_height"), "Plot Height", a$plot_height, ticks = FALSE),
-      optionalSliderInputValMinMax(ns("font_size"), "Font Size", a$font_size, ticks = FALSE),
-      optionalSliderInputValMinMax(ns("dot_size"), "Dot Size", a$dot_size, ticks = FALSE),
-      optionalSliderInputValMinMax(ns("reg_text_size"), "Regression Annotations Size", a$reg_text_size, ticks = FALSE)
-    ),
-    # forms = tags$div(
-    #   actionButton(ns("show_rcode"), "Show R Code", width = "100%")#,
-    #   # downloadButton(ns("export_plot"), "Export Image", width = "100%")
-    # ),
+    forms = get_rcode_ui(ns("rcode")),
     pre_output = a$pre_output,
     post_output = a$post_output
   )
-  
+
 }
 
-srv_g_scatterplot <- function(input, output, session, datasets, dataname, 
-                              param_var, param, xaxis_var, yaxis_var, 
-                              trt_group, facet_var, color_manual, shape_manual,
-                              code_data_processing) {
-  
+#' @importFrom goshawk g_scatterplot
+srv_g_scatterplot <- function(input,
+                              output,
+                              session,
+                              datasets,
+                              dataname,
+                              param_var,
+                              trt_group,
+                              facet_var,
+                              color_manual,
+                              shape_manual) {
+
   ns <- session$ns
-  
-  # dynamic plot height and brushing
-  output$plot_ui <- renderUI({
-    plot_height <- input$plot_height
-    validate(need(plot_height, "need valid plot height"))
-    
-    plotOutput(ns("scatterplot"), height = plot_height,
-               brush = brushOpts(id = ns("scatterplot_brush"), resetOnNew=T)
-    )
-  })
-  
-  output$brush_data <- renderTable({
-    if (nrow(filter_ALB()) > 0 ){
-      brushedPoints(select(filter_ALB(),"USUBJID", trt_group, "AVISITCD", "PARAMCD", input$xaxis_var, input$yaxis_var, "LOQFL"), input$scatterplot_brush)
-    } else{
-      NULL
-    }
-  })
-  
-  # dynamic slider for x-axis
-  output$xaxis_zoom <- renderUI({
-    ALB <- datasets$get_data(dataname, reactive = TRUE, filtered = TRUE)
-    param <- input$param 
-    scale_data <- ALB %>%
-      filter(eval(parse(text = param_var)) == param)
-    
-    # establish default value during reaction and prior to value being available
-    xmin_scale <- -Inf
-    xmax_scale <- Inf
-    
-    # identify min and max values of BM range ignoring NA values
-    xmin_scale <- min(scale_data[[input$xaxis_var]], na.rm = TRUE)
-    xmax_scale <- max(scale_data[[input$xaxis_var]], na.rm = TRUE)
-    
-    tagList({
-      sliderInput(ns("xrange_scale"), label="X-Axis Range Zoom", 
-                  floor(xmin_scale), ceiling(xmax_scale), 
-                  value = c(floor(xmin_scale), ceiling(xmax_scale)))
-    })
-    
-  })
-  
-  # dynamic slider for y-axis
-  output$yaxis_zoom <- renderUI({
-    ALB <- datasets$get_data(dataname, reactive = TRUE, filtered = TRUE)
-    param <- input$param 
-    scale_data <- ALB %>%
-      filter(eval(parse(text = param_var)) == param)
-    
-    # establish default value during reaction and prior to value being available
-    ymin_scale <- -Inf
-    ymax_scale <- Inf
-    
-    # identify min and max values of BM range ignoring NA values
-    ymin_scale <- min(scale_data[[input$yaxis_var]], na.rm = TRUE)
-    ymax_scale <- max(scale_data[[input$yaxis_var]], na.rm = TRUE)
-    
-    tagList({
-      sliderInput(ns("yrange_scale"), label="Y-Axis Range Zoom", 
-                  floor(ymin_scale), ceiling(ymax_scale), 
-                  value = c(floor(ymin_scale), ceiling(ymax_scale)))
-    })
-    
-  })
-  
-  # filter data by param and the constraint_min and constraint_max values
-  filter_ALB <- reactive({
-    param <- input$param
-    constraint_var <- input$constraint_var
-    
-    if (constraint_var != "NONE"){
-      constraint_min_range <- -Inf
-      constraint_max_range <- Inf
-      
-      if (length(input$constraint_min)){
-        constraint_min_range <- input$constraint_min
-      }
-      
-      if (length(input$constraint_max)){
-        constraint_max_range <- input$constraint_max
-      }
-      datasets$get_data(dataname, filtered = TRUE, reactive = TRUE) %>%
-        filter(eval(parse(text = param_var)) == param &
-                 constraint_min_range <= eval(parse(text = constraint_var)) &
-                 eval(parse(text = constraint_var)) <= constraint_max_range |
-                 is.na(constraint_var)
-        )
-    } else{
-      datasets$get_data(dataname, filtered = TRUE, reactive = TRUE) %>%
-        filter(eval(parse(text = param_var)) == param)
-    }
-  })
-  
-  # minimum data constraint value
-  output$constraint_min_value <- renderUI({
-    # conditionally reveal min and max constraint fields
-    if (input$constraint_var != "NONE") {
-      ALB <- datasets$get_data(dataname, filtered = TRUE, reactive = TRUE)
-      validate(need(nrow(ALB) > 0 , "Waiting For Filter Selection"))
-      
-      param <- input$param
-      scale_data <- ALB %>%
-        filter(eval(parse(text = param_var)) == param)
-      # ensure that there are records at visit to process based on the constraint vatriable selection
-      visitFreq <- unique(scale_data$AVISITCD)
-      if (input$constraint_var == "BASE2" & visitFreq[1] == "SCR" | 
-          input$constraint_var == "BASE" & (visitFreq[1] == "BL" | visitFreq[2] == "BL")){
-        # identify min and max values of constraint var range ignoring NA values
-        constraint_min_range <- min(scale_data[[input$constraint_var]], na.rm = TRUE)
-        constraint_max_range <- max(scale_data[[input$constraint_var]], na.rm = TRUE)
-        
-        tagList({
-          numericInput(ns("constraint_min"), 
-                       paste0("Min (", constraint_min_range, ")"), 
-                       value = constraint_min_range, 
-                       min = constraint_min_range, max = constraint_max_range)
-        })
-      }
-    }
-    else {
-      return(NULL)
-    }
-    
-  })
-  
-  # maximum data constraint value
-  output$constraint_max_value <- renderUI({
-    # conditionally reveal min and max constraint fields
-    if (input$constraint_var != "NONE") {
-      ALB <- datasets$get_data(dataname, filtered = TRUE, reactive = TRUE)
-      validate(need(nrow(ALB) > 0 , "Waiting For Filter Selection"))
-      
-      param <- input$param
-      scale_data <- ALB %>%
-        filter(eval(parse(text = param_var)) == param)
-      # ensure that there are records at visit to process based on the constraint vatriable selection
-      visitFreq <- unique(scale_data$AVISITCD)
-      if (input$constraint_var == "BASE2" & visitFreq[1] == "SCR" | 
-          input$constraint_var == "BASE" & (visitFreq[1] == "BL" | visitFreq[2] == "BL")){
-        # identify min and max values of constraint var range ignoring NA values
-        constraint_min_range <- min(scale_data[[input$constraint_var]], na.rm = TRUE)
-        constraint_max_range <- max(scale_data[[input$constraint_var]], na.rm = TRUE)
-        
-        tagList({
-          numericInput(ns("constraint_max"), 
-                       paste0("Max (", constraint_max_range, ")"),
-                       value = constraint_max_range, 
-                       min = constraint_min_range, max = constraint_max_range)
-        })
-      }
-    }
-    else {
-      return(NULL)
-    }
-  })
-  
+
+  # reused in all modules
+  anl_chunks <- constr_anl_chunks(session, input, datasets, dataname, "param", param_var, trt_group)
+
+  # update sliders for axes
+  keep_range_slider_updated(session, input, "xrange_scale", "xaxis_var", anl_chunks)
+  keep_range_slider_updated(session, input, "yrange_scale", "yaxis_var", anl_chunks)
+
+  # plot
   output$scatterplot <- renderPlot({
-    ALB <- filter_ALB()
-    param <- input$param
-    xaxis_var <- input$xaxis_var
-    yaxis_var <- input$yaxis_var
-    xmin_scale <- input$xrange_scale[1]
-    xmax_scale <- input$xrange_scale[2]
-    ymin_scale <- input$yrange_scale[1]
-    ymax_scale <- input$yrange_scale[2]
-    font_size <- input$font_size
-    dot_size <- input$dot_size
-    reg_text_size <- input$reg_text_size
-    hline <- as.numeric(input$hline)
-    vline <- as.numeric(input$vline)
+
+    ac <- anl_chunks()
+    private_chunks <- ac$chunks$clone(deep = TRUE)
+
+    xrange_scale <- input$xrange_scale
+    yrange_scale <- input$yrange_scale
     facet_ncol <- input$facet_ncol
     facet <- input$facet
     reg_line <- input$reg_line
+    font_size <- input$font_size
+    dot_size <- input$dot_size
+    reg_text_size <- input$reg_text_size
     rotate_xlab <- input$rotate_xlab
-    
-    validate(need(!is.null(ALB) && is.data.frame(ALB), "No data left"))
-    validate(need(nrow(ALB) > 0 , "No observations left"))
-    validate(need(param_var %in% names(ALB),
-                  paste("Biomarker parameter variable", param_var, " is not available in data", dataname)))
-    validate(need(param %in% unique(ALB[[param_var]]),
-                  paste("Biomarker", param, " is not available in data", dataname)))
-    validate(need(trt_group %in% names(ALB),
-                  paste("Variable", trt_group, " is not available in data", dataname)))
-    validate(need(xaxis_var %in% names(ALB),
-                  paste("Variable", xaxis_var, " is not available in data", dataname)))
-    validate(need(yaxis_var %in% names(ALB),
-                  paste("Variable", yaxis_var, " is not available in data", dataname)))
-    
-    # re-establish treatment variable label
-    if (trt_group == "ARM"){
-      attributes(ALB$ARM)$label <- "Planned Arm"
-    } else {
-      attributes(ALB$ACTARM)$label <- "Actual Arm"
-    }
-    
-    p <- g_scatterplot(
-      data = ALB,
-      param_var = param_var,
-      param = param,
-      xaxis_var = xaxis_var,
-      yaxis_var = yaxis_var,
-      trt_group = trt_group,
-      xmin = xmin_scale,
-      xmax = xmax_scale,
-      ymin = ymin_scale,
-      ymax = ymax_scale,
-      color_manual = color_manual,
-      shape_manual = shape_manual,
-      facet_ncol = facet_ncol,
-      facet = facet,
-      facet_var = facet_var,
-      reg_line = reg_line,
-      font_size = font_size,
-      dot_size = dot_size,
-      reg_text_size = reg_text_size,
-      rotate_xlab = rotate_xlab,
-      hline = hline,
-      vline = vline      
+    hline <- input$hline
+    vline <- input$vline
+
+    # Below inputs should trigger plot via updates of other reactive objects (i.e. anl_chunk()) and some inputs
+    param <- isolate(input$param)
+    xaxis <- isolate(input$xaxis_var)
+    yaxis <- isolate(input$yaxis_var)
+
+    chunks_push(
+      chunks = private_chunks,
+      id = "scatterplot",
+      expression = bquote({
+        # re-establish treatment variable label
+        g_scatterplot(
+          data = ANL,
+          param_var = .(param_var),
+          param = .(param),
+          xaxis_var = .(xaxis),
+          yaxis_var = .(yaxis),
+          trt_group = .(trt_group),
+          xmin = .(xrange_scale[1]),
+          xmax = .(xrange_scale[2]),
+          ymin = .(yrange_scale[1]),
+          ymax = .(yrange_scale[2]),
+          color_manual = .(color_manual),
+          shape_manual = .(shape_manual),
+          facet_ncol = .(facet_ncol),
+          facet = .(facet),
+          facet_var = .(facet_var),
+          reg_line = .(reg_line),
+          font_size = .(font_size),
+          dot_size = .(dot_size),
+          reg_text_size = .(reg_text_size),
+          rotate_xlab = .(rotate_xlab),
+          hline = .(`if`(is.na(hline), NULL, as.numeric(hline))),
+          vline = .(`if`(is.na(vline), NULL, as.numeric(vline)))
+        )
+      })
     )
-    
+
+    p <- chunks_safe_eval(private_chunks)
+
+    # promote chunks to be visible in the sessionData by other modules
+    init_chunks(private_chunks)
+
     p
-    
   })
-  
+
+  # dynamic plot height and brushing
+  output$plot_ui <- renderUI({
+
+    plot_height <- input$plot_height
+    validate(need(plot_height, "need valid plot height"))
+
+    plotOutput(ns("scatterplot"),
+               height = plot_height,
+               brush = brushOpts(id = ns("scatterplot_brush"), resetOnNew = T)
+    )
+  })
+
+  # highlight plot area
+  output$brush_data <- DT::renderDataTable({
+    req(input$scatterplot_brush)
+
+    ANL <- isolate(anl_chunks()$ANL) # nolint
+    validate_has_data(ANL, 5)
+
+    xvar <- isolate(input$xaxis_var)
+    yvar <- isolate(input$yaxis_var)
+
+    req(all(c(xvar, yvar) %in% names(ANL)))
+
+    df <- brushedPoints(
+      select(ANL, "USUBJID", trt_group, "AVISITCD", "PARAMCD", xvar, yvar, "LOQFL"),
+      input$scatterplot_brush
+    )
+
+    numeric_cols <- names(select_if(df, is.numeric))
+
+    DT::datatable(df, rownames = FALSE) %>%
+      DT::formatRound(numeric_cols, 4)
+  })
+
+  callModule(
+    get_rcode_srv,
+    id = "rcode",
+    datasets = datasets,
+    modal_title = "Scatter Plot"
+  )
 }

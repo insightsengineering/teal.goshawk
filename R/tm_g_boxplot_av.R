@@ -5,7 +5,7 @@
 #'
 #'@param label menu item label of the module in the teal app.
 #'@param dataname analysis data passed to the data argument of teal init. E.g. ADaM structured
-#'  laboratory data frame ALB.
+#'  laboratory data frame ADLB.
 #'@param param_var name of variable containing biomarker codes e.g. PARAMCD.
 #'@param param_choices list of biomarkers of interest.
 #'@param param biomarker selected.
@@ -30,14 +30,10 @@
 #'@param plot_height  numeric vectors to define the plot height.
 #'@param code_data_processing TODO
 #'
-#'@inheritParams teal::standard_layout
+#'@inheritParams teal.devel::standard_layout
 #'
-#'@import DescTools
-#'@import methods
-#'@import utils
-#'@import dplyr
-#'@import goshawk
-#'@import teal
+#' @importFrom utils head tail
+#' @importFrom rlang .data
 #'
 #'@author Jeff Tomlinson (tomlinsj) jeffrey.tomlinson@roche.com
 #'@author Balazs Toth (tothb2) toth.balazs@gene.com
@@ -52,51 +48,74 @@
 #'
 #' # Example using ADaM structure analysis dataset.
 #'
-#' library(dplyr)
-#' library(ggplot2)
-#' library(goshawk)
 #' library(random.cdisc.data)
-#' library(stringr)
-#' library(teal)
-#' library(teal.goshawk)
 #'
 #' # original ARM value = dose value
-#' arm_mapping <- list("A: Drug X" = "150mg QD", "B: Placebo" = "Placebo",
-#' "C: Combination" = "Combination")
-#' color_manual <-  c("150mg QD" = "#000000", "Placebo" = "#3498DB", "Combination" = "#E74C3C")
-#' # assign LOQ flag symbols: circles for "N" and triangles for "Y", squares for "NA"
-#' shape_manual <-  c("N"  = 1, "Y"  = 2, "NA" = 0)
+#' arm_mapping <- list("A: Drug X" = "150mg QD",
+#'                     "B: Placebo" = "Placebo",
+#'                     "C: Combination" = "Combination")
 #'
-#' ASL <- radsl(N = 20, seed = 1)
-#' ALB <- radlb(ASL, visit_format = "WEEK", n_assessments = 7, seed = 2)
-#' ALB <- ALB %>%
-#' mutate(AVISITCD = case_when(
-#' AVISIT == "SCREENING" ~ "SCR",
-#' AVISIT == "BASELINE" ~ "BL", grepl("WEEK", AVISIT) ~ paste("W",trimws(substr(AVISIT, start=6,
-#' stop=str_locate(AVISIT, "DAY")-1))),
-#' TRUE ~ as.character(NA))) %>%
-#' mutate(AVISITCDN = case_when(AVISITCD == "SCR" ~ -2,
-#' AVISITCD == "BL" ~ 0, grepl("W", AVISITCD) ~ as.numeric(gsub("\\D+", "", AVISITCD)),
-#' TRUE ~ as.numeric(NA))) %>%
-#' # use ACTARMCD values to order treatment in visualization legend
-#' mutate(TRTORD = ifelse(grepl("C", ACTARMCD), 1,
-#' ifelse(grepl("B", ACTARMCD), 2,
-#' ifelse(grepl("A", ACTARMCD), 3, NA)))) %>%
-#' mutate(ACTARM = as.character(arm_mapping[match(ACTARM, names(arm_mapping))])) %>%
-#' mutate(ACTARM = factor(ARM) %>% reorder(TRTORD)) %>% 
-#' mutate(ADY = AVISITCDN)
+#' ADSL <- radsl(N = 20, seed = 1)
+#' ADLB <- radlb(ADSL, visit_format = "WEEK", n_assessments = 7L, seed = 2)
+#' ADLB <- ADLB %>%
+#'   mutate(AVISITCD = case_when(
+#'     AVISIT == "SCREENING" ~ "SCR",
+#'     AVISIT == "BASELINE" ~ "BL",
+#'     grepl("WEEK", AVISIT) ~ paste("W", stringr::str_extract(AVISIT, "(?<=(WEEK ))[0-9]+")),
+#'     TRUE ~ as.character(NA)),
+#'     AVISITCDN = case_when(
+#'       AVISITCD == "SCR" ~ -2,
+#'       AVISITCD == "BL" ~ 0,
+#'       grepl("W", AVISITCD) ~ as.numeric(gsub("[^0-9]*", "", AVISITCD)),
+#'       TRUE ~ as.numeric(NA)),
+#'     TRTORD = case_when(
+#'       ARMCD == "ARM C" ~ 1,
+#'       ARMCD == "ARM B" ~ 2,
+#'       ARMCD == "ARM A" ~ 3),
+#'     ARM = as.character(arm_mapping[match(ARM, names(arm_mapping))]),
+#'     ARM = factor(ARM) %>% reorder(TRTORD),
+#'     ADY = AVISITCDN)
 #'
-#' param_choices = c("ALT", "CRP", "IGA")
 #'
 #' x <- teal::init(
-#'   data =  list(ASL = ASL, ALB = ALB),
+#'   data = cdisc_data(
+#'     cdisc_dataset("ADSL", ADSL),
+#'     cdisc_dataset("ADLB", ADLB),
+#'     code = {'
+#'       arm_mapping <- list("A: Drug X" = "150mg QD",
+#'                           "B: Placebo" = "Placebo",
+#'                           "C: Combination" = "Combination")
+#'
+#'       ADSL <- radsl(N = 20, seed = 1)
+#'       ADLB <- radlb(ADSL, visit_format = "WEEK", n_assessments = 7L, seed = 2)
+#'       ADLB <- ADLB %>%
+#'         mutate(AVISITCD = case_when(
+#'             AVISIT == "SCREENING" ~ "SCR",
+#'             AVISIT == "BASELINE" ~ "BL",
+#'             grepl("WEEK", AVISIT) ~ paste("W", stringr::str_extract(AVISIT, "(?<=(WEEK ))[0-9]+")),
+#'             TRUE ~ as.character(NA)),
+#'           AVISITCDN = case_when(
+#'             AVISITCD == "SCR" ~ -2,
+#'             AVISITCD == "BL" ~ 0,
+#'             grepl("W", AVISITCD) ~ as.numeric(gsub("[^0-9]*", "", AVISITCD)),
+#'             TRUE ~ as.numeric(NA)),
+#'           TRTORD = case_when(
+#'             ARMCD == "ARM C" ~ 1,
+#'             ARMCD == "ARM B" ~ 2,
+#'             ARMCD == "ARM A" ~ 3),
+#'           ARM = as.character(arm_mapping[match(ARM, names(arm_mapping))]),
+#'           ARM = factor(ARM) %>% reorder(TRTORD),
+#'           ADY = AVISITCDN)
+#'           '},
+#'     check = FALSE
+#'   ),
 #'   modules = root_modules(
 #'       tm_g_boxplot_av(
 #'         label = "Box Plot",
-#'         dataname = "ALB",
+#'         dataname = "ADLB",
 #'         param_var = "PARAMCD",
-#'         param_choices = param_choices,
-#'         param = param_choices[1],
+#'         param_choices = c("ALT", "CRP", "IGA"),
+#'         param = "ALT",
 #'         yaxis_var = "AVAL",
 #'         yaxis_var_choices = c("AVAL", "BASE", "CHG"),
 #'         rotate_xlab = FALSE,
@@ -128,23 +147,23 @@ tm_g_boxplot_av <- function(label,
                          trt_group = "ARM",
                          color_manual = NULL,
                          shape_manual = NULL,
-                         hline = NULL, 
-                         facet_ncol = NULL, 
+                         hline = NULL,
+                         facet_ncol = NULL,
                          rotate_xlab = FALSE,
                          pre_output = NULL,
                          post_output = NULL,
                          armlabel = NULL,
                          plot_height = c(600, 200, 2000),
                          code_data_processing = NULL) {
-  
+
   args <- as.list(environment())
-  
-  # If there are no choices specified for treatment group/x axis/fact then set the 
-  # appropriate choices variable to the treatment group to enable the display of the treatment 
+
+  # If there are no choices specified for treatment group/x axis/fact then set the
+  # appropriate choices variable to the treatment group to enable the display of the treatment
   # group variable on the UI.
   if (is.null(args$xaxis_var_choices)) args$xaxis_var_choices = args$xaxis_var
   if (is.null(args$facet_var_choices)) args$facet_var_choices = args$facet_var
-  
+
   module(
     label = label,
     filters = dataname,
@@ -170,14 +189,14 @@ tm_g_boxplot_av <- function(label,
 }
 
 ui_g_boxplot_av <- function(id, ...) {
-  
+
   ns <- NS(id)
   a <- list(...)
   inpWidth <- NA
-  
+
   standard_layout(
-    
-    
+
+
     output = div(
       fluidRow(
         uiOutput(ns("plot_ui"))
@@ -199,40 +218,36 @@ ui_g_boxplot_av <- function(id, ...) {
     ),
     encoding =  div(
       tags$label(a$dataname, "Data Settings", class="text-primary"),
-      
+
       optionalSelectInput(inputId = ns("param")
                           , label = " Select a Biomarker"
                           , choices = a$param_choices
                           , selected = a$param
                           , multiple = FALSE
-                          , width = inpWidth
       ),
-      
+
       optionalSelectInput(ns("yaxis_var")
                           , label = "Select a Y-Axis Variable"
                           , choices = a$yaxis_var_choices
                           , selected = a$yaxis_var
                           , multiple = FALSE
-                          , width = inpWidth
       ),
-      
+
       optionalSelectInput(ns("xaxis_var")
                           , label = "Select an X-Axis Variable"
                           , choices = a$xaxis_var_choices
                           , selected = a$xaxis_var
                           , multiple = FALSE
-                          , width = inpWidth
       ),
-      
+
       optionalSelectInput(ns("facet_var")
                           , label = "Facet by"
                           , choices = a$facet_var_choices
                           , selected = a$facet_var
                           , multiple = FALSE
-                          , width = inpWidth
       ),
-      
-      radioButtons(ns("y_filter_by"), 
+
+      radioButtons(ns("y_filter_by"),
                    "Data Constraint:",
                    inline = FALSE,
                    choiceNames = as.list(c("None", a$filter_labs)),
@@ -248,24 +263,24 @@ ui_g_boxplot_av <- function(id, ...) {
                        , style="display: inline-block; vertical-align:center;")
           )
       ),
-      
+
       tags$label("Plot Aesthetic Settings", class="text-primary", style="margin-top: 15px;"),
-      
+
       numericInput(ns("facet_ncol"), "Number of Plots Per Row:", a$facet_ncol, step = 1),
-      
+
       checkboxInput(ns("rotate_xlab"), "Rotate X-Axis Label", a$rotate_xlab),
-      
+
       numericInput(ns("hline"), "Add a Horizontal Line:", a$hline),
-      
+
       uiOutput(ns("yaxis_scale")),
-      
+
       optionalSliderInputValMinMax(ns("plot_height")
                                    , label = "Plot height"
                                    , a$plot_height
                                    , ticks = FALSE
                                    , step = 50
                                    , width = inpWidth),
-      
+
       optionalSliderInputValMinMax(ns("font_size")
                                    , label = "Font Size"
                                    , a$font_size
@@ -274,7 +289,7 @@ ui_g_boxplot_av <- function(id, ...) {
                                    , ticks = FALSE
                                    , width = inpWidth
       ),
-      
+
       optionalSliderInputValMinMax(ns("dot_size")
                                    , label = "Dot Size"
                                    , a$dot_size
@@ -283,7 +298,7 @@ ui_g_boxplot_av <- function(id, ...) {
                                    , ticks = FALSE
                                    , width = inpWidth
       ),
-      
+
       optionalSliderInputValMinMax(ns("alpha")
                                    , label = "Dot Transparency"
                                    , value_min_max = c(0.8, 0.0, 1.0)
@@ -291,12 +306,12 @@ ui_g_boxplot_av <- function(id, ...) {
                                    , ticks = FALSE
                                    , width = inpWidth
       )
-      
+
     )
     # , forms = actionButton(ns("show_rcode"), "Show R Code", width = "100%")
-    
+
   )
-  
+
 }
 
 srv_g_boxplot_av <- function(input, output, session, datasets
@@ -308,14 +323,14 @@ srv_g_boxplot_av <- function(input, output, session, datasets
                           , armlabel
                           , filter_vars, filter_labs
                           , dataname, code_data_processing) {
-  
+
   ns <- session$ns
-  
-  # Get "nice" limits for Y axis. 
+
+  # Get "nice" limits for Y axis.
   get_axis_limits <- function(lo_, hi_, req.n = 2000) {
     hi <- signif(max(hi_, lo_), 6)
     lo <- signif(min(hi_, lo_), 6)
-    
+
     if (req.n == 0) {
       return(list(min = lo, max = hi, step = 0, eqt = (hi == lo)))
     } else if (hi == lo) {
@@ -325,62 +340,62 @@ srv_g_boxplot_av <- function(input, output, session, datasets
       d <- pretty(c(lo, hi), n=1.2*req.n, min.n = 0.5*req.n)
       return(list(min = head(p,1), max = tail(p,1), step = signif(d[2] - d[1], 8), eqt = FALSE))
     }
-  }  
-  
+  }
+
   # Extend is.infinite to include zero length objects.
   is_finite <- function(x){
     if(length(x) == 0) return(FALSE)
     return(is.finite(x))
   }
-  
+
   chunks <- list(
     analysis = "# Not Calculated",
     table = "# Not calculated",
     boxsetup = " ",
     tablesetup =  " "
   )
-  
+
   ## dynamic plot height
   output$plot_ui <- renderUI({
     plot_height <- input$plot_height
     validate(need(plot_height, "need valid plot height"))
-    
+
     plotOutput(ns("boxplot"), height = plot_height,
                brush = brushOpts(id = ns("boxplot_brush"), resetOnNew=T)
     )
   })
-  
+
   output$brush_data <- renderTable({
-    if (nrow(filter_ALB()) > 0 ){
-      
+    if (nrow(filter_ADLB()) > 0 ){
+
       ##--- identify brushed subset of the mtcars data.frame without brushedPoints
       req(input$boxplot_brush)
-      
+
       # I use shorter variable names for better readability
       facet.var <- input$boxplot_brush$mapping$panelvar1  # column used for faceting
       x.axis.var <- input$boxplot_brush$mapping$x  # column used for x-axis
       y.axis.var <- input$boxplot_brush$mapping$y  # column used fo y-axis
       facet.value <- input$boxplot_brush$panelvar1  # level of the brushed facet
-      
+
       # First, subset the data.frame to those rows that match the brushed facet level
-      datfilt <- select(filter_ALB(), "USUBJID", trt_group, input$boxplot_brush$mapping$panelvar1, "AVISITCD", "PARAMCD",
-                        input$xaxis_var, input$yaxis_var, "LOQFL") %>% 
-        droplevels() %>% 
-        filter_at(input$facet_var, all_vars(.== facet.value) )
-      
+      datfilt <- select(filter_ADLB(), "USUBJID", trt_group, input$boxplot_brush$mapping$panelvar1, "AVISITCD", "PARAMCD",
+                        input$xaxis_var, input$yaxis_var, "LOQFL") %>%
+        droplevels() %>%
+        filter_at(input$facet_var, all_vars(.data== facet.value) )
+
       if (!(is.factor(datfilt[[x.axis.var]])| is.numeric(datfilt[[x.axis.var]]))){
         datfilt[[x.axis.var]] <- as.factor(datfilt[[x.axis.var]])
       }
-      
+
       if (!(is.factor(datfilt[[y.axis.var]])| is.numeric(datfilt[[y.axis.var]]))){
         datfilt[[y.axis.var]] <- as.factor(datfilt[[y.axis.var]])
       }
-      
+
       # Next, drop levels not used in the current facet
       #datfilt <- droplevels(datfilt)
-      
+
       # Finally, within this facet, identify points within the brushed ranges
-      datfilt %>% 
+      datfilt %>%
         filter(
           # interpret the factor levels as integers, to match how ggplot2
           # places them on the axes. The 'droplevels' call above ensures that
@@ -389,53 +404,53 @@ srv_g_boxplot_av <- function(input, output, session, datasets
           as.integer(datfilt[[x.axis.var]]) > input$boxplot_brush$xmin,
           datfilt[[y.axis.var]] < input$boxplot_brush$ymax,
           datfilt[[y.axis.var]] > input$boxplot_brush$ymin
-        ) %>% 
+        ) %>%
         arrange_at(
           input$xaxis_var
         )
-      
-      
-      
+
+
+
     } else{
       NULL
     }
   })
-  
+
   # filter data by param and the xmin and xmax values from the filter slider.
-  filter_ALB <- reactive({
-    
-    
+  filter_ADLB <- reactive({
+
+
     param <- input$param
     yaxis_var <- input$yaxis_var
-    
+
     # Select all of the data for the parameter.
-    alb <- datasets$get_data(dataname, filtered = TRUE, reactive = TRUE) %>%
+    ADLB <- datasets$get_data(dataname, filtered = TRUE, reactive = TRUE) %>%
       filter( eval(parse(text = param_var)) == param )
-    
+
     # Only consider filtering on value if there is data to filter, the filter
     # inputs are loaded and that there are some non-missing values present.
     # Then check to see if the filter values have been altered from their default
     # values.  Only if all of these conditions have been met, filter on
     # the values.
     filt_var <- input$y_filter_by
-    if (length(alb) & filt_var != "None" &
+    if (length(ADLB) & filt_var != "None" &
         is_finite(input$ymin) & is_finite(ylimits()$low)) {
       ymin_scale <- input$ymin
       ymax_scale <- input$ymax
       axlim <- get_axis_limits(min(cdata()[,filt_var], na.rm = T)
                                , max(cdata()[,filt_var], na.rm = T), req.n = 0 )
-      
-      if (!axlim$eqt & is_finite(ymin_scale) & is_finite(ymax_scale) & 
+
+      if (!axlim$eqt & is_finite(ymin_scale) & is_finite(ymax_scale) &
           ( ymin_scale != axlim$min | ymax_scale != axlim$max)){
-        
-        alb <- alb %>% 
+
+        ADLB <- ADLB %>%
           filter(ymin_scale <= eval(parse(text = filt_var)) & eval(parse(text = filt_var)) <= ymax_scale)
       }
     }
-    return(alb)
-    
+    return(ADLB)
+
   })
-  
+
   # The current filtered data (by standard Teal filters)
   cdata <- reactive({
     req( input$param)
@@ -443,22 +458,22 @@ srv_g_boxplot_av <- function(input, output, session, datasets
       filter(eval(parse(text = param_var)) == input$param)
     return(ds)
   })
-  
-  # Y axis limits for the current data.  Protect against warning if there is 
+
+  # Y axis limits for the current data.  Protect against warning if there is
   # no data selected.
   ylimits <- reactive({
-    if (nrow(cdata()) == 0 ) 
+    if (nrow(cdata()) == 0 )
       rng <- c( -Inf, Inf)
-    else 
+    else
       rng <- range(cdata()[[input$yaxis_var]], na.rm = TRUE)
-    
+
     return(list(low = rng[1], high = rng[2]))
-  })  
-  
-  # dynamic slider for y-axis - Use ylimits 
+  })
+
+  # dynamic slider for y-axis - Use ylimits
   observe({
-    
-    
+
+
     if (input$y_filter_by == "None") {
       tagList({
         output$ymin_value <- renderUI({NULL})
@@ -469,7 +484,7 @@ srv_g_boxplot_av <- function(input, output, session, datasets
       ybase <- get_axis_limits(min(cdata()[,input$y_filter_by], na.rm = T)
                                , max(cdata()[,input$y_filter_by], na.rm = T)
                                , req.n = 0 )
-      
+
       if (ybase$eqt) {
         output$y_select <- renderUI({
           HTML(
@@ -479,7 +494,7 @@ srv_g_boxplot_av <- function(input, output, session, datasets
       } else {
         output$y_select <- renderUI({NULL})
       }
-      
+
       output$ymin_value <- renderUI({
         if (is_finite(ybase$min) & !ybase$eqt) {
           numericInput(session$ns("ymin")
@@ -489,7 +504,7 @@ srv_g_boxplot_av <- function(input, output, session, datasets
           return(NULL)
         }
       })
-      
+
       output$ymax_value <- renderUI({
         if (is_finite(ybase$max) & !ybase$eqt) {
           numericInput(session$ns("ymax")
@@ -500,7 +515,7 @@ srv_g_boxplot_av <- function(input, output, session, datasets
         }
       })
     }
-    
+
     output$yaxis_scale <- renderUI({
       yax <- get_axis_limits(ylimits()$low, ylimits()$high, req.n = 100)
       if (is_finite(yax$min) & is_finite(yax$max) ) {
@@ -510,13 +525,13 @@ srv_g_boxplot_av <- function(input, output, session, datasets
                       , min = yax$min
                       , max = yax$max
                       , step = yax$step
-                      , value = c(yax$min, yax$max) 
+                      , value = c(yax$min, yax$max)
           )
         })
       }
-    })  
+    })
   })
-  
+
   # If facet selection changes to be the same as x axis selection, set the
   # x axis selection to another value
   observeEvent(input$facet_var,{
@@ -528,7 +543,7 @@ srv_g_boxplot_av <- function(input, output, session, datasets
       updateSelectInput(session,"xaxis_var", selected = s)
     }
   })
-  
+
   observeEvent(input$xaxis_var,{
     x <- input$xaxis_var
     f <- input$facet_var
@@ -538,9 +553,9 @@ srv_g_boxplot_av <- function(input, output, session, datasets
       updateSelectInput(session,"facet_var", selected = s)
     }
   })
-  
+
   output$boxplot <- renderPlot({
-    
+
     filter_var <- input$filter_var
     yaxis_var <- input$yaxis_var
     param <- input$param
@@ -552,15 +567,15 @@ srv_g_boxplot_av <- function(input, output, session, datasets
     alpha <- input$alpha
     xaxis_var <- input$xaxis_var
     facet_var <- input$facet_var
-    
-    # Get the filtered data - Filter by both the right an left filters. 
-    ASL_FILTERED <- datasets$get_data("ASL", reactive = TRUE, filtered = TRUE)
-    ALB <- filter_ALB()
-    
+
+    # Get the filtered data - Filter by both the right an left filters.
+    ADSL_FILTERED <- datasets$get_data("ADSL", reactive = TRUE, filtered = TRUE)
+    ADLB <- filter_ADLB()
+
     ymin_scale <- input$yrange_scale[1]
     ymax_scale <- input$yrange_scale[2]
-    
-    if (input$y_filter_by != "None") {    
+
+    if (input$y_filter_by != "None") {
       ymin <- input$ymin
       ymax <- input$ymax
       if (length(ymin) > 0 & !is.null(ymin)) {
@@ -568,50 +583,50 @@ srv_g_boxplot_av <- function(input, output, session, datasets
                       paste("Minimum filter value greater than maximum filter value")))
       }
     }
-    validate(need(!is.null(ALB) && is.data.frame(ALB), "No data left"))
-    validate(need(nrow(ALB) > 0 , "No observations left"))
-    validate(need(param_var %in% names(ALB),
+    validate(need(!is.null(ADLB) && is.data.frame(ADLB), "No data left"))
+    validate(need(nrow(ADLB) > 0 , "No observations left"))
+    validate(need(param_var %in% names(ADLB),
                   paste("Biomarker parameter variable", param_var, " is not available in data", dataname)))
-    validate(need(param %in% unique(ALB[[param_var]]),
+    validate(need(param %in% unique(ADLB[[param_var]]),
                   paste("Biomarker", param, " is not available in data", dataname)))
-    validate(need(trt_group %in% names(ALB),
+    validate(need(trt_group %in% names(ADLB),
                   paste("Variable", trt_group, " is not available in data", dataname)))
-    validate(need(yaxis_var %in% names(ALB),
+    validate(need(yaxis_var %in% names(ADLB),
                   paste("Variable", yaxis_var, " is not available in data", dataname)))
-    validate(need(xaxis_var %in% names(ALB),
+    validate(need(xaxis_var %in% names(ADLB),
                   paste("Variable", xaxis_var, " is not available in data", dataname)))
-    validate(need(facet_var %in% names(ALB),
+    validate(need(facet_var %in% names(ADLB),
                   paste("Variable", facet_var, " is not available in data", dataname)))
-    validate(need(filter_vars %in% names(ALB),
+    validate(need(filter_vars %in% names(ADLB),
                   paste("Variable", filter_var, " is not available in data", dataname)))
-    
+
     chunks$boxsetup <<- bquote({
       # Units to display, just take the first if there multiples.
-      unit <- ALB %>% 
-        filter(eval(parse(text = param_var)) == param) %>% 
-        select("AVALU") %>% 
-        unique() %>% 
-        top_n(1,1) %>% 
+      unit <- ADLB %>%
+        filter(eval(parse(text = param_var)) == param) %>%
+        select("AVALU") %>%
+        unique() %>%
+        top_n(1,1) %>%
         as.character()
     })
     eval(chunks$boxsetup)
-    
-    data_name <- paste0("ALB", "_FILTERED")
-    assign(data_name, filter_ALB())
-    
+
+    data_name <- paste0("ADLB", "_FILTERED")
+    assign(data_name, filter_ADLB())
+
     # re-establish treatment variable label
     if (trt_group == "ARM"){
-      attributes(ALB_FILTERED$ARM)$label <- "Planned Arm"
+      attributes(ADLB_FILTERED$ARM)$label <- "Planned Arm"
     } else {
-      attributes(ALB_FILTERED$ACTARM)$label <- "Actual Arm"
+      attributes(ADLB_FILTERED$ACTARM)$label <- "Actual Arm"
     }
-    
+
     chunks$analysis <<- call(
       "g_boxplot",
       data = bquote(.(as.name(data_name))),
       biomarker = param,
       yaxis_var = yaxis_var,
-      hline = hline, 
+      hline = hline,
       facet_ncol = facet_ncol,
       rotate_xlab = rotate_xlab,
       trt_group = trt_group,
@@ -627,26 +642,26 @@ srv_g_boxplot_av <- function(input, output, session, datasets
       armlabel = armlabel,
       facet = facet_var
     )
-    
+
     p <- try(eval(chunks$analysis))
     if (is(p, "try-error")) validate(need(FALSE, paste0("could not create plot for box plot:\n\n", p)))
     p
   }
   )
-  
+
   output$table_ui <- renderTable({
-    ALB <- filter_ALB()
-    validate(need(nrow(ALB) > 0 , ""))
-    
+    ADLB <- filter_ADLB()
+    validate(need(nrow(ADLB) > 0 , ""))
+
     param <- input$param
     xaxis_var <- input$yaxis_var
     font_size <- input$font_size
     facet <- ifelse(facet_var_choices, input$facet_var, facet_var)
     facet_var <- input$facet_var
-    
-    data_name <- paste0("ALB", "_FILTERED")
-    assign(data_name, ALB)
-    
+
+    data_name <- paste0("ADLB", "_FILTERED")
+    assign(data_name, ADLB)
+
     chunks$table <<- call(
       "t_summarytable_av",
       data = bquote(.(as.name(data_name))),
@@ -654,13 +669,13 @@ srv_g_boxplot_av <- function(input, output, session, datasets
       param_var = param_var,
       param = param,
       facet_var = facet_var,
-      xaxis_var = xaxis_var, 
+      xaxis_var = xaxis_var,
       font_size = font_size
     )
     t <- try(eval(chunks$table))
     if (is(t, "try-error")) validate(need(FALSE, paste0("could not create table for box plot:\n\n", p)))
     t
-    
+
   })
-  
+
 }

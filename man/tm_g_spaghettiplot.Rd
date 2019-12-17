@@ -4,51 +4,45 @@
 \alias{tm_g_spaghettiplot}
 \title{Spaghetti Plot}
 \usage{
-tm_g_spaghettiplot(label, dataname, param_var, param_choices = param,
-  param, param_var_label = "PARAM", idvar, xvar, yvar,
-  xvar_choices = xvar, yvar_choices = yvar, xvar_level = NULL,
-  filter_var = yvar, filter_var_choices = filter_var, trt_group,
+tm_g_spaghettiplot(label, dataname, param_var, param,
+  param_var_label = "PARAM", idvar, xaxis_var, yaxis_var,
+  xaxis_var_level = NULL, filter_var = yaxis_var, trt_group,
   trt_group_level = NULL, group_stats = "NONE", hline = NULL,
   man_color = NULL, color_comb = NULL, xtick = waiver(),
   xlabel = xtick, rotate_xlab = FALSE, facet_ncol = 2,
-  plot_height = c(600, 200, 2000), font_size = c(12, 8, 20))
+  plot_height = c(600, 200, 2000), font_size = c(12, 8, 20),
+  pre_output = NULL, post_output = NULL)
 }
 \arguments{
 \item{label}{menu item label of the module in the teal app.}
 
-\item{dataname}{analysis data passed to the data argument of teal init. E.g. ADaM structured 
-laboratory data frame ALB.}
+\item{dataname}{analysis data passed to the data argument of teal init.
+E.g. ADaM structured laboratory data frame ADLB.}
 
 \item{param_var}{name of variable containing biomarker codes e.g. PARAMCD.}
 
-\item{param_choices}{list of biomarkers of interest.}
-
 \item{param}{biomarker selected.}
 
-\item{param_var_label}{single name of variable in analysis data that includes parameter labels.}
+\item{param_var_label}{single name of variable in analysis data
+that includes parameter labels.}
 
 \item{idvar}{name of unique subject id variable.}
 
-\item{xvar}{single name of variable in analysis data that is used as x-axis in the plot for the 
-respective goshawk function.}
+\item{xaxis_var}{single name of variable in analysis data
+that is used as x-axis in the plot for the respective goshawk function.}
 
-\item{yvar}{single name of variable in analysis data that is used as summary variable in the 
-respective gshawk function.}
+\item{yaxis_var}{single name of variable in analysis data that is used as
+summary variable in the respective gshawk function.}
 
-\item{xvar_choices}{vector with variable names that can be used as xvar.}
-
-\item{yvar_choices}{vector with variable names that can be used as yvar.}
-
-\item{xvar_level}{vector that can be used to define the factor level of xvar. Only use it when 
-xvar is character or factor.}
+\item{xaxis_var_level}{vector that can be used to define the factor level of xaxis_var.
+Only use it when xaxis_var is character or factor.}
 
 \item{filter_var}{data constraint variable.}
 
-\item{filter_var_choices}{data constraint variable choices.}
-
 \item{trt_group}{name of variable representing treatment group e.g. ARM.}
 
-\item{trt_group_level}{vector that can be used to define factor level of trt_group.}
+\item{trt_group_level}{vector that can be used to define factor
+level of trt_group.}
 
 \item{group_stats}{control group mean or median overlay.}
 
@@ -58,11 +52,11 @@ xvar is character or factor.}
 
 \item{color_comb}{name or hex value for combined treatment color.}
 
-\item{xtick}{numeric vector to define the tick values of x-axis when x variable is numeric. 
-Default value is waive().}
+\item{xtick}{numeric vector to define the tick values of x-axis
+when x variable is numeric. Default value is waive().}
 
-\item{xlabel}{vector with same length of xtick to define the label of x-axis tick values. Default
-value is waive().}
+\item{xlabel}{vector with same length of xtick to define the
+label of x-axis tick values. Default value is waive().}
 
 \item{rotate_xlab}{boolean value indicating whether to rotate x-axis labels}
 
@@ -71,76 +65,107 @@ value is waive().}
 \item{plot_height}{numeric vectors to define the plot height.}
 
 \item{font_size}{control font size for title, x-axis, y-axis and legend font.}
+
+\item{pre_output}{optional, \code{shiny.tag} with text placed before the
+output to put the output into context. For example the
+\code{\link[shiny]{helpText}} elements are useful.}
+
+\item{post_output}{optional, \code{shiny.tag} with text placed before the
+output to put the output into context. For example the
+\code{\link[shiny]{helpText}} elements are useful.}
 }
 \value{
 \code{shiny} object
 }
 \description{
-This teal module renders the UI and calls the function that creates a spaghetti plot.
+This teal module renders the UI and calls the function
+that creates a spaghetti plot.
 }
 \examples{
 
-\dontrun{
-
 # Example using ADaM structure analysis dataset.
 
-library(dplyr)
-library(ggplot2)
-library(goshawk)
 library(random.cdisc.data)
-library(stringr)
-library(teal)
-library(teal.goshawk)
 
 # original ARM value = dose value
-arm_mapping <- list("A: Drug X" = "150mg QD", "B: Placebo" = "Placebo", 
-"C: Combination" = "Combination")
-color_manual <-  c("150mg QD" = "#000000", "Placebo" = "#3498DB", "Combination" = "#E74C3C")
-# assign LOQ flag symbols: circles for "N" and triangles for "Y", squares for "NA"
-shape_manual <-  c("N"  = 1, "Y"  = 2, "NA" = 0)
+arm_mapping <- list("A: Drug X" = "150mg QD",
+                    "B: Placebo" = "Placebo",
+                    "C: Combination" = "Combination")
 
-ASL <- radsl(N = 20, seed = 1)
-ALB <- radlb(ASL, visit_format = "WEEK", n_assessments = 7, seed = 2)
-ALB <- ALB \%>\% 
-mutate(AVISITCD = case_when(
-AVISIT == "SCREENING" ~ "SCR",
-AVISIT == "BASELINE" ~ "BL", grepl("WEEK", AVISIT) ~ paste("W",trimws(substr(AVISIT, start=6, 
-stop=str_locate(AVISIT, "DAY")-1))),
-TRUE ~ as.character(NA))) \%>\%
-mutate(AVISITCDN = case_when(AVISITCD == "SCR" ~ -2,
-AVISITCD == "BL" ~ 0, grepl("W", AVISITCD) ~ as.numeric(gsub("\\\\D+", "", AVISITCD)), 
-TRUE ~ as.numeric(NA))) \%>\%
-# use ARMCD values to order treatment in visualization legend
-mutate(TRTORD = ifelse(grepl("C", ARMCD), 1,
-ifelse(grepl("B", ARMCD), 2,
-ifelse(grepl("A", ARMCD), 3, NA)))) \%>\%
-mutate(ARM = as.character(arm_mapping[match(ARM, names(arm_mapping))])) \%>\%
-mutate(ARM = factor(ARM) \%>\% reorder(TRTORD))
+ADSL <- radsl(cached = TRUE)
+ADLB <- radlb(cached = TRUE)
+ADLB <- ADLB \%>\%
+  mutate(AVISITCD = case_when(
+    AVISIT == "SCREENING" ~ "SCR",
+    AVISIT == "BASELINE" ~ "BL",
+    grepl("WEEK", AVISIT) ~ paste("W", stringr::str_extract(AVISIT, "(?<=(WEEK ))[0-9]+")),
+    TRUE ~ as.character(NA)),
+    AVISITCDN = case_when(
+      AVISITCD == "SCR" ~ -2,
+      AVISITCD == "BL" ~ 0,
+      grepl("W", AVISITCD) ~ as.numeric(gsub("[^0-9]*", "", AVISITCD)),
+      TRUE ~ as.numeric(NA)),
+    AVISITCD = factor(AVISITCD) \%>\% reorder(AVISITCDN),
+    TRTORD = case_when(
+      ARMCD == "ARM C" ~ 1,
+      ARMCD == "ARM B" ~ 2,
+      ARMCD == "ARM A" ~ 3),
+    ARM = as.character(arm_mapping[match(ARM, names(arm_mapping))]),
+    ARM = factor(ARM) \%>\% reorder(TRTORD))
 
-param_choices = c("ALT", "CRP", "IGA")
 
-x <- teal::init(
-  data = list(ASL = ASL, ALB = ALB),
+app <- teal::init(
+  data = cdisc_data(
+    cdisc_dataset("ADSL", ADSL),
+    cdisc_dataset("ADLB", ADLB),
+    code = {'
+      arm_mapping <- list("A: Drug X" = "150mg QD",
+                          "B: Placebo" = "Placebo",
+                          "C: Combination" = "Combination")
+
+      ADSL <- radsl(cached = TRUE)
+      ADLB <- radlb(cached = TRUE)
+      ADLB <- ADLB \%>\%
+        mutate(AVISITCD = case_when(
+            AVISIT == "SCREENING" ~ "SCR",
+            AVISIT == "BASELINE" ~ "BL",
+            grepl("WEEK", AVISIT) ~ paste("W", stringr::str_extract(AVISIT, "(?<=(WEEK ))[0-9]+")),
+            TRUE ~ as.character(NA)),
+          AVISITCDN = case_when(
+            AVISITCD == "SCR" ~ -2,
+            AVISITCD == "BL" ~ 0,
+            grepl("W", AVISITCD) ~ as.numeric(gsub("[^0-9]*", "", AVISITCD)),
+            TRUE ~ as.numeric(NA)),
+          AVISITCD = factor(AVISITCD) \%>\% reorder(AVISITCDN),
+          TRTORD = case_when(
+            ARMCD == "ARM C" ~ 1,
+            ARMCD == "ARM B" ~ 2,
+            ARMCD == "ARM A" ~ 3),
+          ARM = as.character(arm_mapping[match(ARM, names(arm_mapping))]),
+          ARM = factor(ARM) \%>\% reorder(TRTORD))
+          '},
+    check = FALSE
+  ),
   modules = root_modules(
     tm_g_spaghettiplot(
       label = "Spaghetti Plot",
-      dataname = "ALB",
+      dataname = "ADLB",
       param_var = "PARAMCD",
-      param_choices = param_choices,
-      param = param_choices[1],
+      param = choices_selected(c("ALT", "CRP", "IGA"), "ALT"),
       idvar = "USUBJID",
-      xvar = "AVISITCD",
-      yvar = "AVAL",
-      yvar_choices = c("AVAL","CHG", "PCHG"),
-      filter_var = 'NONE',
-      filter_var_choices = c("None" = "NONE", "Screening" = "BASE2", "Baseline" = "BASE"),
+      xaxis_var = choices_selected(c("Analysis Visit Code" = "AVISITCD"), "AVISITCD"),
+      yaxis_var = choices_selected(c("AVAL","CHG", "PCHG"), "AVAL"),
+      filter_var = choices_selected(c("None" = "NONE", "Screening" = "BASE2", "Baseline" = "BASE"), "NONE"),
       trt_group = "ARM",
-      color_comb = "#39ff14"
+      color_comb = "#39ff14",
+      man_color = c('Combination' = "#000000",
+                   'Placebo' = "#fce300",
+                   '150mg QD' = "#5a2f5f")
     )
   )
 )
-
-shinyApp(x$ui, x$server)
+\dontrun{
+shinyApp(app$ui, app$server)
 }
 }
 \author{

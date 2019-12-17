@@ -15,7 +15,33 @@ Description: Modules that produce web interfaces through which visualizations ca
     analysis subject level (ADSL/ASL) and analysis laboratory (ADLB/ALB) data sets. Beyond core 
     variables, Lower Limit of Quantification flag variable (LOQFL) is expected with levels 'Y', 'N'
     or NA.
-Depends: DescTools, dplyr, goshawk, teal, methods, tidyr
+Depends: 
+  R (>= 3.3),
+  goshawk, 
+  shiny,
+  teal
+Imports:
+  DescTools,
+  digest,
+  DT,
+  dplyr, 
+  ggplot2,
+  methods,
+  rlang,
+  shinyjs,
+  stats,
+  teal.devel (>= 0.2.2),
+  tidyr,
+  utils,
+  utils.nest (>= 0.2.0)
+Suggests: 
+  knitr,
+  random.cdisc.data (>= 0.3.0),
+  rmarkdown,
+  stringr,
+  tern (>= 0.6.3),
+  test.nest (>= 0.2.0),
+  testthat (>= 2.1.0)
 License: GPL-2
 Encoding: UTF-8
 LazyData: true

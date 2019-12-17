@@ -2,39 +2,31 @@
 % Please edit documentation in R/tm_g_scatterplot.R
 \name{tm_g_scatterplot}
 \alias{tm_g_scatterplot}
-\title{Scatter Plot}
+\title{Scatter Plot Teal Module For Biomarker Analysis}
 \usage{
-tm_g_scatterplot(label, dataname, param_var, param,
-  param_choices = param, xaxis_var, xaxis_var_choices = xaxis_var,
-  yaxis_var, yaxis_var_choices = yaxis_var, trt_group = "ARM",
-  color_manual = NULL, shape_manual = NULL, facet_ncol = 2,
-  facet = FALSE, facet_var = "ARM", reg_line = FALSE,
-  rotate_xlab = FALSE, hline = NULL, vline = NULL,
-  plot_height = c(500, 200, 2000), font_size = c(12, 8, 20),
-  dot_size = c(1, 1, 12), reg_text_size = c(3, 3, 10),
-  pre_output = NULL, post_output = NULL, code_data_processing = NULL)
+tm_g_scatterplot(label, dataname, param_var, param, xaxis_var, yaxis_var,
+  trt_group = "ARM", color_manual = NULL, shape_manual = NULL,
+  facet_ncol = 2, facet = FALSE, facet_var = "ARM",
+  reg_line = FALSE, rotate_xlab = FALSE, hline = NULL,
+  vline = NULL, plot_height = c(500, 200, 2000), font_size = c(12, 8,
+  20), dot_size = c(1, 1, 12), reg_text_size = c(3, 3, 10),
+  pre_output = NULL, post_output = NULL)
 }
 \arguments{
 \item{label}{menu item label of the module in the teal app.}
 
-\item{dataname}{analysis data passed to the data argument of teal init. E.g. ADaM structured 
-laboratory data frame ALB.}
+\item{dataname}{analysis data passed to the data argument of teal init. E.g. ADaM structured laboratory data frame
+\code{ADLB}.}
 
-\item{param_var}{name of variable containing biomarker codes e.g. PARAMCD.}
+\item{param_var}{name of variable containing biomarker codes e.g. \code{PARAMCD}.}
 
 \item{param}{biomarker selected.}
 
-\item{param_choices}{list of biomarkers of interest.}
+\item{xaxis_var}{name of variable containing biomarker results displayed on x-axis e.g. \code{BASE}.}
 
-\item{xaxis_var}{name of variable containing biomarker results displayed on x-axis e.g. BASE.}
+\item{yaxis_var}{name of variable containing biomarker results displayed on y-axis e.g. \code{AVAL}.}
 
-\item{xaxis_var_choices}{list of variables containing biomarker results choices.}
-
-\item{yaxis_var}{name of variable containing biomarker results displayed on y-axis e.g. AVAL.}
-
-\item{yaxis_var_choices}{list of variables containing biomarker results choices.}
-
-\item{trt_group}{name of variable representing treatment group e.g. ARM.}
+\item{trt_group}{name of variable representing treatment group e.g. \code{ARM}.}
 
 \item{color_manual}{vector of colors applied to treatment values.}
 
@@ -46,8 +38,8 @@ laboratory data frame ALB.}
 
 \item{facet_var}{variable to use for treatment facetting.}
 
-\item{reg_line}{include regression line and annotations for slope and coefficient in 
-visualization. Use with facet TRUE.}
+\item{reg_line}{include regression line and annotations for slope and coefficient in visualization. Use with facet
+TRUE.}
 
 \item{rotate_xlab}{45 degree rotation of x-axis values.}
 
@@ -70,72 +62,86 @@ output to put the output into context. For example the
 \item{post_output}{optional, \code{shiny.tag} with text placed before the
 output to put the output into context. For example the
 \code{\link[shiny]{helpText}} elements are useful.}
-
-\item{code_data_processing}{TODO}
 }
 \description{
-This teal module renders the UI and calls the function that creates a scatter plot.
-}
-\details{
-This module displays a scatter plot. link to specification file \url{http://rstudio.com}
+TODO: a bit more info why the module is needed
 }
 \examples{
-
-\dontrun{
-
 # Example using ADaM structure analysis dataset.
-
-library(dplyr)
-library(ggplot2)
-library(goshawk)
 library(random.cdisc.data)
-library(stringr)
-library(teal)
-library(teal.goshawk)
 
 # original ARM value = dose value
-arm_mapping <- list("A: Drug X" = "150mg QD", "B: Placebo" = "Placebo", 
-"C: Combination" = "Combination")
-color_manual <-  c("150mg QD" = "#000000", "Placebo" = "#3498DB", "Combination" = "#E74C3C")
-# assign LOQ flag symbols: circles for "N" and triangles for "Y", squares for "NA"
-shape_manual <-  c("N"  = 1, "Y"  = 2, "NA" = 0)
+arm_mapping <- list("A: Drug X" = "150mg QD",
+                    "B: Placebo" = "Placebo",
+                    "C: Combination" = "Combination")
 
 ADSL <- radsl(N = 20, seed = 1)
 ADLB <- radlb(ADSL, visit_format = "WEEK", n_assessments = 7L, seed = 2)
-ADLB <- ADLB \%>\% 
-mutate(AVISITCD = case_when(
-AVISIT == "SCREENING" ~ "SCR",
-AVISIT == "BASELINE" ~ "BL", grepl("WEEK", AVISIT) ~ paste("W",trimws(substr(AVISIT, start=6, 
-stop=str_locate(AVISIT, "DAY")-1))),
-TRUE ~ as.character(NA))) \%>\%
-mutate(AVISITCDN = case_when(AVISITCD == "SCR" ~ -2,
-AVISITCD == "BL" ~ 0, grepl("W", AVISITCD) ~ as.numeric(gsub("\\\\D+", "", AVISITCD)), 
-TRUE ~ as.numeric(NA))) \%>\%
-# use ARMCD values to order treatment in visualization legend
-mutate(TRTORD = ifelse(grepl("C", ARMCD), 1,
-ifelse(grepl("B", ARMCD), 2,
-ifelse(grepl("A", ARMCD), 3, NA)))) \%>\%
-mutate(ARM = as.character(arm_mapping[match(ARM, names(arm_mapping))])) \%>\%
-mutate(ARM = factor(ARM) \%>\% reorder(TRTORD))
+ADLB <- ADLB \%>\%
+  mutate(AVISITCD = case_when(
+      AVISIT == "SCREENING" ~ "SCR",
+      AVISIT == "BASELINE" ~ "BL",
+      grepl("WEEK", AVISIT) ~ paste("W", stringr::str_extract(AVISIT, "(?<=(WEEK ))[0-9]+")),
+      TRUE ~ as.character(NA)),
+    AVISITCDN = case_when(
+      AVISITCD == "SCR" ~ -2,
+      AVISITCD == "BL" ~ 0,
+      grepl("W", AVISITCD) ~ as.numeric(gsub("[^0-9]*", "", AVISITCD)),
+      TRUE ~ as.numeric(NA)),
+    AVISITCD = factor(AVISITCD) \%>\% reorder(AVISITCDN),
+    TRTORD = case_when(
+      ARMCD == "ARM C" ~ 1,
+      ARMCD == "ARM B" ~ 2,
+      ARMCD == "ARM A" ~ 3),
+    ARM = as.character(arm_mapping[match(ARM, names(arm_mapping))]),
+    ARM = factor(ARM) \%>\% reorder(TRTORD))
 
-param_choices = c("ALT", "CRP", "IGA")
 
-x <- teal::init(
-  data = list(ADSL = ADSL, ADLB = ADLB),
+app <- init(
+  data = cdisc_data(
+    cdisc_dataset("ADSL", ADSL),
+    cdisc_dataset("ADLB", ADLB),
+    code = {'
+      arm_mapping <- list("A: Drug X" = "150mg QD",
+                          "B: Placebo" = "Placebo",
+                          "C: Combination" = "Combination")
+
+      ADSL <- radsl(N = 20, seed = 1)
+      ADLB <- radlb(ADSL, visit_format = "WEEK", n_assessments = 7L, seed = 2)
+      ADLB <- ADLB \%>\%
+        mutate(AVISITCD = case_when(
+            AVISIT == "SCREENING" ~ "SCR",
+            AVISIT == "BASELINE" ~ "BL",
+            grepl("WEEK", AVISIT) ~ paste("W", stringr::str_extract(AVISIT, "(?<=(WEEK ))[0-9]+")),
+            TRUE ~ as.character(NA)),
+          AVISITCDN = case_when(
+            AVISITCD == "SCR" ~ -2,
+            AVISITCD == "BL" ~ 0,
+            grepl("W", AVISITCD) ~ as.numeric(gsub("[^0-9]*", "", AVISITCD)),
+            TRUE ~ as.numeric(NA)),
+            AVISITCD = factor(AVISITCD) \%>\% reorder(AVISITCDN),
+          TRTORD = case_when(
+            ARMCD == "ARM C" ~ 1,
+            ARMCD == "ARM B" ~ 2,
+            ARMCD == "ARM A" ~ 3),
+          ARM = as.character(arm_mapping[match(ARM, names(arm_mapping))]),
+          ARM = factor(ARM) \%>\% reorder(TRTORD))
+          '},
+    check = FALSE
+  ),
   modules = root_modules(
     tm_g_scatterplot(
        label = "Scatter Plot",
        dataname = "ADLB",
        param_var = "PARAMCD",
-       param_choices = param_choices,
-       param = param_choices[1],
-       xaxis_var = "BASE",
-       xaxis_var_choices = c("AVAL", "BASE", "CHG", "PCHG", "AVALL2"),
-       yaxis_var = "AVAL",
-       yaxis_var_choices = c("AVAL", "BASE", "CHG", "PCHG", "AVALL2"),
+       param = choices_selected(c("ALT", "CRP", "IGA"), "ALT"),
+       xaxis_var = choices_selected(c("AVAL", "BASE", "CHG", "PCHG"), "BASE"),
+       yaxis_var = choices_selected(c("AVAL", "BASE", "CHG", "PCHG"), "AVAL"),
        trt_group = "ARM",
-       color_manual = color_manual,
-       shape_manual = shape_manual,
+       color_manual = c("150mg QD" = "#000000",
+                        "Placebo" = "#3498DB",
+                        "Combination" = "#E74C3C"),
+       shape_manual = c("N"  = 1, "Y"  = 2, "NA" = 0),
        plot_height = c(500, 200, 2000),
        facet_ncol = 2,
        facet = FALSE,
@@ -148,8 +154,8 @@ x <- teal::init(
   )
 )
 
-shinyApp(x$ui, x$server)
-
+\dontrun{
+shinyApp(app$ui, app$server)
 }
 }
 \author{
