@@ -335,7 +335,7 @@ srv_g_spaghettiplot <- function(input,
       select(ANL, "USUBJID", trt_group, "PARAMCD", xvar, yvar, "LOQFL"),
       input$spaghettiplot_brush
     )
-    df <- df[,!(names(df) %in% c(xvar))]
+    df <- df[order(df$PARAMCD, df[[trt_group]], df$USUBJID, df[[xvar]]), ]
     numeric_cols <- names(select_if(df, is.numeric))
 
     DT::datatable(df, rownames = FALSE) %>%
