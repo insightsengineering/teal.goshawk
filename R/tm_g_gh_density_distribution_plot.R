@@ -15,7 +15,7 @@
 #' @param rotate_xlab 45 degree rotation of x-axis values.
 #'
 #' @inheritParams teal.devel::standard_layout
-#' @inheritParams tm_g_scatterplot
+#' @inheritParams tm_g_gh_scatterplot
 #'
 #'
 #' @author Nick Paszty (npaszty) paszty.nicholas@gene.com
@@ -100,7 +100,7 @@
 #'     check = TRUE
 #'   ),
 #'   modules = root_modules(
-#'     tm_g_density_distribution_plot(
+#'     tm_g_gh_density_distribution_plot(
 #'       label = "Density Distribution Plot",
 #'       dataname = "ADLB",
 #'       param_var = "PARAMCD",
@@ -120,22 +120,22 @@
 #' \dontrun{
 #' shinyApp(app$ui, app$server)
 #' }
-tm_g_density_distribution_plot <- function(label,
-                                           dataname,
-                                           param_var,
-                                           param,
-                                           xaxis_var,
-                                           trt_group = "ARM",
-                                           color_manual = NULL,
-                                           color_comb = NULL,
-                                           plot_height = c(500, 200, 2000),
-                                           font_size = c(12, 8, 20),
-                                           line_size = c(1, .25, 3),
-                                           hline = NULL,
-                                           facet_ncol = 2L,
-                                           rotate_xlab = FALSE,
-                                           pre_output = NULL,
-                                           post_output = NULL) {
+tm_g_gh_density_distribution_plot <- function(label,
+                                              dataname,
+                                              param_var,
+                                              param,
+                                              xaxis_var,
+                                              trt_group = "ARM",
+                                              color_manual = NULL,
+                                              color_comb = NULL,
+                                              plot_height = c(500, 200, 2000),
+                                              font_size = c(12, 8, 20),
+                                              line_size = c(1, .25, 3),
+                                              hline = NULL,
+                                              facet_ncol = 2L,
+                                              rotate_xlab = FALSE,
+                                              pre_output = NULL,
+                                              post_output = NULL) {
   stopifnot(
     is_character_single(label),
 
@@ -193,7 +193,7 @@ ui_g_density_distribution_plot <- function(id, ...) {
       templ_ui_dataname(a$dataname),
       templ_ui_param(ns, a$param$choices, a$param$selected), # required by constr_anl_chunks
       templ_ui_xy_vars(ns, a$xaxis_var$choices, a$xaxis_var$selected,
-        ychoices = NULL, yselected = NULL
+                       ychoices = NULL, yselected = NULL
       ),
       templ_ui_constraint(ns),
       panel_group(

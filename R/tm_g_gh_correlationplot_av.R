@@ -115,7 +115,7 @@
 #'     check = FALSE
 #'   ),
 #'   modules = root_modules(
-#'     tm_g_correlationplot_av(
+#'     tm_g_gh_correlationplot_av(
 #'       label = "Correlation Plot",
 #'       dataname = "ADLB",
 #'       param_var = "PARAMCD",
@@ -147,33 +147,33 @@
 #'
 #'}
 
-tm_g_correlationplot_av <- function(label,
-                                 dataname,
-                                 param_var,
-                                 xaxis_param = xaxis_param,
-                                 xaxis_param_choices = xaxis_param,
-                                 xaxis_var = xaxis_var,
-                                 xaxis_var_choices = xaxis_var,
-                                 yaxis_param = yaxis_param,
-                                 yaxis_param_choices = yaxis_param,
-                                 yaxis_var = yaxis_var,
-                                 yaxis_var_choices = yaxis_var,
-                                 trt_group = "ARM",
-                                 color_manual = NULL,
-                                 shape_manual = NULL,
-                                 facet_ncol = 2,
-                                 facet_var = "ACTARM",
-                                 reg_line = FALSE,
-                                 rotate_xlab = FALSE,
-                                 hline = NULL,
-                                 vline = NULL,
-                                 plot_height = c(500, 200, 2000),
-                                 font_size = c(12, 8, 20),
-                                 dot_size = c(1, 1, 12),
-                                 reg_text_size = c(3, 3, 10),
-                                 pre_output = NULL,
-                                 post_output = NULL,
-                                 code_data_processing = NULL) {
+tm_g_gh_correlationplot_av <- function(label,
+                                       dataname,
+                                       param_var,
+                                       xaxis_param = xaxis_param,
+                                       xaxis_param_choices = xaxis_param,
+                                       xaxis_var = xaxis_var,
+                                       xaxis_var_choices = xaxis_var,
+                                       yaxis_param = yaxis_param,
+                                       yaxis_param_choices = yaxis_param,
+                                       yaxis_var = yaxis_var,
+                                       yaxis_var_choices = yaxis_var,
+                                       trt_group = "ARM",
+                                       color_manual = NULL,
+                                       shape_manual = NULL,
+                                       facet_ncol = 2,
+                                       facet_var = "ACTARM",
+                                       reg_line = FALSE,
+                                       rotate_xlab = FALSE,
+                                       hline = NULL,
+                                       vline = NULL,
+                                       plot_height = c(500, 200, 2000),
+                                       font_size = c(12, 8, 20),
+                                       dot_size = c(1, 1, 12),
+                                       reg_text_size = c(3, 3, 10),
+                                       pre_output = NULL,
+                                       post_output = NULL,
+                                       code_data_processing = NULL) {
 
   args <- as.list(environment())
 
@@ -250,9 +250,9 @@ ui_g_correlationplot_av <- function(id, ...) {
 }
 
 srv_g_correlationplot_av <- function(input, output, session, datasets, dataname,
-                                  param_var, xaxis_param, xaxis_var, yaxis_param, yaxis_var,
-                                  trt_group, facet_var, color_manual, shape_manual,
-                                  code_data_processing) {
+                                     param_var, xaxis_param, xaxis_var, yaxis_param, yaxis_var,
+                                     trt_group, facet_var, color_manual, shape_manual,
+                                     code_data_processing) {
 
   ns <- session$ns
 
