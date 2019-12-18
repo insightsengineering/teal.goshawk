@@ -110,7 +110,7 @@
 #'     check = FALSE
 #'   ),
 #'   modules = root_modules(
-#'       tm_g_boxplot_av(
+#'       tm_g_gh_boxplot_av(
 #'         label = "Box Plot",
 #'         dataname = "ADLB",
 #'         param_var = "PARAMCD",
@@ -131,30 +131,30 @@
 #'
 #'}
 
-tm_g_boxplot_av <- function(label,
-                         dataname,
-                         param_var,
-                         param_choices = param,
-                         param,
-                         yaxis_var = "AVAL",
-                         yaxis_var_choices = c("AVAL", "CHG"),
-                         xaxis_var = "AVISITCD",
-                         xaxis_var_choices = NULL,
-                         facet_var = "ARM",
-                         facet_var_choices = NULL,
-                         filter_vars = c("BASE2", "BASE"),
-                         filter_labs = c("Screening", "Baseline"),
-                         trt_group = "ARM",
-                         color_manual = NULL,
-                         shape_manual = NULL,
-                         hline = NULL,
-                         facet_ncol = NULL,
-                         rotate_xlab = FALSE,
-                         pre_output = NULL,
-                         post_output = NULL,
-                         armlabel = NULL,
-                         plot_height = c(600, 200, 2000),
-                         code_data_processing = NULL) {
+tm_g_gh_boxplot_av <- function(label,
+                               dataname,
+                               param_var,
+                               param_choices = param,
+                               param,
+                               yaxis_var = "AVAL",
+                               yaxis_var_choices = c("AVAL", "CHG"),
+                               xaxis_var = "AVISITCD",
+                               xaxis_var_choices = NULL,
+                               facet_var = "ARM",
+                               facet_var_choices = NULL,
+                               filter_vars = c("BASE2", "BASE"),
+                               filter_labs = c("Screening", "Baseline"),
+                               trt_group = "ARM",
+                               color_manual = NULL,
+                               shape_manual = NULL,
+                               hline = NULL,
+                               facet_ncol = NULL,
+                               rotate_xlab = FALSE,
+                               pre_output = NULL,
+                               post_output = NULL,
+                               armlabel = NULL,
+                               plot_height = c(600, 200, 2000),
+                               code_data_processing = NULL) {
 
   args <- as.list(environment())
 
@@ -315,14 +315,14 @@ ui_g_boxplot_av <- function(id, ...) {
 }
 
 srv_g_boxplot_av <- function(input, output, session, datasets
-                          , facet_var, facet_var_choices
-                          , xaxis_var, xaxis_var_choices
-                          , param_var, yaxis_var
-                          , trt_group
-                          , color_manual, shape_manual
-                          , armlabel
-                          , filter_vars, filter_labs
-                          , dataname, code_data_processing) {
+                             , facet_var, facet_var_choices
+                             , xaxis_var, xaxis_var_choices
+                             , param_var, yaxis_var
+                             , trt_group
+                             , color_manual, shape_manual
+                             , armlabel
+                             , filter_vars, filter_labs
+                             , dataname, code_data_processing) {
 
   ns <- session$ns
 

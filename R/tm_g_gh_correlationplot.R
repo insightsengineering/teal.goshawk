@@ -96,7 +96,7 @@
 #'     check = FALSE
 #'   ),
 #'   modules = root_modules(
-#'     tm_g_correlationplot(
+#'     tm_g_gh_correlationplot(
 #'        label = "Correlation Plot",
 #'        dataname = "ADLB",
 #'        param_var = "PARAMCD",
@@ -125,29 +125,29 @@
 #' shinyApp(app$ui, app$server)
 #' }
 #'
-tm_g_correlationplot <- function(label,
-                             dataname,
-                             param_var = "PARAMCD",
-                             xaxis_param = "ALT",
-                             xaxis_var = "BASE",
-                             yaxis_param = "CRP",
-                             yaxis_var = "AVAL",
-                             trt_group = "ARM",
-                             color_manual = NULL,
-                             shape_manual = NULL,
-                             facet_ncol = 2,
-                             facet = FALSE,
-                             facet_var = "ARM",
-                             reg_line = FALSE,
-                             rotate_xlab = FALSE,
-                             hline = NULL,
-                             vline = NULL,
-                             plot_height = c(500, 200, 2000),
-                             font_size = c(12, 8, 20),
-                             dot_size = c(1, 1, 12),
-                             reg_text_size = c(3, 3, 10),
-                             pre_output = NULL,
-                             post_output = NULL) {
+tm_g_gh_correlationplot <- function(label,
+                                    dataname,
+                                    param_var = "PARAMCD",
+                                    xaxis_param = "ALT",
+                                    xaxis_var = "BASE",
+                                    yaxis_param = "CRP",
+                                    yaxis_var = "AVAL",
+                                    trt_group = "ARM",
+                                    color_manual = NULL,
+                                    shape_manual = NULL,
+                                    facet_ncol = 2,
+                                    facet = FALSE,
+                                    facet_var = "ARM",
+                                    reg_line = FALSE,
+                                    rotate_xlab = FALSE,
+                                    hline = NULL,
+                                    vline = NULL,
+                                    plot_height = c(500, 200, 2000),
+                                    font_size = c(12, 8, 20),
+                                    dot_size = c(1, 1, 12),
+                                    reg_text_size = c(3, 3, 10),
+                                    pre_output = NULL,
+                                    post_output = NULL) {
 
   stopifnot(is.choices_selected(xaxis_param))
   stopifnot(is.choices_selected(yaxis_param))
@@ -219,15 +219,15 @@ ui_g_correlationplot <- function(id, ...) {
 
 #' @importFrom goshawk g_correlationplot
 srv_g_correlationplot <- function(input,
-                              output,
-                              session,
-                              datasets,
-                              dataname,
-                              param_var,
-                              trt_group,
-                              facet_var,
-                              color_manual,
-                              shape_manual) {
+                                  output,
+                                  session,
+                                  datasets,
+                                  dataname,
+                                  param_var,
+                                  trt_group,
+                                  facet_var,
+                                  color_manual,
+                                  shape_manual) {
 
   ns <- session$ns
 
@@ -477,10 +477,10 @@ srv_g_correlationplot <- function(input,
       chunks = private_chunks,
       id = "ANL_attributes",
       expression = if (trt_group == "ARM") {
-          bquote(attr(ANL_TRANSPOSED$ARM, "label") <- "Planned Arm")
-        } else {
-          bquote(attr(ANL_TRANSPOSED[[.(trt_group)]], "label") <- "Actual Arm")
-        }
+        bquote(attr(ANL_TRANSPOSED$ARM, "label") <- "Planned Arm")
+      } else {
+        bquote(attr(ANL_TRANSPOSED[[.(trt_group)]], "label") <- "Actual Arm")
+      }
     )
     chunks_push_new_line(private_chunks)
 
