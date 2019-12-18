@@ -110,7 +110,7 @@
 #'     check = FALSE
 #'   ),
 #'   modules = root_modules(
-#'     tm_g_spaghettiplot(
+#'     tm_g_gh_spaghettiplot(
 #'       label = "Spaghetti Plot",
 #'       dataname = "ADLB",
 #'       param_var = "PARAMCD",
@@ -118,7 +118,8 @@
 #'       idvar = "USUBJID",
 #'       xaxis_var = choices_selected(c("Analysis Visit Code" = "AVISITCD"), "AVISITCD"),
 #'       yaxis_var = choices_selected(c("AVAL","CHG", "PCHG"), "AVAL"),
-#'       filter_var = choices_selected(c("None" = "NONE", "Screening" = "BASE2", "Baseline" = "BASE"), "NONE"),
+#'       filter_var = choices_selected(c("None" = "NONE", "Screening" = "BASE2", "Baseline" = "BASE"),
+#'        "NONE"),
 #'       trt_group = "ARM",
 #'       color_comb = "#39ff14",
 #'       man_color = c('Combination' = "#000000",
@@ -131,30 +132,30 @@
 #' shinyApp(app$ui, app$server)
 #' }
 
-tm_g_spaghettiplot <- function(label,
-                               dataname,
-                               param_var,
-                               param,
-                               param_var_label = "PARAM",
-                               idvar,
-                               xaxis_var,
-                               yaxis_var,
-                               xaxis_var_level = NULL,
-                               filter_var = yaxis_var,
-                               trt_group,
-                               trt_group_level = NULL,
-                               group_stats = "NONE",
-                               hline = NULL,
-                               man_color = NULL,
-                               color_comb = NULL,
-                               xtick = waiver(),
-                               xlabel = xtick,
-                               rotate_xlab = FALSE,
-                               facet_ncol = 2,
-                               plot_height = c(600, 200, 2000),
-                               font_size = c(12, 8, 20),
-                               pre_output = NULL,
-                               post_output = NULL) {
+tm_g_gh_spaghettiplot <- function(label,
+                                  dataname,
+                                  param_var,
+                                  param,
+                                  param_var_label = "PARAM",
+                                  idvar,
+                                  xaxis_var,
+                                  yaxis_var,
+                                  xaxis_var_level = NULL,
+                                  filter_var = yaxis_var,
+                                  trt_group,
+                                  trt_group_level = NULL,
+                                  group_stats = "NONE",
+                                  hline = NULL,
+                                  man_color = NULL,
+                                  color_comb = NULL,
+                                  xtick = waiver(),
+                                  xlabel = xtick,
+                                  rotate_xlab = FALSE,
+                                  facet_ncol = 2,
+                                  plot_height = c(600, 200, 2000),
+                                  font_size = c(12, 8, 20),
+                                  pre_output = NULL,
+                                  post_output = NULL) {
 
   stopifnot(is.choices_selected(param))
   stopifnot(is.choices_selected(xaxis_var))
@@ -335,7 +336,7 @@ srv_g_spaghettiplot <- function(input,
       select(ANL, "USUBJID", trt_group, "PARAMCD", xvar, yvar, "LOQFL"),
       input$spaghettiplot_brush
     )
-    df <- df[,!(names(df) %in% c(xvar))]
+    df <- df[order(df$PARAMCD, df[[trt_group]], df$USUBJID, df[[xvar]]), ]
     numeric_cols <- names(select_if(df, is.numeric))
 
     DT::datatable(df, rownames = FALSE) %>%
