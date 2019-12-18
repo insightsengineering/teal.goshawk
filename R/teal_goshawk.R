@@ -5,7 +5,7 @@
 #'
 #' @docType package
 #'
-#' @name teal_goshawk_core_packages
+#' @name teal_goshawk
 #'
 #' @import DescTools
 #' @import dplyr

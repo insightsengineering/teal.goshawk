@@ -106,7 +106,7 @@
 #'     check = FALSE
 #'   ),
 #'   modules = root_modules(
-#'       tm_g_boxplot(
+#'       tm_g_gh_boxplot(
 #'         label = "Box Plot",
 #'         dataname = "ADLB",
 #'         param_var = "PARAMCD",
@@ -124,26 +124,26 @@
 #' shinyApp(app$ui, app$server)
 #'}
 
-tm_g_boxplot <- function(label,
-                         dataname,
-                         param_var,
-                         param,
-                         yaxis_var = choices_selected(c("AVAL", "CHG"), "AVAL"),
-                         xaxis_var = choices_selected("AVISITCD", "AVISITCD"),
-                         facet_var = choices_selected("ARM", "ARM"),
-                         trt_group = "ARM",
-                         armlabel = NULL,
-                         color_manual = NULL,
-                         shape_manual = NULL,
-                         facet_ncol = NULL,
-                         rotate_xlab = FALSE,
-                         hline = NULL,
-                         plot_height = c(600, 200, 2000),
-                         font_size = c(12, 8, 20),
-                         dot_size = c(2, 1, 12),
-                         alpha = c(0.8, 0.0, 1.0),
-                         pre_output = NULL,
-                         post_output = NULL) {
+tm_g_gh_boxplot <- function(label,
+                            dataname,
+                            param_var,
+                            param,
+                            yaxis_var = choices_selected(c("AVAL", "CHG"), "AVAL"),
+                            xaxis_var = choices_selected("AVISITCD", "AVISITCD"),
+                            facet_var = choices_selected("ARM", "ARM"),
+                            trt_group = "ARM",
+                            armlabel = NULL,
+                            color_manual = NULL,
+                            shape_manual = NULL,
+                            facet_ncol = NULL,
+                            rotate_xlab = FALSE,
+                            hline = NULL,
+                            plot_height = c(600, 200, 2000),
+                            font_size = c(12, 8, 20),
+                            dot_size = c(2, 1, 12),
+                            alpha = c(0.8, 0.0, 1.0),
+                            pre_output = NULL,
+                            post_output = NULL) {
   stopifnot(
     is_character_single(label),
     is_character_single(dataname),
@@ -279,7 +279,7 @@ srv_g_boxplot <- function(input,
     validate_has_variable(anl_chunks()$ANL, xaxis,
                           sprintf("Variable %s is not available in data %s", xaxis, dataname))
     validate_has_variable(anl_chunks()$ANL, facet_var,
-                           sprintf("Variable %s is not available in data %s", facet_var, dataname))
+                          sprintf("Variable %s is not available in data %s", facet_var, dataname))
     chunks_push(
       chunks = private_chunks,
       id = "boxplot",
@@ -357,7 +357,7 @@ srv_g_boxplot <- function(input,
     DT::datatable(tbl, rownames = FALSE) %>%
       DT::formatRound(numeric_cols, 4)
 
-    })
+  })
 
   # dynamic plot height and brushing
   output$plot_ui <- renderUI({
