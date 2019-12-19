@@ -611,7 +611,7 @@ srv_g_correlationplot <- function(input,
 
     numeric_cols <- names(select_if(df, is.numeric))
 
-    DT::datatable(df, rownames = FALSE) %>%
+    DT::datatable(df, rownames = FALSE, options = list(scrollX = TRUE)) %>%
       DT::formatRound(numeric_cols, 4)
   })
 
