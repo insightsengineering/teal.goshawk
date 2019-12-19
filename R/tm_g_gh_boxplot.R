@@ -341,6 +341,11 @@ srv_g_boxplot <- function(input,
 
   main_code <- reactive({
     private_chunks <- create_table()
+    chunks_push(
+      chunks = private_chunks,
+      id = "output",
+      expression = quote({plot})
+    )
     init_chunks(private_chunks)
     private_chunks
   })
