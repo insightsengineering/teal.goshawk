@@ -1,7 +1,8 @@
 Package: teal.goshawk
 Type: Package
-Title: I2ON biomarker teal modules
-Version: 0.1.0
+Title: Longitudinal visualization teal modules
+Date: 2019-12-17
+Version: 0.1.1
 Authors@R: c(
   person("Nick", "Paszty", email = "nick.paszty@gene.com", role = c("aut", "cre")),
   person("Wenyi", "Liu", email = "liu.wenyi@roche.com", role = c("aut")),
@@ -9,13 +10,38 @@ Authors@R: c(
   person("Balazs", "Toth", email = "toth.balazs@gene.com", role = c("aut")),
   person("Adrian", "Waddell", email = "adrian.waddell@roche.com", role = "ctb")
   )
-Description: Modules that produce web interfaces through which visualizations can be dynamically
-    modified and displayed. These included box plot, density distribution plot, line plot, scatter 
+Description: Modules that produce web interfaces through which longitudinal visualizations can be dynamically
+    modified and displayed. These included box plot, correlation plot, density distribution plot, line plot, scatter 
     plot and spaghetti plot with accompanying summary. Data are expected in ADaM structure. Requires 
-    analysis subject level (ADSL/ASL) and analysis laboratory (ADLB/ALB) data sets. Beyond core 
+    analysis subject level (ADSL) and analysis laboratory (ADLB) data sets. Beyond core 
     variables, Lower Limit of Quantification flag variable (LOQFL) is expected with levels 'Y', 'N'
     or NA.
-Depends: DescTools, dplyr, goshawk, teal, methods, tidyr
+Depends: 
+  R (>= 3.3),
+  goshawk (>= 0.1.1), 
+  shiny,
+  teal
+Imports:
+  DescTools,
+  DT,
+  dplyr, 
+  ggplot2,
+  methods,
+  rlang,
+  shinyjs,
+  stats,
+  teal.devel (>= 0.2.3),
+  tidyr,
+  utils,
+  utils.nest (>= 0.2.1)
+Suggests: 
+  knitr,
+  random.cdisc.data (>= 0.3.1),
+  rmarkdown,
+  stringr,
+  tern (>= 0.6.4),
+  test.nest (>= 0.2.1),
+  testthat (>= 2.1.0)
 License: GPL-2
 Encoding: UTF-8
 LazyData: true
