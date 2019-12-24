@@ -316,8 +316,8 @@ srv_g_correlationplot <- function(input,
     visit_freq <- unique(ANL$AVISITCD)
 
     # get min max values
-    if ((constraint_var == "BASE2" && any(grepl("SCR", visit_freq))) ||
-        (constraint_var == "BASE" && any(grepl("BL", visit_freq)))) {
+    if ((constraint_var == "BASE2" & any(grepl("SCR", visit_freq))) ||
+        (constraint_var == "BASE" & any(grepl("BL", visit_freq)))) {
 
       val <- na.omit(switch(
         constraint_var,
@@ -326,27 +326,35 @@ srv_g_correlationplot <- function(input,
         stop(paste(constraint_var, "not allowed"))
       ))
 
-      validate_has_elements(val, "filtered data has no rows")
+      if (length(val) == 0 || all(is.na(val))) {
+        shinyjs::show("all_na")
+        shinyjs::hide("constraint_range")
+        args <- list(
+          min = list(label = "Min", min = 0, max = 0, value = 0),
+          max = list(label = "Max", min = 0, max = 0, value = 0)
+        )
+        update_min_max(session, args)
+      } else {
+        rng <- range(val, na.rm = TRUE)
 
-      rng <- range(val)
+        minmax <- c(floor(rng[1] * 1000) / 1000,  ceiling(rng[2] * 1000) / 1000)
 
-      minmax <- c(floor(rng[1] * 1000) / 1000,  ceiling(rng[2] * 1000) / 1000)
+        label_min <- sprintf("Min (%s)", minmax[1])
+        label_max <- sprintf("Max (%s)", minmax[2])
 
-      label_min <- sprintf("Min (%s)", minmax[1])
-      label_max <- sprintf("Max (%s)", minmax[2])
+        args <- list(
+          min = list(label = label_min, min = minmax[1], max = minmax[2], value = minmax[1]),
+          max = list(label = label_max, min = minmax[1], max = minmax[2], value = minmax[2])
+        )
 
-      args <- list(
-        min = list(label = label_min, min = minmax[1], max = minmax[2], value = minmax[1]),
-        max = list(label = label_max, min = minmax[1], max = minmax[2], value = minmax[2])
-      )
-
-      update_min_max(session, args)
-
-      shinyjs::show("constraint_range") # update before show
-
-    } else {
+        update_min_max(session, args)
+        shinyjs::show("constraint_range") # update before show
+        shinyjs::hide("all_na")
+      }
+    } else if (constraint_var == "NONE") {
 
       shinyjs::hide("constraint_range") # hide before update
+      shinyjs::hide("all_na")
 
       # force update (and thus refresh) on different constraint_var -> pass unique value for each constraint_var name
       args <- list(
@@ -355,6 +363,8 @@ srv_g_correlationplot <- function(input,
       )
 
       update_min_max(session, args)
+    } else {
+      stop("invalid contraint_var", contraint_var)
     }
   })
 
