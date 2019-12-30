@@ -242,7 +242,7 @@ constr_anl_chunks <- function(session, input, datasets, dataname, param_id, para
 
       update_min_max(session, args)
     } else {
-      stop("invalid contraint_var", contraint_var)
+      stop("invalid contraint_var", constraint_var)
     }
   })
 
