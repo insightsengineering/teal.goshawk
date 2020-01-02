@@ -4,12 +4,24 @@
 \alias{tm_g_gh_density_distribution_plot}
 \title{Density Distribution Plot}
 \usage{
-tm_g_gh_density_distribution_plot(label, dataname, param_var, param,
-  xaxis_var, trt_group = "ARM", color_manual = NULL,
-  color_comb = NULL, plot_height = c(500, 200, 2000),
-  font_size = c(12, 8, 20), line_size = c(1, 0.25, 3), hline = NULL,
-  facet_ncol = 2L, rotate_xlab = FALSE, pre_output = NULL,
-  post_output = NULL)
+tm_g_gh_density_distribution_plot(
+  label,
+  dataname,
+  param_var,
+  param,
+  xaxis_var,
+  trt_group = "ARM",
+  color_manual = NULL,
+  color_comb = NULL,
+  plot_height = c(500, 200, 2000),
+  font_size = c(12, 8, 20),
+  line_size = c(1, 0.25, 3),
+  hline = NULL,
+  facet_ncol = 2L,
+  rotate_xlab = FALSE,
+  pre_output = NULL,
+  post_output = NULL
+)
 }
 \arguments{
 \item{label}{menu item label of the module in the teal app.}

@@ -2,17 +2,56 @@
 % Please edit documentation in R/tm_g_gh_boxplot.R
 \name{tm_g_gh_boxplot}
 \alias{tm_g_gh_boxplot}
+\alias{tm_g_gh_boxplot_av}
 \title{Box Plot}
 \usage{
-tm_g_gh_boxplot(label, dataname, param_var, param,
+tm_g_gh_boxplot(
+  label,
+  dataname,
+  param_var,
+  param,
   yaxis_var = choices_selected(c("AVAL", "CHG"), "AVAL"),
   xaxis_var = choices_selected("AVISITCD", "AVISITCD"),
-  facet_var = choices_selected("ARM", "ARM"), trt_group = "ARM",
-  armlabel = NULL, color_manual = NULL, shape_manual = NULL,
-  facet_ncol = NULL, rotate_xlab = FALSE, hline = NULL,
-  plot_height = c(600, 200, 2000), font_size = c(12, 8, 20),
-  dot_size = c(2, 1, 12), alpha = c(0.8, 0, 1), pre_output = NULL,
-  post_output = NULL)
+  facet_var = choices_selected("ARM", "ARM"),
+  trt_group = "ARM",
+  armlabel = NULL,
+  color_manual = NULL,
+  shape_manual = NULL,
+  facet_ncol = NULL,
+  rotate_xlab = FALSE,
+  hline = NULL,
+  plot_height = c(600, 200, 2000),
+  font_size = c(12, 8, 20),
+  dot_size = c(2, 1, 12),
+  alpha = c(0.8, 0, 1),
+  av = FALSE,
+  pre_output = NULL,
+  post_output = NULL
+)
+
+tm_g_gh_boxplot_av(
+  label,
+  dataname,
+  param_var,
+  param,
+  yaxis_var = choices_selected(c("AVAL", "CHG"), "AVAL"),
+  xaxis_var = choices_selected("AVISITCD", "AVISITCD"),
+  facet_var = choices_selected("ARM", "ARM"),
+  trt_group = "ARM",
+  armlabel = NULL,
+  color_manual = NULL,
+  shape_manual = NULL,
+  facet_ncol = NULL,
+  rotate_xlab = FALSE,
+  hline = NULL,
+  plot_height = c(600, 200, 2000),
+  font_size = c(12, 8, 20),
+  dot_size = c(2, 1, 12),
+  alpha = c(0.8, 0, 1),
+  av = FALSE,
+  pre_output = NULL,
+  post_output = NULL
+)
 }
 \arguments{
 \item{label}{menu item label of the module in the teal app.}
@@ -54,6 +93,9 @@ name of the parameter (in title case) will be used.}
 
 \item{alpha}{numeric vector to define transparency of plotted points.}
 
+\item{av}{(\code{logical}) Whether to presents all visit data based on analysis day. Influences
+only the summary table.}
+
 \item{pre_output}{optional, \code{shiny.tag} with text placed before the
 output to put the output into context. For example the
 \code{\link[shiny]{helpText}} elements are useful.}
@@ -68,6 +110,11 @@ an \code{\link[teal]{module}} object
 \description{
 This teal module renders the UI and calls the functions that create a box plot and accompanying
 summary table.
+}
+\details{
+To present all visit data based on the analysis day choose \code{av = TRUE} which uses
+ \link[goshawk]{t_summarytable_av} to
+ display the summary table. This setup works without a visit column
 }
 \examples{
 
