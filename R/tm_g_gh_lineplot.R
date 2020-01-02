@@ -33,6 +33,7 @@
 #' @param dodge control the position dodge of error bar
 #'
 #' @importFrom ggplot2 waiver
+#' @importFrom grDevices extendrange
 #'
 #' @author Wenyi Liu (luiw2) wenyi.liu@roche.com
 #' @author Balazs Toth (tothb2) toth.balazs@gene.com
@@ -252,14 +253,36 @@ srv_lineplot <- function(input,
     ANL <- anl_chunks()$ANL # nolint
     validate_has_variable(ANL, varname, paste("variable", varname, "does not exist"))
 
-    minmax <- c(
-      floor(min(if_empty(na.omit(sum_data$stat), 0))),
-      ceiling(max(if_empty(na.omit(sum_data$stat), 0)))
+    shape <- if (!(is.null(input$shape) || input$shape == "None")) {
+      input$shape
+    } else {
+      NULL
+    }
+
+    sum_data <- ANL %>%
+      group_by_at(c(input$xaxis_var, trt_group, shape)) %>%
+      summarise(upper = if (input$stat == 'median') {
+        mean(!!sym(varname), na.rm = TRUE) +
+          1.96 * sd(!!sym(varname), na.rm = TRUE) / sqrt(n())
+      } else {
+        quantile(!!sym(varname), 0.75, na.rm = TRUE)
+      },
+      lower = if (input$stat == 'median') {
+        mean(!!sym(varname), na.rm = TRUE) -
+          1.96 * sd(!!sym(varname), na.rm = TRUE) / sqrt(n())
+      } else {
+        quantile(!!sym(varname), 0.25, na.rm = TRUE)
+      })
+
+    minmax <- grDevices::extendrange(
+      r = c(floor(min(sum_data$lower, na.rm = TRUE)),
+        ceiling(max(sum_data$upper, na.rm = TRUE))),
+      f = 0.10
     )
 
     updateSliderInput(
       session = session,
-      inputId = input$yrange_scale,
+      inputId = "yrange_scale",
       min = minmax[1],
       max = minmax[2],
       value = minmax
@@ -282,7 +305,7 @@ srv_lineplot <- function(input,
     yaxis <- isolate(input$yaxis_var)
 
     shape <- if (!(is.null(input$shape) || input$shape == "None")) {
-      shape <- input$shape
+      input$shape
     } else {
       NULL
     }
