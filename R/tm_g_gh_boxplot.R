@@ -341,6 +341,11 @@ srv_g_boxplot <- function(input,
 
   main_code <- reactive({
     private_chunks <- create_table()
+    chunks_push(
+      chunks = private_chunks,
+      id = "output",
+      expression = quote({plot})
+    )
     init_chunks(private_chunks)
     private_chunks
   })
@@ -354,7 +359,7 @@ srv_g_boxplot <- function(input,
 
     numeric_cols <- setdiff(names(select_if(tbl, is.numeric)), "n")
 
-    DT::datatable(tbl, rownames = FALSE) %>%
+    DT::datatable(tbl, rownames = FALSE, options = list(scrollX = TRUE)) %>%
       DT::formatRound(numeric_cols, 4)
 
   })
@@ -391,7 +396,7 @@ srv_g_boxplot <- function(input,
 
     numeric_cols <- names(select_if(df, is.numeric))
 
-    DT::datatable(df, rownames = FALSE) %>%
+    DT::datatable(df, rownames = FALSE, options = list(scrollX = TRUE)) %>%
       DT::formatRound(numeric_cols, 4)
   })
   callModule(
