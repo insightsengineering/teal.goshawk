@@ -366,7 +366,7 @@ srv_g_boxplot <- function(input,
                     facet_var = .(facet_var),
                     font_size = .(font_size)
                 )
-              })
+          })
       )
     }
 
