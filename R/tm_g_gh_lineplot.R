@@ -261,13 +261,13 @@ srv_lineplot <- function(input,
 
     sum_data <- ANL %>%
       group_by_at(c(input$xaxis_var, trt_group, shape)) %>%
-      summarise(upper = if (input$stat == 'median') {
+      summarise(upper = if (input$stat == 'mean') {
         mean(!!sym(varname), na.rm = TRUE) +
           1.96 * sd(!!sym(varname), na.rm = TRUE) / sqrt(n())
       } else {
         quantile(!!sym(varname), 0.75, na.rm = TRUE)
       },
-      lower = if (input$stat == 'median') {
+      lower = if (input$stat == 'mean') {
         mean(!!sym(varname), na.rm = TRUE) -
           1.96 * sd(!!sym(varname), na.rm = TRUE) / sqrt(n())
       } else {
