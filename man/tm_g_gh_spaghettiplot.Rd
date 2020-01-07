@@ -4,14 +4,32 @@
 \alias{tm_g_gh_spaghettiplot}
 \title{Spaghetti Plot}
 \usage{
-tm_g_gh_spaghettiplot(label, dataname, param_var, param,
-  param_var_label = "PARAM", idvar, xaxis_var, yaxis_var,
-  xaxis_var_level = NULL, filter_var = yaxis_var, trt_group,
-  trt_group_level = NULL, group_stats = "NONE", hline = NULL,
-  man_color = NULL, color_comb = NULL, xtick = waiver(),
-  xlabel = xtick, rotate_xlab = FALSE, facet_ncol = 2,
-  plot_height = c(600, 200, 2000), font_size = c(12, 8, 20),
-  pre_output = NULL, post_output = NULL)
+tm_g_gh_spaghettiplot(
+  label,
+  dataname,
+  param_var,
+  param,
+  param_var_label = "PARAM",
+  idvar,
+  xaxis_var,
+  yaxis_var,
+  xaxis_var_level = NULL,
+  filter_var = yaxis_var,
+  trt_group,
+  trt_group_level = NULL,
+  group_stats = "NONE",
+  hline = NULL,
+  man_color = NULL,
+  color_comb = NULL,
+  xtick = waiver(),
+  xlabel = xtick,
+  rotate_xlab = FALSE,
+  facet_ncol = 2,
+  plot_height = c(600, 200, 2000),
+  font_size = c(12, 8, 20),
+  pre_output = NULL,
+  post_output = NULL
+)
 }
 \arguments{
 \item{label}{menu item label of the module in the teal app.}
