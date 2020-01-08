@@ -3,6 +3,11 @@
 #' This teal module renders the UI and calls the functions that create a box plot and accompanying
 #' summary table.
 #'
+#' @details
+#' To present all visit data based on the analysis day choose \code{av = TRUE} which uses
+#'  \link[goshawk]{t_summarytable_av} to
+#'  display the summary table. This setup works without a visit column
+#'
 #' @param label menu item label of the module in the teal app.
 #' @param dataname analysis data passed to the data argument of teal init. E.g. ADaM structured
 #'  laboratory data frame ALB.
@@ -24,6 +29,8 @@
 #' @param font_size font size control for title, x-axis label, y-axis label and legend.
 #' @param dot_size plot dot size.
 #' @param alpha numeric vector to define transparency of plotted points.
+#' @param av (\code{logical}) Whether to presents all visit data based on analysis day. Influences
+#'   only the summary table.
 #'
 #' @inheritParams teal.devel::standard_layout
 #'
@@ -32,6 +39,7 @@
 #' @import dplyr
 #' @import goshawk
 #' @import teal
+#' @import teal.devel
 #'
 #' @author Jeff Tomlinson (tomlinsj) jeffrey.tomlinson@roche.com
 #' @author Balazs Toth (tothb2) toth.balazs@gene.com
@@ -142,6 +150,7 @@ tm_g_gh_boxplot <- function(label,
                             font_size = c(12, 8, 20),
                             dot_size = c(2, 1, 12),
                             alpha = c(0.8, 0.0, 1.0),
+                            av = FALSE,
                             pre_output = NULL,
                             post_output = NULL) {
   stopifnot(
@@ -160,7 +169,8 @@ tm_g_gh_boxplot <- function(label,
     is_numeric_vector(plot_height) && length(plot_height) == 3,
     is_numeric_vector(font_size) && length(font_size) == 3,
     is_numeric_vector(dot_size) && length(dot_size) == 3,
-    is_numeric_vector(alpha) && length(alpha) == 3
+    is_numeric_vector(alpha) && length(alpha) == 3,
+    is_logical_single(av)
   )
   args <- as.list(environment())
 
@@ -174,7 +184,8 @@ tm_g_gh_boxplot <- function(label,
                        facet_var = facet_var,
                        color_manual = color_manual,
                        shape_manual = shape_manual,
-                       armlabel = armlabel
+                       armlabel = armlabel,
+                       av = av
     ),
     ui = ui_g_boxplot,
     ui_args = args
@@ -249,7 +260,8 @@ srv_g_boxplot <- function(input,
                           facet_var,
                           color_manual,
                           shape_manual,
-                          armlabel){
+                          armlabel,
+                          av){
 
   ns <- session$ns
 
@@ -320,20 +332,43 @@ srv_g_boxplot <- function(input,
     facet_var <- input$facet_var
     font_size <- input$font_size
 
-    chunks_push(
-      chunks = private_chunks,
-      id = "table",
-      expression = bquote({
-        tbl <- t_summarytable(
-          data = ANL,
-          trt_group = .(trt_group),
-          param_var = .(param_var),
-          param = .(param),
-          xaxis_var = .(xaxis_var),
-          visit_var = .("AVISITCD")
-        )
-      })
-    )
+    if (!av) {
+      chunks_push(
+        chunks = private_chunks,
+        id = "table",
+        expression = bquote({
+          tbl <- t_summarytable(
+            data = ANL,
+            trt_group = .(trt_group),
+            param_var = .(param_var),
+            param = .(param),
+            xaxis_var = .(xaxis_var),
+            visit_var = .("AVISITCD")
+          )
+        })
+      )
+    } else {
+
+      if (facet_var != trt_group) {
+        validate_has_elements(facet_var, "Facetting needs to be non-empty for all visits.")
+      }
+
+      chunks_push(
+          chunks = private_chunks,
+          id = "table",
+          expression = bquote({
+                tbl <- t_summarytable_av(
+                    data = ANL,
+                    trt_group = .(trt_group),
+                    param_var = .(param_var),
+                    param = .(param),
+                    xaxis_var = .(xaxis_var),
+                    facet_var = .(facet_var),
+                    font_size = .(font_size)
+                )
+          })
+      )
+    }
 
     chunks_safe_eval(private_chunks)
     private_chunks
@@ -406,3 +441,7 @@ srv_g_boxplot <- function(input,
     modal_title = "Box Plot"
   )
 }
+
+#' @export
+#' @rdname tm_g_gh_boxplot
+tm_g_gh_boxplot_av <- tm_g_gh_boxplot

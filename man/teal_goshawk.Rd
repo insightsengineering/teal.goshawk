@@ -3,7 +3,6 @@
 \docType{package}
 \name{teal_goshawk}
 \alias{teal_goshawk}
-\alias{teal_goshawk-package}
 \title{teal.goshawk core packages}
 \description{
 The teal.goshawk package renders the UI and calls the respective biomarker visualization

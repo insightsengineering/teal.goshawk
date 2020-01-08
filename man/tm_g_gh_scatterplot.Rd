@@ -4,13 +4,30 @@
 \alias{tm_g_gh_scatterplot}
 \title{Scatter Plot Teal Module For Biomarker Analysis}
 \usage{
-tm_g_gh_scatterplot(label, dataname, param_var, param, xaxis_var,
-  yaxis_var, trt_group = "ARM", color_manual = NULL,
-  shape_manual = NULL, facet_ncol = 2, facet = FALSE,
-  facet_var = "ARM", reg_line = FALSE, rotate_xlab = FALSE,
-  hline = NULL, vline = NULL, plot_height = c(500, 200, 2000),
-  font_size = c(12, 8, 20), dot_size = c(1, 1, 12),
-  reg_text_size = c(3, 3, 10), pre_output = NULL, post_output = NULL)
+tm_g_gh_scatterplot(
+  label,
+  dataname,
+  param_var,
+  param,
+  xaxis_var,
+  yaxis_var,
+  trt_group = "ARM",
+  color_manual = NULL,
+  shape_manual = NULL,
+  facet_ncol = 2,
+  facet = FALSE,
+  facet_var = "ARM",
+  reg_line = FALSE,
+  rotate_xlab = FALSE,
+  hline = NULL,
+  vline = NULL,
+  plot_height = c(500, 200, 2000),
+  font_size = c(12, 8, 20),
+  dot_size = c(1, 1, 12),
+  reg_text_size = c(3, 3, 10),
+  pre_output = NULL,
+  post_output = NULL
+)
 }
 \arguments{
 \item{label}{menu item label of the module in the teal app.}
