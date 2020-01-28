@@ -26,6 +26,10 @@ reference:
       - tm_g_gh_scatterplot
       - tm_g_gh_spaghettiplot
 
+  - title: helper functions
+    contents:
+      - maptrt
+
   - title: Package Build Related
     desc: These files facilitate package build.
     contents:

@@ -309,13 +309,19 @@ update_min_max <- function(session, args) {
 #' @export
 #'
 #' @examples
-#' \dontrun{
+#' library(random.cdisc.data)
+#'
+#' ADSL <- radsl(cached = TRUE)
+#'
 #' # get treatment mapping code
 #' maptrt(df_armvar = ADSL$ARMCD, code = "M")
+#'
 #' # get treatment ordering code
 #' maptrt(df_armvar = ADSL$ARMCD, code = "O")
-#' }
-maptrt <- function(df_armvar = ADSL$ARMCD, code = "M") {
+#'
+maptrt <- function(df_armvar = ADSL$ARMCD, code = c("M", "O")) {
+
+  code <- match.arg(code)
 
   # get arm variable
   trtvar <- strsplit(deparse(substitute(df_armvar)), "[$]")[[1]][2]
