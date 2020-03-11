@@ -7,7 +7,7 @@ Authors@R: c(
   person("Nick", "Paszty", email = "nick.paszty@gene.com", role = c("aut", "cre")),
   person("Wenyi", "Liu", email = "liu.wenyi@roche.com", role = c("aut")),
   person("Jeffrey", "Tomlinson", email = "tomlinson.jeffrey@roche.com", role = c("aut")),
-  person("Balazs", "Toth", email = "toth.balazs@gene.com", role = c("aut")),
+  person("Bali", "Toth", email = "toth.balazs@gene.com", role = c("aut")),
   person("Adrian", "Waddell", email = "adrian.waddell@roche.com", role = "ctb")
   )
 Description: Modules that produce web interfaces through which longitudinal visualizations can be dynamically
