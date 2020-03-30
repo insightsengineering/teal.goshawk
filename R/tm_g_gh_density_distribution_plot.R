@@ -12,6 +12,7 @@
 #' @param line_size plot line thickness.
 #' @param hline y-axis value to position a horizontal line.
 #' @param facet_ncol numeric value indicating number of facets per row.
+#' @param comb_line display combined treatment line toggle.
 #' @param rotate_xlab 45 degree rotation of x-axis values.
 #'
 #' @inheritParams teal.devel::standard_layout
@@ -111,6 +112,7 @@
 #'                        "Placebo" = "#3498DB",
 #'                        "Combination" = "#E74C3C"),
 #'       color_comb = "#39ff14",
+#'       comb_line = TRUE,
 #'       plot_height = c(500, 200, 2000),
 #'       font_size = c(12, 8, 20),
 #'       line_size = c(1, .25, 3)
@@ -133,6 +135,7 @@ tm_g_gh_density_distribution_plot <- function(label,
                                               line_size = c(1, .25, 3),
                                               hline = NULL,
                                               facet_ncol = 2L,
+                                              comb_line = TRUE,
                                               rotate_xlab = FALSE,
                                               pre_output = NULL,
                                               post_output = NULL) {
@@ -151,6 +154,7 @@ tm_g_gh_density_distribution_plot <- function(label,
     is_numeric_vector(line_size) && length(line_size) == 3,
     is.null(hline) || is_numeric_single(hline),
     is_integer_single(facet_ncol),
+    is_logical_single(comb_line),
     is_logical_single(rotate_xlab)
   )
 
@@ -201,6 +205,7 @@ ui_g_density_distribution_plot <- function(id, ...) {
           title = "Plot Aesthetic Settings",
           sliderInput(ns("xrange_scale"), label = "X-Axis Range Zoom", min = 0, max = 1, value = c(0, 1)),
           numericInput(ns("facet_ncol"), "Number of Plots Per Row:", a$facet_ncol, min = 1),
+          checkboxInput(ns("comb_line"), "Display combination line", a$comb_line),
           checkboxInput(ns("rotate_xlab"), "Rotate X-axis Label", a$rotate_xlab),
           numericInput(ns("hline"), "Add a horizontal line:", a$hline)
         ),
@@ -238,6 +243,7 @@ srv_g_density_distribution_plot <- function(input, output, session, datasets, da
     hline <- as.numeric(input$hline)
     hline <- `if`(is.na(hline), NULL, as.numeric(hline))
     facet_ncol <- as.integer(input$facet_ncol)
+    comb_line <- input$comb_line
     rotate_xlab <- input$rotate_xlab
     #nolint end
 
@@ -258,6 +264,7 @@ srv_g_density_distribution_plot <- function(input, output, session, datasets, da
           font_size = .(font_size),
           line_size = .(line_size),
           facet_ncol = .(facet_ncol),
+          comb_line = .(comb_line),
           rotate_xlab = .(rotate_xlab),
           hline = .(hline)
         )
