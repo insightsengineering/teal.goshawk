@@ -33,6 +33,7 @@
 #' @param dodge control the position dodge of error bar
 #'
 #' @importFrom ggplot2 waiver
+#' @importFrom grDevices extendrange
 #'
 #' @author Wenyi Liu (luiw2) wenyi.liu@roche.com
 #' @author Balazs Toth (tothb2) toth.balazs@gene.com
@@ -236,11 +237,51 @@ srv_lineplot <- function(input,
     }
   })
 
-  anl_chunks <- constr_anl_chunks(session, input, datasets, dataname, "param", param_var, trt_group)
+  anl_chunks <- constr_anl_chunks(session = session,
+                                  input = input,
+                                  datasets = datasets,
+                                  dataname = dataname,
+                                  param_id = "param",
+                                  param_var =  param_var,
+                                  trt_group = trt_group)
 
   # update sliders for axes
-  keep_range_slider_updated(session, input, "yrange_scale", "yaxis_var", anl_chunks)
+  observe({
+    varname <- input[["yaxis_var"]]
+    validate(need(varname, "Please select variable"))
 
+    ANL <- anl_chunks()$ANL # nolint
+    validate_has_variable(ANL, varname, paste("variable", varname, "does not exist"))
+
+    sum_data <- ANL %>%
+      group_by_at(c(input$xaxis_var, trt_group)) %>%
+      summarise(upper = if (input$stat == 'mean') {
+        mean(!!sym(varname), na.rm = TRUE) +
+          1.96 * sd(!!sym(varname), na.rm = TRUE) / sqrt(n())
+      } else {
+        quantile(!!sym(varname), 0.75, na.rm = TRUE)
+      },
+      lower = if (input$stat == 'mean') {
+        mean(!!sym(varname), na.rm = TRUE) -
+          1.96 * sd(!!sym(varname), na.rm = TRUE) / sqrt(n())
+      } else {
+        quantile(!!sym(varname), 0.25, na.rm = TRUE)
+      })
+
+    minmax <- grDevices::extendrange(
+      r = c(floor(min(sum_data$lower, na.rm = TRUE) * 10) / 10,
+            ceiling(max(sum_data$upper, na.rm = TRUE)) * 10) / 10,
+      f = 0.05
+    )
+
+    updateSliderInput(
+      session = session,
+      inputId = "yrange_scale",
+      min = minmax[1],
+      max = minmax[2],
+      value = minmax
+    )
+  })
 
   output$lineplot <- renderPlot({
     ac <- anl_chunks()
@@ -257,11 +298,10 @@ srv_lineplot <- function(input,
     xaxis <- isolate(input$xaxis_var)
     yaxis <- isolate(input$yaxis_var)
 
-    shape <- NULL
-    if (!is.null(input$shape)){
-      if (input$shape != "None"){
-        shape <- input$shape
-      }
+    shape <- if (!(is.null(input$shape) || input$shape == "None")) {
+      input$shape
+    } else {
+      NULL
     }
 
     chunks_push(
@@ -295,8 +335,8 @@ srv_lineplot <- function(input,
 
     p <- chunks_safe_eval(private_chunks)
     init_chunks(private_chunks)
-    p
 
+    p
   })
 
   output$plot_ui <- renderUI({

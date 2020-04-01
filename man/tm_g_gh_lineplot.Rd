@@ -4,14 +4,32 @@
 \alias{tm_g_gh_lineplot}
 \title{Line plot}
 \usage{
-tm_g_gh_lineplot(label, dataname, param_var, param,
-  param_var_label = "PARAM", xaxis_var, yaxis_var, xvar_level = NULL,
-  filter_var = yaxis_var, filter_var_choices = filter_var, trt_group,
-  trt_group_level = NULL, shape_choices = NULL, stat = "mean",
-  hline = NULL, color_manual = NULL, xtick = waiver(),
-  xlabel = xtick, rotate_xlab = FALSE, plot_height = c(600, 200,
-  2000), font_size = c(12, 8, 20), dodge = c(0.4, 0, 1),
-  pre_output = NULL, post_output = NULL)
+tm_g_gh_lineplot(
+  label,
+  dataname,
+  param_var,
+  param,
+  param_var_label = "PARAM",
+  xaxis_var,
+  yaxis_var,
+  xvar_level = NULL,
+  filter_var = yaxis_var,
+  filter_var_choices = filter_var,
+  trt_group,
+  trt_group_level = NULL,
+  shape_choices = NULL,
+  stat = "mean",
+  hline = NULL,
+  color_manual = NULL,
+  xtick = waiver(),
+  xlabel = xtick,
+  rotate_xlab = FALSE,
+  plot_height = c(600, 200, 2000),
+  font_size = c(12, 8, 20),
+  dodge = c(0.4, 0, 1),
+  pre_output = NULL,
+  post_output = NULL
+)
 }
 \arguments{
 \item{label}{menu item label of the module in the teal app.}

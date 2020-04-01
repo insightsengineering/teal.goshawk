@@ -1,13 +1,13 @@
 Package: teal.goshawk
 Type: Package
 Title: Longitudinal visualization teal modules
-Date: 2019-12-30
-Version: 0.1.1
+Date: 2020-04-01
+Version: 0.1.2
 Authors@R: c(
   person("Nick", "Paszty", email = "nick.paszty@gene.com", role = c("aut", "cre")),
   person("Wenyi", "Liu", email = "liu.wenyi@roche.com", role = c("aut")),
   person("Jeffrey", "Tomlinson", email = "tomlinson.jeffrey@roche.com", role = c("aut")),
-  person("Balazs", "Toth", email = "toth.balazs@gene.com", role = c("aut")),
+  person("Bali", "Toth", email = "toth.balazs@gene.com", role = c("aut")),
   person("Adrian", "Waddell", email = "adrian.waddell@roche.com", role = "ctb")
   )
 Description: Modules that produce web interfaces through which longitudinal visualizations can be dynamically
@@ -45,4 +45,4 @@ Suggests:
 License: GPL-2
 Encoding: UTF-8
 LazyData: true
-RoxygenNote: 6.1.1
+RoxygenNote: 7.0.2
