@@ -12,6 +12,9 @@ The modules included are:
 - tm_g_gh_scatterplot
 - tm_g_gh_spaghettiplot
 
+# Deploy Repository
+Please see the deploy repository [here](https://github.roche.com/STATSSPA/statsspa_384) for full details on data prepocessing and configuration of this package for deployment.
+
 # Installation
 
 ```r

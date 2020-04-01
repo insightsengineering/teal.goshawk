@@ -16,9 +16,11 @@
 #' @param shape_manual vector of symbols applied to LOQ values.
 #' @param facet_ncol numeric value indicating number of facets per row.
 #' @param facet set layout to use treatment facetting.
+#' @param visit_facet visit facet toggle.
 #' @param facet_var variable to use for treatment facetting.
 #' @param reg_line include regression line and annotations for slope and coefficient in visualization. Use with facet
 #'   TRUE.
+#' @param loq_legend loq legend toggle.
 #' @param rotate_xlab 45 degree rotation of x-axis values.
 #' @param hline y-axis value to position of horizontal line.
 #' @param vline x-axis value to position a vertical line.
@@ -111,9 +113,11 @@
 #'        shape_manual = c("N"  = 1, "Y"  = 2, "NA" = 0),
 #'        plot_height = c(500, 200, 2000),
 #'        facet_ncol = 2,
+#'        visit_facet = TRUE,
 #'        facet = FALSE,
 #'        facet_var = "ARM",
 #'        reg_line = FALSE,
+#'        loq_legend = TRUE,
 #'        font_size = c(12, 8, 20),
 #'        dot_size = c(1, 1, 12),
 #'        reg_text_size = c(3, 3, 10)
@@ -136,9 +140,11 @@ tm_g_gh_correlationplot <- function(label,
                                     color_manual = NULL,
                                     shape_manual = NULL,
                                     facet_ncol = 2,
+                                    visit_facet = TRUE,
                                     facet = FALSE,
                                     facet_var = "ARM",
                                     reg_line = FALSE,
+                                    loq_legend = TRUE,
                                     rotate_xlab = FALSE,
                                     hline = NULL,
                                     vline = NULL,
@@ -194,8 +200,10 @@ ui_g_correlationplot <- function(id, ...) {
           sliderInput(ns("xrange_scale"), label = "X-Axis Range Zoom", min = 0, max = 1, value = c(0, 1)),
           sliderInput(ns("yrange_scale"), label = "Y-Axis Range Zoom", min = 0, max = 1, value = c(0, 1)),
           numericInput(ns("facet_ncol"), "Number of Plots Per Row:", a$facet_ncol, min = 1),
+          checkboxInput(ns("visit_facet"), "Visit Facetting", a$visit_facet),
           checkboxInput(ns("facet"), "Treatment Facetting", a$facet),
           checkboxInput(ns("reg_line"), "Regression Line", a$reg_line),
+          checkboxInput(ns("loq_legend"), "Display LoQ Legend", a$loq_legend),
           checkboxInput(ns("rotate_xlab"), "Rotate X-axis Label", a$rotate_xlab),
           numericInput(ns("hline"), "Add a horizontal line:", a$hline),
           numericInput(ns("vline"), "Add a vertical line:", a$vline)
@@ -542,8 +550,10 @@ srv_g_correlationplot <- function(input,
     hline <- if (is.na(input$hline)) NULL else as.numeric(input$hline)
     vline <- if (is.na(input$vline)) NULL else as.numeric(input$vline)
     facet_ncol <- input$facet_ncol
+    visit_facet <- input$visit_facet
     facet <- input$facet
     reg_line <- input$reg_line
+    loq_legend <- input$loq_legend
     rotate_xlab <- input$rotate_xlab
 
     title_text <- plot_labels()$title_text
@@ -575,12 +585,14 @@ srv_g_correlationplot <- function(input,
           color_manual = .(color_manual),
           shape_manual = .(shape_manual),
           facet_ncol = .(facet_ncol),
+          visit_facet = .(visit_facet),
           facet = .(facet),
           facet_var = .(facet_var),
           reg_line = .(reg_line),
           font_size = .(font_size),
           dot_size = .(dot_size),
           reg_text_size = .(reg_text_size),
+          loq_legend = .(loq_legend),
           rotate_xlab = .(rotate_xlab),
           hline = .(hline),
           vline = .(vline)

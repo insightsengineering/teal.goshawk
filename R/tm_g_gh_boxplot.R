@@ -23,6 +23,7 @@
 #' @param color_manual vector of colors applied to treatment values.
 #' @param shape_manual vector of symbols applied to LOQ values.
 #' @param facet_ncol numeric value indicating number of facets per row.
+#' @param loq_legend loq legend toggle.
 #' @param rotate_xlab 45 degree rotation of x-axis values.
 #' @param hline y-axis value to position a horizontal line.  NULL = No line.
 #' @param plot_height numeric vectors to define the plot height.
@@ -124,6 +125,7 @@
 #'         facet_var = choices_selected(c("ARM", "AVISITCD", "SEX"), "AVISITCD"),
 #'         trt_group = "ARM",
 #'         armlabel = "Planned Arm",
+#'         loq_legend = TRUE,
 #'         rotate_xlab = FALSE
 #'       )
 #'   )
@@ -144,6 +146,7 @@ tm_g_gh_boxplot <- function(label,
                             color_manual = NULL,
                             shape_manual = NULL,
                             facet_ncol = NULL,
+                            loq_legend = TRUE,
                             rotate_xlab = FALSE,
                             hline = NULL,
                             plot_height = c(600, 200, 2000),
@@ -164,6 +167,7 @@ tm_g_gh_boxplot <- function(label,
     is_character_single(trt_group),
     is.null(armlabel) || is_character_single(armlabel),
     is.null(facet_ncol) || is_integer_single(facet_ncol),
+    is_logical_single(loq_legend),
     is_logical_single(rotate_xlab),
     is.null(hline) || is_numeric_single(hline),
     is_numeric_vector(plot_height) && length(plot_height) == 3,
@@ -230,6 +234,7 @@ ui_g_boxplot <- function(id, ...) {
         panel_item(
           title = "Plot Aesthetic Settings",
           numericInput(ns("facet_ncol"), "Number of Plots Per Row:", a$facet_ncol, min = 1),
+          checkboxInput(ns("loq_legend"), "Display LoQ Legend", a$loq_legend),
           checkboxInput(ns("rotate_xlab"), "Rotate X-axis Label", a$rotate_xlab),
           numericInput(ns("hline"), "Add a horizontal line:", a$hline),
           sliderInput(ns("yrange_scale"), label = "Y-Axis Range Zoom", min = 0, max = 1, value = c(0, 1))
@@ -283,6 +288,7 @@ srv_g_boxplot <- function(input,
     alpha <- input$alpha
     font_size <- input$font_size
     dot_size <- input$dot_size
+    loq_legend <- input$loq_legend
     rotate_xlab = input$rotate_xlab
     hline <- input$hline
 
@@ -303,6 +309,7 @@ srv_g_boxplot <- function(input,
           yaxis_var = .(yaxis),
           hline = .(`if`(is.na(hline), NULL, as.numeric(hline))),
           facet_ncol = .(facet_ncol),
+          loq_legend = .(loq_legend),
           rotate_xlab = .(rotate_xlab),
           trt_group = .(trt_group),
           ymin_scale = .(yrange_scale[1]),
