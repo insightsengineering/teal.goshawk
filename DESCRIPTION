@@ -18,9 +18,9 @@ Description: Modules that produce web interfaces through which longitudinal visu
     or NA.
 Depends: 
   R (>= 3.3),
-  goshawk (>= 0.1.1), 
+  goshawk (>= 0.1.2), 
   shiny,
-  teal
+  teal (>= 0.8.3)
 Imports:
   DescTools,
   DT,
@@ -30,18 +30,18 @@ Imports:
   rlang,
   shinyjs,
   stats,
-  teal.devel (>= 0.2.3),
+  teal.devel (>= 0.2.4),
   tidyr,
   utils,
-  utils.nest (>= 0.2.1)
+  utils.nest (>= 0.2.2)
 Suggests: 
   knitr,
-  random.cdisc.data (>= 0.3.1),
+  random.cdisc.data (>= 0.3.2),
   rmarkdown,
   stringr,
-  tern (>= 0.6.4),
-  test.nest (>= 0.2.1),
-  testthat (>= 2.1.0)
+  tern (>= 0.6.5),
+  test.nest (>= 0.2.2),
+  testthat (>= 2.0)
 License: GPL-2
 Encoding: UTF-8
 LazyData: true
