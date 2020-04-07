@@ -253,8 +253,14 @@ srv_lineplot <- function(input,
     ANL <- anl_chunks()$ANL # nolint
     validate_has_variable(ANL, varname, paste("variable", varname, "does not exist"))
 
+    shape <- if (!(is.null(input$shape) || input$shape == "None")) {
+      input$shape
+    } else {
+      NULL
+    }
+
     sum_data <- ANL %>%
-      group_by_at(c(input$xaxis_var, trt_group)) %>%
+      group_by_at(c(input$xaxis_var, trt_group, shape)) %>%
       summarise(upper = if (input$stat == 'mean') {
         mean(!!sym(varname), na.rm = TRUE) +
           1.96 * sd(!!sym(varname), na.rm = TRUE) / sqrt(n())
@@ -270,7 +276,7 @@ srv_lineplot <- function(input,
 
     minmax <- grDevices::extendrange(
       r = c(floor(min(sum_data$lower, na.rm = TRUE) * 10) / 10,
-            ceiling(max(sum_data$upper, na.rm = TRUE)) * 10) / 10,
+            ceiling(max(sum_data$upper, na.rm = TRUE) * 10) / 10),
       f = 0.05
     )
 
