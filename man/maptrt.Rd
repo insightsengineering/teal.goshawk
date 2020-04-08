@@ -4,7 +4,7 @@
 \alias{maptrt}
 \title{helper for writing arm mapping and ordering code.}
 \usage{
-maptrt(df_armvar = ADSL$ARMCD, code = "M")
+maptrt(df_armvar, code = c("M", "O"))
 }
 \arguments{
 \item{df_armvar}{the dataframe and column name containing treatment code. e.g. ADSL$ARMCD}
@@ -21,10 +21,14 @@ mapping and ordering syntax. call the function and then copy and paste the resul
 into the app.R file.
 }
 \examples{
-\dontrun{
+library(random.cdisc.data)
+
+ADSL <- radsl(cached = TRUE)
+
 # get treatment mapping code
 maptrt(df_armvar = ADSL$ARMCD, code = "M")
+
 # get treatment ordering code
 maptrt(df_armvar = ADSL$ARMCD, code = "O")
-}
+
 }

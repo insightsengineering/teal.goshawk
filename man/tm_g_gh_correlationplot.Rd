@@ -16,9 +16,11 @@ tm_g_gh_correlationplot(
   color_manual = NULL,
   shape_manual = NULL,
   facet_ncol = 2,
+  visit_facet = TRUE,
   facet = FALSE,
   facet_var = "ARM",
   reg_line = FALSE,
+  loq_legend = TRUE,
   rotate_xlab = FALSE,
   hline = NULL,
   vline = NULL,
@@ -54,12 +56,16 @@ tm_g_gh_correlationplot(
 
 \item{facet_ncol}{numeric value indicating number of facets per row.}
 
+\item{visit_facet}{visit facet toggle.}
+
 \item{facet}{set layout to use treatment facetting.}
 
 \item{facet_var}{variable to use for treatment facetting.}
 
 \item{reg_line}{include regression line and annotations for slope and coefficient in visualization. Use with facet
 TRUE.}
+
+\item{loq_legend}{loq legend toggle.}
 
 \item{rotate_xlab}{45 degree rotation of x-axis values.}
 
@@ -165,9 +171,11 @@ app <- init(
        shape_manual = c("N"  = 1, "Y"  = 2, "NA" = 0),
        plot_height = c(500, 200, 2000),
        facet_ncol = 2,
+       visit_facet = TRUE,
        facet = FALSE,
        facet_var = "ARM",
        reg_line = FALSE,
+       loq_legend = TRUE,
        font_size = c(12, 8, 20),
        dot_size = c(1, 1, 12),
        reg_text_size = c(3, 3, 10)

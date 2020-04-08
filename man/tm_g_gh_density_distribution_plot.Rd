@@ -18,6 +18,7 @@ tm_g_gh_density_distribution_plot(
   line_size = c(1, 0.25, 3),
   hline = NULL,
   facet_ncol = 2L,
+  comb_line = TRUE,
   rotate_xlab = FALSE,
   pre_output = NULL,
   post_output = NULL
@@ -50,6 +51,8 @@ tm_g_gh_density_distribution_plot(
 \item{hline}{y-axis value to position a horizontal line.}
 
 \item{facet_ncol}{numeric value indicating number of facets per row.}
+
+\item{comb_line}{display combined treatment line toggle.}
 
 \item{rotate_xlab}{45 degree rotation of x-axis values.}
 
@@ -154,6 +157,7 @@ ADLB <- ADLB \%>\%
                        "Placebo" = "#3498DB",
                        "Combination" = "#E74C3C"),
       color_comb = "#39ff14",
+      comb_line = TRUE,
       plot_height = c(500, 200, 2000),
       font_size = c(12, 8, 20),
       line_size = c(1, .25, 3)
