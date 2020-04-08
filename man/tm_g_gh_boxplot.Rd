@@ -18,6 +18,7 @@ tm_g_gh_boxplot(
   color_manual = NULL,
   shape_manual = NULL,
   facet_ncol = NULL,
+  loq_legend = TRUE,
   rotate_xlab = FALSE,
   hline = NULL,
   plot_height = c(600, 200, 2000),
@@ -42,6 +43,7 @@ tm_g_gh_boxplot_av(
   color_manual = NULL,
   shape_manual = NULL,
   facet_ncol = NULL,
+  loq_legend = TRUE,
   rotate_xlab = FALSE,
   hline = NULL,
   plot_height = c(600, 200, 2000),
@@ -80,6 +82,8 @@ name of the parameter (in title case) will be used.}
 \item{shape_manual}{vector of symbols applied to LOQ values.}
 
 \item{facet_ncol}{numeric value indicating number of facets per row.}
+
+\item{loq_legend}{loq legend toggle.}
 
 \item{rotate_xlab}{45 degree rotation of x-axis values.}
 
@@ -192,6 +196,7 @@ app <- teal::init(
         facet_var = choices_selected(c("ARM", "AVISITCD", "SEX"), "AVISITCD"),
         trt_group = "ARM",
         armlabel = "Planned Arm",
+        loq_legend = TRUE,
         rotate_xlab = FALSE
       )
   )

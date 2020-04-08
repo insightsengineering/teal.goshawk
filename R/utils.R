@@ -319,7 +319,7 @@ update_min_max <- function(session, args) {
 #' # get treatment ordering code
 #' maptrt(df_armvar = ADSL$ARMCD, code = "O")
 #'
-maptrt <- function(df_armvar = ADSL$ARMCD, code = c("M", "O")) {
+maptrt <- function(df_armvar, code = c("M", "O")) {
 
   code <- match.arg(code)
 
@@ -327,8 +327,8 @@ maptrt <- function(df_armvar = ADSL$ARMCD, code = c("M", "O")) {
   trtvar <- strsplit(deparse(substitute(df_armvar)), "[$]")[[1]][2]
 
   dftrt <- data.frame(unique(df_armvar)) %>%
-    mutate(trt_mapping = paste0('"', unique.df_armvar., '"', ' = "",')) %>%
-    mutate(trt_ordering = paste0(eval(trtvar), ' == "', unique.df_armvar., '"', ' ~  ,'))
+    mutate(trt_mapping = paste0('"', unique(df_armvar), '"', ' = "",')) %>%
+    mutate(trt_ordering = paste0(eval(trtvar), ' == "', unique(df_armvar), '"', ' ~  ,'))
 
   if (toupper(code) == "M") {
     print(unname(dftrt['trt_mapping']), row.names = FALSE)

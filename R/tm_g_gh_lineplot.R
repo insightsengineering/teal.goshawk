@@ -153,6 +153,9 @@ tm_g_gh_lineplot <- function(label,
   stopifnot(is.choices_selected(xaxis_var))
   stopifnot(is.choices_selected(yaxis_var))
   stopifnot(is.choices_selected(param))
+  stopifnot(is_numeric_vector(plot_height) && length(plot_height) == 3)
+  stopifnot(plot_height[1] >= plot_height[2] && plot_height[1] <= plot_height[3])
+  stopifnot(plot_height[1] >= 200 && plot_height[3] <= 2000)
 
   args <- as.list(environment())
 
@@ -179,8 +182,6 @@ ui_lineplot <- function(id, ...) {
 
   ns <- NS(id)
   a <- list(...)
-
-  if (a$plot_height < 200 || a$plot_height > 2000) stop("plot_height must be between 200 and 2000")
 
   standard_layout(
     output = uiOutput(ns("plot_ui")),
