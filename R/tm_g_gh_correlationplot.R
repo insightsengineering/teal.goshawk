@@ -414,8 +414,8 @@ srv_g_correlationplot <- function(input,
   })
 
   # update sliders for axes
-  keep_range_slider_updated(session, input, "xrange_scale", "xaxis_var", anl_constraint)
-  keep_range_slider_updated(session, input, "yrange_scale", "yaxis_var", anl_constraint)
+  keep_range_slider_updated(session, input, "xrange_scale", "xaxis_var", "xaxis_param", anl_constraint)
+  keep_range_slider_updated(session, input, "yrange_scale", "yaxis_var", "yaxis_param", anl_constraint)
 
   # selector names after transposition
   xvar <- reactive(paste0(input$xaxis_var, ".", input$xaxis_param))

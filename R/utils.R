@@ -110,15 +110,19 @@ templ_ui_constraint <- function(ns, label =  "Data Constraint") {
 }
 
 
-keep_range_slider_updated <- function(session, input, id_slider, id_var, reactive_ANL) { # nolint
+keep_range_slider_updated <- function(session, input, id_slider, id_var, filter_var_id, reactive_ANL) { # nolint
+  # todo: remove input and rather pass varnames  directly
+
   observe({
+    stopifnot(is_character_single(input[[filter_var_id]]))
+
     varname <- input[[id_var]]
     validate(need(varname, "Please select variable"))
 
     ANL <- reactive_ANL()$ANL # nolint
     validate_has_variable(ANL, varname, paste("variable", varname, "does not exist"))
 
-    vals <- ANL[[varname]]
+    vals <- ANL %>% filter(PARAMCD == input[[filter_var_id]]) %>% pull(varname)
 
     minmax <- c(
       floor(min(if_empty(na.omit(vals), 0))),
