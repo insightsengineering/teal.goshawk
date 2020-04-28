@@ -324,8 +324,8 @@ srv_g_correlationplot <- function(input,
     visit_freq <- unique(ANL$AVISITCD)
 
     # get min max values
-    if ((constraint_var == "BASE2" & any(grepl("SCR", visit_freq))) ||
-        (constraint_var == "BASE" & any(grepl("BL", visit_freq)))) {
+    if ((constraint_var == "BASE2" && any(grepl("SCR", visit_freq))) ||
+        (constraint_var == "BASE" && any(grepl("BL", visit_freq)))) {
 
       val <- na.omit(switch(
         constraint_var,
@@ -383,6 +383,8 @@ srv_g_correlationplot <- function(input,
     constraint_var <- isolate(input$constraint_var)
     constraint_range_min <- input$constraint_range_min
     constraint_range_max <- input$constraint_range_max
+    xaxis_param <- input$xaxis_param
+    stopifnot(is_character_single(xaxis_param))
 
     validate(need(constraint_range_min, "please select proper constraint minimum value"))
     validate(need(constraint_range_max, "please select proper constraint maximum value"))
@@ -394,12 +396,23 @@ srv_g_correlationplot <- function(input,
         chunks = private_chunks,
         id = "filter_constraint",
         expression = bquote({
-          ANL <- ANL %>% # nolint
+          filtered_usubjids <- ANL %>% # nolint
             dplyr::filter(
-              (.(constraint_range_min) <= .data[[.(constraint_var)]] &
-                 .data[[.(constraint_var)]] <= .(constraint_range_max)) |
-                is.na(.data[[.(constraint_var)]])
-            )
+              PARAMCD == .(xaxis_param),
+              (.(constraint_range_min) <= .data[[.(constraint_var)]]) &
+                 (.data[[.(constraint_var)]] <= .(constraint_range_max))
+            ) %>% pull(USUBJID)
+          # include patients with all NA values for xaxis param
+          filtered_usubjids <- c(
+            filtered_usubjids,
+            ANL %>%
+              dplyr::filter(PARAMCD == .(xaxis_param)) %>%
+              group_by(USUBJID) %>%
+              summarize(all_na = all(is.na(BASE))) %>%
+              filter(all_na) %>%
+              pull(USUBJID)
+          )
+          ANL <- ANL %>% filter(USUBJID %in% filtered_usubjids)
         })
       )
 
