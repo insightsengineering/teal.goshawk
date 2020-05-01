@@ -381,8 +381,9 @@ srv_g_correlationplot <- function(input,
   anl_constraint <- create_anl_constraint_reactive(anl_param, input, param_id = "xaxis_param")
 
   # update sliders for axes taking constraints into account
-  keep_range_slider_updated(session, input, "xrange_scale", "xaxis_var", "xaxis_param", anl_chunks)
-  keep_range_slider_updated(session, input, "yrange_scale", "yaxis_var", "xaxis_param", anl_chunks)
+  keep_range_slider_updated(session, input, "xrange_scale", "xaxis_var", anl_chunks)
+  keep_range_slider_updated(session, input, "yrange_scale", "yaxis_var", anl_chunks)
+  keep_data_constraint_options_updated(session, input, anl_chunks)
 
   # selector names after transposition
   xvar <- reactive(paste0(input$xaxis_var, ".", input$xaxis_param))

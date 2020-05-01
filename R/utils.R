@@ -112,19 +112,30 @@ templ_ui_params_vars <- function(ns,
   )
 }
 
-templ_plot_range_ui <- function(ns) {
-  ns <- NS(id)
-  div(
-    sliderInput(ns("xrange_scale"), label = "X-Axis Range Zoom", min = 0, max = 1, value = c(0, 1)),
-    sliderInput(ns("yrange_scale"), label = "Y-Axis Range Zoom", min = 0, max = 1, value = c(0, 1))
-  )
+keep_data_constraint_options_updated <- function(session, input, data) {
+  # use reactiveVal so that it only updates when options actually changed and not just data
+  choices <- reactiveVal()
+  observeEvent(data(), {
+    choices(c("None" = "NONE", "Screening" = "BASE2", "Baseline" = "BASE")[
+      c(TRUE, !all(is.na(data()$ANL[["BASE2"]])), !all(is.na(data()$ANL[["BASE"]])))
+    ])
+  })
+  observeEvent(choices(), {
+    updateRadioButtons(session, "constraint_var", choices = choices())
+    # hide when only one option "NONE"
+    if (length(choices()) == 1) {
+      shinyjs::hide("constraint_var_whole")
+    } else {
+      shinyjs::show("constraint_var_whole")
+    }
+  })
 }
 
 #' @importFrom shinyjs hidden
 templ_ui_constraint <- function(ns, label = "Data Constraint") {
   div(
-    radioButtons(ns("constraint_var"), label,
-                 c("None" = "NONE", "Screening" = "BASE2", "Baseline" = "BASE")),
+    id = ns("constraint_var_whole"), # give an id to hide it
+    radioButtons(ns("constraint_var"), label, choices = "NONE"),
     shinyjs::hidden(div(
       id = ns("constraint_range"),
       div(
@@ -143,23 +154,19 @@ templ_ui_constraint <- function(ns, label = "Data Constraint") {
   )
 }
 
-keep_range_slider_updated <- function(session, input, id_slider, id_var, filter_var_id, reactive_ANL) { # nolint
+keep_range_slider_updated <- function(session, input, id_slider, id_var, reactive_ANL) { # nolint
   # todo: remove input and rather pass varnames  directly
 
   observe({
-    stopifnot(is_character_single(input[[filter_var_id]]))
-
     varname <- input[[id_var]]
     validate(need(varname, "Please select variable"))
 
     ANL <- reactive_ANL()$ANL # nolint
     validate_has_variable(ANL, varname, paste("variable", varname, "does not exist"))
 
-    vals <- ANL %>% filter(PARAMCD == input[[filter_var_id]]) %>% pull(varname)
-
     minmax <- c(
-      floor(min(if_empty(na.omit(vals), 0))),
-      ceiling(max(if_empty(na.omit(vals), 0)))
+      floor(min(if_empty(na.omit(ANL[[varname]]), 0))),
+      ceiling(max(if_empty(na.omit(ANL[[varname]]), 0)))
     )
 
     updateSliderInput(
