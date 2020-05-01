@@ -174,6 +174,7 @@ tm_g_gh_correlationplot_av <- function(label,
                                        pre_output = NULL,
                                        post_output = NULL,
                                        code_data_processing = NULL) {
+  stop("Don't use this module. It is not guaranteed to work.")
 
   args <- as.list(environment())
 

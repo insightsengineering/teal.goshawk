@@ -150,6 +150,8 @@ tm_g_gh_lineplot <- function(label,
                              dodge = c(0.4, 0, 1),
                              pre_output = NULL,
                              post_output = NULL) {
+  stop("Don't use this module. It is not guaranteed to work.")
+
   stopifnot(is.choices_selected(xaxis_var))
   stopifnot(is.choices_selected(yaxis_var))
   stopifnot(is.choices_selected(param))

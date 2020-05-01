@@ -208,7 +208,7 @@ g_ui_spaghettiplot <- function(id, ...) {
                    c("None" = "NONE", "Mean" = "MEAN", "Median" = "MEDIAN"),
                    inline = TRUE),
       templ_ui_constraint(ns), # required by constr_anl_chunks
-      sliderInput(ns("yrange_scale"), label k= "Y-Axis Range Zoom", min = 0, max = 1, value = c(0, 1)),
+      sliderInput(ns("yrange_scale"), label = "Y-Axis Range Zoom", min = 0, max = 1, value = c(0, 1)),
       panel_group(
         panel_item(
           title = "Plot Aesthetic Settings",

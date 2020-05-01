@@ -197,10 +197,10 @@ ui_g_density_distribution_plot <- function(id, ...) {
       templ_ui_dataname(a$dataname),
       templ_ui_params_vars(
         ns,
-        xchoices = a$xaxis_var$choices, xselected = a$xaxis_var$selected,
-        xparam_choices = a$param$choices, xparam_selected = a$param$selected
+        xparam_choices = a$param$choices, xparam_selected = a$param$selected, xparam_label = "Select a Biomarker",
+        xchoices = a$xaxis_var$choices, xselected = a$xaxis_var$selected
       ),
-      templ_ui_constraint(ns, label = "X-Axis Data Constraint"),
+      templ_ui_constraint(ns, label = "Data Constraint"),
       panel_group(
         panel_item(
           title = "Plot Aesthetic Settings",

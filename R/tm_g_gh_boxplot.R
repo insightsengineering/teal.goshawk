@@ -223,16 +223,16 @@ ui_g_boxplot <- function(id, ...) {
       templ_ui_dataname(a$dataname),
       templ_ui_params_vars(
         ns,
+        xparam_choices = a$param$choices, xparam_selected = a$param$selected, xparam_label = "Select a Biomarker",
         xchoices = a$xaxis_var$choices, xselected = a$xaxis_var$selected,
-        ychoices = a$yaxis_var$choices, yselected = a$yaxis_var$selected,
-        yparam_choices = a$param$choices, yparam_selected = a$param$selected
+        ychoices = a$yaxis_var$choices, yselected = a$yaxis_var$selected
       ),
       optionalSelectInput(ns("facet_var"),
                           label = "Facet by",
                           choices = a$facet_var$choices,
                           selected = a$facet_var$selected,
                           multiple = FALSE),
-      templ_ui_constraint(ns, label = "Y-Axis Data Constraint"), # required by constr_anl_chunks
+      templ_ui_constraint(ns, label = "Data Constraint"), # required by constr_anl_chunks
       panel_group(
         panel_item(
           title = "Plot Aesthetic Settings",
@@ -276,7 +276,7 @@ srv_g_boxplot <- function(input,
   # reused in all modules
   anl_chunks <- constr_anl_chunks(
     session, input, datasets, dataname,
-    param_id = "yaxis_param", param_var = param_var, trt_group = trt_group
+    param_id = "xaxis_param", param_var = param_var, trt_group = trt_group
   )
 
   # update sliders for axes taking constraints into account
@@ -286,7 +286,7 @@ srv_g_boxplot <- function(input,
   create_plot <- reactive({
     private_chunks <- anl_chunks()$chunks$clone(deep = TRUE)
 
-    param <- input$yaxis_param
+    param <- input$xaxis_param
     yaxis <- input$yaxis_var
     xaxis <- input$xaxis_var
     facet_var <- input$facet_var
@@ -341,7 +341,7 @@ srv_g_boxplot <- function(input,
   create_table <- reactive({
     private_chunks <- create_plot()$clone(deep = TRUE)
 
-    param <- input$yaxis_param
+    param <- input$xaxis_param
     xaxis_var <- input$yaxis_var
     facet_var <- input$facet_var
     font_size <- input$font_size

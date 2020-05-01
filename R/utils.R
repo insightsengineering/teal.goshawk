@@ -80,33 +80,40 @@ templ_ui_params_vars <- function(ns,
                            yparam_choices = NULL, yparam_selected = NULL, yparam_label = NULL, # biomarker, e.g. ALT
                            ychoices = NULL, yselected = NULL, yvar_label = NULL, # variable, e.g. AVAL
                            multiple = FALSE) {
+  if (is.null(xparam_choices) && !is.null(xchoices) && !is.null(yparam_choices)) {
+    # otherwise, xchoices will appear first without any biomarker to select and this looks odd in the UI
+    stop(
+      "You have to specify xparam choices rather than yparamchoices
+         if both xvar and yvar should be values for the same biomarker."
+    )
+  }
   tagList(
     if (!is.null(xparam_choices)) {
       stopifnot(!is.null(xparam_selected))
-      optionalSelectInput(
+      selectInput(
         ns("xaxis_param"), if_null(xparam_label, "Select an X-Axis Biomarker"),
-        xparam_choices, xparam_selected, multiple = multiple
+        xparam_choices, xparam_selected, multiple = FALSE
       )
     },
     if (!is.null(xchoices)) {
       #stopifnot(!is.null(xselected))
-      selectInput(
+      optionalSelectInput(
         ns("xaxis_var"), if_null(xvar_label, "Select an X-Axis Variable"),
-        xchoices, xselected, multiple = FALSE
+        xchoices, xselected, multiple = multiple
       )
     },
     if (!is.null(yparam_choices)) {
       stopifnot(!is.null(yparam_selected))
-      optionalSelectInput(
+      selectInput(
         ns("yaxis_param"), if_null(yparam_label, "Select an Y-Axis Biomarker"),
-        yparam_choices, yparam_selected, multiple = multiple
+        yparam_choices, yparam_selected, multiple = FALSE
       )
     },
     if (!is.null(ychoices)) {
       #stopifnot(!is.null(yselected))
-      selectInput(
+      optionalSelectInput(
         ns("yaxis_var"), if_null(yvar_label, "Select a Y-Axis Variable"),
-        ychoices, yselected, multiple = FALSE
+        ychoices, yselected, multiple = multiple
       )
     }
   )
@@ -358,7 +365,7 @@ create_anl_constraint_reactive <- function(anl_param, input, param_id) {
     chunks_push_new_line(private_chunks)
     chunks_safe_eval(private_chunks)
 
-    return(list(ANL = chunks_get_var("ANL", private_chunks), chunks = private_chunks))
+    return(list(ANL = private_chunks$get("ANL"), chunks = private_chunks))
   })
 }
 
