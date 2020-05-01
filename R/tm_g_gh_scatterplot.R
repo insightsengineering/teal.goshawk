@@ -178,9 +178,13 @@ ui_g_scatterplot <- function(id, ...) {
     output = templ_ui_output_datatable(ns),
     encoding =  div(
       templ_ui_dataname(a$dataname),
-      templ_ui_param(ns, a$param$choices, a$param$selected), # required by constr_anl_chunks
-      templ_ui_xy_vars(ns, a$xaxis_var$choices, a$xaxis_var$selected,
-                       a$yaxis_var$choices, a$yaxis_var$selected),
+      templ_ui_params_vars(
+        ns,
+        # xparam and yparam are identical, so we only show the user one
+        xparam_choices = a$param$choices, xparam_selected = a$param$selected, xparam_label = "Select a Biomarker",
+        xchoices = a$xaxis_var$choices, xselected = a$xaxis_var$selected,
+        ychoices = a$yaxis_var$choices, yselected = a$yaxis_var$selected
+      ),
       templ_ui_constraint(ns), # required by constr_anl_chunks
       panel_group(
         panel_item(
@@ -226,11 +230,14 @@ srv_g_scatterplot <- function(input,
   ns <- session$ns
 
   # reused in all modules
-  anl_chunks <- constr_anl_chunks(session, input, datasets, dataname, "param", param_var, trt_group)
+  anl_chunks <- constr_anl_chunks(
+    session, input, datasets, dataname,
+    param_id = "xaxis_param", param_var = param_var, trt_group = trt_group
+  )
 
   # update sliders for axes
-  keep_range_slider_updated(session, input, "xrange_scale", "xaxis_var", anl_chunks)
-  keep_range_slider_updated(session, input, "yrange_scale", "yaxis_var", anl_chunks)
+  keep_range_slider_updated(session, input, "xrange_scale", "xaxis_var", "xaxis_param", anl_chunks)
+  keep_range_slider_updated(session, input, "yrange_scale", "yaxis_var", "xaxis_param", anl_chunks)
 
   # plot
   output$scatterplot <- renderPlot({
@@ -251,7 +258,7 @@ srv_g_scatterplot <- function(input,
     vline <- input$vline
 
     # Below inputs should trigger plot via updates of other reactive objects (i.e. anl_chunk()) and some inputs
-    param <- isolate(input$param)
+    param <- isolate(input$xaxis_param)
     xaxis <- isolate(input$xaxis_var)
     yaxis <- isolate(input$yaxis_var)
 

@@ -221,9 +221,12 @@ ui_g_boxplot <- function(id, ...) {
     ),
     encoding =  div(
       templ_ui_dataname(a$dataname),
-      templ_ui_param(ns, a$param$choices, a$param$selected),
-      templ_ui_xy_vars(ns, a$xaxis_var$choices, a$xaxis_var$selected,
-                       a$yaxis_var$choices, a$yaxis_var$selected),
+      templ_ui_params_vars(
+        ns,
+        xchoices = a$xaxis_var$choices, xselected = a$xaxis_var$selected,
+        ychoices = a$yaxis_var$choices, yselected = a$yaxis_var$selected,
+        yparam_choices = a$param$choices, yparam_selected = a$param$selected
+      ),
       optionalSelectInput(ns("facet_var"),
                           label = "Facet by",
                           choices = a$facet_var$choices,
@@ -271,15 +274,18 @@ srv_g_boxplot <- function(input,
   ns <- session$ns
 
   # reused in all modules
-  anl_chunks <- constr_anl_chunks(session, input, datasets, dataname, "param", param_var, trt_group)
+  anl_chunks <- constr_anl_chunks(
+    session, input, datasets, dataname,
+    param_id = "yaxis_param", param_var = param_var, trt_group = trt_group
+  )
 
   # update sliders for axes
-  keep_range_slider_updated(session, input, "yrange_scale", "yaxis_var", anl_chunks)
+  keep_range_slider_updated(session, input, "yrange_scale", "yaxis_var", "yaxis_param", anl_chunks)
 
   create_plot <- reactive({
     private_chunks <- anl_chunks()$chunks$clone(deep = TRUE)
 
-    param <- input$param
+    param <- input$yaxis_param
     yaxis <- input$yaxis_var
     xaxis <- input$xaxis_var
     facet_var <- input$facet_var
@@ -334,7 +340,7 @@ srv_g_boxplot <- function(input,
   create_table <- reactive({
     private_chunks <- create_plot()$clone(deep = TRUE)
 
-    param <- input$param
+    param <- input$yaxis_param
     xaxis_var <- input$yaxis_var
     facet_var <- input$facet_var
     font_size <- input$font_size

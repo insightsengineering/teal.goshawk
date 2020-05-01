@@ -70,14 +70,59 @@ templ_ui_output_datatable <- function(ns) {
 templ_ui_dataname <- function(dataname) {
   tags$label(dataname, "Data Settings", class = "text-primary")
 }
+
+# UI to create params (biomarker, value of PARAMCD) and vars (column, e.g. AVAL column) select fields for x and y
+templ_ui_params_vars <- function(ns,
+                           # x
+                           xparam_choices = NULL, xparam_selected = NULL, xparam_label = NULL, # biomarker, e.g. ALT
+                           xchoices = NULL, xselected = NULL, xvar_label = NULL, # variable, e.g. AVAL
+                           # y
+                           yparam_choices = NULL, yparam_selected = NULL, yparam_label = NULL, # biomarker, e.g. ALT
+                           ychoices = NULL, yselected = NULL, yvar_label = NULL, # variable, e.g. AVAL
+                           multiple = FALSE) {
+  tagList(
+    if (!is.null(xparam_choices)) {
+      stopifnot(!is.null(xparam_selected))
+      optionalSelectInput(
+        ns("xaxis_param"), if_null(xparam_label, "Select an X-Axis Biomarker"),
+        xparam_choices, xparam_selected, multiple = multiple
+      )
+    },
+    if (!is.null(xchoices)) {
+      #stopifnot(!is.null(xselected))
+      selectInput(
+        ns("xaxis_var"), if_null(xvar_label, "Select an X-Axis Variable"),
+        xchoices, xselected, multiple = FALSE
+      )
+    },
+    if (!is.null(yparam_choices)) {
+      stopifnot(!is.null(yparam_selected))
+      optionalSelectInput(
+        ns("yaxis_param"), if_null(yparam_label, "Select an Y-Axis Biomarker"),
+        yparam_choices, yparam_selected, multiple = multiple
+      )
+    },
+    if (!is.null(ychoices)) {
+      #stopifnot(!is.null(yselected))
+      selectInput(
+        ns("yaxis_var"), if_null(yvar_label, "Select a Y-Axis Variable"),
+        ychoices, yselected, multiple = FALSE
+      )
+    }
+  )
+}
+
+# todo: remove this and below
 templ_ui_param <- function(ns, choices, selected) {
+  stop("Use templ_ui_param instead")
   selectInput(ns("param"), "Select a Biomarker", choices, selected, multiple = FALSE)
 }
 
 templ_ui_xy_vars <- function(ns, xchoices, xselected, ychoices, yselected, multiple = FALSE) {
+  stop("Use templ_ui_param instead")
   tagList(
     if (!is.null(xchoices) && !is.null(xselected)) {
-      optionalSelectInput(ns("xaxis_var"), "Select an X-Axis Variable",  xchoices,  xselected, multiple = multiple)
+      optionalSelectInput(ns("xaxis_var"), "Select an X-Axis Variable", xchoices, xselected, multiple = multiple)
     },
     if (!is.null(ychoices) && !is.null(yselected)) {
       optionalSelectInput(ns("yaxis_var"), "Select a Y-Axis Variable", ychoices, yselected, multiple = multiple)
@@ -87,7 +132,7 @@ templ_ui_xy_vars <- function(ns, xchoices, xselected, ychoices, yselected, multi
 
 
 #' @importFrom shinyjs hidden
-templ_ui_constraint <- function(ns, label =  "Data Constraint") {
+templ_ui_constraint <- function(ns, label = "Data Constraint") {
   div(
     radioButtons(ns("constraint_var"), label,
                  c("None" = "NONE", "Screening" = "BASE2", "Baseline" = "BASE")),
@@ -139,14 +184,21 @@ keep_range_slider_updated <- function(session, input, id_slider, id_var, filter_
   })
 }
 
+# param_id: input id that contains values of PARAMCD to filter for
+# param_var: currently only "PARAMCD" is supported
 #' @importFrom dplyr filter sym
 #' @importFrom shinyjs hide show
 constr_anl_chunks <- function(session, input, datasets, dataname, param_id, param_var, trt_group) {
   dataset_var <- paste0(dataname, "_FILTERED")
+  if (!identical(param_var, "PARAMCD")) {
+    # why is there a variable param_id which is provided to this function and always equal to "param"?
+    stop("param_var must be 'PARAMCD'. Otherwise, we cannot currently guarantee the correctness of the code.")
+  }
 
   anl_param <- reactive({
-    param <- input[[param_id]]
-    validate(need(param, "Please select a biomarker"))
+    param_var_value <- input[[param_id]] # value to filter PARAMCD for
+    validate(need(param_var_value, "Please select a biomarker"))
+    stopifnot(is_character_single(param_var_value))
 
     ANL_FILTERED <- datasets$get_data(dataname, filtered = TRUE, reactive = TRUE) # nolint
     validate_has_data(ANL_FILTERED, 5)
@@ -167,7 +219,7 @@ constr_anl_chunks <- function(session, input, datasets, dataname, param_id, para
       id = "filter_biomarker",
       expression = bquote({
         ANL <- .(as.name(dataset_var)) %>% # nolint
-          dplyr::filter(.(as.name(param_var)) == .(param))
+          dplyr::filter(.(as.name(param_var)) == .(param_var_value))
       })
     )
 
@@ -178,10 +230,10 @@ constr_anl_chunks <- function(session, input, datasets, dataname, param_id, para
   })
 
   observe({
-    param <- input[[param_id]]
-    validate(need(param, "Please select a biomarker"))
+    param_var_value <- input[[param_id]]
+    validate(need(param_var_value, "Please select a biomarker"))
 
-    constraint_var <- input$constraint_var
+    constraint_var <- input[["constraint_var"]]
     validate(need(constraint_var, "select a constraint variable"))
 
     # note that filtered is false thus we cannot use anl_param()$ANL
@@ -192,14 +244,14 @@ constr_anl_chunks <- function(session, input, datasets, dataname, param_id, para
     validate_has_variable(ANL, "BASE")
     validate_has_variable(ANL, "BASE2")
 
-    ANL <- ANL %>% filter(!!sym(param_var) == param) # nolint
+    ANL <- ANL %>% filter(!!sym(param_var) == param_var_value) # nolint
 
     visit_freq <- unique(ANL$AVISITCD)
 
 
     # get min max values
-    if ((constraint_var == "BASE2" & any(grepl("SCR", visit_freq))) ||
-        (constraint_var == "BASE" & any(grepl("BL", visit_freq)))) {
+    if ((constraint_var == "BASE2" && any(grepl("SCR", visit_freq))) ||
+        (constraint_var == "BASE" && any(grepl("BL", visit_freq)))) {
 
       val <- na.omit(switch(
         constraint_var,
@@ -250,18 +302,30 @@ constr_anl_chunks <- function(session, input, datasets, dataname, param_id, para
     }
   })
 
-  anl_constraint <- reactive({
+  anl_constraint <- create_anl_constraint_reactive(anl_param, input, param_id = param_id)
+
+  return(anl_constraint)
+}
+
+# returns a reactive that applies the `x-axis data constraint`
+# More precisely, all patients are filtered out that do not have the range of
+# `param_id.constraint_var` in the specified range
+# constraint var means that `param_id.constraint_var` is constrained to the filtered range (or NA),
+# e.g. `ALT.BASE2` (i.e. `PARAMCD = ALT & range_filter_on(BASE2)`)
+create_anl_constraint_reactive <- function(anl_param, input, param_id) {
+  reactive({
+    private_chunks <- anl_param()$chunks$clone(deep = TRUE)
+
     # it is assumed that constraint_var is triggering constraint_range which then trigger this clause
-    constraint_var <- isolate(input$constraint_var)
-    constraint_range_min <- input$constraint_range_min
-    constraint_range_max <- input$constraint_range_max
+    constraint_var <- isolate(input[["constraint_var"]])
+    constraint_range_min <- input[["constraint_range_min"]]
+    constraint_range_max <- input[["constraint_range_max"]]
+    param <- input[[param_id]]
+    stopifnot(is_character_single(param))
 
     validate(need(constraint_range_min, "please select proper constraint minimum value"))
     validate(need(constraint_range_max, "please select proper constraint maximum value"))
     validate(need(constraint_range_min <= constraint_range_max, "constraint min needs to be smaller than max"))
-
-    anl_param <- anl_param()
-    private_chunks <- anl_param$chunks$clone(deep = TRUE)
 
     # filter constraint
     if (constraint_var != "NONE") {
@@ -269,14 +333,29 @@ constr_anl_chunks <- function(session, input, datasets, dataname, param_id, para
         chunks = private_chunks,
         id = "filter_constraint",
         expression = bquote({
-          ANL <- ANL %>% # nolint
+          # the below includes patients who have at least one non-NA BASE value
+          # ideally, a patient should either have all NA values or none at all
+          # this could be achieved through preprocessing; otherwise, this is easily overseen
+          filtered_usubjids <- ANL %>% # nolint
             dplyr::filter(
-              (.(constraint_range_min) <= .(as.name(constraint_var)) &
-                 .(as.name(constraint_var)) <= .(constraint_range_max)) |
-                is.na(.(as.name(constraint_var)))
-            )
+              PARAMCD == .(param),
+              (.(constraint_range_min) <= .data[[.(constraint_var)]]) &
+                (.data[[.(constraint_var)]] <= .(constraint_range_max))
+            ) %>% pull(USUBJID)
+          # include patients with all NA values for constraint_var
+          filtered_usubjids <- c(
+            filtered_usubjids,
+            ANL %>%
+              dplyr::filter(PARAMCD == .(param)) %>%
+              group_by(USUBJID) %>%
+              summarize(all_na = all(is.na(.data[[.(constraint_var)]]))) %>%
+              filter(all_na) %>%
+              pull(USUBJID)
+          )
+          ANL <- ANL %>% filter(USUBJID %in% filtered_usubjids)
         })
       )
+
       ANL <- chunks_safe_eval(private_chunks) # nolint
       validate_has_data(ANL, 5)
     }
@@ -286,8 +365,6 @@ constr_anl_chunks <- function(session, input, datasets, dataname, param_id, para
 
     return(list(ANL = chunks_get_var("ANL", private_chunks), chunks = private_chunks))
   })
-
-  return(anl_constraint)
 }
 
 

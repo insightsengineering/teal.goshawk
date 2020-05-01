@@ -219,10 +219,13 @@ ui_g_correlationplot_av <- function(id, ...) {
     ),
     encoding =  div(
       tags$label(a$dataname, "Data Settings", class="text-primary"),
-      optionalSelectInput(ns("xaxis_param"), "Select an X-Axis Biomarker", a$xaxis_param_choices, a$xaxis_param, multiple = FALSE),
-      optionalSelectInput(ns("xaxis_var"), "Select an X-Axis Variable", a$xaxis_var_choices, a$xaxis_var, multiple = FALSE),
-      optionalSelectInput(ns("yaxis_param"), "Select a Y-Axis Biomarker", a$yaxis_param_choices, a$yaxis_param, multiple = FALSE),
-      optionalSelectInput(ns("yaxis_var"), "Select a Y-Axis Variable", a$yaxis_var_choices, a$yaxis_var, multiple = FALSE),
+      templ_ui_params_vars(
+        ns,
+        xparam_choices = a$xaxis_param$choices, xparam_selected = a$xaxis_param$selected,
+        xchoices = a$xaxis_var$choices, xselected = a$xaxis_var$selected,
+        yparam_choices = a$yaxis_param$choices, yparam_selected = a$yaxis_param$selected,
+        ychoices = a$yaxis_var$choices, yselected = a$yaxis_var$selected
+      ),
       radioButtons(ns("constraint_var"), "X-Axis Data Constraint", c("None" = "NONE", "Screening" = "BASE2", "Baseline" = "BASE")),
       uiOutput(ns("constraint_min_value"), style="display: inline-block; vertical-align:center"),
       uiOutput(ns("constraint_max_value"), style="display: inline-block; vertical-align:center"),

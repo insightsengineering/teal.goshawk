@@ -187,9 +187,13 @@ ui_lineplot <- function(id, ...) {
     output = uiOutput(ns("plot_ui")),
     encoding = div(
       templ_ui_dataname(a$dataname),
-      templ_ui_param(ns, a$param$choices, a$param$selected), # required by constr_anl_chunks
-      templ_ui_xy_vars(ns, a$xaxis_var$choices, a$xaxis_var$selected,
-                       a$yaxis_var$choices, a$yaxis_var$selected),
+      templ_ui_params_vars(
+        ns,
+        # xparam and yparam are identical, so we only show the user one
+        xparam_choices = a$param$choices, xparam_selected = a$param$selected, xparam_label = "Select a Biomarker",
+        xchoices = a$xaxis_var$choices, xselected = a$xaxis_var$selected,
+        ychoices = a$yaxis_var$choices, yselected = a$yaxis_var$selected
+      ),
       uiOutput(ns("shape_ui")),
       radioButtons(ns("stat"), "Select a Statistic:", c("mean","median"), a$stat),
       templ_ui_constraint(ns), # required by constr_anl_chunks
@@ -242,7 +246,7 @@ srv_lineplot <- function(input,
                                   input = input,
                                   datasets = datasets,
                                   dataname = dataname,
-                                  param_id = "param",
+                                  param_id = "xaxis_param",
                                   param_var =  param_var,
                                   trt_group = trt_group)
 
@@ -301,7 +305,7 @@ srv_lineplot <- function(input,
     median <- ifelse(input$stat=='median',TRUE, FALSE)
     plot_height <- input$plot_height
 
-    param <- isolate(input$param)
+    param <- isolate(input$xaxis_param)
     xaxis <- isolate(input$xaxis_var)
     yaxis <- isolate(input$yaxis_var)
 

@@ -189,10 +189,13 @@ ui_g_correlationplot <- function(id, ...) {
     output = templ_ui_output_datatable(ns),
     encoding =  div(
       templ_ui_dataname(a$dataname),
-      selectInput(ns("xaxis_param"), "Select a X-Axis Biomarker", a$xaxis_param$choices, a$xaxis_param$selected, multiple = FALSE),
-      selectInput(ns("xaxis_var"), "Select an X-Axis Variable",  a$xaxis_var$choices,  a$xaxis_var$selected, multiple = FALSE),
-      selectInput(ns("yaxis_param"), "Select a Y-Axis Biomarker", a$yaxis_param$choices, a$yaxis_param$selected, multiple = FALSE),
-      selectInput(ns("yaxis_var"), "Select a Y-Axis Variable",  a$yaxis_var$choices,  a$yaxis_var$selected, multiple = FALSE),
+      templ_ui_params_vars(
+        ns,
+        xparam_choices = a$xaxis_param$choices, xparam_selected = a$xaxis_param$selected,
+        xchoices = a$xaxis_var$choices, xselected = a$xaxis_var$selected,
+        yparam_choices = a$yaxis_param$choices, yparam_selected = a$yaxis_param$selected,
+        ychoices = a$yaxis_var$choices, yselected = a$yaxis_var$selected
+      ),
       templ_ui_constraint(ns, "X-Axis Data Constraint"), # required by constr_anl_chunks
       panel_group(
         panel_item(
@@ -376,55 +379,7 @@ srv_g_correlationplot <- function(input,
     }
   })
 
-  anl_constraint <- reactive({
-    private_chunks <- anl_param()$chunks$clone(deep = TRUE)
-
-    # it is assumed that constraint_var is triggering constraint_range which then trigger this clause
-    constraint_var <- isolate(input$constraint_var)
-    constraint_range_min <- input$constraint_range_min
-    constraint_range_max <- input$constraint_range_max
-    xaxis_param <- input$xaxis_param
-    stopifnot(is_character_single(xaxis_param))
-
-    validate(need(constraint_range_min, "please select proper constraint minimum value"))
-    validate(need(constraint_range_max, "please select proper constraint maximum value"))
-    validate(need(constraint_range_min <= constraint_range_max, "constraint min needs to be smaller than max"))
-
-    # filter constraint
-    if (constraint_var != "NONE") {
-      chunks_push(
-        chunks = private_chunks,
-        id = "filter_constraint",
-        expression = bquote({
-          filtered_usubjids <- ANL %>% # nolint
-            dplyr::filter(
-              PARAMCD == .(xaxis_param),
-              (.(constraint_range_min) <= .data[[.(constraint_var)]]) &
-                 (.data[[.(constraint_var)]] <= .(constraint_range_max))
-            ) %>% pull(USUBJID)
-          # include patients with all NA values for xaxis param
-          filtered_usubjids <- c(
-            filtered_usubjids,
-            ANL %>%
-              dplyr::filter(PARAMCD == .(xaxis_param)) %>%
-              group_by(USUBJID) %>%
-              summarize(all_na = all(is.na(BASE))) %>%
-              filter(all_na) %>%
-              pull(USUBJID)
-          )
-          ANL <- ANL %>% filter(USUBJID %in% filtered_usubjids)
-        })
-      )
-
-      ANL <- chunks_safe_eval(private_chunks) # nolint
-      validate_has_data(ANL, 5)
-    }
-
-    chunks_push_new_line(private_chunks)
-    chunks_safe_eval(private_chunks)
-
-    return(list(ANL = chunks_get_var("ANL", private_chunks), chunks = private_chunks))
-  })
+  anl_constraint <- create_anl_constraint_reactive(anl_param, input, param_id = "xaxis_param")
 
   # update sliders for axes
   keep_range_slider_updated(session, input, "xrange_scale", "xaxis_var", "xaxis_param", anl_constraint)

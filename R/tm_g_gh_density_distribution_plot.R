@@ -195,9 +195,10 @@ ui_g_density_distribution_plot <- function(id, ...) {
     ),
     encoding = div(
       templ_ui_dataname(a$dataname),
-      templ_ui_param(ns, a$param$choices, a$param$selected), # required by constr_anl_chunks
-      templ_ui_xy_vars(ns, a$xaxis_var$choices, a$xaxis_var$selected,
-                       ychoices = NULL, yselected = NULL
+      templ_ui_params_vars(
+        ns,
+        xchoices = a$xaxis_var$choices, xselected = a$xaxis_var$selected,
+        xparam_choices = a$param$choices, xparam_selected = a$param$selected
       ),
       templ_ui_constraint(ns),
       panel_group(
@@ -227,14 +228,17 @@ ui_g_density_distribution_plot <- function(id, ...) {
 srv_g_density_distribution_plot <- function(input, output, session, datasets, dataname, param_var, param, #nolintr
                                             trt_group, color_manual, color_comb) {
   ns <- session$ns
-  anl_chunks <- constr_anl_chunks(session, input, datasets, dataname, "param", param_var, trt_group)
-  keep_range_slider_updated(session, input, "xrange_scale", "xaxis_var", anl_chunks)
+  anl_chunks <- constr_anl_chunks(
+    session, input, datasets, dataname,
+    param_id = "xaxis_param", param_var = param_var, trt_group = trt_group
+  )
+  keep_range_slider_updated(session, input, "xrange_scale", "xaxis_var", "xaxis_param", anl_chunks)
 
   create_plot <- reactive({
     private_chunks <- anl_chunks()$chunks$clone(deep = TRUE)
 
     #nolint start
-    param <- input$param
+    param <- input$xaxis_param
     xaxis_var <- input$xaxis_var
     xmin_scale <- input$xrange_scale[1]
     xmax_scale <- input$xrange_scale[2]
@@ -279,7 +283,7 @@ srv_g_density_distribution_plot <- function(input, output, session, datasets, da
   create_table <- reactive({
     private_chunks <- create_plot()$clone(deep = TRUE)
 
-    param <- input$param
+    param <- input$xaxis_param
     xaxis_var <- input$xaxis_var
     font_size <- input$font_size
 
