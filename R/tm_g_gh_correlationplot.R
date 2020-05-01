@@ -200,8 +200,7 @@ ui_g_correlationplot <- function(id, ...) {
       panel_group(
         panel_item(
           title = "Plot Aesthetic Settings",
-          sliderInput(ns("xrange_scale"), label = "X-Axis Range Zoom", min = 0, max = 1, value = c(0, 1)),
-          sliderInput(ns("yrange_scale"), label = "Y-Axis Range Zoom", min = 0, max = 1, value = c(0, 1)),
+          templ_plot_range_ui(ns),
           numericInput(ns("facet_ncol"), "Number of Plots Per Row:", a$facet_ncol, min = 1),
           checkboxInput(ns("visit_facet"), "Visit Facetting", a$visit_facet),
           checkboxInput(ns("facet"), "Treatment Facetting", a$facet),
@@ -381,9 +380,9 @@ srv_g_correlationplot <- function(input,
 
   anl_constraint <- create_anl_constraint_reactive(anl_param, input, param_id = "xaxis_param")
 
-  # update sliders for axes
-  keep_range_slider_updated(session, input, "xrange_scale", "xaxis_var", "xaxis_param", anl_constraint)
-  keep_range_slider_updated(session, input, "yrange_scale", "yaxis_var", "yaxis_param", anl_constraint)
+  # update sliders for axes taking constraints into account
+  keep_range_slider_updated(session, input, "xrange_scale", "xaxis_var", "xaxis_param", anl_chunks)
+  keep_range_slider_updated(session, input, "yrange_scale", "yaxis_var", "xaxis_param", anl_chunks)
 
   # selector names after transposition
   xvar <- reactive(paste0(input$xaxis_var, ".", input$xaxis_param))

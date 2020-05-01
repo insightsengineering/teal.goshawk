@@ -41,8 +41,10 @@ ui_goshawk_shell <- function(id, datasets, ...) {
   standard_layout(
     output = textOutput(ns("txt")),
     encoding =  div(
-      # those two templ_* functions need to be here for the server function to work
-      templ_ui_param(ns, a$param$choices, a$param$selected),
+      templ_ui_params_vars(
+        ns,
+        xparam_choices = a$param$choices, xparam_selected = a$param$selected, xparam_label = "Select a Biomarker",
+      ),
       templ_ui_constraint(ns)
     ),
     forms = get_rcode_ui(ns("rcode"))
@@ -51,7 +53,10 @@ ui_goshawk_shell <- function(id, datasets, ...) {
 
 srv_goshawk_shell <- function(input, output, session, datasets, dataname, param_var, trt_group) {
 
-  anl_chunks <- constr_anl_chunks(session, input, datasets, dataname, "param", param_var, trt_group)
+  anl_chunks <- constr_anl_chunks(
+    session, input, datasets, dataname,
+    param_id = "xaxis_param", param_var = param_var, trt_group = trt_group
+  )
 
   output$txt <- renderText({
 

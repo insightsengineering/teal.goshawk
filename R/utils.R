@@ -112,24 +112,13 @@ templ_ui_params_vars <- function(ns,
   )
 }
 
-# todo: remove this and below
-templ_ui_param <- function(ns, choices, selected) {
-  stop("Use templ_ui_param instead")
-  selectInput(ns("param"), "Select a Biomarker", choices, selected, multiple = FALSE)
-}
-
-templ_ui_xy_vars <- function(ns, xchoices, xselected, ychoices, yselected, multiple = FALSE) {
-  stop("Use templ_ui_param instead")
-  tagList(
-    if (!is.null(xchoices) && !is.null(xselected)) {
-      optionalSelectInput(ns("xaxis_var"), "Select an X-Axis Variable", xchoices, xselected, multiple = multiple)
-    },
-    if (!is.null(ychoices) && !is.null(yselected)) {
-      optionalSelectInput(ns("yaxis_var"), "Select a Y-Axis Variable", ychoices, yselected, multiple = multiple)
-    }
+templ_plot_range_ui <- function(ns) {
+  ns <- NS(id)
+  div(
+    sliderInput(ns("xrange_scale"), label = "X-Axis Range Zoom", min = 0, max = 1, value = c(0, 1)),
+    sliderInput(ns("yrange_scale"), label = "Y-Axis Range Zoom", min = 0, max = 1, value = c(0, 1))
   )
 }
-
 
 #' @importFrom shinyjs hidden
 templ_ui_constraint <- function(ns, label = "Data Constraint") {
@@ -153,7 +142,6 @@ templ_ui_constraint <- function(ns, label = "Data Constraint") {
     ))
   )
 }
-
 
 keep_range_slider_updated <- function(session, input, id_slider, id_var, filter_var_id, reactive_ANL) { # nolint
   # todo: remove input and rather pass varnames  directly

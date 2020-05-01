@@ -200,11 +200,11 @@ ui_g_density_distribution_plot <- function(id, ...) {
         xchoices = a$xaxis_var$choices, xselected = a$xaxis_var$selected,
         xparam_choices = a$param$choices, xparam_selected = a$param$selected
       ),
-      templ_ui_constraint(ns),
+      templ_ui_constraint(ns, label = "X-Axis Data Constraint"),
       panel_group(
         panel_item(
           title = "Plot Aesthetic Settings",
-          sliderInput(ns("xrange_scale"), label = "X-Axis Range Zoom", min = 0, max = 1, value = c(0, 1)),
+          templ_plot_range_ui(ns),
           numericInput(ns("facet_ncol"), "Number of Plots Per Row:", a$facet_ncol, min = 1),
           checkboxInput(ns("comb_line"), "Display combination line", a$comb_line),
           checkboxInput(ns("rotate_xlab"), "Rotate X-axis Label", a$rotate_xlab),
@@ -232,7 +232,10 @@ srv_g_density_distribution_plot <- function(input, output, session, datasets, da
     session, input, datasets, dataname,
     param_id = "xaxis_param", param_var = param_var, trt_group = trt_group
   )
+
+  # update sliders for axes taking constraints into account
   keep_range_slider_updated(session, input, "xrange_scale", "xaxis_var", "xaxis_param", anl_chunks)
+  keep_range_slider_updated(session, input, "yrange_scale", "yaxis_var", "xaxis_param", anl_chunks)
 
   create_plot <- reactive({
     private_chunks <- anl_chunks()$chunks$clone(deep = TRUE)

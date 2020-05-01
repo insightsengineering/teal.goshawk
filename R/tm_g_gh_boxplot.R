@@ -232,15 +232,15 @@ ui_g_boxplot <- function(id, ...) {
                           choices = a$facet_var$choices,
                           selected = a$facet_var$selected,
                           multiple = FALSE),
-      templ_ui_constraint(ns), # required by constr_anl_chunks
+      templ_ui_constraint(ns, label = "Y-Axis Data Constraint"), # required by constr_anl_chunks
       panel_group(
         panel_item(
           title = "Plot Aesthetic Settings",
+          templ_plot_range_ui(ns),
           numericInput(ns("facet_ncol"), "Number of Plots Per Row:", a$facet_ncol, min = 1),
           checkboxInput(ns("loq_legend"), "Display LoQ Legend", a$loq_legend),
           checkboxInput(ns("rotate_xlab"), "Rotate X-axis Label", a$rotate_xlab),
-          numericInput(ns("hline"), "Add a horizontal line:", a$hline),
-          sliderInput(ns("yrange_scale"), label = "Y-Axis Range Zoom", min = 0, max = 1, value = c(0, 1))
+          numericInput(ns("hline"), "Add a horizontal line:", a$hline)
         ),
         panel_item(
           title = "Plot settings",
@@ -279,7 +279,8 @@ srv_g_boxplot <- function(input,
     param_id = "yaxis_param", param_var = param_var, trt_group = trt_group
   )
 
-  # update sliders for axes
+  # update sliders for axes taking constraints into account
+  keep_range_slider_updated(session, input, "xrange_scale", "xaxis_var", "yaxis_param", anl_chunks)
   keep_range_slider_updated(session, input, "yrange_scale", "yaxis_var", "yaxis_param", anl_chunks)
 
   create_plot <- reactive({
