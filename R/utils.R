@@ -119,12 +119,16 @@ templ_ui_params_vars <- function(ns,
   )
 }
 
-keep_data_constraint_options_updated <- function(session, input, data) {
+keep_data_constraint_options_updated <- function(session, input, data, id_param_var) {
   # use reactiveVal so that it only updates when options actually changed and not just data
   choices <- reactiveVal()
   observeEvent(data(), {
+    paramname <- input[[id_param_var]]
+    stopifnot(length(paramname) == 1)
+
+    data_filtered <- data()$ANL %>% filter(PARAMCD == paramname)
     choices(c("None" = "NONE", "Screening" = "BASE2", "Baseline" = "BASE")[
-      c(TRUE, !all(is.na(data()$ANL[["BASE2"]])), !all(is.na(data()$ANL[["BASE"]])))
+      c(TRUE, !all(is.na(data_filtered[["BASE2"]])), !all(is.na(data_filtered[["BASE"]])))
       ])
   })
   observeEvent(choices(), {
@@ -161,7 +165,8 @@ templ_ui_constraint <- function(ns, label = "Data Constraint") {
   )
 }
 
-keep_range_slider_updated <- function(session, input, id_slider, id_var, id_param_var, reactive_ANL) { # nolint
+keep_range_slider_updated <- function(session, input, update_slider_fcn, id_var, id_param_var, reactive_ANL) { # nolint
+  stopifnot(is.function(update_slider_fcn))
   # todo: remove input and rather pass varnames  directly
 
   observe({
@@ -182,13 +187,11 @@ keep_range_slider_updated <- function(session, input, id_slider, id_var, id_para
       ceiling(max(if_empty(na.omit(ANL[[varname]]), 0)))
     )
 
-    updateSliderInput(
-      session = session,
-      inputId = id_slider,
-      min = minmax[1],
-      max = minmax[2],
+    isolate(update_slider_fcn(
+      min = minmax[[1]],
+      max = minmax[[2]],
       value = minmax
-    )
+    ))
   })
 }
 

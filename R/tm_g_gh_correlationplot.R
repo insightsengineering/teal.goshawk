@@ -200,8 +200,8 @@ ui_g_correlationplot <- function(id, ...) {
       panel_group(
         panel_item(
           title = "Plot Aesthetic Settings",
-          sliderInput(ns("xrange_scale"), label = "X-Axis Range Zoom", min = 0, max = 1, value = c(0, 1)),
-          sliderInput(ns("yrange_scale"), label = "Y-Axis Range Zoom", min = 0, max = 1, value = c(0, 1)),
+          toggle_slider_ui(ns("xrange_scale"), label = "X-Axis Range Zoom", min = 0, max = 1, value = c(0, 1)),
+          toggle_slider_ui(ns("yrange_scale"), label = "Y-Axis Range Zoom", min = 0, max = 1, value = c(0, 1)),
           numericInput(ns("facet_ncol"), "Number of Plots Per Row:", a$facet_ncol, min = 1),
           checkboxInput(ns("visit_facet"), "Visit Facetting", a$visit_facet),
           checkboxInput(ns("facet"), "Treatment Facetting", a$facet),
@@ -381,10 +381,13 @@ srv_g_correlationplot <- function(input,
 
   anl_constraint <- create_anl_constraint_reactive(anl_param, input, param_id = "xaxis_param")
 
+  xrange_slider <- callModule(toggle_slider_server, "xrange_scale")
+  yrange_slider <- callModule(toggle_slider_server, "yrange_scale")
+
   # update sliders for axes taking constraints into account
-  keep_range_slider_updated(session, input, "xrange_scale", "xaxis_var", "xaxis_param", anl_constraint)
-  keep_range_slider_updated(session, input, "yrange_scale", "yaxis_var", "xaxis_param", anl_constraint)
-  keep_data_constraint_options_updated(session, input, anl_constraint)
+  keep_range_slider_updated(session, input, xrange_slider$update_state, "xaxis_var", "xaxis_param", anl_constraint)
+  keep_range_slider_updated(session, input, yrange_slider$update_state, "yaxis_var", "xaxis_param", anl_constraint)
+  keep_data_constraint_options_updated(session, input, anl_constraint, "xaxis_param")
 
   # selector names after transposition
   xvar <- reactive(paste0(input$xaxis_var, ".", input$xaxis_param))
@@ -509,10 +512,10 @@ srv_g_correlationplot <- function(input,
     xaxis_var <- input$xaxis_var
     yaxis_param <- input$yaxis_param
     yaxis_var <- input$yaxis_var
-    xmin_scale <- input$xrange_scale[1]
-    xmax_scale <- input$xrange_scale[2]
-    ymin_scale <- input$yrange_scale[1]
-    ymax_scale <- input$yrange_scale[2]
+    xmin_scale <- xrange_slider$state()$value[[1]]
+    xmax_scale <- xrange_slider$state()$value[[2]]
+    ymin_scale <- yrange_slider$state()$value[[1]]
+    ymax_scale <- yrange_slider$state()$value[[2]]
     font_size <- input$font_size
     dot_size <- input$dot_size
     reg_text_size <- input$reg_text_size

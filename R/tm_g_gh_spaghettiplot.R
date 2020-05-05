@@ -213,7 +213,7 @@ g_ui_spaghettiplot <- function(id, ...) {
         panel_item(
           title = "Plot Aesthetic Settings",
           div(style = "padding: 0px;",
-              div(style = "display: inline-block;vertical-align:moddle; width: 175px;",
+              div(style = "display: inline-block;vertical-align:middle; width: 175px;",
                   tags$b("Number of Plots Per Row:")),
               div(style = "display: inline-block;vertical-align:middle; width: 100px;",
                   numericInput(ns("facet_ncol"), "", a$facet_ncol, min = 1))
@@ -265,7 +265,7 @@ srv_g_spaghettiplot <- function(input,
 
   # update sliders for axes taking constraints into account
   keep_range_slider_updated(session, input, "yrange_scale", "yaxis_var", "xaxis_param", anl_chunks)
-  keep_data_constraint_options_updated(session, input, anl_chunks)
+  keep_data_constraint_options_updated(session, input, anl_chunks, "xaxis_param")
 
   output$spaghettiplot <- renderPlot({
 

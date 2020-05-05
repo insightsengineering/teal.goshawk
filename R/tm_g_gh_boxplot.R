@@ -281,7 +281,7 @@ srv_g_boxplot <- function(input,
 
   # update sliders for axes taking constraints into account
   keep_range_slider_updated(session, input, "yrange_scale", "yaxis_var", "xaxis_param", anl_chunks)
-  keep_data_constraint_options_updated(session, input, anl_chunks)
+  keep_data_constraint_options_updated(session, input, anl_chunks, "xaxis_param")
 
   create_plot <- reactive({
     private_chunks <- anl_chunks()$chunks$clone(deep = TRUE)

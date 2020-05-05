@@ -126,7 +126,6 @@
 #'
 #' shinyApp(app$ui, app$server)
 #' }
-
 tm_g_gh_lineplot <- function(label,
                              dataname,
                              param_var,
@@ -150,7 +149,6 @@ tm_g_gh_lineplot <- function(label,
                              dodge = c(0.4, 0, 1),
                              pre_output = NULL,
                              post_output = NULL) {
-  stop("Don't use this module. It is not guaranteed to work.")
 
   stopifnot(is.choices_selected(xaxis_var))
   stopifnot(is.choices_selected(yaxis_var))
@@ -202,7 +200,7 @@ ui_lineplot <- function(id, ...) {
       panel_group(
         panel_item(
           title = "Plot Aesthetic Settings",
-          templ_plot_range_ui(ns),
+          sliderInput(ns("yrange_scale"), label = "Y-Axis Range Zoom", min = 0, max = 1, value = c(0, 1)),
           checkboxInput(ns("rotate_xlab"), "Rotate X-axis Label", a$rotate_xlab),
           numericInput(ns("hline"), "Add a horizontal line:", a$hline)
         ),
@@ -251,6 +249,7 @@ srv_lineplot <- function(input,
                                   param_id = "xaxis_param",
                                   param_var =  param_var,
                                   trt_group = trt_group)
+  keep_data_constraint_options_updated(session, input, anl_chunks, "xaxis_param")
 
   # update sliders for axes
   observe({
@@ -266,6 +265,8 @@ srv_lineplot <- function(input,
       NULL
     }
 
+    # we don't need to additionally filter for paramvar here as in keep_range_slider_updated because
+    # xaxis_var and yaxis_var are always distinct
     sum_data <- ANL %>%
       group_by_at(c(input$xaxis_var, trt_group, shape)) %>%
       summarise(upper = if (input$stat == 'mean') {
@@ -287,11 +288,14 @@ srv_lineplot <- function(input,
       f = 0.05
     )
 
+    # we don't use keep_range_slider_updated because this module computes the min, max
+    # not from the constrained ANL, but rather by first grouping and computing confidence
+    # intervals
     updateSliderInput(
       session = session,
       inputId = "yrange_scale",
-      min = minmax[1],
-      max = minmax[2],
+      min = minmax[[1]],
+      max = minmax[[2]],
       value = minmax
     )
   })
@@ -307,6 +311,7 @@ srv_lineplot <- function(input,
     median <- ifelse(input$stat=='median',TRUE, FALSE)
     plot_height <- input$plot_height
 
+    # todo: document why isolated
     param <- isolate(input$xaxis_param)
     xaxis <- isolate(input$xaxis_var)
     yaxis <- isolate(input$yaxis_var)
@@ -354,7 +359,7 @@ srv_lineplot <- function(input,
 
   output$plot_ui <- renderUI({
     plot_height <- input$plot_height
-    validate(need(plot_height, "need  valid plot height"))
+    validate(need(plot_height, "need valid plot height"))
     plotOutput(ns("lineplot"), height = plot_height)
   })
 
