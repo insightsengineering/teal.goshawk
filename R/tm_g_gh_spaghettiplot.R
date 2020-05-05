@@ -264,7 +264,7 @@ srv_g_spaghettiplot <- function(input,
   )
 
   # update sliders for axes taking constraints into account
-  keep_range_slider_updated(session, input, "yrange_scale", "yaxis_var", anl_chunks)
+  keep_range_slider_updated(session, input, "yrange_scale", "yaxis_var", "xaxis_param", anl_chunks)
   keep_data_constraint_options_updated(session, input, anl_chunks)
 
   output$spaghettiplot <- renderPlot({

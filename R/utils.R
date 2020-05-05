@@ -73,13 +73,13 @@ templ_ui_dataname <- function(dataname) {
 
 # UI to create params (biomarker, value of PARAMCD) and vars (column, e.g. AVAL column) select fields for x and y
 templ_ui_params_vars <- function(ns,
-                           # x
-                           xparam_choices = NULL, xparam_selected = NULL, xparam_label = NULL, # biomarker, e.g. ALT
-                           xchoices = NULL, xselected = NULL, xvar_label = NULL, # variable, e.g. AVAL
-                           # y
-                           yparam_choices = NULL, yparam_selected = NULL, yparam_label = NULL, # biomarker, e.g. ALT
-                           ychoices = NULL, yselected = NULL, yvar_label = NULL, # variable, e.g. AVAL
-                           multiple = FALSE) {
+                                 # x
+                                 xparam_choices = NULL, xparam_selected = NULL, xparam_label = NULL, # biomarker, e.g. ALT
+                                 xchoices = NULL, xselected = NULL, xvar_label = NULL, # variable, e.g. AVAL
+                                 # y
+                                 yparam_choices = NULL, yparam_selected = NULL, yparam_label = NULL, # biomarker, e.g. ALT
+                                 ychoices = NULL, yselected = NULL, yvar_label = NULL, # variable, e.g. AVAL
+                                 multiple = FALSE) {
   if (is.null(xparam_choices) && !is.null(xchoices) && !is.null(yparam_choices)) {
     # otherwise, xchoices will appear first without any biomarker to select and this looks odd in the UI
     stop(
@@ -125,7 +125,7 @@ keep_data_constraint_options_updated <- function(session, input, data) {
   observeEvent(data(), {
     choices(c("None" = "NONE", "Screening" = "BASE2", "Baseline" = "BASE")[
       c(TRUE, !all(is.na(data()$ANL[["BASE2"]])), !all(is.na(data()$ANL[["BASE"]])))
-    ])
+      ])
   })
   observeEvent(choices(), {
     updateRadioButtons(session, "constraint_var", choices = choices())
@@ -161,14 +161,20 @@ templ_ui_constraint <- function(ns, label = "Data Constraint") {
   )
 }
 
-keep_range_slider_updated <- function(session, input, id_slider, id_var, reactive_ANL) { # nolint
+keep_range_slider_updated <- function(session, input, id_slider, id_var, id_param_var, reactive_ANL) { # nolint
   # todo: remove input and rather pass varnames  directly
 
   observe({
     varname <- input[[id_var]]
     validate(need(varname, "Please select variable"))
+    paramname <- input[[id_param_var]]
+    validate(need(paramname, "Please select variable"))
+    stopifnot(length(paramname) == 1)
 
-    ANL <- reactive_ANL()$ANL # nolint
+    # we need id_param_var (e.g. ALT) to filter down because the y-axis may have a different
+    # param var and the range of id_var (e.g. BASE) values may be larger due to this
+    # therefore, we need to filter
+    ANL <- reactive_ANL()$ANL %>% filter(PARAMCD == paramname) # nolint
     validate_has_variable(ANL, varname, paste("variable", varname, "does not exist"))
 
     minmax <- c(
