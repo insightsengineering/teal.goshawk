@@ -236,7 +236,7 @@ ui_g_boxplot <- function(id, ...) {
       panel_group(
         panel_item(
           title = "Plot Aesthetic Settings",
-          sliderInput(ns("yrange_scale"), label = "Y-Axis Range Zoom", min = 0, max = 1, value = c(0, 1)),
+          toggle_slider_ui(ns("yrange_scale"), label = "Y-Axis Range Zoom", min = 0, max = 1, value = c(0, 1)),
           numericInput(ns("facet_ncol"), "Number of Plots Per Row:", a$facet_ncol, min = 1),
           checkboxInput(ns("loq_legend"), "Display LoQ Legend", a$loq_legend),
           checkboxInput(ns("rotate_xlab"), "Rotate X-axis Label", a$rotate_xlab),
@@ -280,7 +280,8 @@ srv_g_boxplot <- function(input,
   )
 
   # update sliders for axes taking constraints into account
-  keep_range_slider_updated(session, input, "yrange_scale", "yaxis_var", "xaxis_param", anl_chunks)
+  yrange_slider <- callModule(toggle_slider_server, "yrange_scale")
+  keep_range_slider_updated(session, input, yrange_slider$update_state, "yaxis_var", "xaxis_param", anl_chunks)
   keep_data_constraint_options_updated(session, input, anl_chunks, "xaxis_param")
 
   create_plot <- reactive({
@@ -290,7 +291,7 @@ srv_g_boxplot <- function(input,
     yaxis <- input$yaxis_var
     xaxis <- input$xaxis_var
     facet_var <- input$facet_var
-    yrange_scale <- input$yrange_scale
+    yrange_scale <- yrange_slider$state()$value
     facet_ncol <- input$facet_ncol
     alpha <- input$alpha
     font_size <- input$font_size
@@ -319,8 +320,8 @@ srv_g_boxplot <- function(input,
           loq_legend = .(loq_legend),
           rotate_xlab = .(rotate_xlab),
           trt_group = .(trt_group),
-          ymin_scale = .(yrange_scale[1]),
-          ymax_scale = .(yrange_scale[2]),
+          ymin_scale = .(yrange_scale[[1]]),
+          ymax_scale = .(yrange_scale[[2]]),
           color_manual = .(color_manual),
           shape_manual = .(shape_manual),
           facet = .(facet_var),

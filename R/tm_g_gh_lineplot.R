@@ -200,7 +200,7 @@ ui_lineplot <- function(id, ...) {
       panel_group(
         panel_item(
           title = "Plot Aesthetic Settings",
-          sliderInput(ns("yrange_scale"), label = "Y-Axis Range Zoom", min = 0, max = 1, value = c(0, 1)),
+          toggle_slider_ui(ns("yrange_scale"), label = "Y-Axis Range Zoom", min = 0, max = 1, value = c(0, 1)),
           checkboxInput(ns("rotate_xlab"), "Rotate X-axis Label", a$rotate_xlab),
           numericInput(ns("hline"), "Add a horizontal line:", a$hline)
         ),
@@ -251,6 +251,8 @@ srv_lineplot <- function(input,
                                   trt_group = trt_group)
   keep_data_constraint_options_updated(session, input, anl_chunks, "xaxis_param")
 
+  yrange_slider <- callModule(toggle_slider_server, "yrange_scale")
+
   # update sliders for axes
   observe({
     varname <- input[["yaxis_var"]]
@@ -291,13 +293,11 @@ srv_lineplot <- function(input,
     # we don't use keep_range_slider_updated because this module computes the min, max
     # not from the constrained ANL, but rather by first grouping and computing confidence
     # intervals
-    updateSliderInput(
-      session = session,
-      inputId = "yrange_scale",
+    isolate(yrange_slider$update_state(
       min = minmax[[1]],
       max = minmax[[2]],
       value = minmax
-    )
+    ))
   })
 
   output$lineplot <- renderPlot({

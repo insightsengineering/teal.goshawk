@@ -208,7 +208,7 @@ g_ui_spaghettiplot <- function(id, ...) {
                    c("None" = "NONE", "Mean" = "MEAN", "Median" = "MEDIAN"),
                    inline = TRUE),
       templ_ui_constraint(ns), # required by constr_anl_chunks
-      sliderInput(ns("yrange_scale"), label = "Y-Axis Range Zoom", min = 0, max = 1, value = c(0, 1)),
+      toggle_slider_ui(ns("yrange_scale"), label = "Y-Axis Range Zoom", min = 0, max = 1, value = c(0, 1)),
       panel_group(
         panel_item(
           title = "Plot Aesthetic Settings",
@@ -264,13 +264,14 @@ srv_g_spaghettiplot <- function(input,
   )
 
   # update sliders for axes taking constraints into account
-  keep_range_slider_updated(session, input, "yrange_scale", "yaxis_var", "xaxis_param", anl_chunks)
+  yrange_slider <- callModule(toggle_slider_server, "yrange_scale")
+  keep_range_slider_updated(session, input, yrange_slider$update_state, "yaxis_var", "xaxis_param", anl_chunks)
   keep_data_constraint_options_updated(session, input, anl_chunks, "xaxis_param")
 
   output$spaghettiplot <- renderPlot({
 
     private_chunks <- anl_chunks()$chunks$clone(deep = TRUE)
-    ylim <- input$yrange_scale
+    ylim <- yrange_slider$state()$value
     facet_ncol <- input$facet_ncol
     rotate_xlab <- input$rotate_xlab
     hline <- input$hline

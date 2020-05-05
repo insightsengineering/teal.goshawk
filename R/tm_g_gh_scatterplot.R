@@ -189,8 +189,8 @@ ui_g_scatterplot <- function(id, ...) {
       panel_group(
         panel_item(
           title = "Plot Aesthetic Settings",
-          sliderInput(ns("xrange_scale"), label = "X-Axis Range Zoom", min = 0, max = 1, value = c(0, 1)),
-          sliderInput(ns("yrange_scale"), label = "Y-Axis Range Zoom", min = 0, max = 1, value = c(0, 1)),
+          toggle_slider_ui(ns("xrange_scale"), label = "X-Axis Range Zoom", min = 0, max = 1, value = c(0, 1)),
+          toggle_slider_ui(ns("yrange_scale"), label = "Y-Axis Range Zoom", min = 0, max = 1, value = c(0, 1)),
           numericInput(ns("facet_ncol"), "Number of Plots Per Row:", a$facet_ncol, min = 1),
           checkboxInput(ns("facet"), "Treatment Facetting", a$facet),
           checkboxInput(ns("reg_line"), "Regression Line", a$reg_line),
@@ -236,8 +236,10 @@ srv_g_scatterplot <- function(input,
   )
 
   # update sliders for axes taking constraints into account
-  keep_range_slider_updated(session, input, "xrange_scale", "xaxis_var", "xaxis_param", anl_chunks)
-  keep_range_slider_updated(session, input, "yrange_scale", "yaxis_var", "xaxis_param", anl_chunks)
+  xrange_slider <- callModule(toggle_slider_server, "xrange_scale")
+  yrange_slider <- callModule(toggle_slider_server, "yrange_scale")
+  keep_range_slider_updated(session, input, xrange_slider$update_state, "xaxis_var", "xaxis_param", anl_chunks)
+  keep_range_slider_updated(session, input, yrange_slider$update_state, "yaxis_var", "xaxis_param", anl_chunks)
   keep_data_constraint_options_updated(session, input, anl_chunks, "xaxis_param")
 
   # plot
@@ -246,8 +248,8 @@ srv_g_scatterplot <- function(input,
     ac <- anl_chunks()
     private_chunks <- ac$chunks$clone(deep = TRUE)
 
-    xrange_scale <- input$xrange_scale
-    yrange_scale <- input$yrange_scale
+    xrange_scale <- xrange_slider$state()$value
+    yrange_scale <- yrange_slider$state()$value
     facet_ncol <- input$facet_ncol
     facet <- input$facet
     reg_line <- input$reg_line
@@ -275,10 +277,10 @@ srv_g_scatterplot <- function(input,
           xaxis_var = .(xaxis),
           yaxis_var = .(yaxis),
           trt_group = .(trt_group),
-          xmin = .(xrange_scale[1]),
-          xmax = .(xrange_scale[2]),
-          ymin = .(yrange_scale[1]),
-          ymax = .(yrange_scale[2]),
+          xmin = .(xrange_scale[[1]]),
+          xmax = .(xrange_scale[[2]]),
+          ymin = .(yrange_scale[[1]]),
+          ymax = .(yrange_scale[[2]]),
           color_manual = .(color_manual),
           shape_manual = .(shape_manual),
           facet_ncol = .(facet_ncol),
