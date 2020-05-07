@@ -303,12 +303,12 @@ srv_lineplot <- function(input,
   output$lineplot <- renderPlot({
     ac <- anl_chunks()
     private_chunks <- ac$chunks$clone(deep = TRUE)
-    yrange_scale <- input$yrange_scale
+    yrange_scale <- yrange_slider$state()$value
     font_size <- input$font_size
     dodge <- input$dodge
     rotate_xlab <- input$rotate_xlab
     hline <- if (is.na(input$hline)) NULL else as.numeric(input$hline)
-    median <- ifelse(input$stat=='median',TRUE, FALSE)
+    median <- ifelse(input$stat == "median", TRUE, FALSE)
     plot_height <- input$plot_height
 
     # todo: document why isolated
