@@ -19,7 +19,8 @@
 #'   initially
 #' @param step_slider `numeric or integer` step for slider
 #' @param step_numeric `numeric or integer` step for numeric input fields
-#' @inheritParams sliderInput::width
+#' @param width `numeric` width of slider or of each numeric field
+#' @param ... additional parameters to pass to `sliderInput`
 #'
 #' @return Shiny HTML UI
 #'
@@ -28,7 +29,7 @@
 #' # value <- c(50.1) # normal slider
 #' shinyApp(
 #'   ui = div(
-#'     toggle_slider_ui("toggle_slider", "Select value", min = 0.2, max = 100.1, value = value, slider_initially = FALSE, step_slider = 0.1, step_numeric = 0.001),
+#'     teal.goshawk:::toggle_slider_ui("toggle_slider", "Select value", min = 0.2, max = 100.1, value = value, slider_initially = FALSE, step_slider = 0.1, step_numeric = 0.001),
 #'     verbatimTextOutput("value")
 #'   ),
 #'   server = function(input, output, session) {
@@ -59,7 +60,7 @@
 #'     #   ))
 #'     # })
 #'   }
-#' )
+#' ); shinyApp(app$ui, app$server)
 #' 1
 toggle_slider_ui <- function(id, label, min, max, value, slider_initially = TRUE, step_slider = NULL, step_numeric = step_slider, width = NULL, ...) {
   is_numeric_like <- function(x) is_numeric_single(x) || is_integer_single(x)
