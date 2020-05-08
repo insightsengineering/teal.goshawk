@@ -126,7 +126,7 @@ keep_data_constraint_options_updated <- function(session, input, data, id_param_
     paramname <- input[[id_param_var]]
     stopifnot(length(paramname) == 1)
 
-    data_filtered <- data()$ANL %>% filter(PARAMCD == paramname)
+    data_filtered <- data()$ANL %>% filter(.data$PARAMCD == paramname)
     choices(c("None" = "NONE", "Screening" = "BASE2", "Baseline" = "BASE")[
       c(TRUE, !all(is.na(data_filtered[["BASE2"]])), !all(is.na(data_filtered[["BASE"]])))
       ])
@@ -179,7 +179,7 @@ keep_range_slider_updated <- function(session, input, update_slider_fcn, id_var,
     # we need id_param_var (e.g. ALT) to filter down because the y-axis may have a different
     # param var and the range of id_var (e.g. BASE) values may be larger due to this
     # therefore, we need to filter
-    ANL <- reactive_ANL()$ANL %>% filter(PARAMCD == paramname) # nolint
+    ANL <- reactive_ANL()$ANL %>% filter(.data$PARAMCD == paramname) # nolint
     validate_has_variable(ANL, varname, paste("variable", varname, "does not exist"))
 
     minmax <- c(
