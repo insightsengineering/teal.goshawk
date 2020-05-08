@@ -60,8 +60,10 @@
 #'     #   ))
 #'     # })
 #'   }
-#' ); shinyApp(app$ui, app$server)
-#' 1
+#' )
+#' \dontrun{
+#' shinyApp(app$ui, app$server)
+#' }
 toggle_slider_ui <- function(id, label, min, max, value, slider_initially = TRUE, step_slider = NULL, step_numeric = step_slider, width = NULL, ...) {
   is_numeric_like <- function(x) is_numeric_single(x) || is_integer_single(x)
   # todo: check min, max range as `shiny::sliderInput` also doesn't do it?
