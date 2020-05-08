@@ -27,14 +27,18 @@
 #' @examples
 #' value <- c(20.3, 81.5) # dichotomous slider
 #' # value <- c(50.1) # normal slider
-#' shinyApp(
+#' app <- shinyApp(
 #'   ui = div(
-#'     teal.goshawk:::toggle_slider_ui("toggle_slider", "Select value", min = 0.2, max = 100.1, value = value, slider_initially = FALSE, step_slider = 0.1, step_numeric = 0.001),
+#'     teal.goshawk:::toggle_slider_ui(
+#'       "toggle_slider", "Select value", min = 0.2, max = 100.1, value = value,
+#'       slider_initially = FALSE, step_slider = 0.1, step_numeric = 0.001
+#'     ),
 #'     verbatimTextOutput("value")
 #'   ),
 #'   server = function(input, output, session) {
 #'     is_dichotomous_slider <- (length(value) == 2)
-#'     range_value <- callModule(toggle_slider_server, "toggle_slider", is_dichotomous_slider = is_dichotomous_slider)
+#'     range_value <- callModule(teal.goshawk:::toggle_slider_server, "toggle_slider",
+#'       is_dichotomous_slider = is_dichotomous_slider)
 #'     messages <- reactiveVal() # to keep history
 #'     observeEvent(range_value$state(), {
 #'       list_with_names_str <- function(x) paste(names(x), x, sep = ": ", collapse = ", ")
@@ -61,10 +65,16 @@
 #'     # })
 #'   }
 #' )
-#' \dontrun{
-#' shinyApp(app$ui, app$server)
-#' }
-toggle_slider_ui <- function(id, label, min, max, value, slider_initially = TRUE, step_slider = NULL, step_numeric = step_slider, width = NULL, ...) {
+#' shinyApp(app$ui, app$server) %>% invisible()
+toggle_slider_ui <- function(id,
+                             label,
+                             min,
+                             max,
+                             value,
+                             slider_initially = TRUE,
+                             step_slider = NULL,
+                             step_numeric = step_slider,
+                             width = NULL, ...) {
   is_numeric_like <- function(x) is_numeric_single(x) || is_integer_single(x)
   # todo: check min, max range as `shiny::sliderInput` also doesn't do it?
   stopifnot(
