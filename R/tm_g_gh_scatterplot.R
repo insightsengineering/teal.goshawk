@@ -178,15 +178,19 @@ ui_g_scatterplot <- function(id, ...) {
     output = templ_ui_output_datatable(ns),
     encoding =  div(
       templ_ui_dataname(a$dataname),
-      templ_ui_param(ns, a$param$choices, a$param$selected), # required by constr_anl_chunks
-      templ_ui_xy_vars(ns, a$xaxis_var$choices, a$xaxis_var$selected,
-                       a$yaxis_var$choices, a$yaxis_var$selected),
+      templ_ui_params_vars(
+        ns,
+        # xparam and yparam are identical, so we only show the user one
+        xparam_choices = a$param$choices, xparam_selected = a$param$selected, xparam_label = "Select a Biomarker",
+        xchoices = a$xaxis_var$choices, xselected = a$xaxis_var$selected,
+        ychoices = a$yaxis_var$choices, yselected = a$yaxis_var$selected
+      ),
       templ_ui_constraint(ns), # required by constr_anl_chunks
       panel_group(
         panel_item(
           title = "Plot Aesthetic Settings",
-          sliderInput(ns("xrange_scale"), label = "X-Axis Range Zoom", min = 0, max = 1, value = c(0, 1)),
-          sliderInput(ns("yrange_scale"), label = "Y-Axis Range Zoom", min = 0, max = 1, value = c(0, 1)),
+          toggle_slider_ui(ns("xrange_scale"), label = "X-Axis Range Zoom", min = 0, max = 1, value = c(0, 1)),
+          toggle_slider_ui(ns("yrange_scale"), label = "Y-Axis Range Zoom", min = 0, max = 1, value = c(0, 1)),
           numericInput(ns("facet_ncol"), "Number of Plots Per Row:", a$facet_ncol, min = 1),
           checkboxInput(ns("facet"), "Treatment Facetting", a$facet),
           checkboxInput(ns("reg_line"), "Regression Line", a$reg_line),
@@ -226,11 +230,17 @@ srv_g_scatterplot <- function(input,
   ns <- session$ns
 
   # reused in all modules
-  anl_chunks <- constr_anl_chunks(session, input, datasets, dataname, "param", param_var, trt_group)
+  anl_chunks <- constr_anl_chunks(
+    session, input, datasets, dataname,
+    param_id = "xaxis_param", param_var = param_var, trt_group = trt_group
+  )
 
-  # update sliders for axes
-  keep_range_slider_updated(session, input, "xrange_scale", "xaxis_var", anl_chunks)
-  keep_range_slider_updated(session, input, "yrange_scale", "yaxis_var", anl_chunks)
+  # update sliders for axes taking constraints into account
+  xrange_slider <- callModule(toggle_slider_server, "xrange_scale")
+  yrange_slider <- callModule(toggle_slider_server, "yrange_scale")
+  keep_range_slider_updated(session, input, xrange_slider$update_state, "xaxis_var", "xaxis_param", anl_chunks)
+  keep_range_slider_updated(session, input, yrange_slider$update_state, "yaxis_var", "xaxis_param", anl_chunks)
+  keep_data_constraint_options_updated(session, input, anl_chunks, "xaxis_param")
 
   # plot
   output$scatterplot <- renderPlot({
@@ -238,8 +248,8 @@ srv_g_scatterplot <- function(input,
     ac <- anl_chunks()
     private_chunks <- ac$chunks$clone(deep = TRUE)
 
-    xrange_scale <- input$xrange_scale
-    yrange_scale <- input$yrange_scale
+    xrange_scale <- xrange_slider$state()$value
+    yrange_scale <- yrange_slider$state()$value
     facet_ncol <- input$facet_ncol
     facet <- input$facet
     reg_line <- input$reg_line
@@ -251,7 +261,7 @@ srv_g_scatterplot <- function(input,
     vline <- input$vline
 
     # Below inputs should trigger plot via updates of other reactive objects (i.e. anl_chunk()) and some inputs
-    param <- isolate(input$param)
+    param <- isolate(input$xaxis_param)
     xaxis <- isolate(input$xaxis_var)
     yaxis <- isolate(input$yaxis_var)
 
@@ -267,10 +277,10 @@ srv_g_scatterplot <- function(input,
           xaxis_var = .(xaxis),
           yaxis_var = .(yaxis),
           trt_group = .(trt_group),
-          xmin = .(xrange_scale[1]),
-          xmax = .(xrange_scale[2]),
-          ymin = .(yrange_scale[1]),
-          ymax = .(yrange_scale[2]),
+          xmin = .(xrange_scale[[1]]),
+          xmax = .(xrange_scale[[2]]),
+          ymin = .(yrange_scale[[1]]),
+          ymax = .(yrange_scale[[2]]),
           color_manual = .(color_manual),
           shape_manual = .(shape_manual),
           facet_ncol = .(facet_ncol),

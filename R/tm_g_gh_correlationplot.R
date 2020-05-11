@@ -189,16 +189,19 @@ ui_g_correlationplot <- function(id, ...) {
     output = templ_ui_output_datatable(ns),
     encoding =  div(
       templ_ui_dataname(a$dataname),
-      selectInput(ns("xaxis_param"), "Select a X-Axis Biomarker", a$xaxis_param$choices, a$xaxis_param$selected, multiple = FALSE),
-      selectInput(ns("xaxis_var"), "Select an X-Axis Variable",  a$xaxis_var$choices,  a$xaxis_var$selected, multiple = FALSE),
-      selectInput(ns("yaxis_param"), "Select a Y-Axis Biomarker", a$yaxis_param$choices, a$yaxis_param$selected, multiple = FALSE),
-      selectInput(ns("yaxis_var"), "Select a Y-Axis Variable",  a$yaxis_var$choices,  a$yaxis_var$selected, multiple = FALSE),
+      templ_ui_params_vars(
+        ns,
+        xparam_choices = a$xaxis_param$choices, xparam_selected = a$xaxis_param$selected,
+        xchoices = a$xaxis_var$choices, xselected = a$xaxis_var$selected,
+        yparam_choices = a$yaxis_param$choices, yparam_selected = a$yaxis_param$selected,
+        ychoices = a$yaxis_var$choices, yselected = a$yaxis_var$selected
+      ),
       templ_ui_constraint(ns, "X-Axis Data Constraint"), # required by constr_anl_chunks
       panel_group(
         panel_item(
           title = "Plot Aesthetic Settings",
-          sliderInput(ns("xrange_scale"), label = "X-Axis Range Zoom", min = 0, max = 1, value = c(0, 1)),
-          sliderInput(ns("yrange_scale"), label = "Y-Axis Range Zoom", min = 0, max = 1, value = c(0, 1)),
+          toggle_slider_ui(ns("xrange_scale"), label = "X-Axis Range Zoom", min = 0, max = 1, value = c(0, 1)),
+          toggle_slider_ui(ns("yrange_scale"), label = "Y-Axis Range Zoom", min = 0, max = 1, value = c(0, 1)),
           numericInput(ns("facet_ncol"), "Number of Plots Per Row:", a$facet_ncol, min = 1),
           checkboxInput(ns("visit_facet"), "Visit Facetting", a$visit_facet),
           checkboxInput(ns("facet"), "Treatment Facetting", a$facet),
@@ -324,8 +327,8 @@ srv_g_correlationplot <- function(input,
     visit_freq <- unique(ANL$AVISITCD)
 
     # get min max values
-    if ((constraint_var == "BASE2" & any(grepl("SCR", visit_freq))) ||
-        (constraint_var == "BASE" & any(grepl("BL", visit_freq)))) {
+    if ((constraint_var == "BASE2" && any(grepl("SCR", visit_freq))) ||
+        (constraint_var == "BASE" && any(grepl("BL", visit_freq)))) {
 
       val <- na.omit(switch(
         constraint_var,
@@ -376,46 +379,14 @@ srv_g_correlationplot <- function(input,
     }
   })
 
-  anl_constraint <- reactive({
-    private_chunks <- anl_param()$chunks$clone(deep = TRUE)
+  anl_constraint <- create_anl_constraint_reactive(anl_param, input, param_id = "xaxis_param")
 
-    # it is assumed that constraint_var is triggering constraint_range which then trigger this clause
-    constraint_var <- isolate(input$constraint_var)
-    constraint_range_min <- input$constraint_range_min
-    constraint_range_max <- input$constraint_range_max
-
-    validate(need(constraint_range_min, "please select proper constraint minimum value"))
-    validate(need(constraint_range_max, "please select proper constraint maximum value"))
-    validate(need(constraint_range_min <= constraint_range_max, "constraint min needs to be smaller than max"))
-
-    # filter constraint
-    if (constraint_var != "NONE") {
-      chunks_push(
-        chunks = private_chunks,
-        id = "filter_constraint",
-        expression = bquote({
-          ANL <- ANL %>% # nolint
-            dplyr::filter(
-              (.(constraint_range_min) <= .data[[.(constraint_var)]] &
-                 .data[[.(constraint_var)]] <= .(constraint_range_max)) |
-                is.na(.data[[.(constraint_var)]])
-            )
-        })
-      )
-
-      ANL <- chunks_safe_eval(private_chunks) # nolint
-      validate_has_data(ANL, 5)
-    }
-
-    chunks_push_new_line(private_chunks)
-    chunks_safe_eval(private_chunks)
-
-    return(list(ANL = chunks_get_var("ANL", private_chunks), chunks = private_chunks))
-  })
-
-  # update sliders for axes
-  keep_range_slider_updated(session, input, "xrange_scale", "xaxis_var", anl_constraint)
-  keep_range_slider_updated(session, input, "yrange_scale", "yaxis_var", anl_constraint)
+  # update sliders for axes taking constraints into account
+  xrange_slider <- callModule(toggle_slider_server, "xrange_scale")
+  yrange_slider <- callModule(toggle_slider_server, "yrange_scale")
+  keep_range_slider_updated(session, input, xrange_slider$update_state, "xaxis_var", "xaxis_param", anl_constraint)
+  keep_range_slider_updated(session, input, yrange_slider$update_state, "yaxis_var", "xaxis_param", anl_constraint)
+  keep_data_constraint_options_updated(session, input, anl_constraint, "xaxis_param")
 
   # selector names after transposition
   xvar <- reactive(paste0(input$xaxis_var, ".", input$xaxis_param))
@@ -540,10 +511,10 @@ srv_g_correlationplot <- function(input,
     xaxis_var <- input$xaxis_var
     yaxis_param <- input$yaxis_param
     yaxis_var <- input$yaxis_var
-    xmin_scale <- input$xrange_scale[1]
-    xmax_scale <- input$xrange_scale[2]
-    ymin_scale <- input$yrange_scale[1]
-    ymax_scale <- input$yrange_scale[2]
+    xmin_scale <- xrange_slider$state()$value[[1]]
+    xmax_scale <- xrange_slider$state()$value[[2]]
+    ymin_scale <- yrange_slider$state()$value[[1]]
+    ymax_scale <- yrange_slider$state()$value[[2]]
     font_size <- input$font_size
     dot_size <- input$dot_size
     reg_text_size <- input$reg_text_size

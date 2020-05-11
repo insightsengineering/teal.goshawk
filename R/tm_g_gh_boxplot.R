@@ -221,23 +221,26 @@ ui_g_boxplot <- function(id, ...) {
     ),
     encoding =  div(
       templ_ui_dataname(a$dataname),
-      templ_ui_param(ns, a$param$choices, a$param$selected),
-      templ_ui_xy_vars(ns, a$xaxis_var$choices, a$xaxis_var$selected,
-                       a$yaxis_var$choices, a$yaxis_var$selected),
+      templ_ui_params_vars(
+        ns,
+        xparam_choices = a$param$choices, xparam_selected = a$param$selected, xparam_label = "Select a Biomarker",
+        xchoices = a$xaxis_var$choices, xselected = a$xaxis_var$selected,
+        ychoices = a$yaxis_var$choices, yselected = a$yaxis_var$selected
+      ),
       optionalSelectInput(ns("facet_var"),
                           label = "Facet by",
                           choices = a$facet_var$choices,
                           selected = a$facet_var$selected,
                           multiple = FALSE),
-      templ_ui_constraint(ns), # required by constr_anl_chunks
+      templ_ui_constraint(ns, label = "Data Constraint"), # required by constr_anl_chunks
       panel_group(
         panel_item(
           title = "Plot Aesthetic Settings",
+          toggle_slider_ui(ns("yrange_scale"), label = "Y-Axis Range Zoom", min = 0, max = 1, value = c(0, 1)),
           numericInput(ns("facet_ncol"), "Number of Plots Per Row:", a$facet_ncol, min = 1),
           checkboxInput(ns("loq_legend"), "Display LoQ Legend", a$loq_legend),
           checkboxInput(ns("rotate_xlab"), "Rotate X-axis Label", a$rotate_xlab),
-          numericInput(ns("hline"), "Add a horizontal line:", a$hline),
-          sliderInput(ns("yrange_scale"), label = "Y-Axis Range Zoom", min = 0, max = 1, value = c(0, 1))
+          numericInput(ns("hline"), "Add a horizontal line:", a$hline)
         ),
         panel_item(
           title = "Plot settings",
@@ -271,19 +274,24 @@ srv_g_boxplot <- function(input,
   ns <- session$ns
 
   # reused in all modules
-  anl_chunks <- constr_anl_chunks(session, input, datasets, dataname, "param", param_var, trt_group)
+  anl_chunks <- constr_anl_chunks(
+    session, input, datasets, dataname,
+    param_id = "xaxis_param", param_var = param_var, trt_group = trt_group
+  )
 
-  # update sliders for axes
-  keep_range_slider_updated(session, input, "yrange_scale", "yaxis_var", anl_chunks)
+  # update sliders for axes taking constraints into account
+  yrange_slider <- callModule(toggle_slider_server, "yrange_scale")
+  keep_range_slider_updated(session, input, yrange_slider$update_state, "yaxis_var", "xaxis_param", anl_chunks)
+  keep_data_constraint_options_updated(session, input, anl_chunks, "xaxis_param")
 
   create_plot <- reactive({
     private_chunks <- anl_chunks()$chunks$clone(deep = TRUE)
 
-    param <- input$param
+    param <- input$xaxis_param
     yaxis <- input$yaxis_var
     xaxis <- input$xaxis_var
     facet_var <- input$facet_var
-    yrange_scale <- input$yrange_scale
+    yrange_scale <- yrange_slider$state()$value
     facet_ncol <- input$facet_ncol
     alpha <- input$alpha
     font_size <- input$font_size
@@ -312,8 +320,8 @@ srv_g_boxplot <- function(input,
           loq_legend = .(loq_legend),
           rotate_xlab = .(rotate_xlab),
           trt_group = .(trt_group),
-          ymin_scale = .(yrange_scale[1]),
-          ymax_scale = .(yrange_scale[2]),
+          ymin_scale = .(yrange_scale[[1]]),
+          ymax_scale = .(yrange_scale[[2]]),
           color_manual = .(color_manual),
           shape_manual = .(shape_manual),
           facet = .(facet_var),
@@ -334,7 +342,7 @@ srv_g_boxplot <- function(input,
   create_table <- reactive({
     private_chunks <- create_plot()$clone(deep = TRUE)
 
-    param <- input$param
+    param <- input$xaxis_param
     xaxis_var <- input$yaxis_var
     facet_var <- input$facet_var
     font_size <- input$font_size

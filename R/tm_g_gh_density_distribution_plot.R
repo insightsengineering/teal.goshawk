@@ -195,15 +195,16 @@ ui_g_density_distribution_plot <- function(id, ...) {
     ),
     encoding = div(
       templ_ui_dataname(a$dataname),
-      templ_ui_param(ns, a$param$choices, a$param$selected), # required by constr_anl_chunks
-      templ_ui_xy_vars(ns, a$xaxis_var$choices, a$xaxis_var$selected,
-                       ychoices = NULL, yselected = NULL
+      templ_ui_params_vars(
+        ns,
+        xparam_choices = a$param$choices, xparam_selected = a$param$selected, xparam_label = "Select a Biomarker",
+        xchoices = a$xaxis_var$choices, xselected = a$xaxis_var$selected
       ),
-      templ_ui_constraint(ns),
+      templ_ui_constraint(ns, label = "Data Constraint"),
       panel_group(
         panel_item(
           title = "Plot Aesthetic Settings",
-          sliderInput(ns("xrange_scale"), label = "X-Axis Range Zoom", min = 0, max = 1, value = c(0, 1)),
+          toggle_slider_ui(ns("xrange_scale"), label = "X-Axis Range Zoom", min = 0, max = 1, value = c(0, 1)),
           numericInput(ns("facet_ncol"), "Number of Plots Per Row:", a$facet_ncol, min = 1),
           checkboxInput(ns("comb_line"), "Display combination line", a$comb_line),
           checkboxInput(ns("rotate_xlab"), "Rotate X-axis Label", a$rotate_xlab),
@@ -227,17 +228,24 @@ ui_g_density_distribution_plot <- function(id, ...) {
 srv_g_density_distribution_plot <- function(input, output, session, datasets, dataname, param_var, param, #nolintr
                                             trt_group, color_manual, color_comb) {
   ns <- session$ns
-  anl_chunks <- constr_anl_chunks(session, input, datasets, dataname, "param", param_var, trt_group)
-  keep_range_slider_updated(session, input, "xrange_scale", "xaxis_var", anl_chunks)
+  anl_chunks <- constr_anl_chunks(
+    session, input, datasets, dataname,
+    param_id = "xaxis_param", param_var = param_var, trt_group = trt_group
+  )
+
+  # update sliders for axes taking constraints into account
+  xrange_slider <- callModule(toggle_slider_server, "xrange_scale")
+  keep_range_slider_updated(session, input, xrange_slider$update_state, "xaxis_var", "xaxis_param", anl_chunks)
+  keep_data_constraint_options_updated(session, input, anl_chunks, "xaxis_param")
 
   create_plot <- reactive({
     private_chunks <- anl_chunks()$chunks$clone(deep = TRUE)
 
     #nolint start
-    param <- input$param
+    param <- input$xaxis_param
     xaxis_var <- input$xaxis_var
-    xmin_scale <- input$xrange_scale[1]
-    xmax_scale <- input$xrange_scale[2]
+    xmin_scale <- xrange_slider$state()$value[[1]]
+    xmax_scale <- xrange_slider$state()$value[[2]]
     font_size <- input$font_size
     line_size <- input$line_size
     hline <- as.numeric(input$hline)
@@ -279,7 +287,7 @@ srv_g_density_distribution_plot <- function(input, output, session, datasets, da
   create_table <- reactive({
     private_chunks <- create_plot()$clone(deep = TRUE)
 
-    param <- input$param
+    param <- input$xaxis_param
     xaxis_var <- input$xaxis_var
     font_size <- input$font_size
 

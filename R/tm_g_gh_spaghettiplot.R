@@ -196,20 +196,24 @@ g_ui_spaghettiplot <- function(id, ...) {
     output = templ_ui_output_datatable(ns),
     encoding = div(
       templ_ui_dataname(a$dataname),
-      templ_ui_param(ns, a$param$choices, a$param$selected),
-      optionalSelectInput(ns("xaxis_var"), "X-Axis Variable", a$xaxis_var$choices, a$xaxis_var$selected, multiple = FALSE),
-      optionalSelectInput(ns("yaxis_var"), "Y-Axis Variable", a$yaxis_var$choices, a$yaxis_var$selected, multiple = FALSE),
+      templ_ui_params_vars(
+        ns,
+        # xparam and yparam are identical, so we only show the user one
+        xparam_choices = a$param$choices, xparam_selected = a$param$selected, xparam_label = "Select a Biomarker",
+        xchoices = a$xaxis_var$choices, xselected = a$xaxis_var$selected,
+        ychoices = a$yaxis_var$choices, yselected = a$yaxis_var$selected
+      ),
       radioButtons(ns("group_stats"),
                    "Group Statistics",
                    c("None" = "NONE", "Mean" = "MEAN", "Median" = "MEDIAN"),
                    inline = TRUE),
       templ_ui_constraint(ns), # required by constr_anl_chunks
-      sliderInput(ns("yrange_scale"), label = "Y-Axis Range Zoom", min = 0, max = 1, value = c(0, 1)),
+      toggle_slider_ui(ns("yrange_scale"), label = "Y-Axis Range Zoom", min = 0, max = 1, value = c(0, 1)),
       panel_group(
         panel_item(
           title = "Plot Aesthetic Settings",
           div(style = "padding: 0px;",
-              div(style = "display: inline-block;vertical-align:moddle; width: 175px;",
+              div(style = "display: inline-block;vertical-align:middle; width: 175px;",
                   tags$b("Number of Plots Per Row:")),
               div(style = "display: inline-block;vertical-align:middle; width: 100px;",
                   numericInput(ns("facet_ncol"), "", a$facet_ncol, min = 1))
@@ -254,14 +258,20 @@ srv_g_spaghettiplot <- function(input,
   ns <- session$ns
 
   # reused in all modules
-  anl_chunks <- constr_anl_chunks(session, input, datasets, dataname, "param", param_var, trt_group)
+  anl_chunks <- constr_anl_chunks(
+    session, input, datasets, dataname,
+    param_id = "xaxis_param", param_var = param_var, trt_group = trt_group
+  )
 
-  keep_range_slider_updated(session, input, "yrange_scale", "yaxis_var", anl_chunks)
+  # update sliders for axes taking constraints into account
+  yrange_slider <- callModule(toggle_slider_server, "yrange_scale")
+  keep_range_slider_updated(session, input, yrange_slider$update_state, "yaxis_var", "xaxis_param", anl_chunks)
+  keep_data_constraint_options_updated(session, input, anl_chunks, "xaxis_param")
 
   output$spaghettiplot <- renderPlot({
 
     private_chunks <- anl_chunks()$chunks$clone(deep = TRUE)
-    ylim <- input$yrange_scale
+    ylim <- yrange_slider$state()$value
     facet_ncol <- input$facet_ncol
     rotate_xlab <- input$rotate_xlab
     hline <- input$hline
@@ -270,7 +280,7 @@ srv_g_spaghettiplot <- function(input,
     alpha <- input$alpha
 
     # Below inputs should trigger plot via updates of other reactive objects (i.e. anl_chunk()) and some inputs
-    param <- isolate(input$param)
+    param <- isolate(input$xaxis_param)
     xaxis_var <- isolate(input$xaxis_var)
     yaxis_var <- isolate(input$yaxis_var)
 

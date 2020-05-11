@@ -126,7 +126,6 @@
 #'
 #' shinyApp(app$ui, app$server)
 #' }
-
 tm_g_gh_lineplot <- function(label,
                              dataname,
                              param_var,
@@ -150,6 +149,7 @@ tm_g_gh_lineplot <- function(label,
                              dodge = c(0.4, 0, 1),
                              pre_output = NULL,
                              post_output = NULL) {
+
   stopifnot(is.choices_selected(xaxis_var))
   stopifnot(is.choices_selected(yaxis_var))
   stopifnot(is.choices_selected(param))
@@ -187,16 +187,20 @@ ui_lineplot <- function(id, ...) {
     output = uiOutput(ns("plot_ui")),
     encoding = div(
       templ_ui_dataname(a$dataname),
-      templ_ui_param(ns, a$param$choices, a$param$selected), # required by constr_anl_chunks
-      templ_ui_xy_vars(ns, a$xaxis_var$choices, a$xaxis_var$selected,
-                       a$yaxis_var$choices, a$yaxis_var$selected),
+      templ_ui_params_vars(
+        ns,
+        # xparam and yparam are identical, so we only show the user one
+        xparam_choices = a$param$choices, xparam_selected = a$param$selected, xparam_label = "Select a Biomarker",
+        xchoices = a$xaxis_var$choices, xselected = a$xaxis_var$selected,
+        ychoices = a$yaxis_var$choices, yselected = a$yaxis_var$selected
+      ),
       uiOutput(ns("shape_ui")),
       radioButtons(ns("stat"), "Select a Statistic:", c("mean","median"), a$stat),
       templ_ui_constraint(ns), # required by constr_anl_chunks
       panel_group(
         panel_item(
           title = "Plot Aesthetic Settings",
-          sliderInput(ns("yrange_scale"), label = "Y-Axis Range Zoom", min = 0, max = 1, value = c(0, 1)),
+          toggle_slider_ui(ns("yrange_scale"), label = "Y-Axis Range Zoom", min = 0, max = 1, value = c(0, 1)),
           checkboxInput(ns("rotate_xlab"), "Rotate X-axis Label", a$rotate_xlab),
           numericInput(ns("hline"), "Add a horizontal line:", a$hline)
         ),
@@ -242,9 +246,12 @@ srv_lineplot <- function(input,
                                   input = input,
                                   datasets = datasets,
                                   dataname = dataname,
-                                  param_id = "param",
+                                  param_id = "xaxis_param",
                                   param_var =  param_var,
                                   trt_group = trt_group)
+  keep_data_constraint_options_updated(session, input, anl_chunks, "xaxis_param")
+
+  yrange_slider <- callModule(toggle_slider_server, "yrange_scale")
 
   # update sliders for axes
   observe({
@@ -260,6 +267,8 @@ srv_lineplot <- function(input,
       NULL
     }
 
+    # we don't need to additionally filter for paramvar here as in keep_range_slider_updated because
+    # xaxis_var and yaxis_var are always distinct
     sum_data <- ANL %>%
       group_by_at(c(input$xaxis_var, trt_group, shape)) %>%
       summarise(upper = if (input$stat == 'mean') {
@@ -281,27 +290,29 @@ srv_lineplot <- function(input,
       f = 0.05
     )
 
-    updateSliderInput(
-      session = session,
-      inputId = "yrange_scale",
-      min = minmax[1],
-      max = minmax[2],
+    # we don't use keep_range_slider_updated because this module computes the min, max
+    # not from the constrained ANL, but rather by first grouping and computing confidence
+    # intervals
+    isolate(yrange_slider$update_state(
+      min = minmax[[1]],
+      max = minmax[[2]],
       value = minmax
-    )
+    ))
   })
 
   output$lineplot <- renderPlot({
     ac <- anl_chunks()
     private_chunks <- ac$chunks$clone(deep = TRUE)
-    yrange_scale <- input$yrange_scale
+    yrange_scale <- yrange_slider$state()$value
     font_size <- input$font_size
     dodge <- input$dodge
     rotate_xlab <- input$rotate_xlab
     hline <- if (is.na(input$hline)) NULL else as.numeric(input$hline)
-    median <- ifelse(input$stat=='median',TRUE, FALSE)
+    median <- ifelse(input$stat == "median", TRUE, FALSE)
     plot_height <- input$plot_height
 
-    param <- isolate(input$param)
+    # todo: document why isolated
+    param <- isolate(input$xaxis_param)
     xaxis <- isolate(input$xaxis_var)
     yaxis <- isolate(input$yaxis_var)
 
@@ -348,7 +359,7 @@ srv_lineplot <- function(input,
 
   output$plot_ui <- renderUI({
     plot_height <- input$plot_height
-    validate(need(plot_height, "need  valid plot height"))
+    validate(need(plot_height, "need valid plot height"))
     plotOutput(ns("lineplot"), height = plot_height)
   })
 
