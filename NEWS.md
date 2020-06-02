@@ -1,5 +1,8 @@
-# teal.goshawk 0.1.2.9000
+# teal.goshawk 0.1.3
 
+* added .data to PARAMCD in new functions related to sliders and reactivity
+* fixing doc and other small fixes
+* added toggable slider to all modules
 
 # teal.goshawk 0.1.2
 
