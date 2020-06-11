@@ -82,10 +82,9 @@ TRUE.}
 \item{reg_text_size}{font size control for regression line annotations.}
 
 \item{pre_output}{optional, \code{shiny.tag} with text placed before the
-output to put the output into context. For example the
-\code{\link[shiny]{helpText}} elements are useful.}
+output to put the output into context. For example a title.}
 
-\item{post_output}{optional, \code{shiny.tag} with text placed before the
+\item{post_output}{optional, \code{shiny.tag} with text placed after the
 output to put the output into context. For example the
 \code{\link[shiny]{helpText}} elements are useful.}
 }
