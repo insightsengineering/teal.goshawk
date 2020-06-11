@@ -14,7 +14,7 @@ Description: Modules that produce web interfaces through which longitudinal visu
     modified and displayed. These included box plot, correlation plot, density distribution plot, line plot, scatter 
     plot and spaghetti plot with accompanying summary. Data are expected in ADaM structure. Requires 
     analysis subject level (ADSL) and analysis laboratory (ADLB) data sets. Beyond core 
-    variables, Lower Limit of Quantification flag variable (LOQFL) is expected with levels 'Y', 'N'
+    variables, Limit of Quantification flag variable (LOQFL) is expected with levels 'Y', 'N'
     or NA.
 Depends: 
   R (>= 3.3),

@@ -3,6 +3,7 @@
 * Added `.data` to PARAMCD in new functions related to sliders and reactivity.
 * Fixing doc and other small fixes.
 * Added toggable slider to all modules.
+* Added data driven data constraints UI rendering.
 
 # teal.goshawk 0.1.2
 
