@@ -264,7 +264,7 @@ srv_g_correlationplot_av <- function(input, output, session, datasets, dataname,
   filter_ADLB <- reactive({
     xaxis_param <- input$xaxis_param
     yaxis_param <- input$yaxis_param
-    datasets$get_data(dataname, filtered = TRUE, reactive = TRUE) %>%
+    datasets$get_data(dataname, filtered = TRUE) %>%
       filter((eval(parse(text = param_var)) == xaxis_param | eval(parse(text = param_var)) == yaxis_param))
   })
 
@@ -352,7 +352,7 @@ srv_g_correlationplot_av <- function(input, output, session, datasets, dataname,
 
   # dynamic slider for x-axis
   output$xaxis_zoom <- renderUI({
-    ADLB <- datasets$get_data(dataname, reactive = TRUE, filtered = TRUE)
+    ADLB <- datasets$get_data(dataname, filtered = TRUE)
     xaxis_param <- input$xaxis_param
     scale_data <- ADLB %>%
       filter(eval(parse(text = param_var)) == xaxis_param)
@@ -375,7 +375,7 @@ srv_g_correlationplot_av <- function(input, output, session, datasets, dataname,
 
   # dynamic slider for y-axis
   output$yaxis_zoom <- renderUI({
-    ADLB <- datasets$get_data(dataname, reactive = TRUE, filtered = TRUE)
+    ADLB <- datasets$get_data(dataname, filtered = TRUE)
     yaxis_param <- input$yaxis_param
     scale_data <- ADLB %>%
       filter(eval(parse(text = param_var)) == yaxis_param)
@@ -400,7 +400,7 @@ srv_g_correlationplot_av <- function(input, output, session, datasets, dataname,
   output$constraint_min_value <- renderUI({
     # conditionally reveal min and max constraint fields
     if (input$constraint_var != "NONE") {
-      ADLB <- datasets$get_data(dataname, filtered = TRUE, reactive = TRUE)
+      ADLB <- datasets$get_data(dataname, filtered = TRUE)
       validate(need(nrow(ADLB) > 0 , "Waiting For Filter Selection"))
 
       xaxis_param <- input$xaxis_param
@@ -432,7 +432,7 @@ srv_g_correlationplot_av <- function(input, output, session, datasets, dataname,
   output$constraint_max_value <- renderUI({
     # conditionally reveal min and max constraint fields
     if (input$constraint_var != "NONE") {
-      ADLB <- datasets$get_data(dataname, filtered = TRUE, reactive = TRUE)
+      ADLB <- datasets$get_data(dataname, filtered = TRUE)
       validate(need(nrow(ADLB) > 0 , "Waiting For Filter Selection"))
 
       xaxis_param <- input$xaxis_param

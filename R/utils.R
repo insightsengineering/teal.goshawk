@@ -211,7 +211,7 @@ constr_anl_chunks <- function(session, input, datasets, dataname, param_id, para
     validate(need(param_var_value, "Please select a biomarker"))
     stopifnot(is_character_single(param_var_value))
 
-    ANL_FILTERED <- datasets$get_data(dataname, filtered = TRUE, reactive = TRUE) # nolint
+    ANL_FILTERED <- datasets$get_data(dataname, filtered = TRUE) # nolint
     validate_has_data(ANL_FILTERED, 5)
 
     validate_has_variable(ANL_FILTERED, param_var)
@@ -248,7 +248,7 @@ constr_anl_chunks <- function(session, input, datasets, dataname, param_id, para
     validate(need(constraint_var, "select a constraint variable"))
 
     # note that filtered is false thus we cannot use anl_param()$ANL
-    ANL <- datasets$get_data(dataname, filtered = FALSE, reactive = TRUE) # nolint
+    ANL <- datasets$get_data(dataname, filtered = FALSE) # nolint
 
     validate_has_variable(ANL, param_var)
     validate_has_variable(ANL, "AVISITCD")
