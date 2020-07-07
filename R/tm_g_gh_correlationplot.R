@@ -247,7 +247,7 @@ srv_g_correlationplot <- function(input,
     validate(need(input$xaxis_param, "Please select a biomarker"))
 
     dataset_var <- paste0(dataname, "_FILTERED")
-    ANL_FILTERED <- datasets$get_data(dataname, filtered = TRUE, reactive = TRUE) # nolint
+    ANL_FILTERED <- datasets$get_data(dataname, filtered = TRUE) # nolint
     validate_has_data(ANL_FILTERED, 5)
 
 
@@ -315,7 +315,7 @@ srv_g_correlationplot <- function(input,
     validate(need(constraint_var, "select a constraint variable"))
 
     # note that filtered is false thus we cannot use anl_param()$ANL
-    ANL <- datasets$get_data(dataname, filtered = FALSE, reactive = TRUE) # nolint
+    ANL <- datasets$get_data(dataname, filtered = FALSE) # nolint
 
     validate_has_variable(ANL, param_var)
     validate_has_variable(ANL, "AVISITCD")
@@ -385,7 +385,7 @@ srv_g_correlationplot <- function(input,
   xrange_slider <- callModule(toggle_slider_server, "xrange_scale")
   yrange_slider <- callModule(toggle_slider_server, "yrange_scale")
   keep_range_slider_updated(session, input, xrange_slider$update_state, "xaxis_var", "xaxis_param", anl_constraint)
-  keep_range_slider_updated(session, input, yrange_slider$update_state, "yaxis_var", "xaxis_param", anl_constraint)
+  keep_range_slider_updated(session, input, yrange_slider$update_state, "yaxis_var", "yaxis_param", anl_constraint)
   keep_data_constraint_options_updated(session, input, anl_constraint, "xaxis_param")
 
   # selector names after transposition
