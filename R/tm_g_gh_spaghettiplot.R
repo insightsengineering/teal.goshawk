@@ -46,8 +46,11 @@
 #'
 #' @examples
 #'
+#' \dontrun{
+#'
 #' # Example using ADaM structure analysis dataset.
 #'
+#' library(dplyr)
 #' library(random.cdisc.data)
 #'
 #' # original ARM value = dose value
@@ -75,7 +78,6 @@
 #'       ARMCD == "ARM A" ~ 3),
 #'     ARM = as.character(arm_mapping[match(ARM, names(arm_mapping))]),
 #'     ARM = factor(ARM) %>% reorder(TRTORD))
-#'
 #'
 #' app <- teal::init(
 #'   data = cdisc_data(
@@ -128,10 +130,10 @@
 #'     )
 #'   )
 #' )
-#' \dontrun{
+#'
 #' shinyApp(app$ui, app$server)
+#'
 #' }
-
 tm_g_gh_spaghettiplot <- function(label,
                                   dataname,
                                   param_var,
@@ -208,7 +210,8 @@ g_ui_spaghettiplot <- function(id, ...) {
                    c("None" = "NONE", "Mean" = "MEAN", "Median" = "MEDIAN"),
                    inline = TRUE),
       templ_ui_constraint(ns), # required by constr_anl_chunks
-      toggle_slider_ui(ns("yrange_scale"), label = "Y-Axis Range Zoom", min = 0, max = 1, value = c(0, 1)),
+      toggle_slider_ui(ns("yrange_scale"), label = "Y-Axis Range Zoom",
+                       min = -1000000, max = 1000000, value = c(-1000000, 1000000)),
       panel_group(
         panel_item(
           title = "Plot Aesthetic Settings",

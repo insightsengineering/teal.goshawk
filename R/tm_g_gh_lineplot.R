@@ -48,6 +48,7 @@
 #'
 #' # Example using ADaM structure analysis dataset.
 #'
+#' library(dplyr)
 #' library(random.cdisc.data)
 #' library(stringr)
 #'
@@ -76,7 +77,6 @@
 #'       ARMCD == "ARM A" ~ 3),
 #'     ARM = as.character(arm_mapping[match(ARM, names(arm_mapping))]),
 #'     ARM = factor(ARM) %>% reorder(TRTORD))
-#'
 #'
 #' app <- teal::init(
 #'   data = cdisc_data(
@@ -125,6 +125,7 @@
 #' )
 #'
 #' shinyApp(app$ui, app$server)
+#'
 #' }
 tm_g_gh_lineplot <- function(label,
                              dataname,
@@ -200,7 +201,8 @@ ui_lineplot <- function(id, ...) {
       panel_group(
         panel_item(
           title = "Plot Aesthetic Settings",
-          toggle_slider_ui(ns("yrange_scale"), label = "Y-Axis Range Zoom", min = 0, max = 1, value = c(0, 1)),
+          toggle_slider_ui(ns("yrange_scale"), label = "Y-Axis Range Zoom",
+                           min = -1000000, max = 1000000, value = c(-1000000, 1000000)),
           checkboxInput(ns("rotate_xlab"), "Rotate X-axis Label", a$rotate_xlab),
           numericInput(ns("hline"), "Add a horizontal line:", a$hline)
         ),

@@ -101,6 +101,7 @@ This teal module renders the UI and calls the function that creates a line plot.
 
 # Example using ADaM structure analysis dataset.
 
+library(dplyr)
 library(random.cdisc.data)
 library(stringr)
 
@@ -129,7 +130,6 @@ ADLB <- ADLB \%>\%
       ARMCD == "ARM A" ~ 3),
     ARM = as.character(arm_mapping[match(ARM, names(arm_mapping))]),
     ARM = factor(ARM) \%>\% reorder(TRTORD))
-
 
 app <- teal::init(
   data = cdisc_data(
@@ -178,6 +178,7 @@ app <- teal::init(
 )
 
 shinyApp(app$ui, app$server)
+
 }
 }
 \author{

@@ -121,10 +121,12 @@ To present all visit data based on the analysis day choose \code{av = TRUE} whic
 }
 \examples{
 
+\dontrun{
+
 # Example using ADaM structure analysis dataset.
 
-library(random.cdisc.data)
 library(dplyr)
+library(random.cdisc.data)
 
 # original ARM value = dose value
 arm_mapping <- list("A: Drug X" = "150mg QD",
@@ -200,8 +202,9 @@ app <- teal::init(
       )
   )
 )
-\dontrun{
+
 shinyApp(app$ui, app$server)
+
 }
 }
 \author{
