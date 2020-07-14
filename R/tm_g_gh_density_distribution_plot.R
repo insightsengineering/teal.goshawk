@@ -28,10 +28,12 @@
 #'
 #' @examples
 #'
+#' \dontrun{
+#'
 #' # Example using ADaM structure analysis dataset.
 #'
-#' library(random.cdisc.data)
 #' library(dplyr)
+#' library(random.cdisc.data)
 #'
 #' # original ARM value = dose value
 #' arm_mapping <- list(
@@ -65,7 +67,6 @@
 #'     ARM = as.character(arm_mapping[match(ARM, names(arm_mapping))]),
 #'     ARM = factor(ARM) %>% reorder(TRTORD)
 #'   )
-#'
 #'
 #' app <- teal::init(
 #'   data = cdisc_data(
@@ -119,8 +120,9 @@
 #'     )
 #'   )
 #' )
-#' \dontrun{
+#'
 #' shinyApp(app$ui, app$server)
+#'
 #' }
 tm_g_gh_density_distribution_plot <- function(label,
                                               dataname,
@@ -204,7 +206,8 @@ ui_g_density_distribution_plot <- function(id, ...) {
       panel_group(
         panel_item(
           title = "Plot Aesthetic Settings",
-          toggle_slider_ui(ns("xrange_scale"), label = "X-Axis Range Zoom", min = 0, max = 1, value = c(0, 1)),
+          toggle_slider_ui(ns("xrange_scale"), label = "X-Axis Range Zoom",
+                           min = -1000000, max = 1000000, value = c(-1000000, 1000000)),
           numericInput(ns("facet_ncol"), "Number of Plots Per Row:", a$facet_ncol, min = 1),
           checkboxInput(ns("comb_line"), "Display combination line", a$comb_line),
           checkboxInput(ns("rotate_xlab"), "Rotate X-axis Label", a$rotate_xlab),

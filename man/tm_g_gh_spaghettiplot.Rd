@@ -100,8 +100,11 @@ that creates a spaghetti plot.
 }
 \examples{
 
+\dontrun{
+
 # Example using ADaM structure analysis dataset.
 
+library(dplyr)
 library(random.cdisc.data)
 
 # original ARM value = dose value
@@ -129,7 +132,6 @@ ADLB <- ADLB \%>\%
       ARMCD == "ARM A" ~ 3),
     ARM = as.character(arm_mapping[match(ARM, names(arm_mapping))]),
     ARM = factor(ARM) \%>\% reorder(TRTORD))
-
 
 app <- teal::init(
   data = cdisc_data(
@@ -182,8 +184,9 @@ app <- teal::init(
     )
   )
 )
-\dontrun{
+
 shinyApp(app$ui, app$server)
+
 }
 }
 \author{

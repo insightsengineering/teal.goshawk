@@ -72,10 +72,12 @@ None
 }
 \examples{
 
+\dontrun{
+
 # Example using ADaM structure analysis dataset.
 
-library(random.cdisc.data)
 library(dplyr)
+library(random.cdisc.data)
 
 # original ARM value = dose value
 arm_mapping <- list(
@@ -109,7 +111,6 @@ ADLB <- ADLB \%>\%
     ARM = as.character(arm_mapping[match(ARM, names(arm_mapping))]),
     ARM = factor(ARM) \%>\% reorder(TRTORD)
   )
-
 
 app <- teal::init(
   data = cdisc_data(
@@ -163,8 +164,9 @@ ADLB <- ADLB \%>\%
     )
   )
 )
-\dontrun{
+
 shinyApp(app$ui, app$server)
+
 }
 }
 \author{

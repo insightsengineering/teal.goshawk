@@ -92,7 +92,12 @@ output to put the output into context. For example the
 Scatter Plot Teal Module For Biomarker Analysis
 }
 \examples{
+
+\dontrun{
+
 # Example using ADaM structure analysis dataset.
+
+library(dplyr)
 library(random.cdisc.data)
 
 # original ARM value = dose value
@@ -120,7 +125,6 @@ ADLB <- ADLB \%>\%
       ARMCD == "ARM A" ~ 3),
     ARM = as.character(arm_mapping[match(ARM, names(arm_mapping))]),
     ARM = factor(ARM) \%>\% reorder(TRTORD))
-
 
 app <- init(
   data = cdisc_data(
@@ -182,10 +186,9 @@ app <- init(
   )
 )
 
-\dontrun{
 shinyApp(app$ui, app$server)
-}
 
+}
 }
 \author{
 Nick Paszty (npaszty) paszty.nicholas@gene.com
