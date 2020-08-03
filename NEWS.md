@@ -1,6 +1,6 @@
-# teal.goshawk 0.1.3.9000
+# teal.goshawk 0.1.4
 
-* issues with no comments: 
+* bug fix in correlation plot module
 
 # teal.goshawk 0.1.3
 
