@@ -44,12 +44,13 @@
 #' library(random.cdisc.data)
 #'
 #' # original ARM value = dose value
-#' arm_mapping <- list("A: Drug X" = "150mg QD",
+#' arm_mapping <- list("A: Drug X" = "Drug X 100mg",
 #'                     "B: Placebo" = "Placebo",
-#'                     "C: Combination" = "Combination")
+#'                     "C: Combination" = "Combination 100mg"
+#' )
 #'
-#' ADSL <- radsl(N = 20, seed = 1)
-#' ADLB <- radlb(ADSL, visit_format = "WEEK", n_assessments = 7L, seed = 2)
+#' ADSL <- radsl(cached = TRUE)
+#' ADLB <- radlb(cached = TRUE)
 #' ADLB <- ADLB %>%
 #'   mutate(AVISITCD = case_when(
 #'       AVISIT == "SCREENING" ~ "SCR",
@@ -74,12 +75,12 @@
 #'     cdisc_dataset("ADSL", ADSL),
 #'     cdisc_dataset("ADLB", ADLB),
 #'     code = '
-#'       arm_mapping <- list("A: Drug X" = "150mg QD",
+#'       arm_mapping <- list("A: Drug X" = "Drug X 100mg",
 #'                           "B: Placebo" = "Placebo",
-#'                           "C: Combination" = "Combination")
+#'                           "C: Combination" = "Combination 100mg")
 #'
-#'       ADSL <- radsl(N = 20, seed = 1)
-#'       ADLB <- radlb(ADSL, visit_format = "WEEK", n_assessments = 7L, seed = 2)
+#'       ADSL <- radsl(cached = TRUE)
+#'       ADLB <- radlb(cached = TRUE)
 #'       ADLB <- ADLB %>%
 #'         mutate(AVISITCD = case_when(
 #'             AVISIT == "SCREENING" ~ "SCR",
@@ -111,9 +112,9 @@
 #'        xaxis_var = choices_selected(c("AVAL", "BASE", "CHG", "PCHG"), "BASE"),
 #'        yaxis_var = choices_selected(c("AVAL", "BASE", "CHG", "PCHG"), "AVAL"),
 #'        trt_group = "ARM",
-#'        color_manual = c("150mg QD" = "#000000",
+#'        color_manual = c("Drug X 100mg" = "#000000",
 #'                         "Placebo" = "#3498DB",
-#'                         "Combination" = "#E74C3C"),
+#'                         "Combination 100mg" = "#E74C3C"),
 #'        shape_manual = c("N"  = 1, "Y"  = 2, "NA" = 0),
 #'        plot_height = c(500, 200, 2000),
 #'        facet_ncol = 2,
@@ -282,6 +283,9 @@ srv_g_correlationplot <- function(input,
     validate_has_variable(ANL_FILTERED, "PARAM",
                           sprintf("Variable PARAM is not available in data %s", dataname))
 
+    validate_has_variable(ANL_FILTERED, "LBSTRESC",
+                          sprintf("Variable LBSTRESC is not available in data %s", dataname))
+
     validate_has_variable(ANL_FILTERED, trt_group,
                           sprintf("Variable %s is not available in data %s", trt_group, dataname))
 
@@ -415,7 +419,7 @@ srv_g_correlationplot <- function(input,
                         .data[[.(param_var)]],
                         .data[[.(input$xaxis_var)]],
                         .data[[.(input$yaxis_var)]]) %>%
-          tidyr::gather(key = "ANLVARS",
+        tidyr::gather(key = "ANLVARS",
                         value = "ANLVALS",
                         .data[[.(input$xaxis_var)]],
                         .data[[.(input$yaxis_var)]]) %>%
@@ -428,18 +432,19 @@ srv_g_correlationplot <- function(input,
                         .data[["ANLVALS"]]) %>%
           dplyr::filter(!is.na(.data[[.(xvar())]]) & !is.na(.data[[.(yvar())]]))
 
-
-
-
         ANL_TRANSPOSED2 <- ANL %>%
           dplyr::select(.data[["USUBJID"]],
                         .data[[.(trt_group)]],
                         .data[["AVISITCD"]],
                         .data[[.(param_var)]],
-                        .data[["LOQFL"]]) %>%
+                        .data[["LOQFL"]],
+                        .data[["PARAM"]],
+                        .data[["LBSTRESC"]]) %>%
           tidyr::gather(key = "ANLVARS",
                         value = "ANLVALS",
-                        .data[["LOQFL"]]) %>%
+                        .data[["LOQFL"]],
+                        .data[["PARAM"]],
+                        .data[["LBSTRESC"]]) %>%
           tidyr::unite("ANL.PARAM",
                        "ANLVARS",
                        .(param_var),
