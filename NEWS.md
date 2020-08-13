@@ -1,6 +1,8 @@
 # teal.goshawk 0.1.4
 
-* bug fix in correlation plot module
+* bug fix in correlation plot module related to axis ranges
+* reflect changes in data filter panel re-factoring
+* modification to correlation module to pass data for data driven LLOQ and ULOQ footnote
 
 # teal.goshawk 0.1.3
 
