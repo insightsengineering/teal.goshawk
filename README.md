@@ -19,9 +19,10 @@ Please refer to the deploy repository [here](https://github.roche.com/STATSSPA/s
 
 # Installation
 
-[BEE](https://r.roche.com/) users should check out [Agile-R installation page](https://pages.github.roche.com/NEST/docs/hugo/NEST/agile-R/master/quick_start/install-nest-environment/).
+Please refer to the quick start section in agile-R [here](https://pages.github.roche.com/NEST/docs/hugo/NEST/agile-R/master/quick_start/install-nest-environment/)
 
-You can install locally last released version of `teal.goshawk` with:
+
+The latest version of `teal.goshawk` can be installed locally with:
 ```
 devtools::install_github(
   repo = "NEST/teal.goshawk",
