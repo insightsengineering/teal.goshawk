@@ -23,7 +23,7 @@ Please refer to the quick start section in agile-R [here](https://pages.github.r
 
 
 The latest version of `teal.goshawk` can be installed locally with:
-```
+```r
 devtools::install_github(
   repo = "NEST/teal.goshawk",
   host = "https://github.roche.com/api/v3",
