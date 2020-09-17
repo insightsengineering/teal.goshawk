@@ -90,7 +90,7 @@ templ_ui_params_vars <- function(ns,
   tagList(
     if (!is.null(xparam_choices)) {
       stopifnot(!is.null(xparam_selected))
-      selectInput(
+      optionalSelectInput(
         ns("xaxis_param"), if_null(xparam_label, "Select an X-Axis Biomarker"),
         xparam_choices, xparam_selected, multiple = FALSE
       )
@@ -104,7 +104,7 @@ templ_ui_params_vars <- function(ns,
     },
     if (!is.null(yparam_choices)) {
       stopifnot(!is.null(yparam_selected))
-      selectInput(
+      optionalSelectInput(
         ns("yaxis_param"), if_null(yparam_label, "Select an Y-Axis Biomarker"),
         yparam_choices, yparam_selected, multiple = FALSE
       )
