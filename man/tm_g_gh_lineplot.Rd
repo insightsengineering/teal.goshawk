@@ -60,7 +60,8 @@ xvar is character or factor.}
 
 \item{trt_group_level}{vector that can be used to define factor level of trt_group.}
 
-\item{shape_choices}{Vector with names of ADSL variables which can be used to change shape}
+\item{shape_choices}{Vector or \code{choices_selected} object with names of ADSL variables which
+can be used to change shape}
 
 \item{stat}{string of statistics}
 
