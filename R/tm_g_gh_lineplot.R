@@ -19,7 +19,8 @@
 #' respective gshawk function.
 #' @param trt_group name of variable representing treatment group e.g. ARM.
 #' @param trt_group_level vector that can be used to define factor level of trt_group.
-#' @param shape_choices Vector with names of ADSL variables which can be used to change shape
+#' @param shape_choices Vector or \code{choices_selected} object with names of ADSL variables which
+#' can be used to change shape
 #' @param color_manual string vector representing customized colors
 #' @param stat string of statistics
 #' @param hline numeric value to add horizontal line to plot
@@ -239,8 +240,16 @@ srv_lineplot <- function(input,
   ns <- session$ns
   output$shape_ui <- renderUI({
     if(!is.null(shape_choices)){
-      selectInput(ns("shape"), "Select Line Splitting Variable",
-                  choices = c("None", shape_choices), selected = "None")
+      if (is(shape_choices, "choices_selected")) {
+        choices <- shape_choices$choices
+        selected <- shape_choices$selected
+      }
+      else {
+        choices <- shape_choices
+        selected <- NULL
+      }
+      optionalSelectInput(ns("shape"), "Select Line Splitting Variable",
+                  choices = choices, selected = selected)
     }
   })
 
