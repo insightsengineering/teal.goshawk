@@ -1,5 +1,6 @@
 # teal.goshawk 0.1.4.9000
 
+* `shape_choices` argument to `tm_g_gh_lineplot` can be either a character vector or `choices_selected`.
 * issues with no news:
 
 # teal.goshawk 0.1.4
