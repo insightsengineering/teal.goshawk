@@ -1,63 +1,3 @@
-#' Prepare input to \code{cdisc_data} for testing purposes
-#'
-#' @noRd
-goshawk_data <- function() {
-
-  # original ARM value = dose value
-  arm_mapping <- list("A: Drug X" = "150mg QD",
-                      "B: Placebo" = "Placebo",
-                      "C: Combination" = "Combination")
-
-  ADSL <- random.cdisc.data::radsl(N = 20, seed = 1) # nolint
-  ADLB <- random.cdisc.data::radlb(ADSL, visit_format = "WEEK", n_assessments = 7L, seed = 2) # nolint
-  ADLB <- ADLB %>% # nolint
-    mutate(AVISITCD = case_when(
-      .data$AVISIT == "SCREENING" ~ "SCR",
-      .data$AVISIT == "BASELINE" ~ "BL",
-      grepl("WEEK", .data$AVISIT) ~ paste("W", stringr::str_extract(.data$AVISIT, "(?<=(WEEK ))[0-9]+")),
-      TRUE ~ as.character(NA)),
-      AVISITCDN = case_when(
-        .data$AVISITCD == "SCR" ~ -2,
-        .data$AVISITCD == "BL" ~ 0,
-        grepl("W", .data$AVISITCD) ~ as.numeric(gsub("[^0-9]*", "", .data$AVISITCD)),
-        TRUE ~ as.numeric(NA)),
-      AVISITCD = factor(.data$AVISITCD) %>% reorder(.data$AVISITCDN),
-      TRTORD = case_when(
-        .data$ARMCD == "ARM C" ~ 1,
-        .data$ARMCD == "ARM B" ~ 2,
-        .data$ARMCD == "ARM A" ~ 3),
-      ARM = as.character(arm_mapping[match(.data$ARM, names(arm_mapping))]),
-      ARM = factor(.data$ARM) %>% reorder(.data$TRTORD))
-
-  list(ADSL = ADSL, ADLB = ADLB, code = '
-  arm_mapping <- list("A: Drug X" = "150mg QD",
-                      "B: Placebo" = "Placebo",
-                      "C: Combination" = "Combination")
-
-  ADSL <- radsl(N = 20, seed = 1)
-  ADLB <- radlb(ADSL, visit_format = "WEEK", n_assessments = 7L, seed = 2)
-  ADLB <- ADLB %>%
-    mutate(AVISITCD = case_when(
-      AVISIT == "SCREENING" ~ "SCR",
-      AVISIT == "BASELINE" ~ "BL",
-      grepl("WEEK", AVISIT) ~ paste("W", stringr::str_extract(AVISIT, "(?<=(WEEK ))[0-9]+")),
-      TRUE ~ as.character(NA)),
-      AVISITCDN = case_when(
-        AVISITCD == "SCR" ~ -2,
-        AVISITCD == "BL" ~ 0,
-        grepl("W", AVISITCD) ~ as.numeric(gsub("[^0-9]*", "", AVISITCD)),
-        TRUE ~ as.numeric(NA)),
-      AVISITCD = factor(AVISITCD) %>% reorder(AVISITCDN),
-      TRTORD = case_when(
-        ARMCD == "ARM C" ~ 1,
-        ARMCD == "ARM B" ~ 2,
-        ARMCD == "ARM A" ~ 3),
-      ARM = as.character(arm_mapping[match(ARM, names(arm_mapping))]),
-      ARM = factor(ARM) %>% reorder(TRTORD))
-       ')
-}
-
-
 templ_ui_output_datatable <- function(ns) {
   div(
     uiOutput(ns("plot_ui")),
@@ -74,17 +14,25 @@ templ_ui_dataname <- function(dataname) {
 # UI to create params (biomarker, value of PARAMCD) and vars (column, e.g. AVAL column) select fields for x and y
 templ_ui_params_vars <- function(ns,
                                  # x
-                                 xparam_choices = NULL, xparam_selected = NULL, xparam_label = NULL, # biomarker, e.g. ALT
-                                 xchoices = NULL, xselected = NULL, xvar_label = NULL, # variable, e.g. AVAL
+                                 xparam_choices = NULL,
+                                 xparam_selected = NULL,
+                                 xparam_label = NULL, # biomarker, e.g. ALT
+                                 xchoices = NULL,
+                                 xselected = NULL,
+                                 xvar_label = NULL, # variable, e.g. AVAL
                                  # y
-                                 yparam_choices = NULL, yparam_selected = NULL, yparam_label = NULL, # biomarker, e.g. ALT
-                                 ychoices = NULL, yselected = NULL, yvar_label = NULL, # variable, e.g. AVAL
+                                 yparam_choices = NULL,
+                                 yparam_selected = NULL,
+                                 yparam_label = NULL, # biomarker, e.g. ALT
+                                 ychoices = NULL,
+                                 yselected = NULL,
+                                 yvar_label = NULL, # variable, e.g. AVAL
                                  multiple = FALSE) {
   if (is.null(xparam_choices) && !is.null(xchoices) && !is.null(yparam_choices)) {
     # otherwise, xchoices will appear first without any biomarker to select and this looks odd in the UI
     stop(
       "You have to specify xparam choices rather than yparamchoices
-         if both xvar and yvar should be values for the same biomarker."
+      if both xvar and yvar should be values for the same biomarker."
     )
   }
   tagList(
@@ -96,7 +44,6 @@ templ_ui_params_vars <- function(ns,
       )
     },
     if (!is.null(xchoices)) {
-      #stopifnot(!is.null(xselected))
       optionalSelectInput(
         ns("xaxis_var"), if_null(xvar_label, "Select an X-Axis Variable"),
         xchoices, xselected, multiple = multiple
@@ -110,7 +57,6 @@ templ_ui_params_vars <- function(ns,
       )
     },
     if (!is.null(ychoices)) {
-      #stopifnot(!is.null(yselected))
       optionalSelectInput(
         ns("yaxis_var"), if_null(yvar_label, "Select a Y-Axis Variable"),
         ychoices, yselected, multiple = multiple
@@ -119,7 +65,7 @@ templ_ui_params_vars <- function(ns,
   )
 }
 
-keep_data_constraint_options_updated <- function(session, input, data, id_param_var) {
+keep_data_const_opts_updated <- function(session, input, data, id_param_var) { # nolint
   # use reactiveVal so that it only updates when options actually changed and not just data
   choices <- reactiveVal()
   observeEvent(data(), {
@@ -363,7 +309,7 @@ create_anl_constraint_reactive <- function(anl_param, input, param_id) {
               filter(all_na) %>%
               pull(USUBJID)
           )
-          ANL <- ANL %>% filter(USUBJID %in% filtered_usubjids)
+          ANL <- ANL %>% filter(USUBJID %in% filtered_usubjids) # nolint
         })
       )
 
@@ -389,7 +335,7 @@ update_min_max <- function(session, args) {
 #' Provides lines of code for left hand side of arm mapping. user must provide right hand side
 #'
 #' @details SPA configure study specific pre-processing for deploying goshawk. writing the code for ARM mapping and
-#' ordering is tedious. this function helps to get that started by providing the left hadn side of the
+#' ordering is tedious. this function helps to get that started by providing the left hand side of the
 #' mapping and ordering syntax. call the function and then copy and paste the resulting code from the console
 #' into the app.R file.
 #'
@@ -419,12 +365,12 @@ maptrt <- function(df_armvar, code = c("M", "O")) {
   trtvar <- strsplit(deparse(substitute(df_armvar)), "[$]")[[1]][2]
 
   dftrt <- data.frame(unique(df_armvar)) %>%
-    mutate(trt_mapping = paste0('"', unique(df_armvar), '"', ' = "",')) %>%
-    mutate(trt_ordering = paste0(eval(trtvar), ' == "', unique(df_armvar), '"', ' ~  ,'))
+    mutate(trt_mapping = paste0("\"", unique(df_armvar), "\"", " = \"\",")) %>%
+    mutate(trt_ordering = paste0(eval(trtvar), " == \"", unique(df_armvar), "\"", " ~  ,"))
 
   if (toupper(code) == "M") {
-    print(unname(dftrt['trt_mapping']), row.names = FALSE)
+    print(unname(dftrt["trt_mapping"]), row.names = FALSE)
   } else if (toupper(code) == "O") {
-    print(unname(dftrt['trt_ordering']), row.names = FALSE)
+    print(unname(dftrt["trt_ordering"]), row.names = FALSE)
   }
 }

@@ -83,7 +83,7 @@
 #'   data = cdisc_data(
 #'     cdisc_dataset("ADSL", ADSL),
 #'     cdisc_dataset("ADLB", ADLB),
-#'     code = {'
+#'     code = {' # nolint
 #'       arm_mapping <- list("A: Drug X" = "150mg QD",
 #'                           "B: Placebo" = "Placebo",
 #'                           "C: Combination" = "Combination")
@@ -171,17 +171,18 @@ tm_g_gh_spaghettiplot <- function(label,
   module(
     label = label,
     server = srv_g_spaghettiplot,
-    server_args = list(dataname = dataname,
-                       idvar = idvar,
-                       param_var = param_var,
-                       trt_group = trt_group,
-                       xaxis_var_level = xaxis_var_level,
-                       trt_group_level = trt_group_level,
-                       man_color = man_color,
-                       color_comb = color_comb,
-                       param_var_label = param_var_label,
-                       xtick = xtick,
-                       xlabel = xlabel),
+    server_args = list(
+      dataname = dataname,
+      idvar = idvar,
+      param_var = param_var,
+      trt_group = trt_group,
+      xaxis_var_level = xaxis_var_level,
+      trt_group_level = trt_group_level,
+      man_color = man_color,
+      color_comb = color_comb,
+      param_var_label = param_var_label,
+      xtick = xtick,
+      xlabel = xlabel),
     ui = g_ui_spaghettiplot,
     ui_args = args,
     filters = dataname
@@ -205,32 +206,41 @@ g_ui_spaghettiplot <- function(id, ...) {
         xchoices = a$xaxis_var$choices, xselected = a$xaxis_var$selected,
         ychoices = a$yaxis_var$choices, yselected = a$yaxis_var$selected
       ),
-      radioButtons(ns("group_stats"),
-                   "Group Statistics",
-                   c("None" = "NONE", "Mean" = "MEAN", "Median" = "MEDIAN"),
-                   inline = TRUE),
+      radioButtons(
+        ns("group_stats"),
+        "Group Statistics",
+        c("None" = "NONE", "Mean" = "MEAN", "Median" = "MEDIAN"),
+        inline = TRUE),
       templ_ui_constraint(ns), # required by constr_anl_chunks
-      toggle_slider_ui(ns("yrange_scale"), label = "Y-Axis Range Zoom",
-                       min = -1000000, max = 1000000, value = c(-1000000, 1000000)),
+      toggle_slider_ui(
+        ns("yrange_scale"),
+        label = "Y-Axis Range Zoom",
+        min = -1000000,
+        max = 1000000,
+        value = c(-1000000, 1000000)),
       panel_group(
         panel_item(
           title = "Plot Aesthetic Settings",
           div(style = "padding: 0px;",
-              div(style = "display: inline-block;vertical-align:middle; width: 175px;",
-                  tags$b("Number of Plots Per Row:")),
-              div(style = "display: inline-block;vertical-align:middle; width: 100px;",
-                  numericInput(ns("facet_ncol"), "", a$facet_ncol, min = 1))
+            div(style = "display: inline-block;vertical-align:middle; width: 175px;",
+              tags$b("Number of Plots Per Row:")),
+            div(style = "display: inline-block;vertical-align:middle; width: 100px;",
+              numericInput(ns("facet_ncol"), "", a$facet_ncol, min = 1))
           ),
           checkboxInput(ns("rotate_xlab"), "Rotate X-Axis Label", a$rotate_xlab),
           div(style = "padding: 0px;",
-              div(style = "display: inline-block;vertical-align:moddle; width: 175px;",
-                  tags$b("Add a Horizontal Line:")),
-              div(style = "display: inline-block;vertical-align:middle; width: 100px;",
-                  numericInput(ns("hline"), "", a$hline))
+            div(style = "display: inline-block;vertical-align:moddle; width: 175px;",
+              tags$b("Add a Horizontal Line:")),
+            div(style = "display: inline-block;vertical-align:middle; width: 100px;",
+              numericInput(ns("hline"), "", a$hline))
           ),
           optionalSliderInputValMinMax(ns("plot_height"), "Plot Height", a$plot_height, ticks = FALSE),
           optionalSliderInputValMinMax(ns("font_size"), "Font Size", a$font_size, ticks = FALSE),
-          optionalSliderInputValMinMax(ns("alpha"), "Line Transparency", a$alpha, value_min_max =  c(0.8, 0.0, 1.0), step = 0.1, ticks = FALSE)
+          optionalSliderInputValMinMax(
+            ns("alpha"),
+            "Line Transparency",
+            a$alpha,
+            value_min_max =  c(0.8, 0.0, 1.0), step = 0.1, ticks = FALSE)
         )
       )
     ),
@@ -269,23 +279,23 @@ srv_g_spaghettiplot <- function(input,
   # update sliders for axes taking constraints into account
   yrange_slider <- callModule(toggle_slider_server, "yrange_scale")
   keep_range_slider_updated(session, input, yrange_slider$update_state, "yaxis_var", "xaxis_param", anl_chunks)
-  keep_data_constraint_options_updated(session, input, anl_chunks, "xaxis_param")
+  keep_data_const_opts_updated(session, input, anl_chunks, "xaxis_param")
 
   output$spaghettiplot <- renderPlot({
 
     private_chunks <- anl_chunks()$chunks$clone(deep = TRUE)
-    ylim <- yrange_slider$state()$value
-    facet_ncol <- input$facet_ncol
-    rotate_xlab <- input$rotate_xlab
-    hline <- input$hline
-    group_stats <- input$group_stats
-    font_size <- input$font_size
-    alpha <- input$alpha
+    ylim <- yrange_slider$state()$value # nolint
+    facet_ncol <- input$facet_ncol # nolint
+    rotate_xlab <- input$rotate_xlab # nolint
+    hline <- input$hline # nolint
+    group_stats <- input$group_stats # nolint
+    font_size <- input$font_size # nolint
+    alpha <- input$alpha # nolint
 
     # Below inputs should trigger plot via updates of other reactive objects (i.e. anl_chunk()) and some inputs
-    param <- isolate(input$xaxis_param)
-    xaxis_var <- isolate(input$xaxis_var)
-    yaxis_var <- isolate(input$yaxis_var)
+    param <- isolate(input$xaxis_param) # nolint
+    xaxis_var <- isolate(input$xaxis_var) # nolint
+    yaxis_var <- isolate(input$yaxis_var) # nolint
 
     chunks_push(
       chunks = private_chunks,

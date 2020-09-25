@@ -83,7 +83,7 @@
 #'   data = cdisc_data(
 #'     cdisc_dataset("ADSL", ADSL),
 #'     cdisc_dataset("ADLB", ADLB),
-#'     code = {'
+#'     code = {' # nolint
 #'       arm_mapping <- list("A: Drug X" = "150mg QD",
 #'                           "B: Placebo" = "Placebo",
 #'                           "C: Combination" = "Combination")
@@ -164,15 +164,16 @@ tm_g_gh_lineplot <- function(label,
   module(
     label = label,
     server = srv_lineplot,
-    server_args = list(dataname = dataname,
-                       param_var = param_var,
-                       trt_group = trt_group, color_manual = color_manual,
-                       xvar_level = xvar_level,
-                       trt_group_level = trt_group_level,
-                       shape_choices = shape_choices,
-                       param_var_label = param_var_label,
-                       xtick = xtick,
-                       xlabel = xlabel),
+    server_args = list(
+      dataname = dataname,
+      param_var = param_var,
+      trt_group = trt_group, color_manual = color_manual,
+      xvar_level = xvar_level,
+      trt_group_level = trt_group_level,
+      shape_choices = shape_choices,
+      param_var_label = param_var_label,
+      xtick = xtick,
+      xlabel = xlabel),
     ui = ui_lineplot,
     ui_args = args,
     filters = dataname
@@ -197,13 +198,17 @@ ui_lineplot <- function(id, ...) {
         ychoices = a$yaxis_var$choices, yselected = a$yaxis_var$selected
       ),
       uiOutput(ns("shape_ui")),
-      radioButtons(ns("stat"), "Select a Statistic:", c("mean","median"), a$stat),
+      radioButtons(ns("stat"), "Select a Statistic:", c("mean", "median"), a$stat),
       templ_ui_constraint(ns), # required by constr_anl_chunks
       panel_group(
         panel_item(
           title = "Plot Aesthetic Settings",
-          toggle_slider_ui(ns("yrange_scale"), label = "Y-Axis Range Zoom",
-                           min = -1000000, max = 1000000, value = c(-1000000, 1000000)),
+          toggle_slider_ui(
+            ns("yrange_scale"),
+            label = "Y-Axis Range Zoom",
+            min = -1000000,
+            max = 1000000,
+            value = c(-1000000, 1000000)),
           checkboxInput(ns("rotate_xlab"), "Rotate X-axis Label", a$rotate_xlab),
           numericInput(ns("hline"), "Add a horizontal line:", a$hline)
         ),
@@ -239,7 +244,7 @@ srv_lineplot <- function(input,
 
   ns <- session$ns
   output$shape_ui <- renderUI({
-    if(!is.null(shape_choices)){
+    if (!is.null(shape_choices)) {
       if (is(shape_choices, "choices_selected")) {
         choices <- shape_choices$choices
         selected <- shape_choices$selected
@@ -248,19 +253,22 @@ srv_lineplot <- function(input,
         choices <- shape_choices
         selected <- NULL
       }
-      optionalSelectInput(ns("shape"), "Select Line Splitting Variable",
-                  choices = choices, selected = selected)
+      optionalSelectInput(
+        ns("shape"),
+        "Select Line Splitting Variable",
+        choices = choices, selected = selected)
     }
   })
 
-  anl_chunks <- constr_anl_chunks(session = session,
-                                  input = input,
-                                  datasets = datasets,
-                                  dataname = dataname,
-                                  param_id = "xaxis_param",
-                                  param_var =  param_var,
-                                  trt_group = trt_group)
-  keep_data_constraint_options_updated(session, input, anl_chunks, "xaxis_param")
+  anl_chunks <- constr_anl_chunks(
+    session = session,
+    input = input,
+    datasets = datasets,
+    dataname = dataname,
+    param_id = "xaxis_param",
+    param_var =  param_var,
+    trt_group = trt_group)
+  keep_data_const_opts_updated(session, input, anl_chunks, "xaxis_param")
 
   yrange_slider <- callModule(toggle_slider_server, "yrange_scale")
 
@@ -282,13 +290,13 @@ srv_lineplot <- function(input,
     # xaxis_var and yaxis_var are always distinct
     sum_data <- ANL %>%
       group_by_at(c(input$xaxis_var, trt_group, shape)) %>%
-      summarise(upper = if (input$stat == 'mean') {
+      summarise(upper = if (input$stat == "mean") {
         mean(!!sym(varname), na.rm = TRUE) +
           1.96 * sd(!!sym(varname), na.rm = TRUE) / sqrt(n())
       } else {
         quantile(!!sym(varname), 0.75, na.rm = TRUE)
       },
-      lower = if (input$stat == 'mean') {
+      lower = if (input$stat == "mean") {
         mean(!!sym(varname), na.rm = TRUE) -
           1.96 * sd(!!sym(varname), na.rm = TRUE) / sqrt(n())
       } else {
@@ -296,8 +304,9 @@ srv_lineplot <- function(input,
       })
 
     minmax <- grDevices::extendrange(
-      r = c(floor(min(sum_data$lower, na.rm = TRUE) * 10) / 10,
-            ceiling(max(sum_data$upper, na.rm = TRUE) * 10) / 10),
+      r = c(
+        floor(min(sum_data$lower, na.rm = TRUE) * 10) / 10,
+        ceiling(max(sum_data$upper, na.rm = TRUE) * 10) / 10),
       f = 0.05
     )
 
@@ -314,18 +323,18 @@ srv_lineplot <- function(input,
   output$lineplot <- renderPlot({
     ac <- anl_chunks()
     private_chunks <- ac$chunks$clone(deep = TRUE)
-    yrange_scale <- yrange_slider$state()$value
-    font_size <- input$font_size
-    dodge <- input$dodge
-    rotate_xlab <- input$rotate_xlab
-    hline <- if (is.na(input$hline)) NULL else as.numeric(input$hline)
-    median <- ifelse(input$stat == "median", TRUE, FALSE)
+    yrange_scale <- yrange_slider$state()$value # nolint
+    font_size <- input$font_size # nolint
+    dodge <- input$dodge # nolint
+    rotate_xlab <- input$rotate_xlab # nolint
+    hline <- if (is.na(input$hline)) NULL else as.numeric(input$hline) # nolint
+    median <- ifelse(input$stat == "median", TRUE, FALSE) # nolint
     plot_height <- input$plot_height
 
-    # todo: document why isolated
-    param <- isolate(input$xaxis_param)
-    xaxis <- isolate(input$xaxis_var)
-    yaxis <- isolate(input$yaxis_var)
+    # todo: document why isolated # noreg
+    param <- isolate(input$xaxis_param) # nolint
+    xaxis <- isolate(input$xaxis_var) # nolint
+    yaxis <- isolate(input$yaxis_var) # nolint
 
     shape <- if (!(is.null(input$shape) || input$shape == "None")) {
       input$shape

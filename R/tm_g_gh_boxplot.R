@@ -88,7 +88,7 @@
 #'   data = cdisc_data(
 #'     cdisc_dataset("ADSL", ADSL),
 #'     cdisc_dataset("ADLB", ADLB),
-#'     code = {'
+#'     code = {' # nolint
 #'       arm_mapping <- list("A: Drug X" = "150mg QD",
 #'                           "B: Placebo" = "Placebo",
 #'                           "C: Combination" = "Combination")
@@ -229,17 +229,22 @@ ui_g_boxplot <- function(id, ...) {
         xchoices = a$xaxis_var$choices, xselected = a$xaxis_var$selected,
         ychoices = a$yaxis_var$choices, yselected = a$yaxis_var$selected
       ),
-      optionalSelectInput(ns("facet_var"),
-                          label = "Facet by",
-                          choices = a$facet_var$choices,
-                          selected = a$facet_var$selected,
-                          multiple = FALSE),
+      optionalSelectInput(
+        ns("facet_var"),
+        label = "Facet by",
+        choices = a$facet_var$choices,
+        selected = a$facet_var$selected,
+        multiple = FALSE),
       templ_ui_constraint(ns, label = "Data Constraint"), # required by constr_anl_chunks
       panel_group(
         panel_item(
           title = "Plot Aesthetic Settings",
-          toggle_slider_ui(ns("yrange_scale"), label = "Y-Axis Range Zoom",
-                           min = -1000000, max = 1000000, value = c(-1000000, 1000000)),
+          toggle_slider_ui(
+            ns("yrange_scale"),
+            label = "Y-Axis Range Zoom",
+            min = -1000000,
+            max = 1000000,
+            value = c(-1000000, 1000000)),
           numericInput(ns("facet_ncol"), "Number of Plots Per Row:", a$facet_ncol, min = 1),
           checkboxInput(ns("loq_legend"), "Display LoQ Legend", a$loq_legend),
           checkboxInput(ns("rotate_xlab"), "Rotate X-axis Label", a$rotate_xlab),
@@ -272,7 +277,7 @@ srv_g_boxplot <- function(input,
                           color_manual,
                           shape_manual,
                           armlabel,
-                          av){
+                          av) {
 
   ns <- session$ns
 
@@ -285,30 +290,36 @@ srv_g_boxplot <- function(input,
   # update sliders for axes taking constraints into account
   yrange_slider <- callModule(toggle_slider_server, "yrange_scale")
   keep_range_slider_updated(session, input, yrange_slider$update_state, "yaxis_var", "xaxis_param", anl_chunks)
-  keep_data_constraint_options_updated(session, input, anl_chunks, "xaxis_param")
+  keep_data_const_opts_updated(session, input, anl_chunks, "xaxis_param")
 
   create_plot <- reactive({
     private_chunks <- anl_chunks()$chunks$clone(deep = TRUE)
 
-    param <- input$xaxis_param
+    param <- input$xaxis_param # nolint
     yaxis <- input$yaxis_var
     xaxis <- input$xaxis_var
     facet_var <- input$facet_var
-    yrange_scale <- yrange_slider$state()$value
-    facet_ncol <- input$facet_ncol
-    alpha <- input$alpha
-    font_size <- input$font_size
-    dot_size <- input$dot_size
-    loq_legend <- input$loq_legend
-    rotate_xlab = input$rotate_xlab
-    hline <- input$hline
+    yrange_scale <- yrange_slider$state()$value # nolint
+    facet_ncol <- input$facet_ncol # nolint
+    alpha <- input$alpha # nolint
+    font_size <- input$font_size # nolint
+    dot_size <- input$dot_size # nolint
+    loq_legend <- input$loq_legend # nolint
+    rotate_xlab <- input$rotate_xlab #nolint
+    hline <- input$hline # nolint
 
-    validate_has_variable(anl_chunks()$ANL, yaxis,
-                          sprintf("Variable %s is not available in data %s", yaxis, dataname))
-    validate_has_variable(anl_chunks()$ANL, xaxis,
-                          sprintf("Variable %s is not available in data %s", xaxis, dataname))
-    validate_has_variable(anl_chunks()$ANL, facet_var,
-                          sprintf("Variable %s is not available in data %s", facet_var, dataname))
+    validate_has_variable(
+      anl_chunks()$ANL,
+      yaxis,
+      sprintf("Variable %s is not available in data %s", yaxis, dataname))
+    validate_has_variable(
+      anl_chunks()$ANL,
+      xaxis,
+      sprintf("Variable %s is not available in data %s", xaxis, dataname))
+    validate_has_variable(
+      anl_chunks()$ANL,
+      facet_var,
+      sprintf("Variable %s is not available in data %s", facet_var, dataname))
     chunks_push(
       chunks = private_chunks,
       id = "boxplot",
@@ -346,7 +357,7 @@ srv_g_boxplot <- function(input,
     private_chunks <- create_plot()$clone(deep = TRUE)
 
     param <- input$xaxis_param
-    xaxis_var <- input$yaxis_var
+    xaxis_var <- input$yaxis_var #nolint
     facet_var <- input$facet_var
     font_size <- input$font_size
 
@@ -372,19 +383,19 @@ srv_g_boxplot <- function(input,
       }
 
       chunks_push(
-          chunks = private_chunks,
-          id = "table",
-          expression = bquote({
-                tbl <- t_summarytable_av(
-                    data = ANL,
-                    trt_group = .(trt_group),
-                    param_var = .(param_var),
-                    param = .(param),
-                    xaxis_var = .(xaxis_var),
-                    facet_var = .(facet_var),
-                    font_size = .(font_size)
-                )
-          })
+        chunks = private_chunks,
+        id = "table",
+        expression = bquote({
+          tbl <- t_summarytable_av(
+            data = ANL,
+            trt_group = .(trt_group),
+            param_var = .(param_var),
+            param = .(param),
+            xaxis_var = .(xaxis_var),
+            facet_var = .(facet_var),
+            font_size = .(font_size)
+          )
+        })
       )
     }
 
@@ -397,7 +408,9 @@ srv_g_boxplot <- function(input,
     chunks_push(
       chunks = private_chunks,
       id = "output",
-      expression = quote({plot})
+      expression = quote({
+        plot
+        })
     )
     init_chunks(private_chunks)
     private_chunks
@@ -433,7 +446,7 @@ srv_g_boxplot <- function(input,
   output$brush_data <- DT::renderDataTable({
     req(input$boxplot_brush)
 
-    ANL <- isolate(anl_chunks()$ANL) %>% droplevels()
+    ANL <- isolate(anl_chunks()$ANL) %>% droplevels() #nolint
     validate_has_data(ANL, 5)
 
     xvar <- isolate(input$xaxis_var)

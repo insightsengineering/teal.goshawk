@@ -67,7 +67,7 @@
 #'   data = cdisc_data(
 #'     cdisc_dataset("ADSL", ADSL),
 #'     cdisc_dataset("ADLB", ADLB),
-#'     code = {'
+#'     code = {' # nolint
 #'       arm_mapping <- list("A: Drug X" = "150mg QD",
 #'                           "B: Placebo" = "Placebo",
 #'                           "C: Combination" = "Combination")
@@ -240,7 +240,7 @@ srv_g_scatterplot <- function(input,
   yrange_slider <- callModule(toggle_slider_server, "yrange_scale")
   keep_range_slider_updated(session, input, xrange_slider$update_state, "xaxis_var", "xaxis_param", anl_chunks)
   keep_range_slider_updated(session, input, yrange_slider$update_state, "yaxis_var", "xaxis_param", anl_chunks)
-  keep_data_constraint_options_updated(session, input, anl_chunks, "xaxis_param")
+  keep_data_const_opts_updated(session, input, anl_chunks, "xaxis_param")
 
   # plot
   output$scatterplot <- renderPlot({
@@ -248,22 +248,22 @@ srv_g_scatterplot <- function(input,
     ac <- anl_chunks()
     private_chunks <- ac$chunks$clone(deep = TRUE)
 
-    xrange_scale <- xrange_slider$state()$value
-    yrange_scale <- yrange_slider$state()$value
-    facet_ncol <- input$facet_ncol
-    facet <- input$facet
-    reg_line <- input$reg_line
-    font_size <- input$font_size
-    dot_size <- input$dot_size
-    reg_text_size <- input$reg_text_size
-    rotate_xlab <- input$rotate_xlab
-    hline <- input$hline
-    vline <- input$vline
+    xrange_scale <- xrange_slider$state()$value # nolint
+    yrange_scale <- yrange_slider$state()$value # nolint
+    facet_ncol <- input$facet_ncol # nolint
+    facet <- input$facet # nolint
+    reg_line <- input$reg_line # nolint
+    font_size <- input$font_size # nolint
+    dot_size <- input$dot_size # nolint
+    reg_text_size <- input$reg_text_size # nolint
+    rotate_xlab <- input$rotate_xlab # nolint
+    hline <- input$hline # nolint
+    vline <- input$vline # nolint
 
     # Below inputs should trigger plot via updates of other reactive objects (i.e. anl_chunk()) and some inputs
-    param <- isolate(input$xaxis_param)
-    xaxis <- isolate(input$xaxis_var)
-    yaxis <- isolate(input$yaxis_var)
+    param <- isolate(input$xaxis_param) # nolint
+    xaxis <- isolate(input$xaxis_var) # nolint
+    yaxis <- isolate(input$yaxis_var) # nolint
 
     chunks_push(
       chunks = private_chunks,

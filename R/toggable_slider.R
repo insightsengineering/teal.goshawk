@@ -95,17 +95,46 @@ toggle_slider_ui <- function(id,
     shinyjs::useShinyjs(),
     actionButton(ns("toggle"), "Toggle"),
     show_or_not(slider_initially)(
-      sliderInput(ns("slider"), label = label, min = min, max = max, value = value, step = step_slider, width = width, ...)
+      sliderInput(
+        ns("slider"),
+        label = label,
+        min = min,
+        max = max,
+        value = value,
+        step = step_slider,
+        width = width,
+        ...)
     ),
     show_or_not(!slider_initially)(tags$span(
       id = ns("numeric_view"),
       if (length(value) == 1) {
-        numericInput(ns("value"), label = label, min = min, max = max, value = value[[1]], step = step_numeric, width = width)
+        numericInput(
+          ns("value"),
+          label = label,
+          min = min,
+          max = max,
+          value = value[[1]],
+          step = step_numeric,
+          width = width)
       } else {
         div(
           tags$label(label),
-          numericInput(ns("value_low"), "From:", min = min, max = max, value = value[[1]], step = step_numeric, width = width),
-          numericInput(ns("value_high"), "- to:", min = min, max = max, value = value[[2]], step = step_numeric, width = width)
+          numericInput(
+            ns("value_low"),
+            "From:",
+            min = min,
+            max = max,
+            value = value[[1]],
+            step = step_numeric,
+            width = width),
+          numericInput(
+            ns("value_high"),
+            "- to:",
+            min = min,
+            max = max,
+            value = value[[2]],
+            step = step_numeric,
+            width = width)
         )
       }
     ))
@@ -145,11 +174,13 @@ toggle_slider_server <- function(input, output, session, is_dichotomous_slider =
     set_state(list(value = input$slider))
   })
   # two values for range (dichotomous slider)
-  observeEvent({input$value_low; input$value_high}, {
+  observeEvent({
+    input$value_low; input$value_high}, {
     set_state(list(value = c(input$value_low, input$value_high)))
   })
   # one value for value in range
-  observeEvent({input$value}, {
+  observeEvent({
+    input$value}, {
     set_state(list(value = input$value))
   })
   observeEvent(cur_state(), {

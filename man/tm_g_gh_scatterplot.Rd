@@ -117,7 +117,7 @@ app <- init(
   data = cdisc_data(
     cdisc_dataset("ADSL", ADSL),
     cdisc_dataset("ADLB", ADLB),
-    code = {'
+    code = {' # nolint
       arm_mapping <- list("A: Drug X" = "150mg QD",
                           "B: Placebo" = "Placebo",
                           "C: Combination" = "Combination")
