@@ -326,9 +326,7 @@ srv_g_density_distribution_plot <- function(input, output, session, datasets, da
     chunks_push(
       chunks = private_chunks,
       id = "output",
-      expression = quote({
-        plot
-      })
+      expression = quote(plot)
     )
     init_chunks(private_chunks)
     private_chunks

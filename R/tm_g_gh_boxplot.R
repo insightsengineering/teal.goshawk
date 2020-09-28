@@ -408,9 +408,7 @@ srv_g_boxplot <- function(input,
     chunks_push(
       chunks = private_chunks,
       id = "output",
-      expression = quote({
-        plot
-        })
+      expression = quote(plot)
     )
     init_chunks(private_chunks)
     private_chunks

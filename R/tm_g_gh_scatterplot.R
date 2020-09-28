@@ -247,19 +247,19 @@ srv_g_scatterplot <- function(input,
 
     ac <- anl_chunks()
     private_chunks <- ac$chunks$clone(deep = TRUE)
-
-    xrange_scale <- xrange_slider$state()$value # nolint
-    yrange_scale <- yrange_slider$state()$value # nolint
-    facet_ncol <- input$facet_ncol # nolint
-    facet <- input$facet # nolint
-    reg_line <- input$reg_line # nolint
-    font_size <- input$font_size # nolint
-    dot_size <- input$dot_size # nolint
-    reg_text_size <- input$reg_text_size # nolint
-    rotate_xlab <- input$rotate_xlab # nolint
-    hline <- input$hline # nolint
-    vline <- input$vline # nolint
-
+    # nolint start
+    xrange_scale <- xrange_slider$state()$value
+    yrange_scale <- yrange_slider$state()$value
+    facet_ncol <- input$facet_ncol
+    facet <- input$facet
+    reg_line <- input$reg_line
+    font_size <- input$font_size
+    dot_size <- input$dot_size
+    reg_text_size <- input$reg_text_size
+    rotate_xlab <- input$rotate_xlab
+    hline <- input$hline
+    vline <- input$vline
+    # nolint end
     # Below inputs should trigger plot via updates of other reactive objects (i.e. anl_chunk()) and some inputs
     param <- isolate(input$xaxis_param) # nolint
     xaxis <- isolate(input$xaxis_var) # nolint
