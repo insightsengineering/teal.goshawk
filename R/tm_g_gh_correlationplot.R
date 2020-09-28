@@ -545,27 +545,27 @@ srv_g_correlationplot <- function(input,
   # plot
   output$plot <- renderPlot({
     private_chunks <- plot_data_transpose()$chunks$clone(deep = TRUE)
-
-    xaxis_param <- input$xaxis_param # nolint
-    xaxis_var <- input$xaxis_var # nolint
-    yaxis_param <- input$yaxis_param # nolint
-    yaxis_var <- input$yaxis_var # nolint
-    xmin_scale <- xrange_slider$state()$value[[1]] # nolint
-    xmax_scale <- xrange_slider$state()$value[[2]] # nolint
-    ymin_scale <- yrange_slider$state()$value[[1]] # nolint
-    ymax_scale <- yrange_slider$state()$value[[2]] # nolint
-    font_size <- input$font_size # nolint
-    dot_size <- input$dot_size # nolint
-    reg_text_size <- input$reg_text_size # nolint
-    hline <- if (is.na(input$hline)) NULL else as.numeric(input$hline) # nolint
-    vline <- if (is.na(input$vline)) NULL else as.numeric(input$vline) # nolint
-    facet_ncol <- input$facet_ncol # nolint
-    visit_facet <- input$visit_facet # nolint
-    facet <- input$facet # nolint
-    reg_line <- input$reg_line # nolint
-    loq_legend <- input$loq_legend # nolint
-    rotate_xlab <- input$rotate_xlab # nolint
-
+    # nolint start
+    xaxis_param <- input$xaxis_param
+    xaxis_var <- input$xaxis_var
+    yaxis_param <- input$yaxis_param
+    yaxis_var <- input$yaxis_var
+    xmin_scale <- xrange_slider$state()$value[[1]]
+    xmax_scale <- xrange_slider$state()$value[[2]]
+    ymin_scale <- yrange_slider$state()$value[[1]]
+    ymax_scale <- yrange_slider$state()$value[[2]]
+    font_size <- input$font_size
+    dot_size <- input$dot_size
+    reg_text_size <- input$reg_text_size
+    hline <- if (is.na(input$hline)) NULL else as.numeric(input$hline)
+    vline <- if (is.na(input$vline)) NULL else as.numeric(input$vline)
+    facet_ncol <- input$facet_ncol
+    visit_facet <- input$visit_facet
+    facet <- input$facet
+    reg_line <- input$reg_line
+    loq_legend <- input$loq_legend
+    rotate_xlab <- input$rotate_xlab
+    # nolint end
     title_text <- plot_labels()$title_text
     xaxis_lab  <- plot_labels()$xaxis_lab
     yaxis_lab  <- plot_labels()$yaxis_lab
