@@ -65,7 +65,7 @@ templ_ui_params_vars <- function(ns,
   )
 }
 
-keep_data_const_opts_updated <- function(session, input, data, id_param_var) { # nolint
+keep_data_const_opts_updated <- function(session, input, data, id_param_var) {
   # use reactiveVal so that it only updates when options actually changed and not just data
   choices <- reactiveVal()
   observeEvent(data(), {

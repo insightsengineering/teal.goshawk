@@ -331,7 +331,6 @@ srv_lineplot <- function(input,
     median <- ifelse(input$stat == "median", TRUE, FALSE) # nolint
     plot_height <- input$plot_height
 
-    # todo: document why isolated # noreg
     param <- isolate(input$xaxis_param) # nolint
     xaxis <- isolate(input$xaxis_var) # nolint
     yaxis <- isolate(input$yaxis_var) # nolint
