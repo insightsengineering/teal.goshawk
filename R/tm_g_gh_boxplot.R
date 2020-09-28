@@ -294,20 +294,20 @@ srv_g_boxplot <- function(input,
 
   create_plot <- reactive({
     private_chunks <- anl_chunks()$chunks$clone(deep = TRUE)
-
-    param <- input$xaxis_param # nolint
+    # nolint start
+    param <- input$xaxis_param
     yaxis <- input$yaxis_var
     xaxis <- input$xaxis_var
     facet_var <- input$facet_var
-    yrange_scale <- yrange_slider$state()$value # nolint
-    facet_ncol <- input$facet_ncol # nolint
-    alpha <- input$alpha # nolint
-    font_size <- input$font_size # nolint
-    dot_size <- input$dot_size # nolint
-    loq_legend <- input$loq_legend # nolint
-    rotate_xlab <- input$rotate_xlab #nolint
-    hline <- input$hline # nolint
-
+    yrange_scale <- yrange_slider$state()$value
+    facet_ncol <- input$facet_ncol
+    alpha <- input$alpha
+    font_size <- input$font_size
+    dot_size <- input$dot_size
+    loq_legend <- input$loq_legend
+    rotate_xlab <- input$rotate_xlab
+    hline <- input$hline
+    # nolint end
     validate_has_variable(
       anl_chunks()$ANL,
       yaxis,

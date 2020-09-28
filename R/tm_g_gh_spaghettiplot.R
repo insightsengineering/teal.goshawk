@@ -282,21 +282,21 @@ srv_g_spaghettiplot <- function(input,
   keep_data_const_opts_updated(session, input, anl_chunks, "xaxis_param")
 
   output$spaghettiplot <- renderPlot({
-
+    # nolint start
     private_chunks <- anl_chunks()$chunks$clone(deep = TRUE)
-    ylim <- yrange_slider$state()$value # nolint
-    facet_ncol <- input$facet_ncol # nolint
-    rotate_xlab <- input$rotate_xlab # nolint
-    hline <- input$hline # nolint
-    group_stats <- input$group_stats # nolint
-    font_size <- input$font_size # nolint
-    alpha <- input$alpha # nolint
+    ylim <- yrange_slider$state()$value
+    facet_ncol <- input$facet_ncol
+    rotate_xlab <- input$rotate_xlab
+    hline <- input$hline
+    group_stats <- input$group_stats
+    font_size <- input$font_size
+    alpha <- input$alpha
 
     # Below inputs should trigger plot via updates of other reactive objects (i.e. anl_chunk()) and some inputs
-    param <- isolate(input$xaxis_param) # nolint
-    xaxis_var <- isolate(input$xaxis_var) # nolint
-    yaxis_var <- isolate(input$yaxis_var) # nolint
-
+    param <- isolate(input$xaxis_param)
+    xaxis_var <- isolate(input$xaxis_var)
+    yaxis_var <- isolate(input$yaxis_var)
+    # nolint end
     chunks_push(
       chunks = private_chunks,
       id = "g_spaghettiplot",

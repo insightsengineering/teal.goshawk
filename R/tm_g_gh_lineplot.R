@@ -323,17 +323,19 @@ srv_lineplot <- function(input,
   output$lineplot <- renderPlot({
     ac <- anl_chunks()
     private_chunks <- ac$chunks$clone(deep = TRUE)
-    yrange_scale <- yrange_slider$state()$value # nolint
-    font_size <- input$font_size # nolint
-    dodge <- input$dodge # nolint
-    rotate_xlab <- input$rotate_xlab # nolint
-    hline <- if (is.na(input$hline)) NULL else as.numeric(input$hline) # nolint
-    median <- ifelse(input$stat == "median", TRUE, FALSE) # nolint
+    # nolint start
+    yrange_scale <- yrange_slider$state()$value
+    font_size <- input$font_size
+    dodge <- input$dodge
+    rotate_xlab <- input$rotate_xlab
+    hline <- if (is.na(input$hline)) NULL else as.numeric(input$hline)
+    median <- ifelse(input$stat == "median", TRUE, FALSE)
     plot_height <- input$plot_height
 
-    param <- isolate(input$xaxis_param) # nolint
-    xaxis <- isolate(input$xaxis_var) # nolint
-    yaxis <- isolate(input$yaxis_var) # nolint
+    param <- isolate(input$xaxis_param)
+    xaxis <- isolate(input$xaxis_var)
+    yaxis <- isolate(input$yaxis_var)
+    # nolint end
 
     shape <- if (!(is.null(input$shape) || input$shape == "None")) {
       input$shape

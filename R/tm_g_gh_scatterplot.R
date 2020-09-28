@@ -259,12 +259,12 @@ srv_g_scatterplot <- function(input,
     rotate_xlab <- input$rotate_xlab
     hline <- input$hline
     vline <- input$vline
-    # nolint end
-    # Below inputs should trigger plot via updates of other reactive objects (i.e. anl_chunk()) and some inputs
-    param <- isolate(input$xaxis_param) # nolint
-    xaxis <- isolate(input$xaxis_var) # nolint
-    yaxis <- isolate(input$yaxis_var) # nolint
 
+    # Below inputs should trigger plot via updates of other reactive objects (i.e. anl_chunk()) and some inputs
+    param <- isolate(input$xaxis_param)
+    xaxis <- isolate(input$xaxis_var)
+    yaxis <- isolate(input$yaxis_var)
+    # nolint end
     chunks_push(
       chunks = private_chunks,
       id = "scatterplot",

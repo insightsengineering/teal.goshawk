@@ -179,8 +179,8 @@ toggle_slider_server <- function(input, output, session, is_dichotomous_slider =
     set_state(list(value = c(input$value_low, input$value_high)))
   })
   # one value for value in range
-  observeEvent({
-    input$value}, {
+  observeEvent(
+    input$value, {
     set_state(list(value = input$value))
   })
   observeEvent(cur_state(), {
