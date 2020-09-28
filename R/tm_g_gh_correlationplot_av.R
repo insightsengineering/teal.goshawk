@@ -85,7 +85,7 @@
 #'   data = cdisc_data(
 #'     cdisc_dataset("ADSL", ADSL),
 #'     cdisc_dataset("ADLB", ADLB),
-#'     code = {
+#'     code =
 #'       'arm_mapping <- list("A: Drug X" = "150mg QD",
 #'                           "B: Placebo" = "Placebo",
 #'                           "C: Combination" = "Combination")
@@ -110,7 +110,7 @@
 #'           ARM = as.character(arm_mapping[match(ARM, names(arm_mapping))]),
 #'           ARM = factor(ARM) %>% reorder(TRTORD),
 #'           ADY = AVISITCDN)
-#'           '},
+#'           ',
 #'     check = FALSE
 #'   ),
 #'   modules = root_modules(

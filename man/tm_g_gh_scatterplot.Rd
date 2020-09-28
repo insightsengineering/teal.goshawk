@@ -117,7 +117,7 @@ app <- init(
   data = cdisc_data(
     cdisc_dataset("ADSL", ADSL),
     cdisc_dataset("ADLB", ADLB),
-    code = {
+    code =
      'arm_mapping <- list("A: Drug X" = "150mg QD",
                           "B: Placebo" = "Placebo",
                           "C: Combination" = "Combination")
@@ -142,7 +142,7 @@ app <- init(
             ARMCD == "ARM A" ~ 3),
           ARM = as.character(arm_mapping[match(ARM, names(arm_mapping))]),
           ARM = factor(ARM) \%>\% reorder(TRTORD))
-          '},
+          ',
     check = FALSE
   ),
   modules = root_modules(
