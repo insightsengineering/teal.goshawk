@@ -83,8 +83,8 @@
 #'   data = cdisc_data(
 #'     cdisc_dataset("ADSL", ADSL),
 #'     cdisc_dataset("ADLB", ADLB),
-#'     code = {' # nolint
-#'       arm_mapping <- list("A: Drug X" = "150mg QD",
+#'     code = {
+#'      'arm_mapping <- list("A: Drug X" = "150mg QD",
 #'                           "B: Placebo" = "Placebo",
 #'                           "C: Combination" = "Combination")
 #'
@@ -342,7 +342,7 @@ srv_g_spaghettiplot <- function(input,
 
     plotOutput(ns("spaghettiplot"),
                height = plot_height,
-               brush = brushOpts(id = ns("spaghettiplot_brush"), resetOnNew = T))
+               brush = brushOpts(id = ns("spaghettiplot_brush"), resetOnNew = TRUE))
   })
 
   output$brush_data <- DT::renderDataTable({

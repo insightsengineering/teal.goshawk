@@ -88,8 +88,8 @@
 #'   data = cdisc_data(
 #'     cdisc_dataset("ADSL", ADSL),
 #'     cdisc_dataset("ADLB", ADLB),
-#'     code = {' # nolint
-#'       arm_mapping <- list("A: Drug X" = "150mg QD",
+#'     code = {
+#'      'arm_mapping <- list("A: Drug X" = "150mg QD",
 #'                           "B: Placebo" = "Placebo",
 #'                           "C: Combination" = "Combination")
 #'
@@ -438,7 +438,7 @@ srv_g_boxplot <- function(input,
 
     plotOutput(ns("boxplot"),
                height = plot_height,
-               brush = brushOpts(id = ns("boxplot_brush"), resetOnNew = T)
+               brush = brushOpts(id = ns("boxplot_brush"), resetOnNew = TRUE)
     )
   })
 

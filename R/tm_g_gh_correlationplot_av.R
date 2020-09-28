@@ -85,8 +85,8 @@
 #'   data = cdisc_data(
 #'     cdisc_dataset("ADSL", ADSL),
 #'     cdisc_dataset("ADLB", ADLB),
-#'     code = {' # nolint
-#'       arm_mapping <- list("A: Drug X" = "150mg QD",
+#'     code = {
+#'       'arm_mapping <- list("A: Drug X" = "150mg QD",
 #'                           "B: Placebo" = "Placebo",
 #'                           "C: Combination" = "Combination")
 #'
@@ -332,7 +332,7 @@ srv_g_correlationplot_av <- function(input, output, session, datasets, dataname,
     validate(need(plot_height, "need valid plot height"))
 
     plotOutput(ns("correlationplot"), height = plot_height,
-               brush = brushOpts(id = ns("correlationplot_brush"), resetOnNew = T)
+               brush = brushOpts(id = ns("correlationplot_brush"), resetOnNew = TRUE)
     )
   })
 
