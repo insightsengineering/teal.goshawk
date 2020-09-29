@@ -1,6 +1,5 @@
 #' Scatter Plot Teal Module For Biomarker Analysis
 #'
-#' @description TODO: a bit more info why the module is needed
 #'
 #' @inheritParams teal.devel::standard_layout
 #' @param label menu item label of the module in the teal app.

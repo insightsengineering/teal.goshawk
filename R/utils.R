@@ -113,7 +113,6 @@ templ_ui_constraint <- function(ns, label = "Data Constraint") {
 
 keep_range_slider_updated <- function(session, input, update_slider_fcn, id_var, id_param_var, reactive_ANL) { # nolint
   stopifnot(is.function(update_slider_fcn))
-  # todo: remove input and rather pass varnames  directly
 
   observe({
     varname <- input[[id_var]]

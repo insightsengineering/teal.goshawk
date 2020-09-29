@@ -76,7 +76,7 @@ toggle_slider_ui <- function(id,
                              step_numeric = step_slider,
                              width = NULL, ...) {
   is_numeric_like <- function(x) is_numeric_single(x) || is_integer_single(x)
-  # todo: check min, max range as `shiny::sliderInput` also doesn't do it?
+
   stopifnot(
     is_numeric_like(min),
     is_numeric_like(max),
@@ -201,10 +201,6 @@ toggle_slider_server <- function(input, output, session, is_dichotomous_slider =
     }
   })
   observeEvent(input$toggle, {
-    # todo: currently, slider rounds and only applies if rounded value differs
-    # a problem is when you set 61.2001, which the slider rounds to 61.2 and does
-    # not update; when you click on toggle to show the slider again, the internal
-    # value will stay 61.2001 until you change the slider
     shinyjs::toggle("numeric_view")
     shinyjs::toggle("slider")
   })
