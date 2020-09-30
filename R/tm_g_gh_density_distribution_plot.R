@@ -72,8 +72,8 @@
 #'   data = cdisc_data(
 #'     cdisc_dataset("ADSL", ADSL),
 #'     cdisc_dataset("ADLB", ADLB),
-#'     code = {'
-#'       # original ARM value = dose value
+#'     code =
+#'       '# original ARM value = dose value # nolint
 #' arm_mapping <- list("A: Drug X" = "150mg QD",
 #'                     "B: Placebo" = "Placebo",
 #'                     "C: Combination" = "Combination")
@@ -98,7 +98,7 @@
 #'       ARMCD == "ARM A" ~ 3),
 #'     ARM = as.character(arm_mapping[match(ARM, names(arm_mapping))]),
 #'     ARM = factor(ARM) %>% reorder(TRTORD))
-#'           '},
+#'           ',
 #'     check = TRUE
 #'   ),
 #'   modules = root_modules(
@@ -124,7 +124,7 @@
 #' shinyApp(app$ui, app$server)
 #'
 #' }
-tm_g_gh_density_distribution_plot <- function(label,
+tm_g_gh_density_distribution_plot <- function(label, # nolint
                                               dataname,
                                               param_var,
                                               param,
@@ -206,8 +206,12 @@ ui_g_density_distribution_plot <- function(id, ...) {
       panel_group(
         panel_item(
           title = "Plot Aesthetic Settings",
-          toggle_slider_ui(ns("xrange_scale"), label = "X-Axis Range Zoom",
-                           min = -1000000, max = 1000000, value = c(-1000000, 1000000)),
+          toggle_slider_ui(
+            ns("xrange_scale"),
+            label = "X-Axis Range Zoom",
+            min = -1000000,
+            max = 1000000,
+            value = c(-1000000, 1000000)),
           numericInput(ns("facet_ncol"), "Number of Plots Per Row:", a$facet_ncol, min = 1),
           checkboxInput(ns("comb_line"), "Display combination line", a$comb_line),
           checkboxInput(ns("rotate_xlab"), "Rotate X-axis Label", a$rotate_xlab),
@@ -217,8 +221,12 @@ ui_g_density_distribution_plot <- function(id, ...) {
           title = "Plot settings",
           optionalSliderInputValMinMax(ns("plot_height"), "Plot Height", a$plot_height, ticks = FALSE),
           optionalSliderInputValMinMax(ns("font_size"), "Font Size", a$font_size, ticks = FALSE),
-          optionalSliderInputValMinMax(ns("line_size"), "Line Size", value_min_max = a$line_size,
-                                       step = .25, ticks = FALSE)
+          optionalSliderInputValMinMax(
+            ns("line_size"),
+            "Line Size",
+            value_min_max = a$line_size,
+            step = .25,
+            ticks = FALSE)
         )
       )
     ),
@@ -239,7 +247,7 @@ srv_g_density_distribution_plot <- function(input, output, session, datasets, da
   # update sliders for axes taking constraints into account
   xrange_slider <- callModule(toggle_slider_server, "xrange_scale")
   keep_range_slider_updated(session, input, xrange_slider$update_state, "xaxis_var", "xaxis_param", anl_chunks)
-  keep_data_constraint_options_updated(session, input, anl_chunks, "xaxis_param")
+  keep_data_const_opts_updated(session, input, anl_chunks, "xaxis_param")
 
   create_plot <- reactive({
     private_chunks <- anl_chunks()$chunks$clone(deep = TRUE)
@@ -318,7 +326,7 @@ srv_g_density_distribution_plot <- function(input, output, session, datasets, da
     chunks_push(
       chunks = private_chunks,
       id = "output",
-      expression = quote({plot})
+      expression = quote(print(plot))
     )
     init_chunks(private_chunks)
     private_chunks

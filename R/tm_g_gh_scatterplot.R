@@ -1,6 +1,5 @@
 #' Scatter Plot Teal Module For Biomarker Analysis
 #'
-#' @description TODO: a bit more info why the module is needed
 #'
 #' @inheritParams teal.devel::standard_layout
 #' @param label menu item label of the module in the teal app.
@@ -67,8 +66,8 @@
 #'   data = cdisc_data(
 #'     cdisc_dataset("ADSL", ADSL),
 #'     cdisc_dataset("ADLB", ADLB),
-#'     code = {'
-#'       arm_mapping <- list("A: Drug X" = "150mg QD",
+#'     code =
+#'      'arm_mapping <- list("A: Drug X" = "150mg QD",
 #'                           "B: Placebo" = "Placebo",
 #'                           "C: Combination" = "Combination")
 #'
@@ -92,7 +91,7 @@
 #'             ARMCD == "ARM A" ~ 3),
 #'           ARM = as.character(arm_mapping[match(ARM, names(arm_mapping))]),
 #'           ARM = factor(ARM) %>% reorder(TRTORD))
-#'           '},
+#'           ',
 #'     check = FALSE
 #'   ),
 #'   modules = root_modules(
@@ -240,14 +239,14 @@ srv_g_scatterplot <- function(input,
   yrange_slider <- callModule(toggle_slider_server, "yrange_scale")
   keep_range_slider_updated(session, input, xrange_slider$update_state, "xaxis_var", "xaxis_param", anl_chunks)
   keep_range_slider_updated(session, input, yrange_slider$update_state, "yaxis_var", "xaxis_param", anl_chunks)
-  keep_data_constraint_options_updated(session, input, anl_chunks, "xaxis_param")
+  keep_data_const_opts_updated(session, input, anl_chunks, "xaxis_param")
 
   # plot
   output$scatterplot <- renderPlot({
 
     ac <- anl_chunks()
     private_chunks <- ac$chunks$clone(deep = TRUE)
-
+    # nolint start
     xrange_scale <- xrange_slider$state()$value
     yrange_scale <- yrange_slider$state()$value
     facet_ncol <- input$facet_ncol
@@ -264,7 +263,7 @@ srv_g_scatterplot <- function(input,
     param <- isolate(input$xaxis_param)
     xaxis <- isolate(input$xaxis_var)
     yaxis <- isolate(input$yaxis_var)
-
+    # nolint end
     chunks_push(
       chunks = private_chunks,
       id = "scatterplot",
@@ -313,7 +312,7 @@ srv_g_scatterplot <- function(input,
 
     plotOutput(ns("scatterplot"),
                height = plot_height,
-               brush = brushOpts(id = ns("scatterplot_brush"), resetOnNew = T)
+               brush = brushOpts(id = ns("scatterplot_brush"), resetOnNew = TRUE)
     )
   })
 

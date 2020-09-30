@@ -16,7 +16,7 @@ Provides lines of code for left hand side of arm mapping. user must provide righ
 }
 \details{
 SPA configure study specific pre-processing for deploying goshawk. writing the code for ARM mapping and
-ordering is tedious. this function helps to get that started by providing the left hadn side of the
+ordering is tedious. this function helps to get that started by providing the left hand side of the
 mapping and ordering syntax. call the function and then copy and paste the resulting code from the console
 into the app.R file.
 }

@@ -30,8 +30,7 @@ tm_g_gh_correlationplot_av(
   dot_size = c(1, 1, 12),
   reg_text_size = c(3, 3, 10),
   pre_output = NULL,
-  post_output = NULL,
-  code_data_processing = NULL
+  post_output = NULL
 )
 }
 \arguments{
@@ -91,8 +90,6 @@ output to put the output into context. For example a title.}
 \item{post_output}{optional, \code{shiny.tag} with text placed after the
 output to put the output into context. For example the
 \code{\link[shiny]{helpText}} elements are useful.}
-
-\item{code_data_processing}{TODO}
 }
 \description{
 This teal module renders the UI and calls the function that creates a correlation plot.
@@ -139,8 +136,8 @@ x <- teal::init(
   data = cdisc_data(
     cdisc_dataset("ADSL", ADSL),
     cdisc_dataset("ADLB", ADLB),
-    code = {'
-      arm_mapping <- list("A: Drug X" = "150mg QD",
+    code =
+      'arm_mapping <- list("A: Drug X" = "150mg QD",
                           "B: Placebo" = "Placebo",
                           "C: Combination" = "Combination")
 
@@ -164,7 +161,7 @@ x <- teal::init(
           ARM = as.character(arm_mapping[match(ARM, names(arm_mapping))]),
           ARM = factor(ARM) \%>\% reorder(TRTORD),
           ADY = AVISITCDN)
-          '},
+          ',
     check = FALSE
   ),
   modules = root_modules(
