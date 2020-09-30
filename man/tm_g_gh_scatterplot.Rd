@@ -80,7 +80,7 @@ output to put the output into context. For example the
 \code{\link[shiny]{helpText}} elements are useful.}
 }
 \description{
-TODO: a bit more info why the module is needed
+Scatter Plot Teal Module For Biomarker Analysis
 }
 \examples{
 # Example using ADaM structure analysis dataset.
