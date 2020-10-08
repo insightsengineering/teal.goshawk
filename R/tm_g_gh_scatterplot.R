@@ -260,9 +260,12 @@ srv_g_scatterplot <- function(input,
     vline <- input$vline
 
     # Below inputs should trigger plot via updates of other reactive objects (i.e. anl_chunk()) and some inputs
-    param <- isolate(input$xaxis_param)
-    xaxis <- isolate(input$xaxis_var)
-    yaxis <- isolate(input$yaxis_var)
+    validate(need(input$xaxis_var, "Please select an X-Axis Variable"))
+    validate(need(input$yaxis_var, "Please select a Y-Axis Variable"))
+    param <- input$xaxis_param
+    xaxis <- input$xaxis_var
+    yaxis <- input$yaxis_var
+
     # nolint end
     chunks_push(
       chunks = private_chunks,

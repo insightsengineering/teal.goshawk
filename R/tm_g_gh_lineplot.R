@@ -133,7 +133,8 @@ tm_g_gh_lineplot <- function(label,
                              param_var,
                              param,
                              param_var_label = "PARAM",
-                             xaxis_var, yaxis_var,
+                             xaxis_var,
+                             yaxis_var,
                              xvar_level = NULL,
                              filter_var = yaxis_var,
                              filter_var_choices = filter_var,
@@ -332,9 +333,12 @@ srv_lineplot <- function(input,
     median <- ifelse(input$stat == "median", TRUE, FALSE)
     plot_height <- input$plot_height
 
-    param <- isolate(input$xaxis_param)
-    xaxis <- isolate(input$xaxis_var)
-    yaxis <- isolate(input$yaxis_var)
+    validate(need(input$xaxis_var, "Please select an X-Axis Variable"))
+    validate(need(input$yaxis_var, "Please select a Y-Axis Variable"))
+
+    param <- input$xaxis_param
+    xaxis <- input$xaxis_var
+    yaxis <- input$yaxis_var
     # nolint end
 
     shape <- if (!(is.null(input$shape) || input$shape == "None")) {

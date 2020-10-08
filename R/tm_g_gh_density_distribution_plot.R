@@ -250,6 +250,7 @@ srv_g_density_distribution_plot <- function(input, output, session, datasets, da
   keep_data_const_opts_updated(session, input, anl_chunks, "xaxis_param")
 
   create_plot <- reactive({
+    validate(need(input$xaxis_var, "Please select an X-Axis Variable"))
     private_chunks <- anl_chunks()$chunks$clone(deep = TRUE)
 
     #nolint start
