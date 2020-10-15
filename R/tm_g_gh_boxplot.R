@@ -308,6 +308,8 @@ srv_g_boxplot <- function(input,
     rotate_xlab <- input$rotate_xlab
     hline <- input$hline
     # nolint end
+    validate(need(!is.null(xaxis), "Please select an X-Axis Variable"))
+    validate(need(!is.null(yaxis), "Please select a Y-Axis Variable"))
     validate_has_variable(
       anl_chunks()$ANL,
       yaxis,

@@ -252,7 +252,10 @@ srv_g_correlationplot <- function(input,
 
   # filter seected biomarkers
   anl_param <- reactive({
-    validate(need(input$xaxis_param, "Please select a biomarker"))
+    validate(need(input$xaxis_param, "Please select an X-Axis Biomarker"))
+    validate(need(input$xaxis_var, "Please select an X-Axis Variable"))
+    validate(need(input$yaxis_param, "Please select a Y-Axis Biomarker"))
+    validate(need(input$yaxis_var, "Please select a Y-Axis Variable"))
 
     dataset_var <- paste0(dataname, "_FILTERED")
     ANL_FILTERED <- datasets$get_data(dataname, filtered = TRUE) # nolint
@@ -346,6 +349,8 @@ srv_g_correlationplot <- function(input,
 
   # constraints
   observe({
+    validate(need(input$xaxis_param, "Please select an X-Axis Biomarker"))
+
     constraint_var <- input$constraint_var
     validate(need(constraint_var, "select a constraint variable"))
 
