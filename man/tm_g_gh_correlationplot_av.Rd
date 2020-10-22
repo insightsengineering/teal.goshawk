@@ -99,8 +99,6 @@ This module displays a correlation plot.
 }
 \examples{
 
-\dontrun{
-
 # Example using ADaM structure analysis dataset.
 
 library(random.cdisc.data)
@@ -134,34 +132,31 @@ ADLB <- ADLB \%>\%
 
 x <- teal::init(
   data = cdisc_data(
-    cdisc_dataset("ADSL", ADSL),
-    cdisc_dataset("ADLB", ADLB),
-    code =
-      'arm_mapping <- list("A: Drug X" = "150mg QD",
-                          "B: Placebo" = "Placebo",
-                          "C: Combination" = "Combination")
-
-      ADSL <- radsl(N = 20, seed = 1)
-      ADLB <- radlb(ADSL, visit_format = "WEEK", n_assessments = 7L, seed = 2)
-      ADLB <- ADLB \%>\%
-        mutate(AVISITCD = case_when(
-            AVISIT == "SCREENING" ~ "SCR",
-            AVISIT == "BASELINE" ~ "BL",
-            grepl("WEEK", AVISIT) ~ paste("W", stringr::str_extract(AVISIT, "(?<=(WEEK ))[0-9]+")),
-            TRUE ~ as.character(NA)),
-          AVISITCDN = case_when(
-            AVISITCD == "SCR" ~ -2,
-            AVISITCD == "BL" ~ 0,
-            grepl("W", AVISITCD) ~ as.numeric(gsub("[^0-9]*", "", AVISITCD)),
-            TRUE ~ as.numeric(NA)),
-          TRTORD = case_when(
-            ARMCD == "ARM C" ~ 1,
-            ARMCD == "ARM B" ~ 2,
-            ARMCD == "ARM A" ~ 3),
-          ARM = as.character(arm_mapping[match(ARM, names(arm_mapping))]),
-          ARM = factor(ARM) \%>\% reorder(TRTORD),
-          ADY = AVISITCDN)
-          ',
+    cdisc_dataset("ADSL", ADSL, code = "ADSL <- radsl(N = 20, seed = 1)"),
+    cdisc_dataset("ADLB", ADLB,
+      code = "arm_mapping <- list('A: Drug X' = '150mg QD',
+                                  'B: Placebo' = 'Placebo',
+                                  'C: Combination' = 'Combination')
+              ADLB <- radlb(ADSL, visit_format = 'WEEK', n_assessments = 7L, seed = 2)
+              ADLB <- ADLB \%>\%
+                mutate(AVISITCD = case_when(
+                    AVISIT == 'SCREENING' ~ 'SCR',
+                    AVISIT == 'BASELINE' ~ 'BL',
+                    grepl('WEEK', AVISIT) ~ paste('W', stringr::str_extract(AVISIT, '(?<=(WEEK ))[0-9]+')),
+                    TRUE ~ as.character(NA)),
+                  AVISITCDN = case_when(
+                    AVISITCD == 'SCR' ~ -2,
+                    AVISITCD == 'BL' ~ 0,
+                    grepl('W', AVISITCD) ~ as.numeric(gsub('[^0-9]*', '', AVISITCD)),
+                    TRUE ~ as.numeric(NA)),
+                  TRTORD = case_when(
+                    ARMCD == 'ARM C' ~ 1,
+                    ARMCD == 'ARM B' ~ 2,
+                    ARMCD == 'ARM A' ~ 3),
+                  ARM = as.character(arm_mapping[match(ARM, names(arm_mapping))]),
+                  ARM = factor(ARM) \%>\% reorder(TRTORD),
+                  ADY = AVISITCDN)
+      "),
     check = FALSE
   ),
   modules = root_modules(
@@ -193,6 +188,7 @@ x <- teal::init(
   )
 )
 
+\dontrun{
 shinyApp(x$ui, x$server)
 
 }
