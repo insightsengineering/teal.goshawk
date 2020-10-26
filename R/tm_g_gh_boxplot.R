@@ -255,7 +255,7 @@ ui_g_boxplot <- function(id, ...) {
           optionalSliderInputValMinMax(ns("plot_height"), "Plot Height", a$plot_height, ticks = FALSE),
           optionalSliderInputValMinMax(ns("font_size"),  "Font Size", a$font_size, ticks = FALSE),
           optionalSliderInputValMinMax(ns("dot_size"), "Dot Size", a$dot_size, ticks = FALSE),
-          optionalSliderInputValMinMax(ns("alpha"), "Dot Transparency", a$alpha, ticks = FALSE)
+          optionalSliderInputValMinMax(ns("alpha"), "Dot Alpha", a$alpha, ticks = FALSE)
         )
       )
     ),
