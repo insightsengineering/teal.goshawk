@@ -80,11 +80,10 @@
 #' app <- teal::init(
 #'   data = cdisc_data(
 #'     cdisc_dataset("ADSL", ADSL, code = "ADSL <- radsl(cached = TRUE)"),
-#'     cdisc_dataset("ADLB", ADLB,
-#'       code = "arm_mapping <- list('A: Drug X' = '150mg QD',
-#'                                   'B: Placebo' = 'Placebo',
-#'                                   'C: Combination' = 'Combination')
-#'               ADLB <- radlb(cached = TRUE)
+#'     cdisc_dataset(
+#'       "ADLB",
+#'       ADLB,
+#'       code = "ADLB <- radlb(cached = TRUE)
 #'               ADLB <- ADLB %>%
 #'                 mutate(AVISITCD = case_when(
 #'                     AVISIT == 'SCREENING' ~ 'SCR',
@@ -103,10 +102,10 @@
 #'                     ARMCD == 'ARM B' ~ 2,
 #'                     ARMCD == 'ARM A' ~ 3),
 #'                   ARM = as.character(arm_mapping[match(ARM, names(arm_mapping))]),
-#'                   ARM = factor(ARM) %>% reorder(TRTORD))
-#'       "),
+#'                   ARM = factor(ARM) %>% reorder(TRTORD))",
+#'       vars = list(arm_mapping = arm_mapping)),
 #'     check = TRUE
-#'   ),
+#'     ),
 #'   modules = root_modules(
 #'     tm_g_gh_spaghettiplot(
 #'       label = "Spaghetti Plot",

@@ -84,11 +84,18 @@
 #' x <- teal::init(
 #'   data = cdisc_data(
 #'     cdisc_dataset("ADSL", ADSL, code = "ADSL <- radsl(N = 20, seed = 1)"),
+<<<<<<< Updated upstream
 #'     cdisc_dataset("ADLB", ADLB,
 #'       code = "arm_mapping <- list('A: Drug X' = '150mg QD',
 #'                                   'B: Placebo' = 'Placebo',
 #'                                   'C: Combination' = 'Combination')
 #'               ADLB <- radlb(ADSL, visit_format = 'WEEK', n_assessments = 7L, seed = 2)
+=======
+#'     cdisc_dataset(
+#'       "ADLB",
+#'       ADLB,
+#'       code = "ADLB <- radlb(ADSL, visit_format = 'WEEK', n_assessments = 7L, seed = 2)
+>>>>>>> Stashed changes
 #'               ADLB <- ADLB %>%
 #'                 mutate(AVISITCD = case_when(
 #'                     AVISIT == 'SCREENING' ~ 'SCR',
@@ -107,8 +114,13 @@
 #'                     ARMCD == 'ARM A' ~ 3),
 #'                   ARM = as.character(arm_mapping[match(ARM, names(arm_mapping))]),
 #'                   ARM = factor(ARM) %>% reorder(TRTORD),
+<<<<<<< Updated upstream
 #'                   ADY = AVISITCDN)
 #'       "),
+=======
+#'                   ADY = AVISITCDN)",
+#'       vars = list(arm_mapping = arm_mapping)),
+>>>>>>> Stashed changes
 #'     check = FALSE
 #'   ),
 #'   modules = root_modules(
