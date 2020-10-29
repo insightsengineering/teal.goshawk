@@ -25,7 +25,6 @@ tm_g_gh_boxplot(
   font_size = c(12, 8, 20),
   dot_size = c(2, 1, 12),
   alpha = c(0.8, 0, 1),
-  av = FALSE,
   pre_output = NULL,
   post_output = NULL
 )
@@ -50,7 +49,6 @@ tm_g_gh_boxplot_av(
   font_size = c(12, 8, 20),
   dot_size = c(2, 1, 12),
   alpha = c(0.8, 0, 1),
-  av = FALSE,
   pre_output = NULL,
   post_output = NULL
 )
@@ -96,9 +94,6 @@ name of the parameter (in title case) will be used.}
 \item{dot_size}{plot dot size.}
 
 \item{alpha}{numeric vector to define transparency of plotted points.}
-
-\item{av}{(\code{logical}) Whether to presents all visit data based on analysis day. Influences
-only the summary table.}
 
 \item{pre_output}{optional, \code{shiny.tag} with text placed before the
 output to put the output into context. For example a title.}

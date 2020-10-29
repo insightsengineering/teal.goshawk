@@ -30,8 +30,6 @@
 #' @param font_size font size control for title, x-axis label, y-axis label and legend.
 #' @param dot_size plot dot size.
 #' @param alpha numeric vector to define transparency of plotted points.
-#' @param av (\code{logical}) Whether to presents all visit data based on analysis day. Influences
-#'   only the summary table.
 #'
 #' @inheritParams teal.devel::standard_layout
 #'
@@ -155,7 +153,6 @@ tm_g_gh_boxplot <- function(label,
                             font_size = c(12, 8, 20),
                             dot_size = c(2, 1, 12),
                             alpha = c(0.8, 0.0, 1.0),
-                            av = FALSE,
                             pre_output = NULL,
                             post_output = NULL) {
   stopifnot(
@@ -175,8 +172,7 @@ tm_g_gh_boxplot <- function(label,
     is_numeric_vector(plot_height) && length(plot_height) == 3,
     is_numeric_vector(font_size) && length(font_size) == 3,
     is_numeric_vector(dot_size) && length(dot_size) == 3,
-    is_numeric_vector(alpha) && length(alpha) == 3,
-    is_logical_single(av)
+    is_numeric_vector(alpha) && length(alpha) == 3
   )
   args <- as.list(environment())
 
@@ -190,8 +186,7 @@ tm_g_gh_boxplot <- function(label,
                        facet_var = facet_var,
                        color_manual = color_manual,
                        shape_manual = shape_manual,
-                       armlabel = armlabel,
-                       av = av
+                       armlabel = armlabel
     ),
     ui = ui_g_boxplot,
     ui_args = args
@@ -276,8 +271,7 @@ srv_g_boxplot <- function(input,
                           facet_var,
                           color_manual,
                           shape_manual,
-                          armlabel,
-                          av) {
+                          armlabel) {
 
   ns <- session$ns
 
@@ -363,43 +357,21 @@ srv_g_boxplot <- function(input,
     facet_var <- input$facet_var
     font_size <- input$font_size
 
-    if (!av) {
-      chunks_push(
-        chunks = private_chunks,
-        id = "table",
-        expression = bquote({
-          tbl <- t_summarytable(
-            data = ANL,
-            trt_group = .(trt_group),
-            param_var = .(param_var),
-            param = .(param),
-            xaxis_var = .(xaxis_var),
-            visit_var = .("AVISITCD")
-          )
-        })
-      )
-    } else {
 
-      if (facet_var != trt_group) {
-        validate_has_elements(facet_var, "Facetting needs to be non-empty for all visits.")
-      }
-
-      chunks_push(
-        chunks = private_chunks,
-        id = "table",
-        expression = bquote({
-          tbl <- t_summarytable_av(
-            data = ANL,
-            trt_group = .(trt_group),
-            param_var = .(param_var),
-            param = .(param),
-            xaxis_var = .(xaxis_var),
-            facet_var = .(facet_var),
-            font_size = .(font_size)
-          )
-        })
-      )
-    }
+    chunks_push(
+      chunks = private_chunks,
+      id = "table",
+      expression = bquote({
+        tbl <- t_summarytable(
+          data = ANL,
+          trt_group = .(trt_group),
+          param_var = .(param_var),
+          param = .(param),
+          xaxis_var = .(xaxis_var),
+          visit_var = .("AVISITCD")
+        )
+      })
+    )
 
     chunks_safe_eval(private_chunks)
     private_chunks
