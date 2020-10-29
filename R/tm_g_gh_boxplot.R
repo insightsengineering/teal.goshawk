@@ -3,11 +3,6 @@
 #' This teal module renders the UI and calls the functions that create a box plot and accompanying
 #' summary table.
 #'
-#' @details
-#' To present all visit data based on the analysis day choose \code{av = TRUE} which uses
-#'  \link[goshawk]{t_summarytable_av} to
-#'  display the summary table. This setup works without a visit column
-#'
 #' @param label menu item label of the module in the teal app.
 #' @param dataname analysis data passed to the data argument of teal init. E.g. ADaM structured
 #'  laboratory data frame ALB.
@@ -444,7 +439,3 @@ srv_g_boxplot <- function(input,
     modal_title = "Box Plot"
   )
 }
-
-#' @export
-#' @rdname tm_g_gh_boxplot
-tm_g_gh_boxplot_av <- tm_g_gh_boxplot

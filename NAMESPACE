@@ -2,7 +2,6 @@
 
 export(maptrt)
 export(tm_g_gh_boxplot)
-export(tm_g_gh_boxplot_av)
 export(tm_g_gh_correlationplot)
 export(tm_g_gh_density_distribution_plot)
 export(tm_g_gh_lineplot)

@@ -18,9 +18,7 @@ reference:
     desc: These modules render the UI and call the respective longitudinal visualization function
     contents:
       - tm_g_gh_boxplot
-      - tm_g_gh_boxplot_av
       - tm_g_gh_correlationplot
-      - tm_g_gh_correlationplot_av
       - tm_g_gh_density_distribution_plot
       - tm_g_gh_lineplot
       - tm_g_gh_scatterplot
