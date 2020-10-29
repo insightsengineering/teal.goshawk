@@ -421,14 +421,14 @@ srv_g_boxplot <- function(input,
     private_chunks
   })
 
-  boxplot_r <- reactive({
+  plot_r <- reactive({
     chunks_get_var("p", main_code())
   })
 
   boxplot_data <- callModule(
     plot_with_settings_srv,
     id = "boxplot",
-    plot_r = boxplot_r,
+    plot_r = plot_r,
     height = plot_height,
     width = plot_width,
     brushing = TRUE
