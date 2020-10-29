@@ -340,7 +340,7 @@ srv_g_density_distribution_plot <- function(input, # nolint
     chunks_push(
       chunks = private_chunks,
       id = "output",
-      expression = quote(print(plot))
+      expression = quote(print(p))
     )
     init_chunks(private_chunks)
     private_chunks
