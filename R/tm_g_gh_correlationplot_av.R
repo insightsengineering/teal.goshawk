@@ -83,34 +83,32 @@
 #'
 #' x <- teal::init(
 #'   data = cdisc_data(
-#'     cdisc_dataset("ADSL", ADSL),
-#'     cdisc_dataset("ADLB", ADLB),
-#'     code =
-#'       'arm_mapping <- list("A: Drug X" = "150mg QD",
-#'                           "B: Placebo" = "Placebo",
-#'                           "C: Combination" = "Combination")
-#'
-#'       ADSL <- radsl(N = 20, seed = 1)
-#'       ADLB <- radlb(ADSL, visit_format = "WEEK", n_assessments = 7L, seed = 2)
-#'       ADLB <- ADLB %>%
-#'         mutate(AVISITCD = case_when(
-#'             AVISIT == "SCREENING" ~ "SCR",
-#'             AVISIT == "BASELINE" ~ "BL",
-#'             grepl("WEEK", AVISIT) ~ paste("W", stringr::str_extract(AVISIT, "(?<=(WEEK ))[0-9]+")),
-#'             TRUE ~ as.character(NA)),
-#'           AVISITCDN = case_when(
-#'             AVISITCD == "SCR" ~ -2,
-#'             AVISITCD == "BL" ~ 0,
-#'             grepl("W", AVISITCD) ~ as.numeric(gsub("[^0-9]*", "", AVISITCD)),
-#'             TRUE ~ as.numeric(NA)),
-#'           TRTORD = case_when(
-#'             ARMCD == "ARM C" ~ 1,
-#'             ARMCD == "ARM B" ~ 2,
-#'             ARMCD == "ARM A" ~ 3),
-#'           ARM = as.character(arm_mapping[match(ARM, names(arm_mapping))]),
-#'           ARM = factor(ARM) %>% reorder(TRTORD),
-#'           ADY = AVISITCDN)
-#'           ',
+#'     cdisc_dataset("ADSL", ADSL, code = "ADSL <- radsl(N = 20, seed = 1)"),
+#'     cdisc_dataset("ADLB", ADLB,
+#'       code = "arm_mapping <- list('A: Drug X' = '150mg QD',
+#'                                   'B: Placebo' = 'Placebo',
+#'                                   'C: Combination' = 'Combination')
+#'               ADLB <- radlb(ADSL, visit_format = 'WEEK', n_assessments = 7L, seed = 2)
+#'               ADLB <- ADLB %>%
+#'                 mutate(AVISITCD = case_when(
+#'                     AVISIT == 'SCREENING' ~ 'SCR',
+#'                     AVISIT == 'BASELINE' ~ 'BL',
+#'                     grepl('WEEK', AVISIT) ~
+#'                       paste('W', stringr::str_extract(AVISIT, '(?<=(WEEK ))[0-9]+')),
+#'                     TRUE ~ as.character(NA)),
+#'                   AVISITCDN = case_when(
+#'                     AVISITCD == 'SCR' ~ -2,
+#'                     AVISITCD == 'BL' ~ 0,
+#'                     grepl('W', AVISITCD) ~ as.numeric(gsub('[^0-9]*', '', AVISITCD)),
+#'                     TRUE ~ as.numeric(NA)),
+#'                   TRTORD = case_when(
+#'                     ARMCD == 'ARM C' ~ 1,
+#'                     ARMCD == 'ARM B' ~ 2,
+#'                     ARMCD == 'ARM A' ~ 3),
+#'                   ARM = as.character(arm_mapping[match(ARM, names(arm_mapping))]),
+#'                   ARM = factor(ARM) %>% reorder(TRTORD),
+#'                   ADY = AVISITCDN)
+#'       "),
 #'     check = FALSE
 #'   ),
 #'   modules = root_modules(
@@ -302,16 +300,16 @@ srv_g_correlationplot_av <- function(input, output, session, datasets, dataname,
 
     constraint_var <- input$constraint_var
 
-    if (constraint_var != "NONE"){
+    if (constraint_var != "NONE") {
 
       constraint_min_range <- -Inf
       constraint_max_range <- Inf
 
-      if (length(input$constraint_min)){
+      if (length(input$constraint_min)) {
         constraint_min_range <- input$constraint_min
       }
 
-      if (length(input$constraint_max)){
+      if (length(input$constraint_max)) {
         constraint_max_range <- input$constraint_max
       }
 
@@ -406,7 +404,7 @@ srv_g_correlationplot_av <- function(input, output, session, datasets, dataname,
       # ensure that there are records at visit to process based on the constraint vatriable selection
       visit_freq <- unique(scale_data$AVISITCD)
       if (input$constraint_var == "BASE2" & any(grepl("SCR", visit_freq)) |
-          input$constraint_var == "BASE" & any(grepl("BL", visit_freq))){
+          input$constraint_var == "BASE" & any(grepl("BL", visit_freq))) {
         # identify min and max values of constraint var range ignoring NA values
         constraint_min_range <- min(scale_data[[input$constraint_var]], na.rm = TRUE)
         constraint_max_range <- max(scale_data[[input$constraint_var]], na.rm = TRUE)
@@ -438,7 +436,7 @@ srv_g_correlationplot_av <- function(input, output, session, datasets, dataname,
       # ensure that there are records at visit to process based on the constraint vatriable selection
       visit_freq <- unique(scale_data$AVISITCD)
       if (input$constraint_var == "BASE2" & any(grepl("SCR", visit_freq)) |
-          input$constraint_var == "BASE" & any(grepl("BL", visit_freq))){
+          input$constraint_var == "BASE" & any(grepl("BL", visit_freq))) {
         # identify min and max values of constraint var range ignoring NA values
         constraint_min_range <- min(scale_data[[input$constraint_var]], na.rm = TRUE)
         constraint_max_range <- max(scale_data[[input$constraint_var]], na.rm = TRUE)
@@ -532,7 +530,7 @@ srv_g_correlationplot_av <- function(input, output, session, datasets, dataname,
     validate(need(nrow(plot_data_t3) > 0, "Plot Data No Observations Left"))
 
     # re-establish treatment variable label
-    if (trt_group == "ARM"){
+    if (trt_group == "ARM") {
       attributes(plot_data_t3$ARM)$label <- "Planned Arm"
     } else {
       attributes(plot_data_t3$ACTARM)$label <- "Actual Arm"
