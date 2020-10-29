@@ -14,6 +14,7 @@ tm_g_gh_density_distribution_plot(
   color_manual = NULL,
   color_comb = NULL,
   plot_height = c(500, 200, 2000),
+  plot_width = NULL,
   font_size = c(12, 8, 20),
   line_size = c(1, 0.25, 3),
   hline = NULL,
@@ -43,6 +44,8 @@ tm_g_gh_density_distribution_plot(
 \item{color_comb}{name or hex value for combined treatment color.}
 
 \item{plot_height}{controls plot height.}
+
+\item{plot_width}{optional, controls plot width.}
 
 \item{font_size}{font size control for title, x-axis label, y-axis label and legend.}
 

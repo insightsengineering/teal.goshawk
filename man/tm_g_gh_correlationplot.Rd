@@ -25,6 +25,7 @@ tm_g_gh_correlationplot(
   hline = NULL,
   vline = NULL,
   plot_height = c(500, 200, 2000),
+  plot_width = NULL,
   font_size = c(12, 8, 20),
   dot_size = c(1, 1, 12),
   reg_text_size = c(3, 3, 10),
@@ -74,6 +75,8 @@ TRUE.}
 \item{vline}{x-axis value to position a vertical line.}
 
 \item{plot_height}{controls plot height.}
+
+\item{plot_width}{optional, controls plot width.}
 
 \item{font_size}{font size control for title, x-axis label, y-axis label and legend.}
 

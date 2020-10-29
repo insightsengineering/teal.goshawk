@@ -1,7 +1,7 @@
 # teal.goshawk 0.1.5.9000
 
 * Changing slider titles from Transparency to Alpha for `tm_g_gh_boxplot` and `tm_g_gh_spaghettiplot`.
-
+* Replace `plot_with_height` module with new `plot_with_settings` module. 
 * issues with no news:
 
 # teal.goshawk 0.1.5

@@ -25,6 +25,7 @@ tm_g_gh_lineplot(
   xlabel = xtick,
   rotate_xlab = FALSE,
   plot_height = c(600, 200, 2000),
+  plot_width = NULL,
   font_size = c(12, 8, 20),
   dodge = c(0.4, 0, 1),
   pre_output = NULL,
@@ -77,7 +78,9 @@ Default value is waive().}
 
 \item{rotate_xlab}{boolean value indicating whether to rotate x-axis labels.}
 
-\item{plot_height}{numeric vectors to define the plot height.}
+\item{plot_height}{controls plot height.}
+
+\item{plot_width}{optional, controls plot width.}
 
 \item{font_size}{control font size for title, x-axis, y-axis and legend font.}
 

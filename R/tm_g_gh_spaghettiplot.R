@@ -30,7 +30,8 @@
 #' label of x-axis tick values. Default value is waive().
 #' @param rotate_xlab boolean value indicating whether to rotate x-axis labels
 #' @param facet_ncol numeric value indicating number of facets per row.
-#' @param plot_height numeric vectors to define the plot height.
+#' @param plot_height controls plot height.
+#' @param plot_width optional, controls plot width.
 #' @param font_size control font size for title, x-axis, y-axis and legend font.
 #' @param group_stats control group mean or median overlay.
 #' @inheritParams teal.devel::standard_layout
@@ -155,6 +156,7 @@ tm_g_gh_spaghettiplot <- function(label,
                                   rotate_xlab = FALSE,
                                   facet_ncol = 2,
                                   plot_height = c(600, 200, 2000),
+                                  plot_width = NULL,
                                   font_size = c(12, 8, 20),
                                   pre_output = NULL,
                                   post_output = NULL) {
@@ -162,9 +164,8 @@ tm_g_gh_spaghettiplot <- function(label,
   stopifnot(is.choices_selected(param))
   stopifnot(is.choices_selected(xaxis_var))
   stopifnot(is.choices_selected(yaxis_var))
-  stopifnot(is_numeric_vector(plot_height) && length(plot_height) == 3)
-  stopifnot(plot_height[1] >= plot_height[2] && plot_height[1] <= plot_height[3])
-  stopifnot(plot_height[1] >= 200 && plot_height[3] <= 2000)
+  check_slider_input(plot_height, allow_null = FALSE)
+  check_slider_input(plot_width)
 
   args <- as.list(environment())
 
@@ -182,7 +183,10 @@ tm_g_gh_spaghettiplot <- function(label,
       color_comb = color_comb,
       param_var_label = param_var_label,
       xtick = xtick,
-      xlabel = xlabel),
+      xlabel = xlabel,
+      plot_height = plot_height,
+      plot_width = plot_width
+    ),
     ui = g_ui_spaghettiplot,
     ui_args = args,
     filters = dataname
@@ -196,7 +200,7 @@ g_ui_spaghettiplot <- function(id, ...) {
   a <- list(...)
 
   standard_layout(
-    output = templ_ui_output_datatable(ns),
+    output = templ_ui_output_datatable(ns, a$plot_height, a$plot_width),
     encoding = div(
       templ_ui_dataname(a$dataname),
       templ_ui_params_vars(
@@ -234,7 +238,6 @@ g_ui_spaghettiplot <- function(id, ...) {
             div(style = "display: inline-block;vertical-align:middle; width: 100px;",
               numericInput(ns("hline"), "", a$hline))
           ),
-          optionalSliderInputValMinMax(ns("plot_height"), "Plot Height", a$plot_height, ticks = FALSE),
           optionalSliderInputValMinMax(ns("font_size"), "Font Size", a$font_size, ticks = FALSE),
           optionalSliderInputValMinMax(
             ns("alpha"),
@@ -266,9 +269,9 @@ srv_g_spaghettiplot <- function(input,
                                 trt_group_level,
                                 param_var_label,
                                 xtick,
-                                xlabel) {
-
-  ns <- session$ns
+                                xlabel,
+                                plot_height,
+                                plot_width) {
 
   # reused in all modules
   anl_chunks <- constr_anl_chunks(
@@ -281,7 +284,7 @@ srv_g_spaghettiplot <- function(input,
   keep_range_slider_updated(session, input, yrange_slider$update_state, "yaxis_var", "xaxis_param", anl_chunks)
   keep_data_const_opts_updated(session, input, anl_chunks, "xaxis_param")
 
-  output$spaghettiplot <- renderPlot({
+  plot_r <- reactive({
     # nolint start
     private_chunks <- anl_chunks()$chunks$clone(deep = TRUE)
     ylim <- yrange_slider$state()$value
@@ -303,8 +306,7 @@ srv_g_spaghettiplot <- function(input,
       chunks = private_chunks,
       id = "g_spaghettiplot",
       expression = bquote({
-
-        g_spaghettiplot(
+        p <- g_spaghettiplot(
           data = ANL,
           subj_id = .(idvar),
           biomarker_var = .(param_var),
@@ -326,29 +328,31 @@ srv_g_spaghettiplot <- function(input,
           font_size = .(font_size),
           alpha = .(alpha),
           group_stats = .(group_stats)
-        )})
+        )
+        print(p)
+      })
     )
 
-    p <- chunks_safe_eval(private_chunks)
+    chunks_safe_eval(private_chunks)
 
     # promote chunks to be visible in the sessionData by other modules
     init_chunks(private_chunks)
 
-    p
+    chunks_get_var("p")
   })
 
-  ## dynamic plot height and brushing
-  output$plot_ui <- renderUI({
-    plot_height <- input$plot_height
-    validate(need(plot_height, "need valid plot height"))
-
-    plotOutput(ns("spaghettiplot"),
-               height = plot_height,
-               brush = brushOpts(id = ns("spaghettiplot_brush"), resetOnNew = TRUE))
-  })
+  plot_data <- callModule(
+    plot_with_settings_srv,
+    id = "plot",
+    plot_r = plot_r,
+    height = plot_height,
+    width = plot_width,
+    brushing = TRUE
+  )
 
   output$brush_data <- DT::renderDataTable({
-    req(input$spaghettiplot_brush)
+    plot_brush <- plot_data$brush()
+    req(plot_brush)
 
     ANL <- isolate(anl_chunks()$ANL) # nolint
     validate_has_data(ANL, 5)
@@ -360,7 +364,7 @@ srv_g_spaghettiplot <- function(input,
 
     df <- brushedPoints(
       select(ANL, "USUBJID", trt_group, "PARAMCD", xvar, yvar, "LOQFL"),
-      input$spaghettiplot_brush
+      plot_brush
     )
     df <- df[order(df$PARAMCD, df[[trt_group]], df$USUBJID, df[[xvar]]), ]
     numeric_cols <- names(select_if(df, is.numeric))

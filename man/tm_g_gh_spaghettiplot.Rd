@@ -26,6 +26,7 @@ tm_g_gh_spaghettiplot(
   rotate_xlab = FALSE,
   facet_ncol = 2,
   plot_height = c(600, 200, 2000),
+  plot_width = NULL,
   font_size = c(12, 8, 20),
   pre_output = NULL,
   post_output = NULL
@@ -80,7 +81,9 @@ label of x-axis tick values. Default value is waive().}
 
 \item{facet_ncol}{numeric value indicating number of facets per row.}
 
-\item{plot_height}{numeric vectors to define the plot height.}
+\item{plot_height}{controls plot height.}
+
+\item{plot_width}{optional, controls plot width.}
 
 \item{font_size}{control font size for title, x-axis, y-axis and legend font.}
 
