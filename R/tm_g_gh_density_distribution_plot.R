@@ -346,14 +346,14 @@ srv_g_density_distribution_plot <- function(input, # nolint
     private_chunks
   })
 
-  density_distribution_plot_r <- reactive({
+  plot_r <- reactive({
     chunks_get_var("p", main_code())
   })
 
   callModule(
     plot_with_settings_srv,
     id = "plot",
-    plot_r = density_distribution_plot_r,
+    plot_r = plot_r,
     height = plot_height,
     width = plot_width,
   )
