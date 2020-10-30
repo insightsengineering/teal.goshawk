@@ -447,6 +447,7 @@ srv_g_boxplot <- function(input,
   # highlight plot area
   output$brush_data <- DT::renderDataTable({
     boxplot_brush <- boxplot_data$brush()
+    req(boxplot_brush)
 
     ANL <- isolate(anl_chunks()$ANL) %>% droplevels() #nolint
     validate_has_data(ANL, 5)
