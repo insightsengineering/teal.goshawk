@@ -641,7 +641,7 @@ srv_g_correlationplot <- function(input,
   # highlight plot area
   output$brush_data <- DT::renderDataTable({
     plot_brush <- plot_data$brush()
-    req(plot_brush)
+
     ANL_TRANSPOSED <- isolate(plot_data_transpose()$ANL_TRANSPOSED) # nolint
 
     df <- brushedPoints(

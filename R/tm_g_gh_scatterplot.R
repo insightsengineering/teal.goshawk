@@ -325,7 +325,6 @@ srv_g_scatterplot <- function(input,
   # highlight plot area
   output$brush_data <- DT::renderDataTable({
     plot_brush <- plot_data$brush()
-    req(plot_brush)
 
     ANL <- isolate(anl_chunks()$ANL) # nolint
     validate_has_data(ANL, 5)
