@@ -297,7 +297,8 @@ create_anl_constraint_reactive <- function(anl_param, input, param_id) {
               PARAMCD == .(param),
               (.(constraint_range_min) <= .data[[.(constraint_var)]]) &
                 (.data[[.(constraint_var)]] <= .(constraint_range_max))
-            ) %>% pull(USUBJID)
+            ) %>%
+            pull(USUBJID)
           # include patients with all NA values for constraint_var
           filtered_usubjids <- c(
             filtered_usubjids,

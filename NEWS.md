@@ -1,7 +1,8 @@
 # teal.goshawk 0.1.5.9000
 
-* Changing slider titles from Transparency to Alpha for `tm_g_gh_boxplot` and `tm_g_gh_spaghettiplot`.
 
+* Move `code` argument to `cdisc_dataset` (from `cdisc_data`) in examples.
+* Changing slider titles from Transparency to Alpha for `tm_g_gh_boxplot` and `tm_g_gh_spaghettiplot`.
 * issues with no news:
 
 # teal.goshawk 0.1.5
