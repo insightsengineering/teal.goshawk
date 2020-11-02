@@ -4,9 +4,7 @@ The teal.goshawk package renders the UI and calls the respective longitudinal vi
 The modules included are:
 
 - tm_g_gh_boxplot
-- tm_g_gh_boxplot_av (undergoing update)
 - tm_g_gh_correlationplot
-- tm_g_gh_correlationplot_av (undergoing update)
 - tm_g_gh_density_distribution_plot
 - tm_g_gh_lineplot
 - tm_g_gh_scatterplot (undergoing update)
