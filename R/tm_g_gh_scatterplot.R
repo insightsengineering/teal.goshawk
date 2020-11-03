@@ -21,6 +21,7 @@
 #' @param hline y-axis value to position of horizontal line.
 #' @param vline x-axis value to position a vertical line.
 #' @param plot_height controls plot height.
+#' @param plot_width optional, controls plot width.
 #' @param font_size font size control for title, x-axis label, y-axis label and legend.
 #' @param dot_size plot dot size.
 #' @param reg_text_size font size control for regression line annotations.
@@ -137,6 +138,7 @@ tm_g_gh_scatterplot <- function(label,
                                 hline = NULL,
                                 vline = NULL,
                                 plot_height = c(500, 200, 2000),
+                                plot_width = NULL,
                                 font_size = c(12, 8, 20),
                                 dot_size = c(1, 1, 12),
                                 reg_text_size = c(3, 3, 10),
@@ -146,6 +148,8 @@ tm_g_gh_scatterplot <- function(label,
   stopifnot(is.choices_selected(param))
   stopifnot(is.choices_selected(xaxis_var))
   stopifnot(is.choices_selected(yaxis_var))
+  check_slider_input(plot_height, allow_null = FALSE)
+  check_slider_input(plot_width)
 
   args <- as.list(environment())
 
@@ -158,7 +162,9 @@ tm_g_gh_scatterplot <- function(label,
                        trt_group = trt_group,
                        facet_var = facet_var,
                        color_manual = color_manual,
-                       shape_manual = shape_manual
+                       shape_manual = shape_manual,
+                       plot_height = plot_height,
+                       plot_width = plot_width
     ),
     ui = ui_g_scatterplot,
     ui_args = args
@@ -172,7 +178,7 @@ ui_g_scatterplot <- function(id, ...) {
   a <- list(...)
 
   standard_layout(
-    output = templ_ui_output_datatable(ns),
+    output = templ_ui_output_datatable(ns, a$plot_height, a$plot_width),
     encoding =  div(
       templ_ui_dataname(a$dataname),
       templ_ui_params_vars(
@@ -197,7 +203,6 @@ ui_g_scatterplot <- function(id, ...) {
         ),
         panel_item(
           title = "Plot settings",
-          optionalSliderInputValMinMax(ns("plot_height"), "Plot Height", a$plot_height, ticks = FALSE),
           optionalSliderInputValMinMax(ns("font_size"),  "Font Size", a$font_size, ticks = FALSE),
           optionalSliderInputValMinMax(ns("dot_size"), "Dot Size", a$dot_size, ticks = FALSE),
           optionalSliderInputValMinMax(ns("reg_text_size"), "Regression Annotations Size", a$reg_text_size,
@@ -222,9 +227,9 @@ srv_g_scatterplot <- function(input,
                               trt_group,
                               facet_var,
                               color_manual,
-                              shape_manual) {
-
-  ns <- session$ns
+                              shape_manual,
+                              plot_height,
+                              plot_width) {
 
   # reused in all modules
   anl_chunks <- constr_anl_chunks(
@@ -240,7 +245,7 @@ srv_g_scatterplot <- function(input,
   keep_data_const_opts_updated(session, input, anl_chunks, "xaxis_param")
 
   # plot
-  output$scatterplot <- renderPlot({
+  plot_r <- reactive({
 
     ac <- anl_chunks()
     private_chunks <- ac$chunks$clone(deep = TRUE)
@@ -270,7 +275,7 @@ srv_g_scatterplot <- function(input,
       id = "scatterplot",
       expression = bquote({
         # re-establish treatment variable label
-        g_scatterplot(
+        p <- g_scatterplot(
           data = ANL,
           param_var = .(param_var),
           param = .(param),
@@ -294,32 +299,30 @@ srv_g_scatterplot <- function(input,
           hline = .(`if`(is.na(hline), NULL, as.numeric(hline))),
           vline = .(`if`(is.na(vline), NULL, as.numeric(vline)))
         )
+        print(p)
       })
     )
 
-    p <- chunks_safe_eval(private_chunks)
+    chunks_safe_eval(private_chunks)
 
     # promote chunks to be visible in the sessionData by other modules
     init_chunks(private_chunks)
 
-    p
+    chunks_get_var("p")
   })
 
-  # dynamic plot height and brushing
-  output$plot_ui <- renderUI({
-
-    plot_height <- input$plot_height
-    validate(need(plot_height, "need valid plot height"))
-
-    plotOutput(ns("scatterplot"),
-               height = plot_height,
-               brush = brushOpts(id = ns("scatterplot_brush"), resetOnNew = TRUE)
-    )
-  })
+  plot_data <- callModule(
+    plot_with_settings_srv,
+    id = "plot",
+    plot_r = plot_r,
+    height = plot_height,
+    width = plot_width,
+    brushing = TRUE
+  )
 
   # highlight plot area
   output$brush_data <- DT::renderDataTable({
-    req(input$scatterplot_brush)
+    plot_brush <- plot_data$brush()
 
     ANL <- isolate(anl_chunks()$ANL) # nolint
     validate_has_data(ANL, 5)
@@ -331,7 +334,7 @@ srv_g_scatterplot <- function(input,
 
     df <- brushedPoints(
       select(ANL, "USUBJID", trt_group, "AVISITCD", "PARAMCD", xvar, yvar, "LOQFL"),
-      input$scatterplot_brush
+      plot_brush
     )
 
     numeric_cols <- names(select_if(df, is.numeric))

@@ -21,7 +21,8 @@
 #' @param loq_legend loq legend toggle.
 #' @param rotate_xlab 45 degree rotation of x-axis values.
 #' @param hline y-axis value to position a horizontal line.  NULL = No line.
-#' @param plot_height numeric vectors to define the plot height.
+#' @param plot_height controls plot height.
+#' @param plot_width optional, controls plot width.
 #' @param font_size font size control for title, x-axis label, y-axis label and legend.
 #' @param dot_size plot dot size.
 #' @param alpha numeric vector to define transparency of plotted points.
@@ -142,6 +143,7 @@ tm_g_gh_boxplot <- function(label,
                             rotate_xlab = FALSE,
                             hline = NULL,
                             plot_height = c(600, 200, 2000),
+                            plot_width = NULL,
                             font_size = c(12, 8, 20),
                             dot_size = c(2, 1, 12),
                             alpha = c(0.8, 0.0, 1.0),
@@ -161,11 +163,13 @@ tm_g_gh_boxplot <- function(label,
     is_logical_single(loq_legend),
     is_logical_single(rotate_xlab),
     is.null(hline) || is_numeric_single(hline),
-    is_numeric_vector(plot_height) && length(plot_height) == 3,
     is_numeric_vector(font_size) && length(font_size) == 3,
     is_numeric_vector(dot_size) && length(dot_size) == 3,
     is_numeric_vector(alpha) && length(alpha) == 3
   )
+  check_slider_input(plot_height, allow_null = FALSE)
+  check_slider_input(plot_width)
+
   args <- as.list(environment())
 
   module(
@@ -178,7 +182,9 @@ tm_g_gh_boxplot <- function(label,
                        facet_var = facet_var,
                        color_manual = color_manual,
                        shape_manual = shape_manual,
-                       armlabel = armlabel
+                       armlabel = armlabel,
+                       plot_height = plot_height,
+                       plot_width = plot_width
     ),
     ui = ui_g_boxplot,
     ui_args = args
@@ -193,7 +199,7 @@ ui_g_boxplot <- function(id, ...) {
   standard_layout(
     output = div(
       fluidRow(
-        uiOutput(ns("plot_ui"))
+        plot_with_settings_ui(id = ns("boxplot"), height = a$plot_height, width = a$plot_width)
       ),
       fluidRow(column(
         width = 12,
@@ -239,7 +245,6 @@ ui_g_boxplot <- function(id, ...) {
         ),
         panel_item(
           title = "Plot settings",
-          optionalSliderInputValMinMax(ns("plot_height"), "Plot Height", a$plot_height, ticks = FALSE),
           optionalSliderInputValMinMax(ns("font_size"),  "Font Size", a$font_size, ticks = FALSE),
           optionalSliderInputValMinMax(ns("dot_size"), "Dot Size", a$dot_size, ticks = FALSE),
           optionalSliderInputValMinMax(ns("alpha"), "Dot Alpha", a$alpha, ticks = FALSE)
@@ -263,9 +268,9 @@ srv_g_boxplot <- function(input,
                           facet_var,
                           color_manual,
                           shape_manual,
-                          armlabel) {
-
-  ns <- session$ns
+                          armlabel,
+                          plot_height,
+                          plot_width) {
 
   # reused in all modules
   anl_chunks <- constr_anl_chunks(
@@ -312,7 +317,7 @@ srv_g_boxplot <- function(input,
       chunks = private_chunks,
       id = "boxplot",
       expression = bquote({
-        plot <- g_boxplot(
+        p <- g_boxplot(
           data = ANL,
           biomarker = .(param),
           xaxis_var = .(xaxis),
@@ -374,18 +379,27 @@ srv_g_boxplot <- function(input,
     chunks_push(
       chunks = private_chunks,
       id = "output",
-      expression = quote(print(plot))
+      expression = quote(print(p))
     )
     init_chunks(private_chunks)
     private_chunks
   })
 
-  output$boxplot <- renderPlot({
-    main_code()$get("plot")
+  plot_r <- reactive({
+    chunks_get_var("p", main_code())
   })
 
+  boxplot_data <- callModule(
+    plot_with_settings_srv,
+    id = "boxplot",
+    plot_r = plot_r,
+    height = plot_height,
+    width = plot_width,
+    brushing = TRUE
+  )
+
   output$table_ui <- DT::renderDataTable({
-    tbl <- main_code()$get("tbl")
+    tbl <- chunks_get_var("tbl", main_code())
 
     numeric_cols <- setdiff(names(select_if(tbl, is.numeric)), "n")
 
@@ -394,21 +408,9 @@ srv_g_boxplot <- function(input,
 
   })
 
-  # dynamic plot height and brushing
-  output$plot_ui <- renderUI({
-
-    plot_height <- input$plot_height
-    validate(need(plot_height, "need valid plot height"))
-
-    plotOutput(ns("boxplot"),
-               height = plot_height,
-               brush = brushOpts(id = ns("boxplot_brush"), resetOnNew = TRUE)
-    )
-  })
-
   # highlight plot area
   output$brush_data <- DT::renderDataTable({
-    req(input$boxplot_brush)
+    boxplot_brush <- boxplot_data$brush()
 
     ANL <- isolate(anl_chunks()$ANL) %>% droplevels() #nolint
     validate_has_data(ANL, 5)
@@ -421,7 +423,7 @@ srv_g_boxplot <- function(input,
 
     df <- brushedPoints(
       select(ANL, "USUBJID", trt_group, facetv, "AVISITCD", "PARAMCD", xvar, yvar, "LOQFL"),
-      input$boxplot_brush
+      boxplot_brush
     )
 
     numeric_cols <- names(select_if(df, is.numeric))
@@ -429,6 +431,7 @@ srv_g_boxplot <- function(input,
     DT::datatable(df, rownames = FALSE, options = list(scrollX = TRUE)) %>%
       DT::formatRound(numeric_cols, 4)
   })
+
   callModule(
     get_rcode_srv,
     id = "rcode",

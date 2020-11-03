@@ -21,6 +21,7 @@ tm_g_gh_boxplot(
   rotate_xlab = FALSE,
   hline = NULL,
   plot_height = c(600, 200, 2000),
+  plot_width = NULL,
   font_size = c(12, 8, 20),
   dot_size = c(2, 1, 12),
   alpha = c(0.8, 0, 1),
@@ -62,7 +63,9 @@ name of the parameter (in title case) will be used.}
 
 \item{hline}{y-axis value to position a horizontal line.  NULL = No line.}
 
-\item{plot_height}{numeric vectors to define the plot height.}
+\item{plot_height}{controls plot height.}
+
+\item{plot_width}{optional, controls plot width.}
 
 \item{font_size}{font size control for title, x-axis label, y-axis label and legend.}
 

@@ -8,6 +8,7 @@
 #' @param color_manual vector of colors applied to treatment values.
 #' @param color_comb name or hex value for combined treatment color.
 #' @param plot_height controls plot height.
+#' @param plot_width optional, controls plot width.
 #' @param font_size font size control for title, x-axis label, y-axis label and legend.
 #' @param line_size plot line thickness.
 #' @param hline y-axis value to position a horizontal line.
@@ -128,6 +129,7 @@ tm_g_gh_density_distribution_plot <- function(label, # nolint
                                               color_manual = NULL,
                                               color_comb = NULL,
                                               plot_height = c(500, 200, 2000),
+                                              plot_width = NULL,
                                               font_size = c(12, 8, 20),
                                               line_size = c(1, .25, 3),
                                               hline = NULL,
@@ -146,7 +148,6 @@ tm_g_gh_density_distribution_plot <- function(label, # nolint
 
     is_character_single(trt_group),
     # color_manual, color_comb
-    is_numeric_vector(plot_height) && length(plot_height) == 3,
     is_numeric_vector(font_size) && length(font_size) == 3,
     is_numeric_vector(line_size) && length(line_size) == 3,
     is.null(hline) || is_numeric_single(hline),
@@ -154,6 +155,8 @@ tm_g_gh_density_distribution_plot <- function(label, # nolint
     is_logical_single(comb_line),
     is_logical_single(rotate_xlab)
   )
+  check_slider_input(plot_height, allow_null = FALSE)
+  check_slider_input(plot_width)
 
   args <- as.list(environment())
 
@@ -167,7 +170,9 @@ tm_g_gh_density_distribution_plot <- function(label, # nolint
       param = param,
       trt_group = trt_group,
       color_manual = color_manual,
-      color_comb = color_comb
+      color_comb = color_comb,
+      plot_height = plot_height,
+      plot_width = plot_width
     ),
     ui = ui_g_density_distribution_plot,
     ui_args = args
@@ -181,7 +186,7 @@ ui_g_density_distribution_plot <- function(id, ...) {
   standard_layout(
     output = div(
       fluidRow(
-        uiOutput(ns("plot_ui"))
+        plot_with_settings_ui(id = ns("plot"), height = a$plot_height, width = a$plot_width)
       ),
       fluidRow(column(
         width = 12,
@@ -214,7 +219,6 @@ ui_g_density_distribution_plot <- function(id, ...) {
         ),
         panel_item(
           title = "Plot settings",
-          optionalSliderInputValMinMax(ns("plot_height"), "Plot Height", a$plot_height, ticks = FALSE),
           optionalSliderInputValMinMax(ns("font_size"), "Font Size", a$font_size, ticks = FALSE),
           optionalSliderInputValMinMax(
             ns("line_size"),
@@ -231,9 +235,18 @@ ui_g_density_distribution_plot <- function(id, ...) {
   )
 }
 
-srv_g_density_distribution_plot <- function(input, output, session, datasets, dataname, param_var, param, #nolintr
-                                            trt_group, color_manual, color_comb) {
-  ns <- session$ns
+srv_g_density_distribution_plot <- function(input, # nolint
+                                            output,
+                                            session,
+                                            datasets,
+                                            dataname,
+                                            param_var,
+                                            param,
+                                            trt_group,
+                                            color_manual,
+                                            color_comb,
+                                            plot_height,
+                                            plot_width) {
   anl_chunks <- constr_anl_chunks(
     session, input, datasets, dataname,
     param_id = "xaxis_param", param_var = param_var, trt_group = trt_group
@@ -266,7 +279,7 @@ srv_g_density_distribution_plot <- function(input, output, session, datasets, da
       chunks = private_chunks,
       id = "density_distribution",
       expression = bquote({
-        plot <- g_density_distribution_plot(
+        p <- g_density_distribution_plot(
           data = ANL,
           param_var = .(param_var),
           param = .(param),
@@ -322,33 +335,31 @@ srv_g_density_distribution_plot <- function(input, output, session, datasets, da
     chunks_push(
       chunks = private_chunks,
       id = "output",
-      expression = quote(print(plot))
+      expression = quote(print(p))
     )
     init_chunks(private_chunks)
     private_chunks
   })
 
-  output$density_distribution_plot <- renderPlot({
-    main_code()$get("plot")
+  plot_r <- reactive({
+    chunks_get_var("p", main_code())
   })
+
+  callModule(
+    plot_with_settings_srv,
+    id = "plot",
+    plot_r = plot_r,
+    height = plot_height,
+    width = plot_width,
+  )
+
   output$table_ui <- DT::renderDataTable({
-    tbl <- main_code()$get("tbl")
+    tbl <- chunks_get_var("tbl", main_code())
 
     numeric_cols <- names(select_if(tbl, is.numeric))
 
     DT::datatable(tbl, rownames = FALSE, options = list(scrollX = TRUE)) %>%
       DT::formatRound(numeric_cols, 2)
-  })
-
-  # dynamic plot height and brushing
-  output$plot_ui <- renderUI({
-    plot_height <- input$plot_height
-    validate(need(plot_height, "need valid plot height"))
-
-    plotOutput(
-      ns("density_distribution_plot"),
-      height = plot_height
-    )
   })
 
   callModule(

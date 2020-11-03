@@ -29,7 +29,8 @@
 #' @param xlabel vector with same length of xtick to define the label of x-axis tick values.
 #' Default value is waive().
 #' @param rotate_xlab boolean value indicating whether to rotate x-axis labels.
-#' @param plot_height numeric vectors to define the plot height.
+#' @param plot_height controls plot height.
+#' @param plot_width optional, controls plot width.
 #' @param font_size control font size for title, x-axis, y-axis and legend font.
 #' @param dodge control the position dodge of error bar
 #'
@@ -142,6 +143,7 @@ tm_g_gh_lineplot <- function(label,
                              xlabel = xtick,
                              rotate_xlab = FALSE,
                              plot_height = c(600, 200, 2000),
+                             plot_width = NULL,
                              font_size = c(12, 8, 20),
                              dodge = c(0.4, 0, 1),
                              pre_output = NULL,
@@ -150,9 +152,8 @@ tm_g_gh_lineplot <- function(label,
   stopifnot(is.choices_selected(xaxis_var))
   stopifnot(is.choices_selected(yaxis_var))
   stopifnot(is.choices_selected(param))
-  stopifnot(is_numeric_vector(plot_height) && length(plot_height) == 3)
-  stopifnot(plot_height[1] >= plot_height[2] && plot_height[1] <= plot_height[3])
-  stopifnot(plot_height[1] >= 200 && plot_height[3] <= 2000)
+  check_slider_input(plot_height, allow_null = FALSE)
+  check_slider_input(plot_width)
 
   args <- as.list(environment())
 
@@ -168,7 +169,10 @@ tm_g_gh_lineplot <- function(label,
       shape_choices = shape_choices,
       param_var_label = param_var_label,
       xtick = xtick,
-      xlabel = xlabel),
+      xlabel = xlabel,
+      plot_height = plot_height,
+      plot_width = plot_width
+    ),
     ui = ui_lineplot,
     ui_args = args,
     filters = dataname
@@ -182,7 +186,7 @@ ui_lineplot <- function(id, ...) {
   a <- list(...)
 
   standard_layout(
-    output = uiOutput(ns("plot_ui")),
+    output = plot_with_settings_ui(id = ns("plot"), height = a$plot_height, width = a$plot_width),
     encoding = div(
       templ_ui_dataname(a$dataname),
       templ_ui_params_vars(
@@ -209,7 +213,6 @@ ui_lineplot <- function(id, ...) {
         ),
         panel_item(
           title = "Plot settings",
-          optionalSliderInputValMinMax(ns("plot_height"), "Plot Height", a$plot_height, ticks = FALSE),
           optionalSliderInputValMinMax(ns("dodge"), "Error Bar Position Dodge", a$dodge, ticks = FALSE),
           optionalSliderInputValMinMax(ns("font_size"),  "Font Size", a$font_size, ticks = FALSE)
         )
@@ -235,7 +238,9 @@ srv_lineplot <- function(input,
                          shape_choices,
                          param_var_label,
                          xtick,
-                         xlabel) {
+                         xlabel,
+                         plot_height,
+                         plot_width) {
 
   ns <- session$ns
   output$shape_ui <- renderUI({
@@ -315,7 +320,7 @@ srv_lineplot <- function(input,
     ))
   })
 
-  output$lineplot <- renderPlot({
+  plot_r <- reactive({
     ac <- anl_chunks()
     private_chunks <- ac$chunks$clone(deep = TRUE)
     # nolint start
@@ -345,7 +350,7 @@ srv_lineplot <- function(input,
       chunks = private_chunks,
       id = "lineplot",
       expression = bquote({
-        g_lineplot(
+        p <- g_lineplot(
           data = ANL,
           biomarker_var = .(param_var),
           biomarker_var_label = .(param_var_label),
@@ -365,22 +370,25 @@ srv_lineplot <- function(input,
           rotate_xlab = .(rotate_xlab),
           font_size = .(font_size),
           dodge = .(dodge),
-          plot_height = .(plot_height)
         )
+        print(p)
       })
     )
 
-    p <- chunks_safe_eval(private_chunks)
+    chunks_safe_eval(private_chunks)
+
     init_chunks(private_chunks)
 
-    p
+    chunks_get_var("p")
   })
 
-  output$plot_ui <- renderUI({
-    plot_height <- input$plot_height
-    validate(need(plot_height, "need valid plot height"))
-    plotOutput(ns("lineplot"), height = plot_height)
-  })
+  callModule(
+    plot_with_settings_srv,
+    id = "plot",
+    plot_r = plot_r,
+    height = plot_height,
+    width = plot_width,
+  )
 
   callModule(
     get_rcode_srv,
