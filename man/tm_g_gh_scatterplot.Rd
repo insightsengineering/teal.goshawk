@@ -118,36 +118,33 @@ ADLB <- ADLB \%>\%
 
 app <- init(
   data = cdisc_data(
-    cdisc_dataset("ADSL", ADSL),
-    cdisc_dataset("ADLB", ADLB),
-    code =
-     'arm_mapping <- list("A: Drug X" = "150mg QD",
-                          "B: Placebo" = "Placebo",
-                          "C: Combination" = "Combination")
-
-      ADSL <- radsl(N = 20, seed = 1)
-      ADLB <- radlb(ADSL, visit_format = "WEEK", n_assessments = 7L, seed = 2)
-      ADLB <- ADLB \%>\%
-        mutate(AVISITCD = case_when(
-            AVISIT == "SCREENING" ~ "SCR",
-            AVISIT == "BASELINE" ~ "BL",
-            grepl("WEEK", AVISIT) ~ paste("W", stringr::str_extract(AVISIT, "(?<=(WEEK ))[0-9]+")),
-            TRUE ~ as.character(NA)),
-          AVISITCDN = case_when(
-            AVISITCD == "SCR" ~ -2,
-            AVISITCD == "BL" ~ 0,
-            grepl("W", AVISITCD) ~ as.numeric(gsub("[^0-9]*", "", AVISITCD)),
-            TRUE ~ as.numeric(NA)),
-            AVISITCD = factor(AVISITCD) \%>\% reorder(AVISITCDN),
-          TRTORD = case_when(
-            ARMCD == "ARM C" ~ 1,
-            ARMCD == "ARM B" ~ 2,
-            ARMCD == "ARM A" ~ 3),
-          ARM = as.character(arm_mapping[match(ARM, names(arm_mapping))]),
-          ARM = factor(ARM) \%>\% reorder(TRTORD))
-          ',
-    check = FALSE
-  ),
+    adsl <- cdisc_dataset("ADSL", ADSL, code = "ADSL <- radsl(N = 20, seed = 1)"),
+    cdisc_dataset(
+      "ADLB",
+      ADLB,
+      code = "ADLB <- radlb(ADSL, visit_format = 'WEEK', n_assessments = 7L, seed = 2)
+              ADLB <- ADLB \%>\%
+                mutate(AVISITCD = case_when(
+                    AVISIT == 'SCREENING' ~ 'SCR',
+                    AVISIT == 'BASELINE' ~ 'BL',
+                    grepl('WEEK', AVISIT) ~
+                      paste('W', stringr::str_extract(AVISIT, '(?<=(WEEK ))[0-9]+')),
+                    TRUE ~ as.character(NA)),
+                  AVISITCDN = case_when(
+                    AVISITCD == 'SCR' ~ -2,
+                    AVISITCD == 'BL' ~ 0,
+                    grepl('W', AVISITCD) ~ as.numeric(gsub('[^0-9]*', '', AVISITCD)),
+                    TRUE ~ as.numeric(NA)),
+                  AVISITCD = factor(AVISITCD) \%>\% reorder(AVISITCDN),
+                  TRTORD = case_when(
+                    ARMCD == 'ARM C' ~ 1,
+                    ARMCD == 'ARM B' ~ 2,
+                    ARMCD == 'ARM A' ~ 3),
+                  ARM = as.character(arm_mapping[match(ARM, names(arm_mapping))]),
+                  ARM = factor(ARM) \%>\% reorder(TRTORD))",
+      vars = list(ADSL = adsl, arm_mapping = arm_mapping)),
+    check = TRUE
+    ),
   modules = root_modules(
     tm_g_gh_scatterplot(
        label = "Scatter Plot",
@@ -176,6 +173,7 @@ app <- init(
 \dontrun{
 shinyApp(app$ui, app$server)
 }
+
 }
 \author{
 Nick Paszty (npaszty) paszty.nicholas@gene.com
