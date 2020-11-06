@@ -214,6 +214,7 @@ ui_g_density_distribution_plot <- function(id, ...) {
             value = c(-1000000, 1000000)),
           numericInput(ns("facet_ncol"), "Number of Plots Per Row:", a$facet_ncol, min = 1),
           checkboxInput(ns("comb_line"), "Display combination line", a$comb_line),
+          checkboxInput(ns("rug_plot"), "Include rug plot", value = FALSE),
           checkboxInput(ns("rotate_xlab"), "Rotate X-axis Label", a$rotate_xlab),
           numericInput(ns("hline"), "Add a horizontal line:", a$hline)
         ),
@@ -272,6 +273,7 @@ srv_g_density_distribution_plot <- function(input, # nolint
     hline <- `if`(is.na(hline), NULL, as.numeric(hline))
     facet_ncol <- as.integer(input$facet_ncol)
     comb_line <- input$comb_line
+    rug_plot <- input$rug_plot
     rotate_xlab <- input$rotate_xlab
     #nolint end
 
@@ -294,7 +296,8 @@ srv_g_density_distribution_plot <- function(input, # nolint
           facet_ncol = .(facet_ncol),
           comb_line = .(comb_line),
           rotate_xlab = .(rotate_xlab),
-          hline = .(hline)
+          hline = .(hline),
+          rug_plot = .(rug_plot)
         )
       })
     )
