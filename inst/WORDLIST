@@ -63,6 +63,8 @@ liu
 loq
 luiw
 minmax
+multisessions
+multithreaded
 nicholas
 npaszty
 paszty
@@ -92,5 +94,3 @@ wenyi
 xaxis
 xtick
 xvar
-multisessions
-multithreaded

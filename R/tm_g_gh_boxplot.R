@@ -218,9 +218,13 @@ ui_g_boxplot <- function(id, ...) {
       templ_ui_dataname(a$dataname),
       templ_ui_params_vars(
         ns,
-        xparam_choices = a$param$choices, xparam_selected = a$param$selected, xparam_label = "Select a Biomarker",
-        xchoices = a$xaxis_var$choices, xselected = a$xaxis_var$selected,
-        ychoices = a$yaxis_var$choices, yselected = a$yaxis_var$selected
+        xparam_choices = a$param$choices,
+        xparam_selected = a$param$selected,
+        xparam_label = "Select a Biomarker",
+        xchoices = a$xaxis_var$choices,
+        xselected = a$xaxis_var$selected,
+        ychoices = a$yaxis_var$choices,
+        yselected = a$yaxis_var$selected
       ),
       optionalSelectInput(
         ns("facet_var"),
