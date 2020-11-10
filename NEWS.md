@@ -1,6 +1,6 @@
 # teal.goshawk 0.1.5.9000
 
-
+* Add option to add rug plot in `tm_g_gh_density_distribution_plot`.
 * Move `code` argument to `cdisc_dataset` (from `cdisc_data`) in examples.
 * Changing slider titles from Transparency to Alpha for `tm_g_gh_boxplot` and `tm_g_gh_spaghettiplot`.
 * Replace `plot_with_height` module with new `plot_with_settings` module. 
