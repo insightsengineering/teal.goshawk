@@ -29,7 +29,9 @@ tm_g_gh_lineplot(
   font_size = c(12, 8, 20),
   dodge = c(0.4, 0, 1),
   pre_output = NULL,
-  post_output = NULL
+  post_output = NULL,
+  count_threshold = 0,
+  table_font_size = c(4.5, 1, 20)
 )
 }
 \arguments{
@@ -84,7 +86,7 @@ Default value is waive().}
 
 \item{font_size}{control font size for title, x-axis, y-axis and legend font.}
 
-\item{dodge}{control the position dodge of error bar}
+\item{dodge}{controls the position dodge of error bar}
 
 \item{pre_output}{optional, \code{shiny.tag} with text placed before the
 output to put the output into context. For example a title.}
@@ -92,6 +94,11 @@ output to put the output into context. For example a title.}
 \item{post_output}{optional, \code{shiny.tag} with text placed after the
 output to put the output into context. For example the
 \code{\link[shiny]{helpText}} elements are useful.}
+
+\item{count_threshold}{minimum count of observations (as listed in the output table) to plot
+nodes on the graph}
+
+\item{table_font_size}{controls the font size of values in the table}
 }
 \value{
 \code{shiny} object
