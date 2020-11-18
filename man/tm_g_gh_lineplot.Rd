@@ -26,12 +26,12 @@ tm_g_gh_lineplot(
   rotate_xlab = FALSE,
   plot_height = c(600, 200, 2000),
   plot_width = NULL,
-  font_size = c(12, 8, 20),
+  plot_font_size = c(12, 8, 20),
   dodge = c(0.4, 0, 1),
   pre_output = NULL,
   post_output = NULL,
   count_threshold = 0,
-  table_font_size = c(4.5, 1, 20)
+  table_font_size = c(12, 4, 20)
 )
 }
 \arguments{
@@ -84,7 +84,7 @@ Default value is waive().}
 
 \item{plot_width}{optional, controls plot width.}
 
-\item{font_size}{control font size for title, x-axis, y-axis and legend font.}
+\item{plot_font_size}{control font size for title, x-axis, y-axis and legend font.}
 
 \item{dodge}{controls the position dodge of error bar}
 
