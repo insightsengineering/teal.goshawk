@@ -157,7 +157,6 @@ tm_g_gh_boxplot <- function(label,
     is.choices_selected(yaxis_var),
     is.choices_selected(xaxis_var),
     is.choices_selected(facet_var),
-    is_character_single(trt_group),
     is.null(armlabel) || is_character_single(armlabel),
     is.null(facet_ncol) || is_integer_single(facet_ncol),
     is_logical_single(loq_legend),
@@ -216,6 +215,12 @@ ui_g_boxplot <- function(id, ...) {
     ),
     encoding =  div(
       templ_ui_dataname(a$dataname),
+      optionalSelectInput(
+        ns("trt_group"),
+        label = "Select treatment ARM",
+        choices = a$trt_group$choices,
+        selected = a$trt_group$selected,
+        multiple = FALSE),
       templ_ui_params_vars(
         ns,
         xparam_choices = a$param$choices,
@@ -276,10 +281,11 @@ srv_g_boxplot <- function(input,
                           plot_height,
                           plot_width) {
 
+
   # reused in all modules
   anl_chunks <- constr_anl_chunks(
     session, input, datasets, dataname,
-    param_id = "xaxis_param", param_var = param_var, trt_group = trt_group
+    param_id = "xaxis_param", param_var = param_var, trt_group = input$trt_group
   )
 
   # update sliders for axes taking constraints into account
@@ -302,7 +308,10 @@ srv_g_boxplot <- function(input,
     loq_legend <- input$loq_legend
     rotate_xlab <- input$rotate_xlab
     hline <- input$hline
+    trt_group <- input$trt_group
+
     # nolint end
+    validate(need(input$trt_group, "Please select a treatment ARM"))
     validate(need(!is.null(xaxis), "Please select an X-Axis Variable"))
     validate(need(!is.null(yaxis), "Please select a Y-Axis Variable"))
     validate_has_variable(
@@ -357,7 +366,7 @@ srv_g_boxplot <- function(input,
     xaxis_var <- input$yaxis_var #nolint
     facet_var <- input$facet_var
     font_size <- input$font_size
-
+    trt_group <- input$trt_group
 
     chunks_push(
       chunks = private_chunks,
@@ -422,6 +431,7 @@ srv_g_boxplot <- function(input,
     xvar <- isolate(input$xaxis_var)
     yvar <- isolate(input$yaxis_var)
     facetv <- isolate(input$facet_var)
+    trt_group <- isolate(input$trt_group)
 
     req(all(c(xvar, yvar, facetv, trt_group) %in% names(ANL)))
 

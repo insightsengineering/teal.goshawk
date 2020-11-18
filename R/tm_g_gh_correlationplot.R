@@ -137,7 +137,7 @@ tm_g_gh_correlationplot <- function(label,
                                     xaxis_var = "BASE",
                                     yaxis_param = "CRP",
                                     yaxis_var = "AVAL",
-                                    trt_group = "ARM",
+                                    trt_group,
                                     color_manual = NULL,
                                     shape_manual = NULL,
                                     facet_ncol = 2,
@@ -194,6 +194,12 @@ ui_g_correlationplot <- function(id, ...) {
     output = templ_ui_output_datatable(ns, a$plot_height, a$plot_width),
     encoding =  div(
       templ_ui_dataname(a$dataname),
+      optionalSelectInput(
+        ns("trt_group"),
+        label = "Select treatment ARM",
+        choices = a$trt_group$choices,
+        selected = a$trt_group$selected,
+        multiple = FALSE),
       templ_ui_params_vars(
         ns,
         xparam_choices = a$xaxis_param$choices, xparam_selected = a$xaxis_param$selected,
@@ -249,7 +255,6 @@ srv_g_correlationplot <- function(input,
                                   shape_manual,
                                   plot_height,
                                   plot_width) {
-
   # filter seected biomarkers
   anl_param <- reactive({
     validate(need(input$xaxis_param, "Please select an X-Axis Biomarker"))
@@ -309,8 +314,8 @@ srv_g_correlationplot <- function(input,
 
     validate_has_variable(
       ANL_FILTERED,
-      trt_group,
-      sprintf("Variable %s is not available in data %s", trt_group, dataname))
+      input$trt_group,
+      sprintf("Variable %s is not available in data %s", input$trt_group, dataname))
 
     validate_has_variable(
       ANL_FILTERED,
@@ -438,6 +443,7 @@ srv_g_correlationplot <- function(input,
   plot_data_transpose <- reactive({
     private_chunks <- anl_constraint()$chunks$clone(deep = TRUE)
     ANL <- anl_constraint()$ANL # nolint
+    trt_group <- input$trt_group
     chunks_push(
       chunks = private_chunks,
       id = "plot_data_transpose",
@@ -574,6 +580,8 @@ srv_g_correlationplot <- function(input,
     title_text <- plot_labels()$title_text
     xaxis_lab  <- plot_labels()$xaxis_lab
     yaxis_lab  <- plot_labels()$yaxis_lab
+    validate(need(input$trt_group, "Please select a treatment ARM"))
+    trt_group <- input$trt_group
 
     chunks_push(
       chunks = private_chunks,
@@ -641,7 +649,7 @@ srv_g_correlationplot <- function(input,
     ANL_TRANSPOSED <- isolate(plot_data_transpose()$ANL_TRANSPOSED) # nolint
 
     df <- brushedPoints(
-      select(ANL_TRANSPOSED, "USUBJID", trt_group, "AVISITCD", xvar(), yvar(), "LOQFL_COMB"),
+      select(ANL_TRANSPOSED, "USUBJID", input$trt_group, "AVISITCD", xvar(), yvar(), "LOQFL_COMB"),
       plot_brush
     )
 

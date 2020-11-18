@@ -189,6 +189,12 @@ ui_lineplot <- function(id, ...) {
     output = plot_with_settings_ui(id = ns("plot"), height = a$plot_height, width = a$plot_width),
     encoding = div(
       templ_ui_dataname(a$dataname),
+      optionalSelectInput(
+        ns("trt_group"),
+        label = "Select treatment ARM",
+        choices = a$trt_group$choices,
+        selected = a$trt_group$selected,
+        multiple = FALSE),
       templ_ui_params_vars(
         ns,
         # xparam and yparam are identical, so we only show the user one
@@ -260,6 +266,8 @@ srv_lineplot <- function(input,
     }
   })
 
+  #trt_group <- trt_group$selected
+
   anl_chunks <- constr_anl_chunks(
     session = session,
     input = input,
@@ -267,7 +275,7 @@ srv_lineplot <- function(input,
     dataname = dataname,
     param_id = "xaxis_param",
     param_var =  param_var,
-    trt_group = trt_group)
+    trt_group = input$trt_group)
   keep_data_const_opts_updated(session, input, anl_chunks, "xaxis_param")
 
   yrange_slider <- callModule(toggle_slider_server, "yrange_scale")
@@ -289,7 +297,7 @@ srv_lineplot <- function(input,
     # we don't need to additionally filter for paramvar here as in keep_range_slider_updated because
     # xaxis_var and yaxis_var are always distinct
     sum_data <- ANL %>%
-      group_by_at(c(input$xaxis_var, trt_group, shape)) %>%
+      group_by_at(c(input$xaxis_var, input$trt_group, shape)) %>%
       summarise(upper = if (input$stat == "mean") {
         mean(!!sym(varname), na.rm = TRUE) +
           1.96 * sd(!!sym(varname), na.rm = TRUE) / sqrt(n())
@@ -331,6 +339,8 @@ srv_lineplot <- function(input,
     hline <- if (is.na(input$hline)) NULL else as.numeric(input$hline)
     median <- ifelse(input$stat == "median", TRUE, FALSE)
     plot_height <- input$plot_height
+    validate(need(input$trt_group, "Please select a treatment ARM"))
+    trt_group <- input$trt_group
 
     validate(need(input$xaxis_var, "Please select an X-Axis Variable"))
     validate(need(input$yaxis_var, "Please select a Y-Axis Variable"))

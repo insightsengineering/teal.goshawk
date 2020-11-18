@@ -200,6 +200,12 @@ g_ui_spaghettiplot <- function(id, ...) {
     output = templ_ui_output_datatable(ns, a$plot_height, a$plot_width),
     encoding = div(
       templ_ui_dataname(a$dataname),
+      optionalSelectInput(
+        ns("trt_group"),
+        label = "Select treatment ARM",
+        choices = a$trt_group$choices,
+        selected = a$trt_group$selected,
+        multiple = FALSE),
       templ_ui_params_vars(
         ns,
         # xparam and yparam are identical, so we only show the user one
@@ -273,7 +279,7 @@ srv_g_spaghettiplot <- function(input,
   # reused in all modules
   anl_chunks <- constr_anl_chunks(
     session, input, datasets, dataname,
-    param_id = "xaxis_param", param_var = param_var, trt_group = trt_group
+    param_id = "xaxis_param", param_var = param_var, trt_group = input$trt_group
   )
 
   # update sliders for axes taking constraints into account
@@ -291,6 +297,8 @@ srv_g_spaghettiplot <- function(input,
     group_stats <- input$group_stats
     font_size <- input$font_size
     alpha <- input$alpha
+    validate(need(input$trt_group, "Please select a treatment ARM"))
+    trt_group <- input$trt_group
 
     # Below inputs should trigger plot via updates of other reactive objects (i.e. anl_chunk()) and some inputs
     validate(need(input$xaxis_var, "Please select an X-Axis Variable"))
@@ -355,6 +363,7 @@ srv_g_spaghettiplot <- function(input,
 
     xvar <- isolate(input$xaxis_var)
     yvar <- isolate(input$yaxis_var)
+    trt_group <- isolate(input$trt_group)
 
     req(all(c(xvar, yvar) %in% names(ANL)))
 

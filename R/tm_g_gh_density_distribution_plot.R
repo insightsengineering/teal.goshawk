@@ -125,7 +125,7 @@ tm_g_gh_density_distribution_plot <- function(label, # nolint
                                               param_var,
                                               param,
                                               xaxis_var,
-                                              trt_group = "ARM",
+                                              trt_group,
                                               color_manual = NULL,
                                               color_comb = NULL,
                                               plot_height = c(500, 200, 2000),
@@ -146,7 +146,7 @@ tm_g_gh_density_distribution_plot <- function(label, # nolint
     is.choices_selected(param),
     is.choices_selected(xaxis_var),
 
-    is_character_single(trt_group),
+    #is_character_single(trt_group),
     # color_manual, color_comb
     is_numeric_vector(font_size) && length(font_size) == 3,
     is_numeric_vector(line_size) && length(line_size) == 3,
@@ -197,6 +197,12 @@ ui_g_density_distribution_plot <- function(id, ...) {
     ),
     encoding = div(
       templ_ui_dataname(a$dataname),
+      optionalSelectInput(
+        ns("trt_group"),
+        label = "Select treatment ARM",
+        choices = a$trt_group$choices,
+        selected = a$trt_group$selected,
+        multiple = FALSE),
       templ_ui_params_vars(
         ns,
         xparam_choices = a$param$choices, xparam_selected = a$param$selected, xparam_label = "Select a Biomarker",
@@ -250,7 +256,7 @@ srv_g_density_distribution_plot <- function(input, # nolint
                                             plot_width) {
   anl_chunks <- constr_anl_chunks(
     session, input, datasets, dataname,
-    param_id = "xaxis_param", param_var = param_var, trt_group = trt_group
+    param_id = "xaxis_param", param_var = param_var, trt_group = input$trt_group
   )
 
   # update sliders for axes taking constraints into account
@@ -275,7 +281,9 @@ srv_g_density_distribution_plot <- function(input, # nolint
     comb_line <- input$comb_line
     rug_plot <- input$rug_plot
     rotate_xlab <- input$rotate_xlab
+    trt_group <- input$trt_group
     #nolint end
+    validate(need(input$trt_group, "Please select a treatment ARM"))
 
     chunks_push(
       chunks = private_chunks,
@@ -313,6 +321,7 @@ srv_g_density_distribution_plot <- function(input, # nolint
     param <- input$xaxis_param
     xaxis_var <- input$xaxis_var
     font_size <- input$font_size
+    trt_group <- input$trt_group
 
     chunks_push(
       chunks = private_chunks,
