@@ -268,8 +268,6 @@ srv_lineplot <- function(input,
     }
   })
 
-  #trt_group <- trt_group$selected
-
   anl_chunks <- constr_anl_chunks(
     session = session,
     input = input,
