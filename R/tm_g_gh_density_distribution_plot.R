@@ -4,7 +4,8 @@
 #' and an accompanying summary table.
 #'
 #' @param label menu item label of the module in the teal app.
-#' @param trt_group name of variable representing treatment group e.g. ARM.
+#' @param trt_group \code{\link[teal]{choices_selected}} object with available choices and pre-selected option
+#' for variable names representing treatment group e.g. ARM.
 #' @param color_manual vector of colors applied to treatment values.
 #' @param color_comb name or hex value for combined treatment color.
 #' @param plot_height controls plot height.
@@ -103,7 +104,7 @@
 #'       param_var = "PARAMCD",
 #'       param = choices_selected(c("ALT", "CRP", "IGA"), "ALT"),
 #'       xaxis_var = choices_selected(c("AVAL", "BASE", "CHG", "PCHG"), "AVAL"),
-#'       trt_group = "ARM",
+#'       trt_group = choices_selected(c("ARM", "ACTARM"), "ARM"),
 #'       color_manual = c("150mg QD" = "#000000",
 #'                        "Placebo" = "#3498DB",
 #'                        "Combination" = "#E74C3C"),
@@ -146,14 +147,14 @@ tm_g_gh_density_distribution_plot <- function(label, # nolint
     is.choices_selected(param),
     is.choices_selected(xaxis_var),
 
-    #is_character_single(trt_group),
     # color_manual, color_comb
     is_numeric_vector(font_size) && length(font_size) == 3,
     is_numeric_vector(line_size) && length(line_size) == 3,
     is.null(hline) || is_numeric_single(hline),
     is_integer_single(facet_ncol),
     is_logical_single(comb_line),
-    is_logical_single(rotate_xlab)
+    is_logical_single(rotate_xlab),
+    is.choices_selected(trt_group)
   )
   check_slider_input(plot_height, allow_null = FALSE)
   check_slider_input(plot_width)

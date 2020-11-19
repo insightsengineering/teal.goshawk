@@ -11,7 +11,8 @@
 #' @param yaxis_param biomarker selected for y-axis.
 #' @param xaxis_var name of variable containing biomarker results displayed on x-axis e.g. \code{BASE}.
 #' @param yaxis_var name of variable containing biomarker results displayed on y-axis e.g. \code{AVAL}.
-#' @param trt_group name of variable representing treatment group e.g. \code{ARM}.
+#' @param trt_group \code{\link[teal]{choices_selected}} object with available choices and pre-selected option
+#' for variable names representing treatment group e.g. ARM.
 #' @param color_manual vector of colors applied to treatment values.
 #' @param shape_manual vector of symbols applied to LOQ values.
 #' @param facet_ncol numeric value indicating number of facets per row.
@@ -107,7 +108,7 @@
 #'        yaxis_param = choices_selected(c("ALT", "CRP", "IGA"), "CRP"),
 #'        xaxis_var = choices_selected(c("AVAL", "BASE", "CHG", "PCHG"), "BASE"),
 #'        yaxis_var = choices_selected(c("AVAL", "BASE", "CHG", "PCHG"), "AVAL"),
-#'        trt_group = "ARM",
+#'        trt_group = choices_selected(c("ARM", "ACTARM"), "ARM"),
 #'        color_manual = c("Drug X 100mg" = "#000000",
 #'                         "Placebo" = "#3498DB",
 #'                         "Combination 100mg" = "#E74C3C"),
@@ -161,6 +162,7 @@ tm_g_gh_correlationplot <- function(label,
   stopifnot(is.choices_selected(yaxis_param))
   stopifnot(is.choices_selected(xaxis_var))
   stopifnot(is.choices_selected(yaxis_var))
+  stopifnot(is.choices_selected(trt_group))
   check_slider_input(plot_height, allow_null = FALSE)
   check_slider_input(plot_width)
 

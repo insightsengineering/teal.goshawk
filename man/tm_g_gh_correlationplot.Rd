@@ -12,7 +12,7 @@ tm_g_gh_correlationplot(
   xaxis_var = "BASE",
   yaxis_param = "CRP",
   yaxis_var = "AVAL",
-  trt_group = "ARM",
+  trt_group,
   color_manual = NULL,
   shape_manual = NULL,
   facet_ncol = 2,
@@ -49,7 +49,8 @@ tm_g_gh_correlationplot(
 
 \item{yaxis_var}{name of variable containing biomarker results displayed on y-axis e.g. \code{AVAL}.}
 
-\item{trt_group}{name of variable representing treatment group e.g. \code{ARM}.}
+\item{trt_group}{\code{\link[teal]{choices_selected}} object with available choices and pre-selected option
+for variable names representing treatment group e.g. ARM.}
 
 \item{color_manual}{vector of colors applied to treatment values.}
 
@@ -166,7 +167,7 @@ app <- init(
        yaxis_param = choices_selected(c("ALT", "CRP", "IGA"), "CRP"),
        xaxis_var = choices_selected(c("AVAL", "BASE", "CHG", "PCHG"), "BASE"),
        yaxis_var = choices_selected(c("AVAL", "BASE", "CHG", "PCHG"), "AVAL"),
-       trt_group = "ARM",
+       trt_group = choices_selected(c("ARM", "ACTARM"), "ARM"),
        color_manual = c("Drug X 100mg" = "#000000",
                         "Placebo" = "#3498DB",
                         "Combination 100mg" = "#E74C3C"),

@@ -11,7 +11,7 @@ tm_g_gh_scatterplot(
   param,
   xaxis_var,
   yaxis_var,
-  trt_group = "ARM",
+  trt_group,
   color_manual = NULL,
   shape_manual = NULL,
   facet_ncol = 2,
@@ -44,7 +44,8 @@ tm_g_gh_scatterplot(
 
 \item{yaxis_var}{name of variable containing biomarker results displayed on y-axis e.g. \code{AVAL}.}
 
-\item{trt_group}{name of variable representing treatment group e.g. \code{ARM}.}
+\item{trt_group}{\code{\link[teal]{choices_selected}} object with available choices and pre-selected option
+for variable names representing treatment group e.g. ARM.}
 
 \item{color_manual}{vector of colors applied to treatment values.}
 
@@ -161,7 +162,7 @@ app <- init(
        plot_height = c(500, 200, 2000),
        facet_ncol = 2,
        facet = FALSE,
-       facet_var = "ARM",
+       facet_var = choices_selected(c("ARM", "ACTARM"), "ARM"),
        reg_line = FALSE,
        font_size = c(12, 8, 20),
        dot_size = c(1, 1, 12),

@@ -58,7 +58,8 @@ Only use it when xaxis_var is character or factor.}
 
 \item{filter_var}{data constraint variable.}
 
-\item{trt_group}{name of variable representing treatment group e.g. ARM.}
+\item{trt_group}{\code{\link[teal]{choices_selected}} object with available choices and pre-selected option
+for variable names representing treatment group e.g. ARM.}
 
 \item{trt_group_level}{vector that can be used to define factor
 level of trt_group.}
@@ -174,7 +175,7 @@ app <- teal::init(
       yaxis_var = choices_selected(c("AVAL","CHG", "PCHG"), "AVAL"),
       filter_var = choices_selected(c("None" = "NONE", "Screening" = "BASE2", "Baseline" = "BASE"),
        "NONE"),
-      trt_group = "ARM",
+      trt_group = choices_selected(c("ARM", "ACTARM"), "ARM"),
       color_comb = "#39ff14",
       man_color = c('Combination' = "#000000",
                    'Placebo' = "#fce300",

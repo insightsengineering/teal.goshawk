@@ -11,7 +11,8 @@
 #' @param yaxis_var name of variable containing biomarker results displayed on y-axis e.g. AVAL.
 #' @param xaxis_var variable to categorize the x-axis.
 #' @param facet_var variable to facet the plots by.
-#' @param trt_group name of variable representing treatment group e.g. ARM.
+#' @param trt_group  \code{\link[teal]{choices_selected}} object with available choices and pre-selected option
+#'  for variable names representing treatment group e.g. ARM.
 #' @param armlabel label for the treatment symbols in the legend. If not specified then the label
 #'  attribute for trt_group will be used. If there is no label attribute for trt_group, then the
 #'  name of the parameter (in title case) will be used.
@@ -114,7 +115,7 @@
 #'         yaxis_var = choices_selected(c("AVAL", "BASE", "CHG"), "AVAL"),
 #'         xaxis_var = choices_selected(c("ARM", "AVISITCD", "STUDYID"), "ARM"),
 #'         facet_var = choices_selected(c("ARM", "AVISITCD", "SEX"), "AVISITCD"),
-#'         trt_group = "ARM",
+#'         trt_group = choices_selected(c("ARM", "ACTARM"), "ARM"),
 #'         armlabel = "Planned Arm",
 #'         loq_legend = TRUE,
 #'         rotate_xlab = FALSE
@@ -164,7 +165,8 @@ tm_g_gh_boxplot <- function(label,
     is.null(hline) || is_numeric_single(hline),
     is_numeric_vector(font_size) && length(font_size) == 3,
     is_numeric_vector(dot_size) && length(dot_size) == 3,
-    is_numeric_vector(alpha) && length(alpha) == 3
+    is_numeric_vector(alpha) && length(alpha) == 3,
+    is.choices_selected(trt_group)
   )
   check_slider_input(plot_height, allow_null = FALSE)
   check_slider_input(plot_width)

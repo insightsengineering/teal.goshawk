@@ -18,7 +18,8 @@
 #' @param filter_var data constraint variable.
 #' @param yaxis_var single name of variable in analysis data that is used as
 #' summary variable in the respective gshawk function.
-#' @param trt_group name of variable representing treatment group e.g. ARM.
+#' @param trt_group \code{\link[teal]{choices_selected}} object with available choices and pre-selected option
+#' for variable names representing treatment group e.g. ARM.
 #' @param trt_group_level vector that can be used to define factor
 #' level of trt_group.
 #' @param man_color string vector representing customized colors
@@ -118,7 +119,7 @@
 #'       yaxis_var = choices_selected(c("AVAL","CHG", "PCHG"), "AVAL"),
 #'       filter_var = choices_selected(c("None" = "NONE", "Screening" = "BASE2", "Baseline" = "BASE"),
 #'        "NONE"),
-#'       trt_group = "ARM",
+#'       trt_group = choices_selected(c("ARM", "ACTARM"), "ARM"),
 #'       color_comb = "#39ff14",
 #'       man_color = c('Combination' = "#000000",
 #'                    'Placebo' = "#fce300",
@@ -161,6 +162,7 @@ tm_g_gh_spaghettiplot <- function(label,
   stopifnot(is.choices_selected(param))
   stopifnot(is.choices_selected(xaxis_var))
   stopifnot(is.choices_selected(yaxis_var))
+  stopifnot(is.choices_selected(trt_group))
   check_slider_input(plot_height, allow_null = FALSE)
   check_slider_input(plot_width)
 

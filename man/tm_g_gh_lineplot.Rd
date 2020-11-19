@@ -57,7 +57,8 @@ xvar is character or factor.}
 
 \item{filter_var_choices}{data constraint variable choices.}
 
-\item{trt_group}{name of variable representing treatment group e.g. ARM.}
+\item{trt_group}{\code{\link[teal]{choices_selected}} object with available choices and pre-selected option
+for variable names representing treatment group e.g. ARM.}
 
 \item{trt_group_level}{vector that can be used to define factor level of trt_group.}
 
@@ -169,7 +170,7 @@ app <- teal::init(
       shape_choices = c("SEX", "RACE"),
       xaxis_var =choices_selected("AVISITCD", "AVISITCD"),
       yaxis_var = choices_selected(c("AVAL", "BASE", "CHG", "PCHG"), "AVAL"),
-      trt_group = "ARM"
+      trt_group = choices_selected(c("ARM", "ACTARM"), "ARM")
     )
   )
 )

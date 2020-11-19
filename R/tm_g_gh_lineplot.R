@@ -17,7 +17,8 @@
 #' @param filter_var_choices data constraint variable choices.
 #' @param yaxis_var single name of variable in analysis data that is used as summary variable in the
 #' respective gshawk function.
-#' @param trt_group name of variable representing treatment group e.g. ARM.
+#' @param trt_group \code{\link[teal]{choices_selected}} object with available choices and pre-selected option
+#' for variable names representing treatment group e.g. ARM.
 #' @param trt_group_level vector that can be used to define factor level of trt_group.
 #' @param shape_choices Vector or \code{choices_selected} object with names of ADSL variables which
 #' can be used to change shape
@@ -114,7 +115,7 @@
 #'       shape_choices = c("SEX", "RACE"),
 #'       xaxis_var =choices_selected("AVISITCD", "AVISITCD"),
 #'       yaxis_var = choices_selected(c("AVAL", "BASE", "CHG", "PCHG"), "AVAL"),
-#'       trt_group = "ARM"
+#'       trt_group = choices_selected(c("ARM", "ACTARM"), "ARM")
 #'     )
 #'   )
 #' )
@@ -154,6 +155,7 @@ tm_g_gh_lineplot <- function(label,
   stopifnot(is.choices_selected(param))
   check_slider_input(plot_height, allow_null = FALSE)
   check_slider_input(plot_width)
+  stopifnot(is.choices_selected(trt_group))
 
   args <- as.list(environment())
 

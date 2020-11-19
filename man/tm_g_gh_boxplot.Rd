@@ -45,7 +45,8 @@ laboratory data frame ALB.}
 
 \item{facet_var}{variable to facet the plots by.}
 
-\item{trt_group}{name of variable representing treatment group e.g. ARM.}
+\item{trt_group}{\code{\link[teal]{choices_selected}} object with available choices and pre-selected option
+for variable names representing treatment group e.g. ARM.}
 
 \item{armlabel}{label for the treatment symbols in the legend. If not specified then the label
 attribute for trt_group will be used. If there is no label attribute for trt_group, then the
@@ -158,7 +159,7 @@ app <- teal::init(
         yaxis_var = choices_selected(c("AVAL", "BASE", "CHG"), "AVAL"),
         xaxis_var = choices_selected(c("ARM", "AVISITCD", "STUDYID"), "ARM"),
         facet_var = choices_selected(c("ARM", "AVISITCD", "SEX"), "AVISITCD"),
-        trt_group = "ARM",
+        trt_group = choices_selected(c("ARM", "ACTARM"), "ARM"),
         armlabel = "Planned Arm",
         loq_legend = TRUE,
         rotate_xlab = FALSE
