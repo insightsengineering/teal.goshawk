@@ -12,8 +12,7 @@ tm_g_gh_boxplot(
   yaxis_var = choices_selected(c("AVAL", "CHG"), "AVAL"),
   xaxis_var = choices_selected("AVISITCD", "AVISITCD"),
   facet_var = choices_selected("ARM", "ARM"),
-  trt_group = "ARM",
-  armlabel = NULL,
+  trt_group,
   color_manual = NULL,
   shape_manual = NULL,
   facet_ncol = NULL,
@@ -47,10 +46,6 @@ laboratory data frame ALB.}
 
 \item{trt_group}{\code{\link[teal]{choices_selected}} object with available choices and pre-selected option
 for variable names representing treatment group e.g. ARM.}
-
-\item{armlabel}{label for the treatment symbols in the legend. If not specified then the label
-attribute for trt_group will be used. If there is no label attribute for trt_group, then the
-name of the parameter (in title case) will be used.}
 
 \item{color_manual}{vector of colors applied to treatment values.}
 
@@ -160,7 +155,6 @@ app <- teal::init(
         xaxis_var = choices_selected(c("ARM", "AVISITCD", "STUDYID"), "ARM"),
         facet_var = choices_selected(c("ARM", "AVISITCD", "SEX"), "AVISITCD"),
         trt_group = choices_selected(c("ARM", "ACTARM"), "ARM"),
-        armlabel = "Planned Arm",
         loq_legend = TRUE,
         rotate_xlab = FALSE
       )

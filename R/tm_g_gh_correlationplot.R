@@ -198,7 +198,7 @@ ui_g_correlationplot <- function(id, ...) {
       templ_ui_dataname(a$dataname),
       optionalSelectInput(
         ns("trt_group"),
-        label = "Select treatment ARM",
+        label = "Select Treatment Variable",
         choices = a$trt_group$choices,
         selected = a$trt_group$selected,
         multiple = FALSE),

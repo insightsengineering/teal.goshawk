@@ -13,9 +13,6 @@
 #' @param facet_var variable to facet the plots by.
 #' @param trt_group  \code{\link[teal]{choices_selected}} object with available choices and pre-selected option
 #'  for variable names representing treatment group e.g. ARM.
-#' @param armlabel label for the treatment symbols in the legend. If not specified then the label
-#'  attribute for trt_group will be used. If there is no label attribute for trt_group, then the
-#'  name of the parameter (in title case) will be used.
 #' @param color_manual vector of colors applied to treatment values.
 #' @param shape_manual vector of symbols applied to LOQ values.
 #' @param facet_ncol numeric value indicating number of facets per row.
@@ -116,7 +113,6 @@
 #'         xaxis_var = choices_selected(c("ARM", "AVISITCD", "STUDYID"), "ARM"),
 #'         facet_var = choices_selected(c("ARM", "AVISITCD", "SEX"), "AVISITCD"),
 #'         trt_group = choices_selected(c("ARM", "ACTARM"), "ARM"),
-#'         armlabel = "Planned Arm",
 #'         loq_legend = TRUE,
 #'         rotate_xlab = FALSE
 #'       )
@@ -135,8 +131,7 @@ tm_g_gh_boxplot <- function(label,
                             yaxis_var = choices_selected(c("AVAL", "CHG"), "AVAL"),
                             xaxis_var = choices_selected("AVISITCD", "AVISITCD"),
                             facet_var = choices_selected("ARM", "ARM"),
-                            trt_group = "ARM",
-                            armlabel = NULL,
+                            trt_group,
                             color_manual = NULL,
                             shape_manual = NULL,
                             facet_ncol = NULL,
@@ -158,7 +153,6 @@ tm_g_gh_boxplot <- function(label,
     is.choices_selected(yaxis_var),
     is.choices_selected(xaxis_var),
     is.choices_selected(facet_var),
-    is.null(armlabel) || is_character_single(armlabel),
     is.null(facet_ncol) || is_integer_single(facet_ncol),
     is_logical_single(loq_legend),
     is_logical_single(rotate_xlab),
@@ -183,7 +177,6 @@ tm_g_gh_boxplot <- function(label,
                        facet_var = facet_var,
                        color_manual = color_manual,
                        shape_manual = shape_manual,
-                       armlabel = armlabel,
                        plot_height = plot_height,
                        plot_width = plot_width
     ),
@@ -219,7 +212,7 @@ ui_g_boxplot <- function(id, ...) {
       templ_ui_dataname(a$dataname),
       optionalSelectInput(
         ns("trt_group"),
-        label = "Select treatment ARM",
+        label = "Select Treatment Variable",
         choices = a$trt_group$choices,
         selected = a$trt_group$selected,
         multiple = FALSE),
@@ -279,7 +272,6 @@ srv_g_boxplot <- function(input,
                           facet_var,
                           color_manual,
                           shape_manual,
-                          armlabel,
                           plot_height,
                           plot_width) {
 
@@ -289,7 +281,6 @@ srv_g_boxplot <- function(input,
     session, input, datasets, dataname,
     param_id = "xaxis_param", param_var = param_var, trt_group = input$trt_group
   )
-
   # update sliders for axes taking constraints into account
   yrange_slider <- callModule(toggle_slider_server, "yrange_scale")
   keep_range_slider_updated(session, input, yrange_slider$update_state, "yaxis_var", "xaxis_param", anl_chunks)
@@ -311,7 +302,7 @@ srv_g_boxplot <- function(input,
     rotate_xlab <- input$rotate_xlab
     hline <- input$hline
     trt_group <- input$trt_group
-
+    armlabel <- get_variable_labels(anl_chunks()$ANL, trt_group)
     # nolint end
     validate(need(input$trt_group, "Please select a treatment ARM"))
     validate(need(!is.null(xaxis), "Please select an X-Axis Variable"))
