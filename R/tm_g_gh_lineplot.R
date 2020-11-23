@@ -341,7 +341,7 @@ srv_lineplot <- function(input,
     plot_font_size <- input$plot_font_size
     dodge <- input$dodge
     rotate_xlab <- input$rotate_xlab
-    count_threshold <- input$count_threshold
+    count_threshold <- if_na(as.numeric(input$count_threshold), 0)
     table_font_size <- input$table_font_size
     hline <- if (is.na(input$hline)) NULL else as.numeric(input$hline)
     median <- ifelse(input$stat == "median", TRUE, FALSE)
