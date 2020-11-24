@@ -134,8 +134,11 @@ ADLB <- ADLB \%>\%
       ARMCD == "ARM B" ~ 2,
       ARMCD == "ARM A" ~ 3),
     ARM = as.character(arm_mapping[match(ARM, names(arm_mapping))]),
-    ARM = factor(ARM) \%>\% reorder(TRTORD))
+    ARM = factor(ARM) \%>\% reorder(TRTORD),
+    ACTARM = as.character(arm_mapping[match(ACTARM, names(arm_mapping))]),
+    ACTARM = factor(ACTARM) \%>\% reorder(TRTORD))
 attr(ADLB[["ARM"]], "label") <- var_labels[["ARM"]]
+attr(ADLB[["ACTARM"]], 'label') <- var_labels[["ACTARM"]]
 
 app <- teal::init(
   data = cdisc_data(
@@ -163,8 +166,11 @@ app <- teal::init(
                     ARMCD == 'ARM B' ~ 2,
                     ARMCD == 'ARM A' ~ 3),
                   ARM = as.character(arm_mapping[match(ARM, names(arm_mapping))]),
-                  ARM = factor(ARM) \%>\% reorder(TRTORD))
-               attr(ADLB[['ARM']], 'label') <- var_labels[['ARM']]",
+                  ARM = factor(ARM) \%>\% reorder(TRTORD),
+                  ACTARM = as.character(arm_mapping[match(ACTARM, names(arm_mapping))]),
+                  ACTARM = factor(ACTARM) \%>\% reorder(TRTORD))
+               attr(ADLB[['ARM']], 'label') <- var_labels[['ARM']]
+               attr(ADLB[['ACTARM']], 'label') <- var_labels[['ACTARM']]",
       vars = list(arm_mapping = arm_mapping)),
     check = TRUE
     ),

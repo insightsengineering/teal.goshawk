@@ -16,7 +16,6 @@
 #' @param color_manual vector of colors applied to treatment values.
 #' @param shape_manual vector of symbols applied to LOQ values.
 #' @param facet_ncol numeric value indicating number of facets per row.
-#' @param facet set layout to use treatment facetting.
 #' @param visit_facet visit facet toggle.
 #' @param facet_var variable to use for treatment facetting.
 #' @param reg_line include regression line and annotations for slope and coefficient in visualization. Use with facet
@@ -126,8 +125,6 @@
 #'        plot_height = c(500, 200, 2000),
 #'        facet_ncol = 2,
 #'        visit_facet = TRUE,
-#'        facet = FALSE,
-#'        facet_var = "ARM",
 #'        reg_line = FALSE,
 #'        loq_legend = TRUE,
 #'        font_size = c(12, 8, 20),
@@ -153,8 +150,7 @@ tm_g_gh_correlationplot <- function(label,
                                     shape_manual = NULL,
                                     facet_ncol = 2,
                                     visit_facet = TRUE,
-                                    facet = FALSE,
-                                    facet_var = "ARM",
+                                    facet_var = choices_selected(c("ARM", "ACTARM"), "ARM"),
                                     reg_line = FALSE,
                                     loq_legend = TRUE,
                                     rotate_xlab = FALSE,
@@ -173,6 +169,7 @@ tm_g_gh_correlationplot <- function(label,
   stopifnot(is.choices_selected(xaxis_var))
   stopifnot(is.choices_selected(yaxis_var))
   stopifnot(is.choices_selected(trt_group))
+  stopifnot(is.choices_selected(facet_var))
   check_slider_input(plot_height, allow_null = FALSE)
   check_slider_input(plot_width)
 
@@ -219,6 +216,12 @@ ui_g_correlationplot <- function(id, ...) {
         yparam_choices = a$yaxis_param$choices, yparam_selected = a$yaxis_param$selected,
         ychoices = a$yaxis_var$choices, yselected = a$yaxis_var$selected
       ),
+      optionalSelectInput(
+        ns("facet_var"),
+        label = "Facet by",
+        choices = a$facet_var$choices,
+        selected = a$facet_var$selected,
+        multiple = FALSE),
       templ_ui_constraint(ns, "X-Axis Data Constraint"), # required by constr_anl_chunks
       panel_group(
         panel_item(
@@ -231,7 +234,6 @@ ui_g_correlationplot <- function(id, ...) {
             min = -1000000, max = 1000000, value = c(-1000000, 1000000)),
           numericInput(ns("facet_ncol"), "Number of Plots Per Row:", a$facet_ncol, min = 1),
           checkboxInput(ns("visit_facet"), "Visit Facetting", a$visit_facet),
-          checkboxInput(ns("facet"), "Treatment Facetting", a$facet),
           checkboxInput(ns("reg_line"), "Regression Line", a$reg_line),
           checkboxInput(ns("loq_legend"), "Display LoQ Legend", a$loq_legend),
           checkboxInput(ns("rotate_xlab"), "Rotate X-axis Label", a$rotate_xlab),
@@ -306,8 +308,8 @@ srv_g_correlationplot <- function(input,
 
     validate_has_variable(
       ANL_FILTERED,
-      facet_var,
-      sprintf("Variable %s is not available in data %s", facet_var, dataname))
+      input$facet_var,
+      sprintf("Variable %s is not available in data %s", input$facet_var, dataname))
 
     validate_has_variable(
       ANL_FILTERED,
@@ -579,7 +581,7 @@ srv_g_correlationplot <- function(input,
     vline <- if (is.na(input$vline)) NULL else as.numeric(input$vline)
     facet_ncol <- input$facet_ncol
     visit_facet <- input$visit_facet
-    facet <- input$facet
+    facet <- if (is.null(input$facet_var)) FALSE else TRUE
     reg_line <- input$reg_line
     loq_legend <- input$loq_legend
     rotate_xlab <- input$rotate_xlab
@@ -589,6 +591,7 @@ srv_g_correlationplot <- function(input,
     yaxis_lab  <- plot_labels()$yaxis_lab
     validate(need(input$trt_group, "Please select a treatment variable"))
     trt_group <- input$trt_group
+    facet_var <- input$facet_var
 
     chunks_push(
       chunks = private_chunks,

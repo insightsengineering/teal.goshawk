@@ -14,7 +14,6 @@
 #' @param color_manual vector of colors applied to treatment values.
 #' @param shape_manual vector of symbols applied to LOQ values.
 #' @param facet_ncol numeric value indicating number of facets per row.
-#' @param facet set layout to use treatment facetting.
 #' @param facet_var variable to use for treatment facetting.
 #' @param reg_line include regression line and annotations for slope and coefficient in visualization. Use with facet
 #'   TRUE.
@@ -62,8 +61,11 @@
 #'       ARMCD == "ARM B" ~ 2,
 #'       ARMCD == "ARM A" ~ 3),
 #'     ARM = as.character(arm_mapping[match(ARM, names(arm_mapping))]),
-#'     ARM = factor(ARM) %>% reorder(TRTORD))
+#'     ARM = factor(ARM) %>% reorder(TRTORD),
+#'     ACTARM = as.character(arm_mapping[match(ACTARM, names(arm_mapping))]),
+#'     ACTARM = factor(ACTARM) %>% reorder(TRTORD))
 #' attr(ADLB[["ARM"]], "label") <- var_labels[["ARM"]]
+#' attr(ADLB[["ACTARM"]], 'label') <- var_labels[["ACTARM"]]
 #'
 #' app <- init(
 #'   data = cdisc_data(
@@ -91,8 +93,11 @@
 #'                     ARMCD == 'ARM B' ~ 2,
 #'                     ARMCD == 'ARM A' ~ 3),
 #'                   ARM = as.character(arm_mapping[match(ARM, names(arm_mapping))]),
-#'                   ARM = factor(ARM) %>% reorder(TRTORD))
-#'                attr(ADLB[['ARM']], 'label') <- var_labels[['ARM']]",
+#'                   ARM = factor(ARM) %>% reorder(TRTORD),
+#'                   ACTARM = as.character(arm_mapping[match(ACTARM, names(arm_mapping))]),
+#'                   ACTARM = factor(ACTARM) %>% reorder(TRTORD))
+#'                attr(ADLB[['ARM']], 'label') <- var_labels[['ARM']]
+#'                attr(ADLB[['ACTARM']], 'label') <- var_labels[['ACTARM']]",
 #'       vars = list(ADSL = adsl, arm_mapping = arm_mapping)),
 #'     check = TRUE
 #'     ),
@@ -111,8 +116,7 @@
 #'        shape_manual = c("N"  = 1, "Y"  = 2, "NA" = 0),
 #'        plot_height = c(500, 200, 2000),
 #'        facet_ncol = 2,
-#'        facet = FALSE,
-#'        facet_var = "ARM",
+#'        facet_var = choices_selected(c("ARM", "ACTARM"), "ARM"),
 #'        reg_line = FALSE,
 #'        font_size = c(12, 8, 20),
 #'        dot_size = c(1, 1, 12),
@@ -135,8 +139,7 @@ tm_g_gh_scatterplot <- function(label,
                                 color_manual = NULL,
                                 shape_manual = NULL,
                                 facet_ncol = 2,
-                                facet = FALSE,
-                                facet_var = "ARM",
+                                facet_var = choices_selected(c("ARM", "ACTARM"), "ARM"),
                                 reg_line = FALSE,
                                 rotate_xlab = FALSE,
                                 hline = NULL,
@@ -153,6 +156,7 @@ tm_g_gh_scatterplot <- function(label,
   stopifnot(is.choices_selected(xaxis_var))
   stopifnot(is.choices_selected(yaxis_var))
   stopifnot(is.choices_selected(trt_group))
+  stopifnot(is.choices_selected(facet_var))
   check_slider_input(plot_height, allow_null = FALSE)
   check_slider_input(plot_width)
 
@@ -199,6 +203,12 @@ ui_g_scatterplot <- function(id, ...) {
         xchoices = a$xaxis_var$choices, xselected = a$xaxis_var$selected,
         ychoices = a$yaxis_var$choices, yselected = a$yaxis_var$selected
       ),
+      optionalSelectInput(
+        ns("facet_var"),
+        label = "Facet by",
+        choices = a$facet_var$choices,
+        selected = a$facet_var$selected,
+        multiple = FALSE),
       templ_ui_constraint(ns), # required by constr_anl_chunks
       panel_group(
         panel_item(
@@ -206,7 +216,6 @@ ui_g_scatterplot <- function(id, ...) {
           toggle_slider_ui(ns("xrange_scale"), label = "X-Axis Range Zoom", min = 0, max = 1, value = c(0, 1)),
           toggle_slider_ui(ns("yrange_scale"), label = "Y-Axis Range Zoom", min = 0, max = 1, value = c(0, 1)),
           numericInput(ns("facet_ncol"), "Number of Plots Per Row:", a$facet_ncol, min = 1),
-          checkboxInput(ns("facet"), "Treatment Facetting", a$facet),
           checkboxInput(ns("reg_line"), "Regression Line", a$reg_line),
           checkboxInput(ns("rotate_xlab"), "Rotate X-axis Label", a$rotate_xlab),
           numericInput(ns("hline"), "Add a horizontal line:", a$hline),
@@ -264,7 +273,6 @@ srv_g_scatterplot <- function(input,
     xrange_scale <- xrange_slider$state()$value
     yrange_scale <- yrange_slider$state()$value
     facet_ncol <- input$facet_ncol
-    facet <- input$facet
     reg_line <- input$reg_line
     font_size <- input$font_size
     dot_size <- input$dot_size
@@ -274,6 +282,8 @@ srv_g_scatterplot <- function(input,
     vline <- input$vline
     validate(need(input$trt_group, "Please select a treatment variable"))
     trt_group <- input$trt_group
+    facet_var <- input$facet_var
+    facet <- if (is.null(input$facet_var)) FALSE else TRUE
 
     # Below inputs should trigger plot via updates of other reactive objects (i.e. anl_chunk()) and some inputs
     validate(need(input$xaxis_var, "Please select an X-Axis Variable"))

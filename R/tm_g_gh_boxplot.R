@@ -73,8 +73,11 @@
 #'       ARMCD == "ARM B" ~ 2,
 #'       ARMCD == "ARM A" ~ 3),
 #'     ARM = as.character(arm_mapping[match(ARM, names(arm_mapping))]),
-#'     ARM = factor(ARM) %>% reorder(TRTORD))
+#'     ARM = factor(ARM) %>% reorder(TRTORD),
+#'     ACTARM = as.character(arm_mapping[match(ACTARM, names(arm_mapping))]),
+#'     ACTARM = factor(ACTARM) %>% reorder(TRTORD))
 #' attr(ADLB[["ARM"]], "label") <- var_labels[["ARM"]]
+#' attr(ADLB[["ACTARM"]], 'label') <- var_labels[["ACTARM"]]
 #'
 #' app <- teal::init(
 #'   data = cdisc_data(
@@ -102,8 +105,11 @@
 #'                  ARMCD == 'ARM B' ~ 2,
 #'                  ARMCD == 'ARM A' ~ 3),
 #'              ARM = as.character(arm_mapping[match(ARM, names(arm_mapping))]),
-#'              ARM = factor(ARM) %>% reorder(TRTORD))
-#'           attr(ADLB[['ARM']], 'label') <- var_labels[['ARM']]",
+#'              ARM = factor(ARM) %>% reorder(TRTORD),
+#'              ACTARM = as.character(arm_mapping[match(ACTARM, names(arm_mapping))]),
+#'              ACTARM = factor(ACTARM) %>% reorder(TRTORD))
+#'           attr(ADLB[['ARM']], 'label') <- var_labels[['ARM']]
+#'           attr(ADLB[['ACTARM']], 'label') <- var_labels[['ACTARM']]",
 #'       vars = list(ADSL = adsl, arm_mapping = arm_mapping)),
 #'     check = TRUE
 #'   ),
@@ -114,8 +120,8 @@
 #'         param_var = "PARAMCD",
 #'         param = choices_selected(c("ALT", "CRP", "IGA"), "ALT"),
 #'         yaxis_var = choices_selected(c("AVAL", "BASE", "CHG"), "AVAL"),
-#'         xaxis_var = choices_selected(c("ARM", "AVISITCD", "STUDYID"), "ARM"),
-#'         facet_var = choices_selected(c("ARM", "AVISITCD", "SEX"), "AVISITCD"),
+#'         xaxis_var = choices_selected(c("ACTARM", "ARM", "AVISITCD", "STUDYID"), "ARM"),
+#'         facet_var = choices_selected(c("ACTARM", "ARM", "AVISITCD", "SEX"), "AVISITCD"),
 #'         trt_group = choices_selected(c("ARM", "ACTARM"), "ARM"),
 #'         loq_legend = TRUE,
 #'         rotate_xlab = FALSE
@@ -134,7 +140,7 @@ tm_g_gh_boxplot <- function(label,
                             param,
                             yaxis_var = choices_selected(c("AVAL", "CHG"), "AVAL"),
                             xaxis_var = choices_selected("AVISITCD", "AVISITCD"),
-                            facet_var = choices_selected("ARM", "ARM"),
+                            facet_var = choices_selected(c("ARM", "ACTARM"), "ARM"),
                             trt_group,
                             color_manual = NULL,
                             shape_manual = NULL,

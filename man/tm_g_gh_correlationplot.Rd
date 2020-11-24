@@ -17,8 +17,7 @@ tm_g_gh_correlationplot(
   shape_manual = NULL,
   facet_ncol = 2,
   visit_facet = TRUE,
-  facet = FALSE,
-  facet_var = "ARM",
+  facet_var = choices_selected(c("ARM", "ACTARM"), "ARM"),
   reg_line = FALSE,
   loq_legend = TRUE,
   rotate_xlab = FALSE,
@@ -59,8 +58,6 @@ for variable names representing treatment group e.g. ARM.}
 \item{facet_ncol}{numeric value indicating number of facets per row.}
 
 \item{visit_facet}{visit facet toggle.}
-
-\item{facet}{set layout to use treatment facetting.}
 
 \item{facet_var}{variable to use for treatment facetting.}
 
@@ -185,8 +182,6 @@ app <- init(
        plot_height = c(500, 200, 2000),
        facet_ncol = 2,
        visit_facet = TRUE,
-       facet = FALSE,
-       facet_var = "ARM",
        reg_line = FALSE,
        loq_legend = TRUE,
        font_size = c(12, 8, 20),

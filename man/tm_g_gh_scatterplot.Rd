@@ -15,8 +15,7 @@ tm_g_gh_scatterplot(
   color_manual = NULL,
   shape_manual = NULL,
   facet_ncol = 2,
-  facet = FALSE,
-  facet_var = "ARM",
+  facet_var = choices_selected(c("ARM", "ACTARM"), "ARM"),
   reg_line = FALSE,
   rotate_xlab = FALSE,
   hline = NULL,
@@ -52,8 +51,6 @@ for variable names representing treatment group e.g. ARM.}
 \item{shape_manual}{vector of symbols applied to LOQ values.}
 
 \item{facet_ncol}{numeric value indicating number of facets per row.}
-
-\item{facet}{set layout to use treatment facetting.}
 
 \item{facet_var}{variable to use for treatment facetting.}
 
@@ -115,8 +112,11 @@ ADLB <- ADLB \%>\%
       ARMCD == "ARM B" ~ 2,
       ARMCD == "ARM A" ~ 3),
     ARM = as.character(arm_mapping[match(ARM, names(arm_mapping))]),
-    ARM = factor(ARM) \%>\% reorder(TRTORD))
+    ARM = factor(ARM) \%>\% reorder(TRTORD),
+    ACTARM = as.character(arm_mapping[match(ACTARM, names(arm_mapping))]),
+    ACTARM = factor(ACTARM) \%>\% reorder(TRTORD))
 attr(ADLB[["ARM"]], "label") <- var_labels[["ARM"]]
+attr(ADLB[["ACTARM"]], 'label') <- var_labels[["ACTARM"]]
 
 app <- init(
   data = cdisc_data(
@@ -144,8 +144,11 @@ app <- init(
                     ARMCD == 'ARM B' ~ 2,
                     ARMCD == 'ARM A' ~ 3),
                   ARM = as.character(arm_mapping[match(ARM, names(arm_mapping))]),
-                  ARM = factor(ARM) \%>\% reorder(TRTORD))
-               attr(ADLB[['ARM']], 'label') <- var_labels[['ARM']]",
+                  ARM = factor(ARM) \%>\% reorder(TRTORD),
+                  ACTARM = as.character(arm_mapping[match(ACTARM, names(arm_mapping))]),
+                  ACTARM = factor(ACTARM) \%>\% reorder(TRTORD))
+               attr(ADLB[['ARM']], 'label') <- var_labels[['ARM']]
+               attr(ADLB[['ACTARM']], 'label') <- var_labels[['ACTARM']]",
       vars = list(ADSL = adsl, arm_mapping = arm_mapping)),
     check = TRUE
     ),
@@ -164,8 +167,7 @@ app <- init(
        shape_manual = c("N"  = 1, "Y"  = 2, "NA" = 0),
        plot_height = c(500, 200, 2000),
        facet_ncol = 2,
-       facet = FALSE,
-       facet_var = "ARM",
+       facet_var = choices_selected(c("ARM", "ACTARM"), "ARM"),
        reg_line = FALSE,
        font_size = c(12, 8, 20),
        dot_size = c(1, 1, 12),
