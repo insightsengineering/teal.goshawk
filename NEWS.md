@@ -4,8 +4,7 @@
 * Move `code` argument to `cdisc_dataset` (from `cdisc_data`) in examples.
 * Changing slider titles from Transparency to Alpha for `tm_g_gh_boxplot` and `tm_g_gh_spaghettiplot`.
 * Replace `plot_with_height` module with new `plot_with_settings` module.
-* Allow to set a minimum number of observations to render a node in `tm_g_gh_lineplot` and allow to
-change the font size in the table
+* Allow to set a minimum number of observations to render a node in `tm_g_gh_lineplot` and allow to change the font size in the table.
 * issues with no news:
 
 # teal.goshawk 0.1.5
