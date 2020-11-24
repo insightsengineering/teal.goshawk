@@ -97,6 +97,7 @@ arm_mapping <- list("A: Drug X" = "150mg QD",
 
 ADSL <- radsl(N = 20, seed = 1)
 ADLB <- radlb(ADSL, visit_format = "WEEK", n_assessments = 7L, seed = 2)
+var_labels <- sapply(ADLB, function(x) attributes(x)$label)
 ADLB <- ADLB \%>\%
   mutate(AVISITCD = case_when(
       AVISIT == "SCREENING" ~ "SCR",
@@ -115,7 +116,7 @@ ADLB <- ADLB \%>\%
       ARMCD == "ARM A" ~ 3),
     ARM = as.character(arm_mapping[match(ARM, names(arm_mapping))]),
     ARM = factor(ARM) \%>\% reorder(TRTORD))
-
+attr(ADLB[["ARM"]], "label") <- var_labels[["ARM"]]
 
 app <- init(
   data = cdisc_data(
@@ -124,6 +125,7 @@ app <- init(
       "ADLB",
       ADLB,
       code = "ADLB <- radlb(ADSL, visit_format = 'WEEK', n_assessments = 7L, seed = 2)
+              var_labels <- sapply(ADLB, function(x) attributes(x)$label)
               ADLB <- ADLB \%>\%
                 mutate(AVISITCD = case_when(
                     AVISIT == 'SCREENING' ~ 'SCR',
@@ -142,7 +144,8 @@ app <- init(
                     ARMCD == 'ARM B' ~ 2,
                     ARMCD == 'ARM A' ~ 3),
                   ARM = as.character(arm_mapping[match(ARM, names(arm_mapping))]),
-                  ARM = factor(ARM) \%>\% reorder(TRTORD))",
+                  ARM = factor(ARM) \%>\% reorder(TRTORD))
+               attr(ADLB[['ARM']], 'label') <- var_labels[['ARM']]",
       vars = list(ADSL = adsl, arm_mapping = arm_mapping)),
     check = TRUE
     ),

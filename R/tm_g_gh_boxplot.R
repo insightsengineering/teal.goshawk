@@ -55,6 +55,7 @@
 #'
 #' ADSL <- radsl(N = 20, seed = 1)
 #' ADLB <- radlb(ADSL, visit_format = "WEEK", n_assessments = 7L, seed = 2)
+#' var_labels <- sapply(ADLB, function(x) attributes(x)$label)
 #' ADLB <- ADLB %>%
 #'   mutate(AVISITCD = case_when(
 #'     AVISIT == "SCREENING" ~ "SCR",
@@ -73,8 +74,7 @@
 #'       ARMCD == "ARM A" ~ 3),
 #'     ARM = as.character(arm_mapping[match(ARM, names(arm_mapping))]),
 #'     ARM = factor(ARM) %>% reorder(TRTORD))
-#'
-#' attr(ADLB$ARM, "label") <- "Description of Planned Arm"
+#' attr(ADLB[["ARM"]], "label") <- var_labels[["ARM"]]
 #'
 #' app <- teal::init(
 #'   data = cdisc_data(
@@ -83,6 +83,7 @@
 #'       "ADLB",
 #'       ADLB,
 #'       code = "ADLB <- radlb(ADSL, visit_format = 'WEEK', n_assessments = 7L, seed = 2)
+#'            var_labels <- sapply(ADLB, function(x) attributes(x)$label)
 #'            ADLB <- ADLB %>%
 #'              mutate(AVISITCD = case_when(
 #'                  AVISIT == 'SCREENING' ~ 'SCR',
@@ -101,7 +102,8 @@
 #'                  ARMCD == 'ARM B' ~ 2,
 #'                  ARMCD == 'ARM A' ~ 3),
 #'              ARM = as.character(arm_mapping[match(ARM, names(arm_mapping))]),
-#'              ARM = factor(ARM) %>% reorder(TRTORD))",
+#'              ARM = factor(ARM) %>% reorder(TRTORD))
+#'           attr(ADLB[['ARM']], 'label') <- var_labels[['ARM']]",
 #'       vars = list(ADSL = adsl, arm_mapping = arm_mapping)),
 #'     check = TRUE
 #'   ),
@@ -304,7 +306,6 @@ srv_g_boxplot <- function(input,
     rotate_xlab <- input$rotate_xlab
     hline <- input$hline
     trt_group <- input$trt_group
-    armlabel <- get_variable_labels(anl_chunks()$ANL, trt_group)
     # nolint end
     validate(need(input$trt_group, "Please select a treatment variable"))
     validate(need(!is.null(xaxis), "Please select an X-Axis Variable"))
@@ -343,7 +344,6 @@ srv_g_boxplot <- function(input,
           alpha = .(alpha),
           dot_size = .(dot_size),
           font_size = .(font_size),
-          armlabel = .(armlabel),
           unit = .("AVALU")
         )
       })

@@ -51,6 +51,7 @@
 #'
 #' ADSL <- radsl(cached = TRUE)
 #' ADLB <- radlb(cached = TRUE)
+#' var_labels <- sapply(ADLB, function(x) attributes(x)$label)
 #' ADLB <- ADLB %>%
 #'   mutate(AVISITCD = case_when(
 #'       AVISIT == "SCREENING" ~ "SCR",
@@ -68,7 +69,11 @@
 #'       ARMCD == "ARM B" ~ 2,
 #'       ARMCD == "ARM A" ~ 3),
 #'     ARM = as.character(arm_mapping[match(ARM, names(arm_mapping))]),
-#'     ARM = factor(ARM) %>% reorder(TRTORD))
+#'     ARM = factor(ARM) %>% reorder(TRTORD),
+#'     ACTARM = as.character(arm_mapping[match(ACTARM, names(arm_mapping))]),
+#'     ACTARM = factor(ACTARM) %>% reorder(TRTORD))
+#' attr(ADLB[["ARM"]], "label") <- var_labels[["ARM"]]
+#' attr(ADLB[["ACTARM"]], 'label') <- var_labels[["ACTARM"]]
 #'
 #' app <- init(
 #'   data = cdisc_data(
@@ -77,6 +82,7 @@
 #'       "ADLB",
 #'       ADLB,
 #'       code = "ADLB <- radlb(cached = TRUE)
+#'               var_labels <- sapply(ADLB, function(x) attributes(x)$label)
 #'               ADLB <- ADLB %>%
 #'                 mutate(AVISITCD = case_when(
 #'                     AVISIT == 'SCREENING' ~ 'SCR',
@@ -95,7 +101,11 @@
 #'                     ARMCD == 'ARM B' ~ 2,
 #'                     ARMCD == 'ARM A' ~ 3),
 #'                   ARM = as.character(arm_mapping[match(ARM, names(arm_mapping))]),
-#'                   ARM = factor(ARM) %>% reorder(TRTORD))",
+#'                   ARM = factor(ARM) %>% reorder(TRTORD),
+#'                   ACTARM = as.character(arm_mapping[match(ACTARM, names(arm_mapping))]),
+#'                   ACTARM = factor(ACTARM) %>% reorder(TRTORD))
+#'                attr(ADLB[['ARM']], 'label') <- var_labels[['ARM']]
+#'                attr(ADLB[['ACTARM']], 'label') <- var_labels[['ACTARM']]",
 #'       vars = list(arm_mapping = arm_mapping)),
 #'     check = TRUE
 #'     ),
@@ -515,18 +525,13 @@ srv_g_correlationplot <- function(input,
     validate(need(nrow(ANL_TRANSPOSED) > 0, "Plot Data No Observations Left"))
     validate_has_variable(data = ANL_TRANSPOSED, varname = c(xvar(), yvar(), xloqfl(), yloqfl()))
 
-
     chunks_push(
       chunks = private_chunks,
       id = "ANL_attributes",
-      expression = if (trt_group == "ARM") {
-        bquote(attr(ANL_TRANSPOSED$ARM, "label") <- "Planned Arm")
-      } else {
-        bquote(attr(ANL_TRANSPOSED[[.(trt_group)]], "label") <- "Actual Arm")
-      }
+      expression =
+        bquote(attr(ANL_TRANSPOSED[[.(trt_group)]], "label") <- attr(ANL[[.(trt_group)]], "label"))
     )
     chunks_push_new_line(private_chunks)
-
 
     return(list(ANL_TRANSPOSED = ANL_TRANSPOSED, chunks = private_chunks))
   })
@@ -630,7 +635,6 @@ srv_g_correlationplot <- function(input,
 
     # promote chunks to be visible in the sessionData by other modules
     init_chunks(private_chunks)
-
     chunks_get_var("p")
   })
 
