@@ -339,9 +339,8 @@ srv_lineplot <- function(input,
     hline <- if (is.na(input$hline)) NULL else as.numeric(input$hline)
     median <- ifelse(input$stat == "median", TRUE, FALSE)
     plot_height <- input$plot_height
-    validate(need(input$trt_group, "Please select a treatment ARM"))
+    validate(need(input$trt_group, "Please select a treatment variable"))
     trt_group <- input$trt_group
-
     validate(need(input$xaxis_var, "Please select an X-Axis Variable"))
     validate(need(input$yaxis_var, "Please select a Y-Axis Variable"))
 

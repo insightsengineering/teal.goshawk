@@ -269,7 +269,7 @@ srv_g_scatterplot <- function(input,
     rotate_xlab <- input$rotate_xlab
     hline <- input$hline
     vline <- input$vline
-    validate(need(input$trt_group, "Please select a treatment ARM"))
+    validate(need(input$trt_group, "Please select a treatment variable"))
     trt_group <- input$trt_group
 
     # Below inputs should trigger plot via updates of other reactive objects (i.e. anl_chunk()) and some inputs

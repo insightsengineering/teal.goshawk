@@ -74,6 +74,8 @@
 #'     ARM = as.character(arm_mapping[match(ARM, names(arm_mapping))]),
 #'     ARM = factor(ARM) %>% reorder(TRTORD))
 #'
+#' attr(ADLB$ARM, "label") <- "Description of Planned Arm"
+#'
 #' app <- teal::init(
 #'   data = cdisc_data(
 #'     adsl <- cdisc_dataset("ADSL", ADSL, code = "ADSL <- radsl(N = 20, seed = 1)"),
@@ -304,7 +306,7 @@ srv_g_boxplot <- function(input,
     trt_group <- input$trt_group
     armlabel <- get_variable_labels(anl_chunks()$ANL, trt_group)
     # nolint end
-    validate(need(input$trt_group, "Please select a treatment ARM"))
+    validate(need(input$trt_group, "Please select a treatment variable"))
     validate(need(!is.null(xaxis), "Please select an X-Axis Variable"))
     validate(need(!is.null(yaxis), "Please select a Y-Axis Variable"))
     validate_has_variable(

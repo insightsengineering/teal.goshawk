@@ -299,7 +299,7 @@ srv_g_spaghettiplot <- function(input,
     group_stats <- input$group_stats
     font_size <- input$font_size
     alpha <- input$alpha
-    validate(need(input$trt_group, "Please select a treatment ARM"))
+    validate(need(input$trt_group, "Please select a treatment variable"))
     trt_group <- input$trt_group
 
     # Below inputs should trigger plot via updates of other reactive objects (i.e. anl_chunk()) and some inputs

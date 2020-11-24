@@ -284,7 +284,7 @@ srv_g_density_distribution_plot <- function(input, # nolint
     rotate_xlab <- input$rotate_xlab
     trt_group <- input$trt_group
     #nolint end
-    validate(need(input$trt_group, "Please select a treatment ARM"))
+    validate(need(input$trt_group, "Please select a treatment variable"))
 
     chunks_push(
       chunks = private_chunks,

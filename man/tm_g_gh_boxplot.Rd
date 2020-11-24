@@ -116,6 +116,8 @@ ADLB <- ADLB \%>\%
     ARM = as.character(arm_mapping[match(ARM, names(arm_mapping))]),
     ARM = factor(ARM) \%>\% reorder(TRTORD))
 
+attr(ADLB$ARM, "label") <- "Description of Planned Arm"
+
 app <- teal::init(
   data = cdisc_data(
     adsl <- cdisc_dataset("ADSL", ADSL, code = "ADSL <- radsl(N = 20, seed = 1)"),

@@ -582,7 +582,7 @@ srv_g_correlationplot <- function(input,
     title_text <- plot_labels()$title_text
     xaxis_lab  <- plot_labels()$xaxis_lab
     yaxis_lab  <- plot_labels()$yaxis_lab
-    validate(need(input$trt_group, "Please select a treatment ARM"))
+    validate(need(input$trt_group, "Please select a treatment variable"))
     trt_group <- input$trt_group
 
     chunks_push(
