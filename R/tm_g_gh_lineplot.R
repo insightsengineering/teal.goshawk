@@ -223,6 +223,8 @@ ui_lineplot <- function(id, ...) {
         panel_item(
           title = "Plot settings",
           optionalSliderInputValMinMax(ns("dodge"), "Error Bar Position Dodge", a$dodge, ticks = FALSE),
+          uiOutput(ns("lines")),
+          uiOutput(ns("symbols")),
           optionalSliderInputValMinMax(ns("plot_font_size"),  "Font Size", a$plot_font_size, ticks = FALSE)
         ),
         panel_item(
@@ -333,10 +335,134 @@ srv_lineplot <- function(input,
     ))
   })
 
+
+  line_color_start <-  if (is.null(color_manual)) {
+    c("#ff0000", "#008000", "#4ca3dd", "#8a2be2")
+  } else {
+    color_manual
+  }
+  line_color_defaults <- reactiveVal(line_color_start)
+
+  line_type_start <- "dashed"
+  line_type_defaults <- reactiveVal(line_type_start)
+
+  observe({
+    anl_arm <- anl_chunks()$ANL$ARM
+    anl_arm_nlevels <- nlevels(anl_arm)
+
+    line_color_to_set <- if (length(line_color_defaults()) <= anl_arm_nlevels) {
+      c(line_color_defaults(), rainbow(anl_arm_nlevels - length(line_color_defaults())))
+    } else {
+      line_color_defaults()[seq_len(anl_arm_nlevels)]
+    }
+    line_color_defaults(line_color_to_set)
+
+    line_type_to_set <- if (length(line_type_defaults()) <= anl_arm_nlevels) {
+      c(line_type_defaults(), rep("dashed", anl_arm_nlevels - length(line_type_defaults())))
+    } else {
+      line_type_defaults()[seq_len(anl_arm_nlevels)]
+    }
+    line_type_defaults(line_type_to_set)
+  })
+
+  line_color_selected <- reactive({
+    anl_arm <- isolate(anl_chunks()$ANL$ARM)
+    anl_arm_nlevels <- nlevels(anl_arm)
+    anl_arm_levels <- levels(anl_arm)
+
+    setNames(
+      vapply(
+        seq_len(anl_arm_nlevels),
+        function(idx) {
+          x <- anl_arm_levels[[idx]]
+          x_id <- gsub(" ", "_", x)
+          if_null(input[[paste0("line_color_", x_id)]], isolate(line_color_defaults())[[idx]])
+        },
+        character(1)
+      ),
+      anl_arm_levels
+    )
+  })
+
+  line_type_selected <- reactive({
+    anl_arm <- isolate(anl_chunks()$ANL$ARM)
+    anl_arm_nlevels <- nlevels(anl_arm)
+    anl_arm_levels <- levels(anl_arm)
+
+    setNames(
+      vapply(
+        seq_len(anl_arm_nlevels),
+        function(idx) {
+          x <- anl_arm_levels[[idx]]
+          x_id <- gsub(" ", "_", x)
+          if_null(input[[paste0("line_type_", x_id)]], isolate(line_type_defaults())[[idx]])
+        },
+        character(1)
+      ),
+      anl_arm_levels
+    )
+  })
+
+  output$lines <- renderUI({
+    anl_arm <- isolate(anl_chunks()$ANL$ARM)
+    anl_arm_nlevels <- nlevels(anl_arm)
+    anl_arm_levels <- levels(anl_arm)
+    color_def <- line_color_defaults()
+    type_def <- line_type_defaults()
+    tagList(
+      lapply(
+        seq_len(anl_arm_nlevels),
+        function(idx) {
+          x <- anl_arm_levels[[idx]]
+          x_id <- gsub(" ", "_", x)
+          x_color <- color_def[[idx]]
+          color_input <- colourpicker::colourInput(
+            ns(paste0("line_color_", x_id)),
+            "Color:",
+            x_color
+          )
+          x_type <- type_def[[idx]]
+          type_input <- selectInput(
+            ns(paste0("line_type_", x_id)),
+            "Type:",
+            choices = c(
+              "blank",
+              "solid",
+              "dashed",
+              "dotted",
+              "dotdash",
+              "longdash",
+              "twodash",
+              "1F",
+              "F1",
+              "4C88C488",
+              "12345678"
+            ),
+            x_type
+          )
+          fluidRow(
+            column(
+              width = 12,
+              tags$label("Line configuration for:", tags$code(x))
+            ),
+            column(
+              width = 6,
+              color_input
+            ),
+            column(
+              width = 6,
+              type_input
+            )
+          )
+        }
+      )
+    )
+  })
+
+
   plot_r <- reactive({
     ac <- anl_chunks()
     private_chunks <- ac$chunks$clone(deep = TRUE)
-    # nolint start
     yrange_scale <- yrange_slider$state()$value
     plot_font_size <- input$plot_font_size
     dodge <- input$dodge
@@ -346,6 +472,8 @@ srv_lineplot <- function(input,
     hline <- if (is.na(input$hline)) NULL else as.numeric(input$hline)
     median <- ifelse(input$stat == "median", TRUE, FALSE)
     plot_height <- input$plot_height
+    color_selected <- line_color_selected()
+    type_selected <- line_type_selected()
 
     validate(need(input$xaxis_var, "Please select an X-Axis Variable"))
     validate(need(input$yaxis_var, "Please select a Y-Axis Variable"))
@@ -353,7 +481,6 @@ srv_lineplot <- function(input,
     param <- input$xaxis_param
     xaxis <- input$xaxis_var
     yaxis <- input$yaxis_var
-    # nolint end
 
     shape <- if (!(is.null(input$shape) || input$shape == "None")) {
       input$shape
@@ -377,7 +504,8 @@ srv_lineplot <- function(input,
           shape = .(shape),
           time = .(xaxis),
           time_level = .(xvar_level),
-          color_manual = .(color_manual),
+          color_manual = .(color_selected),
+          line_type = .(type_selected),
           median = .(median),
           hline = .(hline),
           xtick = .(xtick),
