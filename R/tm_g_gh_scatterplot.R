@@ -286,7 +286,7 @@ srv_g_scatterplot <- function(input,
     validate(need(trt_group, "Please select a treatment variable"))
     if (!is.null(input$facet_var)) {
       validate(need(
-        !facet_var %in% c("ACTARM","ARM")[!c("ACTARM","ARM") %in% trt_group],
+        !facet_var %in% c("ACTARM", "ARM")[!c("ACTARM", "ARM") %in% trt_group],
         sprintf("You can not choose %s as facetting variable for treatment variable %s.", facet_var, trt_group)
       ))
     }

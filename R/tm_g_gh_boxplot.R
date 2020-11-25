@@ -330,11 +330,11 @@ srv_g_boxplot <- function(input,
       sprintf("Variable %s is not available in data %s", facet_var, dataname))
 
     validate(need(
-      !facet_var %in% c("ACTARM","ARM")[!c("ACTARM","ARM") %in% trt_group],
+      !facet_var %in% c("ACTARM", "ARM")[!c("ACTARM", "ARM") %in% trt_group],
       sprintf("You can not choose %s as facetting variable for treatment variable %s.", facet_var, trt_group)
       ))
     validate(need(
-      !xaxis %in% c("ACTARM","ARM")[!c("ACTARM","ARM") %in% trt_group],
+      !xaxis %in% c("ACTARM", "ARM")[!c("ACTARM", "ARM") %in% trt_group],
       sprintf("You can not choose %s as facetting variable for treatment variable %s.", xaxis, trt_group)
     ))
 
@@ -356,7 +356,7 @@ srv_g_boxplot <- function(input,
           ymax_scale = .(yrange_scale[[2]]),
           color_manual = .(color_manual),
           shape_manual = .(shape_manual),
-          facet = .(facet_var),
+          facet_var = .(facet_var),
           alpha = .(alpha),
           dot_size = .(dot_size),
           font_size = .(font_size),

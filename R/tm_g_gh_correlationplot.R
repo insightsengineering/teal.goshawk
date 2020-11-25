@@ -348,8 +348,12 @@ srv_g_correlationplot <- function(input,
 
     if (!is.null(input$facet_var)) {
       validate(need(
-        !input$facet_var %in% c("ACTARM","ARM")[!c("ACTARM","ARM") %in% input$trt_group],
-        sprintf("You can not choose %s as facetting variable for treatment variable %s.", input$facet_var, input$trt_group)
+        !input$facet_var %in% c("ACTARM", "ARM")[!c("ACTARM", "ARM") %in% input$trt_group],
+        sprintf(
+          "You can not choose %s as facetting variable for treatment variable %s.",
+          input$facet_var,
+          input$trt_group
+          )
       ))
       }
     # analysis
