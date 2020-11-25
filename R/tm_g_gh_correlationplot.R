@@ -150,7 +150,7 @@ tm_g_gh_correlationplot <- function(label,
                                     shape_manual = NULL,
                                     facet_ncol = 2,
                                     visit_facet = TRUE,
-                                    facet_var = choices_selected(c("ARM", "ACTARM"), "ARM"),
+                                    facet_var = choices_selected(c("ARM", "ACTARM")),
                                     reg_line = FALSE,
                                     loq_legend = TRUE,
                                     rotate_xlab = FALSE,
@@ -220,7 +220,7 @@ ui_g_correlationplot <- function(id, ...) {
         ns("facet_var"),
         label = "Facet by",
         choices = a$facet_var$choices,
-        selected = a$facet_var$selected,
+        selected = NULL,
         multiple = FALSE),
       templ_ui_constraint(ns, "X-Axis Data Constraint"), # required by constr_anl_chunks
       panel_group(
@@ -269,7 +269,7 @@ srv_g_correlationplot <- function(input,
                                   shape_manual,
                                   plot_height,
                                   plot_width) {
-  # filter seected biomarkers
+  # filter selected biomarkers
   anl_param <- reactive({
     validate(need(input$xaxis_param, "Please select an X-Axis Biomarker"))
     validate(need(input$xaxis_var, "Please select an X-Axis Variable"))
@@ -346,6 +346,12 @@ srv_g_correlationplot <- function(input,
       input$yaxis_var,
       sprintf("Variable %s is not available in data %s", input$yaxis_var, dataname))
 
+    if (!is.null(input$facet_var)) {
+      validate(need(
+        identical(input$trt_group, input$facet_var),
+        "Please choose the same facetting variable as the treatment variable"
+        ))
+      }
     # analysis
     private_chunks <- chunks$new()
     chunks_reset(as.environment(setNames(list(ANL_FILTERED), dataset_var)), private_chunks)

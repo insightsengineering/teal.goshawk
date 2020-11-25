@@ -17,7 +17,7 @@ tm_g_gh_correlationplot(
   shape_manual = NULL,
   facet_ncol = 2,
   visit_facet = TRUE,
-  facet_var = choices_selected(c("ARM", "ACTARM"), "ARM"),
+  facet_var = choices_selected(c("ARM", "ACTARM")),
   reg_line = FALSE,
   loq_legend = TRUE,
   rotate_xlab = FALSE,

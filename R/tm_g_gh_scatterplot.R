@@ -116,7 +116,7 @@
 #'        shape_manual = c("N"  = 1, "Y"  = 2, "NA" = 0),
 #'        plot_height = c(500, 200, 2000),
 #'        facet_ncol = 2,
-#'        facet_var = choices_selected(c("ARM", "ACTARM"), "ARM"),
+#'        facet_var = choices_selected(c("ARM", "ACTARM")),
 #'        reg_line = FALSE,
 #'        font_size = c(12, 8, 20),
 #'        dot_size = c(1, 1, 12),
@@ -139,7 +139,7 @@ tm_g_gh_scatterplot <- function(label,
                                 color_manual = NULL,
                                 shape_manual = NULL,
                                 facet_ncol = 2,
-                                facet_var = choices_selected(c("ARM", "ACTARM"), "ARM"),
+                                facet_var = choices_selected(c("ARM", "ACTARM")),
                                 reg_line = FALSE,
                                 rotate_xlab = FALSE,
                                 hline = NULL,
@@ -207,7 +207,7 @@ ui_g_scatterplot <- function(id, ...) {
         ns("facet_var"),
         label = "Facet by",
         choices = a$facet_var$choices,
-        selected = a$facet_var$selected,
+        selected = NULL,
         multiple = FALSE),
       templ_ui_constraint(ns), # required by constr_anl_chunks
       panel_group(
@@ -284,7 +284,12 @@ srv_g_scatterplot <- function(input,
     trt_group <- input$trt_group
     facet_var <- input$facet_var
     facet <- if (is.null(input$facet_var)) FALSE else TRUE
-
+    if (!is.null(input$facet_var)) {
+      validate(need(
+        identical(input$trt_group, input$facet_var),
+        "Please choose the same facetting variable as the treatment variable"
+        ))
+      }
     # Below inputs should trigger plot via updates of other reactive objects (i.e. anl_chunk()) and some inputs
     validate(need(input$xaxis_var, "Please select an X-Axis Variable"))
     validate(need(input$yaxis_var, "Please select a Y-Axis Variable"))
