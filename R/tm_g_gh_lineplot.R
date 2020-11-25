@@ -31,8 +31,11 @@
 #' @param rotate_xlab boolean value indicating whether to rotate x-axis labels.
 #' @param plot_height controls plot height.
 #' @param plot_width optional, controls plot width.
-#' @param font_size control font size for title, x-axis, y-axis and legend font.
-#' @param dodge control the position dodge of error bar
+#' @param plot_font_size control font size for title, x-axis, y-axis and legend font.
+#' @param dodge controls the position dodge of error bar
+#' @param count_threshold minimum count of observations (as listed in the output table) to plot
+#' nodes on the graph
+#' @param table_font_size controls the font size of values in the table
 #'
 #' @importFrom ggplot2 waiver
 #' @importFrom grDevices extendrange
@@ -144,16 +147,21 @@ tm_g_gh_lineplot <- function(label,
                              rotate_xlab = FALSE,
                              plot_height = c(600, 200, 2000),
                              plot_width = NULL,
-                             font_size = c(12, 8, 20),
+                             plot_font_size = c(12, 8, 20),
                              dodge = c(0.4, 0, 1),
                              pre_output = NULL,
-                             post_output = NULL) {
+                             post_output = NULL,
+                             count_threshold = 0,
+                             table_font_size = c(12, 4, 20)
+                             ) {
 
   stopifnot(is.choices_selected(xaxis_var))
   stopifnot(is.choices_selected(yaxis_var))
   stopifnot(is.choices_selected(param))
   check_slider_input(plot_height, allow_null = FALSE)
   check_slider_input(plot_width)
+  check_slider_input(table_font_size)
+  stopifnot(is_numeric_single(count_threshold))
 
   args <- as.list(environment())
 
@@ -209,12 +217,17 @@ ui_lineplot <- function(id, ...) {
             max = 1000000,
             value = c(-1000000, 1000000)),
           checkboxInput(ns("rotate_xlab"), "Rotate X-axis Label", a$rotate_xlab),
-          numericInput(ns("hline"), "Add a horizontal line:", a$hline)
+          numericInput(ns("hline"), "Add a horizontal line:", a$hline),
+          numericInput(ns("count_threshold"), "Contributing Observations Threshold:", a$count_threshold)
         ),
         panel_item(
           title = "Plot settings",
           optionalSliderInputValMinMax(ns("dodge"), "Error Bar Position Dodge", a$dodge, ticks = FALSE),
-          optionalSliderInputValMinMax(ns("font_size"),  "Font Size", a$font_size, ticks = FALSE)
+          optionalSliderInputValMinMax(ns("plot_font_size"),  "Font Size", a$plot_font_size, ticks = FALSE)
+        ),
+        panel_item(
+          title = "Table settings",
+          optionalSliderInputValMinMax(ns("table_font_size"), "Table Font Size", a$table_font_size, ticks = FALSE)
         )
       )
     ),
@@ -325,9 +338,11 @@ srv_lineplot <- function(input,
     private_chunks <- ac$chunks$clone(deep = TRUE)
     # nolint start
     yrange_scale <- yrange_slider$state()$value
-    font_size <- input$font_size
+    plot_font_size <- input$plot_font_size
     dodge <- input$dodge
     rotate_xlab <- input$rotate_xlab
+    count_threshold <- if_na(as.numeric(input$count_threshold), 0)
+    table_font_size <- input$table_font_size
     hline <- if (is.na(input$hline)) NULL else as.numeric(input$hline)
     median <- ifelse(input$stat == "median", TRUE, FALSE)
     plot_height <- input$plot_height
@@ -368,8 +383,10 @@ srv_lineplot <- function(input,
           xtick = .(xtick),
           xlabel = .(xlabel),
           rotate_xlab = .(rotate_xlab),
-          font_size = .(font_size),
+          plot_font_size = .(plot_font_size),
           dodge = .(dodge),
+          count_threshold = .(count_threshold),
+          table_font_size = .(table_font_size)
         )
         print(p)
       })
