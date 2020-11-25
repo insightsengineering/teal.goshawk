@@ -5,6 +5,7 @@
 * Changing slider titles from Transparency to Alpha for `tm_g_gh_boxplot` and `tm_g_gh_spaghettiplot`.
 * Replace `plot_with_height` module with new `plot_with_settings` module. 
 * Add drop down selector for treatment ARM `trt_group`.
+* Introduce `facet_var` drop down in `tm_g_gh_scatterplot` and `tm_g_gh_correlationplot`.
 * issues with no news:
 
 # teal.goshawk 0.1.5

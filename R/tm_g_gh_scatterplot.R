@@ -280,16 +280,17 @@ srv_g_scatterplot <- function(input,
     rotate_xlab <- input$rotate_xlab
     hline <- input$hline
     vline <- input$vline
-    validate(need(input$trt_group, "Please select a treatment variable"))
     trt_group <- input$trt_group
     facet_var <- input$facet_var
     facet <- if (is.null(input$facet_var)) FALSE else TRUE
+    validate(need(trt_group, "Please select a treatment variable"))
     if (!is.null(input$facet_var)) {
       validate(need(
-        identical(input$trt_group, input$facet_var),
-        "Please choose the same facetting variable as the treatment variable"
-        ))
-      }
+        !facet_var %in% c("ACTARM","ARM")[!c("ACTARM","ARM") %in% trt_group],
+        sprintf("You can not choose %s as facetting variable for treatment variable %s.", facet_var, trt_group)
+      ))
+    }
+
     # Below inputs should trigger plot via updates of other reactive objects (i.e. anl_chunk()) and some inputs
     validate(need(input$xaxis_var, "Please select an X-Axis Variable"))
     validate(need(input$yaxis_var, "Please select a Y-Axis Variable"))
