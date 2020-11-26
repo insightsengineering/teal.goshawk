@@ -38,7 +38,8 @@
 #' @param table_font_size controls the font size of values in the table
 #'
 #' @importFrom ggplot2 waiver
-#' @importFrom grDevices extendrange
+#' @importFrom grDevices extendrange rainbow
+#' @importFrom colourpicker colourInput
 #'
 #' @author Wenyi Liu (luiw2) wenyi.liu@roche.com
 #' @author Balazs Toth (tothb2) toth.balazs@gene.com
@@ -223,8 +224,16 @@ ui_lineplot <- function(id, ...) {
         panel_item(
           title = "Plot settings",
           optionalSliderInputValMinMax(ns("dodge"), "Error Bar Position Dodge", a$dodge, ticks = FALSE),
-          uiOutput(ns("lines")),
-          uiOutput(ns("symbols")),
+          panel_group(
+            panel_item(
+              title = "Line Settings",
+              uiOutput(ns("lines"))
+            ),
+            panel_item(
+              title = "Symbol settings",
+              uiOutput(ns("symbols"))
+            )
+          ),
           optionalSliderInputValMinMax(ns("plot_font_size"),  "Font Size", a$plot_font_size, ticks = FALSE)
         ),
         panel_item(
@@ -438,7 +447,7 @@ srv_lineplot <- function(input,
               "4C88C488",
               "12345678"
             ),
-            x_type
+            selected = x_type
           )
           fluidRow(
             column(
@@ -460,9 +469,72 @@ srv_lineplot <- function(input,
   })
 
 
+  symbol_type_start <- c(15:18, 3:14, 0:2)
+  symbol_type_defaults <- reactiveVal(symbol_type_start)
+
+  observe({
+    req(input$shape)
+    anl_shape <- anl_chunks()$ANL[[input$shape]]
+    anl_shape_nlevels <- nlevels(anl_shape)
+
+    symbol_type_to_set <- symbol_type_start[pmin(length(symbol_type_start), seq_len(anl_shape_nlevels))]
+    symbol_type_defaults(symbol_type_to_set)
+  })
+
+  symbol_type_selected <- reactive({
+    if (is.null(input$shape)) {
+      return(NULL)
+    }
+    anl_shape <- isolate(anl_chunks()$ANL[[input$shape]])
+    anl_shape_nlevels <- nlevels(anl_shape)
+    anl_shape_levels <- levels(anl_shape)
+
+    setNames(
+      vapply(
+        seq_len(anl_shape_nlevels),
+        function(idx) {
+          x <- anl_shape_levels[[idx]]
+          x_id <- gsub(" ", "_", x)
+          if_empty(as.integer(input[[paste0("symbol_type_", x_id)]]), isolate(symbol_type_defaults())[[idx]])
+        },
+        integer(1)
+      ),
+      anl_shape_levels
+    )
+  })
+
+  output$symbols <- renderUI({
+    validate(need(input$shape, "Please select line splitting variable first."))
+    anl_shape <- anl_chunks()$ANL[[input$shape]]
+    anl_shape_nlevels <- nlevels(anl_shape)
+    anl_shape_levels <- levels(anl_shape)
+    symbol_def <- symbol_type_defaults()
+
+    tagList(
+      lapply(
+        seq_len(anl_shape_nlevels),
+        function(idx) {
+          x <- anl_shape_levels[[idx]]
+          x_id <- gsub(" ", "_", x)
+          x_color <- symbol_def[[idx]]
+          selectInput(
+            ns(paste0("symbol_type_", x_id)),
+            HTML(paste0("Symbol for: ", tags$code(x))),
+            choices = symbol_type_start,
+            selected = x_color
+          )
+        }
+      )
+    )
+
+  })
+
+
   plot_r <- reactive({
     ac <- anl_chunks()
     private_chunks <- ac$chunks$clone(deep = TRUE)
+
+    # nolint start
     yrange_scale <- yrange_slider$state()$value
     plot_font_size <- input$plot_font_size
     dodge <- input$dodge
@@ -474,13 +546,17 @@ srv_lineplot <- function(input,
     plot_height <- input$plot_height
     color_selected <- line_color_selected()
     type_selected <- line_type_selected()
+    symbol_selected <- symbol_type_selected()
+    # nolint end
 
     validate(need(input$xaxis_var, "Please select an X-Axis Variable"))
     validate(need(input$yaxis_var, "Please select a Y-Axis Variable"))
 
+    # nolint start
     param <- input$xaxis_param
     xaxis <- input$xaxis_var
     yaxis <- input$yaxis_var
+    # nolint end
 
     shape <- if (!(is.null(input$shape) || input$shape == "None")) {
       input$shape
@@ -502,6 +578,7 @@ srv_lineplot <- function(input,
           trt_group = .(trt_group),
           trt_group_level = .(trt_group_level),
           shape = .(shape),
+          shape_type = .(symbol_selected),
           time = .(xaxis),
           time_level = .(xvar_level),
           color_manual = .(color_selected),
