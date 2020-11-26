@@ -481,12 +481,15 @@ srv_lineplot <- function(input,
               tags$label("Line configuration for:", tags$code(x))
             ),
             column(
-              width = 6,
-              color_input
-            ),
-            column(
-              width = 6,
-              type_input
+              width = 12,
+              div(
+                style = "width: 50%; float: left;",
+                color_input
+              ),
+              div(
+                style = "width: 50%; float: left;",
+                type_input
+              )
             )
           )
         }
