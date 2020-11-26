@@ -116,7 +116,7 @@ arm_mapping <- list("A: Drug X" = "150mg QD",
 
 ADSL <- radsl(cached = TRUE)
 ADLB <- radlb(cached = TRUE)
-var_labels <- sapply(ADLB, function(x) attributes(x)$label)
+var_labels <- lapply(ADLB, function(x) attributes(x)$label)
 ADLB <- ADLB \%>\%
   mutate(AVISITCD = case_when(
     AVISIT == "SCREENING" ~ "SCR",
@@ -147,7 +147,7 @@ app <- teal::init(
       "ADLB",
       ADLB,
       code = "ADLB <- radlb(cached = TRUE)
-              var_labels <- sapply(ADLB, function(x) attributes(x)$label)
+              var_labels <- lapply(ADLB, function(x) attributes(x)$label)
               ADLB <- ADLB \%>\%
                 mutate(AVISITCD = case_when(
                     AVISIT == 'SCREENING' ~ 'SCR',

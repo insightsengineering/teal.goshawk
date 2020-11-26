@@ -44,7 +44,7 @@
 #'
 #' ADSL <- radsl(cached = TRUE)
 #' ADLB <- radlb(cached = TRUE)
-#' var_labels <- sapply(ADLB, function(x) attributes(x)$label)
+#' var_labels <- lapply(ADLB, function(x) attributes(x)$label)
 #' ADLB <- ADLB %>%
 #'   mutate(
 #'     AVISITCD = case_when(
@@ -80,7 +80,7 @@
 #'       "ADLB",
 #'       ADLB,
 #'       code = "ADLB <- radlb(cached = TRUE)
-#'               var_labels <- sapply(ADLB, function(x) attributes(x)$label)
+#'               var_labels <- lapply(ADLB, function(x) attributes(x)$label)
 #'               ADLB <- ADLB %>%
 #'                 mutate(AVISITCD = case_when(
 #'                     AVISIT == 'SCREENING' ~ 'SCR',

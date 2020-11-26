@@ -63,7 +63,7 @@
 #'
 #' ADSL <- radsl(N = 20, seed = 1)
 #' ADLB <- radlb(ADSL, visit_format = "WEEK", n_assessments = 7L, seed = 2)
-#' var_labels <- sapply(ADLB, function(x) attributes(x)$label)
+#' var_labels <- lapply(ADLB, function(x) attributes(x)$label)
 #' ADLB <- ADLB %>%
 #'   mutate(AVISITCD = case_when(
 #'     AVISIT == "SCREENING" ~ "SCR",
@@ -92,7 +92,7 @@
 #'     adsl <- cdisc_dataset("ADSL", ADSL, code = "ADSL <- radsl(N = 20, seed = 1)"),
 #'     cdisc_dataset("ADLB", ADLB,
 #'       code = "ADLB <- radlb(ADSL, visit_format = 'WEEK', n_assessments = 7L, seed = 2)
-#'               var_labels <- sapply(ADLB, function(x) attributes(x)$label)
+#'               var_labels <- lapply(ADLB, function(x) attributes(x)$label)
 #'               ADLB <- ADLB %>%
 #'                 mutate(AVISITCD = case_when(
 #'                     AVISIT == 'SCREENING' ~ 'SCR',

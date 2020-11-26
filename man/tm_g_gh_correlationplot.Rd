@@ -107,7 +107,7 @@ arm_mapping <- list("A: Drug X" = "Drug X 100mg",
 
 ADSL <- radsl(cached = TRUE)
 ADLB <- radlb(cached = TRUE)
-var_labels <- sapply(ADLB, function(x) attributes(x)$label)
+var_labels <- lapply(ADLB, function(x) attributes(x)$label)
 ADLB <- ADLB \%>\%
   mutate(AVISITCD = case_when(
       AVISIT == "SCREENING" ~ "SCR",
@@ -138,7 +138,7 @@ app <- init(
       "ADLB",
       ADLB,
       code = "ADLB <- radlb(cached = TRUE)
-              var_labels <- sapply(ADLB, function(x) attributes(x)$label)
+              var_labels <- lapply(ADLB, function(x) attributes(x)$label)
               ADLB <- ADLB \%>\%
                 mutate(AVISITCD = case_when(
                     AVISIT == 'SCREENING' ~ 'SCR',
