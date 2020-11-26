@@ -18,7 +18,8 @@
 #' @param filter_var data constraint variable.
 #' @param yaxis_var single name of variable in analysis data that is used as
 #' summary variable in the respective gshawk function.
-#' @param trt_group name of variable representing treatment group e.g. ARM.
+#' @param trt_group \code{\link[teal]{choices_selected}} object with available choices and pre-selected option
+#' for variable names representing treatment group e.g. ARM.
 #' @param trt_group_level vector that can be used to define factor
 #' level of trt_group.
 #' @param man_color string vector representing customized colors
@@ -59,6 +60,7 @@
 #'
 #' ADSL <- radsl(cached = TRUE)
 #' ADLB <- radlb(cached = TRUE)
+#' var_labels <- lapply(ADLB, function(x) attributes(x)$label)
 #' ADLB <- ADLB %>%
 #'   mutate(AVISITCD = case_when(
 #'     AVISIT == "SCREENING" ~ "SCR",
@@ -76,7 +78,11 @@
 #'       ARMCD == "ARM B" ~ 2,
 #'       ARMCD == "ARM A" ~ 3),
 #'     ARM = as.character(arm_mapping[match(ARM, names(arm_mapping))]),
-#'     ARM = factor(ARM) %>% reorder(TRTORD))
+#'     ARM = factor(ARM) %>% reorder(TRTORD),
+#'     ACTARM = as.character(arm_mapping[match(ACTARM, names(arm_mapping))]),
+#'     ACTARM = factor(ACTARM) %>% reorder(TRTORD))
+#' attr(ADLB[["ARM"]], "label") <- var_labels[["ARM"]]
+#' attr(ADLB[["ACTARM"]], 'label') <- var_labels[["ACTARM"]]
 #'
 #' app <- teal::init(
 #'   data = cdisc_data(
@@ -85,6 +91,7 @@
 #'       "ADLB",
 #'       ADLB,
 #'       code = "ADLB <- radlb(cached = TRUE)
+#'               var_labels <- lapply(ADLB, function(x) attributes(x)$label)
 #'               ADLB <- ADLB %>%
 #'                 mutate(AVISITCD = case_when(
 #'                     AVISIT == 'SCREENING' ~ 'SCR',
@@ -103,7 +110,11 @@
 #'                     ARMCD == 'ARM B' ~ 2,
 #'                     ARMCD == 'ARM A' ~ 3),
 #'                   ARM = as.character(arm_mapping[match(ARM, names(arm_mapping))]),
-#'                   ARM = factor(ARM) %>% reorder(TRTORD))",
+#'                   ARM = factor(ARM) %>% reorder(TRTORD),
+#'                   ACTARM = as.character(arm_mapping[match(ACTARM, names(arm_mapping))]),
+#'                   ACTARM = factor(ACTARM) %>% reorder(TRTORD))
+#'                attr(ADLB[['ARM']], 'label') <- var_labels[['ARM']]
+#'                attr(ADLB[['ACTARM']], 'label') <- var_labels[['ACTARM']]",
 #'       vars = list(arm_mapping = arm_mapping)),
 #'     check = TRUE
 #'     ),
@@ -118,7 +129,7 @@
 #'       yaxis_var = choices_selected(c("AVAL","CHG", "PCHG"), "AVAL"),
 #'       filter_var = choices_selected(c("None" = "NONE", "Screening" = "BASE2", "Baseline" = "BASE"),
 #'        "NONE"),
-#'       trt_group = "ARM",
+#'       trt_group = choices_selected(c("ARM", "ACTARM"), "ARM"),
 #'       color_comb = "#39ff14",
 #'       man_color = c('Combination' = "#000000",
 #'                    'Placebo' = "#fce300",
@@ -161,6 +172,7 @@ tm_g_gh_spaghettiplot <- function(label,
   stopifnot(is.choices_selected(param))
   stopifnot(is.choices_selected(xaxis_var))
   stopifnot(is.choices_selected(yaxis_var))
+  stopifnot(is.choices_selected(trt_group))
   check_slider_input(plot_height, allow_null = FALSE)
   check_slider_input(plot_width)
 
@@ -200,6 +212,12 @@ g_ui_spaghettiplot <- function(id, ...) {
     output = templ_ui_output_datatable(ns, a$plot_height, a$plot_width),
     encoding = div(
       templ_ui_dataname(a$dataname),
+      optionalSelectInput(
+        ns("trt_group"),
+        label = "Select Treatment Variable",
+        choices = a$trt_group$choices,
+        selected = a$trt_group$selected,
+        multiple = FALSE),
       templ_ui_params_vars(
         ns,
         # xparam and yparam are identical, so we only show the user one
@@ -273,7 +291,7 @@ srv_g_spaghettiplot <- function(input,
   # reused in all modules
   anl_chunks <- constr_anl_chunks(
     session, input, datasets, dataname,
-    param_id = "xaxis_param", param_var = param_var, trt_group = trt_group
+    param_id = "xaxis_param", param_var = param_var, trt_group = input$trt_group
   )
 
   # update sliders for axes taking constraints into account
@@ -291,6 +309,8 @@ srv_g_spaghettiplot <- function(input,
     group_stats <- input$group_stats
     font_size <- input$font_size
     alpha <- input$alpha
+    validate(need(input$trt_group, "Please select a treatment variable"))
+    trt_group <- input$trt_group
 
     # Below inputs should trigger plot via updates of other reactive objects (i.e. anl_chunk()) and some inputs
     validate(need(input$xaxis_var, "Please select an X-Axis Variable"))
@@ -355,6 +375,7 @@ srv_g_spaghettiplot <- function(input,
 
     xvar <- isolate(input$xaxis_var)
     yvar <- isolate(input$yaxis_var)
+    trt_group <- isolate(input$trt_group)
 
     req(all(c(xvar, yvar) %in% names(ANL)))
 

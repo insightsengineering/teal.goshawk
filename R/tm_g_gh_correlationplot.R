@@ -11,11 +11,11 @@
 #' @param yaxis_param biomarker selected for y-axis.
 #' @param xaxis_var name of variable containing biomarker results displayed on x-axis e.g. \code{BASE}.
 #' @param yaxis_var name of variable containing biomarker results displayed on y-axis e.g. \code{AVAL}.
-#' @param trt_group name of variable representing treatment group e.g. \code{ARM}.
+#' @param trt_group \code{\link[teal]{choices_selected}} object with available choices and pre-selected option
+#' for variable names representing treatment group e.g. ARM.
 #' @param color_manual vector of colors applied to treatment values.
 #' @param shape_manual vector of symbols applied to LOQ values.
 #' @param facet_ncol numeric value indicating number of facets per row.
-#' @param facet set layout to use treatment facetting.
 #' @param visit_facet visit facet toggle.
 #' @param facet_var variable to use for treatment facetting.
 #' @param reg_line include regression line and annotations for slope and coefficient in visualization. Use with facet
@@ -50,6 +50,7 @@
 #'
 #' ADSL <- radsl(cached = TRUE)
 #' ADLB <- radlb(cached = TRUE)
+#' var_labels <- lapply(ADLB, function(x) attributes(x)$label)
 #' ADLB <- ADLB %>%
 #'   mutate(AVISITCD = case_when(
 #'       AVISIT == "SCREENING" ~ "SCR",
@@ -67,7 +68,11 @@
 #'       ARMCD == "ARM B" ~ 2,
 #'       ARMCD == "ARM A" ~ 3),
 #'     ARM = as.character(arm_mapping[match(ARM, names(arm_mapping))]),
-#'     ARM = factor(ARM) %>% reorder(TRTORD))
+#'     ARM = factor(ARM) %>% reorder(TRTORD),
+#'     ACTARM = as.character(arm_mapping[match(ACTARM, names(arm_mapping))]),
+#'     ACTARM = factor(ACTARM) %>% reorder(TRTORD))
+#' attr(ADLB[["ARM"]], "label") <- var_labels[["ARM"]]
+#' attr(ADLB[["ACTARM"]], 'label') <- var_labels[["ACTARM"]]
 #'
 #' app <- init(
 #'   data = cdisc_data(
@@ -76,6 +81,7 @@
 #'       "ADLB",
 #'       ADLB,
 #'       code = "ADLB <- radlb(cached = TRUE)
+#'               var_labels <- lapply(ADLB, function(x) attributes(x)$label)
 #'               ADLB <- ADLB %>%
 #'                 mutate(AVISITCD = case_when(
 #'                     AVISIT == 'SCREENING' ~ 'SCR',
@@ -94,7 +100,11 @@
 #'                     ARMCD == 'ARM B' ~ 2,
 #'                     ARMCD == 'ARM A' ~ 3),
 #'                   ARM = as.character(arm_mapping[match(ARM, names(arm_mapping))]),
-#'                   ARM = factor(ARM) %>% reorder(TRTORD))",
+#'                   ARM = factor(ARM) %>% reorder(TRTORD),
+#'                   ACTARM = as.character(arm_mapping[match(ACTARM, names(arm_mapping))]),
+#'                   ACTARM = factor(ACTARM) %>% reorder(TRTORD))
+#'                attr(ADLB[['ARM']], 'label') <- var_labels[['ARM']]
+#'                attr(ADLB[['ACTARM']], 'label') <- var_labels[['ACTARM']]",
 #'       vars = list(arm_mapping = arm_mapping)),
 #'     check = TRUE
 #'     ),
@@ -107,7 +117,7 @@
 #'        yaxis_param = choices_selected(c("ALT", "CRP", "IGA"), "CRP"),
 #'        xaxis_var = choices_selected(c("AVAL", "BASE", "CHG", "PCHG"), "BASE"),
 #'        yaxis_var = choices_selected(c("AVAL", "BASE", "CHG", "PCHG"), "AVAL"),
-#'        trt_group = "ARM",
+#'        trt_group = choices_selected(c("ARM", "ACTARM"), "ARM"),
 #'        color_manual = c("Drug X 100mg" = "#000000",
 #'                         "Placebo" = "#3498DB",
 #'                         "Combination 100mg" = "#E74C3C"),
@@ -115,8 +125,6 @@
 #'        plot_height = c(500, 200, 2000),
 #'        facet_ncol = 2,
 #'        visit_facet = TRUE,
-#'        facet = FALSE,
-#'        facet_var = "ARM",
 #'        reg_line = FALSE,
 #'        loq_legend = TRUE,
 #'        font_size = c(12, 8, 20),
@@ -137,13 +145,12 @@ tm_g_gh_correlationplot <- function(label,
                                     xaxis_var = "BASE",
                                     yaxis_param = "CRP",
                                     yaxis_var = "AVAL",
-                                    trt_group = "ARM",
+                                    trt_group,
                                     color_manual = NULL,
                                     shape_manual = NULL,
                                     facet_ncol = 2,
                                     visit_facet = TRUE,
-                                    facet = FALSE,
-                                    facet_var = "ARM",
+                                    facet_var = choices_selected(c("ARM", "ACTARM")),
                                     reg_line = FALSE,
                                     loq_legend = TRUE,
                                     rotate_xlab = FALSE,
@@ -161,6 +168,8 @@ tm_g_gh_correlationplot <- function(label,
   stopifnot(is.choices_selected(yaxis_param))
   stopifnot(is.choices_selected(xaxis_var))
   stopifnot(is.choices_selected(yaxis_var))
+  stopifnot(is.choices_selected(trt_group))
+  stopifnot(is.choices_selected(facet_var))
   check_slider_input(plot_height, allow_null = FALSE)
   check_slider_input(plot_width)
 
@@ -194,6 +203,12 @@ ui_g_correlationplot <- function(id, ...) {
     output = templ_ui_output_datatable(ns, a$plot_height, a$plot_width),
     encoding =  div(
       templ_ui_dataname(a$dataname),
+      optionalSelectInput(
+        ns("trt_group"),
+        label = "Select Treatment Variable",
+        choices = a$trt_group$choices,
+        selected = a$trt_group$selected,
+        multiple = FALSE),
       templ_ui_params_vars(
         ns,
         xparam_choices = a$xaxis_param$choices, xparam_selected = a$xaxis_param$selected,
@@ -201,6 +216,12 @@ ui_g_correlationplot <- function(id, ...) {
         yparam_choices = a$yaxis_param$choices, yparam_selected = a$yaxis_param$selected,
         ychoices = a$yaxis_var$choices, yselected = a$yaxis_var$selected
       ),
+      optionalSelectInput(
+        ns("facet_var"),
+        label = "Facet by",
+        choices = a$facet_var$choices,
+        selected = NULL,
+        multiple = FALSE),
       templ_ui_constraint(ns, "X-Axis Data Constraint"), # required by constr_anl_chunks
       panel_group(
         panel_item(
@@ -213,7 +234,6 @@ ui_g_correlationplot <- function(id, ...) {
             min = -1000000, max = 1000000, value = c(-1000000, 1000000)),
           numericInput(ns("facet_ncol"), "Number of Plots Per Row:", a$facet_ncol, min = 1),
           checkboxInput(ns("visit_facet"), "Visit Facetting", a$visit_facet),
-          checkboxInput(ns("facet"), "Treatment Facetting", a$facet),
           checkboxInput(ns("reg_line"), "Regression Line", a$reg_line),
           checkboxInput(ns("loq_legend"), "Display LoQ Legend", a$loq_legend),
           checkboxInput(ns("rotate_xlab"), "Rotate X-axis Label", a$rotate_xlab),
@@ -249,8 +269,7 @@ srv_g_correlationplot <- function(input,
                                   shape_manual,
                                   plot_height,
                                   plot_width) {
-
-  # filter seected biomarkers
+  # filter selected biomarkers
   anl_param <- reactive({
     validate(need(input$xaxis_param, "Please select an X-Axis Biomarker"))
     validate(need(input$xaxis_var, "Please select an X-Axis Variable"))
@@ -289,8 +308,8 @@ srv_g_correlationplot <- function(input,
 
     validate_has_variable(
       ANL_FILTERED,
-      facet_var,
-      sprintf("Variable %s is not available in data %s", facet_var, dataname))
+      input$facet_var,
+      sprintf("Variable %s is not available in data %s", input$facet_var, dataname))
 
     validate_has_variable(
       ANL_FILTERED,
@@ -309,8 +328,8 @@ srv_g_correlationplot <- function(input,
 
     validate_has_variable(
       ANL_FILTERED,
-      trt_group,
-      sprintf("Variable %s is not available in data %s", trt_group, dataname))
+      input$trt_group,
+      sprintf("Variable %s is not available in data %s", input$trt_group, dataname))
 
     validate_has_variable(
       ANL_FILTERED,
@@ -327,6 +346,16 @@ srv_g_correlationplot <- function(input,
       input$yaxis_var,
       sprintf("Variable %s is not available in data %s", input$yaxis_var, dataname))
 
+    if (!is.null(input$facet_var)) {
+      validate(need(
+        !input$facet_var %in% c("ACTARM", "ARM")[!c("ACTARM", "ARM") %in% input$trt_group],
+        sprintf(
+          "You can not choose %s as facetting variable for treatment variable %s.",
+          input$facet_var,
+          input$trt_group
+          )
+      ))
+      }
     # analysis
     private_chunks <- chunks$new()
     chunks_reset(as.environment(setNames(list(ANL_FILTERED), dataset_var)), private_chunks)
@@ -438,6 +467,7 @@ srv_g_correlationplot <- function(input,
   plot_data_transpose <- reactive({
     private_chunks <- anl_constraint()$chunks$clone(deep = TRUE)
     ANL <- anl_constraint()$ANL # nolint
+    trt_group <- input$trt_group
     chunks_push(
       chunks = private_chunks,
       id = "plot_data_transpose",
@@ -507,18 +537,13 @@ srv_g_correlationplot <- function(input,
     validate(need(nrow(ANL_TRANSPOSED) > 0, "Plot Data No Observations Left"))
     validate_has_variable(data = ANL_TRANSPOSED, varname = c(xvar(), yvar(), xloqfl(), yloqfl()))
 
-
     chunks_push(
       chunks = private_chunks,
       id = "ANL_attributes",
-      expression = if (trt_group == "ARM") {
-        bquote(attr(ANL_TRANSPOSED$ARM, "label") <- "Planned Arm")
-      } else {
-        bquote(attr(ANL_TRANSPOSED[[.(trt_group)]], "label") <- "Actual Arm")
-      }
+      expression =
+        bquote(attr(ANL_TRANSPOSED[[.(trt_group)]], "label") <- attr(ANL[[.(trt_group)]], "label"))
     )
     chunks_push_new_line(private_chunks)
-
 
     return(list(ANL_TRANSPOSED = ANL_TRANSPOSED, chunks = private_chunks))
   })
@@ -566,7 +591,7 @@ srv_g_correlationplot <- function(input,
     vline <- if (is.na(input$vline)) NULL else as.numeric(input$vline)
     facet_ncol <- input$facet_ncol
     visit_facet <- input$visit_facet
-    facet <- input$facet
+    facet <- if (is.null(input$facet_var)) FALSE else TRUE
     reg_line <- input$reg_line
     loq_legend <- input$loq_legend
     rotate_xlab <- input$rotate_xlab
@@ -574,6 +599,9 @@ srv_g_correlationplot <- function(input,
     title_text <- plot_labels()$title_text
     xaxis_lab  <- plot_labels()$xaxis_lab
     yaxis_lab  <- plot_labels()$yaxis_lab
+    validate(need(input$trt_group, "Please select a treatment variable"))
+    trt_group <- input$trt_group
+    facet_var <- input$facet_var
 
     chunks_push(
       chunks = private_chunks,
@@ -620,7 +648,6 @@ srv_g_correlationplot <- function(input,
 
     # promote chunks to be visible in the sessionData by other modules
     init_chunks(private_chunks)
-
     chunks_get_var("p")
   })
 
@@ -641,7 +668,7 @@ srv_g_correlationplot <- function(input,
     ANL_TRANSPOSED <- isolate(plot_data_transpose()$ANL_TRANSPOSED) # nolint
 
     df <- brushedPoints(
-      select(ANL_TRANSPOSED, "USUBJID", trt_group, "AVISITCD", xvar(), yvar(), "LOQFL_COMB"),
+      select(ANL_TRANSPOSED, "USUBJID", input$trt_group, "AVISITCD", xvar(), yvar(), "LOQFL_COMB"),
       plot_brush
     )
 

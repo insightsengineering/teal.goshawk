@@ -4,7 +4,8 @@
 #' and an accompanying summary table.
 #'
 #' @param label menu item label of the module in the teal app.
-#' @param trt_group name of variable representing treatment group e.g. ARM.
+#' @param trt_group \code{\link[teal]{choices_selected}} object with available choices and pre-selected option
+#' for variable names representing treatment group e.g. ARM.
 #' @param color_manual vector of colors applied to treatment values.
 #' @param color_comb name or hex value for combined treatment color.
 #' @param plot_height controls plot height.
@@ -43,6 +44,7 @@
 #'
 #' ADSL <- radsl(cached = TRUE)
 #' ADLB <- radlb(cached = TRUE)
+#' var_labels <- lapply(ADLB, function(x) attributes(x)$label)
 #' ADLB <- ADLB %>%
 #'   mutate(
 #'     AVISITCD = case_when(
@@ -64,8 +66,12 @@
 #'       ARMCD == "ARM A" ~ 3
 #'     ),
 #'     ARM = as.character(arm_mapping[match(ARM, names(arm_mapping))]),
-#'     ARM = factor(ARM) %>% reorder(TRTORD)
-#'   )
+#'     ARM = factor(ARM) %>% reorder(TRTORD),
+#'     ACTARM = as.character(arm_mapping[match(ACTARM, names(arm_mapping))]),
+#'     ACTARM = factor(ACTARM) %>% reorder(TRTORD))
+#'
+#' attr(ADLB[["ARM"]], "label") <- var_labels[["ARM"]]
+#' attr(ADLB[["ACTARM"]], 'label') <- var_labels[["ACTARM"]]
 #'
 #' app <- teal::init(
 #'   data = cdisc_data(
@@ -74,6 +80,7 @@
 #'       "ADLB",
 #'       ADLB,
 #'       code = "ADLB <- radlb(cached = TRUE)
+#'               var_labels <- lapply(ADLB, function(x) attributes(x)$label)
 #'               ADLB <- ADLB %>%
 #'                 mutate(AVISITCD = case_when(
 #'                     AVISIT == 'SCREENING' ~ 'SCR',
@@ -92,7 +99,11 @@
 #'                     ARMCD == 'ARM B' ~ 2,
 #'                    ARMCD == 'ARM A' ~ 3),
 #'                  ARM = as.character(arm_mapping[match(ARM, names(arm_mapping))]),
-#'                  ARM = factor(ARM) %>% reorder(TRTORD))",
+#'                  ARM = factor(ARM) %>% reorder(TRTORD),
+#'                  ACTARM = as.character(arm_mapping[match(ACTARM, names(arm_mapping))]),
+#'                  ACTARM = factor(ACTARM) %>% reorder(TRTORD))
+#'                attr(ADLB[['ARM']], 'label') <- var_labels[['ARM']]
+#'                attr(ADLB[['ACTARM']], 'label') <- var_labels[['ACTARM']]",
 #'       vars = list(arm_mapping = arm_mapping)),
 #'     check = TRUE
 #'   ),
@@ -103,7 +114,7 @@
 #'       param_var = "PARAMCD",
 #'       param = choices_selected(c("ALT", "CRP", "IGA"), "ALT"),
 #'       xaxis_var = choices_selected(c("AVAL", "BASE", "CHG", "PCHG"), "AVAL"),
-#'       trt_group = "ARM",
+#'       trt_group = choices_selected(c("ARM", "ACTARM"), "ARM"),
 #'       color_manual = c("150mg QD" = "#000000",
 #'                        "Placebo" = "#3498DB",
 #'                        "Combination" = "#E74C3C"),
@@ -125,7 +136,7 @@ tm_g_gh_density_distribution_plot <- function(label, # nolint
                                               param_var,
                                               param,
                                               xaxis_var,
-                                              trt_group = "ARM",
+                                              trt_group,
                                               color_manual = NULL,
                                               color_comb = NULL,
                                               plot_height = c(500, 200, 2000),
@@ -146,14 +157,14 @@ tm_g_gh_density_distribution_plot <- function(label, # nolint
     is.choices_selected(param),
     is.choices_selected(xaxis_var),
 
-    is_character_single(trt_group),
     # color_manual, color_comb
     is_numeric_vector(font_size) && length(font_size) == 3,
     is_numeric_vector(line_size) && length(line_size) == 3,
     is.null(hline) || is_numeric_single(hline),
     is_integer_single(facet_ncol),
     is_logical_single(comb_line),
-    is_logical_single(rotate_xlab)
+    is_logical_single(rotate_xlab),
+    is.choices_selected(trt_group)
   )
   check_slider_input(plot_height, allow_null = FALSE)
   check_slider_input(plot_width)
@@ -197,6 +208,12 @@ ui_g_density_distribution_plot <- function(id, ...) {
     ),
     encoding = div(
       templ_ui_dataname(a$dataname),
+      optionalSelectInput(
+        ns("trt_group"),
+        label = "Select Treatment Variable",
+        choices = a$trt_group$choices,
+        selected = a$trt_group$selected,
+        multiple = FALSE),
       templ_ui_params_vars(
         ns,
         xparam_choices = a$param$choices, xparam_selected = a$param$selected, xparam_label = "Select a Biomarker",
@@ -250,7 +267,7 @@ srv_g_density_distribution_plot <- function(input, # nolint
                                             plot_width) {
   anl_chunks <- constr_anl_chunks(
     session, input, datasets, dataname,
-    param_id = "xaxis_param", param_var = param_var, trt_group = trt_group
+    param_id = "xaxis_param", param_var = param_var, trt_group = input$trt_group
   )
 
   # update sliders for axes taking constraints into account
@@ -275,7 +292,9 @@ srv_g_density_distribution_plot <- function(input, # nolint
     comb_line <- input$comb_line
     rug_plot <- input$rug_plot
     rotate_xlab <- input$rotate_xlab
+    trt_group <- input$trt_group
     #nolint end
+    validate(need(input$trt_group, "Please select a treatment variable"))
 
     chunks_push(
       chunks = private_chunks,
@@ -313,6 +332,7 @@ srv_g_density_distribution_plot <- function(input, # nolint
     param <- input$xaxis_param
     xaxis_var <- input$xaxis_var
     font_size <- input$font_size
+    trt_group <- input$trt_group
 
     chunks_push(
       chunks = private_chunks,
