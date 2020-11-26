@@ -17,7 +17,8 @@
 #' @param filter_var_choices data constraint variable choices.
 #' @param yaxis_var single name of variable in analysis data that is used as summary variable in the
 #' respective gshawk function.
-#' @param trt_group name of variable representing treatment group e.g. ARM.
+#' @param trt_group \code{\link[teal]{choices_selected}} object with available choices and pre-selected option
+#' for variable names representing treatment group e.g. ARM.
 #' @param trt_group_level vector that can be used to define factor level of trt_group.
 #' @param shape_choices Vector or \code{choices_selected} object with names of ADSL variables which
 #' can be used to change shape
@@ -62,6 +63,7 @@
 #'
 #' ADSL <- radsl(N = 20, seed = 1)
 #' ADLB <- radlb(ADSL, visit_format = "WEEK", n_assessments = 7L, seed = 2)
+#' var_labels <- lapply(ADLB, function(x) attributes(x)$label)
 #' ADLB <- ADLB %>%
 #'   mutate(AVISITCD = case_when(
 #'     AVISIT == "SCREENING" ~ "SCR",
@@ -79,13 +81,18 @@
 #'       ARMCD == "ARM B" ~ 2,
 #'       ARMCD == "ARM A" ~ 3),
 #'     ARM = as.character(arm_mapping[match(ARM, names(arm_mapping))]),
-#'     ARM = factor(ARM) %>% reorder(TRTORD))
+#'     ARM = factor(ARM) %>% reorder(TRTORD),
+#'     ACTARM = as.character(arm_mapping[match(ACTARM, names(arm_mapping))]),
+#'     ACTARM = factor(ACTARM) %>% reorder(TRTORD))
+#' attr(ADLB[["ARM"]], "label") <- var_labels[["ARM"]]
+#' attr(ADLB[["ACTARM"]], 'label') <- var_labels[["ACTARM"]]
 #'
 #' app <- teal::init(
 #'   data = cdisc_data(
 #'     adsl <- cdisc_dataset("ADSL", ADSL, code = "ADSL <- radsl(N = 20, seed = 1)"),
 #'     cdisc_dataset("ADLB", ADLB,
 #'       code = "ADLB <- radlb(ADSL, visit_format = 'WEEK', n_assessments = 7L, seed = 2)
+#'               var_labels <- lapply(ADLB, function(x) attributes(x)$label)
 #'               ADLB <- ADLB %>%
 #'                 mutate(AVISITCD = case_when(
 #'                     AVISIT == 'SCREENING' ~ 'SCR',
@@ -104,7 +111,11 @@
 #'                     ARMCD == 'ARM B' ~ 2,
 #'                     ARMCD == 'ARM A' ~ 3),
 #'                   ARM = as.character(arm_mapping[match(ARM, names(arm_mapping))]),
-#'                   ARM = factor(ARM) %>% reorder(TRTORD))",
+#'                   ARM = factor(ARM) %>% reorder(TRTORD),
+#'                   ACTARM = as.character(arm_mapping[match(ACTARM, names(arm_mapping))]),
+#'                   ACTARM = factor(ACTARM) %>% reorder(TRTORD))
+#'                attr(ADLB[['ARM']], 'label') <- var_labels[['ARM']]
+#'                attr(ADLB[['ACTARM']], 'label') <- var_labels[['ACTARM']]",
 #'       vars = list(ADSL = adsl, arm_mapping = arm_mapping)),
 #'     check = TRUE
 #'     ),
@@ -117,7 +128,7 @@
 #'       shape_choices = c("SEX", "RACE"),
 #'       xaxis_var =choices_selected("AVISITCD", "AVISITCD"),
 #'       yaxis_var = choices_selected(c("AVAL", "BASE", "CHG", "PCHG"), "AVAL"),
-#'       trt_group = "ARM"
+#'       trt_group = choices_selected(c("ARM", "ACTARM"), "ARM")
 #'     )
 #'   )
 #' )
@@ -160,6 +171,7 @@ tm_g_gh_lineplot <- function(label,
   stopifnot(is.choices_selected(param))
   check_slider_input(plot_height, allow_null = FALSE)
   check_slider_input(plot_width)
+  stopifnot(is.choices_selected(trt_group))
   check_slider_input(table_font_size)
   stopifnot(is_numeric_single(count_threshold))
 
@@ -197,6 +209,12 @@ ui_lineplot <- function(id, ...) {
     output = plot_with_settings_ui(id = ns("plot"), height = a$plot_height, width = a$plot_width),
     encoding = div(
       templ_ui_dataname(a$dataname),
+      optionalSelectInput(
+        ns("trt_group"),
+        label = "Select Treatment Variable",
+        choices = a$trt_group$choices,
+        selected = a$trt_group$selected,
+        multiple = FALSE),
       templ_ui_params_vars(
         ns,
         # xparam and yparam are identical, so we only show the user one
@@ -280,7 +298,7 @@ srv_lineplot <- function(input,
     dataname = dataname,
     param_id = "xaxis_param",
     param_var =  param_var,
-    trt_group = trt_group)
+    trt_group = input$trt_group)
   keep_data_const_opts_updated(session, input, anl_chunks, "xaxis_param")
 
   yrange_slider <- callModule(toggle_slider_server, "yrange_scale")
@@ -302,7 +320,7 @@ srv_lineplot <- function(input,
     # we don't need to additionally filter for paramvar here as in keep_range_slider_updated because
     # xaxis_var and yaxis_var are always distinct
     sum_data <- ANL %>%
-      group_by_at(c(input$xaxis_var, trt_group, shape)) %>%
+      group_by_at(c(input$xaxis_var, input$trt_group, shape)) %>%
       summarise(upper = if (input$stat == "mean") {
         mean(!!sym(varname), na.rm = TRUE) +
           1.96 * sd(!!sym(varname), na.rm = TRUE) / sqrt(n())
@@ -346,7 +364,8 @@ srv_lineplot <- function(input,
     hline <- if (is.na(input$hline)) NULL else as.numeric(input$hline)
     median <- ifelse(input$stat == "median", TRUE, FALSE)
     plot_height <- input$plot_height
-
+    validate(need(input$trt_group, "Please select a treatment variable"))
+    trt_group <- input$trt_group
     validate(need(input$xaxis_var, "Please select an X-Axis Variable"))
     validate(need(input$yaxis_var, "Please select a Y-Axis Variable"))
 

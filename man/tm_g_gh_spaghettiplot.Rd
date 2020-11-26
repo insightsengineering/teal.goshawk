@@ -58,7 +58,8 @@ Only use it when xaxis_var is character or factor.}
 
 \item{filter_var}{data constraint variable.}
 
-\item{trt_group}{name of variable representing treatment group e.g. ARM.}
+\item{trt_group}{\code{\link[teal]{choices_selected}} object with available choices and pre-selected option
+for variable names representing treatment group e.g. ARM.}
 
 \item{trt_group_level}{vector that can be used to define factor
 level of trt_group.}
@@ -115,6 +116,7 @@ arm_mapping <- list("A: Drug X" = "150mg QD",
 
 ADSL <- radsl(cached = TRUE)
 ADLB <- radlb(cached = TRUE)
+var_labels <- lapply(ADLB, function(x) attributes(x)$label)
 ADLB <- ADLB \%>\%
   mutate(AVISITCD = case_when(
     AVISIT == "SCREENING" ~ "SCR",
@@ -132,7 +134,11 @@ ADLB <- ADLB \%>\%
       ARMCD == "ARM B" ~ 2,
       ARMCD == "ARM A" ~ 3),
     ARM = as.character(arm_mapping[match(ARM, names(arm_mapping))]),
-    ARM = factor(ARM) \%>\% reorder(TRTORD))
+    ARM = factor(ARM) \%>\% reorder(TRTORD),
+    ACTARM = as.character(arm_mapping[match(ACTARM, names(arm_mapping))]),
+    ACTARM = factor(ACTARM) \%>\% reorder(TRTORD))
+attr(ADLB[["ARM"]], "label") <- var_labels[["ARM"]]
+attr(ADLB[["ACTARM"]], 'label') <- var_labels[["ACTARM"]]
 
 app <- teal::init(
   data = cdisc_data(
@@ -141,6 +147,7 @@ app <- teal::init(
       "ADLB",
       ADLB,
       code = "ADLB <- radlb(cached = TRUE)
+              var_labels <- lapply(ADLB, function(x) attributes(x)$label)
               ADLB <- ADLB \%>\%
                 mutate(AVISITCD = case_when(
                     AVISIT == 'SCREENING' ~ 'SCR',
@@ -159,7 +166,11 @@ app <- teal::init(
                     ARMCD == 'ARM B' ~ 2,
                     ARMCD == 'ARM A' ~ 3),
                   ARM = as.character(arm_mapping[match(ARM, names(arm_mapping))]),
-                  ARM = factor(ARM) \%>\% reorder(TRTORD))",
+                  ARM = factor(ARM) \%>\% reorder(TRTORD),
+                  ACTARM = as.character(arm_mapping[match(ACTARM, names(arm_mapping))]),
+                  ACTARM = factor(ACTARM) \%>\% reorder(TRTORD))
+               attr(ADLB[['ARM']], 'label') <- var_labels[['ARM']]
+               attr(ADLB[['ACTARM']], 'label') <- var_labels[['ACTARM']]",
       vars = list(arm_mapping = arm_mapping)),
     check = TRUE
     ),
@@ -174,7 +185,7 @@ app <- teal::init(
       yaxis_var = choices_selected(c("AVAL","CHG", "PCHG"), "AVAL"),
       filter_var = choices_selected(c("None" = "NONE", "Screening" = "BASE2", "Baseline" = "BASE"),
        "NONE"),
-      trt_group = "ARM",
+      trt_group = choices_selected(c("ARM", "ACTARM"), "ARM"),
       color_comb = "#39ff14",
       man_color = c('Combination' = "#000000",
                    'Placebo' = "#fce300",

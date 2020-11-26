@@ -11,10 +11,8 @@
 #' @param yaxis_var name of variable containing biomarker results displayed on y-axis e.g. AVAL.
 #' @param xaxis_var variable to categorize the x-axis.
 #' @param facet_var variable to facet the plots by.
-#' @param trt_group name of variable representing treatment group e.g. ARM.
-#' @param armlabel label for the treatment symbols in the legend. If not specified then the label
-#'  attribute for trt_group will be used. If there is no label attribute for trt_group, then the
-#'  name of the parameter (in title case) will be used.
+#' @param trt_group  \code{\link[teal]{choices_selected}} object with available choices and pre-selected option
+#'  for variable names representing treatment group e.g. ARM.
 #' @param color_manual vector of colors applied to treatment values.
 #' @param shape_manual vector of symbols applied to LOQ values.
 #' @param facet_ncol numeric value indicating number of facets per row.
@@ -57,6 +55,7 @@
 #'
 #' ADSL <- radsl(N = 20, seed = 1)
 #' ADLB <- radlb(ADSL, visit_format = "WEEK", n_assessments = 7L, seed = 2)
+#' var_labels <- lapply(ADLB, function(x) attributes(x)$label)
 #' ADLB <- ADLB %>%
 #'   mutate(AVISITCD = case_when(
 #'     AVISIT == "SCREENING" ~ "SCR",
@@ -74,7 +73,11 @@
 #'       ARMCD == "ARM B" ~ 2,
 #'       ARMCD == "ARM A" ~ 3),
 #'     ARM = as.character(arm_mapping[match(ARM, names(arm_mapping))]),
-#'     ARM = factor(ARM) %>% reorder(TRTORD))
+#'     ARM = factor(ARM) %>% reorder(TRTORD),
+#'     ACTARM = as.character(arm_mapping[match(ACTARM, names(arm_mapping))]),
+#'     ACTARM = factor(ACTARM) %>% reorder(TRTORD))
+#' attr(ADLB[["ARM"]], "label") <- var_labels[["ARM"]]
+#' attr(ADLB[["ACTARM"]], 'label') <- var_labels[["ACTARM"]]
 #'
 #' app <- teal::init(
 #'   data = cdisc_data(
@@ -83,6 +86,7 @@
 #'       "ADLB",
 #'       ADLB,
 #'       code = "ADLB <- radlb(ADSL, visit_format = 'WEEK', n_assessments = 7L, seed = 2)
+#'            var_labels <- lapply(ADLB, function(x) attributes(x)$label)
 #'            ADLB <- ADLB %>%
 #'              mutate(AVISITCD = case_when(
 #'                  AVISIT == 'SCREENING' ~ 'SCR',
@@ -101,7 +105,11 @@
 #'                  ARMCD == 'ARM B' ~ 2,
 #'                  ARMCD == 'ARM A' ~ 3),
 #'              ARM = as.character(arm_mapping[match(ARM, names(arm_mapping))]),
-#'              ARM = factor(ARM) %>% reorder(TRTORD))",
+#'              ARM = factor(ARM) %>% reorder(TRTORD),
+#'              ACTARM = as.character(arm_mapping[match(ACTARM, names(arm_mapping))]),
+#'              ACTARM = factor(ACTARM) %>% reorder(TRTORD))
+#'           attr(ADLB[['ARM']], 'label') <- var_labels[['ARM']]
+#'           attr(ADLB[['ACTARM']], 'label') <- var_labels[['ACTARM']]",
 #'       vars = list(ADSL = adsl, arm_mapping = arm_mapping)),
 #'     check = TRUE
 #'   ),
@@ -112,10 +120,9 @@
 #'         param_var = "PARAMCD",
 #'         param = choices_selected(c("ALT", "CRP", "IGA"), "ALT"),
 #'         yaxis_var = choices_selected(c("AVAL", "BASE", "CHG"), "AVAL"),
-#'         xaxis_var = choices_selected(c("ARM", "AVISITCD", "STUDYID"), "ARM"),
-#'         facet_var = choices_selected(c("ARM", "AVISITCD", "SEX"), "AVISITCD"),
-#'         trt_group = "ARM",
-#'         armlabel = "Planned Arm",
+#'         xaxis_var = choices_selected(c("ACTARM", "ARM", "AVISITCD", "STUDYID"), "ARM"),
+#'         facet_var = choices_selected(c("ACTARM", "ARM", "AVISITCD", "SEX"), "AVISITCD"),
+#'         trt_group = choices_selected(c("ARM", "ACTARM"), "ARM"),
 #'         loq_legend = TRUE,
 #'         rotate_xlab = FALSE
 #'       )
@@ -133,9 +140,8 @@ tm_g_gh_boxplot <- function(label,
                             param,
                             yaxis_var = choices_selected(c("AVAL", "CHG"), "AVAL"),
                             xaxis_var = choices_selected("AVISITCD", "AVISITCD"),
-                            facet_var = choices_selected("ARM", "ARM"),
-                            trt_group = "ARM",
-                            armlabel = NULL,
+                            facet_var = choices_selected(c("ARM", "ACTARM"), "ARM"),
+                            trt_group,
                             color_manual = NULL,
                             shape_manual = NULL,
                             facet_ncol = NULL,
@@ -157,15 +163,14 @@ tm_g_gh_boxplot <- function(label,
     is.choices_selected(yaxis_var),
     is.choices_selected(xaxis_var),
     is.choices_selected(facet_var),
-    is_character_single(trt_group),
-    is.null(armlabel) || is_character_single(armlabel),
     is.null(facet_ncol) || is_integer_single(facet_ncol),
     is_logical_single(loq_legend),
     is_logical_single(rotate_xlab),
     is.null(hline) || is_numeric_single(hline),
     is_numeric_vector(font_size) && length(font_size) == 3,
     is_numeric_vector(dot_size) && length(dot_size) == 3,
-    is_numeric_vector(alpha) && length(alpha) == 3
+    is_numeric_vector(alpha) && length(alpha) == 3,
+    is.choices_selected(trt_group)
   )
   check_slider_input(plot_height, allow_null = FALSE)
   check_slider_input(plot_width)
@@ -182,7 +187,6 @@ tm_g_gh_boxplot <- function(label,
                        facet_var = facet_var,
                        color_manual = color_manual,
                        shape_manual = shape_manual,
-                       armlabel = armlabel,
                        plot_height = plot_height,
                        plot_width = plot_width
     ),
@@ -216,6 +220,12 @@ ui_g_boxplot <- function(id, ...) {
     ),
     encoding =  div(
       templ_ui_dataname(a$dataname),
+      optionalSelectInput(
+        ns("trt_group"),
+        label = "Select Treatment Variable",
+        choices = a$trt_group$choices,
+        selected = a$trt_group$selected,
+        multiple = FALSE),
       templ_ui_params_vars(
         ns,
         xparam_choices = a$param$choices,
@@ -272,16 +282,15 @@ srv_g_boxplot <- function(input,
                           facet_var,
                           color_manual,
                           shape_manual,
-                          armlabel,
                           plot_height,
                           plot_width) {
+
 
   # reused in all modules
   anl_chunks <- constr_anl_chunks(
     session, input, datasets, dataname,
-    param_id = "xaxis_param", param_var = param_var, trt_group = trt_group
+    param_id = "xaxis_param", param_var = param_var, trt_group = input$trt_group
   )
-
   # update sliders for axes taking constraints into account
   yrange_slider <- callModule(toggle_slider_server, "yrange_scale")
   keep_range_slider_updated(session, input, yrange_slider$update_state, "yaxis_var", "xaxis_param", anl_chunks)
@@ -293,7 +302,7 @@ srv_g_boxplot <- function(input,
     param <- input$xaxis_param
     yaxis <- input$yaxis_var
     xaxis <- input$xaxis_var
-    facet_var <- input$facet_var
+    facet_var <- if (is.null(input$facet_var)) "None" else input$facet_var
     yrange_scale <- yrange_slider$state()$value
     facet_ncol <- input$facet_ncol
     alpha <- input$alpha
@@ -302,7 +311,9 @@ srv_g_boxplot <- function(input,
     loq_legend <- input$loq_legend
     rotate_xlab <- input$rotate_xlab
     hline <- input$hline
+    trt_group <- input$trt_group
     # nolint end
+    validate(need(input$trt_group, "Please select a treatment variable"))
     validate(need(!is.null(xaxis), "Please select an X-Axis Variable"))
     validate(need(!is.null(yaxis), "Please select a Y-Axis Variable"))
     validate_has_variable(
@@ -313,10 +324,23 @@ srv_g_boxplot <- function(input,
       anl_chunks()$ANL,
       xaxis,
       sprintf("Variable %s is not available in data %s", xaxis, dataname))
-    validate_has_variable(
-      anl_chunks()$ANL,
-      facet_var,
-      sprintf("Variable %s is not available in data %s", facet_var, dataname))
+
+    if (!facet_var == "None") {
+      validate_has_variable(
+        anl_chunks()$ANL,
+        facet_var,
+        sprintf("Variable %s is not available in data %s", facet_var, dataname))
+    }
+
+    validate(need(
+      !facet_var %in% c("ACTARM", "ARM")[!c("ACTARM", "ARM") %in% trt_group],
+      sprintf("You can not choose %s as facetting variable for treatment variable %s.", facet_var, trt_group)
+      ))
+    validate(need(
+      !xaxis %in% c("ACTARM", "ARM")[!c("ACTARM", "ARM") %in% trt_group],
+      sprintf("You can not choose %s as x-axis variable for treatment variable %s.", xaxis, trt_group)
+    ))
+
     chunks_push(
       chunks = private_chunks,
       id = "boxplot",
@@ -335,11 +359,10 @@ srv_g_boxplot <- function(input,
           ymax_scale = .(yrange_scale[[2]]),
           color_manual = .(color_manual),
           shape_manual = .(shape_manual),
-          facet = .(facet_var),
+          facet_var = .(facet_var),
           alpha = .(alpha),
           dot_size = .(dot_size),
           font_size = .(font_size),
-          armlabel = .(armlabel),
           unit = .("AVALU")
         )
       })
@@ -357,7 +380,7 @@ srv_g_boxplot <- function(input,
     xaxis_var <- input$yaxis_var #nolint
     facet_var <- input$facet_var
     font_size <- input$font_size
-
+    trt_group <- input$trt_group
 
     chunks_push(
       chunks = private_chunks,
@@ -422,6 +445,7 @@ srv_g_boxplot <- function(input,
     xvar <- isolate(input$xaxis_var)
     yvar <- isolate(input$yaxis_var)
     facetv <- isolate(input$facet_var)
+    trt_group <- isolate(input$trt_group)
 
     req(all(c(xvar, yvar, facetv, trt_group) %in% names(ANL)))
 

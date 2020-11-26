@@ -10,7 +10,7 @@ tm_g_gh_density_distribution_plot(
   param_var,
   param,
   xaxis_var,
-  trt_group = "ARM",
+  trt_group,
   color_manual = NULL,
   color_comb = NULL,
   plot_height = c(500, 200, 2000),
@@ -37,7 +37,8 @@ tm_g_gh_density_distribution_plot(
 
 \item{xaxis_var}{name of variable containing biomarker results displayed on x-axis e.g. \code{BASE}.}
 
-\item{trt_group}{name of variable representing treatment group e.g. ARM.}
+\item{trt_group}{\code{\link[teal]{choices_selected}} object with available choices and pre-selected option
+for variable names representing treatment group e.g. ARM.}
 
 \item{color_manual}{vector of colors applied to treatment values.}
 
@@ -89,6 +90,7 @@ arm_mapping <- list(
 
 ADSL <- radsl(cached = TRUE)
 ADLB <- radlb(cached = TRUE)
+var_labels <- lapply(ADLB, function(x) attributes(x)$label)
 ADLB <- ADLB \%>\%
   mutate(
     AVISITCD = case_when(
@@ -110,8 +112,12 @@ ADLB <- ADLB \%>\%
       ARMCD == "ARM A" ~ 3
     ),
     ARM = as.character(arm_mapping[match(ARM, names(arm_mapping))]),
-    ARM = factor(ARM) \%>\% reorder(TRTORD)
-  )
+    ARM = factor(ARM) \%>\% reorder(TRTORD),
+    ACTARM = as.character(arm_mapping[match(ACTARM, names(arm_mapping))]),
+    ACTARM = factor(ACTARM) \%>\% reorder(TRTORD))
+
+attr(ADLB[["ARM"]], "label") <- var_labels[["ARM"]]
+attr(ADLB[["ACTARM"]], 'label') <- var_labels[["ACTARM"]]
 
 app <- teal::init(
   data = cdisc_data(
@@ -120,6 +126,7 @@ app <- teal::init(
       "ADLB",
       ADLB,
       code = "ADLB <- radlb(cached = TRUE)
+              var_labels <- lapply(ADLB, function(x) attributes(x)$label)
               ADLB <- ADLB \%>\%
                 mutate(AVISITCD = case_when(
                     AVISIT == 'SCREENING' ~ 'SCR',
@@ -138,7 +145,11 @@ app <- teal::init(
                     ARMCD == 'ARM B' ~ 2,
                    ARMCD == 'ARM A' ~ 3),
                  ARM = as.character(arm_mapping[match(ARM, names(arm_mapping))]),
-                 ARM = factor(ARM) \%>\% reorder(TRTORD))",
+                 ARM = factor(ARM) \%>\% reorder(TRTORD),
+                 ACTARM = as.character(arm_mapping[match(ACTARM, names(arm_mapping))]),
+                 ACTARM = factor(ACTARM) \%>\% reorder(TRTORD))
+               attr(ADLB[['ARM']], 'label') <- var_labels[['ARM']]
+               attr(ADLB[['ACTARM']], 'label') <- var_labels[['ACTARM']]",
       vars = list(arm_mapping = arm_mapping)),
     check = TRUE
   ),
@@ -149,7 +160,7 @@ app <- teal::init(
       param_var = "PARAMCD",
       param = choices_selected(c("ALT", "CRP", "IGA"), "ALT"),
       xaxis_var = choices_selected(c("AVAL", "BASE", "CHG", "PCHG"), "AVAL"),
-      trt_group = "ARM",
+      trt_group = choices_selected(c("ARM", "ACTARM"), "ARM"),
       color_manual = c("150mg QD" = "#000000",
                        "Placebo" = "#3498DB",
                        "Combination" = "#E74C3C"),

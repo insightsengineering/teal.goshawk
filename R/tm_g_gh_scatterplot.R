@@ -9,11 +9,11 @@
 #' @param param biomarker selected.
 #' @param xaxis_var name of variable containing biomarker results displayed on x-axis e.g. \code{BASE}.
 #' @param yaxis_var name of variable containing biomarker results displayed on y-axis e.g. \code{AVAL}.
-#' @param trt_group name of variable representing treatment group e.g. \code{ARM}.
+#' @param trt_group \code{\link[teal]{choices_selected}} object with available choices and pre-selected option
+#' for variable names representing treatment group e.g. ARM.
 #' @param color_manual vector of colors applied to treatment values.
 #' @param shape_manual vector of symbols applied to LOQ values.
 #' @param facet_ncol numeric value indicating number of facets per row.
-#' @param facet set layout to use treatment facetting.
 #' @param facet_var variable to use for treatment facetting.
 #' @param reg_line include regression line and annotations for slope and coefficient in visualization. Use with facet
 #'   TRUE.
@@ -43,6 +43,7 @@
 #'
 #' ADSL <- radsl(N = 20, seed = 1)
 #' ADLB <- radlb(ADSL, visit_format = "WEEK", n_assessments = 7L, seed = 2)
+#' var_labels <- lapply(ADLB, function(x) attributes(x)$label)
 #' ADLB <- ADLB %>%
 #'   mutate(AVISITCD = case_when(
 #'       AVISIT == "SCREENING" ~ "SCR",
@@ -60,8 +61,11 @@
 #'       ARMCD == "ARM B" ~ 2,
 #'       ARMCD == "ARM A" ~ 3),
 #'     ARM = as.character(arm_mapping[match(ARM, names(arm_mapping))]),
-#'     ARM = factor(ARM) %>% reorder(TRTORD))
-#'
+#'     ARM = factor(ARM) %>% reorder(TRTORD),
+#'     ACTARM = as.character(arm_mapping[match(ACTARM, names(arm_mapping))]),
+#'     ACTARM = factor(ACTARM) %>% reorder(TRTORD))
+#' attr(ADLB[["ARM"]], "label") <- var_labels[["ARM"]]
+#' attr(ADLB[["ACTARM"]], 'label') <- var_labels[["ACTARM"]]
 #'
 #' app <- init(
 #'   data = cdisc_data(
@@ -70,6 +74,7 @@
 #'       "ADLB",
 #'       ADLB,
 #'       code = "ADLB <- radlb(ADSL, visit_format = 'WEEK', n_assessments = 7L, seed = 2)
+#'               var_labels <- lapply(ADLB, function(x) attributes(x)$label)
 #'               ADLB <- ADLB %>%
 #'                 mutate(AVISITCD = case_when(
 #'                     AVISIT == 'SCREENING' ~ 'SCR',
@@ -88,7 +93,11 @@
 #'                     ARMCD == 'ARM B' ~ 2,
 #'                     ARMCD == 'ARM A' ~ 3),
 #'                   ARM = as.character(arm_mapping[match(ARM, names(arm_mapping))]),
-#'                   ARM = factor(ARM) %>% reorder(TRTORD))",
+#'                   ARM = factor(ARM) %>% reorder(TRTORD),
+#'                   ACTARM = as.character(arm_mapping[match(ACTARM, names(arm_mapping))]),
+#'                   ACTARM = factor(ACTARM) %>% reorder(TRTORD))
+#'                attr(ADLB[['ARM']], 'label') <- var_labels[['ARM']]
+#'                attr(ADLB[['ACTARM']], 'label') <- var_labels[['ACTARM']]",
 #'       vars = list(ADSL = adsl, arm_mapping = arm_mapping)),
 #'     check = TRUE
 #'     ),
@@ -100,15 +109,14 @@
 #'        param = choices_selected(c("ALT", "CRP", "IGA"), "ALT"),
 #'        xaxis_var = choices_selected(c("AVAL", "BASE", "CHG", "PCHG"), "BASE"),
 #'        yaxis_var = choices_selected(c("AVAL", "BASE", "CHG", "PCHG"), "AVAL"),
-#'        trt_group = "ARM",
+#'        trt_group = choices_selected(c("ARM", "ACTARM"), "ARM"),
 #'        color_manual = c("150mg QD" = "#000000",
 #'                         "Placebo" = "#3498DB",
 #'                         "Combination" = "#E74C3C"),
 #'        shape_manual = c("N"  = 1, "Y"  = 2, "NA" = 0),
 #'        plot_height = c(500, 200, 2000),
 #'        facet_ncol = 2,
-#'        facet = FALSE,
-#'        facet_var = "ARM",
+#'        facet_var = choices_selected(c("ARM", "ACTARM")),
 #'        reg_line = FALSE,
 #'        font_size = c(12, 8, 20),
 #'        dot_size = c(1, 1, 12),
@@ -127,12 +135,11 @@ tm_g_gh_scatterplot <- function(label,
                                 param,
                                 xaxis_var,
                                 yaxis_var,
-                                trt_group = "ARM",
+                                trt_group,
                                 color_manual = NULL,
                                 shape_manual = NULL,
                                 facet_ncol = 2,
-                                facet = FALSE,
-                                facet_var = "ARM",
+                                facet_var = choices_selected(c("ARM", "ACTARM")),
                                 reg_line = FALSE,
                                 rotate_xlab = FALSE,
                                 hline = NULL,
@@ -148,6 +155,8 @@ tm_g_gh_scatterplot <- function(label,
   stopifnot(is.choices_selected(param))
   stopifnot(is.choices_selected(xaxis_var))
   stopifnot(is.choices_selected(yaxis_var))
+  stopifnot(is.choices_selected(trt_group))
+  stopifnot(is.choices_selected(facet_var))
   check_slider_input(plot_height, allow_null = FALSE)
   check_slider_input(plot_width)
 
@@ -181,6 +190,12 @@ ui_g_scatterplot <- function(id, ...) {
     output = templ_ui_output_datatable(ns, a$plot_height, a$plot_width),
     encoding =  div(
       templ_ui_dataname(a$dataname),
+      optionalSelectInput(
+        ns("trt_group"),
+        label = "Select Treatment Variable",
+        choices = a$trt_group$choices,
+        selected = a$trt_group$selected,
+        multiple = FALSE),
       templ_ui_params_vars(
         ns,
         # xparam and yparam are identical, so we only show the user one
@@ -188,6 +203,12 @@ ui_g_scatterplot <- function(id, ...) {
         xchoices = a$xaxis_var$choices, xselected = a$xaxis_var$selected,
         ychoices = a$yaxis_var$choices, yselected = a$yaxis_var$selected
       ),
+      optionalSelectInput(
+        ns("facet_var"),
+        label = "Facet by",
+        choices = a$facet_var$choices,
+        selected = NULL,
+        multiple = FALSE),
       templ_ui_constraint(ns), # required by constr_anl_chunks
       panel_group(
         panel_item(
@@ -195,7 +216,6 @@ ui_g_scatterplot <- function(id, ...) {
           toggle_slider_ui(ns("xrange_scale"), label = "X-Axis Range Zoom", min = 0, max = 1, value = c(0, 1)),
           toggle_slider_ui(ns("yrange_scale"), label = "Y-Axis Range Zoom", min = 0, max = 1, value = c(0, 1)),
           numericInput(ns("facet_ncol"), "Number of Plots Per Row:", a$facet_ncol, min = 1),
-          checkboxInput(ns("facet"), "Treatment Facetting", a$facet),
           checkboxInput(ns("reg_line"), "Regression Line", a$reg_line),
           checkboxInput(ns("rotate_xlab"), "Rotate X-axis Label", a$rotate_xlab),
           numericInput(ns("hline"), "Add a horizontal line:", a$hline),
@@ -234,7 +254,7 @@ srv_g_scatterplot <- function(input,
   # reused in all modules
   anl_chunks <- constr_anl_chunks(
     session, input, datasets, dataname,
-    param_id = "xaxis_param", param_var = param_var, trt_group = trt_group
+    param_id = "xaxis_param", param_var = param_var, trt_group = input$trt_group
   )
 
   # update sliders for axes taking constraints into account
@@ -253,7 +273,6 @@ srv_g_scatterplot <- function(input,
     xrange_scale <- xrange_slider$state()$value
     yrange_scale <- yrange_slider$state()$value
     facet_ncol <- input$facet_ncol
-    facet <- input$facet
     reg_line <- input$reg_line
     font_size <- input$font_size
     dot_size <- input$dot_size
@@ -261,6 +280,16 @@ srv_g_scatterplot <- function(input,
     rotate_xlab <- input$rotate_xlab
     hline <- input$hline
     vline <- input$vline
+    trt_group <- input$trt_group
+    facet_var <- input$facet_var
+    facet <- if (is.null(input$facet_var)) FALSE else TRUE
+    validate(need(trt_group, "Please select a treatment variable"))
+    if (!is.null(input$facet_var)) {
+      validate(need(
+        !facet_var %in% c("ACTARM", "ARM")[!c("ACTARM", "ARM") %in% trt_group],
+        sprintf("You can not choose %s as facetting variable for treatment variable %s.", facet_var, trt_group)
+      ))
+    }
 
     # Below inputs should trigger plot via updates of other reactive objects (i.e. anl_chunk()) and some inputs
     validate(need(input$xaxis_var, "Please select an X-Axis Variable"))
@@ -329,6 +358,7 @@ srv_g_scatterplot <- function(input,
 
     xvar <- isolate(input$xaxis_var)
     yvar <- isolate(input$yaxis_var)
+    trt_group <- isolate(input$trt_group)
 
     req(all(c(xvar, yvar) %in% names(ANL)))
 
