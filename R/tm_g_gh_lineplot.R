@@ -39,7 +39,8 @@
 #' @param table_font_size controls the font size of values in the table
 #'
 #' @importFrom ggplot2 waiver
-#' @importFrom grDevices extendrange
+#' @importFrom grDevices extendrange rainbow
+#' @importFrom colourpicker colourInput
 #'
 #' @author Wenyi Liu (luiw2) wenyi.liu@roche.com
 #' @author Balazs Toth (tothb2) toth.balazs@gene.com
@@ -241,6 +242,16 @@ ui_lineplot <- function(id, ...) {
         panel_item(
           title = "Plot settings",
           optionalSliderInputValMinMax(ns("dodge"), "Error Bar Position Dodge", a$dodge, ticks = FALSE),
+          panel_group(
+            panel_item(
+              title = "Line Settings",
+              uiOutput(ns("lines"))
+            ),
+            panel_item(
+              title = "Symbol settings",
+              uiOutput(ns("symbols"))
+            )
+          ),
           optionalSliderInputValMinMax(ns("plot_font_size"),  "Font Size", a$plot_font_size, ticks = FALSE)
         ),
         panel_item(
@@ -351,9 +362,226 @@ srv_lineplot <- function(input,
     ))
   })
 
+
+  line_color_start <-  if (is.null(color_manual)) {
+    c("#ff0000", "#008000", "#4ca3dd", "#8a2be2")
+  } else {
+    color_manual
+  }
+  line_color_defaults <- reactiveVal(line_color_start)
+
+  line_type_start <- "dashed"
+  line_type_defaults <- reactiveVal(line_type_start)
+
+  observe({
+    req(input$trt_group)
+    anl_arm <- anl_chunks()$ANL[[input$trt_group]]
+    anl_arm_nlevels <- nlevels(anl_arm)
+
+    line_color_to_set <- if (length(line_color_defaults()) <= anl_arm_nlevels) {
+      c(line_color_defaults(), rainbow(anl_arm_nlevels - length(line_color_defaults())))
+    } else {
+      line_color_defaults()[seq_len(anl_arm_nlevels)]
+    }
+    line_color_defaults(line_color_to_set)
+
+    line_type_to_set <- if (length(line_type_defaults()) <= anl_arm_nlevels) {
+      c(line_type_defaults(), rep("dashed", anl_arm_nlevels - length(line_type_defaults())))
+    } else {
+      line_type_defaults()[seq_len(anl_arm_nlevels)]
+    }
+    line_type_defaults(line_type_to_set)
+  })
+
+  line_color_selected <- reactive({
+    if (is.null(input$trt_group)) {
+      return(NULL)
+    }
+    anl_arm <- isolate(anl_chunks()$ANL[[input$trt_group]])
+    anl_arm_nlevels <- nlevels(anl_arm)
+    anl_arm_levels <- levels(anl_arm)
+
+    setNames(
+      vapply(
+        seq_len(anl_arm_nlevels),
+        function(idx) {
+          x <- anl_arm_levels[[idx]]
+          x_id <- gsub(" ", "_", x)
+          if_null(input[[paste0("line_color_", x_id)]], isolate(line_color_defaults())[[idx]])
+        },
+        character(1)
+      ),
+      anl_arm_levels
+    )
+  })
+
+  line_type_selected <- reactive({
+    if (is.null(input$trt_group)) {
+      return(NULL)
+    }
+    anl_arm <- isolate(anl_chunks()$ANL[[input$trt_group]])
+    anl_arm_nlevels <- nlevels(anl_arm)
+    anl_arm_levels <- levels(anl_arm)
+
+    setNames(
+      vapply(
+        seq_len(anl_arm_nlevels),
+        function(idx) {
+          x <- anl_arm_levels[[idx]]
+          x_id <- gsub(" ", "_", x)
+          if_null(input[[paste0("line_type_", x_id)]], isolate(line_type_defaults())[[idx]])
+        },
+        character(1)
+      ),
+      anl_arm_levels
+    )
+  })
+
+  output$lines <- renderUI({
+    req(input$trt_group)
+    anl_arm <- isolate(anl_chunks()$ANL[[input$trt_group]])
+    anl_arm_nlevels <- nlevels(anl_arm)
+    anl_arm_levels <- levels(anl_arm)
+    color_def <- line_color_defaults()
+    type_def <- line_type_defaults()
+    tagList(
+      lapply(
+        seq_len(anl_arm_nlevels),
+        function(idx) {
+          x <- anl_arm_levels[[idx]]
+          x_id <- gsub(" ", "_", x)
+          x_color <- color_def[[idx]]
+          color_input <- colourpicker::colourInput(
+            ns(paste0("line_color_", x_id)),
+            "Color:",
+            x_color
+          )
+          x_type <- type_def[[idx]]
+          type_input <- selectInput(
+            ns(paste0("line_type_", x_id)),
+            "Type:",
+            choices = c(
+              "blank",
+              "solid",
+              "dashed",
+              "dotted",
+              "dotdash",
+              "longdash",
+              "twodash",
+              "1F",
+              "F1",
+              "4C88C488",
+              "12345678"
+            ),
+            selected = x_type
+          )
+          fluidRow(
+            column(
+              width = 12,
+              tags$label("Line configuration for:", tags$code(x))
+            ),
+            column(
+              width = 12,
+              div(
+                style = "width: 50%; float: left;",
+                color_input
+              ),
+              div(
+                style = "width: 50%; float: left;",
+                type_input
+              )
+            )
+          )
+        }
+      )
+    )
+  })
+
+
+  symbol_type_start <- c(
+    "circle",
+    "square",
+    "diamond",
+    "triangle",
+    "circle open",
+    "square open",
+    "diamond open",
+    "triangle open",
+    "triangle down open",
+    "circle cross",
+    "square cross",
+    "circle plus",
+    "square plus",
+    "diamond plus",
+    "square traingle",
+    "plus",
+    "cross",
+    "asterisk"
+  )
+  symbol_type_defaults <- reactiveVal(symbol_type_start)
+
+  observe({
+    req(input$shape)
+    anl_shape <- anl_chunks()$ANL[[input$shape]]
+    anl_shape_nlevels <- nlevels(anl_shape)
+
+    symbol_type_to_set <- symbol_type_start[pmin(length(symbol_type_start), seq_len(anl_shape_nlevels))]
+    symbol_type_defaults(symbol_type_to_set)
+  })
+
+  symbol_type_selected <- reactive({
+    if (is.null(input$shape)) {
+      return(NULL)
+    }
+    anl_shape <- isolate(anl_chunks()$ANL[[input$shape]])
+    anl_shape_nlevels <- nlevels(anl_shape)
+    anl_shape_levels <- levels(anl_shape)
+
+    setNames(
+      vapply(
+        seq_len(anl_shape_nlevels),
+        function(idx) {
+          x <- anl_shape_levels[[idx]]
+          x_id <- gsub(" ", "_", x)
+          if_null(input[[paste0("symbol_type_", x_id)]], isolate(symbol_type_defaults())[[idx]])
+        },
+        character(1)
+      ),
+      anl_shape_levels
+    )
+  })
+
+  output$symbols <- renderUI({
+    validate(need(input$shape, "Please select line splitting variable first."))
+    anl_shape <- anl_chunks()$ANL[[input$shape]]
+    anl_shape_nlevels <- nlevels(anl_shape)
+    anl_shape_levels <- levels(anl_shape)
+    symbol_def <- symbol_type_defaults()
+
+    tagList(
+      lapply(
+        seq_len(anl_shape_nlevels),
+        function(idx) {
+          x <- anl_shape_levels[[idx]]
+          x_id <- gsub(" ", "_", x)
+          x_color <- symbol_def[[idx]]
+          selectInput(
+            ns(paste0("symbol_type_", x_id)),
+            HTML(paste0("Symbol for: ", tags$code(x))),
+            choices = symbol_type_start,
+            selected = x_color
+          )
+        }
+      )
+    )
+
+  })
+
+
   plot_r <- reactive({
     ac <- anl_chunks()
     private_chunks <- ac$chunks$clone(deep = TRUE)
+
     # nolint start
     yrange_scale <- yrange_slider$state()$value
     plot_font_size <- input$plot_font_size
@@ -366,9 +594,15 @@ srv_lineplot <- function(input,
     plot_height <- input$plot_height
     validate(need(input$trt_group, "Please select a treatment variable"))
     trt_group <- input$trt_group
+    color_selected <- line_color_selected()
+    type_selected <- line_type_selected()
+    symbol_selected <- symbol_type_selected()
+    # nolint end
+
     validate(need(input$xaxis_var, "Please select an X-Axis Variable"))
     validate(need(input$yaxis_var, "Please select a Y-Axis Variable"))
 
+    # nolint start
     param <- input$xaxis_param
     xaxis <- input$xaxis_var
     yaxis <- input$yaxis_var
@@ -394,9 +628,11 @@ srv_lineplot <- function(input,
           trt_group = .(trt_group),
           trt_group_level = .(trt_group_level),
           shape = .(shape),
+          shape_type = .(symbol_selected),
           time = .(xaxis),
           time_level = .(xvar_level),
-          color_manual = .(color_manual),
+          color_manual = .(color_selected),
+          line_type = .(type_selected),
           median = .(median),
           hline = .(hline),
           xtick = .(xtick),
