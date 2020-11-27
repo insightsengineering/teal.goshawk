@@ -498,7 +498,26 @@ srv_lineplot <- function(input,
   })
 
 
-  symbol_type_start <- c(15:18, 3:14, 0:2)
+  symbol_type_start <- c(
+    "circle",
+    "square",
+    "diamond",
+    "triangle",
+    "circle open",
+    "square open",
+    "diamond open",
+    "triangle open",
+    "triangle down open",
+    "circle cross",
+    "square cross",
+    "circle plus",
+    "square plus",
+    "diamond plus",
+    "square traingle",
+    "plus",
+    "cross",
+    "asterisk"
+  )
   symbol_type_defaults <- reactiveVal(symbol_type_start)
 
   observe({
@@ -524,9 +543,9 @@ srv_lineplot <- function(input,
         function(idx) {
           x <- anl_shape_levels[[idx]]
           x_id <- gsub(" ", "_", x)
-          if_empty(as.integer(input[[paste0("symbol_type_", x_id)]]), isolate(symbol_type_defaults())[[idx]])
+          if_null(input[[paste0("symbol_type_", x_id)]], isolate(symbol_type_defaults())[[idx]])
         },
-        integer(1)
+        character(1)
       ),
       anl_shape_levels
     )
