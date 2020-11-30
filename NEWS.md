@@ -1,4 +1,4 @@
-# teal.goshawk 0.1.5.9000
+# teal.goshawk 0.1.6
 
 * Add option to add rug plot in `tm_g_gh_density_distribution_plot`.
 * Move `code` argument to `cdisc_dataset` (from `cdisc_data`) in examples.
@@ -9,7 +9,6 @@
 * Replace `plot_with_height` module with new `plot_with_settings` module.
 * Allow to set a minimum number of observations to render a node in `tm_g_gh_lineplot` and allow to change the font size in the table. Also the previously named argument `font_size` is now `plot_font_size` to distinguish it from the table font size argument.
 * Add option to customize symbol type, line type and color in `tm_g_gh_lineplot`.
-* issues with no news:
 
 # teal.goshawk 0.1.5
 
