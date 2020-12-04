@@ -513,7 +513,7 @@ srv_lineplot <- function(input,
     "circle plus",
     "square plus",
     "diamond plus",
-    "square traingle",
+    "square triangle",
     "plus",
     "cross",
     "asterisk"
@@ -553,7 +553,10 @@ srv_lineplot <- function(input,
 
   output$symbols <- renderUI({
     validate(need(input$shape, "Please select line splitting variable first."))
+
     anl_shape <- anl_chunks()$ANL[[input$shape]]
+    validate(need(is.factor(anl_shape), "Line splitting variable must be a factor."))
+
     anl_shape_nlevels <- nlevels(anl_shape)
     anl_shape_levels <- levels(anl_shape)
     symbol_def <- symbol_type_defaults()
