@@ -28,7 +28,6 @@ Imports:
   dplyr, 
   ggplot2,
   methods,
-  rlang,
   shinyjs,
   stats,
   teal.devel (>= 0.2.8),
