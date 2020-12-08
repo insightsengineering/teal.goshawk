@@ -640,7 +640,7 @@ srv_lineplot <- function(input,
           xtick = .(xtick),
           xlabel = .(xlabel),
           rotate_xlab = .(rotate_xlab),
-          plot_height = .(if_empty(height, 989)),
+          plot_height = .(if_empty(height, 989)), # 989 is the default value for plot_height
           plot_font_size = .(plot_font_size),
           dodge = .(dodge),
           count_threshold = .(count_threshold),
