@@ -580,7 +580,6 @@ srv_lineplot <- function(input,
 
   })
 
-
   plot_r <- reactive({
     ac <- anl_chunks()
     private_chunks <- ac$chunks$clone(deep = TRUE)
@@ -594,7 +593,7 @@ srv_lineplot <- function(input,
     table_font_size <- input$table_font_size
     hline <- if (is.na(input$hline)) NULL else as.numeric(input$hline)
     median <- ifelse(input$stat == "median", TRUE, FALSE)
-    plot_height <- input$plot_height
+    height <- input[["plot-height"]]
     validate(need(input$trt_group, "Please select a treatment variable"))
     trt_group <- input$trt_group
     color_selected <- line_color_selected()
@@ -641,6 +640,7 @@ srv_lineplot <- function(input,
           xtick = .(xtick),
           xlabel = .(xlabel),
           rotate_xlab = .(rotate_xlab),
+          plot_height = .(if_empty(height, 989)), # 989 is the default value for plot_height
           plot_font_size = .(plot_font_size),
           dodge = .(dodge),
           count_threshold = .(count_threshold),
