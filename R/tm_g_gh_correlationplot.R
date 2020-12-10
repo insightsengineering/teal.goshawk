@@ -271,7 +271,7 @@ srv_g_correlationplot <- function(input,
                                   plot_width) {
   # filter selected biomarkers
   anl_param <- reactive({
-    validate(need(input$trt_group, "Please select an Treatment Variable"))
+    validate(need(input$trt_group, "Please select a Treatment Variable"))
     validate(need(input$xaxis_param, "Please select an X-Axis Biomarker"))
     validate(need(input$xaxis_var, "Please select an X-Axis Variable"))
     validate(need(input$yaxis_param, "Please select a Y-Axis Biomarker"))
