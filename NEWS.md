@@ -1,14 +1,16 @@
 # teal.goshawk 0.1.6
 
-* Add option to add rug plot in `tm_g_gh_density_distribution_plot`.
-* Move `code` argument to `cdisc_dataset` (from `cdisc_data`) in examples.
-* Changing slider titles from Transparency to Alpha for `tm_g_gh_boxplot` and `tm_g_gh_spaghettiplot`.
-* Replace `plot_with_height` module with new `plot_with_settings` module. 
-* Add drop down selector for treatment ARM `trt_group`.
-* Introduce `facet_var` drop down in `tm_g_gh_scatterplot` and `tm_g_gh_correlationplot`.
-* Replace `plot_with_height` module with new `plot_with_settings` module.
-* Allow to set a minimum number of observations to render a node in `tm_g_gh_lineplot` and allow to change the font size in the table. Also the previously named argument `font_size` is now `plot_font_size` to distinguish it from the table font size argument.
-* Add option to customize symbol type, line type and color in `tm_g_gh_lineplot`.
+### Enhancements
+* Added optional rug plot in `tm_g_gh_density_distribution_plot`.
+* Implemented new `plot_with_settings` functionality to all modules with support for plot resizing, zooming, and downloading functionality.
+* Added drop down selector for treatment ARM.
+* Introduced `facet_var` drop down in `tm_g_gh_scatterplot` and `tm_g_gh_correlationplot`.
+* Allow the setting of a minimum number of observations to render a node in `tm_g_gh_lineplot` and allow to change the font size in the table. Also the previously named argument `font_size` is now `plot_font_size` to distinguish it from the table font size argument.
+* Added option to customize symbol type, line type, and color in `tm_g_gh_lineplot`.
+
+### Miscellaneous
+* Moved `code` argument to `cdisc_dataset` (from `cdisc_data`) in examples.
+* Changed slider titles from Transparency to Alpha for `tm_g_gh_boxplot` and `tm_g_gh_spaghettiplot`.
 
 # teal.goshawk 0.1.5
 
