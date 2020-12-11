@@ -388,7 +388,7 @@ srv_lineplot <- function(input,
       # or missing then we fill with a random colour
       line_color_to_set <- setNames(line_color_defaults()[levels(anl_arm)], nm = levels(anl_arm))
     }
-    line_color_to_set[is.na(line_color_to_set)] <- rainbow(length(is.na(line_color_to_set)))
+    line_color_to_set[is.na(line_color_to_set)] <- rainbow(sum(is.na(line_color_to_set)))
     line_color_defaults(line_color_to_set)
 
     line_type_to_set <- if (length(line_type_defaults()) <= anl_arm_nlevels) {
