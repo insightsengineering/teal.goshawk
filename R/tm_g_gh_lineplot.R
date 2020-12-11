@@ -380,27 +380,15 @@ srv_lineplot <- function(input,
 
     if (is.null(names(line_color_defaults()))) {
       # if color_manual did not specify arms (i.e. didn't have names) then order
-      # of the vector does not need ot match order of level(anl_arm)
-      line_color_to_set <- if (length(line_color_defaults()) <= anl_arm_nlevels) {
-        c(line_color_defaults(), rainbow(anl_arm_nlevels - length(line_color_defaults())))
-      } else {
-        line_color_defaults()[seq_len(anl_arm_nlevels)]
-      }
+      # of the vector does not need to match order of level(anl_arm)
+      line_color_to_set <- line_color_defaults()[seq_len(anl_arm_nlevels)]
     } else {
       # if color_manual did specify arms then we need to make sure the order of
       # line_color_to_set matches the order of level(anl_arm) and if any arms are invalid
       # or missing then we fill with a random colour
-      line_color_to_set <- vapply(levels(anl_arm),
-        function(arm_val) {
-          if (arm_val %in% names(line_color_defaults())) {
-            return(line_color_defaults()[arm_val])
-          }
-          return(as.character(NA))
-        }, FUN.VALUE = character(1)
-      )
-      line_color_to_set[is.na(line_color_to_set)] <- rainbow(length(is.na(line_color_to_set)))
+      line_color_to_set <- setNames(line_color_defaults()[levels(anl_arm)], nm = levels(anl_arm))
     }
-
+    line_color_to_set[is.na(line_color_to_set)] <- rainbow(length(is.na(line_color_to_set)))
     line_color_defaults(line_color_to_set)
 
     line_type_to_set <- if (length(line_type_defaults()) <= anl_arm_nlevels) {
