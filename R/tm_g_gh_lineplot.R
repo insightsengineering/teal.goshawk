@@ -529,8 +529,7 @@ srv_lineplot <- function(input,
 
   observeEvent(input$shape, { # reset shapes when different splitting variable is selected
     symbol_type_defaults(symbol_type_start)
-    }, ignoreNULL = TRUE
-  )
+  }, ignoreNULL = TRUE)
 
   observe({
     req(input$shape)
