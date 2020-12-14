@@ -527,12 +527,16 @@ srv_lineplot <- function(input,
   )
   symbol_type_defaults <- reactiveVal(symbol_type_start)
 
+  # reset shapes when different splitting variable is selected
+  observeEvent(input$shape, {
+    symbol_type_defaults(symbol_type_start)
+  }, ignoreNULL = TRUE)
+
   observe({
     req(input$shape)
     anl_shape <- anl_chunks()$ANL[[input$shape]]
     anl_shape_nlevels <- nlevels(anl_shape)
-
-    symbol_type_to_set <- symbol_type_start[pmin(length(symbol_type_start), seq_len(anl_shape_nlevels))]
+    symbol_type_to_set <- symbol_type_defaults()[pmin(length(symbol_type_defaults()), seq_len(anl_shape_nlevels))]
     symbol_type_defaults(symbol_type_to_set)
   })
 
@@ -561,7 +565,7 @@ srv_lineplot <- function(input,
   output$symbols <- renderUI({
     validate(need(input$shape, "Please select line splitting variable first."))
 
-    anl_shape <- anl_chunks()$ANL[[input$shape]]
+    anl_shape <- isolate(anl_chunks()$ANL[[input$shape]])
     validate(need(is.factor(anl_shape), "Line splitting variable must be a factor."))
 
     anl_shape_nlevels <- nlevels(anl_shape)
