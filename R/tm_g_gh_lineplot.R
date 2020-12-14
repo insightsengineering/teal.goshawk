@@ -378,11 +378,17 @@ srv_lineplot <- function(input,
     anl_arm <- anl_chunks()$ANL[[input$trt_group]]
     anl_arm_nlevels <- nlevels(anl_arm)
 
-    line_color_to_set <- if (length(line_color_defaults()) <= anl_arm_nlevels) {
-      c(line_color_defaults(), rainbow(anl_arm_nlevels - length(line_color_defaults())))
+    if (is.null(names(line_color_defaults()))) {
+      # if color_manual did not specify arms (i.e. didn't have names) then order
+      # of the vector does not need to match order of level(anl_arm)
+      line_color_to_set <- line_color_defaults()[seq_len(anl_arm_nlevels)]
     } else {
-      line_color_defaults()[seq_len(anl_arm_nlevels)]
+      # if color_manual did specify arms then we need to make sure the order of
+      # line_color_to_set matches the order of level(anl_arm) and if any arms are invalid
+      # or missing then we fill with a random colour
+      line_color_to_set <- setNames(line_color_defaults()[levels(anl_arm)], nm = levels(anl_arm))
     }
+    line_color_to_set[is.na(line_color_to_set)] <- rainbow(sum(is.na(line_color_to_set)))
     line_color_defaults(line_color_to_set)
 
     line_type_to_set <- if (length(line_type_defaults()) <= anl_arm_nlevels) {
@@ -390,6 +396,7 @@ srv_lineplot <- function(input,
     } else {
       line_type_defaults()[seq_len(anl_arm_nlevels)]
     }
+
     line_type_defaults(line_type_to_set)
   })
 
