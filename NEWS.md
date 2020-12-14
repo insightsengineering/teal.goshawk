@@ -1,20 +1,20 @@
 # teal.goshawk 0.1.6
 
 ### Enhancements
-* tm_g_gh_boxplot 
+* `tm_g_gh_boxplot` 
    - Changed slider title from "Transparency" to "Alpha". 
-* tm_g_gh_correlationplot
+* `tm_g_gh_correlationplot`
     - Added `facet_var` argument and UI drop down.
-* tm_g_gh_density_distribution_plot
+* `tm_g_gh_density_distribution_plot`
     - Rug plot option added.
-* tm_g_gh_lineplot
+* `tm_g_gh_lineplot`
     - Argument changes: `font_size` --> `plot_font_size`.
     - Line and symbol type can now be configured. especially useful if line splitting is used.
     - Can set minimum records threshold for rendering data point in plot.
     - Table font size can now be controlled.
-* tm_g_gh_scatterplot
+* `tm_g_gh_scatterplot`
     - Added `facet_var` argument and UI drop down.
-* tm_g_gh_spaghettiplot
+* `tm_g_gh_spaghettiplot`
    - Changed slider title from "Transparency" to "Alpha".
     
 ### General
