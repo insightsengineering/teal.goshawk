@@ -7,7 +7,7 @@ The modules included are:
 - tm_g_gh_correlationplot
 - tm_g_gh_density_distribution_plot
 - tm_g_gh_lineplot
-- tm_g_gh_scatterplot (undergoing update)
+- tm_g_gh_scatterplot
 - tm_g_gh_spaghettiplot
 
 # Sample App

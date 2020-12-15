@@ -27,6 +27,7 @@ reference:
   - title: helper functions
     contents:
       - maptrt
+      - toggle_slider_ui
 
   - title: Package Build Related
     desc: These files facilitate package build.
