@@ -1,6 +1,6 @@
-templ_ui_output_datatable <- function(ns, plot_height = NULL, plot_width = NULL) {
+templ_ui_output_datatable <- function(ns) {
   div(
-    plot_with_settings_ui(id = ns("plot"), height = plot_height, width = plot_width),
+    plot_with_settings_ui(id = ns("plot")),
     br(), hr(),
     h4("Selected Data Points"),
     DT::dataTableOutput(ns("brush_data"))

@@ -207,7 +207,7 @@ ui_lineplot <- function(id, ...) {
   a <- list(...)
 
   standard_layout(
-    output = plot_with_settings_ui(id = ns("plot"), height = a$plot_height, width = a$plot_width),
+    output = plot_with_settings_ui(id = ns("plot")),
     encoding = div(
       templ_ui_dataname(a$dataname),
       optionalSelectInput(
