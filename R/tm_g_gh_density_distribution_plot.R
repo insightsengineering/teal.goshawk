@@ -197,7 +197,7 @@ ui_g_density_distribution_plot <- function(id, ...) {
   standard_layout(
     output = div(
       fluidRow(
-        plot_with_settings_ui(id = ns("plot"), height = a$plot_height, width = a$plot_width)
+        plot_with_settings_ui(id = ns("plot"))
       ),
       fluidRow(column(
         width = 12,

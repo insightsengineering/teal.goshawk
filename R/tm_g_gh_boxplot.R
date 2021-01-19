@@ -203,7 +203,7 @@ ui_g_boxplot <- function(id, ...) {
   standard_layout(
     output = div(
       fluidRow(
-        plot_with_settings_ui(id = ns("boxplot"), height = a$plot_height, width = a$plot_width)
+        plot_with_settings_ui(id = ns("boxplot"))
       ),
       fluidRow(column(
         width = 12,

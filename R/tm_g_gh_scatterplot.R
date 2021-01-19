@@ -187,7 +187,7 @@ ui_g_scatterplot <- function(id, ...) {
   a <- list(...)
 
   standard_layout(
-    output = templ_ui_output_datatable(ns, a$plot_height, a$plot_width),
+    output = templ_ui_output_datatable(ns),
     encoding =  div(
       templ_ui_dataname(a$dataname),
       optionalSelectInput(
