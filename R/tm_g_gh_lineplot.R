@@ -124,8 +124,8 @@
 #'     tm_g_gh_lineplot(
 #'       label = "Line Plot",
 #'       dataname = "ADLB",
-#'        param_var = "PARAMCD",
-#'        param = choices_selected(c("ALT", "CRP", "IGA"), "ALT"),
+#'       param_var = "PARAMCD",
+#'       param = choices_selected(c("ALT", "CRP", "IGA"), "ALT"),
 #'       shape_choices = c("SEX", "RACE"),
 #'       xaxis_var =choices_selected("AVISITCD", "AVISITCD"),
 #'       yaxis_var = choices_selected(c("AVAL", "BASE", "CHG", "PCHG"), "AVAL"),
@@ -225,6 +225,7 @@ ui_lineplot <- function(id, ...) {
       ),
       uiOutput(ns("shape_ui")),
       radioButtons(ns("stat"), "Select a Statistic:", c("mean", "median"), a$stat),
+      checkboxInput(ns("include_stat"), "Include Statistic Table", value = FALSE),
       templ_ui_constraint(ns), # required by constr_anl_chunks
       panel_group(
         panel_item(
@@ -610,6 +611,7 @@ srv_lineplot <- function(input,
     color_selected <- line_color_selected()
     type_selected <- line_type_selected()
     symbol_selected <- symbol_type_selected()
+    include_stat <- input$include_stat
     # nolint end
 
     validate(need(input$xaxis_var, "Please select an X-Axis Variable"))
@@ -655,7 +657,8 @@ srv_lineplot <- function(input,
           plot_font_size = .(plot_font_size),
           dodge = .(dodge),
           count_threshold = .(count_threshold),
-          table_font_size = .(table_font_size)
+          table_font_size = .(table_font_size),
+          display_center_tbl = .(include_stat)
         )
         print(p)
       })
