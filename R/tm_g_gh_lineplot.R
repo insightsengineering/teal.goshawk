@@ -225,7 +225,7 @@ ui_lineplot <- function(id, ...) {
       ),
       uiOutput(ns("shape_ui")),
       radioButtons(ns("stat"), "Select a Statistic:", c("mean", "median"), a$stat),
-      checkboxInput(ns("include_stat"), "Include Statistic Table", value = FALSE),
+      checkboxInput(ns("include_stat"), "Include Statistic Table", value = TRUE),
       templ_ui_constraint(ns), # required by constr_anl_chunks
       panel_group(
         panel_item(
