@@ -664,6 +664,7 @@ srv_lineplot <- function(input,
 
     chunks_safe_eval(private_chunks)
 
+    chunks_reset()
     chunks_push_chunks(private_chunks)
 
     chunks_get_var("p")
