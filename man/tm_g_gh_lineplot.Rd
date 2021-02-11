@@ -182,8 +182,8 @@ app <- teal::init(
     tm_g_gh_lineplot(
       label = "Line Plot",
       dataname = "ADLB",
-       param_var = "PARAMCD",
-       param = choices_selected(c("ALT", "CRP", "IGA"), "ALT"),
+      param_var = "PARAMCD",
+      param = choices_selected(c("ALT", "CRP", "IGA"), "ALT"),
       shape_choices = c("SEX", "RACE"),
       xaxis_var =choices_selected("AVISITCD", "AVISITCD"),
       yaxis_var = choices_selected(c("AVAL", "BASE", "CHG", "PCHG"), "AVAL"),
