@@ -1,4 +1,8 @@
 # teal.goshawk 0.1.6.9000
+### Enhancements
+* `tm_g_gh_lineplot`
+  - Added a table to display mean, median and quartiles.
+  
 ### Bug fixes
 * `tm_g_gh_lineplot`
   - fixed displaying the number of messages, warnings and errors on the Debug Info button
