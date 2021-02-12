@@ -1,7 +1,7 @@
 # teal.goshawk 0.1.6.9000
 ### Enhancements
 * `tm_g_gh_lineplot`
-  - Added a table to display mean, median and quartiles.
+  - Added a table to display summary statistics.
   
 ### Bug fixes
 * `tm_g_gh_lineplot`
