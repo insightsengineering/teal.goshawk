@@ -284,6 +284,7 @@ srv_lineplot <- function(input,
                          plot_height,
                          plot_width) {
 
+  init_chunks()
   ns <- session$ns
   output$shape_ui <- renderUI({
     if (!is.null(shape_choices)) {
@@ -663,7 +664,8 @@ srv_lineplot <- function(input,
 
     chunks_safe_eval(private_chunks)
 
-    init_chunks(private_chunks)
+    chunks_reset()
+    chunks_push_chunks(private_chunks)
 
     chunks_get_var("p")
   })
