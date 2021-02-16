@@ -41,6 +41,7 @@
 #' @importFrom ggplot2 waiver
 #' @importFrom grDevices extendrange rainbow
 #' @importFrom colourpicker colourInput
+#' @importFrom digest digest
 #'
 #' @author Wenyi Liu (luiw2) wenyi.liu@roche.com
 #' @author Balazs Toth (tothb2) toth.balazs@gene.com
@@ -416,7 +417,7 @@ srv_lineplot <- function(input,
         function(idx) {
           x <- anl_arm_levels[[idx]]
           x_id <- gsub(" ", "_", x)
-          if_null(input[[paste0("line_color_", x_id)]], isolate(line_color_defaults())[[idx]])
+          if_null(input[[paste0("line_color_", digest(x_id))]], isolate(line_color_defaults())[[idx]])
         },
         character(1)
       ),
@@ -438,7 +439,7 @@ srv_lineplot <- function(input,
         function(idx) {
           x <- anl_arm_levels[[idx]]
           x_id <- gsub(" ", "_", x)
-          if_null(input[[paste0("line_type_", x_id)]], isolate(line_type_defaults())[[idx]])
+          if_null(input[[paste0("line_type_", digest(x_id))]], isolate(line_type_defaults())[[idx]])
         },
         character(1)
       ),
@@ -461,13 +462,13 @@ srv_lineplot <- function(input,
           x_id <- gsub(" ", "_", x)
           x_color <- color_def[[idx]]
           color_input <- colourpicker::colourInput(
-            ns(paste0("line_color_", x_id)),
+            ns(paste0("line_color_", digest(x_id))),
             "Color:",
             x_color
           )
           x_type <- type_def[[idx]]
           type_input <- selectInput(
-            ns(paste0("line_type_", x_id)),
+            ns(paste0("line_type_", digest(x_id))),
             "Type:",
             choices = c(
               "blank",
@@ -556,7 +557,7 @@ srv_lineplot <- function(input,
         function(idx) {
           x <- anl_shape_levels[[idx]]
           x_id <- gsub(" ", "_", x)
-          if_null(input[[paste0("symbol_type_", x_id)]], isolate(symbol_type_defaults())[[idx]])
+          if_null(input[[paste0("symbol_type_", digest(x_id))]], isolate(symbol_type_defaults())[[idx]])
         },
         character(1)
       ),
@@ -582,7 +583,7 @@ srv_lineplot <- function(input,
           x_id <- gsub(" ", "_", x)
           x_color <- symbol_def[[idx]]
           selectInput(
-            ns(paste0("symbol_type_", x_id)),
+            ns(paste0("symbol_type_", digest(x_id))),
             HTML(paste0("Symbol for: ", tags$code(x))),
             choices = symbol_type_start,
             selected = x_color
