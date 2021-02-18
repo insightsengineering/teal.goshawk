@@ -41,7 +41,6 @@
 #' @importFrom ggplot2 waiver
 #' @importFrom grDevices extendrange rainbow
 #' @importFrom colourpicker colourInput
-#' @importFrom digest digest
 #'
 #' @author Wenyi Liu (luiw2) wenyi.liu@roche.com
 #' @author Balazs Toth (tothb2) toth.balazs@gene.com
