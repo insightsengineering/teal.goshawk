@@ -185,7 +185,8 @@ tm_g_gh_lineplot <- function(label,
     server_args = list(
       dataname = dataname,
       param_var = param_var,
-      trt_group = trt_group, color_manual = color_manual,
+      trt_group = trt_group,
+      color_manual = color_manual,
       xvar_level = xvar_level,
       trt_group_level = trt_group_level,
       shape_choices = shape_choices,
@@ -415,9 +416,7 @@ srv_lineplot <- function(input,
       vapply(
         seq_len(anl_arm_nlevels),
         function(idx) {
-          x <- anl_arm_levels[[idx]]
-          x_id <- gsub(" ", "_", x)
-          if_null(input[[paste0("line_color_", digest(x_id))]], isolate(line_color_defaults())[[idx]])
+          if_null(input[[paste0("line_color_", idx)]], isolate(line_color_defaults())[[idx]])
         },
         character(1)
       ),
@@ -437,9 +436,7 @@ srv_lineplot <- function(input,
       vapply(
         seq_len(anl_arm_nlevels),
         function(idx) {
-          x <- anl_arm_levels[[idx]]
-          x_id <- gsub(" ", "_", x)
-          if_null(input[[paste0("line_type_", digest(x_id))]], isolate(line_type_defaults())[[idx]])
+          if_null(input[[paste0("line_type_", idx)]], isolate(line_type_defaults())[[idx]])
         },
         character(1)
       ),
@@ -459,16 +456,15 @@ srv_lineplot <- function(input,
         seq_len(anl_arm_nlevels),
         function(idx) {
           x <- anl_arm_levels[[idx]]
-          x_id <- gsub(" ", "_", x)
           x_color <- color_def[[idx]]
           color_input <- colourpicker::colourInput(
-            ns(paste0("line_color_", digest(x_id))),
+            ns(paste0("line_color_", idx)),
             "Color:",
             x_color
           )
           x_type <- type_def[[idx]]
           type_input <- selectInput(
-            ns(paste0("line_type_", digest(x_id))),
+            ns(paste0("line_type_", idx)),
             "Type:",
             choices = c(
               "blank",
@@ -555,9 +551,7 @@ srv_lineplot <- function(input,
       vapply(
         seq_len(anl_shape_nlevels),
         function(idx) {
-          x <- anl_shape_levels[[idx]]
-          x_id <- gsub(" ", "_", x)
-          if_null(input[[paste0("symbol_type_", digest(x_id))]], isolate(symbol_type_defaults())[[idx]])
+          if_null(input[[paste0("symbol_type_", idx)]], isolate(symbol_type_defaults())[[idx]])
         },
         character(1)
       ),
@@ -580,10 +574,9 @@ srv_lineplot <- function(input,
         seq_len(anl_shape_nlevels),
         function(idx) {
           x <- anl_shape_levels[[idx]]
-          x_id <- gsub(" ", "_", x)
           x_color <- symbol_def[[idx]]
           selectInput(
-            ns(paste0("symbol_type_", digest(x_id))),
+            ns(paste0("symbol_type_", idx)),
             HTML(paste0("Symbol for: ", tags$code(x))),
             choices = symbol_type_start,
             selected = x_color
