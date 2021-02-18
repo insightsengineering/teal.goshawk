@@ -6,7 +6,7 @@
 ### Bug fixes
 * `tm_g_gh_lineplot`
   - Fixed displaying the number of messages, warnings and errors on the Debug Info button.
-  - Allow arm names with symbols (e.g. ':').
+  - Fixed treatment variable having values with with symbols (e.g. ':').
   - Allow treatment variables with different arm levels.
 
 * Issues with no news:
