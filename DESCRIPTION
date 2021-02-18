@@ -25,7 +25,6 @@ Imports:
   colourpicker,
   DescTools,
   DT,
-  digest,
   dplyr, 
   ggplot2,
   methods,
