@@ -5,7 +5,9 @@
   
 ### Bug fixes
 * `tm_g_gh_lineplot`
-  - fixed displaying the number of messages, warnings and errors on the Debug Info button
+  - Fixed displaying the number of messages, warnings and errors on the Debug Info button.
+  - Fixed treatment variable having values with with symbols (e.g. ':').
+  - Allow treatment variables with different arm levels.
 
 * Issues with no news:
 

@@ -376,7 +376,7 @@ srv_lineplot <- function(input,
   line_type_start <- "dashed"
   line_type_defaults <- reactiveVal(line_type_start)
 
-  observe({
+  observeEvent(input$trt_group, {
     req(input$trt_group)
     anl_arm <- anl_chunks()$ANL[[input$trt_group]]
     anl_arm_nlevels <- nlevels(anl_arm)
@@ -391,7 +391,7 @@ srv_lineplot <- function(input,
       # or missing then we fill with a random colour
       line_color_to_set <- setNames(line_color_defaults()[levels(anl_arm)], nm = levels(anl_arm))
     }
-    line_color_to_set[is.na(line_color_to_set)] <- rainbow(sum(is.na(line_color_to_set)))
+    line_color_to_set[is.na(line_color_to_set)] <- rainbow(anl_arm_nlevels)[is.na(line_color_to_set)]
     line_color_defaults(line_color_to_set)
 
     line_type_to_set <- if (length(line_type_defaults()) <= anl_arm_nlevels) {
