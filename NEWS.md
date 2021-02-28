@@ -1,4 +1,4 @@
-# teal.goshawk 0.1.6.9000
+# teal.goshawk 0.1.7
 ### Enhancements
 * `tm_g_gh_lineplot`
   - Added a table to display summary statistics.
@@ -8,8 +8,6 @@
   - Fixed displaying the number of messages, warnings and errors on the Debug Info button.
   - Fixed treatment variable having values with with symbols (e.g. ':').
   - Allow treatment variables with different arm levels.
-
-* Issues with no news:
 
 # teal.goshawk 0.1.6
 
