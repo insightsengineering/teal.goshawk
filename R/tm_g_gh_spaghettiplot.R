@@ -287,7 +287,7 @@ srv_g_spaghettiplot <- function(input,
                                 xlabel,
                                 plot_height,
                                 plot_width) {
-
+  init_chunks()
   # reused in all modules
   anl_chunks <- constr_anl_chunks(
     session, input, datasets, dataname,

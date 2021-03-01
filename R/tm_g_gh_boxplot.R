@@ -285,6 +285,7 @@ srv_g_boxplot <- function(input,
                           plot_height,
                           plot_width) {
 
+  init_chunks()
 
   # reused in all modules
   anl_chunks <- constr_anl_chunks(

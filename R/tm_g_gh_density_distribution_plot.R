@@ -265,6 +265,7 @@ srv_g_density_distribution_plot <- function(input, # nolint
                                             color_comb,
                                             plot_height,
                                             plot_width) {
+  init_chunks()
   anl_chunks <- constr_anl_chunks(
     session, input, datasets, dataname,
     param_id = "xaxis_param", param_var = param_var, trt_group = input$trt_group
