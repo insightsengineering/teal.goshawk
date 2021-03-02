@@ -284,7 +284,6 @@ srv_g_boxplot <- function(input,
                           shape_manual,
                           plot_height,
                           plot_width) {
-
   init_chunks()
 
   # reused in all modules
@@ -409,7 +408,12 @@ srv_g_boxplot <- function(input,
       id = "output",
       expression = quote(print(p))
     )
-    init_chunks(private_chunks)
+
+    chunks_safe_eval(private_chunks)
+
+    chunks_reset()
+    chunks_push_chunks(private_chunks)
+
     private_chunks
   })
 
