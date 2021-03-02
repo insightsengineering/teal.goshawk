@@ -250,6 +250,7 @@ srv_g_scatterplot <- function(input,
                               shape_manual,
                               plot_height,
                               plot_width) {
+  init_chunks()
 
   # reused in all modules
   anl_chunks <- constr_anl_chunks(
@@ -335,7 +336,8 @@ srv_g_scatterplot <- function(input,
     chunks_safe_eval(private_chunks)
 
     # promote chunks to be visible in the sessionData by other modules
-    init_chunks(private_chunks)
+    chunks_reset()
+    chunks_push_chunks(private_chunks)
 
     chunks_get_var("p")
   })

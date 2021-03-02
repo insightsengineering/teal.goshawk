@@ -287,7 +287,7 @@ srv_g_spaghettiplot <- function(input,
                                 xlabel,
                                 plot_height,
                                 plot_width) {
-
+  init_chunks()
   # reused in all modules
   anl_chunks <- constr_anl_chunks(
     session, input, datasets, dataname,
@@ -353,7 +353,8 @@ srv_g_spaghettiplot <- function(input,
     chunks_safe_eval(private_chunks)
 
     # promote chunks to be visible in the sessionData by other modules
-    init_chunks(private_chunks)
+    chunks_reset()
+    chunks_push_chunks(private_chunks)
 
     chunks_get_var("p")
   })

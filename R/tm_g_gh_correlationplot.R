@@ -269,6 +269,7 @@ srv_g_correlationplot <- function(input,
                                   shape_manual,
                                   plot_height,
                                   plot_width) {
+  init_chunks()
   # filter selected biomarkers
   anl_param <- reactive({
     validate(need(input$trt_group, "Please select a Treatment Variable"))
@@ -648,7 +649,8 @@ srv_g_correlationplot <- function(input,
     chunks_safe_eval(private_chunks)
 
     # promote chunks to be visible in the sessionData by other modules
-    init_chunks(private_chunks)
+    chunks_reset()
+    chunks_push_chunks(private_chunks)
     chunks_get_var("p")
   })
 
