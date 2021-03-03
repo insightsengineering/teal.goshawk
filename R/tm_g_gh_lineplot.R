@@ -62,8 +62,8 @@
 #'                     "B: Placebo" = "Placebo",
 #'                     "C: Combination" = "Combination")
 #'
-#' ADSL <- radsl(N = 20, seed = 1)
-#' ADLB <- radlb(ADSL, visit_format = "WEEK", n_assessments = 7L, seed = 2)
+#' ADSL <- radsl(cached = TRUE)
+#' ADLB <- radlb(ADSL, cached = TRUE)
 #' var_labels <- lapply(ADLB, function(x) attributes(x)$label)
 #' ADLB <- ADLB %>%
 #'   mutate(AVISITCD = case_when(
@@ -90,9 +90,9 @@
 #'
 #' app <- teal::init(
 #'   data = cdisc_data(
-#'     adsl <- cdisc_dataset("ADSL", ADSL, code = "ADSL <- radsl(N = 20, seed = 1)"),
+#'     adsl <- cdisc_dataset("ADSL", ADSL, code = "ADSL <- radsl(cached = TRUE)"),
 #'     cdisc_dataset("ADLB", ADLB,
-#'       code = "ADLB <- radlb(ADSL, visit_format = 'WEEK', n_assessments = 7L, seed = 2)
+#'       code = "ADLB <- radlb(ADSL, cached = TRUE)
 #'               var_labels <- lapply(ADLB, function(x) attributes(x)$label)
 #'               ADLB <- ADLB %>%
 #'                 mutate(AVISITCD = case_when(
