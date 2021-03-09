@@ -213,8 +213,18 @@ ui_g_scatterplot <- function(id, ...) {
       panel_group(
         panel_item(
           title = "Plot Aesthetic Settings",
-          toggle_slider_ui(ns("xrange_scale"), label = "X-Axis Range Zoom", min = 0, max = 1, value = c(0, 1)),
-          toggle_slider_ui(ns("yrange_scale"), label = "Y-Axis Range Zoom", min = 0, max = 1, value = c(0, 1)),
+          toggle_slider_ui(ns("xrange_scale"),
+            label = "X-Axis Range Zoom",
+            min = -1000000,
+            max = 1000000,
+            value = c(-1000000, 1000000)
+          ),
+          toggle_slider_ui(ns("yrange_scale"),
+            label = "Y-Axis Range Zoom",
+            min = -1000000,
+            max = 1000000,
+            value = c(-1000000, 1000000)
+          ),
           numericInput(ns("facet_ncol"), "Number of Plots Per Row:", a$facet_ncol, min = 1),
           checkboxInput(ns("reg_line"), "Regression Line", a$reg_line),
           checkboxInput(ns("rotate_xlab"), "Rotate X-axis Label", a$rotate_xlab),
