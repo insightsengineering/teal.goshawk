@@ -395,6 +395,6 @@ srv_g_density_distribution_plot <- function(input, # nolint
     get_rcode_srv,
     id = "rcode",
     datasets = datasets,
-    modal_title = "Scatter Plot"
+    modal_title = "Density Distribution Plot"
   )
 }
