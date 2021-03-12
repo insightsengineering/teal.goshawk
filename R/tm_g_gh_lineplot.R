@@ -227,6 +227,25 @@ ui_lineplot <- function(id, ...) {
       uiOutput(ns("shape_ui")),
       radioButtons(ns("stat"), "Select a Statistic:", c("mean", "median"), a$stat),
       checkboxInput(ns("include_stat"), "Include Statistic Table", value = TRUE),
+      div(
+        sliderInput(
+          ns("relative_height"),
+          div(
+            "Relative height of plot to table(s)",
+            title =
+            paste("The larger the value selected the greater the size of the plot relative",
+                  "to the size of the tables. Note the units of this slider are arbitrary.",
+                  "To change the total size of the plot and table(s)",
+                  "use the plot resizing controls available at the top right of the plot"),
+            icon("info-circle")
+          ),
+          min = 500,
+          max = 2500,
+          step = 50,
+          value = 1000,
+          ticks = FALSE
+        ),
+      ),
       templ_ui_constraint(ns), # required by constr_anl_chunks
       panel_group(
         panel_item(
@@ -599,7 +618,7 @@ srv_lineplot <- function(input,
     table_font_size <- input$table_font_size
     hline <- if (is.na(input$hline)) NULL else as.numeric(input$hline)
     median <- ifelse(input$stat == "median", TRUE, FALSE)
-    height <- input[["plot-height"]]
+    relative_height <- input$relative_height
     validate(need(input$trt_group, "Please select a treatment variable"))
     trt_group <- input$trt_group
     color_selected <- line_color_selected()
@@ -647,7 +666,7 @@ srv_lineplot <- function(input,
           xtick = .(xtick),
           xlabel = .(xlabel),
           rotate_xlab = .(rotate_xlab),
-          plot_height = .(if_empty(height, 989)), # 989 is the default value for plot_height
+          plot_height = .(relative_height), # in g_lineplot this is relative height of plot to table
           plot_font_size = .(plot_font_size),
           dodge = .(dodge),
           count_threshold = .(count_threshold),

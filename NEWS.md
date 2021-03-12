@@ -2,6 +2,7 @@
 ### Enhancements
 * `tm_g_gh_lineplot`
   - Added a table to display summary statistics.
+  - Added slider to control the relative size of the plot and tables.
   
 ### Bug fixes
 * `tm_g_gh_lineplot`
