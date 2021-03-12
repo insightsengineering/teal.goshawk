@@ -233,10 +233,12 @@ ui_lineplot <- function(id, ...) {
           div(
             "Relative height of plot to table(s)",
             title =
-            paste("The larger the value selected the greater the size of the plot relative",
-                  "to the size of the tables. Note the units of this slider are arbitrary.",
-                  "To change the total size of the plot and table(s)",
-                  "use the plot resizing controls available at the top right of the plot"),
+            paste(
+              "The larger the value selected the greater the size of the plot relative\nto",
+              "the size of the tables. Note the units of this slider are arbitrary.\nTo",
+              "change the total size of the plot and table(s)\nuse",
+              "the plot resizing controls available at the top right of the plot."
+            ),
             icon("info-circle")
           ),
           min = 500,
