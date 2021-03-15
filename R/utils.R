@@ -142,7 +142,7 @@ keep_range_slider_updated <- function(session, input, update_slider_fcn, id_var,
 # param_var: currently only "PARAMCD" is supported
 #' @importFrom dplyr filter sym
 #' @importFrom shinyjs hide show
-constr_anl_chunks <- function(session, input, datasets, dataname, param_id, param_var, trt_group) {
+constr_anl_chunks <- function(session, input, datasets, dataname, param_id, param_var, trt_group, min_rows) {
   dataset_var <- paste0(dataname, "_FILTERED")
   if (!identical(param_var, "PARAMCD")) {
     # why is there a variable param_id which is provided to this function and always equal to "param"?
@@ -155,7 +155,7 @@ constr_anl_chunks <- function(session, input, datasets, dataname, param_id, para
     stopifnot(is_character_single(param_var_value))
 
     ANL_FILTERED <- datasets$get_data(dataname, filtered = TRUE) # nolint
-    validate_has_data(ANL_FILTERED, 5)
+    validate_has_data(ANL_FILTERED, min_rows)
 
     validate_has_variable(ANL_FILTERED, param_var)
     validate_has_variable(ANL_FILTERED, "AVISITCD")
@@ -178,7 +178,7 @@ constr_anl_chunks <- function(session, input, datasets, dataname, param_id, para
     )
 
     ANL <- chunks_safe_eval(private_chunks) # nolint
-    validate_has_data(ANL, 5)
+    validate_has_data(ANL, min_rows)
 
     return(list(ANL = ANL, chunks = private_chunks))
   })
@@ -256,7 +256,7 @@ constr_anl_chunks <- function(session, input, datasets, dataname, param_id, para
     }
   })
 
-  anl_constraint <- create_anl_constraint_reactive(anl_param, input, param_id = param_id)
+  anl_constraint <- create_anl_constraint_reactive(anl_param, input, param_id = param_id, min_rows = min_rows)
 
   return(anl_constraint)
 }
@@ -266,7 +266,7 @@ constr_anl_chunks <- function(session, input, datasets, dataname, param_id, para
 # `param_id.constraint_var` in the specified range
 # constraint var means that `param_id.constraint_var` is constrained to the filtered range (or NA),
 # e.g. `ALT.BASE2` (i.e. `PARAMCD = ALT & range_filter_on(BASE2)`)
-create_anl_constraint_reactive <- function(anl_param, input, param_id) {
+create_anl_constraint_reactive <- function(anl_param, input, param_id, min_rows) {
   reactive({
     private_chunks <- anl_param()$chunks$clone(deep = TRUE)
 
@@ -312,7 +312,7 @@ create_anl_constraint_reactive <- function(anl_param, input, param_id) {
       )
 
       ANL <- chunks_safe_eval(private_chunks) # nolint
-      validate_has_data(ANL, 5)
+      validate_has_data(ANL, min_rows)
     }
 
     chunks_push_new_line(private_chunks)
