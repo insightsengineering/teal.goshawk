@@ -10,7 +10,7 @@
   - Allow treatment variables with different arm levels.
   
 ### Miscellaneous
-* Minimum number of records required in dataset has been reduced to either 1 or 2 in all modules.
+* Reduced minimum number of records required in dataset to either 1 or 2 in all modules.
 
 # teal.goshawk 0.1.6
 
