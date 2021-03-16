@@ -280,7 +280,7 @@ srv_g_correlationplot <- function(input,
 
     dataset_var <- paste0(dataname, "_FILTERED")
     ANL_FILTERED <- datasets$get_data(dataname, filtered = TRUE) # nolint
-    validate_has_data(ANL_FILTERED, 5)
+    validate_has_data(ANL_FILTERED, 1)
 
 
     validate_has_variable(ANL_FILTERED, param_var)
@@ -373,7 +373,7 @@ srv_g_correlationplot <- function(input,
     )
 
     ANL <- chunks_safe_eval(private_chunks) # nolint
-    validate_has_data(ANL, 5)
+    validate_has_data(ANL, 1)
 
     return(list(ANL = ANL, chunks = private_chunks))
   })
@@ -450,7 +450,7 @@ srv_g_correlationplot <- function(input,
     }
   })
 
-  anl_constraint <- create_anl_constraint_reactive(anl_param, input, param_id = "xaxis_param")
+  anl_constraint <- create_anl_constraint_reactive(anl_param, input, param_id = "xaxis_param", min_rows = 1)
 
   # update sliders for axes taking constraints into account
   xrange_slider <- callModule(toggle_slider_server, "xrange_scale")

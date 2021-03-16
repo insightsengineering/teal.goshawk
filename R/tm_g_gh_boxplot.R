@@ -289,7 +289,7 @@ srv_g_boxplot <- function(input,
   # reused in all modules
   anl_chunks <- constr_anl_chunks(
     session, input, datasets, dataname,
-    param_id = "xaxis_param", param_var = param_var, trt_group = input$trt_group
+    param_id = "xaxis_param", param_var = param_var, trt_group = input$trt_group, min_rows = 2
   )
   # update sliders for axes taking constraints into account
   yrange_slider <- callModule(toggle_slider_server, "yrange_scale")
@@ -445,7 +445,7 @@ srv_g_boxplot <- function(input,
     boxplot_brush <- boxplot_data$brush()
 
     ANL <- isolate(anl_chunks()$ANL) %>% droplevels() #nolint
-    validate_has_data(ANL, 5)
+    validate_has_data(ANL, 2)
 
     xvar <- isolate(input$xaxis_var)
     yvar <- isolate(input$yaxis_var)
