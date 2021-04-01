@@ -1,6 +1,9 @@
 # teal.goshawk 0.1.7.9000
 Issues with no news:
 
+### Bug fixes
+* Fixed infinite reactive loop inside of `toggle_slider_server`. 
+
 # teal.goshawk 0.1.7
 ### Enhancements
 * `tm_g_gh_lineplot`
