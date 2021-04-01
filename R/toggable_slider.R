@@ -205,14 +205,7 @@ toggle_slider_server <- function(input, output, session, is_dichotomous_slider =
       }
     }
   }
-  initial_app_launch <- reactiveVal(TRUE)
-  observeEvent(cur_state(), {
-    # this observeEvent is only meant to run upon app launch
-    if (initial_app_launch()) {
-      update_widgets()
-      initial_app_launch(FALSE)
-    }
-  })
+  observeEvent(cur_state(), handlerExpr = update_widgets(), once = TRUE)
   observeEvent(input$toggle, {
     update_widgets()
     shinyjs::toggle("numeric_view")
