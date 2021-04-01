@@ -1,6 +1,12 @@
 # teal.goshawk 0.1.7.9000
 Issues with no news:
 
+### Bug fixes
+* Fixed infinite reactive loop inside of `toggle_slider_server`.
+
+### Miscellaneous
+* Renamed `toggle.R` file to `toggleable.R` file to be consistent with the accepted correct spelling of the word.
+
 # teal.goshawk 0.1.7
 ### Enhancements
 * `tm_g_gh_lineplot`

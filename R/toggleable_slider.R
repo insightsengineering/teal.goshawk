@@ -183,7 +183,9 @@ toggle_slider_server <- function(input, output, session, is_dichotomous_slider =
     input$value, {
     set_state(list(value = input$value))
   })
-  observeEvent(cur_state(), {
+
+
+  update_widgets <- function() {
     state_slider <- cur_state()
     req(length(state_slider) > 0) # update will otherwise not work
     state_low <- state_slider
@@ -192,15 +194,20 @@ toggle_slider_server <- function(input, output, session, is_dichotomous_slider =
       state_low$value <- state_low$value[[1]]
       state_high$value <- state_high$value[[2]]
     }
-    do.call(updateSliderInput, c(list(session, "slider"), state_slider))
-    if (length(state_slider$value) > 1) {
-      do.call(updateNumericInput, c(list(session, "value_low"), state_low))
-      do.call(updateNumericInput, c(list(session, "value_high"), state_high))
+    if (input$toggle %% 2 == 0) {
+      do.call(updateSliderInput, c(list(session, "slider"), state_slider))
     } else {
-      do.call(updateNumericInput, c(list(session, "value"), state_low))
+      if (length(state_slider$value) > 1) {
+        do.call(updateNumericInput, c(list(session, "value_low"), state_low))
+        do.call(updateNumericInput, c(list(session, "value_high"), state_high))
+      } else {
+        do.call(updateNumericInput, c(list(session, "value"), state_low))
+      }
     }
-  })
+  }
+  observeEvent(cur_state(), handlerExpr = update_widgets(), once = TRUE)
   observeEvent(input$toggle, {
+    update_widgets()
     shinyjs::toggle("numeric_view")
     shinyjs::toggle("slider")
   })
