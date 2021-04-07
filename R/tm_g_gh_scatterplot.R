@@ -374,7 +374,7 @@ srv_g_scatterplot <- function(input,
 
     req(all(c(xvar, yvar) %in% names(ANL)))
 
-    df <- brushedPoints(
+    df <- clean_brushedPoints(
       select(ANL, "USUBJID", trt_group, "AVISITCD", "PARAMCD", xvar, yvar, "LOQFL"),
       plot_brush
     )

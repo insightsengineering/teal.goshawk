@@ -670,7 +670,7 @@ srv_g_correlationplot <- function(input,
 
     ANL_TRANSPOSED <- isolate(plot_data_transpose()$ANL_TRANSPOSED) # nolint
 
-    df <- brushedPoints(
+    df <- clean_brushedPoints(
       select(ANL_TRANSPOSED, "USUBJID", input$trt_group, "AVISITCD", xvar(), yvar(), "LOQFL_COMB"),
       plot_brush
     )
