@@ -623,7 +623,16 @@ srv_lineplot <- function(input,
     } else {
       NULL
     }
-
+    if (!is(xtick, "waiver") && !is.null(xtick)) {
+      chunks_push(
+        chunks = private_chunks,
+        expression = bquote({
+          keep_index <- which(.(xtick) %in% ANL[[.(xaxis)]])
+          xtick <- (.(xtick))[keep_index] # extra parentheses needed for edge case, e.g. 1:5[keep_index]
+          xlabel <- (.(xlabel))[keep_index]
+        })
+      )
+    }
     chunks_push(
       chunks = private_chunks,
       id = "lineplot",
@@ -645,8 +654,8 @@ srv_lineplot <- function(input,
           line_type = .(type_selected),
           median = .(median),
           hline = .(hline),
-          xtick = .(xtick),
-          xlabel = .(xlabel),
+          xtick = .(if (!is(xtick, "waiver") && !is.null(xtick)) quote(xtick) else xtick),
+          xlabel = .(if (!is(xtick, "waiver") && !is.null(xtick)) quote(xlabel) else xlabel),
           rotate_xlab = .(rotate_xlab),
           plot_height = .(if_empty(height, 989)), # 989 is the default value for plot_height
           plot_font_size = .(plot_font_size),
