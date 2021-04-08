@@ -1,4 +1,5 @@
 # teal.goshawk 0.1.7.9000
+- Added slider to control the relative size of the plot and tables.
 Issues with no news:
 
 ### Bug fixes
@@ -11,8 +12,7 @@ Issues with no news:
 ### Enhancements
 * `tm_g_gh_lineplot`
   - Added a table to display summary statistics.
-  - Added slider to control the relative size of the plot and tables.
-  
+
 ### Bug fixes
 * `tm_g_gh_lineplot`
   - Fixed displaying the number of messages, warnings and errors on the Debug Info button.
