@@ -333,7 +333,8 @@ srv_lineplot <- function(input,
     dataname = dataname,
     param_id = "xaxis_param",
     param_var =  param_var,
-    trt_group = input$trt_group)
+    trt_group = input$trt_group,
+    min_rows = 2)
   keep_data_const_opts_updated(session, input, anl_chunks, "xaxis_param")
 
   yrange_slider <- callModule(toggle_slider_server, "yrange_scale")

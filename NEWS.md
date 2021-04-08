@@ -1,3 +1,12 @@
+# teal.goshawk 0.1.7.9000
+Issues with no news:
+
+### Bug fixes
+* Fixed infinite reactive loop inside of `toggle_slider_server`.
+
+### Miscellaneous
+* Renamed `toggle.R` file to `toggleable.R` file to be consistent with the accepted correct spelling of the word.
+
 # teal.goshawk 0.1.7
 ### Enhancements
 * `tm_g_gh_lineplot`
@@ -9,6 +18,9 @@
   - Fixed displaying the number of messages, warnings and errors on the Debug Info button.
   - Fixed treatment variable having values with with symbols (e.g. ':').
   - Allow treatment variables with different arm levels.
+  
+### Miscellaneous
+* Reduced minimum number of records required in dataset to either 1 or 2 in all modules.
 
 # teal.goshawk 0.1.6
 
