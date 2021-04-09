@@ -157,7 +157,7 @@ tm_g_gh_lineplot <- function(label,
                              xtick = waiver(),
                              xlabel = xtick,
                              rotate_xlab = FALSE,
-                             plot_height = c(600, 200, 2000),
+                             plot_height = c(600, 200, 4000),
                              plot_width = NULL,
                              plot_font_size = c(12, 8, 20),
                              dodge = c(0.4, 0, 1),
@@ -242,7 +242,7 @@ ui_lineplot <- function(id, ...) {
             icon("info-circle")
           ),
           min = 500,
-          max = 2500,
+          max = 5000,
           step = 50,
           value = 1000,
           ticks = FALSE
