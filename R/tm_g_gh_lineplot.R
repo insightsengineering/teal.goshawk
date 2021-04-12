@@ -623,6 +623,13 @@ srv_lineplot <- function(input,
     } else {
       NULL
     }
+
+    chunks_validate_custom(
+      bquote(nrow(ANL[complete.cases(ANL[, c(.(yaxis), .(xaxis))]), ]) >= 2),
+      "Number of complete rows on x and y axis variables is less than 2",
+      chunks = private_chunks
+    )
+
     if (!is(xtick, "waiver") && !is.null(xtick)) {
       chunks_push(
         chunks = private_chunks,
@@ -638,7 +645,7 @@ srv_lineplot <- function(input,
       id = "lineplot",
       expression = bquote({
         p <- g_lineplot(
-          data = ANL,
+          data = ANL[complete.cases(ANL[, c(.(yaxis), .(xaxis))]), ],
           biomarker_var = .(param_var),
           biomarker_var_label = .(param_var_label),
           biomarker = .(param),
