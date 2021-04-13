@@ -1,9 +1,9 @@
 # teal.goshawk 0.1.7.9000
+
 ### Enhancements
 * `g_lineplot`
-  -When x-axis is numeric and has no data in the corresponding y-axis variable, the x-axis label will be removed.
-
-Issues with no news:
+  - When x-axis is numeric and has no data in the corresponding y-axis variable, the x-axis label will be removed.
+  - Added slider to control the relative size of the plot and tables.
 
 ### Bug fixes
 * Fixed infinite reactive loop inside of `toggle_slider_server`.
@@ -11,11 +11,13 @@ Issues with no news:
 ### Miscellaneous
 * Renamed `toggle.R` file to `toggleable.R` file to be consistent with the accepted correct spelling of the word.
 
+Issues with no news:
+
 # teal.goshawk 0.1.7
 ### Enhancements
 * `tm_g_gh_lineplot`
   - Added a table to display summary statistics.
-  
+
 ### Bug fixes
 * `tm_g_gh_lineplot`
   - Fixed displaying the number of messages, warnings and errors on the Debug Info button.
