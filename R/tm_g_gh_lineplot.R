@@ -645,12 +645,28 @@ srv_lineplot <- function(input,
       NULL
     }
 
+    chunks_validate_custom(
+      bquote(nrow(ANL[complete.cases(ANL[, c(.(yaxis), .(xaxis))]), ]) >= 2),
+      "Number of complete rows on x and y axis variables is less than 2",
+      chunks = private_chunks
+    )
+
+    if (!is(xtick, "waiver") && !is.null(xtick)) {
+      chunks_push(
+        chunks = private_chunks,
+        expression = bquote({
+          keep_index <- which(.(xtick) %in% ANL[[.(xaxis)]])
+          xtick <- (.(xtick))[keep_index] # extra parentheses needed for edge case, e.g. 1:5[keep_index]
+          xlabel <- (.(xlabel))[keep_index]
+        })
+      )
+    }
     chunks_push(
       chunks = private_chunks,
       id = "lineplot",
       expression = bquote({
         p <- g_lineplot(
-          data = ANL,
+          data = ANL[complete.cases(ANL[, c(.(yaxis), .(xaxis))]), ],
           biomarker_var = .(param_var),
           biomarker_var_label = .(param_var_label),
           biomarker = .(param),
@@ -666,8 +682,8 @@ srv_lineplot <- function(input,
           line_type = .(type_selected),
           median = .(median),
           hline = .(hline),
-          xtick = .(xtick),
-          xlabel = .(xlabel),
+          xtick = .(if (!is(xtick, "waiver") && !is.null(xtick)) quote(xtick) else xtick),
+          xlabel = .(if (!is(xtick, "waiver") && !is.null(xtick)) quote(xlabel) else xlabel),
           rotate_xlab = .(rotate_xlab),
           plot_height = .(relative_height), # in g_lineplot this is relative height of plot to table
           plot_font_size = .(plot_font_size),
