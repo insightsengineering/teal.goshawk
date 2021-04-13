@@ -1,4 +1,8 @@
 # teal.goshawk 0.1.7.9000
+### Enhancements
+* `g_lineplot`
+  -When x-axis is numeric and has no data in the corresponding y-axis variable, the x-axis label will be removed.
+
 Issues with no news:
 
 ### Bug fixes
