@@ -371,12 +371,11 @@ srv_g_scatterplot <- function(input,
     xvar <- isolate(input$xaxis_var)
     yvar <- isolate(input$yaxis_var)
     trt_group <- isolate(input$trt_group)
-    facet_var <- isolate(input$facet_var)
 
     req(all(c(xvar, yvar) %in% names(ANL)))
 
     df <- clean_brushedPoints(
-      select(ANL, "USUBJID", facet_var, trt_group, "AVISITCD", "PARAMCD", xvar, yvar, "LOQFL"),
+      select(ANL, "USUBJID", trt_group, "AVISITCD", "PARAMCD", xvar, yvar, "LOQFL"),
       plot_brush
     )
 
