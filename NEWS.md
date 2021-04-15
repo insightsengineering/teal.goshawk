@@ -1,6 +1,10 @@
 # teal.goshawk 0.1.7.9000
 Issues with no news:
 
+### Enhancements
+* Replaced function `brushedPoints` with `clean_brushedPoints` in `tm_g_gh_boxplot`, `tm_g_gh_correlationplot`, 
+`tm_g_gh_scatterplot` and `tm_g_gh_spaghettiplot`.
+
 ### Bug fixes
 * Fixed infinite reactive loop inside of `toggle_slider_server`.
 
