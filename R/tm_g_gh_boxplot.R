@@ -454,7 +454,7 @@ srv_g_boxplot <- function(input,
 
     req(all(c(xvar, yvar, facetv, trt_group) %in% names(ANL)))
 
-    df <- brushedPoints(
+    df <- clean_brushedPoints(
       select(ANL, "USUBJID", trt_group, facetv, "AVISITCD", "PARAMCD", xvar, yvar, "LOQFL"),
       boxplot_brush
     )
