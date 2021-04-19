@@ -2,12 +2,10 @@
 
 ### Enhancements
 * `g_lineplot`
-  - When x-axis is numeric and has no data in the corresponding y-axis variable, the x-axis label will be removed.
+  - Updated the plot to remove x-axis label when When x-axis is numeric and has no data in the corresponding y-axis variable.
   - Added slider to control the relative size of the plot and tables.
-
-### Enhancements
-* Replaced function `brushedPoints` with `clean_brushedPoints` in `tm_g_gh_boxplot`, `tm_g_gh_correlationplot`, 
-`tm_g_gh_scatterplot` and `tm_g_gh_spaghettiplot`.
+* Replaced function `brushedPoints` with `clean_brushedPoints` in `tm_g_gh_boxplot`,
+`tm_g_gh_correlationplot`, `tm_g_gh_scatterplot` and `tm_g_gh_spaghettiplot`.
 
 ### Bug fixes
 * Fixed infinite reactive loop inside of `toggle_slider_server`.
