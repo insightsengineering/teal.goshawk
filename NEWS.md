@@ -1,4 +1,4 @@
-# teal.goshawk 0.1.7.9000
+# teal.goshawk 0.1.8
 
 ### Enhancements
 * `g_lineplot`
@@ -13,9 +13,8 @@
 ### Miscellaneous
 * Renamed `toggle.R` file to `toggleable.R` file to be consistent with the accepted correct spelling of the word.
 
-Issues with no news:
-
 # teal.goshawk 0.1.7
+
 ### Enhancements
 * `tm_g_gh_lineplot`
   - Added a table to display summary statistics.

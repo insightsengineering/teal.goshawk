@@ -1,8 +1,8 @@
 Package: teal.goshawk
 Type: Package
 Title: Longitudinal visualization teal modules
-Date: 2021-03-17
-Version: 0.1.7.9000
+Date: 2021-05-05
+Version: 0.1.8
 Authors@R: c(
   person("Nick", "Paszty", email = "nick.paszty@gene.com", role = c("aut", "cre")),
   person("Wenyi", "Liu", email = "liu.wenyi@roche.com", role = c("aut")),
@@ -18,9 +18,9 @@ Description: Modules that produce web interfaces through which longitudinal visu
     or NA.
 Depends: 
   R (>= 3.3),
-  goshawk (>= 0.1.7), 
+  goshawk (>= 0.1.8), 
   shiny,
-  teal (>= 0.9.3)
+  teal (>= 0.9.4)
 Imports:
   colourpicker,
   DescTools,
@@ -30,16 +30,16 @@ Imports:
   methods,
   shinyjs,
   stats,
-  teal.devel (>= 0.2.9),
+  teal.devel (>= 0.2.10),
   tidyr,
   utils,
   utils.nest (>= 0.2.8)
 Suggests: 
   knitr,
-  random.cdisc.data (>= 0.3.8),
+  random.cdisc.data (>= 0.3.10),
   rmarkdown,
   stringr,
-  tern (>= 0.7.1),
+  tern (>= 0.7.3),
   test.nest (>= 0.2.7),
   testthat (>= 2.0)
 License: GPL-2
