@@ -11,13 +11,13 @@ The modules included are:
 - tm_g_gh_spaghettiplot
 
 # Sample App
-Please refer to agile-r/Teal/Sample Teal Apps/Goshawk [here](https://pages.github.roche.com/NEST/docs/hugo/NEST/agile-R/master/teal/sample_apps/sample-app-goshawk)] for a ready to go sample app that uses randomly generated CDISC data.
+Please refer to agile-r/Teal/Sample Teal Apps/Goshawk [here](tps://go.roche.com/agile-R)] for a ready to go sample app that uses randomly generated CDISC data.
 # Deploy Repository
 Please refer to the deploy repository [here](https://github.roche.com/STATSSPA/statsspa_384) for full details on data prepocessing and configuration of this package for deployment.
 
 # Installation
 
-Please refer to the quick start section in agile-R [here](https://pages.github.roche.com/NEST/docs/hugo/NEST/agile-R/master/quick_start/install-nest-environment/)
+Please refer to the quick start section in agile-R [here](https://go.roche.com/agile-R)
 
 The latest version of `teal.goshawk` can be installed locally with:
 ```r
