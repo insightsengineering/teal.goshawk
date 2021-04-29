@@ -17,7 +17,7 @@ Please refer to the deploy repository [here](https://github.roche.com/STATSSPA/s
 
 # Installation
 
-Please refer to the quick start section in agile-R [here](https://go.roche.com/agile-R)
+Please refer to the quick start section in agile-R [here](https://go.roche.com/agile-R).
 
 The latest version of `teal.goshawk` can be installed locally with:
 ```r
