@@ -11,7 +11,7 @@ The modules included are:
 - tm_g_gh_spaghettiplot
 
 # Sample App
-Please refer to agile-r/Teal/Sample Teal Apps/Goshawk [here](https://go.roche.com/agile-R)] for a ready to go sample app that uses randomly generated CDISC data.
+Please refer to agile-r/Teal/Sample Teal Apps/Goshawk [here](https://go.roche.com/agile-R) for a ready to go sample app that uses randomly generated CDISC data.
 # Deploy Repository
 Please refer to the deploy repository [here](https://github.roche.com/STATSSPA/statsspa_384) for full details on data prepocessing and configuration of this package for deployment.
 
