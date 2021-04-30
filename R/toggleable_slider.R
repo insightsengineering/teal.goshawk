@@ -142,7 +142,7 @@ toggle_slider_ui <- function(id,
 }
 
 # is_dichotomous_slider `logical` whether it is a dichotomous slider or normal slider
-toggle_slider_server <- function(input, output, session, is_dichotomous_slider = TRUE) {
+toggle_slider_server <- function(input, output, session, is_dichotomous_slider = TRUE, global_input = NULL) {
   stopifnot(is_logical_single(is_dichotomous_slider))
   # model view controller: cur_state is the model, the sliderInput and numericInputs are two views/controllers
   # additionally, the module returns the cur_state, so it can be controlled from that end as well
@@ -206,6 +206,9 @@ toggle_slider_server <- function(input, output, session, is_dichotomous_slider =
     }
   }
   observeEvent(cur_state(), handlerExpr = update_widgets(), once = TRUE)
+  if (!is.null(global_input)) {
+    observeEvent(list(global_input$xaxis_var, global_input$yaxis_var), update_widgets(), priority = -Inf)
+  }
   observeEvent(input$toggle, {
     update_widgets()
     shinyjs::toggle("numeric_view")

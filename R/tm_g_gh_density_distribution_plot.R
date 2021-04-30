@@ -272,7 +272,7 @@ srv_g_density_distribution_plot <- function(input, # nolint
   )
 
   # update sliders for axes taking constraints into account
-  xrange_slider <- callModule(toggle_slider_server, "xrange_scale")
+  xrange_slider <- callModule(toggle_slider_server, "xrange_scale", global_input = input)
   keep_range_slider_updated(session, input, xrange_slider$update_state, "xaxis_var", "xaxis_param", anl_chunks)
   keep_data_const_opts_updated(session, input, anl_chunks, "xaxis_param")
 
