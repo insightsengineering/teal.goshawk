@@ -197,7 +197,7 @@ toggle_slider_server <- function(input, output, session, is_dichotomous_slider =
       state_high$value <- state_high$value[[2]]
     }
     if (input$toggle %% 2 == 0) {
-      isolate(do.call(updateSliderInput, c(list(session, "slider"), state_slider)))
+      do.call(updateSliderInput, c(list(session, "slider"), state_slider))
     } else {
       if (length(state_slider$value) > 1) {
         do.call(updateNumericInput, c(list(session, "value_low"), state_low))
@@ -208,10 +208,10 @@ toggle_slider_server <- function(input, output, session, is_dichotomous_slider =
     }
   }
   observeEvent(cur_state(), handlerExpr = {
-    isolate(update_widgets())
+    update_widgets()
   }, once = TRUE)
   observeEvent(input$toggle, {
-    isolate(update_widgets())
+    update_widgets()
     shinyjs::toggle("numeric_view")
     shinyjs::toggle("slider")
   })
@@ -221,7 +221,7 @@ toggle_slider_server <- function(input, output, session, is_dichotomous_slider =
       stopifnot(length(value) == 2)
     }
     set_state(Filter(Negate(is.null), list(value = value, min = min, max = max, step = step)))
-    isolate(update_widgets())
+    update_widgets()
   }
   return(list(
     state = cur_state,
