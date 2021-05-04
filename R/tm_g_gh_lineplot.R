@@ -337,7 +337,7 @@ srv_lineplot <- function(input,
     min_rows = 2)
   keep_data_const_opts_updated(session, input, anl_chunks, "xaxis_param")
 
-  yrange_slider <- callModule(toggle_slider_server, "yrange_scale", global_input = input)
+  yrange_slider <- callModule(toggle_slider_server, "yrange_scale")
 
   # update sliders for axes
   observe({

@@ -1,4 +1,5 @@
 #' Box Plot
+#'#' Box Plot
 #'
 #' This teal module renders the UI and calls the functions that create a box plot and accompanying
 #' summary table.
@@ -292,8 +293,15 @@ srv_g_boxplot <- function(input,
     param_id = "xaxis_param", param_var = param_var, trt_group = input$trt_group, min_rows = 2
   )
   # update sliders for axes taking constraints into account
-  yrange_slider <- callModule(toggle_slider_server, "yrange_scale", global_input = input)
-  keep_range_slider_updated(session, input, yrange_slider$update_state, "yaxis_var", "xaxis_param", anl_chunks)
+  yrange_slider <- callModule(toggle_slider_server, "yrange_scale", axis_vars = reactive(input$yaxis_var))
+  keep_range_slider_updated(
+    session,
+    input,
+    update_slider_fcn = yrange_slider$update_state,
+    id_var = "yaxis_var",
+    id_param_var = "xaxis_param",
+    reactive_ANL = anl_chunks
+  )
   keep_data_const_opts_updated(session, input, anl_chunks, "xaxis_param")
 
   create_plot <- reactive({

@@ -142,7 +142,7 @@ toggle_slider_ui <- function(id,
 }
 
 # is_dichotomous_slider `logical` whether it is a dichotomous slider or normal slider
-toggle_slider_server <- function(input, output, session, is_dichotomous_slider = TRUE, global_input = NULL) {
+toggle_slider_server <- function(input, output, session, is_dichotomous_slider = TRUE) {
   stopifnot(is_logical_single(is_dichotomous_slider))
   # model view controller: cur_state is the model, the sliderInput and numericInputs are two views/controllers
   # additionally, the module returns the cur_state, so it can be controlled from that end as well
@@ -168,7 +168,9 @@ toggle_slider_server <- function(input, output, session, is_dichotomous_slider =
     old_state <- cur_state()
     new_state <- c(new_state, old_state[!names(old_state) %in% names(new_state)])
     new_state <- new_state[sort(names(new_state))]
-    cur_state(new_state)
+    if (!setequal(new_state, cur_state())) {
+      cur_state(new_state)
+    }
   }
   observeEvent(input$slider, {
     set_state(list(value = input$slider))
@@ -195,7 +197,7 @@ toggle_slider_server <- function(input, output, session, is_dichotomous_slider =
       state_high$value <- state_high$value[[2]]
     }
     if (input$toggle %% 2 == 0) {
-      do.call(updateSliderInput, c(list(session, "slider"), state_slider))
+      isolate(do.call(updateSliderInput, c(list(session, "slider"), state_slider)))
     } else {
       if (length(state_slider$value) > 1) {
         do.call(updateNumericInput, c(list(session, "value_low"), state_low))
@@ -205,12 +207,11 @@ toggle_slider_server <- function(input, output, session, is_dichotomous_slider =
       }
     }
   }
-  observeEvent(cur_state(), handlerExpr = update_widgets(), once = TRUE)
-  if (!is.null(global_input)) {
-    observeEvent(list(global_input$xaxis_var, global_input$yaxis_var), update_widgets(), priority = -Inf)
-  }
+  observeEvent(cur_state(), handlerExpr = {
+    isolate(update_widgets())
+  }, once = TRUE)
   observeEvent(input$toggle, {
-    update_widgets()
+    isolate(update_widgets())
     shinyjs::toggle("numeric_view")
     shinyjs::toggle("slider")
   })
@@ -220,6 +221,7 @@ toggle_slider_server <- function(input, output, session, is_dichotomous_slider =
       stopifnot(length(value) == 2)
     }
     set_state(Filter(Negate(is.null), list(value = value, min = min, max = max, step = step)))
+    isolate(update_widgets())
   }
   return(list(
     state = cur_state,

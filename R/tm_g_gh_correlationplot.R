@@ -453,8 +453,8 @@ srv_g_correlationplot <- function(input,
   anl_constraint <- create_anl_constraint_reactive(anl_param, input, param_id = "xaxis_param", min_rows = 1)
 
   # update sliders for axes taking constraints into account
-  xrange_slider <- callModule(toggle_slider_server, "xrange_scale", global_input = input)
-  yrange_slider <- callModule(toggle_slider_server, "yrange_scale", global_input = input)
+  xrange_slider <- callModule(toggle_slider_server, "xrange_scale")
+  yrange_slider <- callModule(toggle_slider_server, "yrange_scale")
   keep_range_slider_updated(session, input, xrange_slider$update_state, "xaxis_var", "xaxis_param", anl_constraint)
   keep_range_slider_updated(session, input, yrange_slider$update_state, "yaxis_var", "yaxis_param", anl_constraint)
   keep_data_const_opts_updated(session, input, anl_constraint, "xaxis_param")
