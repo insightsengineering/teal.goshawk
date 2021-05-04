@@ -293,7 +293,7 @@ srv_g_boxplot <- function(input,
     param_id = "xaxis_param", param_var = param_var, trt_group = input$trt_group, min_rows = 2
   )
   # update sliders for axes taking constraints into account
-  yrange_slider <- callModule(toggle_slider_server, "yrange_scale", axis_vars = reactive(input$yaxis_var))
+  yrange_slider <- callModule(toggle_slider_server, "yrange_scale")
   keep_range_slider_updated(
     session,
     input,
