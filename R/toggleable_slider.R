@@ -207,7 +207,6 @@ toggle_slider_server <- function(input, output, session, is_dichotomous_slider =
       }
     }
   }
-  observeEvent(cur_state(), handlerExpr = update_widgets(), once = TRUE)
   observeEvent(input$toggle, {
     update_widgets()
     shinyjs::toggle("numeric_view")
