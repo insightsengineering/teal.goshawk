@@ -14,7 +14,7 @@
 #' @param color_manual vector of colors applied to treatment values.
 #' @param shape_manual vector of symbols applied to LOQ values.
 #' @param facet_ncol numeric value indicating number of facets per row.
-#' @param facet_var variable to use for treatment facetting.
+#' @param trt_facet facet by treatment group \code{trt_group}.
 #' @param reg_line include regression line and annotations for slope and coefficient in visualization. Use with facet
 #'   TRUE.
 #' @param rotate_xlab 45 degree rotation of x-axis values.
@@ -116,7 +116,7 @@
 #'        shape_manual = c("N"  = 1, "Y"  = 2, "NA" = 0),
 #'        plot_height = c(500, 200, 2000),
 #'        facet_ncol = 2,
-#'        facet_var = choices_selected(c("ARM", "ACTARM")),
+#'        trt_facet = FALSE,
 #'        reg_line = FALSE,
 #'        font_size = c(12, 8, 20),
 #'        dot_size = c(1, 1, 12),
@@ -139,7 +139,7 @@ tm_g_gh_scatterplot <- function(label,
                                 color_manual = NULL,
                                 shape_manual = NULL,
                                 facet_ncol = 2,
-                                facet_var = choices_selected(c("ARM", "ACTARM")),
+                                trt_facet = FALSE,
                                 reg_line = FALSE,
                                 rotate_xlab = FALSE,
                                 hline = NULL,
@@ -156,7 +156,7 @@ tm_g_gh_scatterplot <- function(label,
   stopifnot(is.choices_selected(xaxis_var))
   stopifnot(is.choices_selected(yaxis_var))
   stopifnot(is.choices_selected(trt_group))
-  stopifnot(is.choices_selected(facet_var))
+  stopifnot(is_logical_single(trt_facet))
   check_slider_input(plot_height, allow_null = FALSE)
   check_slider_input(plot_width)
 
@@ -169,7 +169,7 @@ tm_g_gh_scatterplot <- function(label,
     server_args = list(dataname = dataname,
                        param_var = param_var,
                        trt_group = trt_group,
-                       facet_var = facet_var,
+                       trt_facet = trt_facet,
                        color_manual = color_manual,
                        shape_manual = shape_manual,
                        plot_height = plot_height,
@@ -203,12 +203,6 @@ ui_g_scatterplot <- function(id, ...) {
         xchoices = a$xaxis_var$choices, xselected = a$xaxis_var$selected,
         ychoices = a$yaxis_var$choices, yselected = a$yaxis_var$selected
       ),
-      optionalSelectInput(
-        ns("facet_var"),
-        label = "Facet by",
-        choices = a$facet_var$choices,
-        selected = NULL,
-        multiple = FALSE),
       templ_ui_constraint(ns), # required by constr_anl_chunks
       panel_group(
         panel_item(
@@ -226,6 +220,7 @@ ui_g_scatterplot <- function(id, ...) {
             value = c(-1000000, 1000000)
           ),
           numericInput(ns("facet_ncol"), "Number of Plots Per Row:", a$facet_ncol, min = 1),
+          checkboxInput(ns("trt_facet"), "Treatment Variable Facetting", a$trt_facet),
           checkboxInput(ns("reg_line"), "Regression Line", a$reg_line),
           checkboxInput(ns("rotate_xlab"), "Rotate X-axis Label", a$rotate_xlab),
           numericInput(ns("hline"), "Add a horizontal line:", a$hline),
@@ -255,7 +250,7 @@ srv_g_scatterplot <- function(input,
                               dataname,
                               param_var,
                               trt_group,
-                              facet_var,
+                              trt_facet,
                               color_manual,
                               shape_manual,
                               plot_height,
@@ -292,15 +287,8 @@ srv_g_scatterplot <- function(input,
     hline <- input$hline
     vline <- input$vline
     trt_group <- input$trt_group
-    facet_var <- input$facet_var
-    facet <- if (is.null(input$facet_var)) FALSE else TRUE
+    facet <- input$trt_facet
     validate(need(trt_group, "Please select a treatment variable"))
-    if (!is.null(input$facet_var)) {
-      validate(need(
-        !facet_var %in% c("ACTARM", "ARM")[!c("ACTARM", "ARM") %in% trt_group],
-        sprintf("You can not choose %s as facetting variable for treatment variable %s.", facet_var, trt_group)
-      ))
-    }
 
     # Below inputs should trigger plot via updates of other reactive objects (i.e. anl_chunk()) and some inputs
     validate(need(input$xaxis_var, "Please select an X-Axis Variable"))
@@ -330,7 +318,7 @@ srv_g_scatterplot <- function(input,
           shape_manual = .(shape_manual),
           facet_ncol = .(facet_ncol),
           facet = .(facet),
-          facet_var = .(facet_var),
+          facet_var = .(trt_group),
           reg_line = .(reg_line),
           font_size = .(font_size),
           dot_size = .(dot_size),

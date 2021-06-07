@@ -1,5 +1,8 @@
 # teal.goshawk 0.1.8.9000
-.
+
+### Enhancements
+* Updated `tm_g_gh_correlationplot`, `tm_g_gh_scatterplot` and `tm_g_gh_boxplot` encodings to have a checkbox to facet by the treatment variable instead of 
+a drop down menu.
 
 # teal.goshawk 0.1.8
 

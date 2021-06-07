@@ -11,7 +11,7 @@ tm_g_gh_boxplot(
   param,
   yaxis_var = choices_selected(c("AVAL", "CHG"), "AVAL"),
   xaxis_var = choices_selected("AVISITCD", "AVISITCD"),
-  facet_var = choices_selected(c("ARM", "ACTARM"), "ARM"),
+  trt_facet = FALSE,
   trt_group,
   color_manual = NULL,
   shape_manual = NULL,
@@ -42,7 +42,7 @@ laboratory data frame ALB.}
 
 \item{xaxis_var}{variable to categorize the x-axis.}
 
-\item{facet_var}{variable to facet the plots by.}
+\item{trt_facet}{facet by treatment group \code{trt_group}.}
 
 \item{trt_group}{\code{\link[teal]{choices_selected}} object with available choices and pre-selected option
 for variable names representing treatment group e.g. ARM.}
@@ -163,8 +163,8 @@ app <- teal::init(
         param = choices_selected(c("ALT", "CRP", "IGA"), "ALT"),
         yaxis_var = choices_selected(c("AVAL", "BASE", "CHG"), "AVAL"),
         xaxis_var = choices_selected(c("ACTARM", "ARM", "AVISITCD", "STUDYID"), "ARM"),
-        facet_var = choices_selected(c("ACTARM", "ARM", "AVISITCD", "SEX"), "AVISITCD"),
         trt_group = choices_selected(c("ARM", "ACTARM"), "ARM"),
+        trt_facet = FALSE,
         loq_legend = TRUE,
         rotate_xlab = FALSE
       )

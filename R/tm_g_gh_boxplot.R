@@ -10,7 +10,7 @@
 #' @param param list of biomarkers of interest.
 #' @param yaxis_var name of variable containing biomarker results displayed on y-axis e.g. AVAL.
 #' @param xaxis_var variable to categorize the x-axis.
-#' @param facet_var variable to facet the plots by.
+#' @param trt_facet facet by treatment group \code{trt_group}.
 #' @param trt_group  \code{\link[teal]{choices_selected}} object with available choices and pre-selected option
 #'  for variable names representing treatment group e.g. ARM.
 #' @param color_manual vector of colors applied to treatment values.
@@ -121,8 +121,8 @@
 #'         param = choices_selected(c("ALT", "CRP", "IGA"), "ALT"),
 #'         yaxis_var = choices_selected(c("AVAL", "BASE", "CHG"), "AVAL"),
 #'         xaxis_var = choices_selected(c("ACTARM", "ARM", "AVISITCD", "STUDYID"), "ARM"),
-#'         facet_var = choices_selected(c("ACTARM", "ARM", "AVISITCD", "SEX"), "AVISITCD"),
 #'         trt_group = choices_selected(c("ARM", "ACTARM"), "ARM"),
+#'         trt_facet = FALSE,
 #'         loq_legend = TRUE,
 #'         rotate_xlab = FALSE
 #'       )
@@ -140,7 +140,7 @@ tm_g_gh_boxplot <- function(label,
                             param,
                             yaxis_var = choices_selected(c("AVAL", "CHG"), "AVAL"),
                             xaxis_var = choices_selected("AVISITCD", "AVISITCD"),
-                            facet_var = choices_selected(c("ARM", "ACTARM"), "ARM"),
+                            trt_facet = FALSE,
                             trt_group,
                             color_manual = NULL,
                             shape_manual = NULL,
@@ -162,7 +162,7 @@ tm_g_gh_boxplot <- function(label,
     is.choices_selected(param),
     is.choices_selected(yaxis_var),
     is.choices_selected(xaxis_var),
-    is.choices_selected(facet_var),
+    is_logical_single(trt_facet),
     is.null(facet_ncol) || is_integer_single(facet_ncol),
     is_logical_single(loq_legend),
     is_logical_single(rotate_xlab),
@@ -184,7 +184,7 @@ tm_g_gh_boxplot <- function(label,
     server_args = list(dataname = dataname,
                        param_var = param_var,
                        trt_group = trt_group,
-                       facet_var = facet_var,
+                       trt_facet = trt_facet,
                        color_manual = color_manual,
                        shape_manual = shape_manual,
                        plot_height = plot_height,
@@ -236,12 +236,6 @@ ui_g_boxplot <- function(id, ...) {
         ychoices = a$yaxis_var$choices,
         yselected = a$yaxis_var$selected
       ),
-      optionalSelectInput(
-        ns("facet_var"),
-        label = "Facet by",
-        choices = a$facet_var$choices,
-        selected = a$facet_var$selected,
-        multiple = FALSE),
       templ_ui_constraint(ns, label = "Data Constraint"), # required by constr_anl_chunks
       panel_group(
         panel_item(
@@ -253,6 +247,7 @@ ui_g_boxplot <- function(id, ...) {
             max = 1000000,
             value = c(-1000000, 1000000)),
           numericInput(ns("facet_ncol"), "Number of Plots Per Row:", a$facet_ncol, min = 1),
+          checkboxInput(ns("trt_facet"), "Treatment Variable Facetting", a$trt_facet),
           checkboxInput(ns("loq_legend"), "Display LoQ Legend", a$loq_legend),
           checkboxInput(ns("rotate_xlab"), "Rotate X-axis Label", a$rotate_xlab),
           numericInput(ns("hline"), "Add a horizontal line:", a$hline)
@@ -279,7 +274,7 @@ srv_g_boxplot <- function(input,
                           dataname,
                           param_var,
                           trt_group,
-                          facet_var,
+                          trt_facet,
                           color_manual,
                           shape_manual,
                           plot_height,
@@ -309,7 +304,7 @@ srv_g_boxplot <- function(input,
     param <- input$xaxis_param
     yaxis <- input$yaxis_var
     xaxis <- input$xaxis_var
-    facet_var <- if (is.null(input$facet_var)) "None" else input$facet_var
+    facet_var <- if (isFALSE(input$trt_facet)) "None" else input$trt_group
     yrange_scale <- yrange_slider$state()$value
     facet_ncol <- input$facet_ncol
     alpha <- input$alpha
@@ -332,17 +327,6 @@ srv_g_boxplot <- function(input,
       xaxis,
       sprintf("Variable %s is not available in data %s", xaxis, dataname))
 
-    if (!facet_var == "None") {
-      validate_has_variable(
-        anl_chunks()$ANL,
-        facet_var,
-        sprintf("Variable %s is not available in data %s", facet_var, dataname))
-    }
-
-    validate(need(
-      !facet_var %in% c("ACTARM", "ARM")[!c("ACTARM", "ARM") %in% trt_group],
-      sprintf("You can not choose %s as facetting variable for treatment variable %s.", facet_var, trt_group)
-      ))
     validate(need(
       !xaxis %in% c("ACTARM", "ARM")[!c("ACTARM", "ARM") %in% trt_group],
       sprintf("You can not choose %s as x-axis variable for treatment variable %s.", xaxis, trt_group)
@@ -385,7 +369,6 @@ srv_g_boxplot <- function(input,
 
     param <- input$xaxis_param
     xaxis_var <- input$yaxis_var #nolint
-    facet_var <- input$facet_var
     font_size <- input$font_size
     trt_group <- input$trt_group
 
@@ -456,13 +439,12 @@ srv_g_boxplot <- function(input,
 
     xvar <- isolate(input$xaxis_var)
     yvar <- isolate(input$yaxis_var)
-    facetv <- isolate(input$facet_var)
     trt_group <- isolate(input$trt_group)
 
-    req(all(c(xvar, yvar, facetv, trt_group) %in% names(ANL)))
+    req(all(c(xvar, yvar, trt_group) %in% names(ANL)))
 
     df <- clean_brushedPoints(
-      select(ANL, "USUBJID", trt_group, facetv, "AVISITCD", "PARAMCD", xvar, yvar, "LOQFL"),
+      select(ANL, "USUBJID", trt_group, "AVISITCD", "PARAMCD", xvar, yvar, "LOQFL"),
       boxplot_brush
     )
 
