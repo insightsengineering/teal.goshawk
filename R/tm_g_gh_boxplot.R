@@ -385,7 +385,6 @@ srv_g_boxplot <- function(input,
 
     param <- input$xaxis_param
     xaxis_var <- input$yaxis_var #nolint
-    facet_var <- input$facet_var
     font_size <- input$font_size
     trt_group <- input$trt_group
 

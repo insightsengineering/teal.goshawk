@@ -17,7 +17,7 @@ tm_g_gh_correlationplot(
   shape_manual = NULL,
   facet_ncol = 2,
   visit_facet = TRUE,
-  facet_var = choices_selected(c("ARM", "ACTARM")),
+  trt_facet = FALSE,
   reg_line = FALSE,
   loq_legend = TRUE,
   rotate_xlab = FALSE,
@@ -59,7 +59,7 @@ for variable names representing treatment group e.g. ARM.}
 
 \item{visit_facet}{visit facet toggle.}
 
-\item{facet_var}{variable to use for treatment facetting.}
+\item{trt_facet}{facet by treatment group \code{trt_group}.}
 
 \item{reg_line}{include regression line and annotations for slope and coefficient in visualization. Use with facet
 TRUE.}

@@ -15,7 +15,7 @@ tm_g_gh_scatterplot(
   color_manual = NULL,
   shape_manual = NULL,
   facet_ncol = 2,
-  facet_var = choices_selected(c("ARM", "ACTARM")),
+  trt_facet = FALSE,
   reg_line = FALSE,
   rotate_xlab = FALSE,
   hline = NULL,
@@ -52,7 +52,7 @@ for variable names representing treatment group e.g. ARM.}
 
 \item{facet_ncol}{numeric value indicating number of facets per row.}
 
-\item{facet_var}{variable to use for treatment facetting.}
+\item{trt_facet}{facet by treatment group \code{trt_group}.}
 
 \item{reg_line}{include regression line and annotations for slope and coefficient in visualization. Use with facet
 TRUE.}
@@ -167,7 +167,7 @@ app <- init(
        shape_manual = c("N"  = 1, "Y"  = 2, "NA" = 0),
        plot_height = c(500, 200, 2000),
        facet_ncol = 2,
-       facet_var = choices_selected(c("ARM", "ACTARM")),
+       trt_facet = FALSE,
        reg_line = FALSE,
        font_size = c(12, 8, 20),
        dot_size = c(1, 1, 12),
