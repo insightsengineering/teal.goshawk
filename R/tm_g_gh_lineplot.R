@@ -417,7 +417,7 @@ srv_lineplot <- function(input,
     line_color_defaults(line_color_to_set)
 
     line_type_to_set <- if (length(line_type_defaults()) <= anl_arm_nlevels) {
-      c(line_type_defaults(), rep("dashed", anl_arm_nlevels - length(line_type_defaults())))
+      c(line_type_defaults(), rep(line_type_defaults(), anl_arm_nlevels - length(line_type_defaults())))
     } else {
       line_type_defaults()[seq_len(anl_arm_nlevels)]
     }
