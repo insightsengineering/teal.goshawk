@@ -395,8 +395,7 @@ srv_lineplot <- function(input,
   }
   line_color_defaults <- reactiveVal(line_color_start)
 
-  line_type_start <- "solid"
-  line_type_defaults <- reactiveVal(line_type_start)
+  line_type_defaults <- reactiveVal("solid")
 
   observeEvent(input$trt_group, {
     req(input$trt_group)
