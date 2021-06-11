@@ -395,8 +395,7 @@ srv_lineplot <- function(input,
   }
   line_color_defaults <- reactiveVal(line_color_start)
 
-  line_type_start <- "dashed"
-  line_type_defaults <- reactiveVal(line_type_start)
+  line_type_defaults <- reactiveVal("solid")
 
   observeEvent(input$trt_group, {
     req(input$trt_group)
@@ -417,7 +416,7 @@ srv_lineplot <- function(input,
     line_color_defaults(line_color_to_set)
 
     line_type_to_set <- if (length(line_type_defaults()) <= anl_arm_nlevels) {
-      c(line_type_defaults(), rep("dashed", anl_arm_nlevels - length(line_type_defaults())))
+      c(line_type_defaults(), rep(line_type_defaults(), anl_arm_nlevels - length(line_type_defaults())))
     } else {
       line_type_defaults()[seq_len(anl_arm_nlevels)]
     }
