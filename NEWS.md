@@ -2,6 +2,7 @@
 
 ### Enhancements
 * Updated `tm_g_gh_correlationplot` and `tm_g_gh_scatterplot` encodings to have a checkbox to facet by the treatment variable instead of a drop down menu.
+* Updated the starting line type to be solid instead of dashed in `tm_g_gh_lineplot`.
 
 # teal.goshawk 0.1.8
 
