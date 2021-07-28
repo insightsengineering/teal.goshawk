@@ -345,9 +345,9 @@ update_min_max <- function(session, args) {
 #' @export
 #'
 #' @examples
-#' library(random.cdisc.data)
+#' library(scda)
 #'
-#' ADSL <- radsl(cached = TRUE)
+#' ADSL <- synthetic_cdisc_data("latest")$adsl
 #'
 #' # get treatment mapping code
 #' maptrt(df_armvar = ADSL$ARMCD, code = "M")

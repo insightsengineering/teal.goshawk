@@ -88,15 +88,15 @@ summary table.
 # Example using ADaM structure analysis dataset.
 
 library(dplyr)
-library(random.cdisc.data)
+library(scda)
 
 # original ARM value = dose value
 arm_mapping <- list("A: Drug X" = "150mg QD",
                     "B: Placebo" = "Placebo",
                     "C: Combination" = "Combination")
 
-ADSL <- radsl(cached = TRUE)
-ADLB <- radlb(ADSL, cached = TRUE)
+ADSL <- synthetic_cdisc_data("latest")$adsl
+ADLB <- synthetic_cdisc_data("latest")$adlb
 var_labels <- lapply(ADLB, function(x) attributes(x)$label)
 ADLB <- ADLB \%>\%
   mutate(AVISITCD = case_when(
@@ -123,11 +123,11 @@ attr(ADLB[["ACTARM"]], 'label') <- var_labels[["ACTARM"]]
 
 app <- teal::init(
   data = cdisc_data(
-    adsl <- cdisc_dataset("ADSL", ADSL, code = "ADSL <- radsl(cached = TRUE)"),
+    adsl <- cdisc_dataset("ADSL", ADSL, code = "ADSL <- synthetic_cdisc_data(\"latest\")$adsl"),
     cdisc_dataset(
       "ADLB",
       ADLB,
-      code = "ADLB <- radlb(ADSL, cached = TRUE)
+      code = "ADLB <- synthetic_cdisc_data(\"latest\")$adlb
            var_labels <- lapply(ADLB, function(x) attributes(x)$label)
            ADLB <- ADLB \%>\%
              mutate(AVISITCD = case_when(
