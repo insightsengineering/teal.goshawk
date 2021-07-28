@@ -93,7 +93,7 @@ arm_mapping <- list("A: Drug X" = "150mg QD",
                     "C: Combination" = "Combination")
 
 ADSL <- synthetic_cdisc_data("latest")$adsl
-ADLB <- synthetic_cdisc_data("latest")$$adlb
+ADLB <- synthetic_cdisc_data("latest")$adlb
 var_labels <- lapply(ADLB, function(x) attributes(x)$label)
 ADLB <- ADLB \%>\%
   mutate(AVISITCD = case_when(
