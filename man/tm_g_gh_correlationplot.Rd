@@ -97,7 +97,7 @@ Scatter Plot Teal Module For Biomarker Analysis
 # Example using ADaM structure analysis dataset.
 
 library(dplyr)
-library(random.cdisc.data)
+library(scda)
 
 # original ARM value = dose value
 arm_mapping <- list("A: Drug X" = "Drug X 100mg",
@@ -105,8 +105,8 @@ arm_mapping <- list("A: Drug X" = "Drug X 100mg",
                     "C: Combination" = "Combination 100mg"
 )
 
-ADSL <- radsl(cached = TRUE)
-ADLB <- radlb(cached = TRUE)
+ADSL <- synthetic_cdisc_data("latest")$adsl
+ADLB <- synthetic_cdisc_data("latest")$adlb
 var_labels <- lapply(ADLB, function(x) attributes(x)$label)
 ADLB <- ADLB \%>\%
   mutate(AVISITCD = case_when(
@@ -133,11 +133,11 @@ attr(ADLB[["ACTARM"]], 'label') <- var_labels[["ACTARM"]]
 
 app <- init(
   data = cdisc_data(
-    cdisc_dataset("ADSL", ADSL, code = "ADSL <- radsl(cached = TRUE)"),
+    cdisc_dataset("ADSL", ADSL, code = "ADSL <- synthetic_cdisc_data(\"latest\")$adsl"),
     cdisc_dataset(
       "ADLB",
       ADLB,
-      code = "ADLB <- radlb(cached = TRUE)
+      code = "ADLB <- synthetic_cdisc_data(\"latest\")$adlb
               var_labels <- lapply(ADLB, function(x) attributes(x)$label)
               ADLB <- ADLB \%>\%
                 mutate(AVISITCD = case_when(

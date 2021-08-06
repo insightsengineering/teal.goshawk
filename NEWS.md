@@ -1,4 +1,5 @@
 # teal.goshawk 0.1.9.9000
+* Update examples and document using `scda` synthetic data to replace `random.cdisc.data`.
 
 # teal.goshawk 0.1.9
 
