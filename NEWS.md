@@ -1,5 +1,6 @@
 # teal.goshawk 0.1.9.9000
 * Update examples and document using `scda` synthetic data to replace `random.cdisc.data`.
+* Updated license and `README.md` with appropriate information for migration to public Github.
 
 # teal.goshawk 0.1.9
 
