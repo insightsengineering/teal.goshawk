@@ -1,6 +1,7 @@
 # teal.goshawk 0.1.9.9000
 * Update examples and document using `scda` synthetic data to replace `random.cdisc.data`.
 * Updated license and `README.md` with appropriate information for migration to public Github.
+* Added `error_on_lint: TRUE` to `.lintr`.
 
 # teal.goshawk 0.1.9
 
@@ -34,15 +35,15 @@
   - Fixed displaying the number of messages, warnings and errors on the Debug Info button.
   - Fixed treatment variable having values with with symbols (e.g. ':').
   - Allow treatment variables with different arm levels.
-  
+
 ### Miscellaneous
 * Reduced minimum number of records required in dataset to either 1 or 2 in all modules.
 
 # teal.goshawk 0.1.6
 
 ### Enhancements
-* `tm_g_gh_boxplot` 
-   - Changed slider title from "Transparency" to "Alpha". 
+* `tm_g_gh_boxplot`
+   - Changed slider title from "Transparency" to "Alpha".
 * `tm_g_gh_correlationplot`
     - Added `facet_var` argument and UI drop down.
 * `tm_g_gh_density_distribution_plot`
@@ -56,7 +57,7 @@
     - Added `facet_var` argument and UI drop down.
 * `tm_g_gh_spaghettiplot`
    - Changed slider title from "Transparency" to "Alpha".
-    
+
 ### General
 * Moved `code` argument to `cdisc_dataset` (from `cdisc_data`) in examples.
 * Implemented new `plot_with_settings` functionality to all modules with support for plot resizing, zooming, and downloading functionality.
