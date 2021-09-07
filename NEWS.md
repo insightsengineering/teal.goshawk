@@ -2,6 +2,7 @@
 * Update examples and document using `scda` synthetic data to replace `random.cdisc.data`.
 * Updated license and `README.md` with appropriate information for migration to public Github.
 * Added `error_on_lint: TRUE` to `.lintr`.
+* Fixed bug in `tm_g_gh_boxplot` module that always uses the `AVISITCD` variable as the `Visit` Column of the table.
 
 # teal.goshawk 0.1.9
 
