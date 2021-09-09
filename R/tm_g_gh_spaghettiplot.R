@@ -265,14 +265,28 @@ g_ui_spaghettiplot <- function(id, ...) {
           multiple = TRUE)
       },
       div(
-        style = "padding: 0px;",
+        style = "display: flex",
         div(
-          style = "display: inline-block;vertical-align:moddle; width: 100%;",
-          tags$b("Add Arbitrary Horizontal Line:")
+          style = "padding: 0px;",
+          div(
+            style = "display: inline-block;vertical-align:moddle; width: 100%;",
+            tags$b("Line:")
+          ),
+          div(
+            style = "display: inline-block;vertical-align:middle; width: 100%;",
+            numericInput(ns("hline"), "", a$hline)
+          )
         ),
         div(
-          style = "display: inline-block;vertical-align:middle; width: 100%;",
-          numericInput(ns("hline"), "", a$hline)
+          style = "padding: 0px;",
+          div(
+            style = "display: inline-block;vertical-align:moddle; width: 100%;",
+            tags$b("Label:")
+          ),
+          div(
+            style = "display: inline-block;vertical-align:middle; width: 100%;",
+            textInput(ns("hline_label"), "", "")
+          )
         )
       ),
       templ_ui_constraint(ns), # required by constr_anl_chunks
@@ -381,6 +395,7 @@ srv_g_spaghettiplot <- function(input,
           ylim = .(ylim),
           facet_ncol = .(facet_ncol),
           hline_arb = .(`if`(is.na(hline), NULL, as.numeric(hline))),
+          hline_arb_label = .(input$hline_label),
           xtick = .(xtick),
           xlabel = .(xlabel),
           rotate_xlab = .(rotate_xlab),
