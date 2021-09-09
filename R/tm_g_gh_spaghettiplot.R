@@ -254,15 +254,22 @@ g_ui_spaghettiplot <- function(id, ...) {
         ns("group_stats"),
         "Group Statistics",
         c("None" = "NONE", "Mean" = "MEAN", "Median" = "MEDIAN"),
-        inline = TRUE),
+        inline = TRUE
+      ),
       if (!is.null(a$hline_vars)) {
         optionalSelectInput(
           ns("hline_vars"),
-          label = "Horizontal lines",
+          label = "Add Horizontal Range Line(s):",
           choices = a$hline_vars,
           selected = a$hline_vars[1],
           multiple = TRUE)
       },
+      div(style = "padding: 0px;",
+          div(style = "display: inline-block;vertical-align:moddle; width: 100%;",
+              tags$b("Add Arbitrary Horizontal Line:")),
+          div(style = "display: inline-block;vertical-align:middle; width: 100%;",
+              numericInput(ns("hline"), "", a$hline))
+      ),
       templ_ui_constraint(ns), # required by constr_anl_chunks
       toggle_slider_ui(
         ns("yrange_scale"),
@@ -280,12 +287,6 @@ g_ui_spaghettiplot <- function(id, ...) {
               numericInput(ns("facet_ncol"), "", a$facet_ncol, min = 1))
           ),
           checkboxInput(ns("rotate_xlab"), "Rotate X-Axis Label", a$rotate_xlab),
-          div(style = "padding: 0px;",
-            div(style = "display: inline-block;vertical-align:moddle; width: 175px;",
-              tags$b("Add a Horizontal Line:")),
-            div(style = "display: inline-block;vertical-align:middle; width: 100px;",
-              numericInput(ns("hline"), "", a$hline))
-          ),
           optionalSliderInputValMinMax(ns("font_size"), "Font Size", a$font_size, ticks = FALSE),
           optionalSliderInputValMinMax(
             ns("alpha"),
