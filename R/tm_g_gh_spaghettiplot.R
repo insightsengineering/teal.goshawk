@@ -35,6 +35,9 @@
 #' @param plot_width optional, controls plot width.
 #' @param font_size control font size for title, x-axis, y-axis and legend font.
 #' @param group_stats control group mean or median overlay.
+#' @param hline_vars a character vector to name the columns that will define additional horizontal lines.
+#' @param hline_vars_colors a character vector equal in length to hline_vars that will define the colors.
+#' @param hline_vars_labels a character vector equal in length to hline_vars that will define the legend labels.
 #' @inheritParams teal.devel::standard_layout
 #'
 #' @import goshawk
@@ -167,7 +170,27 @@ tm_g_gh_spaghettiplot <- function(label,
                                   plot_width = NULL,
                                   font_size = c(12, 8, 20),
                                   pre_output = NULL,
-                                  post_output = NULL) {
+                                  post_output = NULL,
+                                  hline_vars = NULL,
+                                  hline_vars_colors = NULL,
+                                  hline_vars_labels = NULL) {
+
+  if (!is.null(hline_vars)) {
+    stopifnot(is_character_vector(hline_vars, min_length = 1))
+    if (!is.null(hline_vars_labels)) {
+      stopifnot(is_character_vector(
+        hline_vars_labels, min_length = length(hline_vars),
+        max_length = (length(hline_vars)))
+      )
+    }
+    if (!is.null(hline_vars_colors)) {
+      stopifnot(is_character_vector(
+        hline_vars_colors,
+        min_length = length(hline_vars),
+        max_length = (length(hline_vars)))
+      )
+    }
+  }
 
   stopifnot(is.choices_selected(param))
   stopifnot(is.choices_selected(xaxis_var))
@@ -194,7 +217,9 @@ tm_g_gh_spaghettiplot <- function(label,
       xtick = xtick,
       xlabel = xlabel,
       plot_height = plot_height,
-      plot_width = plot_width
+      plot_width = plot_width,
+      hline_vars_colors = hline_vars_colors,
+      hline_vars_labels = hline_vars_labels
     ),
     ui = g_ui_spaghettiplot,
     ui_args = args,
@@ -230,6 +255,14 @@ g_ui_spaghettiplot <- function(id, ...) {
         "Group Statistics",
         c("None" = "NONE", "Mean" = "MEAN", "Median" = "MEDIAN"),
         inline = TRUE),
+      if (!is.null(a$hline_vars)) {
+        optionalSelectInput(
+          ns("hline_vars"),
+          label = "Horizontal lines",
+          choices = a$hline_vars,
+          selected = a$hline_vars[1],
+          multiple = TRUE)
+      },
       templ_ui_constraint(ns), # required by constr_anl_chunks
       toggle_slider_ui(
         ns("yrange_scale"),
@@ -286,7 +319,9 @@ srv_g_spaghettiplot <- function(input,
                                 xtick,
                                 xlabel,
                                 plot_height,
-                                plot_width) {
+                                plot_width,
+                                hline_vars_colors,
+                                hline_vars_labels) {
   init_chunks()
   # reused in all modules
   anl_chunks <- constr_anl_chunks(
@@ -318,6 +353,7 @@ srv_g_spaghettiplot <- function(input,
     param <- input$xaxis_param
     xaxis_var <- input$xaxis_var
     yaxis_var <- input$yaxis_var
+    hline_vars <- input$hline_vars
     # nolint end
     chunks_push(
       chunks = private_chunks,
@@ -344,7 +380,10 @@ srv_g_spaghettiplot <- function(input,
           rotate_xlab = .(rotate_xlab),
           font_size = .(font_size),
           alpha = .(alpha),
-          group_stats = .(group_stats)
+          group_stats = .(group_stats),
+          hline_vars = .(hline_vars),
+          hline_vars_colors = .(hline_vars_colors[seq_along(hline_vars)]),
+          hline_vars_labels = .(hline_vars_labels[seq_along(hline_vars)])
         )
         print(p)
       })

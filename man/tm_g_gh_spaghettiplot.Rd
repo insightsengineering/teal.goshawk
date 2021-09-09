@@ -29,7 +29,10 @@ tm_g_gh_spaghettiplot(
   plot_width = NULL,
   font_size = c(12, 8, 20),
   pre_output = NULL,
-  post_output = NULL
+  post_output = NULL,
+  hline_vars = NULL,
+  hline_vars_colors = NULL,
+  hline_vars_labels = NULL
 )
 }
 \arguments{
@@ -94,6 +97,12 @@ output to put the output into context. For example a title.}
 \item{post_output}{optional, \code{shiny.tag} with text placed after the
 output to put the output into context. For example the
 \code{\link[shiny]{helpText}} elements are useful.}
+
+\item{hline_vars}{a character vector to name the columns that will define additional horizontal lines.}
+
+\item{hline_vars_colors}{a character vector equal in length to hline_vars that will define the colors.}
+
+\item{hline_vars_labels}{a character vector equal in length to hline_vars that will define the legend labels.}
 }
 \value{
 \code{shiny} object
