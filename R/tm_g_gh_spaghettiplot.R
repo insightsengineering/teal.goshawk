@@ -264,11 +264,16 @@ g_ui_spaghettiplot <- function(id, ...) {
           selected = a$hline_vars[1],
           multiple = TRUE)
       },
-      div(style = "padding: 0px;",
-          div(style = "display: inline-block;vertical-align:moddle; width: 100%;",
-              tags$b("Add Arbitrary Horizontal Line:")),
-          div(style = "display: inline-block;vertical-align:middle; width: 100%;",
-              numericInput(ns("hline"), "", a$hline))
+      div(
+        style = "padding: 0px;",
+        div(
+          style = "display: inline-block;vertical-align:moddle; width: 100%;",
+          tags$b("Add Arbitrary Horizontal Line:")
+        ),
+        div(
+          style = "display: inline-block;vertical-align:middle; width: 100%;",
+          numericInput(ns("hline"), "", a$hline)
+        )
       ),
       templ_ui_constraint(ns), # required by constr_anl_chunks
       toggle_slider_ui(
