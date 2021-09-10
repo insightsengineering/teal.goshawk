@@ -3,6 +3,7 @@
 * Updated license and `README.md` with appropriate information for migration to public Github.
 * Added `error_on_lint: TRUE` to `.lintr`.
 * Added another select input to `tm_g_gh_spaghettiplot` to add arbitrary horizontal lines to the plot.
+* Fixed bug in `tm_g_gh_boxplot` module that always uses the `AVISITCD` variable as the `Visit` Column of the table.
 
 # teal.goshawk 0.1.9
 
