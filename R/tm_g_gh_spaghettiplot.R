@@ -24,7 +24,6 @@
 #' level of trt_group.
 #' @param man_color string vector representing customized colors
 #' @param color_comb name or hex value for combined treatment color.
-#' @param hline numeric value to add horizontal line to plot
 #' @param xtick numeric vector to define the tick values of x-axis
 #' when x variable is numeric. Default value is waive().
 #' @param xlabel vector with same length of xtick to define the
@@ -159,7 +158,6 @@ tm_g_gh_spaghettiplot <- function(label,
                                   trt_group,
                                   trt_group_level = NULL,
                                   group_stats = "NONE",
-                                  hline = NULL,
                                   man_color = NULL,
                                   color_comb = NULL,
                                   xtick = waiver(),

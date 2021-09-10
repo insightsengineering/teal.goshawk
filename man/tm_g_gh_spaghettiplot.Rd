@@ -18,7 +18,6 @@ tm_g_gh_spaghettiplot(
   trt_group,
   trt_group_level = NULL,
   group_stats = "NONE",
-  hline = NULL,
   man_color = NULL,
   color_comb = NULL,
   xtick = waiver(),
@@ -68,8 +67,6 @@ for variable names representing treatment group e.g. ARM.}
 level of trt_group.}
 
 \item{group_stats}{control group mean or median overlay.}
-
-\item{hline}{numeric value to add horizontal line to plot}
 
 \item{man_color}{string vector representing customized colors}
 
