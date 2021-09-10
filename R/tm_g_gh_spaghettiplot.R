@@ -359,6 +359,7 @@ srv_g_spaghettiplot <- function(input,
     facet_ncol <- input$facet_ncol
     rotate_xlab <- input$rotate_xlab
     hline <- input$hline
+    hline_label <- input$hline_label
     group_stats <- input$group_stats
     font_size <- input$font_size
     alpha <- input$alpha
