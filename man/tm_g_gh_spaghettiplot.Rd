@@ -29,6 +29,7 @@ tm_g_gh_spaghettiplot(
   font_size = c(12, 8, 20),
   pre_output = NULL,
   post_output = NULL,
+  hline_arb_color = "red",
   hline_vars = NULL,
   hline_vars_colors = NULL,
   hline_vars_labels = NULL
@@ -94,6 +95,8 @@ output to put the output into context. For example a title.}
 \item{post_output}{optional, \code{shiny.tag} with text placed after the
 output to put the output into context. For example the
 \code{\link[shiny]{helpText}} elements are useful.}
+
+\item{hline_arb_color}{a character naming the color for the arbitrary horizontal line}
 
 \item{hline_vars}{a character vector to name the columns that will define additional horizontal lines.}
 

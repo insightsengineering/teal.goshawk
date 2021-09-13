@@ -34,6 +34,7 @@
 #' @param plot_width optional, controls plot width.
 #' @param font_size control font size for title, x-axis, y-axis and legend font.
 #' @param group_stats control group mean or median overlay.
+#' @param hline_arb_color a character naming the color for the arbitrary horizontal line
 #' @param hline_vars a character vector to name the columns that will define additional horizontal lines.
 #' @param hline_vars_colors a character vector equal in length to hline_vars that will define the colors.
 #' @param hline_vars_labels a character vector equal in length to hline_vars that will define the legend labels.
@@ -169,6 +170,7 @@ tm_g_gh_spaghettiplot <- function(label,
                                   font_size = c(12, 8, 20),
                                   pre_output = NULL,
                                   post_output = NULL,
+                                  hline_arb_color = "red",
                                   hline_vars = NULL,
                                   hline_vars_colors = NULL,
                                   hline_vars_labels = NULL) {
@@ -214,6 +216,7 @@ tm_g_gh_spaghettiplot <- function(label,
       param_var_label = param_var_label,
       xtick = xtick,
       xlabel = xlabel,
+      hline_arb_color = hline_arb_color,
       plot_height = plot_height,
       plot_width = plot_width,
       hline_vars_colors = hline_vars_colors,
@@ -339,7 +342,8 @@ srv_g_spaghettiplot <- function(input,
                                 plot_height,
                                 plot_width,
                                 hline_vars_colors,
-                                hline_vars_labels) {
+                                hline_vars_labels,
+                                hline_arb_color) {
   init_chunks()
   # reused in all modules
   anl_chunks <- constr_anl_chunks(
@@ -395,6 +399,7 @@ srv_g_spaghettiplot <- function(input,
           facet_ncol = .(facet_ncol),
           hline_arb = .(`if`(is.na(hline), NULL, as.numeric(hline))),
           hline_arb_label = .(`if`(is.na(hline), NULL, hline_label)),
+          hline_arb_color = .(hline_arb_color),
           xtick = .(xtick),
           xlabel = .(xlabel),
           rotate_xlab = .(rotate_xlab),
