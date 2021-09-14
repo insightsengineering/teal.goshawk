@@ -85,7 +85,14 @@
 #'     ACTARM = as.character(arm_mapping[match(ACTARM, names(arm_mapping))]),
 #'     ACTARM = factor(ACTARM) %>% reorder(TRTORD),
 #'     ANRLO = 30,
-#'     ANRHI = 75)
+#'     ANRHI = 75) %>%
+#'     rowwise() %>%
+#'     group_by(PARAMCD) %>%
+#'     mutate(LBSTRESC = ifelse(USUBJID %in% sample(USUBJID, 1, replace = TRUE),
+#'     paste('<', round(runif(1, min = 25, max = 30))), LBSTRESC)) %>%
+#'     mutate(LBSTRESC = ifelse(USUBJID %in% sample(USUBJID, 1, replace = TRUE),
+#'     paste( '>', round(runif(1, min = 70, max = 75))), LBSTRESC)) %>%
+#'     ungroup
 #' attr(ADLB[["ARM"]], "label") <- var_labels[["ARM"]]
 #' attr(ADLB[["ACTARM"]], 'label') <- var_labels[["ACTARM"]]
 #' attr(ADLB[["ANRLO"]], "label") <- "Analysis Normal Range Lower Limit"
@@ -125,7 +132,14 @@
 #'                   ACTARM = as.character(arm_mapping[match(ACTARM, names(arm_mapping))]),
 #'                   ACTARM = factor(ACTARM) %>% reorder(TRTORD),
 #'                   ANRLO = 30,
-#'                   ANRHI = 75)
+#'                   ANRHI = 75) %>%
+#'                   rowwise() %>%
+#'                   group_by(PARAMCD) %>%
+#'                   mutate(LBSTRESC = ifelse(USUBJID %in% sample(USUBJID, 1, replace = TRUE),
+#'                   paste('<', round(runif(1, min = 25, max = 30))), LBSTRESC)) %>%
+#'                   mutate(LBSTRESC = ifelse(USUBJID %in% sample(USUBJID, 1, replace = TRUE),
+#'                   paste( '>', round(runif(1, min = 70, max = 75))), LBSTRESC)) %>%
+#'                   ungroup
 #'                attr(ADLB[['ARM']], 'label') <- var_labels[['ARM']]
 #'                attr(ADLB[['ACTARM']], 'label') <- var_labels[['ACTARM']]
 #'                attr(ADLB[['ANRLO']], 'label') <- 'Analysis Normal Range Lower Limit'
@@ -133,7 +147,7 @@
 #'                ALB_LOQS <- goshawk:::h_identify_loq_values(ADLB)
 #'                ADLB <- left_join(ADLB, ALB_LOQS, by = 'PARAM')",
 #'       vars = list(arm_mapping = arm_mapping)),
-#'       check = TRUE
+#'       check = FALSE
 #'     ),
 #'   modules = root_modules(
 #'     tm_g_gh_spaghettiplot(
@@ -151,8 +165,9 @@
 #'       man_color = c('Combination' = "#000000",
 #'                    'Placebo' = "#fce300",
 #'                    '150mg QD' = "#5a2f5f"),
-#'       hline_vars = c("ANRHI", "ANRLO"),
-#'       hline_vars_colors = c("pink", "brown"),
+#'       hline_arb_color = "grey",
+#'       hline_vars = c("ANRHI", "ANRLO", "ULOQN", "LLOQN"),
+#'       hline_vars_colors = c("pink", "brown", "purple", "black"),
 #'       hline_vars_labels = NULL
 #'     )
 #'   )
@@ -277,18 +292,19 @@ g_ui_spaghettiplot <- function(id, ...) {
       if (!is.null(a$hline_vars)) {
         optionalSelectInput(
           ns("hline_vars"),
-          label = "Add Horizontal Range Line(s):",
+          label = "Add Range Line(s):",
           choices = a$hline_vars,
           selected = a$hline_vars[1],
           multiple = TRUE)
       },
+      tags$b("Add Arbitrary Horizontal Line/Label:"),
       div(
         style = "display: flex",
         div(
           style = "padding: 0px;",
           div(
             style = "display: inline-block;vertical-align:moddle; width: 100%;",
-            tags$b("Line:")
+            tags$b("Line Value:")
           ),
           div(
             style = "display: inline-block;vertical-align:middle; width: 100%;",
@@ -299,7 +315,7 @@ g_ui_spaghettiplot <- function(id, ...) {
           style = "padding: 0px;",
           div(
             style = "display: inline-block;vertical-align:moddle; width: 100%;",
-            tags$b("Label:")
+            tags$b("Line Label:")
           ),
           div(
             style = "display: inline-block;vertical-align:middle; width: 100%;",
