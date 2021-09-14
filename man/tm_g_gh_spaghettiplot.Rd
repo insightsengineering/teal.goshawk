@@ -118,7 +118,7 @@ that creates a spaghetti plot.
 library(dplyr)
 library(scda)
 
-# original ARM value = dose value
+#' original ARM value = dose value
 arm_mapping <- list("A: Drug X" = "150mg QD",
                     "B: Placebo" = "Placebo",
                     "C: Combination" = "Combination")
@@ -145,9 +145,17 @@ ADLB <- ADLB \%>\%
     ARM = as.character(arm_mapping[match(ARM, names(arm_mapping))]),
     ARM = factor(ARM) \%>\% reorder(TRTORD),
     ACTARM = as.character(arm_mapping[match(ACTARM, names(arm_mapping))]),
-    ACTARM = factor(ACTARM) \%>\% reorder(TRTORD))
+    ACTARM = factor(ACTARM) \%>\% reorder(TRTORD),
+    ANRLO = 30,
+    ANRHI = 75)
 attr(ADLB[["ARM"]], "label") <- var_labels[["ARM"]]
 attr(ADLB[["ACTARM"]], 'label') <- var_labels[["ACTARM"]]
+attr(ADLB[["ANRLO"]], "label") <- "Analysis Normal Range Lower Limit"
+attr(ADLB[["ANRHI"]], "label") <- "Analysis Normal Range Upper Limit"
+
+#' add LLOQ and ULOQ variables
+ALB_LOQS <- goshawk:::h_identify_loq_values(ADLB)
+ADLB <- left_join(ADLB, ALB_LOQS, by = "PARAM")
 
 app <- teal::init(
   data = cdisc_data(
@@ -177,11 +185,17 @@ app <- teal::init(
                   ARM = as.character(arm_mapping[match(ARM, names(arm_mapping))]),
                   ARM = factor(ARM) \%>\% reorder(TRTORD),
                   ACTARM = as.character(arm_mapping[match(ACTARM, names(arm_mapping))]),
-                  ACTARM = factor(ACTARM) \%>\% reorder(TRTORD))
+                  ACTARM = factor(ACTARM) \%>\% reorder(TRTORD),
+                  ANRLO = 30,
+                  ANRHI = 75)
                attr(ADLB[['ARM']], 'label') <- var_labels[['ARM']]
-               attr(ADLB[['ACTARM']], 'label') <- var_labels[['ACTARM']]",
+               attr(ADLB[['ACTARM']], 'label') <- var_labels[['ACTARM']]
+               attr(ADLB[['ANRLO']], 'label') <- 'Analysis Normal Range Lower Limit'
+               attr(ADLB[['ANRHI']], 'label') <- 'Analysis Normal Range Upper Limit'
+               ALB_LOQS <- goshawk:::h_identify_loq_values(ADLB)
+               ADLB <- left_join(ADLB, ALB_LOQS, by = 'PARAM')",
       vars = list(arm_mapping = arm_mapping)),
-    check = TRUE
+      check = TRUE
     ),
   modules = root_modules(
     tm_g_gh_spaghettiplot(
@@ -195,10 +209,13 @@ app <- teal::init(
       filter_var = choices_selected(c("None" = "NONE", "Screening" = "BASE2", "Baseline" = "BASE"),
        "NONE"),
       trt_group = choices_selected(c("ARM", "ACTARM"), "ARM"),
-      color_comb = "#39ff14",
-      man_color = c('Combination' = "#000000",
-                   'Placebo' = "#fce300",
-                   '150mg QD' = "#5a2f5f")
+      color_comb = "#'39ff14",
+      man_color = c('Combination' = "#'000000",
+                   'Placebo' = "#'fce300",
+                   '150mg QD' = "#'5a2f5f"),
+      hline_vars = c("ANRHI", "ANRLO"),
+      hline_vars_colors = c("pink", "brown"),
+      hline_vars_labels = NULL
     )
   )
 )
