@@ -185,12 +185,12 @@ tm_g_gh_spaghettiplot <- function(label,
                                   plot_height = c(600, 200, 2000),
                                   plot_width = NULL,
                                   font_size = c(12, 8, 20),
-                                  pre_output = NULL,
-                                  post_output = NULL,
                                   hline_arb_color = "red",
                                   hline_vars = NULL,
                                   hline_vars_colors = NULL,
-                                  hline_vars_labels = NULL) {
+                                  hline_vars_labels = NULL,
+                                  pre_output = NULL,
+                                  post_output = NULL) {
 
   if (!is.null(hline_vars)) {
     stopifnot(is_character_vector(hline_vars, min_length = 1))

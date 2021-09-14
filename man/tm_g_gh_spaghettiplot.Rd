@@ -27,12 +27,12 @@ tm_g_gh_spaghettiplot(
   plot_height = c(600, 200, 2000),
   plot_width = NULL,
   font_size = c(12, 8, 20),
-  pre_output = NULL,
-  post_output = NULL,
   hline_arb_color = "red",
   hline_vars = NULL,
   hline_vars_colors = NULL,
-  hline_vars_labels = NULL
+  hline_vars_labels = NULL,
+  pre_output = NULL,
+  post_output = NULL
 )
 }
 \arguments{
@@ -89,13 +89,6 @@ label of x-axis tick values. Default value is waive().}
 
 \item{font_size}{control font size for title, x-axis, y-axis and legend font.}
 
-\item{pre_output}{optional, \code{shiny.tag} with text placed before the
-output to put the output into context. For example a title.}
-
-\item{post_output}{optional, \code{shiny.tag} with text placed after the
-output to put the output into context. For example the
-\code{\link[shiny]{helpText}} elements are useful.}
-
 \item{hline_arb_color}{a character naming the color for the arbitrary horizontal line}
 
 \item{hline_vars}{a character vector to name the columns that will define additional horizontal lines.}
@@ -103,6 +96,13 @@ output to put the output into context. For example the
 \item{hline_vars_colors}{a character vector equal in length to hline_vars that will define the colors.}
 
 \item{hline_vars_labels}{a character vector equal in length to hline_vars that will define the legend labels.}
+
+\item{pre_output}{optional, \code{shiny.tag} with text placed before the
+output to put the output into context. For example a title.}
+
+\item{post_output}{optional, \code{shiny.tag} with text placed after the
+output to put the output into context. For example the
+\code{\link[shiny]{helpText}} elements are useful.}
 }
 \value{
 \code{shiny} object
