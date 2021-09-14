@@ -118,7 +118,7 @@ that creates a spaghetti plot.
 library(dplyr)
 library(scda)
 
-#' original ARM value = dose value
+original ARM value = dose value
 arm_mapping <- list("A: Drug X" = "150mg QD",
                     "B: Placebo" = "Placebo",
                     "C: Combination" = "Combination")
@@ -153,7 +153,7 @@ attr(ADLB[["ACTARM"]], 'label') <- var_labels[["ACTARM"]]
 attr(ADLB[["ANRLO"]], "label") <- "Analysis Normal Range Lower Limit"
 attr(ADLB[["ANRHI"]], "label") <- "Analysis Normal Range Upper Limit"
 
-#' add LLOQ and ULOQ variables
+add LLOQ and ULOQ variables
 ALB_LOQS <- goshawk:::h_identify_loq_values(ADLB)
 ADLB <- left_join(ADLB, ALB_LOQS, by = "PARAM")
 
