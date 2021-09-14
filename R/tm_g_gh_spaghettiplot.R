@@ -56,7 +56,7 @@
 #' library(dplyr)
 #' library(scda)
 #'
-#' #' original ARM value = dose value
+#' original ARM value = dose value
 #' arm_mapping <- list("A: Drug X" = "150mg QD",
 #'                     "B: Placebo" = "Placebo",
 #'                     "C: Combination" = "Combination")
