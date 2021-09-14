@@ -192,6 +192,13 @@ tm_g_gh_spaghettiplot <- function(label,
                                   pre_output = NULL,
                                   post_output = NULL) {
 
+  stopifnot(is.choices_selected(param))
+  stopifnot(is.choices_selected(xaxis_var))
+  stopifnot(is.choices_selected(yaxis_var))
+  stopifnot(is.choices_selected(trt_group))
+  check_slider_input(plot_height, allow_null = FALSE)
+  check_slider_input(plot_width)
+
   if (!is.null(hline_vars)) {
     stopifnot(is_character_vector(hline_vars, min_length = 1))
     if (!is.null(hline_vars_labels)) {
@@ -208,13 +215,6 @@ tm_g_gh_spaghettiplot <- function(label,
       )
     }
   }
-
-  stopifnot(is.choices_selected(param))
-  stopifnot(is.choices_selected(xaxis_var))
-  stopifnot(is.choices_selected(yaxis_var))
-  stopifnot(is.choices_selected(trt_group))
-  check_slider_input(plot_height, allow_null = FALSE)
-  check_slider_input(plot_width)
 
   args <- as.list(environment())
 
