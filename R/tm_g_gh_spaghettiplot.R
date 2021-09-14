@@ -91,7 +91,7 @@
 #' attr(ADLB[["ANRLO"]], "label") <- "Analysis Normal Range Lower Limit"
 #' attr(ADLB[["ANRHI"]], "label") <- "Analysis Normal Range Upper Limit"
 #'
-#' #' add LLOQ and ULOQ variables
+#' add LLOQ and ULOQ variables
 #' ALB_LOQS <- goshawk:::h_identify_loq_values(ADLB)
 #' ADLB <- left_join(ADLB, ALB_LOQS, by = "PARAM")
 #'
