@@ -122,7 +122,7 @@ library(scda)
 arm_mapping <- list("A: Drug X" = "150mg QD",
                     "B: Placebo" = "Placebo",
                     "C: Combination" = "Combination")
-
+set.seed(1)
 ADSL <- synthetic_cdisc_data("latest")$adsl
 ADLB <- synthetic_cdisc_data("latest")$adlb
 var_labels <- lapply(ADLB, function(x) attributes(x)$label)
@@ -147,7 +147,14 @@ ADLB <- ADLB \%>\%
     ACTARM = as.character(arm_mapping[match(ACTARM, names(arm_mapping))]),
     ACTARM = factor(ACTARM) \%>\% reorder(TRTORD),
     ANRLO = 30,
-    ANRHI = 75)
+    ANRHI = 75) \%>\%
+    rowwise() \%>\%
+    group_by(PARAMCD) \%>\%
+    mutate(LBSTRESC = ifelse(USUBJID \%in\% sample(USUBJID, 1, replace = TRUE),
+    paste('<', round(runif(1, min = 25, max = 30))), LBSTRESC)) \%>\%
+    mutate(LBSTRESC = ifelse(USUBJID \%in\% sample(USUBJID, 1, replace = TRUE),
+    paste( '>', round(runif(1, min = 70, max = 75))), LBSTRESC)) \%>\%
+    ungroup
 attr(ADLB[["ARM"]], "label") <- var_labels[["ARM"]]
 attr(ADLB[["ACTARM"]], 'label') <- var_labels[["ACTARM"]]
 attr(ADLB[["ANRLO"]], "label") <- "Analysis Normal Range Lower Limit"
@@ -163,7 +170,8 @@ app <- teal::init(
     cdisc_dataset(
       "ADLB",
       ADLB,
-      code = "ADLB <- synthetic_cdisc_data(\"latest\")$adlb
+      code = "set.seed(1)
+              ADLB <- synthetic_cdisc_data(\"latest\")$adlb
               var_labels <- lapply(ADLB, function(x) attributes(x)$label)
               ADLB <- ADLB \%>\%
                 mutate(AVISITCD = case_when(
@@ -187,7 +195,14 @@ app <- teal::init(
                   ACTARM = as.character(arm_mapping[match(ACTARM, names(arm_mapping))]),
                   ACTARM = factor(ACTARM) \%>\% reorder(TRTORD),
                   ANRLO = 30,
-                  ANRHI = 75)
+                  ANRHI = 75) \%>\%
+                  rowwise() \%>\%
+                  group_by(PARAMCD) \%>\%
+                  mutate(LBSTRESC = ifelse(USUBJID \%in\% sample(USUBJID, 1, replace = TRUE),
+                  paste('<', round(runif(1, min = 25, max = 30))), LBSTRESC)) \%>\%
+                  mutate(LBSTRESC = ifelse(USUBJID \%in\% sample(USUBJID, 1, replace = TRUE),
+                  paste( '>', round(runif(1, min = 70, max = 75))), LBSTRESC)) \%>\%
+                  ungroup
                attr(ADLB[['ARM']], 'label') <- var_labels[['ARM']]
                attr(ADLB[['ACTARM']], 'label') <- var_labels[['ACTARM']]
                attr(ADLB[['ANRLO']], 'label') <- 'Analysis Normal Range Lower Limit'
@@ -195,7 +210,7 @@ app <- teal::init(
                ALB_LOQS <- goshawk:::h_identify_loq_values(ADLB)
                ADLB <- left_join(ADLB, ALB_LOQS, by = 'PARAM')",
       vars = list(arm_mapping = arm_mapping)),
-      check = TRUE
+      check = FALSE
     ),
   modules = root_modules(
     tm_g_gh_spaghettiplot(
@@ -213,8 +228,9 @@ app <- teal::init(
       man_color = c('Combination' = "#000000",
                    'Placebo' = "#fce300",
                    '150mg QD' = "#5a2f5f"),
-      hline_vars = c("ANRHI", "ANRLO"),
-      hline_vars_colors = c("pink", "brown"),
+      hline_arb_color = "grey",
+      hline_vars = c("ANRHI", "ANRLO", "ULOQN", "LLOQN"),
+      hline_vars_colors = c("pink", "brown", "purple", "black"),
       hline_vars_labels = NULL
     )
   )
