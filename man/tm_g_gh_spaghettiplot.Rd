@@ -122,7 +122,7 @@ library(scda)
 arm_mapping <- list("A: Drug X" = "150mg QD",
                     "B: Placebo" = "Placebo",
                     "C: Combination" = "Combination")
-set.seed(1)
+
 ADSL <- synthetic_cdisc_data("latest")$adsl
 ADLB <- synthetic_cdisc_data("latest")$adlb
 var_labels <- lapply(ADLB, function(x) attributes(x)$label)
@@ -147,14 +147,9 @@ ADLB <- ADLB \%>\%
     ACTARM = as.character(arm_mapping[match(ACTARM, names(arm_mapping))]),
     ACTARM = factor(ACTARM) \%>\% reorder(TRTORD),
     ANRLO = 30,
-    ANRHI = 75) \%>\%
-    rowwise() \%>\%
-    group_by(PARAMCD) \%>\%
-    mutate(LBSTRESC = ifelse(USUBJID \%in\% sample(USUBJID, 1, replace = TRUE),
-    paste('<', round(runif(1, min = 25, max = 30))), LBSTRESC)) \%>\%
-    mutate(LBSTRESC = ifelse(USUBJID \%in\% sample(USUBJID, 1, replace = TRUE),
-    paste( '>', round(runif(1, min = 70, max = 75))), LBSTRESC)) \%>\%
-    ungroup
+    ANRHI = 75,
+    LBSTRESC = c(paste('<', 26), LBSTRESC[2:length(LBSTRESC)]),
+    LBSTRESC = c(LBSTRESC[1], paste('>', 73), LBSTRESC[3:length(LBSTRESC)]))
 attr(ADLB[["ARM"]], "label") <- var_labels[["ARM"]]
 attr(ADLB[["ACTARM"]], 'label') <- var_labels[["ACTARM"]]
 attr(ADLB[["ANRLO"]], "label") <- "Analysis Normal Range Lower Limit"
@@ -170,8 +165,7 @@ app <- teal::init(
     cdisc_dataset(
       "ADLB",
       ADLB,
-      code = "set.seed(1)
-              ADLB <- synthetic_cdisc_data(\"latest\")$adlb
+      code = "ADLB <- synthetic_cdisc_data(\"latest\")$adlb
               var_labels <- lapply(ADLB, function(x) attributes(x)$label)
               ADLB <- ADLB \%>\%
                 mutate(AVISITCD = case_when(
@@ -195,14 +189,9 @@ app <- teal::init(
                   ACTARM = as.character(arm_mapping[match(ACTARM, names(arm_mapping))]),
                   ACTARM = factor(ACTARM) \%>\% reorder(TRTORD),
                   ANRLO = 30,
-                  ANRHI = 75) \%>\%
-                  rowwise() \%>\%
-                  group_by(PARAMCD) \%>\%
-                  mutate(LBSTRESC = ifelse(USUBJID \%in\% sample(USUBJID, 1, replace = TRUE),
-                  paste('<', round(runif(1, min = 25, max = 30))), LBSTRESC)) \%>\%
-                  mutate(LBSTRESC = ifelse(USUBJID \%in\% sample(USUBJID, 1, replace = TRUE),
-                  paste( '>', round(runif(1, min = 70, max = 75))), LBSTRESC)) \%>\%
-                  ungroup
+                  ANRHI = 75,
+                  LBSTRESC = c(paste('<', 26), LBSTRESC[2:length(LBSTRESC)]),
+                  LBSTRESC = c(LBSTRESC[1], paste('>', 73), LBSTRESC[3:length(LBSTRESC)]))
                attr(ADLB[['ARM']], 'label') <- var_labels[['ARM']]
                attr(ADLB[['ACTARM']], 'label') <- var_labels[['ACTARM']]
                attr(ADLB[['ANRLO']], 'label') <- 'Analysis Normal Range Lower Limit'
