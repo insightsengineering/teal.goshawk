@@ -60,7 +60,7 @@
 #' arm_mapping <- list("A: Drug X" = "150mg QD",
 #'                     "B: Placebo" = "Placebo",
 #'                     "C: Combination" = "Combination")
-#'
+#' set.seed(1)
 #' ADSL <- synthetic_cdisc_data("latest")$adsl
 #' ADLB <- synthetic_cdisc_data("latest")$adlb
 #' var_labels <- lapply(ADLB, function(x) attributes(x)$label)
@@ -108,7 +108,8 @@
 #'     cdisc_dataset(
 #'       "ADLB",
 #'       ADLB,
-#'       code = "ADLB <- synthetic_cdisc_data(\"latest\")$adlb
+#'       code = "set.seed(1)
+#'               ADLB <- synthetic_cdisc_data(\"latest\")$adlb
 #'               var_labels <- lapply(ADLB, function(x) attributes(x)$label)
 #'               ADLB <- ADLB %>%
 #'                 mutate(AVISITCD = case_when(
