@@ -24,7 +24,6 @@
 #' level of trt_group.
 #' @param man_color string vector representing customized colors
 #' @param color_comb name or hex value for combined treatment color.
-#' @param hline numeric value to add horizontal line to plot
 #' @param xtick numeric vector to define the tick values of x-axis
 #' when x variable is numeric. Default value is waive().
 #' @param xlabel vector with same length of xtick to define the
@@ -35,6 +34,10 @@
 #' @param plot_width optional, controls plot width.
 #' @param font_size control font size for title, x-axis, y-axis and legend font.
 #' @param group_stats control group mean or median overlay.
+#' @param hline_arb_color a character naming the color for the arbitrary horizontal line
+#' @param hline_vars a character vector to name the columns that will define additional horizontal lines.
+#' @param hline_vars_colors a character vector equal in length to hline_vars that will define the colors.
+#' @param hline_vars_labels a character vector equal in length to hline_vars that will define the legend labels.
 #' @inheritParams teal.devel::standard_layout
 #'
 #' @import goshawk
@@ -57,7 +60,7 @@
 #' arm_mapping <- list("A: Drug X" = "150mg QD",
 #'                     "B: Placebo" = "Placebo",
 #'                     "C: Combination" = "Combination")
-#'
+#' set.seed(1)
 #' ADSL <- synthetic_cdisc_data("latest")$adsl
 #' ADLB <- synthetic_cdisc_data("latest")$adlb
 #' var_labels <- lapply(ADLB, function(x) attributes(x)$label)
@@ -80,9 +83,24 @@
 #'     ARM = as.character(arm_mapping[match(ARM, names(arm_mapping))]),
 #'     ARM = factor(ARM) %>% reorder(TRTORD),
 #'     ACTARM = as.character(arm_mapping[match(ACTARM, names(arm_mapping))]),
-#'     ACTARM = factor(ACTARM) %>% reorder(TRTORD))
+#'     ACTARM = factor(ACTARM) %>% reorder(TRTORD),
+#'     ANRLO = 30,
+#'     ANRHI = 75) %>%
+#'     rowwise() %>%
+#'     group_by(PARAMCD) %>%
+#'     mutate(LBSTRESC = ifelse(USUBJID %in% sample(USUBJID, 1, replace = TRUE),
+#'     paste('<', round(runif(1, min = 25, max = 30))), LBSTRESC)) %>%
+#'     mutate(LBSTRESC = ifelse(USUBJID %in% sample(USUBJID, 1, replace = TRUE),
+#'     paste( '>', round(runif(1, min = 70, max = 75))), LBSTRESC)) %>%
+#'     ungroup
 #' attr(ADLB[["ARM"]], "label") <- var_labels[["ARM"]]
 #' attr(ADLB[["ACTARM"]], 'label') <- var_labels[["ACTARM"]]
+#' attr(ADLB[["ANRLO"]], "label") <- "Analysis Normal Range Lower Limit"
+#' attr(ADLB[["ANRHI"]], "label") <- "Analysis Normal Range Upper Limit"
+#'
+#' # add LLOQ and ULOQ variables
+#' ALB_LOQS <- goshawk:::h_identify_loq_values(ADLB)
+#' ADLB <- left_join(ADLB, ALB_LOQS, by = "PARAM")
 #'
 #' app <- teal::init(
 #'   data = cdisc_data(
@@ -90,7 +108,8 @@
 #'     cdisc_dataset(
 #'       "ADLB",
 #'       ADLB,
-#'       code = "ADLB <- synthetic_cdisc_data(\"latest\")$adlb
+#'       code = "set.seed(1)
+#'               ADLB <- synthetic_cdisc_data(\"latest\")$adlb
 #'               var_labels <- lapply(ADLB, function(x) attributes(x)$label)
 #'               ADLB <- ADLB %>%
 #'                 mutate(AVISITCD = case_when(
@@ -112,11 +131,24 @@
 #'                   ARM = as.character(arm_mapping[match(ARM, names(arm_mapping))]),
 #'                   ARM = factor(ARM) %>% reorder(TRTORD),
 #'                   ACTARM = as.character(arm_mapping[match(ACTARM, names(arm_mapping))]),
-#'                   ACTARM = factor(ACTARM) %>% reorder(TRTORD))
+#'                   ACTARM = factor(ACTARM) %>% reorder(TRTORD),
+#'                   ANRLO = 30,
+#'                   ANRHI = 75) %>%
+#'                   rowwise() %>%
+#'                   group_by(PARAMCD) %>%
+#'                   mutate(LBSTRESC = ifelse(USUBJID %in% sample(USUBJID, 1, replace = TRUE),
+#'                   paste('<', round(runif(1, min = 25, max = 30))), LBSTRESC)) %>%
+#'                   mutate(LBSTRESC = ifelse(USUBJID %in% sample(USUBJID, 1, replace = TRUE),
+#'                   paste( '>', round(runif(1, min = 70, max = 75))), LBSTRESC)) %>%
+#'                   ungroup
 #'                attr(ADLB[['ARM']], 'label') <- var_labels[['ARM']]
-#'                attr(ADLB[['ACTARM']], 'label') <- var_labels[['ACTARM']]",
+#'                attr(ADLB[['ACTARM']], 'label') <- var_labels[['ACTARM']]
+#'                attr(ADLB[['ANRLO']], 'label') <- 'Analysis Normal Range Lower Limit'
+#'                attr(ADLB[['ANRHI']], 'label') <- 'Analysis Normal Range Upper Limit'
+#'                ALB_LOQS <- goshawk:::h_identify_loq_values(ADLB)
+#'                ADLB <- left_join(ADLB, ALB_LOQS, by = 'PARAM')",
 #'       vars = list(arm_mapping = arm_mapping)),
-#'     check = TRUE
+#'       check = FALSE
 #'     ),
 #'   modules = root_modules(
 #'     tm_g_gh_spaghettiplot(
@@ -133,7 +165,11 @@
 #'       color_comb = "#39ff14",
 #'       man_color = c('Combination' = "#000000",
 #'                    'Placebo' = "#fce300",
-#'                    '150mg QD' = "#5a2f5f")
+#'                    '150mg QD' = "#5a2f5f"),
+#'       hline_arb_color = "grey",
+#'       hline_vars = c("ANRHI", "ANRLO", "ULOQN", "LLOQN"),
+#'       hline_vars_colors = c("pink", "brown", "purple", "black"),
+#'       hline_vars_labels = NULL
 #'     )
 #'   )
 #' )
@@ -156,7 +192,6 @@ tm_g_gh_spaghettiplot <- function(label,
                                   trt_group,
                                   trt_group_level = NULL,
                                   group_stats = "NONE",
-                                  hline = NULL,
                                   man_color = NULL,
                                   color_comb = NULL,
                                   xtick = waiver(),
@@ -166,6 +201,10 @@ tm_g_gh_spaghettiplot <- function(label,
                                   plot_height = c(600, 200, 2000),
                                   plot_width = NULL,
                                   font_size = c(12, 8, 20),
+                                  hline_arb_color = "red",
+                                  hline_vars = NULL,
+                                  hline_vars_colors = NULL,
+                                  hline_vars_labels = NULL,
                                   pre_output = NULL,
                                   post_output = NULL) {
 
@@ -175,6 +214,23 @@ tm_g_gh_spaghettiplot <- function(label,
   stopifnot(is.choices_selected(trt_group))
   check_slider_input(plot_height, allow_null = FALSE)
   check_slider_input(plot_width)
+
+  if (!is.null(hline_vars)) {
+    stopifnot(is_character_vector(hline_vars, min_length = 1))
+    if (!is.null(hline_vars_labels)) {
+      stopifnot(is_character_vector(
+        hline_vars_labels, min_length = length(hline_vars),
+        max_length = (length(hline_vars)))
+      )
+    }
+    if (!is.null(hline_vars_colors)) {
+      stopifnot(is_character_vector(
+        hline_vars_colors,
+        min_length = length(hline_vars),
+        max_length = (length(hline_vars)))
+      )
+    }
+  }
 
   args <- as.list(environment())
 
@@ -193,8 +249,11 @@ tm_g_gh_spaghettiplot <- function(label,
       param_var_label = param_var_label,
       xtick = xtick,
       xlabel = xlabel,
+      hline_arb_color = hline_arb_color,
       plot_height = plot_height,
-      plot_width = plot_width
+      plot_width = plot_width,
+      hline_vars_colors = hline_vars_colors,
+      hline_vars_labels = hline_vars_labels
     ),
     ui = g_ui_spaghettiplot,
     ui_args = args,
@@ -229,7 +288,42 @@ g_ui_spaghettiplot <- function(id, ...) {
         ns("group_stats"),
         "Group Statistics",
         c("None" = "NONE", "Mean" = "MEAN", "Median" = "MEDIAN"),
-        inline = TRUE),
+        inline = TRUE
+      ),
+      if (!is.null(a$hline_vars)) {
+        optionalSelectInput(
+          ns("hline_vars"),
+          label = "Add Range Line(s):",
+          choices = a$hline_vars,
+          selected = a$hline_vars[1],
+          multiple = TRUE)
+      },
+      tags$b("Add Arbitrary Horizontal Line/Label:"),
+      div(
+        style = "display: flex",
+        div(
+          style = "padding: 0px;",
+          div(
+            style = "display: inline-block;vertical-align:moddle; width: 100%;",
+            tags$b("Line Value:")
+          ),
+          div(
+            style = "display: inline-block;vertical-align:middle; width: 100%;",
+            numericInput(ns("hline"), "", a$hline)
+          )
+        ),
+        div(
+          style = "padding: 0px;",
+          div(
+            style = "display: inline-block;vertical-align:moddle; width: 100%;",
+            tags$b("Line Label:")
+          ),
+          div(
+            style = "display: inline-block;vertical-align:middle; width: 100%;",
+            textInput(ns("hline_label"), "", "")
+          )
+        )
+      ),
       templ_ui_constraint(ns), # required by constr_anl_chunks
       toggle_slider_ui(
         ns("yrange_scale"),
@@ -247,12 +341,6 @@ g_ui_spaghettiplot <- function(id, ...) {
               numericInput(ns("facet_ncol"), "", a$facet_ncol, min = 1))
           ),
           checkboxInput(ns("rotate_xlab"), "Rotate X-Axis Label", a$rotate_xlab),
-          div(style = "padding: 0px;",
-            div(style = "display: inline-block;vertical-align:moddle; width: 175px;",
-              tags$b("Add a Horizontal Line:")),
-            div(style = "display: inline-block;vertical-align:middle; width: 100px;",
-              numericInput(ns("hline"), "", a$hline))
-          ),
           optionalSliderInputValMinMax(ns("font_size"), "Font Size", a$font_size, ticks = FALSE),
           optionalSliderInputValMinMax(
             ns("alpha"),
@@ -286,7 +374,10 @@ srv_g_spaghettiplot <- function(input,
                                 xtick,
                                 xlabel,
                                 plot_height,
-                                plot_width) {
+                                plot_width,
+                                hline_vars_colors,
+                                hline_vars_labels,
+                                hline_arb_color) {
   init_chunks()
   # reused in all modules
   anl_chunks <- constr_anl_chunks(
@@ -306,6 +397,7 @@ srv_g_spaghettiplot <- function(input,
     facet_ncol <- input$facet_ncol
     rotate_xlab <- input$rotate_xlab
     hline <- input$hline
+    hline_label <- input$hline_label
     group_stats <- input$group_stats
     font_size <- input$font_size
     alpha <- input$alpha
@@ -318,6 +410,7 @@ srv_g_spaghettiplot <- function(input,
     param <- input$xaxis_param
     xaxis_var <- input$xaxis_var
     yaxis_var <- input$yaxis_var
+    hline_vars <- input$hline_vars
     # nolint end
     chunks_push(
       chunks = private_chunks,
@@ -338,13 +431,18 @@ srv_g_spaghettiplot <- function(input,
           color_comb = .(color_comb),
           ylim = .(ylim),
           facet_ncol = .(facet_ncol),
-          hline = .(`if`(is.na(hline), NULL, as.numeric(hline))),
+          hline_arb = .(`if`(is.na(hline), NULL, as.numeric(hline))),
+          hline_arb_label = .(`if`(is.na(hline), NULL, hline_label)),
+          hline_arb_color = .(hline_arb_color),
           xtick = .(xtick),
           xlabel = .(xlabel),
           rotate_xlab = .(rotate_xlab),
           font_size = .(font_size),
           alpha = .(alpha),
-          group_stats = .(group_stats)
+          group_stats = .(group_stats),
+          hline_vars = .(hline_vars),
+          hline_vars_colors = .(hline_vars_colors[seq_along(hline_vars)]),
+          hline_vars_labels = .(hline_vars_labels[seq_along(hline_vars)])
         )
         print(p)
       })
