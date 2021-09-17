@@ -1,4 +1,4 @@
-url: https://go.roche.com/nest-docs/releases/latest/api-reference/teal.goshawk
+url: https://github.com/insightsengineering/teal.goshawk
 
 template:
   params:
@@ -7,7 +7,7 @@ template:
 navbar:
   right:
     - icon: fa-github
-      href: https://github.roche.com/Rpackages/teal.goshawk
+      href: https://github.com/insightsengineering/teal.goshawk
 
 #development:
   mode: devel
