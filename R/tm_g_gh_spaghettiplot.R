@@ -34,6 +34,7 @@
 #' @param plot_width optional, controls plot width.
 #' @param font_size control font size for title, x-axis, y-axis and legend font.
 #' @param group_stats control group mean or median overlay.
+#' @param hline_arb numeric value identifying intercept for arbitrary horizontal line.
 #' @param hline_arb_color a character naming the color for the arbitrary horizontal line
 #' @param hline_vars a character vector to name the columns that will define additional horizontal lines.
 #' @param hline_vars_colors a character vector equal in length to hline_vars that will define the colors.
@@ -201,6 +202,7 @@ tm_g_gh_spaghettiplot <- function(label,
                                   plot_height = c(600, 200, 2000),
                                   plot_width = NULL,
                                   font_size = c(12, 8, 20),
+                                  hline_arb = NULL,
                                   hline_arb_color = "red",
                                   hline_vars = NULL,
                                   hline_vars_colors = NULL,
@@ -309,7 +311,7 @@ g_ui_spaghettiplot <- function(id, ...) {
           ),
           div(
             style = "display: inline-block;vertical-align:middle; width: 100%;",
-            numericInput(ns("hline"), "", a$hline)
+            numericInput(ns("hline"), "", a$hline_arb)
           )
         ),
         div(
