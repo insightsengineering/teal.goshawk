@@ -118,11 +118,58 @@
 <h1 class="page-header" data-toc-text="0.1.9.9000">
 <a href="#tealgoshawk-0199000" class="anchor"></a>teal.goshawk 0.1.9.9000</h1>
 <ul>
-<li>Update examples and document using <code>scda</code> synthetic data to replace <code>random.cdisc.data</code>.</li>
-<li>Updated license and <code>README.md</code> with appropriate information for migration to public Github.</li>
-<li>Added <code>error_on_lint: TRUE</code> to <code>.lintr</code>.</li>
-<li>Added another select input to <code>tm_g_gh_spaghettiplot</code> to add arbitrary horizontal lines to the plot.</li>
-<li>Fixed bug in <code>tm_g_gh_boxplot</code> module that always uses the <code>AVISITCD</code> variable as the <code>Visit</code> Column of the table.</li>
+<li><p>Update examples and document using <code>scda</code> synthetic data to replace <code>random.cdisc.data</code>.</p></li>
+<li><p>Updated license and <code>README.md</code> with appropriate information for migration to public Github.</p></li>
+<li><p>Added <code>error_on_lint: TRUE</code> to <code>.lintr</code>.</p></li>
+<li><p>Fixed bug in <code>tm_g_gh_boxplot</code> module that always uses the <code>AVISITCD</code> variable as the <code>Visit</code> Column of the table.</p></li>
+<li>
+<p><strong>Breaking Change(s)</strong></p>
+<ul>
+<li>Arbitrary horizontal and vertical line arguments in
+<ul>
+<li><p><code>tm_g_gh_spaghettiplot</code></p></li>
+<li><p><code>tm_g_gh_boxplot</code></p></li>
+<li><p><code>tm_g_gh_correlationplot</code></p></li>
+<li>
+<p>User modifications required</p>
+<ul>
+<li>
+<code>tm_g_gh_spaghettiplot</code> and <code>tm_g_gh_boxplot</code> update from <code>hline</code> argument to
+<ul>
+<li>
+<code>hline_arb</code>, <code>hline_arb_color</code> and <code>hline_arb_label</code>
+</li>
+</ul>
+</li>
+<li>
+<code>tm_g_gh_correlationplot</code> update from <code>hline</code> and <code>vline</code> arguments to
+<ul>
+<li>
+<code>hline_arb_var</code>, <code>hline_arb_color</code> and <code>hline_arb_label</code>
+</li>
+<li>
+<code>vline_arb_var</code>, <code>vline_arb_color</code> and <code>vline_arb_label</code>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<p><strong>New Feature(s)</strong></p>
+<ul>
+<li>Lab normal range and <code>LOQs</code> horizontal line feature in
+<ul>
+<li><code>tm_g_gh_spaghettiplot</code></li>
+<li><code>tm_g_gh_boxplot</code></li>
+<li><code>tm_g_gh_correlationplot</code></li>
+</ul>
+</li>
+</ul>
+</li>
 </ul>
 </div>
     <div id="tealgoshawk-019" class="section level1">

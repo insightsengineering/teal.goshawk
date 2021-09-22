@@ -145,6 +145,7 @@ that creates a spaghetti plot.</p>
   plot_height <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>600</span>, <span class='fl'>200</span>, <span class='fl'>2000</span><span class='op'>)</span>,
   plot_width <span class='op'>=</span> <span class='cn'>NULL</span>,
   font_size <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>12</span>, <span class='fl'>8</span>, <span class='fl'>20</span><span class='op'>)</span>,
+  hline_arb <span class='op'>=</span> <span class='cn'>NULL</span>,
   hline_arb_color <span class='op'>=</span> <span class='st'>"red"</span>,
   hline_vars <span class='op'>=</span> <span class='cn'>NULL</span>,
   hline_vars_colors <span class='op'>=</span> <span class='cn'>NULL</span>,
@@ -252,6 +253,10 @@ label of x-axis tick values. Default value is waive().</p></td>
     <tr>
       <th>font_size</th>
       <td><p>control font size for title, x-axis, y-axis and legend font.</p></td>
+    </tr>
+    <tr>
+      <th>hline_arb</th>
+      <td><p>numeric value identifying intercept for arbitrary horizontal line.</p></td>
     </tr>
     <tr>
       <th>hline_arb_color</th>
