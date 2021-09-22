@@ -2,8 +2,28 @@
 * Update examples and document using `scda` synthetic data to replace `random.cdisc.data`.
 * Updated license and `README.md` with appropriate information for migration to public Github.
 * Added `error_on_lint: TRUE` to `.lintr`.
-* Added another select input to `tm_g_gh_spaghettiplot` to add arbitrary horizontal lines to the plot.
 * Fixed bug in `tm_g_gh_boxplot` module that always uses the `AVISITCD` variable as the `Visit` Column of the table.
+
+* **Breaking Change(s)**
+
+  - Arbitrary horizontal and vertical line arguments in 
+    - `tm_g_gh_spaghettiplot`
+    - `tm_g_gh_boxplot`
+    - `tm_g_gh_correlationplot`
+
+    - User modifications required
+      - `tm_g_gh_spaghettiplot` and `tm_g_gh_boxplot` update from `hline` argument to
+        - `hline_arb`, `hline_arb_color` and `hline_arb_label`
+      - `tm_g_gh_correlationplot` update from `hline` and `vline` arguments to 
+        - `hline_arb_var`, `hline_arb_color` and `hline_arb_label`
+        - `vline_arb_var`, `vline_arb_color` and `vline_arb_label`
+
+* **New Feature(s)**
+
+  - Lab normal range and `LOQs` horizontal line feature in 
+    - `tm_g_gh_spaghettiplot`
+    - `tm_g_gh_boxplot`
+    - `tm_g_gh_correlationplot`
 
 # teal.goshawk 0.1.9
 

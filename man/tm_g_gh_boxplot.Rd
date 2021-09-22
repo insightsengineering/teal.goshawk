@@ -18,7 +18,11 @@ tm_g_gh_boxplot(
   facet_ncol = NULL,
   loq_legend = TRUE,
   rotate_xlab = FALSE,
-  hline = NULL,
+  hline_arb = NULL,
+  hline_arb_color = "red",
+  hline_vars = NULL,
+  hline_vars_colors = NULL,
+  hline_vars_labels = NULL,
   plot_height = c(600, 200, 2000),
   plot_width = NULL,
   font_size = c(12, 8, 20),
@@ -57,7 +61,15 @@ for variable names representing treatment group e.g. ARM.}
 
 \item{rotate_xlab}{45 degree rotation of x-axis values.}
 
-\item{hline}{y-axis value to position a horizontal line.  NULL = No line.}
+\item{hline_arb}{numeric value identifying intercept for arbitrary horizontal line.}
+
+\item{hline_arb_color}{a character naming the color for the arbitrary horizontal line}
+
+\item{hline_vars}{a character vector to name the columns that will define additional horizontal lines.}
+
+\item{hline_vars_colors}{a character vector equal in length to hline_vars that will define the colors.}
+
+\item{hline_vars_labels}{a character vector equal in length to hline_vars that will define the legend labels.}
 
 \item{plot_height}{controls plot height.}
 
@@ -95,6 +107,7 @@ arm_mapping <- list("A: Drug X" = "150mg QD",
                     "B: Placebo" = "Placebo",
                     "C: Combination" = "Combination")
 
+set.seed(1)
 ADSL <- synthetic_cdisc_data("latest")$adsl
 ADLB <- synthetic_cdisc_data("latest")$adlb
 var_labels <- lapply(ADLB, function(x) attributes(x)$label)
@@ -117,9 +130,27 @@ ADLB <- ADLB \%>\%
     ARM = as.character(arm_mapping[match(ARM, names(arm_mapping))]),
     ARM = factor(ARM) \%>\% reorder(TRTORD),
     ACTARM = as.character(arm_mapping[match(ACTARM, names(arm_mapping))]),
-    ACTARM = factor(ACTARM) \%>\% reorder(TRTORD))
+    ACTARM = factor(ACTARM) \%>\% reorder(TRTORD),
+    ANRLO = 50,
+    ANRHI = 75) \%>\%
+  rowwise() \%>\%
+  group_by(PARAMCD) \%>\%
+  mutate(LBSTRESC = ifelse(
+    USUBJID \%in\% sample(USUBJID, 1, replace = TRUE),
+    paste("<", round(runif(1, min = 25, max = 30))), LBSTRESC)) \%>\%
+  mutate(LBSTRESC = ifelse(
+    USUBJID \%in\% sample(USUBJID, 1, replace = TRUE),
+    paste( ">", round(runif(1, min = 70, max = 75))), LBSTRESC)) \%>\%
+  ungroup()
+
 attr(ADLB[["ARM"]], "label") <- var_labels[["ARM"]]
 attr(ADLB[["ACTARM"]], 'label') <- var_labels[["ACTARM"]]
+attr(ADLB[["ANRLO"]], "label") <- "Analysis Normal Range Lower Limit"
+attr(ADLB[["ANRHI"]], "label") <- "Analysis Normal Range Upper Limit"
+
+# add LLOQ and ULOQ variables
+ALB_LOQS <- goshawk:::h_identify_loq_values(ADLB)
+ADLB <- left_join(ADLB, ALB_LOQS, by = "PARAM")
 
 app <- teal::init(
   data = cdisc_data(
@@ -127,7 +158,8 @@ app <- teal::init(
     cdisc_dataset(
       "ADLB",
       ADLB,
-      code = "ADLB <- synthetic_cdisc_data(\"latest\")$adlb
+      code = "set.seed(1)
+           ADLB <- synthetic_cdisc_data(\"latest\")$adlb
            var_labels <- lapply(ADLB, function(x) attributes(x)$label)
            ADLB <- ADLB \%>\%
              mutate(AVISITCD = case_when(
@@ -149,9 +181,27 @@ app <- teal::init(
              ARM = as.character(arm_mapping[match(ARM, names(arm_mapping))]),
              ARM = factor(ARM) \%>\% reorder(TRTORD),
              ACTARM = as.character(arm_mapping[match(ACTARM, names(arm_mapping))]),
-             ACTARM = factor(ACTARM) \%>\% reorder(TRTORD))
+             ACTARM = factor(ACTARM) \%>\% reorder(TRTORD),
+             ANRLO = 50,
+             ANRHI = 75) \%>\%
+           rowwise() \%>\%
+           group_by(PARAMCD) \%>\%
+           mutate(LBSTRESC = ifelse(
+             USUBJID \%in\% sample(USUBJID, 1, replace = TRUE),
+             paste('<', round(runif(1, min = 25, max = 30))), LBSTRESC)) \%>\%
+           mutate(LBSTRESC = ifelse(
+             USUBJID \%in\% sample(USUBJID, 1, replace = TRUE),
+             paste( '>', round(runif(1, min = 70, max = 75))), LBSTRESC)) \%>\%
+           ungroup()
+
           attr(ADLB[['ARM']], 'label') <- var_labels[['ARM']]
-          attr(ADLB[['ACTARM']], 'label') <- var_labels[['ACTARM']]",
+          attr(ADLB[['ACTARM']], 'label') <- var_labels[['ACTARM']]
+          attr(ADLB[['ANRLO']], 'label') <- 'Analysis Normal Range Lower Limit'
+          attr(ADLB[['ANRHI']], 'label') <- 'Analysis Normal Range Upper Limit'
+
+          # add LLOQ and ULOQ variables
+          ALB_LOQS <- goshawk:::h_identify_loq_values(ADLB)
+          ADLB <- left_join(ADLB, ALB_LOQS, by = 'PARAM')",
       vars = list(ADSL = adsl, arm_mapping = arm_mapping)),
     check = TRUE
   ),
@@ -166,7 +216,12 @@ app <- teal::init(
         facet_var = choices_selected(c("ACTARM", "ARM", "AVISITCD", "SEX"), "AVISITCD"),
         trt_group = choices_selected(c("ARM", "ACTARM"), "ARM"),
         loq_legend = TRUE,
-        rotate_xlab = FALSE
+        rotate_xlab = FALSE,
+        hline_arb = 60,
+        hline_arb_color = "grey",
+        hline_vars = c("ANRHI", "ANRLO", "ULOQN", "LLOQN"),
+        hline_vars_colors = c("pink", "brown", "purple", "black"),
+        hline_vars_labels = NULL
       )
   )
 )

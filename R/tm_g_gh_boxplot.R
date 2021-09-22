@@ -18,7 +18,11 @@
 #' @param facet_ncol numeric value indicating number of facets per row.
 #' @param loq_legend loq legend toggle.
 #' @param rotate_xlab 45 degree rotation of x-axis values.
-#' @param hline y-axis value to position a horizontal line.  NULL = No line.
+#' @param hline_arb numeric value identifying intercept for arbitrary horizontal line.
+#' @param hline_arb_color a character naming the color for the arbitrary horizontal line
+#' @param hline_vars a character vector to name the columns that will define additional horizontal lines.
+#' @param hline_vars_colors a character vector equal in length to hline_vars that will define the colors.
+#' @param hline_vars_labels a character vector equal in length to hline_vars that will define the legend labels.
 #' @param plot_height controls plot height.
 #' @param plot_width optional, controls plot width.
 #' @param font_size font size control for title, x-axis label, y-axis label and legend.
@@ -53,6 +57,7 @@
 #'                     "B: Placebo" = "Placebo",
 #'                     "C: Combination" = "Combination")
 #'
+#' set.seed(1)
 #' ADSL <- synthetic_cdisc_data("latest")$adsl
 #' ADLB <- synthetic_cdisc_data("latest")$adlb
 #' var_labels <- lapply(ADLB, function(x) attributes(x)$label)
@@ -75,9 +80,27 @@
 #'     ARM = as.character(arm_mapping[match(ARM, names(arm_mapping))]),
 #'     ARM = factor(ARM) %>% reorder(TRTORD),
 #'     ACTARM = as.character(arm_mapping[match(ACTARM, names(arm_mapping))]),
-#'     ACTARM = factor(ACTARM) %>% reorder(TRTORD))
+#'     ACTARM = factor(ACTARM) %>% reorder(TRTORD),
+#'     ANRLO = 50,
+#'     ANRHI = 75) %>%
+#'   rowwise() %>%
+#'   group_by(PARAMCD) %>%
+#'   mutate(LBSTRESC = ifelse(
+#'     USUBJID %in% sample(USUBJID, 1, replace = TRUE),
+#'     paste("<", round(runif(1, min = 25, max = 30))), LBSTRESC)) %>%
+#'   mutate(LBSTRESC = ifelse(
+#'     USUBJID %in% sample(USUBJID, 1, replace = TRUE),
+#'     paste( ">", round(runif(1, min = 70, max = 75))), LBSTRESC)) %>%
+#'   ungroup()
+#'
 #' attr(ADLB[["ARM"]], "label") <- var_labels[["ARM"]]
 #' attr(ADLB[["ACTARM"]], 'label') <- var_labels[["ACTARM"]]
+#' attr(ADLB[["ANRLO"]], "label") <- "Analysis Normal Range Lower Limit"
+#' attr(ADLB[["ANRHI"]], "label") <- "Analysis Normal Range Upper Limit"
+#'
+#' # add LLOQ and ULOQ variables
+#' ALB_LOQS <- goshawk:::h_identify_loq_values(ADLB)
+#' ADLB <- left_join(ADLB, ALB_LOQS, by = "PARAM")
 #'
 #' app <- teal::init(
 #'   data = cdisc_data(
@@ -85,7 +108,8 @@
 #'     cdisc_dataset(
 #'       "ADLB",
 #'       ADLB,
-#'       code = "ADLB <- synthetic_cdisc_data(\"latest\")$adlb
+#'       code = "set.seed(1)
+#'            ADLB <- synthetic_cdisc_data(\"latest\")$adlb
 #'            var_labels <- lapply(ADLB, function(x) attributes(x)$label)
 #'            ADLB <- ADLB %>%
 #'              mutate(AVISITCD = case_when(
@@ -107,9 +131,27 @@
 #'              ARM = as.character(arm_mapping[match(ARM, names(arm_mapping))]),
 #'              ARM = factor(ARM) %>% reorder(TRTORD),
 #'              ACTARM = as.character(arm_mapping[match(ACTARM, names(arm_mapping))]),
-#'              ACTARM = factor(ACTARM) %>% reorder(TRTORD))
+#'              ACTARM = factor(ACTARM) %>% reorder(TRTORD),
+#'              ANRLO = 50,
+#'              ANRHI = 75) %>%
+#'            rowwise() %>%
+#'            group_by(PARAMCD) %>%
+#'            mutate(LBSTRESC = ifelse(
+#'              USUBJID %in% sample(USUBJID, 1, replace = TRUE),
+#'              paste('<', round(runif(1, min = 25, max = 30))), LBSTRESC)) %>%
+#'            mutate(LBSTRESC = ifelse(
+#'              USUBJID %in% sample(USUBJID, 1, replace = TRUE),
+#'              paste( '>', round(runif(1, min = 70, max = 75))), LBSTRESC)) %>%
+#'            ungroup()
+#'
 #'           attr(ADLB[['ARM']], 'label') <- var_labels[['ARM']]
-#'           attr(ADLB[['ACTARM']], 'label') <- var_labels[['ACTARM']]",
+#'           attr(ADLB[['ACTARM']], 'label') <- var_labels[['ACTARM']]
+#'           attr(ADLB[['ANRLO']], 'label') <- 'Analysis Normal Range Lower Limit'
+#'           attr(ADLB[['ANRHI']], 'label') <- 'Analysis Normal Range Upper Limit'
+#'
+#'           # add LLOQ and ULOQ variables
+#'           ALB_LOQS <- goshawk:::h_identify_loq_values(ADLB)
+#'           ADLB <- left_join(ADLB, ALB_LOQS, by = 'PARAM')",
 #'       vars = list(ADSL = adsl, arm_mapping = arm_mapping)),
 #'     check = TRUE
 #'   ),
@@ -124,7 +166,12 @@
 #'         facet_var = choices_selected(c("ACTARM", "ARM", "AVISITCD", "SEX"), "AVISITCD"),
 #'         trt_group = choices_selected(c("ARM", "ACTARM"), "ARM"),
 #'         loq_legend = TRUE,
-#'         rotate_xlab = FALSE
+#'         rotate_xlab = FALSE,
+#'         hline_arb = 60,
+#'         hline_arb_color = "grey",
+#'         hline_vars = c("ANRHI", "ANRLO", "ULOQN", "LLOQN"),
+#'         hline_vars_colors = c("pink", "brown", "purple", "black"),
+#'         hline_vars_labels = NULL
 #'       )
 #'   )
 #' )
@@ -147,7 +194,11 @@ tm_g_gh_boxplot <- function(label,
                             facet_ncol = NULL,
                             loq_legend = TRUE,
                             rotate_xlab = FALSE,
-                            hline = NULL,
+                            hline_arb = NULL,
+                            hline_arb_color = "red",
+                            hline_vars = NULL,
+                            hline_vars_colors = NULL,
+                            hline_vars_labels = NULL,
                             plot_height = c(600, 200, 2000),
                             plot_width = NULL,
                             font_size = c(12, 8, 20),
@@ -166,12 +217,28 @@ tm_g_gh_boxplot <- function(label,
     is.null(facet_ncol) || is_integer_single(facet_ncol),
     is_logical_single(loq_legend),
     is_logical_single(rotate_xlab),
-    is.null(hline) || is_numeric_single(hline),
+    is.null(hline_arb) || is_numeric_single(hline_arb),
     is_numeric_vector(font_size) && length(font_size) == 3,
     is_numeric_vector(dot_size) && length(dot_size) == 3,
     is_numeric_vector(alpha) && length(alpha) == 3,
     is.choices_selected(trt_group)
   )
+  if (!is.null(hline_vars)) {
+    stopifnot(is_character_vector(hline_vars, min_length = 1))
+    if (!is.null(hline_vars_labels)) {
+      stopifnot(is_character_vector(
+        hline_vars_labels, min_length = length(hline_vars),
+        max_length = (length(hline_vars)))
+      )
+    }
+    if (!is.null(hline_vars_colors)) {
+      stopifnot(is_character_vector(
+        hline_vars_colors,
+        min_length = length(hline_vars),
+        max_length = (length(hline_vars)))
+      )
+    }
+  }
   check_slider_input(plot_height, allow_null = FALSE)
   check_slider_input(plot_width)
 
@@ -188,7 +255,10 @@ tm_g_gh_boxplot <- function(label,
                        color_manual = color_manual,
                        shape_manual = shape_manual,
                        plot_height = plot_height,
-                       plot_width = plot_width
+                       plot_width = plot_width,
+                       hline_arb_color = hline_arb_color,
+                       hline_vars_colors = hline_vars_colors,
+                       hline_vars_labels = hline_vars_labels
     ),
     ui = ui_g_boxplot,
     ui_args = args
@@ -243,6 +313,40 @@ ui_g_boxplot <- function(id, ...) {
         selected = a$facet_var$selected,
         multiple = FALSE),
       templ_ui_constraint(ns, label = "Data Constraint"), # required by constr_anl_chunks
+      if (!is.null(a$hline_vars)) {
+        optionalSelectInput(
+          ns("hline_vars"),
+          label = "Add Range Line(s):",
+          choices = a$hline_vars,
+          selected = a$hline_vars[1],
+          multiple = TRUE)
+      },
+      tags$b("Add Arbitrary Horizontal Line/Label:"),
+      div(
+        style = "display: flex",
+        div(
+          style = "padding: 0px;",
+          div(
+            style = "display: inline-block;vertical-align:moddle; width: 100%;",
+            tags$b("Line Value:")
+          ),
+          div(
+            style = "display: inline-block;vertical-align:middle; width: 100%;",
+            numericInput(ns("hline"), "", a$hline_arb)
+          )
+        ),
+        div(
+          style = "padding: 0px;",
+          div(
+            style = "display: inline-block;vertical-align:moddle; width: 100%;",
+            tags$b("Line Label:")
+          ),
+          div(
+            style = "display: inline-block;vertical-align:middle; width: 100%;",
+            textInput(ns("hline_label"), "", "")
+          )
+        )
+      ),
       panel_group(
         panel_item(
           title = "Plot Aesthetic Settings",
@@ -254,8 +358,7 @@ ui_g_boxplot <- function(id, ...) {
             value = c(-1000000, 1000000)),
           numericInput(ns("facet_ncol"), "Number of Plots Per Row:", a$facet_ncol, min = 1),
           checkboxInput(ns("loq_legend"), "Display LoQ Legend", a$loq_legend),
-          checkboxInput(ns("rotate_xlab"), "Rotate X-axis Label", a$rotate_xlab),
-          numericInput(ns("hline"), "Add a horizontal line:", a$hline)
+          checkboxInput(ns("rotate_xlab"), "Rotate X-axis Label", a$rotate_xlab)
         ),
         panel_item(
           title = "Plot settings",
@@ -283,7 +386,10 @@ srv_g_boxplot <- function(input,
                           color_manual,
                           shape_manual,
                           plot_height,
-                          plot_width) {
+                          plot_width,
+                          hline_vars_colors,
+                          hline_vars_labels,
+                          hline_arb_color) {
   init_chunks()
 
   # reused in all modules
@@ -318,6 +424,8 @@ srv_g_boxplot <- function(input,
     loq_legend <- input$loq_legend
     rotate_xlab <- input$rotate_xlab
     hline <- input$hline
+    hline_label <- input$hline_label
+    hline_vars <- input$hline_vars
     trt_group <- input$trt_group
     # nolint end
     validate(need(input$trt_group, "Please select a treatment variable"))
@@ -357,7 +465,12 @@ srv_g_boxplot <- function(input,
           biomarker = .(param),
           xaxis_var = .(xaxis),
           yaxis_var = .(yaxis),
-          hline = .(`if`(is.na(hline), NULL, as.numeric(hline))),
+          hline_arb = .(`if`(is.na(hline), NULL, as.numeric(hline))),
+          hline_arb_label = .(`if`(is.na(hline), NULL, hline_label)),
+          hline_arb_color = .(hline_arb_color),
+          hline_vars = .(hline_vars),
+          hline_vars_colors = .(hline_vars_colors[seq_along(hline_vars)]),
+          hline_vars_labels = .(hline_vars_labels[seq_along(hline_vars)]),
           facet_ncol = .(facet_ncol),
           loq_legend = .(loq_legend),
           rotate_xlab = .(rotate_xlab),
