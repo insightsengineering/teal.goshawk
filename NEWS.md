@@ -20,7 +20,7 @@
 
 * **New Feature(s)**
 
-  - Lab normal range and LOQs horizontal line feature in 
+  - Lab normal range and `LOQs` horizontal line feature in 
     - `tm_g_gh_spaghettiplot`
     - `tm_g_gh_boxplot`
     - `tm_g_gh_correlationplot`
