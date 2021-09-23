@@ -29,6 +29,7 @@ tm_g_gh_spaghettiplot(
   font_size = c(12, 8, 20),
   hline_arb = NULL,
   hline_arb_color = "red",
+  hline_arb_label = NULL,
   hline_vars = NULL,
   hline_vars_colors = NULL,
   hline_vars_labels = NULL,
@@ -94,11 +95,14 @@ label of x-axis tick values. Default value is waive().}
 
 \item{hline_arb_color}{a character naming the color for the arbitrary horizontal line}
 
+\item{hline_arb_label}{a character naming the label for the arbitrary horizontal line}
+
 \item{hline_vars}{a character vector to name the columns that will define additional horizontal lines.}
 
-\item{hline_vars_colors}{a character vector equal in length to hline_vars that will define the colors.}
+\item{hline_vars_colors}{a character vector naming the colors for the additional horizontal lines.}
 
-\item{hline_vars_labels}{a character vector equal in length to hline_vars that will define the legend labels.}
+\item{hline_vars_labels}{a character vector naming the labels for the additional horizontal lines that will appear
+in the legend.}
 
 \item{pre_output}{optional, \code{shiny.tag} with text placed before the
 output to put the output into context. For example a title.}
@@ -231,7 +235,9 @@ app <- teal::init(
       man_color = c('Combination' = "#000000",
                    'Placebo' = "#fce300",
                    '150mg QD' = "#5a2f5f"),
+      hline_arb = 50,
       hline_arb_color = "grey",
+      hline_arb_label = "default hori label",
       hline_vars = c("ANRHI", "ANRLO", "ULOQN", "LLOQN"),
       hline_vars_colors = c("pink", "brown", "purple", "black"),
       hline_vars_labels = NULL
