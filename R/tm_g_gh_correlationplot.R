@@ -22,8 +22,18 @@
 #'   TRUE.
 #' @param loq_legend loq legend toggle.
 #' @param rotate_xlab 45 degree rotation of x-axis values.
-#' @param hline y-axis value to position of horizontal line.
-#' @param vline x-axis value to position a vertical line.
+#' @param hline_arb numeric value identifying intercept for arbitrary horizontal line.
+#' @param hline_arb_color a character naming the color for the arbitrary horizontal line
+#' @param hline_arb_label a character naming the label for the arbitrary horizontal line
+#' @param hline_vars a character vector to name the columns that will define additional horizontal lines.
+#' @param hline_vars_colors a character vector naming the colors for the additional horizontal lines.
+#' @param hline_vars_labels a character vector naming the labels for the additional horizontal lines that will appear
+#' @param vline_arb numeric value identifying intercept for arbitrary vertical line.
+#' @param vline_arb_color color for the arbitrary vertical line that will appear on the plot.
+#' @param vline_arb_label label for the arbitrary vertical that will appear on the legend.
+#' @param vline_vars a character vector to name the columns that will define additional vertical lines.
+#' @param vline_vars_colors a character vector naming the colors for the additional vertical lines.
+#' @param vline_vars_labels a character vector naming the labels for the additional vertical lines that will appear
 #' @param plot_height controls plot height.
 #' @param plot_width optional, controls plot width.
 #' @param font_size font size control for title, x-axis label, y-axis label and legend.
@@ -154,8 +164,18 @@ tm_g_gh_correlationplot <- function(label,
                                     reg_line = FALSE,
                                     loq_legend = TRUE,
                                     rotate_xlab = FALSE,
-                                    hline = NULL,
-                                    vline = NULL,
+                                    hline_arb = NULL,
+                                    hline_arb_color = "red",
+                                    hline_arb_label = NULL,
+                                    hline_vars = NULL,
+                                    hline_vars_colors = NULL,
+                                    hline_vars_labels = NULL,
+                                    vline_arb = NULL,
+                                    vline_arb_color = "green",
+                                    vline_arb_label = NULL,
+                                    vline_vars = NULL,
+                                    vline_vars_colors = NULL,
+                                    vline_vars_labels = NULL,
                                     plot_height = c(500, 200, 2000),
                                     plot_width = NULL,
                                     font_size = c(12, 8, 20),
@@ -173,6 +193,40 @@ tm_g_gh_correlationplot <- function(label,
   check_slider_input(plot_height, allow_null = FALSE)
   check_slider_input(plot_width)
 
+  if (!is.null(hline_vars)) {
+    stopifnot(is_character_vector(hline_vars, min_length = 1))
+    if (!is.null(hline_vars_labels)) {
+      stopifnot(is_character_vector(
+        hline_vars_labels, min_length = length(hline_vars),
+        max_length = (length(hline_vars)))
+      )
+    }
+    if (!is.null(hline_vars_colors)) {
+      stopifnot(is_character_vector(
+        hline_vars_colors,
+        min_length = length(hline_vars),
+        max_length = (length(hline_vars)))
+      )
+    }
+  }
+
+  if (!is.null(vline_vars)) {
+    stopifnot(is_character_vector(vline_vars, min_length = 1))
+    if (!is.null(vline_vars_labels)) {
+      stopifnot(is_character_vector(
+        vline_vars_labels, min_length = length(vline_vars),
+        max_length = (length(vline_vars)))
+      )
+    }
+    if (!is.null(vline_vars_colors)) {
+      stopifnot(is_character_vector(
+        vline_vars_colors,
+        min_length = length(vline_vars),
+        max_length = (length(vline_vars)))
+      )
+    }
+  }
+
   args <- as.list(environment())
 
   module(
@@ -186,7 +240,13 @@ tm_g_gh_correlationplot <- function(label,
                        color_manual = color_manual,
                        shape_manual = shape_manual,
                        plot_height = plot_height,
-                       plot_width = plot_width
+                       plot_width = plot_width,
+                       hline_arb_color = hline_arb_color,
+                       hline_vars_colors = hline_vars_colors,
+                       hline_vars_labels = hline_vars_labels,
+                       vline_arb_color = vline_arb_color,
+                       vline_vars_colors = vline_vars_colors,
+                       vline_vars_labels = vline_vars_labels,
     ),
     ui = ui_g_correlationplot,
     ui_args = args
@@ -217,6 +277,74 @@ ui_g_correlationplot <- function(id, ...) {
         ychoices = a$yaxis_var$choices, yselected = a$yaxis_var$selected
       ),
       templ_ui_constraint(ns, "X-Axis Data Constraint"), # required by constr_anl_chunks
+      if (!is.null(a$hline_vars)) {
+        optionalSelectInput(
+          ns("hline_vars"),
+          label = "Add Range Line(s):",
+          choices = a$hline_vars,
+          selected = a$hline_vars[1],
+          multiple = TRUE)
+      },
+      tags$b("Add Arbitrary Horizontal Line/Label:"),
+      div(
+        style = "display: flex",
+        div(
+          style = "padding: 0px;",
+          div(
+            style = "display: inline-block;vertical-align:moddle; width: 100%;",
+            tags$b("Line Value:")
+          ),
+          div(
+            style = "display: inline-block;vertical-align:middle; width: 100%;",
+            numericInput(ns("hline"), "", a$hline_arb)
+          )
+        ),
+        div(
+          style = "padding: 0px;",
+          div(
+            style = "display: inline-block;vertical-align:moddle; width: 100%;",
+            tags$b("Line Label:")
+          ),
+          div(
+            style = "display: inline-block;vertical-align:middle; width: 100%;",
+            textInput(ns("hline_label"), "", a$hline_arb_label)
+          )
+        )
+      ),
+      if (!is.null(a$vline_vars)) {
+        optionalSelectInput(
+          ns("vline_vars"),
+          label = "Add Range Line(s):",
+          choices = a$vline_vars,
+          selected = a$vline_vars[1],
+          multiple = TRUE)
+      },
+      tags$b("Add Arbitrary Vertical Line/Label:"),
+      div(
+        style = "display: flex",
+        div(
+          style = "padding: 0px;",
+          div(
+            style = "display: inline-block;vertical-align:moddle; width: 100%;",
+            tags$b("Line Value:")
+          ),
+          div(
+            style = "display: inline-block;vertical-align:middle; width: 100%;",
+            numericInput(ns("vline"), "", a$vline_arb)
+          )
+        ),
+        div(
+          style = "padding: 0px;",
+          div(
+            style = "display: inline-block;vertical-align:moddle; width: 100%;",
+            tags$b("Line Label:")
+          ),
+          div(
+            style = "display: inline-block;vertical-align:middle; width: 100%;",
+            textInput(ns("vline_label"), "", a$vline_arb_label)
+          )
+        )
+      ),
       panel_group(
         panel_item(
           title = "Plot Aesthetic Settings",
@@ -232,7 +360,6 @@ ui_g_correlationplot <- function(id, ...) {
           checkboxInput(ns("reg_line"), "Regression Line", a$reg_line),
           checkboxInput(ns("loq_legend"), "Display LoQ Legend", a$loq_legend),
           checkboxInput(ns("rotate_xlab"), "Rotate X-axis Label", a$rotate_xlab),
-          numericInput(ns("hline"), "Add a horizontal line:", a$hline),
           numericInput(ns("vline"), "Add a vertical line:", a$vline)
         ),
         panel_item(
@@ -263,7 +390,13 @@ srv_g_correlationplot <- function(input,
                                   color_manual,
                                   shape_manual,
                                   plot_height,
-                                  plot_width) {
+                                  plot_width,
+                                  hline_arb_color,
+                                  hline_vars_colors,
+                                  hline_vars_labels,
+                                  vline_arb_color,
+                                  vline_vars_colors,
+                                  vline_vars_labels) {
   init_chunks()
   # filter selected biomarkers
   anl_param <- reactive({
@@ -569,8 +702,12 @@ srv_g_correlationplot <- function(input,
     font_size <- input$font_size
     dot_size <- input$dot_size
     reg_text_size <- input$reg_text_size
-    hline <- if (is.na(input$hline)) NULL else as.numeric(input$hline)
-    vline <- if (is.na(input$vline)) NULL else as.numeric(input$vline)
+    hline <- input$hline
+    hline_label <- input$hline_label
+    hline_vars <- input$hline_vars
+    vline <- input$vline
+    vline_label <- input$vline_label
+    vline_vars <- input$vline_vars
     facet_ncol <- input$facet_ncol
     visit_facet <- input$visit_facet
     facet <- input$trt_facet
@@ -618,8 +755,17 @@ srv_g_correlationplot <- function(input,
           reg_text_size = .(reg_text_size),
           loq_legend = .(loq_legend),
           rotate_xlab = .(rotate_xlab),
-          hline = .(hline),
-          vline = .(vline)
+          hline_arb = .(`if`(is.na(hline), NULL, as.numeric(hline))),
+          hline_arb_label = .(`if`(is.na(hline), NULL, hline_label)),
+          hline_arb_color = .(hline_arb_color),
+          hline_vars = .(hline_vars),
+          hline_vars_colors = .(hline_vars_colors[seq_along(hline_vars)]),
+          hline_vars_labels = .(hline_vars_labels[seq_along(hline_vars)]),
+          vline_arb = .(`if`(is.na(vline), NULL, as.numeric(vline))),
+          vline_arb_label = .(`if`(is.na(vline), NULL, vline_label)),
+          vline_arb_color = .(vline_arb_color),
+          vline_vars_colors = .(hline_vars_colors[seq_along(vline_vars)]),
+          vline_vars_labels = .(hline_vars_labels[seq_along(vline_vars)]),
         )
         print(p)
       })
