@@ -21,8 +21,18 @@ tm_g_gh_correlationplot(
   reg_line = FALSE,
   loq_legend = TRUE,
   rotate_xlab = FALSE,
-  hline = NULL,
-  vline = NULL,
+  hline_arb = NULL,
+  hline_arb_color = "red",
+  hline_arb_label = NULL,
+  hline_vars = NULL,
+  hline_vars_colors = NULL,
+  hline_vars_labels = NULL,
+  vline_arb = NULL,
+  vline_arb_color = "green",
+  vline_arb_label = NULL,
+  vline_vars = NULL,
+  vline_vars_colors = NULL,
+  vline_vars_labels = NULL,
   plot_height = c(500, 200, 2000),
   plot_width = NULL,
   font_size = c(12, 8, 20),
@@ -68,9 +78,29 @@ TRUE.}
 
 \item{rotate_xlab}{45 degree rotation of x-axis values.}
 
-\item{hline}{y-axis value to position of horizontal line.}
+\item{hline_arb}{numeric value identifying intercept for arbitrary horizontal line.}
 
-\item{vline}{x-axis value to position a vertical line.}
+\item{hline_arb_color}{a character naming the color for the arbitrary horizontal line}
+
+\item{hline_arb_label}{a character naming the label for the arbitrary horizontal line}
+
+\item{hline_vars}{a character vector to name the columns that will define additional horizontal lines.}
+
+\item{hline_vars_colors}{a character vector naming the colors for the additional horizontal lines.}
+
+\item{hline_vars_labels}{a character vector naming the labels for the additional horizontal lines that will appear}
+
+\item{vline_arb}{numeric value identifying intercept for arbitrary vertical line.}
+
+\item{vline_arb_color}{color for the arbitrary vertical line that will appear on the plot.}
+
+\item{vline_arb_label}{label for the arbitrary vertical that will appear on the legend.}
+
+\item{vline_vars}{a character vector to name the columns that will define additional vertical lines.}
+
+\item{vline_vars_colors}{a character vector naming the colors for the additional vertical lines.}
+
+\item{vline_vars_labels}{a character vector naming the labels for the additional vertical lines that will appear}
 
 \item{plot_height}{controls plot height.}
 
@@ -100,36 +130,77 @@ library(dplyr)
 library(scda)
 
 # original ARM value = dose value
-arm_mapping <- list("A: Drug X" = "Drug X 100mg",
-                    "B: Placebo" = "Placebo",
-                    "C: Combination" = "Combination 100mg"
+arm_mapping <- list(
+  "A: Drug X" = "150mg QD",
+  "B: Placebo" = "Placebo",
+  "C: Combination" = "Combination"
 )
+color_manual <- c("150mg QD" = "#000000", "Placebo" = "#3498DB", "Combination" = "#E74C3C")
+# assign LOQ flag symbols: circles for "N" and triangles for "Y", squares for "NA"
+shape_manual <- c("N" = 1, "Y" = 2, "NA" = 0)
 
 ADSL <- synthetic_cdisc_data("latest")$adsl
+
+set.seed(1)
 ADLB <- synthetic_cdisc_data("latest")$adlb
 var_labels <- lapply(ADLB, function(x) attributes(x)$label)
 ADLB <- ADLB \%>\%
   mutate(AVISITCD = case_when(
-      AVISIT == "SCREENING" ~ "SCR",
-      AVISIT == "BASELINE" ~ "BL",
-      grepl("WEEK", AVISIT) ~ paste("W", stringr::str_extract(AVISIT, "(?<=(WEEK ))[0-9]+")),
-      TRUE ~ as.character(NA)),
-    AVISITCDN = case_when(
-      AVISITCD == "SCR" ~ -2,
-      AVISITCD == "BL" ~ 0,
-      grepl("W", AVISITCD) ~ as.numeric(gsub("[^0-9]*", "", AVISITCD)),
-      TRUE ~ as.numeric(NA)),
-    AVISITCD = factor(AVISITCD) \%>\% reorder(AVISITCDN),
-    TRTORD = case_when(
-      ARMCD == "ARM C" ~ 1,
-      ARMCD == "ARM B" ~ 2,
-      ARMCD == "ARM A" ~ 3),
-    ARM = as.character(arm_mapping[match(ARM, names(arm_mapping))]),
-    ARM = factor(ARM) \%>\% reorder(TRTORD),
-    ACTARM = as.character(arm_mapping[match(ACTARM, names(arm_mapping))]),
-    ACTARM = factor(ACTARM) \%>\% reorder(TRTORD))
+    AVISIT == "SCREENING" ~ "SCR",
+    AVISIT == "BASELINE" ~ "BL",
+    grepl("WEEK", AVISIT) ~
+      paste(
+        "W",
+        trimws(
+          substr(
+            AVISIT,
+            start = 6,
+            stop = stringr::str_locate(AVISIT, "DAY") - 1
+          )
+        )
+      ),
+    TRUE ~ NA_character_)) \%>\%
+  mutate(AVISITCDN = case_when(
+    AVISITCD == "SCR" ~ -2,
+    AVISITCD == "BL" ~ 0,
+    grepl("W", AVISITCD) ~ as.numeric(gsub("[^0-9]*", "", AVISITCD)),
+    TRUE ~ NA_real_)) \%>\%
+  # use ARMCD values to order treatment in visualization legend
+  mutate(TRTORD = ifelse(grepl("C", ARMCD), 1,
+                         ifelse(grepl("B", ARMCD), 2,
+                                ifelse(grepl("A", ARMCD), 3, NA)))) \%>\%
+  mutate(ARM = as.character(arm_mapping[match(ARM, names(arm_mapping))])) \%>\%
+  mutate(ARM = factor(ARM) \%>\%
+           reorder(TRTORD)) \%>\%
+  mutate(
+    ANRHI = case_when(
+      PARAMCD == "ALT" ~ 60,
+      PARAMCD == "CRP" ~ 70,
+      PARAMCD == "IGA" ~ 80,
+      TRUE ~ NA_real_
+    ),
+    ANRLO = case_when(
+      PARAMCD == "ALT" ~ 20,
+      PARAMCD == "CRP" ~ 30,
+      PARAMCD == "IGA" ~ 40,
+      TRUE ~ NA_real_
+    )) \%>\%
+  rowwise() \%>\%
+  group_by(PARAMCD) \%>\%
+  mutate(LBSTRESC = ifelse(
+    USUBJID \%in\% sample(USUBJID, 1, replace = TRUE),
+    paste("<", round(runif(1, min = 25, max = 30))), LBSTRESC)) \%>\%
+  mutate(LBSTRESC = ifelse(
+    USUBJID \%in\% sample(USUBJID, 1, replace = TRUE),
+    paste( ">", round(runif(1, min = 70, max = 75))), LBSTRESC)) \%>\%
+  ungroup()
 attr(ADLB[["ARM"]], "label") <- var_labels[["ARM"]]
-attr(ADLB[["ACTARM"]], 'label') <- var_labels[["ACTARM"]]
+attr(ADLB[["ANRHI"]], "label") <- "Analysis Normal Range Upper Limit"
+attr(ADLB[["ANRLO"]], "label") <- "Analysis Normal Range Lower Limit"
+
+# add LLOQ and ULOQ variables
+ADLB_LOQS <- goshawk:::h_identify_loq_values(ADLB)
+ADLB <- left_join(ADLB, ADLB_LOQS, by = "PARAM")
 
 app <- init(
   data = cdisc_data(
@@ -137,31 +208,66 @@ app <- init(
     cdisc_dataset(
       "ADLB",
       ADLB,
-      code = "ADLB <- synthetic_cdisc_data(\"latest\")$adlb
+      code = "set.seed(1)
+              ADLB <- synthetic_cdisc_data('latest')$adlb
               var_labels <- lapply(ADLB, function(x) attributes(x)$label)
               ADLB <- ADLB \%>\%
                 mutate(AVISITCD = case_when(
-                    AVISIT == 'SCREENING' ~ 'SCR',
-                    AVISIT == 'BASELINE' ~ 'BL',
-                    grepl('WEEK', AVISIT) ~
-                      paste('W', stringr::str_extract(AVISIT, '(?<=(WEEK ))[0-9]+')),
-                    TRUE ~ as.character(NA)),
-                  AVISITCDN = case_when(
-                    AVISITCD == 'SCR' ~ -2,
-                    AVISITCD == 'BL' ~ 0,
-                    grepl('W', AVISITCD) ~ as.numeric(gsub('[^0-9]*', '', AVISITCD)),
-                    TRUE ~ as.numeric(NA)),
-                  AVISITCD = factor(AVISITCD) \%>\% reorder(AVISITCDN),
-                  TRTORD = case_when(
-                    ARMCD == 'ARM C' ~ 1,
-                    ARMCD == 'ARM B' ~ 2,
-                    ARMCD == 'ARM A' ~ 3),
-                  ARM = as.character(arm_mapping[match(ARM, names(arm_mapping))]),
-                  ARM = factor(ARM) \%>\% reorder(TRTORD),
-                  ACTARM = as.character(arm_mapping[match(ACTARM, names(arm_mapping))]),
-                  ACTARM = factor(ACTARM) \%>\% reorder(TRTORD))
-               attr(ADLB[['ARM']], 'label') <- var_labels[['ARM']]
-               attr(ADLB[['ACTARM']], 'label') <- var_labels[['ACTARM']]",
+                  AVISIT == 'SCREENING' ~ 'SCR',
+                  AVISIT == 'BASELINE' ~ 'BL',
+                  grepl('WEEK', AVISIT) ~
+                    paste(
+                      'W',
+                      trimws(
+                        substr(
+                          AVISIT,
+                          start = 6,
+                          stop = stringr::str_locate(AVISIT, 'DAY') - 1
+                        )
+                      )
+                    ),
+                  TRUE ~ NA_character_)) \%>\%
+                mutate(AVISITCDN = case_when(
+                  AVISITCD == 'SCR' ~ -2,
+                  AVISITCD == 'BL' ~ 0,
+                  grepl('W', AVISITCD) ~ as.numeric(gsub('[^0-9]*', '', AVISITCD)),
+                  TRUE ~ NA_real_)) \%>\%
+                # use ARMCD values to order treatment in visualization legend
+                mutate(TRTORD = ifelse(grepl('C', ARMCD), 1,
+                                       ifelse(grepl('B', ARMCD), 2,
+                                              ifelse(grepl('A', ARMCD), 3, NA)))) \%>\%
+                mutate(ARM = as.character(arm_mapping[match(ARM, names(arm_mapping))])) \%>\%
+                mutate(ARM = factor(ARM) \%>\%
+                         reorder(TRTORD)) \%>\%
+                mutate(
+                  ANRHI = case_when(
+                    PARAMCD == 'ALT' ~ 60,
+                    PARAMCD == 'CRP' ~ 70,
+                    PARAMCD == 'IGA' ~ 80,
+                    TRUE ~ NA_real_
+                  ),
+                  ANRLO = case_when(
+                    PARAMCD == 'ALT' ~ 20,
+                    PARAMCD == 'CRP' ~ 30,
+                    PARAMCD == 'IGA' ~ 40,
+                    TRUE ~ NA_real_
+                  )) \%>\%
+                rowwise() \%>\%
+                group_by(PARAMCD) \%>\%
+                mutate(LBSTRESC = ifelse(
+                  USUBJID \%in\% sample(USUBJID, 1, replace = TRUE),
+                  paste('<', round(runif(1, min = 25, max = 30))), LBSTRESC)) \%>\%
+                mutate(LBSTRESC = ifelse(
+                  USUBJID \%in\% sample(USUBJID, 1, replace = TRUE),
+                  paste( '>', round(runif(1, min = 70, max = 75))), LBSTRESC)) \%>\%
+                ungroup()
+              attr(ADLB[['ARM']], 'label') <- var_labels[['ARM']]
+              attr(ADLB[['ANRHI']], 'label') <- 'Analysis Normal Range Upper Limit'
+              attr(ADLB[['ANRLO']], 'label') <- 'Analysis Normal Range Lower Limit'
+
+              # add LLOQ and ULOQ variables
+              ADLB_LOQS <- goshawk:::h_identify_loq_values(ADLB)
+              ADLB <- left_join(ADLB, ADLB_LOQS, by = 'PARAM')",
       vars = list(arm_mapping = arm_mapping)),
     check = TRUE
     ),
@@ -186,7 +292,17 @@ app <- init(
        loq_legend = TRUE,
        font_size = c(12, 8, 20),
        dot_size = c(1, 1, 12),
-       reg_text_size = c(3, 3, 10)
+       reg_text_size = c(3, 3, 10),
+       hline_arb = 50,
+       hline_arb_label = "arb hori label",
+       hline_vars = c("ANRHI", "ANRLO", "ULOQN", "LLOQN"),
+       hline_vars_colors = c("green", "blue", "purple", "cyan"),
+       hline_vars_label =  c("ANRHI ALT Label", "ANRLO ALT Label", "ULOQN ALT Label", "LLOQN ALT Label"),
+       vline_vars = c("ANRHI", "ANRLO", "ULOQN", "LLOQN"),
+       vline_vars_colors = c("yellow", "orange", "brown", "gold"),
+       vline_vars_labels =  c("ANRHI CRP Label", "ANRLO CRP Label", "ULOQN CRP Label", "LLOQN CRP Label"),
+       vline_arb = 50,
+       vline_arb_label = "arb vert label"
    )
   )
 )
