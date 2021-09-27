@@ -1,4 +1,5 @@
-# teal.goshawk 0.1.9.9000
+# teal.goshawk 0.1.10
+
 * Update examples and document using `scda` synthetic data to replace `random.cdisc.data`.
 * Updated license and `README.md` with appropriate information for migration to public Github.
 * Added `error_on_lint: TRUE` to `.lintr`.
