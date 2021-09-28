@@ -20,9 +20,11 @@
 #' @param rotate_xlab 45 degree rotation of x-axis values.
 #' @param hline_arb numeric value identifying intercept for arbitrary horizontal line.
 #' @param hline_arb_color a character naming the color for the arbitrary horizontal line
+#' @param hline_arb_label a character naming the label for the arbitrary horizontal line
 #' @param hline_vars a character vector to name the columns that will define additional horizontal lines.
-#' @param hline_vars_colors a character vector equal in length to hline_vars that will define the colors.
-#' @param hline_vars_labels a character vector equal in length to hline_vars that will define the legend labels.
+#' @param hline_vars_colors a character vector naming the colors for the additional horizontal lines.
+#' @param hline_vars_labels a character vector naming the labels for the additional horizontal lines that will appear
+#'  in the legend.
 #' @param plot_height controls plot height.
 #' @param plot_width optional, controls plot width.
 #' @param font_size font size control for title, x-axis label, y-axis label and legend.
@@ -109,49 +111,47 @@
 #'       "ADLB",
 #'       ADLB,
 #'       code = "set.seed(1)
-#'            ADLB <- synthetic_cdisc_data(\"latest\")$adlb
-#'            var_labels <- lapply(ADLB, function(x) attributes(x)$label)
-#'            ADLB <- ADLB %>%
-#'              mutate(AVISITCD = case_when(
-#'                  AVISIT == 'SCREENING' ~ 'SCR',
-#'                  AVISIT == 'BASELINE' ~ 'BL',
-#'                  grepl('WEEK', AVISIT) ~
-#'                    paste('W', stringr::str_extract(AVISIT, '(?<=(WEEK ))[0-9]+')),
-#'                  TRUE ~ as.character(NA)),
-#'                AVISITCDN = case_when(
-#'                  AVISITCD == 'SCR' ~ -2,
-#'                  AVISITCD == 'BL' ~ 0,
-#'                  grepl('W', AVISITCD) ~ as.numeric(gsub('[^0-9]*', '', AVISITCD)),
-#'                  TRUE ~ as.numeric(NA)),
-#'                AVISITCD = factor(AVISITCD) %>% reorder(AVISITCDN),
-#'                TRTORD = case_when(
-#'                  ARMCD == 'ARM C' ~ 1,
-#'                  ARMCD == 'ARM B' ~ 2,
-#'                  ARMCD == 'ARM A' ~ 3),
-#'              ARM = as.character(arm_mapping[match(ARM, names(arm_mapping))]),
-#'              ARM = factor(ARM) %>% reorder(TRTORD),
-#'              ACTARM = as.character(arm_mapping[match(ACTARM, names(arm_mapping))]),
-#'              ACTARM = factor(ACTARM) %>% reorder(TRTORD),
-#'              ANRLO = 50,
-#'              ANRHI = 75) %>%
-#'            rowwise() %>%
-#'            group_by(PARAMCD) %>%
-#'            mutate(LBSTRESC = ifelse(
-#'              USUBJID %in% sample(USUBJID, 1, replace = TRUE),
-#'              paste('<', round(runif(1, min = 25, max = 30))), LBSTRESC)) %>%
-#'            mutate(LBSTRESC = ifelse(
-#'              USUBJID %in% sample(USUBJID, 1, replace = TRUE),
-#'              paste( '>', round(runif(1, min = 70, max = 75))), LBSTRESC)) %>%
-#'            ungroup()
+#'               ADLB <- synthetic_cdisc_data('latest')$adlb
+#'               var_labels <- lapply(ADLB, function(x) attributes(x)$label)
+#'               ADLB <- ADLB %>%
+#'                 mutate(AVISITCD = case_when(
+#'                   AVISIT == 'SCREENING' ~ 'SCR',
+#'                   AVISIT == 'BASELINE' ~ 'BL',
+#'                   grepl('WEEK', AVISIT) ~ paste('W', stringr::str_extract(AVISIT, '(?<=(WEEK ))[0-9]+')),
+#'                   TRUE ~ as.character(NA)),
+#'                   AVISITCDN = case_when(
+#'                     AVISITCD == 'SCR' ~ -2,
+#'                     AVISITCD == 'BL' ~ 0,
+#'                     grepl('W', AVISITCD) ~ as.numeric(gsub('[^0-9]*', '', AVISITCD)),
+#'                     TRUE ~ as.numeric(NA)),
+#'                   AVISITCD = factor(AVISITCD) %>% reorder(AVISITCDN),
+#'                   TRTORD = case_when(
+#'                     ARMCD == 'ARM C' ~ 1,
+#'                     ARMCD == 'ARM B' ~ 2,
+#'                     ARMCD == 'ARM A' ~ 3),
+#'                   ARM = as.character(arm_mapping[match(ARM, names(arm_mapping))]),
+#'                   ARM = factor(ARM) %>% reorder(TRTORD),
+#'                   ACTARM = as.character(arm_mapping[match(ACTARM, names(arm_mapping))]),
+#'                   ACTARM = factor(ACTARM) %>% reorder(TRTORD),
+#'                   ANRLO = 50,
+#'                   ANRHI = 75) %>%
+#'                 rowwise() %>%
+#'                 group_by(PARAMCD) %>%
+#'                 mutate(LBSTRESC = ifelse(
+#'                   USUBJID %in% sample(USUBJID, 1, replace = TRUE),
+#'                   paste('<', round(runif(1, min = 25, max = 30))), LBSTRESC)) %>%
+#'                 mutate(LBSTRESC = ifelse(
+#'                   USUBJID %in% sample(USUBJID, 1, replace = TRUE),
+#'                   paste( '>', round(runif(1, min = 70, max = 75))), LBSTRESC)) %>%
+#'                 ungroup()
 #'
-#'           attr(ADLB[['ARM']], 'label') <- var_labels[['ARM']]
-#'           attr(ADLB[['ACTARM']], 'label') <- var_labels[['ACTARM']]
-#'           attr(ADLB[['ANRLO']], 'label') <- 'Analysis Normal Range Lower Limit'
-#'           attr(ADLB[['ANRHI']], 'label') <- 'Analysis Normal Range Upper Limit'
-#'
-#'           # add LLOQ and ULOQ variables
-#'           ALB_LOQS <- goshawk:::h_identify_loq_values(ADLB)
-#'           ADLB <- left_join(ADLB, ALB_LOQS, by = 'PARAM')",
+#'               attr(ADLB[['ARM']], 'label') <- var_labels[['ARM']]
+#'               attr(ADLB[['ACTARM']], 'label') <- var_labels[['ACTARM']]
+#'               attr(ADLB[['ANRLO']], 'label') <- 'Analysis Normal Range Lower Limit'
+#'               attr(ADLB[['ANRHI']], 'label') <- 'Analysis Normal Range Upper Limit'
+#'               # add LLOQ and ULOQ variables
+#'               ALB_LOQS <- goshawk:::h_identify_loq_values(ADLB)
+#'               ADLB <- left_join(ADLB, ALB_LOQS, by = 'PARAM')",
 #'       vars = list(ADSL = adsl, arm_mapping = arm_mapping)),
 #'     check = TRUE
 #'   ),
@@ -169,6 +169,7 @@
 #'         rotate_xlab = FALSE,
 #'         hline_arb = 60,
 #'         hline_arb_color = "grey",
+#'         hline_arb_label = "default_hori_label",
 #'         hline_vars = c("ANRHI", "ANRLO", "ULOQN", "LLOQN"),
 #'         hline_vars_colors = c("pink", "brown", "purple", "black"),
 #'         hline_vars_labels = NULL
@@ -196,6 +197,7 @@ tm_g_gh_boxplot <- function(label,
                             rotate_xlab = FALSE,
                             hline_arb = NULL,
                             hline_arb_color = "red",
+                            hline_arb_label = NULL,
                             hline_vars = NULL,
                             hline_vars_colors = NULL,
                             hline_vars_labels = NULL,
@@ -343,7 +345,7 @@ ui_g_boxplot <- function(id, ...) {
           ),
           div(
             style = "display: inline-block;vertical-align:middle; width: 100%;",
-            textInput(ns("hline_label"), "", "")
+            textInput(ns("hline_label"), "", a$hline_arb_label)
           )
         )
       ),

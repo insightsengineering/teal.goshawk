@@ -20,6 +20,7 @@ tm_g_gh_boxplot(
   rotate_xlab = FALSE,
   hline_arb = NULL,
   hline_arb_color = "red",
+  hline_arb_label = NULL,
   hline_vars = NULL,
   hline_vars_colors = NULL,
   hline_vars_labels = NULL,
@@ -65,11 +66,14 @@ for variable names representing treatment group e.g. ARM.}
 
 \item{hline_arb_color}{a character naming the color for the arbitrary horizontal line}
 
+\item{hline_arb_label}{a character naming the label for the arbitrary horizontal line}
+
 \item{hline_vars}{a character vector to name the columns that will define additional horizontal lines.}
 
-\item{hline_vars_colors}{a character vector equal in length to hline_vars that will define the colors.}
+\item{hline_vars_colors}{a character vector naming the colors for the additional horizontal lines.}
 
-\item{hline_vars_labels}{a character vector equal in length to hline_vars that will define the legend labels.}
+\item{hline_vars_labels}{a character vector naming the labels for the additional horizontal lines that will appear
+in the legend.}
 
 \item{plot_height}{controls plot height.}
 
@@ -159,49 +163,47 @@ app <- teal::init(
       "ADLB",
       ADLB,
       code = "set.seed(1)
-           ADLB <- synthetic_cdisc_data(\"latest\")$adlb
-           var_labels <- lapply(ADLB, function(x) attributes(x)$label)
-           ADLB <- ADLB \%>\%
-             mutate(AVISITCD = case_when(
-                 AVISIT == 'SCREENING' ~ 'SCR',
-                 AVISIT == 'BASELINE' ~ 'BL',
-                 grepl('WEEK', AVISIT) ~
-                   paste('W', stringr::str_extract(AVISIT, '(?<=(WEEK ))[0-9]+')),
-                 TRUE ~ as.character(NA)),
-               AVISITCDN = case_when(
-                 AVISITCD == 'SCR' ~ -2,
-                 AVISITCD == 'BL' ~ 0,
-                 grepl('W', AVISITCD) ~ as.numeric(gsub('[^0-9]*', '', AVISITCD)),
-                 TRUE ~ as.numeric(NA)),
-               AVISITCD = factor(AVISITCD) \%>\% reorder(AVISITCDN),
-               TRTORD = case_when(
-                 ARMCD == 'ARM C' ~ 1,
-                 ARMCD == 'ARM B' ~ 2,
-                 ARMCD == 'ARM A' ~ 3),
-             ARM = as.character(arm_mapping[match(ARM, names(arm_mapping))]),
-             ARM = factor(ARM) \%>\% reorder(TRTORD),
-             ACTARM = as.character(arm_mapping[match(ACTARM, names(arm_mapping))]),
-             ACTARM = factor(ACTARM) \%>\% reorder(TRTORD),
-             ANRLO = 50,
-             ANRHI = 75) \%>\%
-           rowwise() \%>\%
-           group_by(PARAMCD) \%>\%
-           mutate(LBSTRESC = ifelse(
-             USUBJID \%in\% sample(USUBJID, 1, replace = TRUE),
-             paste('<', round(runif(1, min = 25, max = 30))), LBSTRESC)) \%>\%
-           mutate(LBSTRESC = ifelse(
-             USUBJID \%in\% sample(USUBJID, 1, replace = TRUE),
-             paste( '>', round(runif(1, min = 70, max = 75))), LBSTRESC)) \%>\%
-           ungroup()
+              ADLB <- synthetic_cdisc_data('latest')$adlb
+              var_labels <- lapply(ADLB, function(x) attributes(x)$label)
+              ADLB <- ADLB \%>\%
+                mutate(AVISITCD = case_when(
+                  AVISIT == 'SCREENING' ~ 'SCR',
+                  AVISIT == 'BASELINE' ~ 'BL',
+                  grepl('WEEK', AVISIT) ~ paste('W', stringr::str_extract(AVISIT, '(?<=(WEEK ))[0-9]+')),
+                  TRUE ~ as.character(NA)),
+                  AVISITCDN = case_when(
+                    AVISITCD == 'SCR' ~ -2,
+                    AVISITCD == 'BL' ~ 0,
+                    grepl('W', AVISITCD) ~ as.numeric(gsub('[^0-9]*', '', AVISITCD)),
+                    TRUE ~ as.numeric(NA)),
+                  AVISITCD = factor(AVISITCD) \%>\% reorder(AVISITCDN),
+                  TRTORD = case_when(
+                    ARMCD == 'ARM C' ~ 1,
+                    ARMCD == 'ARM B' ~ 2,
+                    ARMCD == 'ARM A' ~ 3),
+                  ARM = as.character(arm_mapping[match(ARM, names(arm_mapping))]),
+                  ARM = factor(ARM) \%>\% reorder(TRTORD),
+                  ACTARM = as.character(arm_mapping[match(ACTARM, names(arm_mapping))]),
+                  ACTARM = factor(ACTARM) \%>\% reorder(TRTORD),
+                  ANRLO = 50,
+                  ANRHI = 75) \%>\%
+                rowwise() \%>\%
+                group_by(PARAMCD) \%>\%
+                mutate(LBSTRESC = ifelse(
+                  USUBJID \%in\% sample(USUBJID, 1, replace = TRUE),
+                  paste('<', round(runif(1, min = 25, max = 30))), LBSTRESC)) \%>\%
+                mutate(LBSTRESC = ifelse(
+                  USUBJID \%in\% sample(USUBJID, 1, replace = TRUE),
+                  paste( '>', round(runif(1, min = 70, max = 75))), LBSTRESC)) \%>\%
+                ungroup()
 
-          attr(ADLB[['ARM']], 'label') <- var_labels[['ARM']]
-          attr(ADLB[['ACTARM']], 'label') <- var_labels[['ACTARM']]
-          attr(ADLB[['ANRLO']], 'label') <- 'Analysis Normal Range Lower Limit'
-          attr(ADLB[['ANRHI']], 'label') <- 'Analysis Normal Range Upper Limit'
-
-          # add LLOQ and ULOQ variables
-          ALB_LOQS <- goshawk:::h_identify_loq_values(ADLB)
-          ADLB <- left_join(ADLB, ALB_LOQS, by = 'PARAM')",
+              attr(ADLB[['ARM']], 'label') <- var_labels[['ARM']]
+              attr(ADLB[['ACTARM']], 'label') <- var_labels[['ACTARM']]
+              attr(ADLB[['ANRLO']], 'label') <- 'Analysis Normal Range Lower Limit'
+              attr(ADLB[['ANRHI']], 'label') <- 'Analysis Normal Range Upper Limit'
+              # add LLOQ and ULOQ variables
+              ALB_LOQS <- goshawk:::h_identify_loq_values(ADLB)
+              ADLB <- left_join(ADLB, ALB_LOQS, by = 'PARAM')",
       vars = list(ADSL = adsl, arm_mapping = arm_mapping)),
     check = TRUE
   ),
@@ -219,6 +221,7 @@ app <- teal::init(
         rotate_xlab = FALSE,
         hline_arb = 60,
         hline_arb_color = "grey",
+        hline_arb_label = "default_hori_label",
         hline_vars = c("ANRHI", "ANRLO", "ULOQN", "LLOQN"),
         hline_vars_colors = c("pink", "brown", "purple", "black"),
         hline_vars_labels = NULL
