@@ -869,8 +869,8 @@ srv_g_correlationplot <- function(input,
           vline_arb_label = .(`if`(is.na(vline), NULL, vline_label)),
           vline_arb_color = .(vline_arb_color),
           vline_vars = .(vline_vars),
-          vline_vars_colors = .(hline_vars_colors[seq_along(vline_vars)]),
-          vline_vars_labels = .(paste(hline_vars_labels[seq_along(vline_vars)], "-", xaxis_param)),
+          vline_vars_colors = .(vline_vars_colors[seq_along(vline_vars)]),
+          vline_vars_labels = .(paste(vline_vars_labels[seq_along(vline_vars)], "-", xaxis_param)),
         )
         print(p)
       })
