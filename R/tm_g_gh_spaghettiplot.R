@@ -423,7 +423,7 @@ srv_g_spaghettiplot <- function(input,
       chunks = private_chunks,
       id = "g_spaghettiplot",
       expression = bquote({
-        p <- g_spaghettiplot(
+        p <- goshawk::g_spaghettiplot(
           data = ANL,
           subj_id = .(idvar),
           biomarker_var = .(param_var),
