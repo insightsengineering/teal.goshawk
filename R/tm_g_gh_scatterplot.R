@@ -303,7 +303,7 @@ srv_g_scatterplot <- function(input,
       id = "scatterplot",
       expression = bquote({
         # re-establish treatment variable label
-        p <- g_scatterplot(
+        p <- goshawk::g_scatterplot(
           data = ANL,
           param_var = .(param_var),
           param = .(param),

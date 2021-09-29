@@ -462,7 +462,7 @@ srv_g_boxplot <- function(input,
       chunks = private_chunks,
       id = "boxplot",
       expression = bquote({
-        p <- g_boxplot(
+        p <- goshawk::g_boxplot(
           data = ANL,
           biomarker = .(param),
           xaxis_var = .(xaxis),
@@ -508,7 +508,7 @@ srv_g_boxplot <- function(input,
       chunks = private_chunks,
       id = "table",
       expression = bquote({
-        tbl <- t_summarytable(
+        tbl <- goshawk::t_summarytable(
           data = ANL,
           trt_group = .(trt_group),
           param_var = .(param_var),

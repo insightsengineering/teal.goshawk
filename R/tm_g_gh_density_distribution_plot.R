@@ -301,7 +301,7 @@ srv_g_density_distribution_plot <- function(input, # nolint
       chunks = private_chunks,
       id = "density_distribution",
       expression = bquote({
-        p <- g_density_distribution_plot(
+        p <- goshawk::g_density_distribution_plot(
           data = ANL,
           param_var = .(param_var),
           param = .(param),
@@ -339,7 +339,7 @@ srv_g_density_distribution_plot <- function(input, # nolint
       chunks = private_chunks,
       id = "table",
       expression = bquote({
-        tbl <- t_summarytable(
+        tbl <- goshawk::t_summarytable(
           data = ANL,
           trt_group = .(trt_group),
           param_var = .(param_var),

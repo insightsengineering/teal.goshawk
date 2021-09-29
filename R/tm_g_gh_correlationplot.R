@@ -830,7 +830,7 @@ srv_g_correlationplot <- function(input,
       id = "scatterplot",
       expression = bquote({
         # re-establish treatment variable label
-        p <- g_correlationplot(
+        p <- goshawk::g_correlationplot(
           data = ANL_TRANSPOSED,
           param_var = .(param_var),
           xaxis_param = .(xaxis_param),
