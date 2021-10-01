@@ -1,6 +1,6 @@
 # teal.goshawk 0.1.10
 
-* Updated `LICENCE` and `README` with new package reference.
+* Updated `LICENCE` and `README` with new package references.
 * Update examples and document using `scda` synthetic data to replace `random.cdisc.data`.
 * Added `error_on_lint: TRUE` to `.lintr`.
 * Fixed bug in `tm_g_gh_boxplot` module that always uses the `AVISITCD` variable as the `Visit` Column of the table.
