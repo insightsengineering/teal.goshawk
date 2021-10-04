@@ -445,8 +445,7 @@ ui_g_correlationplot <- function(id, ...) {
           checkboxInput(ns("visit_facet"), "Visit Facetting", a$visit_facet),
           checkboxInput(ns("reg_line"), "Regression Line", a$reg_line),
           checkboxInput(ns("loq_legend"), "Display LoQ Legend", a$loq_legend),
-          checkboxInput(ns("rotate_xlab"), "Rotate X-axis Label", a$rotate_xlab),
-          numericInput(ns("vline"), "Add a vertical line:", a$vline)
+          checkboxInput(ns("rotate_xlab"), "Rotate X-axis Label", a$rotate_xlab)
         ),
         panel_item(
           title = "Plot settings",
