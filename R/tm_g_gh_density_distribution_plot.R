@@ -13,8 +13,8 @@
 #' @param font_size font size control for title, x-axis label, y-axis label and legend.
 #' @param line_size plot line thickness.
 #' @param hline_arb numeric value identifying intercept for arbitrary horizontal line.
-#' @param hline_arb_color a character naming the color for the arbitrary horizontal line
-#' @param hline_arb_label a character naming the label for the arbitrary horizontal line
+#' @param hline_arb_color a character naming the color for the arbitrary horizontal line.
+#' @param hline_arb_label a character naming the label for the arbitrary horizontal line.
 #' @param facet_ncol numeric value indicating number of facets per row.
 #' @param comb_line display combined treatment line toggle.
 #' @param rotate_xlab 45 degree rotation of x-axis values.

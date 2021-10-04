@@ -56,9 +56,9 @@ for variable names representing treatment group e.g. ARM.}
 
 \item{hline_arb}{numeric value identifying intercept for arbitrary horizontal line.}
 
-\item{hline_arb_color}{a character naming the color for the arbitrary horizontal line}
+\item{hline_arb_color}{a character naming the color for the arbitrary horizontal line.}
 
-\item{hline_arb_label}{a character naming the label for the arbitrary horizontal line}
+\item{hline_arb_label}{a character naming the label for the arbitrary horizontal line.}
 
 \item{facet_ncol}{numeric value indicating number of facets per row.}
 
