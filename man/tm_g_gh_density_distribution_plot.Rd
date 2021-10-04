@@ -17,7 +17,9 @@ tm_g_gh_density_distribution_plot(
   plot_width = NULL,
   font_size = c(12, 8, 20),
   line_size = c(1, 0.25, 3),
-  hline = NULL,
+  hline_arb = NULL,
+  hline_arb_color = "red",
+  hline_arb_label = NULL,
   facet_ncol = 2L,
   comb_line = TRUE,
   rotate_xlab = FALSE,
@@ -52,7 +54,11 @@ for variable names representing treatment group e.g. ARM.}
 
 \item{line_size}{plot line thickness.}
 
-\item{hline}{y-axis value to position a horizontal line.}
+\item{hline_arb}{numeric value identifying intercept for arbitrary horizontal line.}
+
+\item{hline_arb_color}{a character naming the color for the arbitrary horizontal line.}
+
+\item{hline_arb_label}{a character naming the label for the arbitrary horizontal line.}
 
 \item{facet_ncol}{numeric value indicating number of facets per row.}
 
@@ -168,7 +174,10 @@ app <- teal::init(
       comb_line = TRUE,
       plot_height = c(500, 200, 2000),
       font_size = c(12, 8, 20),
-      line_size = c(1, .25, 3)
+      line_size = c(1, .25, 3),
+      hline_arb = .05,
+      hline_arb_color = "black",
+      hline_arb_label = "Horizontal Line Label"
     )
   )
 )
