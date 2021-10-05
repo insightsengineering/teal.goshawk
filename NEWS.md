@@ -3,6 +3,7 @@
 * Updated `LICENCE` and `README` with new package references.
 * Update examples and document using `scda` synthetic data to replace `random.cdisc.data`.
 * Added `error_on_lint: TRUE` to `.lintr`.
+* Replace `tidyr`'s `gather` and `spread` with `pivot_wider` and `pivot_longer` in package.
 * Fixed bug in `tm_g_gh_boxplot` module that always uses the `AVISITCD` variable as the `Visit` Column of the table.
 
 * **Breaking Change(s)**
