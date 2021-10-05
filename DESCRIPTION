@@ -31,7 +31,7 @@ Imports:
   shinyjs,
   stats,
   teal.devel (>= 0.2.12),
-  tidyr,
+  tidyr (>= 1.0.0),
   utils,
   utils.nest (>= 0.2.11)
 Suggests: 
