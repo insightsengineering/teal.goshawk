@@ -340,7 +340,6 @@ tm_g_gh_correlationplot <- function(label,
 
 }
 
-#' @importFrom shinyjs hidden
 ui_g_correlationplot <- function(id, ...) {
   ns <- NS(id)
   a <- list(...)
