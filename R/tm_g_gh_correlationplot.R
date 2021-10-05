@@ -340,7 +340,6 @@ tm_g_gh_correlationplot <- function(label,
 
 }
 
-#' @importFrom shinyjs hidden
 ui_g_correlationplot <- function(id, ...) {
   ns <- NS(id)
   a <- list(...)
@@ -690,19 +689,19 @@ srv_g_correlationplot <- function(input,
             .data[[.(input$xaxis_var)]],
             .data[[.(input$yaxis_var)]],
             .(if_empty(unique(c(input$hline_vars, input$vline_vars)), NULL))) %>%
-          tidyr::gather(
-            key = "ANLVARS",
-            value = "ANLVALS",
-            .data[[.(input$xaxis_var)]],
+          tidyr::pivot_longer(
+            c(.data[[.(input$xaxis_var)]],
             .data[[.(input$yaxis_var)]],
-            .(if_empty(unique(c(input$hline_vars, input$vline_vars)), NULL))) %>%
+            .(if_empty(unique(c(input$hline_vars, input$vline_vars)), NULL))),
+            names_to = "ANLVARS",
+            values_to = "ANLVALS") %>%
           tidyr::unite(
             "ANL.PARAM",
             "ANLVARS",
             .(param_var),
             sep = ".",
             remove = TRUE) %>%
-          tidyr::spread(.data[["ANL.PARAM"]], .data[["ANLVALS"]]) %>%
+          tidyr::pivot_wider(names_from = "ANL.PARAM", values_from = "ANLVALS") %>%
           dplyr::filter(!is.na(.data[[.(xvar())]]) & !is.na(.data[[.(yvar())]]))
 
         ANL_TRANSPOSED2 <- ANL %>% # nolint
@@ -714,19 +713,19 @@ srv_g_correlationplot <- function(input,
             .data[["LOQFL"]],
             .data[["PARAM"]],
             .data[["LBSTRESC"]]) %>%
-          tidyr::gather(
-            key = "ANLVARS",
-            value = "ANLVALS",
-            .data[["LOQFL"]],
-            .data[["PARAM"]],
-            .data[["LBSTRESC"]]) %>%
+          tidyr::pivot_longer(
+            c(.data[["LOQFL"]],
+              .data[["PARAM"]],
+              .data[["LBSTRESC"]]),
+            names_to = "ANLVARS",
+            values_to = "ANLVALS") %>%
           tidyr::unite(
             "ANL.PARAM",
             "ANLVARS",
             .(param_var),
             sep = "_",
             remove = TRUE) %>%
-          tidyr::spread(.data[["ANL.PARAM"]], .data[["ANLVALS"]]) %>%
+          tidyr::pivot_wider(names_from = "ANL.PARAM", values_from = "ANLVALS") %>%
           dplyr::mutate(LOQFL_COMB = case_when(
             .data[[.(xloqfl())]] == "Y" | .data[[.(yloqfl())]] == "Y" ~ "Y",
             .data[[.(xloqfl())]] == "N" & .data[[.(yloqfl())]] == "N" ~ "N",
