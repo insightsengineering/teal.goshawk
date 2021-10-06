@@ -402,6 +402,8 @@ srv_g_spaghettiplot <- function(input,
     private_chunks <- anl_chunks()$chunks$clone(deep = TRUE)
     ylim <- yrange_slider$state()$value
     facet_ncol <- input$facet_ncol
+    validate(need(is.na(facet_ncol) || (as.numeric(facet_ncol) > 0 && as.numeric(facet_ncol) %% 1 == 0),
+      "Number of plots per row must be a positive integer"))
     rotate_xlab <- input$rotate_xlab
     hline <- input$hline
     hline_label <- input$hline_label
