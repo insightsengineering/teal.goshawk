@@ -221,7 +221,7 @@ tm_g_gh_boxplot <- function(label,
     is_logical_single(rotate_xlab),
     is.null(hline_arb) || is_numeric_single(hline_arb),
     is.null(hline_arb) ||
-      is.null(hline_arb_color) || is_character_single(hline_arb_color) || is_integer_single(hline_arb_color),
+      is.null(hline_arb_color) || is_character_single(hline_arb_color),
     is.null(hline_arb) || is.null(hline_arb_label) || is_character_single(hline_arb_label),
     is_numeric_vector(font_size) && length(font_size) == 3,
     is_numeric_vector(dot_size) && length(dot_size) == 3,
