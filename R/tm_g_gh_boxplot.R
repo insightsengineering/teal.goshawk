@@ -420,6 +420,8 @@ srv_g_boxplot <- function(input,
     facet_var <- if_null(input$facet_var, "None")
     yrange_scale <- yrange_slider$state()$value
     facet_ncol <- input$facet_ncol
+    validate(need(is.na(facet_ncol) || (as.numeric(facet_ncol) > 0 && as.numeric(facet_ncol) %% 1 == 0),
+      "Number of plots per row must be a positive integer"))
     alpha <- input$alpha
     font_size <- input$font_size
     dot_size <- input$dot_size
