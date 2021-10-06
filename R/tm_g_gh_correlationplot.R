@@ -824,6 +824,8 @@ srv_g_correlationplot <- function(input,
       paste0(input$vline_vars, ".", xaxis_param)
     }
     facet_ncol <- input$facet_ncol
+    validate(need(is.na(facet_ncol) || (as.numeric(facet_ncol) > 0 && as.numeric(facet_ncol) %% 1 == 0),
+      "Number of plots per row must be a positive integer"))
     visit_facet <- input$visit_facet
     facet <- input$trt_facet
     reg_line <- input$reg_line

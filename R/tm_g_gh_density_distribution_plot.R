@@ -326,7 +326,9 @@ srv_g_density_distribution_plot <- function(input, # nolint
     line_size <- input$line_size
     hline <- `if`(is.na(input$hline), NULL, as.numeric(input$hline))
     hline_label <- input$hline_label
-    facet_ncol <- as.integer(input$facet_ncol)
+    facet_ncol <- input$facet_ncol
+    validate(need(is.na(facet_ncol) || (as.numeric(facet_ncol) > 0 && as.numeric(facet_ncol) %% 1 == 0),
+      "Number of plots per row must be a positive integer"))
     comb_line <- input$comb_line
     rug_plot <- input$rug_plot
     rotate_xlab <- input$rotate_xlab
