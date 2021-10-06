@@ -286,8 +286,7 @@ tm_g_gh_correlationplot <- function(label,
   )
   stopifnot(
     is.null(vline_arb) || is_numeric_single(vline_arb),
-    is.null(vline_arb) ||
-      is.null(vline_arb_color) || is_character_single(vline_arb_color) || is_integer_single(vline_arb_color),
+    is.null(vline_arb) || is.null(vline_arb_color) || is_character_single(vline_arb_color),
     is.null(vline_arb) || is.null(vline_arb_label) || is_character_single(vline_arb_label)
   )
 
