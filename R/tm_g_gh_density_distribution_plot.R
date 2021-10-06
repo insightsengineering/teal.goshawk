@@ -168,8 +168,7 @@ tm_g_gh_density_distribution_plot <- function(label, # nolint
     is_numeric_vector(font_size) && length(font_size) == 3,
     is_numeric_vector(line_size) && length(line_size) == 3,
     is.null(hline_arb) || is_numeric_single(hline_arb),
-    is.null(hline_arb) ||
-      is.null(hline_arb_color) || is_character_single(hline_arb_color) || is_integer_single(hline_arb_color),
+    is.null(hline_arb) || is.null(hline_arb_color) || is_character_single(hline_arb_color),
     is.null(hline_arb) || is.null(hline_arb_label) || is_character_single(hline_arb_label),
     is_integer_single(facet_ncol),
     is_logical_single(comb_line),
