@@ -279,6 +279,19 @@ tm_g_gh_correlationplot <- function(label,
   check_slider_input(plot_height, allow_null = FALSE)
   check_slider_input(plot_width)
 
+  stopifnot(
+    is.null(hline_arb) || is_numeric_single(hline_arb),
+    is.null(hline_arb) ||
+      is.null(hline_arb_color) || is_character_single(hline_arb_color) || is_integer_single(hline_arb_color),
+    is.null(hline_arb) || is.null(hline_arb_label) || is_character_single(hline_arb_label)
+  )
+  stopifnot(
+    is.null(vline_arb) || is_numeric_single(vline_arb),
+    is.null(vline_arb) ||
+      is.null(vline_arb_color) || is_character_single(vline_arb_color) || is_integer_single(vline_arb_color),
+    is.null(vline_arb) || is.null(vline_arb_label) || is_character_single(vline_arb_label)
+  )
+
   if (!is.null(hline_vars)) {
     stopifnot(is_character_vector(hline_vars, min_length = 1))
     if (!is.null(hline_vars_labels)) {
