@@ -221,8 +221,7 @@ tm_g_gh_spaghettiplot <- function(label,
   stopifnot(is.choices_selected(trt_group))
   stopifnot(
     is.null(hline_arb) || is_numeric_single(hline_arb),
-    is.null(hline_arb) ||
-      is.null(hline_arb_color) || is_character_single(hline_arb_color) || is_integer_single(hline_arb_color),
+    is.null(hline_arb) || is.null(hline_arb_color) || is_character_single(hline_arb_color),
     is.null(hline_arb) || is.null(hline_arb_label) || is_character_single(hline_arb_label)
   )
   check_slider_input(plot_height, allow_null = FALSE)
