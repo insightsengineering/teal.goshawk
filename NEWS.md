@@ -15,9 +15,9 @@
 
 ### Miscellaneous
 * Updated `LICENCE` and `README` with new package references.
-* Update examples and documentation using `scda` synthetic data instead of `random.cdisc.data`.
+* Updated examples and documentation using `scda` synthetic data instead of `random.cdisc.data`.
 * Added `error_on_lint: TRUE` to `.lintr`.
-* Replace `tidyr`'s `gather` and `spread` with `pivot_wider` and `pivot_longer` in package.
+* Replaced `tidyr`'s `gather` and `spread` with `pivot_wider` and `pivot_longer` in package.
 
 # teal.goshawk 0.1.9
 
