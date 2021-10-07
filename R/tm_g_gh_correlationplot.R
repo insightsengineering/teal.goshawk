@@ -22,8 +22,18 @@
 #'   TRUE.
 #' @param loq_legend loq legend toggle.
 #' @param rotate_xlab 45 degree rotation of x-axis values.
-#' @param hline y-axis value to position of horizontal line.
-#' @param vline x-axis value to position a vertical line.
+#' @param hline_arb numeric value identifying intercept for arbitrary horizontal line.
+#' @param hline_arb_color a character naming the color for the arbitrary horizontal line
+#' @param hline_arb_label a character naming the label for the arbitrary horizontal line
+#' @param hline_vars a character vector to name the columns that will define additional horizontal lines.
+#' @param hline_vars_colors a character vector naming the colors for the additional horizontal lines.
+#' @param hline_vars_labels a character vector naming the labels for the additional horizontal lines that will appear
+#' @param vline_arb numeric value identifying intercept for arbitrary vertical line.
+#' @param vline_arb_color color for the arbitrary vertical line that will appear on the plot.
+#' @param vline_arb_label label for the arbitrary vertical that will appear on the legend.
+#' @param vline_vars a character vector to name the columns that will define additional vertical lines.
+#' @param vline_vars_colors a character vector naming the colors for the additional vertical lines.
+#' @param vline_vars_labels a character vector naming the labels for the additional vertical lines that will appear
 #' @param plot_height controls plot height.
 #' @param plot_width optional, controls plot width.
 #' @param font_size font size control for title, x-axis label, y-axis label and legend.
@@ -43,36 +53,77 @@
 #' library(scda)
 #'
 #' # original ARM value = dose value
-#' arm_mapping <- list("A: Drug X" = "Drug X 100mg",
-#'                     "B: Placebo" = "Placebo",
-#'                     "C: Combination" = "Combination 100mg"
+#' arm_mapping <- list(
+#'   "A: Drug X" = "150mg QD",
+#'   "B: Placebo" = "Placebo",
+#'   "C: Combination" = "Combination"
 #' )
+#' color_manual <- c("150mg QD" = "#000000", "Placebo" = "#3498DB", "Combination" = "#E74C3C")
+#' # assign LOQ flag symbols: circles for "N" and triangles for "Y", squares for "NA"
+#' shape_manual <- c("N" = 1, "Y" = 2, "NA" = 0)
 #'
 #' ADSL <- synthetic_cdisc_data("latest")$adsl
+#'
+#' set.seed(1)
 #' ADLB <- synthetic_cdisc_data("latest")$adlb
 #' var_labels <- lapply(ADLB, function(x) attributes(x)$label)
 #' ADLB <- ADLB %>%
 #'   mutate(AVISITCD = case_when(
-#'       AVISIT == "SCREENING" ~ "SCR",
-#'       AVISIT == "BASELINE" ~ "BL",
-#'       grepl("WEEK", AVISIT) ~ paste("W", stringr::str_extract(AVISIT, "(?<=(WEEK ))[0-9]+")),
-#'       TRUE ~ as.character(NA)),
-#'     AVISITCDN = case_when(
-#'       AVISITCD == "SCR" ~ -2,
-#'       AVISITCD == "BL" ~ 0,
-#'       grepl("W", AVISITCD) ~ as.numeric(gsub("[^0-9]*", "", AVISITCD)),
-#'       TRUE ~ as.numeric(NA)),
-#'     AVISITCD = factor(AVISITCD) %>% reorder(AVISITCDN),
-#'     TRTORD = case_when(
-#'       ARMCD == "ARM C" ~ 1,
-#'       ARMCD == "ARM B" ~ 2,
-#'       ARMCD == "ARM A" ~ 3),
-#'     ARM = as.character(arm_mapping[match(ARM, names(arm_mapping))]),
-#'     ARM = factor(ARM) %>% reorder(TRTORD),
-#'     ACTARM = as.character(arm_mapping[match(ACTARM, names(arm_mapping))]),
-#'     ACTARM = factor(ACTARM) %>% reorder(TRTORD))
+#'     AVISIT == "SCREENING" ~ "SCR",
+#'     AVISIT == "BASELINE" ~ "BL",
+#'     grepl("WEEK", AVISIT) ~
+#'       paste(
+#'         "W",
+#'         trimws(
+#'           substr(
+#'             AVISIT,
+#'             start = 6,
+#'             stop = stringr::str_locate(AVISIT, "DAY") - 1
+#'           )
+#'         )
+#'       ),
+#'     TRUE ~ NA_character_)) %>%
+#'   mutate(AVISITCDN = case_when(
+#'     AVISITCD == "SCR" ~ -2,
+#'     AVISITCD == "BL" ~ 0,
+#'     grepl("W", AVISITCD) ~ as.numeric(gsub("[^0-9]*", "", AVISITCD)),
+#'     TRUE ~ NA_real_)) %>%
+#'   # use ARMCD values to order treatment in visualization legend
+#'   mutate(TRTORD = ifelse(grepl("C", ARMCD), 1,
+#'                          ifelse(grepl("B", ARMCD), 2,
+#'                                 ifelse(grepl("A", ARMCD), 3, NA)))) %>%
+#'   mutate(ARM = as.character(arm_mapping[match(ARM, names(arm_mapping))])) %>%
+#'   mutate(ARM = factor(ARM) %>%
+#'            reorder(TRTORD)) %>%
+#'   mutate(
+#'     ANRHI = case_when(
+#'       PARAMCD == "ALT" ~ 60,
+#'       PARAMCD == "CRP" ~ 70,
+#'       PARAMCD == "IGA" ~ 80,
+#'       TRUE ~ NA_real_
+#'     ),
+#'     ANRLO = case_when(
+#'       PARAMCD == "ALT" ~ 20,
+#'       PARAMCD == "CRP" ~ 30,
+#'       PARAMCD == "IGA" ~ 40,
+#'       TRUE ~ NA_real_
+#'     )) %>%
+#'   rowwise() %>%
+#'   group_by(PARAMCD) %>%
+#'   mutate(LBSTRESC = ifelse(
+#'     USUBJID %in% sample(USUBJID, 1, replace = TRUE),
+#'     paste("<", round(runif(1, min = 25, max = 30))), LBSTRESC)) %>%
+#'   mutate(LBSTRESC = ifelse(
+#'     USUBJID %in% sample(USUBJID, 1, replace = TRUE),
+#'     paste( ">", round(runif(1, min = 70, max = 75))), LBSTRESC)) %>%
+#'   ungroup()
 #' attr(ADLB[["ARM"]], "label") <- var_labels[["ARM"]]
-#' attr(ADLB[["ACTARM"]], 'label') <- var_labels[["ACTARM"]]
+#' attr(ADLB[["ANRHI"]], "label") <- "Analysis Normal Range Upper Limit"
+#' attr(ADLB[["ANRLO"]], "label") <- "Analysis Normal Range Lower Limit"
+#'
+#' # add LLOQ and ULOQ variables
+#' ADLB_LOQS <- goshawk:::h_identify_loq_values(ADLB)
+#' ADLB <- left_join(ADLB, ADLB_LOQS, by = "PARAM")
 #'
 #' app <- init(
 #'   data = cdisc_data(
@@ -80,31 +131,66 @@
 #'     cdisc_dataset(
 #'       "ADLB",
 #'       ADLB,
-#'       code = "ADLB <- synthetic_cdisc_data(\"latest\")$adlb
+#'       code = "set.seed(1)
+#'               ADLB <- synthetic_cdisc_data('latest')$adlb
 #'               var_labels <- lapply(ADLB, function(x) attributes(x)$label)
 #'               ADLB <- ADLB %>%
 #'                 mutate(AVISITCD = case_when(
-#'                     AVISIT == 'SCREENING' ~ 'SCR',
-#'                     AVISIT == 'BASELINE' ~ 'BL',
-#'                     grepl('WEEK', AVISIT) ~
-#'                       paste('W', stringr::str_extract(AVISIT, '(?<=(WEEK ))[0-9]+')),
-#'                     TRUE ~ as.character(NA)),
-#'                   AVISITCDN = case_when(
-#'                     AVISITCD == 'SCR' ~ -2,
-#'                     AVISITCD == 'BL' ~ 0,
-#'                     grepl('W', AVISITCD) ~ as.numeric(gsub('[^0-9]*', '', AVISITCD)),
-#'                     TRUE ~ as.numeric(NA)),
-#'                   AVISITCD = factor(AVISITCD) %>% reorder(AVISITCDN),
-#'                   TRTORD = case_when(
-#'                     ARMCD == 'ARM C' ~ 1,
-#'                     ARMCD == 'ARM B' ~ 2,
-#'                     ARMCD == 'ARM A' ~ 3),
-#'                   ARM = as.character(arm_mapping[match(ARM, names(arm_mapping))]),
-#'                   ARM = factor(ARM) %>% reorder(TRTORD),
-#'                   ACTARM = as.character(arm_mapping[match(ACTARM, names(arm_mapping))]),
-#'                   ACTARM = factor(ACTARM) %>% reorder(TRTORD))
-#'                attr(ADLB[['ARM']], 'label') <- var_labels[['ARM']]
-#'                attr(ADLB[['ACTARM']], 'label') <- var_labels[['ACTARM']]",
+#'                   AVISIT == 'SCREENING' ~ 'SCR',
+#'                   AVISIT == 'BASELINE' ~ 'BL',
+#'                   grepl('WEEK', AVISIT) ~
+#'                     paste(
+#'                       'W',
+#'                       trimws(
+#'                         substr(
+#'                           AVISIT,
+#'                           start = 6,
+#'                           stop = stringr::str_locate(AVISIT, 'DAY') - 1
+#'                         )
+#'                       )
+#'                     ),
+#'                   TRUE ~ NA_character_)) %>%
+#'                 mutate(AVISITCDN = case_when(
+#'                   AVISITCD == 'SCR' ~ -2,
+#'                   AVISITCD == 'BL' ~ 0,
+#'                   grepl('W', AVISITCD) ~ as.numeric(gsub('[^0-9]*', '', AVISITCD)),
+#'                   TRUE ~ NA_real_)) %>%
+#'                 # use ARMCD values to order treatment in visualization legend
+#'                 mutate(TRTORD = ifelse(grepl('C', ARMCD), 1,
+#'                                        ifelse(grepl('B', ARMCD), 2,
+#'                                               ifelse(grepl('A', ARMCD), 3, NA)))) %>%
+#'                 mutate(ARM = as.character(arm_mapping[match(ARM, names(arm_mapping))])) %>%
+#'                 mutate(ARM = factor(ARM) %>%
+#'                          reorder(TRTORD)) %>%
+#'                 mutate(
+#'                   ANRHI = case_when(
+#'                     PARAMCD == 'ALT' ~ 60,
+#'                     PARAMCD == 'CRP' ~ 70,
+#'                     PARAMCD == 'IGA' ~ 80,
+#'                     TRUE ~ NA_real_
+#'                   ),
+#'                   ANRLO = case_when(
+#'                     PARAMCD == 'ALT' ~ 20,
+#'                     PARAMCD == 'CRP' ~ 30,
+#'                     PARAMCD == 'IGA' ~ 40,
+#'                     TRUE ~ NA_real_
+#'                   )) %>%
+#'                 rowwise() %>%
+#'                 group_by(PARAMCD) %>%
+#'                 mutate(LBSTRESC = ifelse(
+#'                   USUBJID %in% sample(USUBJID, 1, replace = TRUE),
+#'                   paste('<', round(runif(1, min = 25, max = 30))), LBSTRESC)) %>%
+#'                 mutate(LBSTRESC = ifelse(
+#'                   USUBJID %in% sample(USUBJID, 1, replace = TRUE),
+#'                   paste( '>', round(runif(1, min = 70, max = 75))), LBSTRESC)) %>%
+#'                 ungroup()
+#'               attr(ADLB[['ARM']], 'label') <- var_labels[['ARM']]
+#'               attr(ADLB[['ANRHI']], 'label') <- 'Analysis Normal Range Upper Limit'
+#'               attr(ADLB[['ANRLO']], 'label') <- 'Analysis Normal Range Lower Limit'
+#'
+#'               # add LLOQ and ULOQ variables
+#'               ADLB_LOQS <- goshawk:::h_identify_loq_values(ADLB)
+#'               ADLB <- left_join(ADLB, ADLB_LOQS, by = 'PARAM')",
 #'       vars = list(arm_mapping = arm_mapping)),
 #'     check = TRUE
 #'     ),
@@ -129,7 +215,17 @@
 #'        loq_legend = TRUE,
 #'        font_size = c(12, 8, 20),
 #'        dot_size = c(1, 1, 12),
-#'        reg_text_size = c(3, 3, 10)
+#'        reg_text_size = c(3, 3, 10),
+#'        hline_arb = 50,
+#'        hline_arb_label = "arb hori label",
+#'        hline_vars = c("ANRHI", "ANRLO", "ULOQN", "LLOQN"),
+#'        hline_vars_colors = c("green", "blue", "purple", "cyan"),
+#'        hline_vars_label =  c("ANRHI Label", "ANRLO Label", "ULOQN Label", "LLOQN Label"),
+#'        vline_vars = c("ANRHI", "ANRLO", "ULOQN", "LLOQN"),
+#'        vline_vars_colors = c("yellow", "orange", "brown", "gold"),
+#'        vline_vars_labels =  c("ANRHI Label", "ANRLO Label", "ULOQN Label", "LLOQN Label"),
+#'        vline_arb = 50,
+#'        vline_arb_label = "arb vert label"
 #'    )
 #'   )
 #' )
@@ -154,8 +250,18 @@ tm_g_gh_correlationplot <- function(label,
                                     reg_line = FALSE,
                                     loq_legend = TRUE,
                                     rotate_xlab = FALSE,
-                                    hline = NULL,
-                                    vline = NULL,
+                                    hline_arb = NULL,
+                                    hline_arb_color = "red",
+                                    hline_arb_label = NULL,
+                                    hline_vars = NULL,
+                                    hline_vars_colors = NULL,
+                                    hline_vars_labels = NULL,
+                                    vline_arb = NULL,
+                                    vline_arb_color = "green",
+                                    vline_arb_label = NULL,
+                                    vline_vars = NULL,
+                                    vline_vars_colors = NULL,
+                                    vline_vars_labels = NULL,
                                     plot_height = c(500, 200, 2000),
                                     plot_width = NULL,
                                     font_size = c(12, 8, 20),
@@ -173,6 +279,51 @@ tm_g_gh_correlationplot <- function(label,
   check_slider_input(plot_height, allow_null = FALSE)
   check_slider_input(plot_width)
 
+  stopifnot(
+    is.null(hline_arb) || is_numeric_single(hline_arb),
+    is.null(hline_arb) || is.null(hline_arb_color) || is_character_single(hline_arb_color),
+    is.null(hline_arb) || is.null(hline_arb_label) || is_character_single(hline_arb_label)
+  )
+  stopifnot(
+    is.null(vline_arb) || is_numeric_single(vline_arb),
+    is.null(vline_arb) || is.null(vline_arb_color) || is_character_single(vline_arb_color),
+    is.null(vline_arb) || is.null(vline_arb_label) || is_character_single(vline_arb_label)
+  )
+
+  if (!is.null(hline_vars)) {
+    stopifnot(is_character_vector(hline_vars, min_length = 1))
+    if (!is.null(hline_vars_labels)) {
+      stopifnot(is_character_vector(
+        hline_vars_labels, min_length = length(hline_vars),
+        max_length = (length(hline_vars)))
+      )
+    }
+    if (!is.null(hline_vars_colors)) {
+      stopifnot(is_character_vector(
+        hline_vars_colors,
+        min_length = length(hline_vars),
+        max_length = (length(hline_vars)))
+      )
+    }
+  }
+
+  if (!is.null(vline_vars)) {
+    stopifnot(is_character_vector(vline_vars, min_length = 1))
+    if (!is.null(vline_vars_labels)) {
+      stopifnot(is_character_vector(
+        vline_vars_labels, min_length = length(vline_vars),
+        max_length = (length(vline_vars)))
+      )
+    }
+    if (!is.null(vline_vars_colors)) {
+      stopifnot(is_character_vector(
+        vline_vars_colors,
+        min_length = length(vline_vars),
+        max_length = (length(vline_vars)))
+      )
+    }
+  }
+
   args <- as.list(environment())
 
   module(
@@ -186,7 +337,13 @@ tm_g_gh_correlationplot <- function(label,
                        color_manual = color_manual,
                        shape_manual = shape_manual,
                        plot_height = plot_height,
-                       plot_width = plot_width
+                       plot_width = plot_width,
+                       hline_arb_color = hline_arb_color,
+                       hline_vars_colors = hline_vars_colors,
+                       hline_vars_labels = hline_vars_labels,
+                       vline_arb_color = vline_arb_color,
+                       vline_vars_colors = vline_vars_colors,
+                       vline_vars_labels = vline_vars_labels
     ),
     ui = ui_g_correlationplot,
     ui_args = args
@@ -194,7 +351,6 @@ tm_g_gh_correlationplot <- function(label,
 
 }
 
-#' @importFrom shinyjs hidden
 ui_g_correlationplot <- function(id, ...) {
   ns <- NS(id)
   a <- list(...)
@@ -217,6 +373,74 @@ ui_g_correlationplot <- function(id, ...) {
         ychoices = a$yaxis_var$choices, yselected = a$yaxis_var$selected
       ),
       templ_ui_constraint(ns, "X-Axis Data Constraint"), # required by constr_anl_chunks
+      if (!is.null(a$hline_vars)) {
+        optionalSelectInput(
+          ns("hline_vars"),
+          label = "Add Horizontal Range Line(s):",
+          choices = a$hline_vars,
+          selected = a$hline_vars[1],
+          multiple = TRUE)
+      },
+      tags$b("Add Arbitrary Horizontal Line/Label:"),
+      div(
+        style = "display: flex",
+        div(
+          style = "padding: 0px;",
+          div(
+            style = "display: inline-block;vertical-align:moddle; width: 100%;",
+            tags$b("Line Value:")
+          ),
+          div(
+            style = "display: inline-block;vertical-align:middle; width: 100%;",
+            numericInput(ns("hline"), "", a$hline_arb)
+          )
+        ),
+        div(
+          style = "padding: 0px;",
+          div(
+            style = "display: inline-block;vertical-align:moddle; width: 100%;",
+            tags$b("Line Label:")
+          ),
+          div(
+            style = "display: inline-block;vertical-align:middle; width: 100%;",
+            textInput(ns("hline_label"), "", a$hline_arb_label)
+          )
+        )
+      ),
+      if (!is.null(a$vline_vars)) {
+        optionalSelectInput(
+          ns("vline_vars"),
+          label = "Add Vertical Range Line(s):",
+          choices = a$vline_vars,
+          selected = a$vline_vars[1],
+          multiple = TRUE)
+      },
+      tags$b("Add Arbitrary Vertical Line/Label:"),
+      div(
+        style = "display: flex",
+        div(
+          style = "padding: 0px;",
+          div(
+            style = "display: inline-block;vertical-align:moddle; width: 100%;",
+            tags$b("Line Value:")
+          ),
+          div(
+            style = "display: inline-block;vertical-align:middle; width: 100%;",
+            numericInput(ns("vline"), "", a$vline_arb)
+          )
+        ),
+        div(
+          style = "padding: 0px;",
+          div(
+            style = "display: inline-block;vertical-align:moddle; width: 100%;",
+            tags$b("Line Label:")
+          ),
+          div(
+            style = "display: inline-block;vertical-align:middle; width: 100%;",
+            textInput(ns("vline_label"), "", a$vline_arb_label)
+          )
+        )
+      ),
       panel_group(
         panel_item(
           title = "Plot Aesthetic Settings",
@@ -231,9 +455,7 @@ ui_g_correlationplot <- function(id, ...) {
           checkboxInput(ns("visit_facet"), "Visit Facetting", a$visit_facet),
           checkboxInput(ns("reg_line"), "Regression Line", a$reg_line),
           checkboxInput(ns("loq_legend"), "Display LoQ Legend", a$loq_legend),
-          checkboxInput(ns("rotate_xlab"), "Rotate X-axis Label", a$rotate_xlab),
-          numericInput(ns("hline"), "Add a horizontal line:", a$hline),
-          numericInput(ns("vline"), "Add a vertical line:", a$vline)
+          checkboxInput(ns("rotate_xlab"), "Rotate X-axis Label", a$rotate_xlab)
         ),
         panel_item(
           title = "Plot settings",
@@ -263,7 +485,13 @@ srv_g_correlationplot <- function(input,
                                   color_manual,
                                   shape_manual,
                                   plot_height,
-                                  plot_width) {
+                                  plot_width,
+                                  hline_arb_color,
+                                  hline_vars_colors,
+                                  hline_vars_labels,
+                                  vline_arb_color,
+                                  vline_vars_colors,
+                                  vline_vars_labels) {
   init_chunks()
   # filter selected biomarkers
   anl_param <- reactive({
@@ -277,6 +505,15 @@ srv_g_correlationplot <- function(input,
     ANL_FILTERED <- datasets$get_data(dataname, filtered = TRUE) # nolint
     validate_has_data(ANL_FILTERED, 1)
 
+    if (!is_empty(input$hline_vars)) {
+      validate(
+        need(
+          all(input$hline_vars %in% names(ANL_FILTERED)),
+          "One or more selected horizontal line variable(s) is/are not names to any column in the data"),
+        need(
+          all(input$vline_vars %in% names(ANL_FILTERED)),
+          "One or more selected vertical line variable(s) is/are not names to any column in the data"))
+    }
 
     validate_has_variable(ANL_FILTERED, param_var)
 
@@ -454,7 +691,6 @@ srv_g_correlationplot <- function(input,
       chunks = private_chunks,
       id = "plot_data_transpose",
       expression = bquote({
-
         ANL_TRANSPOSED1 <- ANL %>% # nolint
           dplyr::select(
             .data[["USUBJID"]],
@@ -462,19 +698,21 @@ srv_g_correlationplot <- function(input,
             .data[["AVISITCD"]],
             .data[[.(param_var)]],
             .data[[.(input$xaxis_var)]],
-            .data[[.(input$yaxis_var)]]) %>%
-          tidyr::gather(
-            key = "ANLVARS",
-            value = "ANLVALS",
-            .data[[.(input$xaxis_var)]],
-            .data[[.(input$yaxis_var)]]) %>%
+            .data[[.(input$yaxis_var)]],
+            .(if_empty(unique(c(input$hline_vars, input$vline_vars)), NULL))) %>%
+          tidyr::pivot_longer(
+            c(.data[[.(input$xaxis_var)]],
+            .data[[.(input$yaxis_var)]],
+            .(if_empty(unique(c(input$hline_vars, input$vline_vars)), NULL))),
+            names_to = "ANLVARS",
+            values_to = "ANLVALS") %>%
           tidyr::unite(
             "ANL.PARAM",
             "ANLVARS",
             .(param_var),
             sep = ".",
             remove = TRUE) %>%
-          tidyr::spread(.data[["ANL.PARAM"]], .data[["ANLVALS"]]) %>%
+          tidyr::pivot_wider(names_from = "ANL.PARAM", values_from = "ANLVALS") %>%
           dplyr::filter(!is.na(.data[[.(xvar())]]) & !is.na(.data[[.(yvar())]]))
 
         ANL_TRANSPOSED2 <- ANL %>% # nolint
@@ -486,19 +724,19 @@ srv_g_correlationplot <- function(input,
             .data[["LOQFL"]],
             .data[["PARAM"]],
             .data[["LBSTRESC"]]) %>%
-          tidyr::gather(
-            key = "ANLVARS",
-            value = "ANLVALS",
-            .data[["LOQFL"]],
-            .data[["PARAM"]],
-            .data[["LBSTRESC"]]) %>%
+          tidyr::pivot_longer(
+            c(.data[["LOQFL"]],
+              .data[["PARAM"]],
+              .data[["LBSTRESC"]]),
+            names_to = "ANLVARS",
+            values_to = "ANLVALS") %>%
           tidyr::unite(
             "ANL.PARAM",
             "ANLVARS",
             .(param_var),
             sep = "_",
             remove = TRUE) %>%
-          tidyr::spread(.data[["ANL.PARAM"]], .data[["ANLVALS"]]) %>%
+          tidyr::pivot_wider(names_from = "ANL.PARAM", values_from = "ANLVALS") %>%
           dplyr::mutate(LOQFL_COMB = case_when(
             .data[[.(xloqfl())]] == "Y" | .data[[.(yloqfl())]] == "Y" ~ "Y",
             .data[[.(xloqfl())]] == "N" & .data[[.(yloqfl())]] == "N" ~ "N",
@@ -569,9 +807,23 @@ srv_g_correlationplot <- function(input,
     font_size <- input$font_size
     dot_size <- input$dot_size
     reg_text_size <- input$reg_text_size
-    hline <- if (is.na(input$hline)) NULL else as.numeric(input$hline)
-    vline <- if (is.na(input$vline)) NULL else as.numeric(input$vline)
+    hline <- input$hline
+    hline_label <- input$hline_label
+    hline_vars <- if (is_empty(input$hline_vars)) {
+      NULL
+    } else {
+      paste0(input$hline_vars, ".", yaxis_param)
+    }
+    vline <- input$vline
+    vline_label <- input$vline_label
+    vline_vars <- if (is_empty(input$vline_vars)) {
+      NULL
+    } else {
+      paste0(input$vline_vars, ".", xaxis_param)
+    }
     facet_ncol <- input$facet_ncol
+    validate(need(is.na(facet_ncol) || (as.numeric(facet_ncol) > 0 && as.numeric(facet_ncol) %% 1 == 0),
+      "Number of plots per row must be a positive integer"))
     visit_facet <- input$visit_facet
     facet <- input$trt_facet
     reg_line <- input$reg_line
@@ -589,7 +841,7 @@ srv_g_correlationplot <- function(input,
       id = "scatterplot",
       expression = bquote({
         # re-establish treatment variable label
-        p <- g_correlationplot(
+        p <- goshawk::g_correlationplot(
           data = ANL_TRANSPOSED,
           param_var = .(param_var),
           xaxis_param = .(xaxis_param),
@@ -618,8 +870,18 @@ srv_g_correlationplot <- function(input,
           reg_text_size = .(reg_text_size),
           loq_legend = .(loq_legend),
           rotate_xlab = .(rotate_xlab),
-          hline = .(hline),
-          vline = .(vline)
+          hline_arb = .(`if`(is.na(hline), NULL, as.numeric(hline))),
+          hline_arb_label = .(`if`(is.na(hline), NULL, hline_label)),
+          hline_arb_color = .(hline_arb_color),
+          hline_vars = .(hline_vars),
+          hline_vars_colors = .(hline_vars_colors[seq_along(hline_vars)]),
+          hline_vars_labels = .(paste(hline_vars_labels[seq_along(hline_vars)], "-", yaxis_param)),
+          vline_arb = .(`if`(is.na(vline), NULL, as.numeric(vline))),
+          vline_arb_label = .(`if`(is.na(vline), NULL, vline_label)),
+          vline_arb_color = .(vline_arb_color),
+          vline_vars = .(vline_vars),
+          vline_vars_colors = .(vline_vars_colors[seq_along(vline_vars)]),
+          vline_vars_labels = .(paste(vline_vars_labels[seq_along(vline_vars)], "-", xaxis_param)),
         )
         print(p)
       })

@@ -36,9 +36,11 @@
 #' @param group_stats control group mean or median overlay.
 #' @param hline_arb numeric value identifying intercept for arbitrary horizontal line.
 #' @param hline_arb_color a character naming the color for the arbitrary horizontal line
+#' @param hline_arb_label a character naming the label for the arbitrary horizontal line
 #' @param hline_vars a character vector to name the columns that will define additional horizontal lines.
-#' @param hline_vars_colors a character vector equal in length to hline_vars that will define the colors.
-#' @param hline_vars_labels a character vector equal in length to hline_vars that will define the legend labels.
+#' @param hline_vars_colors a character vector naming the colors for the additional horizontal lines.
+#' @param hline_vars_labels a character vector naming the labels for the additional horizontal lines that will appear
+#'  in the legend.
 #' @inheritParams teal.devel::standard_layout
 #'
 #' @import goshawk
@@ -167,7 +169,9 @@
 #'       man_color = c('Combination' = "#000000",
 #'                    'Placebo' = "#fce300",
 #'                    '150mg QD' = "#5a2f5f"),
+#'       hline_arb = 50,
 #'       hline_arb_color = "grey",
+#'       hline_arb_label = "default hori label",
 #'       hline_vars = c("ANRHI", "ANRLO", "ULOQN", "LLOQN"),
 #'       hline_vars_colors = c("pink", "brown", "purple", "black"),
 #'       hline_vars_labels = NULL
@@ -204,6 +208,7 @@ tm_g_gh_spaghettiplot <- function(label,
                                   font_size = c(12, 8, 20),
                                   hline_arb = NULL,
                                   hline_arb_color = "red",
+                                  hline_arb_label = NULL,
                                   hline_vars = NULL,
                                   hline_vars_colors = NULL,
                                   hline_vars_labels = NULL,
@@ -214,6 +219,11 @@ tm_g_gh_spaghettiplot <- function(label,
   stopifnot(is.choices_selected(xaxis_var))
   stopifnot(is.choices_selected(yaxis_var))
   stopifnot(is.choices_selected(trt_group))
+  stopifnot(
+    is.null(hline_arb) || is_numeric_single(hline_arb),
+    is.null(hline_arb) || is.null(hline_arb_color) || is_character_single(hline_arb_color),
+    is.null(hline_arb) || is.null(hline_arb_label) || is_character_single(hline_arb_label)
+  )
   check_slider_input(plot_height, allow_null = FALSE)
   check_slider_input(plot_width)
 
@@ -322,7 +332,7 @@ g_ui_spaghettiplot <- function(id, ...) {
           ),
           div(
             style = "display: inline-block;vertical-align:middle; width: 100%;",
-            textInput(ns("hline_label"), "", "")
+            textInput(ns("hline_label"), "", a$hline_arb_label)
           )
         )
       ),
@@ -397,6 +407,8 @@ srv_g_spaghettiplot <- function(input,
     private_chunks <- anl_chunks()$chunks$clone(deep = TRUE)
     ylim <- yrange_slider$state()$value
     facet_ncol <- input$facet_ncol
+    validate(need(is.na(facet_ncol) || (as.numeric(facet_ncol) > 0 && as.numeric(facet_ncol) %% 1 == 0),
+      "Number of plots per row must be a positive integer"))
     rotate_xlab <- input$rotate_xlab
     hline <- input$hline
     hline_label <- input$hline_label
@@ -418,7 +430,7 @@ srv_g_spaghettiplot <- function(input,
       chunks = private_chunks,
       id = "g_spaghettiplot",
       expression = bquote({
-        p <- g_spaghettiplot(
+        p <- goshawk::g_spaghettiplot(
           data = ANL,
           subj_id = .(idvar),
           biomarker_var = .(param_var),

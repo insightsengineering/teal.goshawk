@@ -664,7 +664,7 @@ srv_lineplot <- function(input,
       chunks = private_chunks,
       id = "lineplot",
       expression = bquote({
-        p <- g_lineplot(
+        p <- goshawk::g_lineplot(
           data = ANL[complete.cases(ANL[, c(.(yaxis), .(xaxis))]), ],
           biomarker_var = .(param_var),
           biomarker_var_label = .(param_var_label),
