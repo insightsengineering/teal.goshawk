@@ -1,31 +1,23 @@
 # teal.goshawk 0.1.10
 
+### Enhancements
+
+* Lab normal range and `LOQs` horizontal line feature in `tm_g_gh_spaghettiplot`, `tm_g_gh_boxplot` and `tm_g_gh_correlationplot`.
+
+### Breaking Changes
+
+* Allow arbitrary horizontal line arguments in `tm_g_gh_spaghettiplot`, `tm_g_gh_boxplot`, `tm_g_gh_density_distribution_plot` and `tm_g_gh_correlationplot` and vertical line arguments in `tm_g_gh_correlationplot`. This functionality has changed the arguments required to use the modules:
+  - `hline` replaced by `hline_arb`, `hline_arb_color` and `hline_arb_label` in the above modules.
+  - `vline` replaced by `vline_arb_var`, `vline_arb_color` and `vline_arb_label` in `tm_g_gh_correlationplot`. 
+
+### Bug Fixes
+* Fixed bug in `tm_g_gh_boxplot` module that always used the `AVISITCD` variable as the `Visit` Column of the table.
+
+### Miscellaneous
 * Updated `LICENCE` and `README` with new package references.
-* Update examples and document using `scda` synthetic data to replace `random.cdisc.data`.
+* Updated examples and documentation using `scda` synthetic data instead of `random.cdisc.data`.
 * Added `error_on_lint: TRUE` to `.lintr`.
-* Replace `tidyr`'s `gather` and `spread` with `pivot_wider` and `pivot_longer` in package.
-* Fixed bug in `tm_g_gh_boxplot` module that always uses the `AVISITCD` variable as the `Visit` Column of the table.
-
-* **Breaking Change(s)**
-
-  - Arbitrary horizontal and vertical line arguments in 
-    - `tm_g_gh_spaghettiplot`
-    - `tm_g_gh_boxplot`
-    - `tm_g_gh_correlationplot`
-
-    - User modifications required
-      - `tm_g_gh_spaghettiplot` and `tm_g_gh_boxplot` update from `hline` argument to
-        - `hline_arb`, `hline_arb_color` and `hline_arb_label`
-      - `tm_g_gh_correlationplot` update from `hline` and `vline` arguments to 
-        - `hline_arb_var`, `hline_arb_color` and `hline_arb_label`
-        - `vline_arb_var`, `vline_arb_color` and `vline_arb_label`
-
-* **New Feature(s)**
-
-  - Lab normal range and `LOQs` horizontal line feature in 
-    - `tm_g_gh_spaghettiplot`
-    - `tm_g_gh_boxplot`
-    - `tm_g_gh_correlationplot`
+* Replaced `tidyr`'s `gather` and `spread` with `pivot_wider` and `pivot_longer` in package.
 
 # teal.goshawk 0.1.9
 
