@@ -1,6 +1,6 @@
 # teal.goshawk 0.1.10
 
-### Enhancements
+### New Features
 
 * Lab normal range and `LOQs` horizontal line feature in `tm_g_gh_spaghettiplot`, `tm_g_gh_boxplot` and `tm_g_gh_correlationplot`.
 
