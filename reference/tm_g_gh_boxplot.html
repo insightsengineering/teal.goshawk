@@ -83,7 +83,7 @@ summary table." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">teal.goshawk</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.9.9000</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.10.9000</span>
       </span>
     </div>
 
@@ -148,6 +148,7 @@ summary table.</p>
   rotate_xlab <span class='op'>=</span> <span class='cn'>FALSE</span>,
   hline_arb <span class='op'>=</span> <span class='cn'>NULL</span>,
   hline_arb_color <span class='op'>=</span> <span class='st'>"red"</span>,
+  hline_arb_label <span class='op'>=</span> <span class='cn'>NULL</span>,
   hline_vars <span class='op'>=</span> <span class='cn'>NULL</span>,
   hline_vars_colors <span class='op'>=</span> <span class='cn'>NULL</span>,
   hline_vars_labels <span class='op'>=</span> <span class='cn'>NULL</span>,
@@ -226,16 +227,21 @@ for variable names representing treatment group e.g. ARM.</p></td>
       <td><p>a character naming the color for the arbitrary horizontal line</p></td>
     </tr>
     <tr>
+      <th>hline_arb_label</th>
+      <td><p>a character naming the label for the arbitrary horizontal line</p></td>
+    </tr>
+    <tr>
       <th>hline_vars</th>
       <td><p>a character vector to name the columns that will define additional horizontal lines.</p></td>
     </tr>
     <tr>
       <th>hline_vars_colors</th>
-      <td><p>a character vector equal in length to hline_vars that will define the colors.</p></td>
+      <td><p>a character vector naming the colors for the additional horizontal lines.</p></td>
     </tr>
     <tr>
       <th>hline_vars_labels</th>
-      <td><p>a character vector equal in length to hline_vars that will define the legend labels.</p></td>
+      <td><p>a character vector naming the labels for the additional horizontal lines that will appear
+in the legend.</p></td>
     </tr>
     <tr>
       <th>plot_height</th>
@@ -341,7 +347,7 @@ output to put the output into context. For example the
     <span class='fu'>cdisc_dataset</span><span class='op'>(</span>
       <span class='st'>"ADLB"</span>,
       <span class='va'>ADLB</span>,
-      code <span class='op'>=</span> <span class='st'>[2138 chars quoted with '"']</span>,
+      code <span class='op'>=</span> <span class='st'>[2267 chars quoted with '"']</span>,
       vars <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span>ADSL <span class='op'>=</span> <span class='va'>adsl</span>, arm_mapping <span class='op'>=</span> <span class='va'>arm_mapping</span><span class='op'>)</span><span class='op'>)</span>,
     check <span class='op'>=</span> <span class='cn'>TRUE</span>
   <span class='op'>)</span>,
@@ -359,6 +365,7 @@ output to put the output into context. For example the
         rotate_xlab <span class='op'>=</span> <span class='cn'>FALSE</span>,
         hline_arb <span class='op'>=</span> <span class='fl'>60</span>,
         hline_arb_color <span class='op'>=</span> <span class='st'>"grey"</span>,
+        hline_arb_label <span class='op'>=</span> <span class='st'>"default_hori_label"</span>,
         hline_vars <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"ANRHI"</span>, <span class='st'>"ANRLO"</span>, <span class='st'>"ULOQN"</span>, <span class='st'>"LLOQN"</span><span class='op'>)</span>,
         hline_vars_colors <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"pink"</span>, <span class='st'>"brown"</span>, <span class='st'>"purple"</span>, <span class='st'>"black"</span><span class='op'>)</span>,
         hline_vars_labels <span class='op'>=</span> <span class='cn'>NULL</span>
