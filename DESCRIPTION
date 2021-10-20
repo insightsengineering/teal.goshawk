@@ -17,8 +17,8 @@ Description: Modules that produce web interfaces through which longitudinal visu
     variables, Limit of Quantification flag variable (LOQFL) is expected with levels 'Y', 'N'
     or NA.
 Depends: 
-  R (>= 3.3),
   goshawk (>= 0.1.10), 
+  R (>= 3.6),
   shiny,
   teal (>= 0.10.0)
 Imports:
