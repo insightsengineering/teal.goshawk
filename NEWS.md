@@ -1,5 +1,7 @@
 # teal.goshawk 0.1.10.9000
 
+* Updated R version requirement to >= 3.6.
+
 # teal.goshawk 0.1.10
 
 ### New Features
