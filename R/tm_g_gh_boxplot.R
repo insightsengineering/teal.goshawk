@@ -506,7 +506,6 @@ srv_g_boxplot <- function(input,
     xaxis_var <- input$yaxis_var #nolint
     font_size <- input$font_size
     trt_group <- input$trt_group
-    facet_var <- if_null(input$facet_var, "None")
 
     chunks_push(
       chunks = private_chunks,
@@ -518,7 +517,7 @@ srv_g_boxplot <- function(input,
           param_var = .(param_var),
           param = .(param),
           xaxis_var = .(xaxis_var),
-          visit_var = .(facet_var)
+          facet_var = .(input$facet_var)
         )
       })
     )
