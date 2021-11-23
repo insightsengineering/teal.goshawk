@@ -2,6 +2,7 @@
 
 * Updated R version requirement to >= 3.6.
 * Fixed error in `tm_g_gh_boxplot` when no facet variable is selected.
+* Added an additional UI input component to add an addition arbitrary horizontal line to `tm_g_gh_spaghettiplot`, `tm_g_gh_boxplot`, `tm_g_gh_density_distribution_plot` as well as two additional UI input components to add an additional horizontal and an additional vertical line to `tm_g_gh_correlationplot`.
 
 # teal.goshawk 0.1.10
 

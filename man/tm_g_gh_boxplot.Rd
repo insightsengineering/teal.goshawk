@@ -62,11 +62,13 @@ for variable names representing treatment group e.g. ARM.}
 
 \item{rotate_xlab}{45 degree rotation of x-axis values.}
 
-\item{hline_arb}{numeric value identifying intercept for arbitrary horizontal line.}
+\item{hline_arb}{numeric vector of at most 2 values identifying intercepts for arbitrary horizontal lines.}
 
-\item{hline_arb_color}{a character naming the color for the arbitrary horizontal line}
+\item{hline_arb_color}{a character vector of at most length of \code{hline_arb}.
+naming the color for the arbitrary horizontal lines.}
 
-\item{hline_arb_label}{a character naming the label for the arbitrary horizontal line}
+\item{hline_arb_label}{a character vector of at most length of \code{hline_arb}.
+naming the label for the arbitrary horizontal lines.}
 
 \item{hline_vars}{a character vector to name the columns that will define additional horizontal lines.}
 
@@ -219,9 +221,9 @@ app <- teal::init(
         trt_group = choices_selected(c("ARM", "ACTARM"), "ARM"),
         loq_legend = TRUE,
         rotate_xlab = FALSE,
-        hline_arb = 60,
-        hline_arb_color = "grey",
-        hline_arb_label = "default_hori_label",
+        hline_arb = c(60, 55),
+        hline_arb_color = c("grey", "red"),
+        hline_arb_label = c("default_hori_A", "default_hori_B"),
         hline_vars = c("ANRHI", "ANRLO", "ULOQN", "LLOQN"),
         hline_vars_colors = c("pink", "brown", "purple", "black"),
         hline_vars_labels = NULL

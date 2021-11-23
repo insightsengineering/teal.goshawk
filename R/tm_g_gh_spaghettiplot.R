@@ -34,9 +34,11 @@
 #' @param plot_width optional, controls plot width.
 #' @param font_size control font size for title, x-axis, y-axis and legend font.
 #' @param group_stats control group mean or median overlay.
-#' @param hline_arb numeric value identifying intercept for arbitrary horizontal line.
-#' @param hline_arb_color a character naming the color for the arbitrary horizontal line
-#' @param hline_arb_label a character naming the label for the arbitrary horizontal line
+#' @param hline_arb numeric vector of at most 2 values identifying intercepts for arbitrary horizontal lines.
+#' @param hline_arb_color a character vector of at most length of \code{hline_arb}.
+#' naming the color for the arbitrary horizontal lines.
+#' @param hline_arb_label a character vector of at most length of \code{hline_arb}.
+#' naming the label for the arbitrary horizontal lines.
 #' @param hline_vars a character vector to name the columns that will define additional horizontal lines.
 #' @param hline_vars_colors a character vector naming the colors for the additional horizontal lines.
 #' @param hline_vars_labels a character vector naming the labels for the additional horizontal lines that will appear
@@ -169,9 +171,9 @@
 #'       man_color = c('Combination' = "#000000",
 #'                    'Placebo' = "#fce300",
 #'                    '150mg QD' = "#5a2f5f"),
-#'       hline_arb = 50,
-#'       hline_arb_color = "grey",
-#'       hline_arb_label = "default hori label",
+#'       hline_arb = c(60, 50),
+#'       hline_arb_color = c("grey", "red"),
+#'       hline_arb_label = c("default A", "default B"),
 #'       hline_vars = c("ANRHI", "ANRLO", "ULOQN", "LLOQN"),
 #'       hline_vars_colors = c("pink", "brown", "purple", "black"),
 #'       hline_vars_labels = NULL
@@ -220,9 +222,13 @@ tm_g_gh_spaghettiplot <- function(label,
   stopifnot(is.choices_selected(yaxis_var))
   stopifnot(is.choices_selected(trt_group))
   stopifnot(
-    is.null(hline_arb) || is_numeric_single(hline_arb),
-    is.null(hline_arb) || is.null(hline_arb_color) || is_character_single(hline_arb_color),
-    is.null(hline_arb) || is.null(hline_arb_label) || is_character_single(hline_arb_label)
+    is.null(hline_arb) || is_numeric_vector(hline_arb, min_length = 1, max_length = 2),
+    is.null(hline_arb) ||
+      is.null(hline_arb_color) ||
+      (is_character_vector(hline_arb_color) && length(hline_arb_color) <= length(hline_arb)),
+    is.null(hline_arb) ||
+      is.null(hline_arb_label) ||
+      (is_character_vector(hline_arb_label) && length(hline_arb_label) <= length(hline_arb))
   )
   check_slider_input(plot_height, allow_null = FALSE)
   check_slider_input(plot_width)
@@ -321,7 +327,7 @@ g_ui_spaghettiplot <- function(id, ...) {
           ),
           div(
             style = "display: inline-block;vertical-align:middle; width: 100%;",
-            numericInput(ns("hline"), "", a$hline_arb)
+            numericInput(ns("hline"), "", a$hline_arb[1])
           )
         ),
         div(
@@ -332,7 +338,32 @@ g_ui_spaghettiplot <- function(id, ...) {
           ),
           div(
             style = "display: inline-block;vertical-align:middle; width: 100%;",
-            textInput(ns("hline_label"), "", a$hline_arb_label)
+            textInput(ns("hline_arb_label"), "", a$hline_arb_label[1])
+          )
+        )
+      ),
+      div(
+        style = "display: flex",
+        div(
+          style = "padding: 0px;",
+          div(
+            style = "display: inline-block;vertical-align:moddle; width: 100%;",
+            tags$b("Line Value:")
+          ),
+          div(
+            style = "display: inline-block;vertical-align:middle; width: 100%;",
+            numericInput(ns("hline_1"), "", a$hline_arb[2])
+          )
+        ),
+        div(
+          style = "padding: 0px;",
+          div(
+            style = "display: inline-block;vertical-align:moddle; width: 100%;",
+            tags$b("Line Label:")
+          ),
+          div(
+            style = "display: inline-block;vertical-align:middle; width: 100%;",
+            textInput(ns("hline_arb_label_1"), "", a$hline_arb_label[2])
           )
         )
       ),
@@ -410,8 +441,18 @@ srv_g_spaghettiplot <- function(input,
     validate(need(is.na(facet_ncol) || (as.numeric(facet_ncol) > 0 && as.numeric(facet_ncol) %% 1 == 0),
       "Number of plots per row must be a positive integer"))
     rotate_xlab <- input$rotate_xlab
-    hline <- input$hline
-    hline_label <- input$hline_label
+    hline <- c(
+      `if`(is.na(input$hline), NULL, input$hline),
+      `if`(is.na(input$hline_1), NULL, input$hline_1)
+    )
+    hline_arb_label <- c(
+      `if`(is.na(input$hline), NULL, input$hline_arb_label),
+      `if`(is.na(input$hline_1), NULL, input$hline_arb_label_1)
+    )
+    hline_arb_color <- c(
+      `if`(is.na(input$hline), NULL, hline_arb_color[1]),
+      `if`(is.na(input$hline_1), NULL, `if`(length(hline_arb_color) > 1, hline_arb_color[2], hline_arb_color[1]))
+    )
     group_stats <- input$group_stats
     font_size <- input$font_size
     alpha <- input$alpha
@@ -445,8 +486,8 @@ srv_g_spaghettiplot <- function(input,
           color_comb = .(color_comb),
           ylim = .(ylim),
           facet_ncol = .(facet_ncol),
-          hline_arb = .(`if`(is.na(hline), NULL, as.numeric(hline))),
-          hline_arb_label = .(`if`(is.na(hline), NULL, hline_label)),
+          hline_arb = .(hline),
+          hline_arb_label = .(hline_arb_label),
           hline_arb_color = .(hline_arb_color),
           xtick = .(xtick),
           xlabel = .(xlabel),

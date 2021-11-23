@@ -18,9 +18,11 @@
 #' @param facet_ncol numeric value indicating number of facets per row.
 #' @param loq_legend loq legend toggle.
 #' @param rotate_xlab 45 degree rotation of x-axis values.
-#' @param hline_arb numeric value identifying intercept for arbitrary horizontal line.
-#' @param hline_arb_color a character naming the color for the arbitrary horizontal line
-#' @param hline_arb_label a character naming the label for the arbitrary horizontal line
+#' @param hline_arb numeric vector of at most 2 values identifying intercepts for arbitrary horizontal lines.
+#' @param hline_arb_color a character vector of at most length of \code{hline_arb}.
+#' naming the color for the arbitrary horizontal lines.
+#' @param hline_arb_label a character vector of at most length of \code{hline_arb}.
+#' naming the label for the arbitrary horizontal lines.
 #' @param hline_vars a character vector to name the columns that will define additional horizontal lines.
 #' @param hline_vars_colors a character vector naming the colors for the additional horizontal lines.
 #' @param hline_vars_labels a character vector naming the labels for the additional horizontal lines that will appear
@@ -167,9 +169,9 @@
 #'         trt_group = choices_selected(c("ARM", "ACTARM"), "ARM"),
 #'         loq_legend = TRUE,
 #'         rotate_xlab = FALSE,
-#'         hline_arb = 60,
-#'         hline_arb_color = "grey",
-#'         hline_arb_label = "default_hori_label",
+#'         hline_arb = c(60, 55),
+#'         hline_arb_color = c("grey", "red"),
+#'         hline_arb_label = c("default_hori_A", "default_hori_B"),
 #'         hline_vars = c("ANRHI", "ANRLO", "ULOQN", "LLOQN"),
 #'         hline_vars_colors = c("pink", "brown", "purple", "black"),
 #'         hline_vars_labels = NULL
@@ -352,7 +354,7 @@ ui_g_boxplot <- function(id, ...) {
           ),
           div(
             style = "display: inline-block;vertical-align:middle; width: 100%;",
-            textInput(ns("hline_label"), "", a$hline_arb_label[1])
+            textInput(ns("hline_arb_label"), "", a$hline_arb_label[1])
           )
         )
       ),
@@ -377,7 +379,7 @@ ui_g_boxplot <- function(id, ...) {
           ),
           div(
             style = "display: inline-block;vertical-align:middle; width: 100%;",
-            textInput(ns("hline_label_1"), "", a$hline_arb_label[2])
+            textInput(ns("hline_arb_label_1"), "", a$hline_arb_label[2])
           )
         )
       ),
@@ -463,9 +465,13 @@ srv_g_boxplot <- function(input,
       `if`(is.na(input$hline), NULL, input$hline),
       `if`(is.na(input$hline_1), NULL, input$hline_1)
     )
-    hline_label <- c(
-      `if`(is.na(input$hline), NULL, input$hline_label),
-      `if`(is.na(input$hline_1), NULL, input$hline_label_1)
+    hline_arb_label <- c(
+      `if`(is.na(input$hline), NULL, input$hline_arb_label),
+      `if`(is.na(input$hline_1), NULL, input$hline_arb_label_1)
+    )
+    hline_arb_color <- c(
+      `if`(is.na(input$hline), NULL, hline_arb_color[1]),
+      `if`(is.na(input$hline_1), NULL, `if`(length(hline_arb_color) > 1, hline_arb_color[2], hline_arb_color[1]))
     )
     hline_vars <- input$hline_vars
     trt_group <- input$trt_group
@@ -508,7 +514,7 @@ srv_g_boxplot <- function(input,
           xaxis_var = .(xaxis),
           yaxis_var = .(yaxis),
           hline_arb = .(hline),
-          hline_arb_label = .(hline_label),
+          hline_arb_label = .(hline_arb_label),
           hline_arb_color = .(hline_arb_color),
           hline_vars = .(hline_vars),
           hline_vars_colors = .(hline_vars_colors[seq_along(hline_vars)]),

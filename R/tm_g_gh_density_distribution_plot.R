@@ -12,9 +12,11 @@
 #' @param plot_width optional, controls plot width.
 #' @param font_size font size control for title, x-axis label, y-axis label and legend.
 #' @param line_size plot line thickness.
-#' @param hline_arb numeric value identifying intercept for arbitrary horizontal line.
-#' @param hline_arb_color a character naming the color for the arbitrary horizontal line.
-#' @param hline_arb_label a character naming the label for the arbitrary horizontal line.
+#' @param hline_arb numeric vector of at most 2 values identifying intercepts for arbitrary horizontal lines.
+#' @param hline_arb_color a character vector of at most length of \code{hline_arb}.
+#' naming the color for the arbitrary horizontal lines.
+#' @param hline_arb_label a character vector of at most length of \code{hline_arb}.
+#' naming the label for the arbitrary horizontal lines.
 #' @param facet_ncol numeric value indicating number of facets per row.
 #' @param comb_line display combined treatment line toggle.
 #' @param rotate_xlab 45 degree rotation of x-axis values.
@@ -125,9 +127,9 @@
 #'       plot_height = c(500, 200, 2000),
 #'       font_size = c(12, 8, 20),
 #'       line_size = c(1, .25, 3),
-#'       hline_arb = .05,
-#'       hline_arb_color = "black",
-#'       hline_arb_label = "Horizontal Line Label"
+#'       hline_arb = c(.02, .05),
+#'       hline_arb_color = c("red", "black"),
+#'       hline_arb_label = c("Horizontal Line A", "Horizontal Line B")
 #'     )
 #'   )
 #' )
@@ -167,9 +169,13 @@ tm_g_gh_density_distribution_plot <- function(label, # nolint
     # color_manual, color_comb
     is_numeric_vector(font_size) && length(font_size) == 3,
     is_numeric_vector(line_size) && length(line_size) == 3,
-    is.null(hline_arb) || is_numeric_single(hline_arb),
-    is.null(hline_arb) || is.null(hline_arb_color) || is_character_single(hline_arb_color),
-    is.null(hline_arb) || is.null(hline_arb_label) || is_character_single(hline_arb_label),
+    is.null(hline_arb) || is_numeric_vector(hline_arb, min_length = 1, max_length = 2),
+    is.null(hline_arb) ||
+      is.null(hline_arb_color) ||
+      (is_character_vector(hline_arb_color) && length(hline_arb_color) <= length(hline_arb)),
+    is.null(hline_arb) ||
+      is.null(hline_arb_label) ||
+      (is_character_vector(hline_arb_label) && length(hline_arb_label) <= length(hline_arb)),
     is_integer_single(facet_ncol),
     is_logical_single(comb_line),
     is_logical_single(rotate_xlab),
@@ -241,7 +247,7 @@ ui_g_density_distribution_plot <- function(id, ...) {
           ),
           div(
             style = "display: inline-block;vertical-align:middle; width: 100%;",
-            numericInput(ns("hline"), "", a$hline_arb)
+            numericInput(ns("hline"), "", a$hline_arb[1])
           )
         ),
         div(
@@ -252,7 +258,32 @@ ui_g_density_distribution_plot <- function(id, ...) {
           ),
           div(
             style = "display: inline-block;vertical-align:middle; width: 100%;",
-            textInput(ns("hline_label"), "", a$hline_arb_label)
+            textInput(ns("hline_arb_label"), "", a$hline_arb_label[1])
+          )
+        )
+      ),
+      div(
+        style = "display: flex",
+        div(
+          style = "padding: 0px;",
+          div(
+            style = "display: inline-block;vertical-align:moddle; width: 100%;",
+            tags$b("Line Value:")
+          ),
+          div(
+            style = "display: inline-block;vertical-align:middle; width: 100%;",
+            numericInput(ns("hline_1"), "", a$hline_arb[2])
+          )
+        ),
+        div(
+          style = "padding: 0px;",
+          div(
+            style = "display: inline-block;vertical-align:moddle; width: 100%;",
+            tags$b("Line Label:")
+          ),
+          div(
+            style = "display: inline-block;vertical-align:middle; width: 100%;",
+            textInput(ns("hline_arb_label_1"), "", a$hline_arb_label[2])
           )
         )
       ),
@@ -323,8 +354,18 @@ srv_g_density_distribution_plot <- function(input, # nolint
     xmax_scale <- xrange_slider$state()$value[[2]]
     font_size <- input$font_size
     line_size <- input$line_size
-    hline <- `if`(is.na(input$hline), NULL, as.numeric(input$hline))
-    hline_label <- input$hline_label
+    hline <- c(
+      `if`(is.na(input$hline), NULL, input$hline),
+      `if`(is.na(input$hline_1), NULL, input$hline_1)
+    )
+    hline_arb_label <- c(
+      `if`(is.na(input$hline), NULL, input$hline_arb_label),
+      `if`(is.na(input$hline_1), NULL, input$hline_arb_label_1)
+    )
+    hline_arb_color <- c(
+      `if`(is.na(input$hline), NULL, hline_arb_color[1]),
+      `if`(is.na(input$hline_1), NULL, `if`(length(hline_arb_color) > 1, hline_arb_color[2], hline_arb_color[1]))
+    )
     facet_ncol <- input$facet_ncol
     validate(need(is.na(facet_ncol) || (as.numeric(facet_ncol) > 0 && as.numeric(facet_ncol) %% 1 == 0),
       "Number of plots per row must be a positive integer"))
@@ -353,9 +394,8 @@ srv_g_density_distribution_plot <- function(input, # nolint
           line_size = .(line_size),
           facet_ncol = .(facet_ncol),
           comb_line = .(comb_line),
-          rotate_xlab = .(rotate_xlab),
           hline_arb = .(hline),
-          hline_arb_label = .(`if`(is.null(hline), NULL, hline_label)),
+          hline_arb_label = .(hline_arb_label),
           hline_arb_color = .(hline_arb_color),
           rug_plot = .(rug_plot)
         )

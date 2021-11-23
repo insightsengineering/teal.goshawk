@@ -54,11 +54,13 @@ for variable names representing treatment group e.g. ARM.}
 
 \item{line_size}{plot line thickness.}
 
-\item{hline_arb}{numeric value identifying intercept for arbitrary horizontal line.}
+\item{hline_arb}{numeric vector of at most 2 values identifying intercepts for arbitrary horizontal lines.}
 
-\item{hline_arb_color}{a character naming the color for the arbitrary horizontal line.}
+\item{hline_arb_color}{a character vector of at most length of \code{hline_arb}.
+naming the color for the arbitrary horizontal lines.}
 
-\item{hline_arb_label}{a character naming the label for the arbitrary horizontal line.}
+\item{hline_arb_label}{a character vector of at most length of \code{hline_arb}.
+naming the label for the arbitrary horizontal lines.}
 
 \item{facet_ncol}{numeric value indicating number of facets per row.}
 
@@ -175,9 +177,9 @@ app <- teal::init(
       plot_height = c(500, 200, 2000),
       font_size = c(12, 8, 20),
       line_size = c(1, .25, 3),
-      hline_arb = .05,
-      hline_arb_color = "black",
-      hline_arb_label = "Horizontal Line Label"
+      hline_arb = c(.02, .05),
+      hline_arb_color = c("red", "black"),
+      hline_arb_label = c("Horizontal Line A", "Horizontal Line B")
     )
   )
 )

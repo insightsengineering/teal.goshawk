@@ -78,11 +78,13 @@ TRUE.}
 
 \item{rotate_xlab}{45 degree rotation of x-axis values.}
 
-\item{hline_arb}{numeric value identifying intercept for arbitrary horizontal line.}
+\item{hline_arb}{numeric vector of at most 2 values identifying intercepts for arbitrary horizontal lines.}
 
-\item{hline_arb_color}{a character naming the color for the arbitrary horizontal line}
+\item{hline_arb_color}{a character vector of at most length of \code{hline_arb}.
+naming the color for the arbitrary horizontal lines.}
 
-\item{hline_arb_label}{a character naming the label for the arbitrary horizontal line}
+\item{hline_arb_label}{a character vector of at most length of \code{hline_arb}.
+naming the label for the arbitrary horizontal lines.}
 
 \item{hline_vars}{a character vector to name the columns that will define additional horizontal lines.}
 
@@ -90,11 +92,13 @@ TRUE.}
 
 \item{hline_vars_labels}{a character vector naming the labels for the additional horizontal lines that will appear}
 
-\item{vline_arb}{numeric value identifying intercept for arbitrary vertical line.}
+\item{vline_arb}{numeric vector of at most 2 values identifying intercepts for arbitrary horizontal lines.}
 
-\item{vline_arb_color}{color for the arbitrary vertical line that will appear on the plot.}
+\item{vline_arb_color}{a character vector of at most length of \code{vline_arb}.
+naming the color for the arbitrary horizontal lines.}
 
-\item{vline_arb_label}{label for the arbitrary vertical that will appear on the legend.}
+\item{vline_arb_label}{a character vector of at most length of \code{vline_arb}.
+naming the label for the arbitrary horizontal lines.}
 
 \item{vline_vars}{a character vector to name the columns that will define additional vertical lines.}
 
@@ -293,16 +297,18 @@ app <- init(
        font_size = c(12, 8, 20),
        dot_size = c(1, 1, 12),
        reg_text_size = c(3, 3, 10),
-       hline_arb = 50,
+       hline_arb = c(40, 50),
        hline_arb_label = "arb hori label",
+       hline_arb_color = c("red", "blue"),
        hline_vars = c("ANRHI", "ANRLO", "ULOQN", "LLOQN"),
        hline_vars_colors = c("green", "blue", "purple", "cyan"),
        hline_vars_label =  c("ANRHI Label", "ANRLO Label", "ULOQN Label", "LLOQN Label"),
        vline_vars = c("ANRHI", "ANRLO", "ULOQN", "LLOQN"),
        vline_vars_colors = c("yellow", "orange", "brown", "gold"),
        vline_vars_labels =  c("ANRHI Label", "ANRLO Label", "ULOQN Label", "LLOQN Label"),
-       vline_arb = 50,
-       vline_arb_label = "arb vert label"
+       vline_arb = c(50, 70),
+       vline_arb_label = "arb vert A",
+       vline_arb_color = c("green", "orange")
    )
   )
 )
