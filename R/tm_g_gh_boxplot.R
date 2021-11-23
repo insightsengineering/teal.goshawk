@@ -322,8 +322,9 @@ ui_g_boxplot <- function(id, ...) {
           ns("hline_vars"),
           label = "Add Range Line(s):",
           choices = a$hline_vars,
-          selected = a$hline_vars[1],
-          multiple = TRUE)
+          selected = NULL,
+          multiple = TRUE
+        )
       },
       tags$b("Add Arbitrary Horizontal Line/Label:"),
       div(

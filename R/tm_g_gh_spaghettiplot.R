@@ -307,7 +307,7 @@ g_ui_spaghettiplot <- function(id, ...) {
           ns("hline_vars"),
           label = "Add Range Line(s):",
           choices = a$hline_vars,
-          selected = a$hline_vars[1],
+          selected = NULL,
           multiple = TRUE)
       },
       tags$b("Add Arbitrary Horizontal Line/Label:"),

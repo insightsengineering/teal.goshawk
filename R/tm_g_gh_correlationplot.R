@@ -378,7 +378,7 @@ ui_g_correlationplot <- function(id, ...) {
           ns("hline_vars"),
           label = "Add Horizontal Range Line(s):",
           choices = a$hline_vars,
-          selected = a$hline_vars[1],
+          selected = NULL,
           multiple = TRUE)
       },
       tags$b("Add Arbitrary Horizontal Line/Label:"),
@@ -412,8 +412,9 @@ ui_g_correlationplot <- function(id, ...) {
           ns("vline_vars"),
           label = "Add Vertical Range Line(s):",
           choices = a$vline_vars,
-          selected = a$vline_vars[1],
-          multiple = TRUE)
+          selected = NULL,
+          multiple = TRUE
+        )
       },
       tags$b("Add Arbitrary Vertical Line/Label:"),
       div(
