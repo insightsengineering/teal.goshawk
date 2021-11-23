@@ -219,9 +219,13 @@ tm_g_gh_boxplot <- function(label,
     is.null(facet_ncol) || is_integer_single(facet_ncol),
     is_logical_single(loq_legend),
     is_logical_single(rotate_xlab),
-    is.null(hline_arb) || is_numeric_single(hline_arb),
-    is.null(hline_arb) || is.null(hline_arb_color) || is_character_single(hline_arb_color),
-    is.null(hline_arb) || is.null(hline_arb_label) || is_character_single(hline_arb_label),
+    is.null(hline_arb) || is_numeric_vector(hline_arb, min_length = 1, max_length = 2),
+    is.null(hline_arb) ||
+      is.null(hline_arb_color) ||
+      (is_character_vector(hline_arb_color) && length(hline_arb_color) <= length(hline_arb)),
+    is.null(hline_arb) ||
+      is.null(hline_arb_label) ||
+      (is_character_vector(hline_arb_label) && length(hline_arb_label) <= length(hline_arb)),
     is_numeric_vector(font_size) && length(font_size) == 3,
     is_numeric_vector(dot_size) && length(dot_size) == 3,
     is_numeric_vector(alpha) && length(alpha) == 3,
@@ -337,7 +341,7 @@ ui_g_boxplot <- function(id, ...) {
           ),
           div(
             style = "display: inline-block;vertical-align:middle; width: 100%;",
-            numericInput(ns("hline"), "", a$hline_arb)
+            numericInput(ns("hline"), "", a$hline_arb[1])
           )
         ),
         div(
@@ -348,7 +352,32 @@ ui_g_boxplot <- function(id, ...) {
           ),
           div(
             style = "display: inline-block;vertical-align:middle; width: 100%;",
-            textInput(ns("hline_label"), "", a$hline_arb_label)
+            textInput(ns("hline_label"), "", a$hline_arb_label[1])
+          )
+        )
+      ),
+      div(
+        style = "display: flex",
+        div(
+          style = "padding: 0px;",
+          div(
+            style = "display: inline-block;vertical-align:moddle; width: 100%;",
+            tags$b("Line Value:")
+          ),
+          div(
+            style = "display: inline-block;vertical-align:middle; width: 100%;",
+            numericInput(ns("hline_1"), "", a$hline_arb[2])
+          )
+        ),
+        div(
+          style = "padding: 0px;",
+          div(
+            style = "display: inline-block;vertical-align:moddle; width: 100%;",
+            tags$b("Line Label:")
+          ),
+          div(
+            style = "display: inline-block;vertical-align:middle; width: 100%;",
+            textInput(ns("hline_label_1"), "", a$hline_arb_label[2])
           )
         )
       ),
@@ -430,8 +459,14 @@ srv_g_boxplot <- function(input,
     dot_size <- input$dot_size
     loq_legend <- input$loq_legend
     rotate_xlab <- input$rotate_xlab
-    hline <- input$hline
-    hline_label <- input$hline_label
+    hline <- c(
+      `if`(is.na(input$hline), NULL, input$hline),
+      `if`(is.na(input$hline_1), NULL, input$hline_1)
+    )
+    hline_label <- c(
+      `if`(is.na(input$hline), NULL, input$hline_label),
+      `if`(is.na(input$hline_1), NULL, input$hline_label_1)
+    )
     hline_vars <- input$hline_vars
     trt_group <- input$trt_group
     # nolint end
@@ -472,8 +507,8 @@ srv_g_boxplot <- function(input,
           biomarker = .(param),
           xaxis_var = .(xaxis),
           yaxis_var = .(yaxis),
-          hline_arb = .(`if`(is.na(hline), NULL, as.numeric(hline))),
-          hline_arb_label = .(`if`(is.na(hline), NULL, hline_label)),
+          hline_arb = .(hline),
+          hline_arb_label = .(hline_label),
           hline_arb_color = .(hline_arb_color),
           hline_vars = .(hline_vars),
           hline_vars_colors = .(hline_vars_colors[seq_along(hline_vars)]),
