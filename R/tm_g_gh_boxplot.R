@@ -374,7 +374,7 @@ ui_g_boxplot <- function(id, ...) {
         div(
           style = "padding: 0px;",
           div(
-            style = "display: inline-block;vertical-align:moddle; width: 100%;",
+            style = "display: inline-block;vertical-align:middle; width: 100%;",
             tags$b("Line Label:")
           ),
           div(
