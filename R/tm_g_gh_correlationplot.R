@@ -378,7 +378,8 @@ ui_g_correlationplot <- function(id, ...) {
         label = "Select Treatment Variable",
         choices = a$trt_group$choices,
         selected = a$trt_group$selected,
-        multiple = FALSE),
+        multiple = FALSE
+      ),
       templ_ui_params_vars(
         ns,
         xparam_choices = a$xaxis_param$choices, xparam_selected = a$xaxis_param$selected,
@@ -399,51 +400,27 @@ ui_g_correlationplot <- function(id, ...) {
       div(
         style = "display: flex",
         div(
-          style = "padding: 0px;",
-          div(
-            style = "display: inline-block;vertical-align:middle; width: 100%;",
-            tags$b("Line Value:")
-          ),
-          div(
-            style = "display: inline-block;vertical-align:middle; width: 100%;",
-            numericInput(ns("hline"), "", a$hline_arb[1])
-          )
+          style = "padding: 0px; display: flex; flex-direction: column; justify-content: flex-end; flex: 1",
+          tags$b("Value:"),
+          numericInput(ns("hline"), "", a$hline_arb[1])
         ),
         div(
-          style = "padding: 0px;",
-          div(
-            style = "display: inline-block;vertical-align:middle; width: 100%;",
-            tags$b("Line Label:")
-          ),
-          div(
-            style = "display: inline-block;vertical-align:middle; width: 100%;",
-            textInput(ns("hline_arb_label"), "", a$hline_arb_label[1])
-          )
+          style = "padding: 0px; display: flex; flex-direction: column; justify-content: flex-end; flex: 3",
+          tags$b("Label:"),
+          textInput(ns("hline_arb_label"), "", a$hline_arb_label[1])
         )
       ),
       div(
         style = "display: flex",
         div(
-          style = "padding: 0px;",
-          div(
-            style = "display: inline-block;vertical-align:middle; width: 100%;",
-            tags$b("Line Value:")
-          ),
-          div(
-            style = "display: inline-block;vertical-align:middle; width: 100%;",
-            numericInput(ns("hline_1"), "", a$hline_arb[2])
-          )
+          style = "padding: 0px; display: flex; flex-direction: column; justify-content: flex-end; flex: 1",
+          tags$b("Value:"),
+          numericInput(ns("hline_1"), "", a$hline_arb[2])
         ),
         div(
-          style = "padding: 0px;",
-          div(
-            style = "display: inline-block;vertical-align:middle; width: 100%;",
-            tags$b("Line Label:")
-          ),
-          div(
-            style = "display: inline-block;vertical-align:middle; width: 100%;",
-            textInput(ns("hline_arb_label_1"), "", a$hline_arb_label[2])
-          )
+          style = "padding: 0px; display: flex; flex-direction: column; justify-content: flex-end; flex: 3",
+          tags$b("Label:"),
+          textInput(ns("hline_arb_label_1"), "", a$hline_arb_label[2])
         )
       ),
       if (!is.null(a$vline_vars)) {
@@ -459,51 +436,27 @@ ui_g_correlationplot <- function(id, ...) {
       div(
         style = "display: flex",
         div(
-          style = "padding: 0px;",
-          div(
-            style = "display: inline-block;vertical-align:middle; width: 100%;",
-            tags$b("Line Value:")
-          ),
-          div(
-            style = "display: inline-block;vertical-align:middle; width: 100%;",
-            numericInput(ns("vline"), "", a$vline_arb[1])
-          )
+          style = "padding: 0px; display: flex; flex-direction: column; justify-content: flex-end; flex: 1",
+          tags$b("Value:"),
+          numericInput(ns("vline"), "", a$vline_arb[1])
         ),
         div(
-          style = "padding: 0px;",
-          div(
-            style = "display: inline-block;vertical-align:middle; width: 100%;",
-            tags$b("Line Label:")
-          ),
-          div(
-            style = "display: inline-block;vertical-align:middle; width: 100%;",
-            textInput(ns("vline_arb_label"), "", a$vline_arb_label[1])
-          )
+          style = "padding: 0px; display: flex; flex-direction: column; justify-content: flex-end; flex: 3",
+          tags$b("Label:"),
+          textInput(ns("vline_arb_label"), "", a$vline_arb_label[1])
         )
       ),
       div(
         style = "display: flex",
         div(
-          style = "padding: 0px;",
-          div(
-            style = "display: inline-block;vertical-align:middle; width: 100%;",
-            tags$b("Line Value:")
-          ),
-          div(
-            style = "display: inline-block;vertical-align:middle; width: 100%;",
-            numericInput(ns("vline_1"), "", a$vline_arb[2])
-          )
+          style = "padding: 0px; display: flex; flex-direction: column; justify-content: flex-end; flex: 1",
+          tags$b("Value:"),
+          numericInput(ns("vline_1"), "", a$vline_arb[2])
         ),
         div(
-          style = "padding: 0px;",
-          div(
-            style = "display: inline-block;vertical-align:middle; width: 100%;",
-            tags$b("Line Label:")
-          ),
-          div(
-            style = "display: inline-block;vertical-align:middle; width: 100%;",
-            textInput(ns("vline_arb_label_1"), "", a$vline_arb_label[2])
-          )
+          style = "padding: 0px; display: flex; flex-direction: column; justify-content: flex-end; flex: 3",
+          tags$b("Label:"),
+          textInput(ns("vline_arb_label_1"), "", a$vline_arb_label[2])
         )
       ),
       panel_group(

@@ -320,49 +320,29 @@ g_ui_spaghettiplot <- function(id, ...) {
       div(
         style = "display: flex",
         div(
-          style = "padding: 0px;",
-          div(
-            style = "display: inline-block;vertical-align:middle; width: 100%;",
-            tags$b("Line Value:")
-          ),
-          div(
-            style = "display: inline-block;vertical-align:middle; width: 100%;",
-            numericInput(ns("hline"), "", a$hline_arb[1])
-          )
+          style = "padding: 0px; display: flex; flex-direction: column; justify-content: flex-end; flex: 1",
+          tags$b("Value:"),
+          numericInput(ns("hline"), "", a$hline_arb[1])
         ),
         div(
-          style = "padding: 0px;",
-          div(
-            style = "display: inline-block;vertical-align:middle; width: 100%;",
-            tags$b("Line Label:")
-          ),
-          div(
-            style = "display: inline-block;vertical-align:middle; width: 100%;",
-            textInput(ns("hline_arb_label"), "", a$hline_arb_label[1])
-          )
+          style = "padding: 0px; display: flex; flex-direction: column; justify-content: flex-end; flex: 3",
+          tags$b("Label:"),
+          textInput(ns("hline_arb_label"), "", a$hline_arb_label[1])
         )
       ),
       div(
         style = "display: flex",
         div(
-          style = "padding: 0px;",
-          div(
-            style = "display: inline-block;vertical-align:middle; width: 100%;",
-            tags$b("Line Value:")
-          ),
-          div(
-            style = "display: inline-block;vertical-align:middle; width: 100%;",
-            numericInput(ns("hline_1"), "", a$hline_arb[2])
-          )
+          style = "padding: 0px; display: flex; flex-direction: column; justify-content: flex-end; flex: 1",
+          tags$b("Value:"),
+          numericInput(ns("hline_1"), "", a$hline_arb[2])
         ),
         div(
-          style = "padding: 0px;",
+          style = "padding: 0px; display: flex; flex-direction: column; justify-content: flex-end; flex: 3",
           div(
-            style = "display: inline-block;vertical-align:middle; width: 100%;",
-            tags$b("Line Label:")
+            tags$b("Label:")
           ),
           div(
-            style = "display: inline-block;vertical-align:middle; width: 100%;",
             textInput(ns("hline_arb_label_1"), "", a$hline_arb_label[2])
           )
         )
