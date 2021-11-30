@@ -322,7 +322,7 @@ g_ui_spaghettiplot <- function(id, ...) {
         div(
           style = "padding: 0px;",
           div(
-            style = "display: inline-block;vertical-align:moddle; width: 100%;",
+            style = "display: inline-block;vertical-align:middle; width: 100%;",
             tags$b("Line Value:")
           ),
           div(
@@ -333,7 +333,7 @@ g_ui_spaghettiplot <- function(id, ...) {
         div(
           style = "padding: 0px;",
           div(
-            style = "display: inline-block;vertical-align:moddle; width: 100%;",
+            style = "display: inline-block;vertical-align:middle; width: 100%;",
             tags$b("Line Label:")
           ),
           div(
@@ -483,22 +483,31 @@ srv_g_spaghettiplot <- function(input,
           time = .(xaxis_var),
           time_level = .(xaxis_var_level),
           color_manual = .(man_color),
-          color_comb = .(color_comb),
           ylim = .(ylim),
           facet_ncol = .(facet_ncol),
-          hline_arb = .(hline),
-          hline_arb_label = .(hline_arb_label),
-          hline_arb_color = .(hline_arb_color),
           xtick = .(xtick),
           xlabel = .(xlabel),
           rotate_xlab = .(rotate_xlab),
           font_size = .(font_size),
           alpha = .(alpha),
           group_stats = .(group_stats),
-          hline_vars = .(hline_vars),
-          hline_vars_colors = .(hline_vars_colors[seq_along(hline_vars)]),
-          hline_vars_labels = .(hline_vars_labels[seq_along(hline_vars)])
-        )
+          hline_vars = .(hline_vars)
+        ) %>%
+          add_straight_lines(
+            agg_label = .(`if`(
+              group_stats == "NONE",
+              NULL,
+              `if`(group_stats == "median", "Group Median", "Group Mean")
+              )
+            ),
+            color_comb = .(color_comb),
+            hline_arb = .(hline),
+            hline_arb_label = .(hline_arb_label),
+            hline_arb_color = .(hline_arb_color),
+            hline_vars = .(hline_vars),
+            hline_vars_colors = .(hline_vars_colors[seq_along(hline_vars)]),
+            hline_vars_labels = .(hline_vars_labels[seq_along(hline_vars)])
+          )
         print(p)
       })
     )

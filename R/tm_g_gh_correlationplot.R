@@ -401,7 +401,7 @@ ui_g_correlationplot <- function(id, ...) {
         div(
           style = "padding: 0px;",
           div(
-            style = "display: inline-block;vertical-align:moddle; width: 100%;",
+            style = "display: inline-block;vertical-align:middle; width: 100%;",
             tags$b("Line Value:")
           ),
           div(
@@ -412,7 +412,7 @@ ui_g_correlationplot <- function(id, ...) {
         div(
           style = "padding: 0px;",
           div(
-            style = "display: inline-block;vertical-align:moddle; width: 100%;",
+            style = "display: inline-block;vertical-align:middle; width: 100%;",
             tags$b("Line Label:")
           ),
           div(
@@ -461,7 +461,7 @@ ui_g_correlationplot <- function(id, ...) {
         div(
           style = "padding: 0px;",
           div(
-            style = "display: inline-block;vertical-align:moddle; width: 100%;",
+            style = "display: inline-block;vertical-align:middle; width: 100%;",
             tags$b("Line Value:")
           ),
           div(
@@ -486,7 +486,7 @@ ui_g_correlationplot <- function(id, ...) {
         div(
           style = "padding: 0px;",
           div(
-            style = "display: inline-block;vertical-align:moddle; width: 100%;",
+            style = "display: inline-block;vertical-align:middle; width: 100%;",
             tags$b("Line Value:")
           ),
           div(
@@ -497,7 +497,7 @@ ui_g_correlationplot <- function(id, ...) {
         div(
           style = "padding: 0px;",
           div(
-            style = "display: inline-block;vertical-align:moddle; width: 100%;",
+            style = "display: inline-block;vertical-align:middle; width: 100%;",
             tags$b("Line Label:")
           ),
           div(
@@ -955,19 +955,21 @@ srv_g_correlationplot <- function(input,
           reg_text_size = .(reg_text_size),
           loq_legend = .(loq_legend),
           rotate_xlab = .(rotate_xlab),
-          hline_arb = .(hline),
-          hline_arb_label = .(hline_arb_label),
-          hline_arb_color = .(hline_arb_color),
-          hline_vars = .(hline_vars),
-          hline_vars_colors = .(hline_vars_colors[seq_along(hline_vars)]),
-          hline_vars_labels = .(paste(hline_vars_labels[seq_along(hline_vars)], "-", yaxis_param)),
-          vline_arb = .(vline),
-          vline_arb_label = .(vline_arb_label),
-          vline_arb_color = .(vline_arb_color),
-          vline_vars = .(vline_vars),
-          vline_vars_colors = .(vline_vars_colors[seq_along(vline_vars)]),
-          vline_vars_labels = .(paste(vline_vars_labels[seq_along(vline_vars)], "-", xaxis_param)),
-        )
+        ) %>%
+          add_straight_lines(
+            hline_arb = .(hline),
+            hline_arb_label = .(hline_arb_label),
+            hline_arb_color = .(hline_arb_color),
+            hline_vars = .(hline_vars),
+            hline_vars_colors = .(hline_vars_colors[seq_along(hline_vars)]),
+            hline_vars_labels = .(paste(hline_vars_labels[seq_along(hline_vars)], "-", yaxis_param)),
+            vline_arb = .(vline),
+            vline_arb_label = .(vline_arb_label),
+            vline_arb_color = .(vline_arb_color),
+            vline_vars = .(vline_vars),
+            vline_vars_colors = .(vline_vars_colors[seq_along(vline_vars)]),
+            vline_vars_labels = .(paste(vline_vars_labels[seq_along(vline_vars)], "-", xaxis_param))
+          )
         print(p)
       })
     )
