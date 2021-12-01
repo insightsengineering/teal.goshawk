@@ -489,6 +489,12 @@ srv_g_boxplot <- function(input,
           biomarker = .(param),
           xaxis_var = .(xaxis),
           yaxis_var = .(yaxis),
+          hline_arb = .(hline),
+          hline_arb_label = .(hline_arb_label),
+          hline_arb_color = .(hline_arb_color),
+          hline_vars = .(hline_vars),
+          hline_vars_colors = .(hline_vars_colors[seq_along(hline_vars)]),
+          hline_vars_labels = .(hline_vars_labels[seq_along(hline_vars)]),
           facet_ncol = .(facet_ncol),
           loq_legend = .(loq_legend),
           rotate_xlab = .(rotate_xlab),
@@ -502,15 +508,7 @@ srv_g_boxplot <- function(input,
           dot_size = .(dot_size),
           font_size = .(font_size),
           unit = .("AVALU")
-        ) %>%
-          add_straight_lines(
-            hline_arb = .(hline),
-            hline_arb_label = .(hline_arb_label),
-            hline_arb_color = .(hline_arb_color),
-            hline_vars = .(hline_vars),
-            hline_vars_colors = .(hline_vars_colors[seq_along(hline_vars)]),
-            hline_vars_labels = .(hline_vars_labels[seq_along(hline_vars)])
-          )
+        )
       })
     )
 

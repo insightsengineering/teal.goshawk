@@ -370,13 +370,11 @@ srv_g_density_distribution_plot <- function(input, # nolint
           line_size = .(line_size),
           facet_ncol = .(facet_ncol),
           comb_line = .(comb_line),
+          hline_arb = .(hline),
+          hline_arb_label = .(hline_arb_label),
+          hline_arb_color = .(hline_arb_color),
           rug_plot = .(rug_plot)
-        ) %>%
-          add_straight_lines(
-            hline_arb = .(hline),
-            hline_arb_label = .(hline_arb_label),
-            hline_arb_color = .(hline_arb_color)
-          )
+        )
       })
     )
 
