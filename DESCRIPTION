@@ -39,13 +39,15 @@ Imports:
     utils.nest (>= 0.2.11)
 Suggests: 
     knitr,
+    logger,
     rmarkdown,
     scda (>= 0.1.1),
     scda.2021 (>= 0.1.1),
     stringr,
     tern (>= 0.7.5),
     test.nest (>= 0.2.11),
-    testthat (>= 2.0)
+    testthat (>= 2.0),
+    withr
 Encoding: UTF-8
 LazyData: true
 RoxygenNote: 7.1.2
