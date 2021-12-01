@@ -221,13 +221,13 @@ tm_g_gh_boxplot <- function(label,
     is.null(facet_ncol) || is_integer_single(facet_ncol),
     is_logical_single(loq_legend),
     is_logical_single(rotate_xlab),
-    is.null(hline_arb) || is_numeric_vector(hline_arb, min_length = 1, max_length = 2),
+    is.null(hline_arb) || is_numeric_vector(hline_arb, min_length = 1),
     is.null(hline_arb) ||
       is.null(hline_arb_color) ||
-      (is_character_vector(hline_arb_color) && length(hline_arb_color) <= length(hline_arb)),
+      (is_character_vector(hline_arb_color) && length(hline_arb_color) %in% c(1, length(hline_arb))),
     is.null(hline_arb) ||
       is.null(hline_arb_label) ||
-      (is_character_vector(hline_arb_label) && length(hline_arb_label) <= length(hline_arb)),
+      (is_character_vector(hline_arb_label) && length(hline_arb_label) %in% c(1, length(hline_arb))),
     is_numeric_vector(font_size) && length(font_size) == 3,
     is_numeric_vector(dot_size) && length(dot_size) == 3,
     is_numeric_vector(alpha) && length(alpha) == 3,
@@ -266,7 +266,6 @@ tm_g_gh_boxplot <- function(label,
                        shape_manual = shape_manual,
                        plot_height = plot_height,
                        plot_width = plot_width,
-                       hline_arb_color = hline_arb_color,
                        hline_vars_colors = hline_vars_colors,
                        hline_vars_labels = hline_vars_labels
     ),
@@ -332,33 +331,10 @@ ui_g_boxplot <- function(id, ...) {
           multiple = TRUE
         )
       },
-      tags$b("Add Arbitrary Horizontal Line/Label:"),
-      div(
-        style = "display: flex",
-        div(
-          style = "padding: 0px; display: flex; flex-direction: column; justify-content: flex-end; flex: 1",
-          tags$b("Value:"),
-          numericInput(ns("hline"), "", a$hline_arb[1])
-        ),
-        div(
-          style = "padding: 0px; display: flex; flex-direction: column; justify-content: flex-end; flex: 3",
-          tags$b("Label:"),
-          textInput(ns("hline_arb_label"), "", a$hline_arb_label[1])
-        )
-      ),
-      div(
-        style = "display: flex",
-        div(
-          style = "padding: 0px; display: flex; flex-direction: column; justify-content: flex-end; flex: 1",
-          tags$b("Value:"),
-          numericInput(ns("hline_1"), "", a$hline_arb[2])
-        ),
-        div(
-          style = "padding: 0px; display: flex; flex-direction: column; justify-content: flex-end; flex: 3",
-          tags$b("Label:"),
-          textInput(ns("hline_arb_label_1"), "", a$hline_arb_label[2])
-        )
-      ),
+      tags$b("Arbitrary Horizontal Lines:"),
+      textInput(ns("hline_arb"), label = "Value:", value = paste(a$hline_arb, collapse = ", ")),
+      textInput(ns("hline_arb_label"), label = "Label:", value = paste(a$hline_arb_label, collapse = ", ")),
+      textInput(ns("hline_arb_color"), label = "Color:", value = paste(a$hline_arb_color, collapse = ", ")),
       panel_group(
         panel_item(
           title = "Plot Aesthetic Settings",
@@ -400,8 +376,7 @@ srv_g_boxplot <- function(input,
                           plot_height,
                           plot_width,
                           hline_vars_colors,
-                          hline_vars_labels,
-                          hline_arb_color) {
+                          hline_vars_labels) {
   init_chunks()
 
   # reused in all modules
@@ -437,18 +412,15 @@ srv_g_boxplot <- function(input,
     dot_size <- input$dot_size
     loq_legend <- input$loq_legend
     rotate_xlab <- input$rotate_xlab
-    hline <- c(
-      `if`(is.na(input$hline), NULL, input$hline),
-      `if`(is.na(input$hline_1), NULL, input$hline_1)
+    res <- validate_arb_lines(
+      line_arb = input$hline_arb,
+      line_arb_label = input$hline_arb_label,
+      line_arb_color = input$hline_arb_color
     )
-    hline_arb_label <- c(
-      `if`(is.na(input$hline), NULL, input$hline_arb_label),
-      `if`(is.na(input$hline_1), NULL, input$hline_arb_label_1)
-    )
-    hline_arb_color <- c(
-      `if`(is.na(input$hline), NULL, hline_arb_color[1]),
-      `if`(is.na(input$hline_1), NULL, `if`(length(hline_arb_color) > 1, hline_arb_color[2], hline_arb_color[1]))
-    )
+    hline_arb <- res$line_arb
+    hline_arb_label <- res$line_arb_label
+    hline_arb_color <- res$line_arb_color
+
     hline_vars <- input$hline_vars
     trt_group <- input$trt_group
     # nolint end
@@ -489,7 +461,7 @@ srv_g_boxplot <- function(input,
           biomarker = .(param),
           xaxis_var = .(xaxis),
           yaxis_var = .(yaxis),
-          hline_arb = .(hline),
+          hline_arb = .(hline_arb),
           hline_arb_label = .(hline_arb_label),
           hline_arb_color = .(hline_arb_color),
           hline_vars = .(hline_vars),

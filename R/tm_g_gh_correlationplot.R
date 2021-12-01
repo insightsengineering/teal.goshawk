@@ -286,22 +286,22 @@ tm_g_gh_correlationplot <- function(label,
   check_slider_input(plot_width)
 
   stopifnot(
-    is.null(hline_arb) || is_numeric_vector(hline_arb, min_length = 1, max_length = 2),
+    is.null(hline_arb) || is_numeric_vector(hline_arb, min_length = 1),
     is.null(hline_arb) ||
       is.null(hline_arb_color) ||
-      (is_character_vector(hline_arb_color) && length(hline_arb_color) <= length(hline_arb)),
+      (is_character_vector(hline_arb_color) && length(hline_arb_color) %in% c(1, length(hline_arb))),
     is.null(hline_arb) ||
       is.null(hline_arb_label) ||
-      (is_character_vector(hline_arb_label) && length(hline_arb_label) <= length(hline_arb))
+      (is_character_vector(hline_arb_label) && length(hline_arb_label) %in% c(1, length(hline_arb)))
   )
   stopifnot(
-    is.null(vline_arb) || is_numeric_vector(vline_arb, min_length = 1, max_length = 2),
+    is.null(vline_arb) || is_numeric_vector(vline_arb, min_length = 1),
     is.null(vline_arb) ||
       is.null(vline_arb_color) ||
-      (is_character_vector(vline_arb_color) && length(vline_arb_color) <= length(vline_arb)),
+      (is_character_vector(vline_arb_color) && length(vline_arb_color) %in% c(1, length(vline_arb))),
     is.null(vline_arb) ||
       is.null(vline_arb_label) ||
-      (is_character_vector(vline_arb_label) && length(vline_arb_label) <= length(vline_arb))
+      (is_character_vector(vline_arb_label) && length(vline_arb_label) %in% c(1, length(vline_arb)))
   )
 
   if (!is.null(hline_vars)) {
@@ -352,10 +352,8 @@ tm_g_gh_correlationplot <- function(label,
                        shape_manual = shape_manual,
                        plot_height = plot_height,
                        plot_width = plot_width,
-                       hline_arb_color = hline_arb_color,
                        hline_vars_colors = hline_vars_colors,
                        hline_vars_labels = hline_vars_labels,
-                       vline_arb_color = vline_arb_color,
                        vline_vars_colors = vline_vars_colors,
                        vline_vars_labels = vline_vars_labels
     ),
@@ -396,33 +394,10 @@ ui_g_correlationplot <- function(id, ...) {
           selected = NULL,
           multiple = TRUE)
       },
-      tags$b("Add Arbitrary Horizontal Line/Label:"),
-      div(
-        style = "display: flex",
-        div(
-          style = "padding: 0px; display: flex; flex-direction: column; justify-content: flex-end; flex: 1",
-          tags$b("Value:"),
-          numericInput(ns("hline"), "", a$hline_arb[1])
-        ),
-        div(
-          style = "padding: 0px; display: flex; flex-direction: column; justify-content: flex-end; flex: 3",
-          tags$b("Label:"),
-          textInput(ns("hline_arb_label"), "", a$hline_arb_label[1])
-        )
-      ),
-      div(
-        style = "display: flex",
-        div(
-          style = "padding: 0px; display: flex; flex-direction: column; justify-content: flex-end; flex: 1",
-          tags$b("Value:"),
-          numericInput(ns("hline_1"), "", a$hline_arb[2])
-        ),
-        div(
-          style = "padding: 0px; display: flex; flex-direction: column; justify-content: flex-end; flex: 3",
-          tags$b("Label:"),
-          textInput(ns("hline_arb_label_1"), "", a$hline_arb_label[2])
-        )
-      ),
+      tags$b("Arbitrary Horizontal Lines:"),
+      textInput(ns("hline_arb"), label = "Value:", value = paste(a$hline_arb, collapse = ", ")),
+      textInput(ns("hline_arb_label"), label = "Label:", value = paste(a$hline_arb_label, collapse = ", ")),
+      textInput(ns("hline_arb_color"), label = "Color:", value = paste(a$hline_arb_color, collapse = ", ")),
       if (!is.null(a$vline_vars)) {
         optionalSelectInput(
           ns("vline_vars"),
@@ -432,33 +407,10 @@ ui_g_correlationplot <- function(id, ...) {
           multiple = TRUE
         )
       },
-      tags$b("Add Arbitrary Vertical Line/Label:"),
-      div(
-        style = "display: flex",
-        div(
-          style = "padding: 0px; display: flex; flex-direction: column; justify-content: flex-end; flex: 1",
-          tags$b("Value:"),
-          numericInput(ns("vline"), "", a$vline_arb[1])
-        ),
-        div(
-          style = "padding: 0px; display: flex; flex-direction: column; justify-content: flex-end; flex: 3",
-          tags$b("Label:"),
-          textInput(ns("vline_arb_label"), "", a$vline_arb_label[1])
-        )
-      ),
-      div(
-        style = "display: flex",
-        div(
-          style = "padding: 0px; display: flex; flex-direction: column; justify-content: flex-end; flex: 1",
-          tags$b("Value:"),
-          numericInput(ns("vline_1"), "", a$vline_arb[2])
-        ),
-        div(
-          style = "padding: 0px; display: flex; flex-direction: column; justify-content: flex-end; flex: 3",
-          tags$b("Label:"),
-          textInput(ns("vline_arb_label_1"), "", a$vline_arb_label[2])
-        )
-      ),
+      tags$b("Arbitrary Vertical Lines:"),
+      textInput(ns("vline_arb"), label = "Value:", value = paste(a$vline_arb, collapse = ", ")),
+      textInput(ns("vline_arb_label"), label = "Label:", value = paste(a$vline_arb_label, collapse = ", ")),
+      textInput(ns("vline_arb_color"), label = "Color:", value = paste(a$vline_arb_color, collapse = ", ")),
       panel_group(
         panel_item(
           title = "Plot Aesthetic Settings",
@@ -504,10 +456,8 @@ srv_g_correlationplot <- function(input,
                                   shape_manual,
                                   plot_height,
                                   plot_width,
-                                  hline_arb_color,
                                   hline_vars_colors,
                                   hline_vars_labels,
-                                  vline_arb_color,
                                   vline_vars_colors,
                                   vline_vars_labels) {
   init_chunks()
@@ -825,35 +775,27 @@ srv_g_correlationplot <- function(input,
     font_size <- input$font_size
     dot_size <- input$dot_size
     reg_text_size <- input$reg_text_size
-    hline <- c(
-      `if`(is.na(input$hline), NULL, input$hline),
-      `if`(is.na(input$hline_1), NULL, input$hline_1)
+    res <- validate_arb_lines(
+      line_arb = input$hline_arb,
+      line_arb_label = input$hline_arb_label,
+      line_arb_color = input$hline_arb_color
     )
-    hline_arb_label <- c(
-      `if`(is.na(input$hline), NULL, input$hline_arb_label),
-      `if`(is.na(input$hline_1), NULL, input$hline_arb_label_1)
-    )
-    hline_arb_color <- c(
-      `if`(is.na(input$hline), NULL, hline_arb_color[1]),
-      `if`(is.na(input$hline_1), NULL, `if`(length(hline_arb_color) > 1, hline_arb_color[2], hline_arb_color[1]))
-    )
+    hline_arb <- res$line_arb
+    hline_arb_label <- res$line_arb_label
+    hline_arb_color <- res$line_arb_color
     hline_vars <- if (is_empty(input$hline_vars)) {
       NULL
     } else {
       paste0(input$hline_vars, ".", yaxis_param)
     }
-    vline <- c(
-      `if`(is.na(input$vline), NULL, input$vline),
-      `if`(is.na(input$vline_1), NULL, input$vline_1)
+    res_v <- validate_arb_lines(
+      line_arb = input$vline_arb,
+      line_arb_label = input$vline_arb_label,
+      line_arb_color = input$vline_arb_color
     )
-    vline_arb_label <- c(
-      `if`(is.na(input$vline), NULL, input$vline_arb_label),
-      `if`(is.na(input$vline_1), NULL, input$vline_arb_label_1)
-    )
-    vline_arb_color <- c(
-      `if`(is.na(input$vline), NULL, vline_arb_color[1]),
-      `if`(is.na(input$vline_1), NULL, `if`(length(vline_arb_color) > 1, vline_arb_color[2], vline_arb_color[1]))
-    )
+    vline_arb <- res_v$line_arb
+    vline_arb_label <- res_v$line_arb_label
+    vline_arb_color <- res_v$line_arb_color
     vline_vars <- if (is_empty(input$vline_vars)) {
       NULL
     } else {
@@ -908,13 +850,13 @@ srv_g_correlationplot <- function(input,
           reg_text_size = .(reg_text_size),
           loq_legend = .(loq_legend),
           rotate_xlab = .(rotate_xlab),
-          hline_arb = .(hline),
+          hline_arb = .(hline_arb),
           hline_arb_label = .(hline_arb_label),
           hline_arb_color = .(hline_arb_color),
           hline_vars = .(hline_vars),
           hline_vars_colors = .(hline_vars_colors[seq_along(hline_vars)]),
           hline_vars_labels = .(paste(hline_vars_labels[seq_along(hline_vars)], "-", yaxis_param)),
-          vline_arb = .(vline),
+          vline_arb = .(vline_arb),
           vline_arb_label = .(vline_arb_label),
           vline_arb_color = .(vline_arb_color),
           vline_vars = .(vline_vars),

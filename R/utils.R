@@ -372,3 +372,39 @@ maptrt <- function(df_armvar, code = c("M", "O")) {
     print(unname(dftrt["trt_ordering"]), row.names = FALSE)
   }
 }
+
+validate_arb_lines <- function(line_arb, line_arb_label, line_arb_color) {
+  line_arb <- strsplit(line_arb, "\\s{0,},\\s{0,}")[[1]] %>%
+    as.numeric()
+  if (length(line_arb) == 1 && is.na(line_arb)) {
+    line_arb <- NULL
+    line_arb_label <- NULL
+    line_arb_color <- NULL
+  } else {
+    validate(need(all(!is.na(line_arb)), "Invalid arbitrary line values"))
+
+    line_arb_label <- strsplit(line_arb_label, "\\s{0,},\\s{0,}")[[1]] %>%
+      trimws()
+    line_arb_color <- strsplit(line_arb_color, "\\s{0,},\\s{0,}")[[1]] %>%
+      trimws()
+    if (length(line_arb_label) == 0) {
+      line_arb_label <- ""
+    } else {
+      validate(
+        need(
+          length(line_arb_label) %in% c(1, length(line_arb)),
+          "Labels should be 1 or equalling the number of values")
+      )
+    }
+    if (length(line_arb_color) == 0 || line_arb_color == "") {
+      line_arb_color <- NULL
+    } else {
+      validate(
+        need(
+          length(line_arb_color) %in% c(1, length(line_arb)),
+          "Colors should be 1 or equalling the number of values")
+      )
+    }
+  }
+  list(line_arb = line_arb, line_arb_label = line_arb_label, line_arb_color = line_arb_color)
+}

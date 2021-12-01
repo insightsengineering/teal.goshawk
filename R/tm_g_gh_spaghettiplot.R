@@ -222,13 +222,13 @@ tm_g_gh_spaghettiplot <- function(label,
   stopifnot(is.choices_selected(yaxis_var))
   stopifnot(is.choices_selected(trt_group))
   stopifnot(
-    is.null(hline_arb) || is_numeric_vector(hline_arb, min_length = 1, max_length = 2),
+    is.null(hline_arb) || is_numeric_vector(hline_arb, min_length = 1),
     is.null(hline_arb) ||
       is.null(hline_arb_color) ||
-      (is_character_vector(hline_arb_color) && length(hline_arb_color) <= length(hline_arb)),
+      (is_character_vector(hline_arb_color) && length(hline_arb_color) %in% c(1, length(hline_arb))),
     is.null(hline_arb) ||
       is.null(hline_arb_label) ||
-      (is_character_vector(hline_arb_label) && length(hline_arb_label) <= length(hline_arb))
+      (is_character_vector(hline_arb_label) && length(hline_arb_label) %in% c(1, length(hline_arb)))
   )
   check_slider_input(plot_height, allow_null = FALSE)
   check_slider_input(plot_width)
@@ -267,7 +267,6 @@ tm_g_gh_spaghettiplot <- function(label,
       param_var_label = param_var_label,
       xtick = xtick,
       xlabel = xlabel,
-      hline_arb_color = hline_arb_color,
       plot_height = plot_height,
       plot_width = plot_width,
       hline_vars_colors = hline_vars_colors,
@@ -316,37 +315,10 @@ g_ui_spaghettiplot <- function(id, ...) {
           selected = NULL,
           multiple = TRUE)
       },
-      tags$b("Add Arbitrary Horizontal Line/Label:"),
-      div(
-        style = "display: flex",
-        div(
-          style = "padding: 0px; display: flex; flex-direction: column; justify-content: flex-end; flex: 1",
-          tags$b("Value:"),
-          numericInput(ns("hline"), "", a$hline_arb[1])
-        ),
-        div(
-          style = "padding: 0px; display: flex; flex-direction: column; justify-content: flex-end; flex: 3",
-          tags$b("Label:"),
-          textInput(ns("hline_arb_label"), "", a$hline_arb_label[1])
-        )
-      ),
-      div(
-        style = "display: flex",
-        div(
-          style = "padding: 0px; display: flex; flex-direction: column; justify-content: flex-end; flex: 1",
-          tags$b("Value:"),
-          numericInput(ns("hline_1"), "", a$hline_arb[2])
-        ),
-        div(
-          style = "padding: 0px; display: flex; flex-direction: column; justify-content: flex-end; flex: 3",
-          div(
-            tags$b("Label:")
-          ),
-          div(
-            textInput(ns("hline_arb_label_1"), "", a$hline_arb_label[2])
-          )
-        )
-      ),
+      tags$b("Arbitrary Horizontal Lines:"),
+      textInput(ns("hline_arb"), label = "Value:", value = paste(a$hline_arb, collapse = ", ")),
+      textInput(ns("hline_arb_label"), label = "Label:", value = paste(a$hline_arb_label, collapse = ", ")),
+      textInput(ns("hline_arb_color"), label = "Color:", value = paste(a$hline_arb_color, collapse = ", ")),
       templ_ui_constraint(ns), # required by constr_anl_chunks
       toggle_slider_ui(
         ns("yrange_scale"),
@@ -399,8 +371,7 @@ srv_g_spaghettiplot <- function(input,
                                 plot_height,
                                 plot_width,
                                 hline_vars_colors,
-                                hline_vars_labels,
-                                hline_arb_color) {
+                                hline_vars_labels) {
   init_chunks()
   # reused in all modules
   anl_chunks <- constr_anl_chunks(
@@ -421,18 +392,14 @@ srv_g_spaghettiplot <- function(input,
     validate(need(is.na(facet_ncol) || (as.numeric(facet_ncol) > 0 && as.numeric(facet_ncol) %% 1 == 0),
       "Number of plots per row must be a positive integer"))
     rotate_xlab <- input$rotate_xlab
-    hline <- c(
-      `if`(is.na(input$hline), NULL, input$hline),
-      `if`(is.na(input$hline_1), NULL, input$hline_1)
+    res <- validate_arb_lines(
+      line_arb = input$hline_arb,
+      line_arb_label = input$hline_arb_label,
+      line_arb_color = input$hline_arb_color
     )
-    hline_arb_label <- c(
-      `if`(is.na(input$hline), NULL, input$hline_arb_label),
-      `if`(is.na(input$hline_1), NULL, input$hline_arb_label_1)
-    )
-    hline_arb_color <- c(
-      `if`(is.na(input$hline), NULL, hline_arb_color[1]),
-      `if`(is.na(input$hline_1), NULL, `if`(length(hline_arb_color) > 1, hline_arb_color[2], hline_arb_color[1]))
-    )
+    hline_arb <- res$line_arb
+    hline_arb_label <- res$line_arb_label
+    hline_arb_color <- res$line_arb_color
     group_stats <- input$group_stats
     font_size <- input$font_size
     alpha <- input$alpha
@@ -466,7 +433,7 @@ srv_g_spaghettiplot <- function(input,
           color_comb = .(color_comb),
           ylim = .(ylim),
           facet_ncol = .(facet_ncol),
-          hline_arb = .(hline),
+          hline_arb = .(hline_arb),
           hline_arb_label = .(hline_arb_label),
           hline_arb_color = .(hline_arb_color),
           xtick = .(xtick),
