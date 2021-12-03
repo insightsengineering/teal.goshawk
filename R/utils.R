@@ -373,7 +373,22 @@ maptrt <- function(df_armvar, code = c("M", "O")) {
   }
 }
 
-# UI module to input either horizontal or vertical lines to a plot via comma separated values
+#' UI module to arbitrary lines
+#'
+#' UI module to input either horizontal or vertical lines to a plot via comma separated values
+#'
+#' @param id (`character(1)`)\cr
+#'  defining namespace of the `shiny` module.
+#' @param line_arb (`numeric`)\cr
+#'  default values for the `textInput` defining values of arbitrary lines
+#' @param line_arb_color (`character`)\cr
+#'  default values for the `textInput` defining colors of arbitrary lines
+#' @param line_arb_label (`character`)\cr
+#'  default values for the `textInput` defining labels of arbitrary lines
+#' @param title (`character(1)`)\cr
+#'  title of the arbitrary lines input. The default is "Arbitrary Horizontal Lines".
+#' @return (`shiny.tag`) an input to define values, colors and labels for arbitrary
+#' straight lines.
 ui_arbitrary_lines <- function(id, line_arb, line_arb_label, line_arb_color, title = "Arbitrary Horizontal Lines:") {
   ns <- NS(id)
   div(
@@ -383,41 +398,49 @@ ui_arbitrary_lines <- function(id, line_arb, line_arb_label, line_arb_color, tit
     textInput(ns("line_arb_color"), label = "Color:", value = paste(line_arb_color, collapse = ", "))
   )
 }
-# Server to validate and transform the comma separated values into vectors of values to be passed into goshawk functions
-srv_arbitrary_lines <- function(input, output, session) {
-  reactive({
-    line_arb <- strsplit(input$line_arb, "\\s{0,},\\s{0,}")[[1]] %>%
-      as.numeric()
-    if ((length(line_arb) == 1 && is.na(line_arb)) || length(line_arb) == 0) {
-      line_arb <- numeric(0)
-      line_arb_label <- character(0)
-      line_arb_color <- character(0)
-    } else {
-      validate(need(all(!is.na(line_arb)), "Invalid arbitrary line values"))
+#' Server module to arbitrary lines
+#'
+#' Server to validate and transform the comma separated values into vectors of values
+#' to be passed into goshawk functions.
+#' @inheritParams shiny::moduleServer
+#' @return (`reactive`) returning a `list` containing `line_arb`, `line_arb_color`,
+#'  `line_arb_label` which are validated and could be passed to `goshawk` plot functions.
+srv_arbitrary_lines <- function(id) {
+  moduleServer(id, function(input, output, session) {
+    reactive({
+      line_arb <- strsplit(input$line_arb, "\\s{0,},\\s{0,}")[[1]] %>%
+        as.numeric()
+      if ((length(line_arb) == 1 && is.na(line_arb)) || length(line_arb) == 0) {
+        line_arb <- numeric(0)
+        line_arb_label <- character(0)
+        line_arb_color <- character(0)
+      } else {
+        validate(need(all(!is.na(line_arb)), "Invalid arbitrary line values"))
 
-      line_arb_label <- strsplit(input$line_arb_label, "\\s{0,},\\s{0,}")[[1]] %>%
-        trimws()
-      line_arb_color <- strsplit(input$line_arb_color, "\\s{0,},\\s{0,}")[[1]] %>%
-        trimws()
-      if (length(line_arb_label) == 0) {
-        line_arb_label <- ""
-      } else {
-        validate(
-          need(
-            length(line_arb_label) %in% c(1, length(line_arb)),
-            "Line input error: number of labels should be equal to 1 or the number of values")
-        )
+        line_arb_label <- strsplit(input$line_arb_label, "\\s{0,},\\s{0,}")[[1]] %>%
+          trimws()
+        line_arb_color <- strsplit(input$line_arb_color, "\\s{0,},\\s{0,}")[[1]] %>%
+          trimws()
+        if (length(line_arb_label) == 0) {
+          line_arb_label <- ""
+        } else {
+          validate(
+            need(
+              length(line_arb_label) %in% c(1, length(line_arb)),
+              "Line input error: number of labels should be equal to 1 or the number of values")
+          )
+        }
+        if (length(line_arb_color) == 0 || line_arb_color == "") {
+          line_arb_color <- NULL
+        } else {
+          validate(
+            need(
+              length(line_arb_color) %in% c(1, length(line_arb)),
+              "Line input error: number of colors should be equal to 1 or the number of values")
+          )
+        }
       }
-      if (length(line_arb_color) == 0 || line_arb_color == "") {
-        line_arb_color <- NULL
-      } else {
-        validate(
-          need(
-            length(line_arb_color) %in% c(1, length(line_arb)),
-            "Line input error: number of colors should be equal to 1 or the number of values")
-        )
-      }
-    }
-    list(line_arb = line_arb, line_arb_label = line_arb_label, line_arb_color = line_arb_color)
+      list(line_arb = line_arb, line_arb_label = line_arb_label, line_arb_color = line_arb_color)
+    })
   })
 }

@@ -291,7 +291,7 @@ srv_g_density_distribution_plot <- function(input, # nolint
   keep_range_slider_updated(session, input, xrange_slider$update_state, "xaxis_var", "xaxis_param", anl_chunks)
   keep_data_const_opts_updated(session, input, anl_chunks, "xaxis_param")
 
-  horizontal_line <- callModule(srv_arbitrary_lines, "hline_arb")
+  horizontal_line <- srv_arbitrary_lines("hline_arb")
 
   create_plot <- reactive({
     validate(need(input$xaxis_var, "Please select an X-Axis Variable"))

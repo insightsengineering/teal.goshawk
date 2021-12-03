@@ -238,7 +238,6 @@
 #'
 #' \dontrun{
 #' shinyApp(app$ui, app$server)
-#'
 #' }
 tm_g_gh_correlationplot <- function(label,
                                     dataname,
@@ -760,8 +759,8 @@ srv_g_correlationplot <- function(input,
     list(title_text = title_text, xaxis_lab = xaxis_lab, yaxis_lab = yaxis_lab)
   })
 
-  horizontal_line <- callModule(srv_arbitrary_lines, "hline_arb");
-  vertical_line <- callModule(srv_arbitrary_lines, "vline_arb");
+  horizontal_line <- srv_arbitrary_lines("hline_arb")
+  vertical_line <- srv_arbitrary_lines("vline_arb")
 
   # plot
   plot_r <- reactive({

@@ -380,7 +380,7 @@ srv_g_spaghettiplot <- function(input,
   keep_range_slider_updated(session, input, yrange_slider$update_state, "yaxis_var", "xaxis_param", anl_chunks)
   keep_data_const_opts_updated(session, input, anl_chunks, "xaxis_param")
 
-  horizontal_line <- callModule(srv_arbitrary_lines, "hline_arb")
+  horizontal_line <- srv_arbitrary_lines("hline_arb")
 
   plot_r <- reactive({
     # nolint start
