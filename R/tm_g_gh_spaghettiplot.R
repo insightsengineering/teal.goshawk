@@ -176,7 +176,6 @@
 #'       hline_arb_label = c("default A", "default B"),
 #'       hline_vars = c("ANRHI", "ANRLO", "ULOQN", "LLOQN"),
 #'       hline_vars_colors = c("pink", "brown", "purple", "black"),
-#'       hline_vars_labels = NULL
 #'     )
 #'   )
 #' )
@@ -208,12 +207,12 @@ tm_g_gh_spaghettiplot <- function(label,
                                   plot_height = c(600, 200, 2000),
                                   plot_width = NULL,
                                   font_size = c(12, 8, 20),
-                                  hline_arb = NULL,
+                                  hline_arb = numeric(0),
                                   hline_arb_color = "red",
-                                  hline_arb_label = NULL,
-                                  hline_vars = NULL,
-                                  hline_vars_colors = NULL,
-                                  hline_vars_labels = NULL,
+                                  hline_arb_label = "Horizontal line",
+                                  hline_vars = character(0),
+                                  hline_vars_colors = "green",
+                                  hline_vars_labels = hline_vars,
                                   pre_output = NULL,
                                   post_output = NULL) {
 

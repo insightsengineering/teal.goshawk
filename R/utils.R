@@ -373,13 +373,15 @@ maptrt <- function(df_armvar, code = c("M", "O")) {
   }
 }
 
+# used to check, clean, and output validate messages to the shiny modules that
+# have comma separated text input fields to add either horizontal and / or vertical lines
 validate_arb_lines <- function(line_arb, line_arb_label, line_arb_color) {
   line_arb <- strsplit(line_arb, "\\s{0,},\\s{0,}")[[1]] %>%
     as.numeric()
-  if (length(line_arb) == 1 && is.na(line_arb)) {
-    line_arb <- NULL
-    line_arb_label <- NULL
-    line_arb_color <- NULL
+  if ((length(line_arb) == 1 && is.na(line_arb)) || length(line_arb) == 0) {
+    line_arb <- numeric(0)
+    line_arb_label <- character(0)
+    line_arb_color <- character(0)
   } else {
     validate(need(all(!is.na(line_arb)), "Invalid arbitrary line values"))
 
@@ -393,7 +395,7 @@ validate_arb_lines <- function(line_arb, line_arb_label, line_arb_color) {
       validate(
         need(
           length(line_arb_label) %in% c(1, length(line_arb)),
-          "Labels should be 1 or equalling the number of values")
+          "Line input error: labels should be 1 or equal the number of values")
       )
     }
     if (length(line_arb_color) == 0 || line_arb_color == "") {
@@ -402,7 +404,7 @@ validate_arb_lines <- function(line_arb, line_arb_label, line_arb_color) {
       validate(
         need(
           length(line_arb_color) %in% c(1, length(line_arb)),
-          "Colors should be 1 or equalling the number of values")
+          "Line input error: colors should be 1 or equal the number of values")
       )
     }
   }

@@ -18,12 +18,12 @@ tm_g_gh_boxplot(
   facet_ncol = NULL,
   loq_legend = TRUE,
   rotate_xlab = FALSE,
-  hline_arb = NULL,
+  hline_arb = numeric(0),
   hline_arb_color = "red",
-  hline_arb_label = NULL,
-  hline_vars = NULL,
-  hline_vars_colors = NULL,
-  hline_vars_labels = NULL,
+  hline_arb_label = "Horizontal line",
+  hline_vars = character(0),
+  hline_vars_colors = "green",
+  hline_vars_labels = hline_vars,
   plot_height = c(600, 200, 2000),
   plot_width = NULL,
   font_size = c(12, 8, 20),
@@ -226,7 +226,6 @@ app <- teal::init(
         hline_arb_label = c("default_hori_A", "default_hori_B"),
         hline_vars = c("ANRHI", "ANRLO", "ULOQN", "LLOQN"),
         hline_vars_colors = c("pink", "brown", "purple", "black"),
-        hline_vars_labels = NULL
       )
   )
 )
