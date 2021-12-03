@@ -235,10 +235,7 @@ ui_g_density_distribution_plot <- function(id, ...) {
         xchoices = a$xaxis_var$choices, xselected = a$xaxis_var$selected
       ),
       templ_ui_constraint(ns, label = "Data Constraint"),
-      tags$b("Arbitrary Horizontal Lines:"),
-      textInput(ns("hline_arb"), label = "Value:", value = paste(a$hline_arb, collapse = ", ")),
-      textInput(ns("hline_arb_label"), label = "Label:", value = paste(a$hline_arb_label, collapse = ", ")),
-      textInput(ns("hline_arb_color"), label = "Color:", value = paste(a$hline_arb_color, collapse = ", ")),
+      ui_arbitrary_lines(id = ns("hline_arb"), a$hline_arb, a$hline_arb_label, a$hline_arb_color),
       panel_group(
         panel_item(
           title = "Plot Aesthetic Settings",
@@ -294,6 +291,8 @@ srv_g_density_distribution_plot <- function(input, # nolint
   keep_range_slider_updated(session, input, xrange_slider$update_state, "xaxis_var", "xaxis_param", anl_chunks)
   keep_data_const_opts_updated(session, input, anl_chunks, "xaxis_param")
 
+  horizontal_line <- callModule(srv_arbitrary_lines, "hline_arb")
+
   create_plot <- reactive({
     validate(need(input$xaxis_var, "Please select an X-Axis Variable"))
     private_chunks <- anl_chunks()$chunks$clone(deep = TRUE)
@@ -305,14 +304,9 @@ srv_g_density_distribution_plot <- function(input, # nolint
     xmax_scale <- xrange_slider$state()$value[[2]]
     font_size <- input$font_size
     line_size <- input$line_size
-    res <- validate_arb_lines(
-      line_arb = input$hline_arb,
-      line_arb_label = input$hline_arb_label,
-      line_arb_color = input$hline_arb_color
-    )
-    hline_arb <- res$line_arb
-    hline_arb_label <- res$line_arb_label
-    hline_arb_color <- res$line_arb_color
+    hline_arb <- horizontal_line()$line_arb
+    hline_arb_label <- horizontal_line()$line_arb_label
+    hline_arb_color <- horizontal_line()$line_arb_color
     facet_ncol <- input$facet_ncol
     validate(need(is.na(facet_ncol) || (as.numeric(facet_ncol) > 0 && as.numeric(facet_ncol) %% 1 == 0),
       "Number of plots per row must be a positive integer"))

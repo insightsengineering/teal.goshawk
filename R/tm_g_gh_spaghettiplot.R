@@ -314,10 +314,7 @@ g_ui_spaghettiplot <- function(id, ...) {
           selected = NULL,
           multiple = TRUE)
       },
-      tags$b("Arbitrary Horizontal Lines:"),
-      textInput(ns("hline_arb"), label = "Value:", value = paste(a$hline_arb, collapse = ", ")),
-      textInput(ns("hline_arb_label"), label = "Label:", value = paste(a$hline_arb_label, collapse = ", ")),
-      textInput(ns("hline_arb_color"), label = "Color:", value = paste(a$hline_arb_color, collapse = ", ")),
+      ui_arbitrary_lines(id = ns("hline_arb"), a$hline_arb, a$hline_arb_label, a$hline_arb_color),
       templ_ui_constraint(ns), # required by constr_anl_chunks
       toggle_slider_ui(
         ns("yrange_scale"),
@@ -383,6 +380,8 @@ srv_g_spaghettiplot <- function(input,
   keep_range_slider_updated(session, input, yrange_slider$update_state, "yaxis_var", "xaxis_param", anl_chunks)
   keep_data_const_opts_updated(session, input, anl_chunks, "xaxis_param")
 
+  horizontal_line <- callModule(srv_arbitrary_lines, "hline_arb")
+
   plot_r <- reactive({
     # nolint start
     private_chunks <- anl_chunks()$chunks$clone(deep = TRUE)
@@ -391,14 +390,9 @@ srv_g_spaghettiplot <- function(input,
     validate(need(is.na(facet_ncol) || (as.numeric(facet_ncol) > 0 && as.numeric(facet_ncol) %% 1 == 0),
       "Number of plots per row must be a positive integer"))
     rotate_xlab <- input$rotate_xlab
-    res <- validate_arb_lines(
-      line_arb = input$hline_arb,
-      line_arb_label = input$hline_arb_label,
-      line_arb_color = input$hline_arb_color
-    )
-    hline_arb <- res$line_arb
-    hline_arb_label <- res$line_arb_label
-    hline_arb_color <- res$line_arb_color
+    hline_arb <- horizontal_line()$line_arb
+    hline_arb_label <- horizontal_line()$line_arb_label
+    hline_arb_color <- horizontal_line()$line_arb_color
     group_stats <- input$group_stats
     font_size <- input$font_size
     alpha <- input$alpha

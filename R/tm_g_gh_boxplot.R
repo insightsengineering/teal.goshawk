@@ -330,10 +330,7 @@ ui_g_boxplot <- function(id, ...) {
           multiple = TRUE
         )
       },
-      tags$b("Arbitrary Horizontal Lines:"),
-      textInput(ns("hline_arb"), label = "Value:", value = paste(a$hline_arb, collapse = ", ")),
-      textInput(ns("hline_arb_label"), label = "Label:", value = paste(a$hline_arb_label, collapse = ", ")),
-      textInput(ns("hline_arb_color"), label = "Color:", value = paste(a$hline_arb_color, collapse = ", ")),
+      ui_arbitrary_lines(id = ns("hline_arb"), a$hline_arb, a$hline_arb_label, a$hline_arb_color),
       panel_group(
         panel_item(
           title = "Plot Aesthetic Settings",
@@ -395,6 +392,8 @@ srv_g_boxplot <- function(input,
   )
   keep_data_const_opts_updated(session, input, anl_chunks, "xaxis_param")
 
+  horizontal_line <- callModule(srv_arbitrary_lines, "hline_arb")
+
   create_plot <- reactive({
     private_chunks <- anl_chunks()$chunks$clone(deep = TRUE)
     # nolint start
@@ -411,14 +410,10 @@ srv_g_boxplot <- function(input,
     dot_size <- input$dot_size
     loq_legend <- input$loq_legend
     rotate_xlab <- input$rotate_xlab
-    res <- validate_arb_lines(
-      line_arb = input$hline_arb,
-      line_arb_label = input$hline_arb_label,
-      line_arb_color = input$hline_arb_color
-    )
-    hline_arb <- res$line_arb
-    hline_arb_label <- res$line_arb_label
-    hline_arb_color <- res$line_arb_color
+
+    hline_arb <- horizontal_line()$line_arb
+    hline_arb_label <- horizontal_line()$line_arb_label
+    hline_arb_color <- horizontal_line()$line_arb_color
 
     hline_vars <- input$hline_vars
     trt_group <- input$trt_group

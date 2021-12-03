@@ -394,10 +394,7 @@ ui_g_correlationplot <- function(id, ...) {
           selected = NULL,
           multiple = TRUE)
       },
-      tags$b("Arbitrary Horizontal Lines:"),
-      textInput(ns("hline_arb"), label = "Value:", value = paste(a$hline_arb, collapse = ", ")),
-      textInput(ns("hline_arb_label"), label = "Label:", value = paste(a$hline_arb_label, collapse = ", ")),
-      textInput(ns("hline_arb_color"), label = "Color:", value = paste(a$hline_arb_color, collapse = ", ")),
+      ui_arbitrary_lines(id = ns("hline_arb"), a$hline_arb, a$hline_arb_label, a$hline_arb_color),
       if (!is.null(a$vline_vars)) {
         optionalSelectInput(
           ns("vline_vars"),
@@ -407,10 +404,13 @@ ui_g_correlationplot <- function(id, ...) {
           multiple = TRUE
         )
       },
-      tags$b("Arbitrary Vertical Lines:"),
-      textInput(ns("vline_arb"), label = "Value:", value = paste(a$vline_arb, collapse = ", ")),
-      textInput(ns("vline_arb_label"), label = "Label:", value = paste(a$vline_arb_label, collapse = ", ")),
-      textInput(ns("vline_arb_color"), label = "Color:", value = paste(a$vline_arb_color, collapse = ", ")),
+      ui_arbitrary_lines(
+        id = ns("vline_arb"),
+        a$vline_arb,
+        a$vline_arb_label,
+        a$vline_arb_color,
+        title = "Arbitrary Vertical Lines:"
+      ),
       panel_group(
         panel_item(
           title = "Plot Aesthetic Settings",
@@ -760,6 +760,9 @@ srv_g_correlationplot <- function(input,
     list(title_text = title_text, xaxis_lab = xaxis_lab, yaxis_lab = yaxis_lab)
   })
 
+  horizontal_line <- callModule(srv_arbitrary_lines, "hline_arb");
+  vertical_line <- callModule(srv_arbitrary_lines, "vline_arb");
+
   # plot
   plot_r <- reactive({
     private_chunks <- plot_data_transpose()$chunks$clone(deep = TRUE)
@@ -775,27 +778,17 @@ srv_g_correlationplot <- function(input,
     font_size <- input$font_size
     dot_size <- input$dot_size
     reg_text_size <- input$reg_text_size
-    res <- validate_arb_lines(
-      line_arb = input$hline_arb,
-      line_arb_label = input$hline_arb_label,
-      line_arb_color = input$hline_arb_color
-    )
-    hline_arb <- res$line_arb
-    hline_arb_label <- res$line_arb_label
-    hline_arb_color <- res$line_arb_color
+    hline_arb <- horizontal_line()$line_arb
+    hline_arb_label <- horizontal_line()$line_arb_label
+    hline_arb_color <- horizontal_line()$line_arb_color
     hline_vars <- if (is_empty(input$hline_vars)) {
       NULL
     } else {
       paste0(input$hline_vars, ".", yaxis_param)
     }
-    res_v <- validate_arb_lines(
-      line_arb = input$vline_arb,
-      line_arb_label = input$vline_arb_label,
-      line_arb_color = input$vline_arb_color
-    )
-    vline_arb <- res_v$line_arb
-    vline_arb_label <- res_v$line_arb_label
-    vline_arb_color <- res_v$line_arb_color
+    vline_arb <- vertical_line()$line_arb
+    vline_arb_label <- vertical_line()$line_arb_label
+    vline_arb_color <- vertical_line()$line_arb_color
     vline_vars <- if (is_empty(input$vline_vars)) {
       NULL
     } else {
