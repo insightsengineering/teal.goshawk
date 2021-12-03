@@ -30,7 +30,13 @@ reference:
       - maptrt
       - toggle_slider_ui
 
+  - title: Utility modules
+    contents:
+      - ui_arbitrary_lines
+      - srv_arbitrary_lines
+
   - title: Package Build Related
     desc: These files facilitate package build.
     contents:
       - teal_goshawk
+
