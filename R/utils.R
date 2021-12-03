@@ -395,7 +395,7 @@ validate_arb_lines <- function(line_arb, line_arb_label, line_arb_color) {
       validate(
         need(
           length(line_arb_label) %in% c(1, length(line_arb)),
-          "Line input error: labels should be 1 or equal the number of values")
+          "Line input error: number of labels should be equal to 1 or the number of values")
       )
     }
     if (length(line_arb_color) == 0 || line_arb_color == "") {
@@ -404,7 +404,7 @@ validate_arb_lines <- function(line_arb, line_arb_label, line_arb_color) {
       validate(
         need(
           length(line_arb_color) %in% c(1, length(line_arb)),
-          "Line input error: colors should be 1 or equal the number of values")
+          "Line input error: number of colors should be equal to 1 or the number of values")
       )
     }
   }
