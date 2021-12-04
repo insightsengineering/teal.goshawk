@@ -1,4 +1,4 @@
-# teal.goshawk 0.1.10.9007
+# teal.goshawk 0.1.10.9008
 
 * Updated R version requirement to >= 3.6.
 * Fixed error in `tm_g_gh_boxplot` when no facet variable is selected.
