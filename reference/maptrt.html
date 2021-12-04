@@ -82,7 +82,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">teal.goshawk</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.10.9004</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.10.9007</span>
       </span>
     </div>
 
@@ -153,23 +153,26 @@ mapping and ordering syntax. call the function and then copy and paste the resul
 into the app.R file.</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='kw'><a href='https://rdrr.io/r/base/library.html'>library</a></span><span class='op'>(</span><span class='va'>scda</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; </div><div class='input'>
-<span class='va'>ADSL</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/scda/man/synthetic_cdisc_data.html'>synthetic_cdisc_data</a></span><span class='op'>(</span><span class='st'>"latest"</span><span class='op'>)</span><span class='op'>$</span><span class='va'>adsl</span>
-
-<span class='co'># get treatment mapping code</span>
-<span class='fu'>maptrt</span><span class='op'>(</span>df_armvar <span class='op'>=</span> <span class='va'>ADSL</span><span class='op'>$</span><span class='va'>ARMCD</span>, code <span class='op'>=</span> <span class='st'>"M"</span><span class='op'>)</span>
-</div><div class='output co'>#&gt;               
-#&gt;  "ARM A" = "",
-#&gt;  "ARM C" = "",
-#&gt;  "ARM B" = "",</div><div class='input'>
-<span class='co'># get treatment ordering code</span>
-<span class='fu'>maptrt</span><span class='op'>(</span>df_armvar <span class='op'>=</span> <span class='va'>ADSL</span><span class='op'>$</span><span class='va'>ARMCD</span>, code <span class='op'>=</span> <span class='st'>"O"</span><span class='op'>)</span>
-</div><div class='output co'>#&gt;                       
-#&gt;  ARMCD == "ARM A" ~  ,
-#&gt;  ARMCD == "ARM C" ~  ,
-#&gt;  ARMCD == "ARM B" ~  ,</div><div class='input'>
-</div></pre>
+    <pre class="examples"><span class='r-in'><span class='kw'><a href='https://rdrr.io/r/base/library.html'>library</a></span><span class='op'>(</span><span class='va'>scda</span><span class='op'>)</span></span>
+<span class='r-msg co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-in'></span>
+<span class='r-in'><span class='va'>ADSL</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/scda/man/synthetic_cdisc_data.html'>synthetic_cdisc_data</a></span><span class='op'>(</span><span class='st'>"latest"</span><span class='op'>)</span><span class='op'>$</span><span class='va'>adsl</span></span>
+<span class='r-in'></span>
+<span class='r-in'><span class='co'># get treatment mapping code</span></span>
+<span class='r-in'><span class='fu'>maptrt</span><span class='op'>(</span>df_armvar <span class='op'>=</span> <span class='va'>ADSL</span><span class='op'>$</span><span class='va'>ARMCD</span>, code <span class='op'>=</span> <span class='st'>"M"</span><span class='op'>)</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>               </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  "ARM A" = "",</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  "ARM C" = "",</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  "ARM B" = "",</span>
+<span class='r-in'></span>
+<span class='r-in'><span class='co'># get treatment ordering code</span></span>
+<span class='r-in'><span class='fu'>maptrt</span><span class='op'>(</span>df_armvar <span class='op'>=</span> <span class='va'>ADSL</span><span class='op'>$</span><span class='va'>ARMCD</span>, code <span class='op'>=</span> <span class='st'>"O"</span><span class='op'>)</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>                       </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  ARMCD == "ARM A" ~  ,</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  ARMCD == "ARM C" ~  ,</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  ARMCD == "ARM B" ~  ,</span>
+<span class='r-in'></span>
+</pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">

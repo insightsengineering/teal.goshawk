@@ -7,6 +7,9 @@
     <loc>https://github.com/insightsengineering/teal.goshawk/reference/maptrt.html</loc>
   </url>
   <url>
+    <loc>https://github.com/insightsengineering/teal.goshawk/reference/srv_arbitrary_lines.html</loc>
+  </url>
+  <url>
     <loc>https://github.com/insightsengineering/teal.goshawk/reference/teal_goshawk.html</loc>
   </url>
   <url>
@@ -29,5 +32,8 @@
   </url>
   <url>
     <loc>https://github.com/insightsengineering/teal.goshawk/reference/toggle_slider_ui.html</loc>
+  </url>
+  <url>
+    <loc>https://github.com/insightsengineering/teal.goshawk/reference/ui_arbitrary_lines.html</loc>
   </url>
 </urlset>
