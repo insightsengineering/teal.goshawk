@@ -21,18 +21,18 @@ tm_g_gh_correlationplot(
   reg_line = FALSE,
   loq_legend = TRUE,
   rotate_xlab = FALSE,
-  hline_arb = NULL,
+  hline_arb = numeric(0),
   hline_arb_color = "red",
-  hline_arb_label = NULL,
-  hline_vars = NULL,
-  hline_vars_colors = NULL,
-  hline_vars_labels = NULL,
-  vline_arb = NULL,
-  vline_arb_color = "green",
-  vline_arb_label = NULL,
-  vline_vars = NULL,
-  vline_vars_colors = NULL,
-  vline_vars_labels = NULL,
+  hline_arb_label = "Horizontal line",
+  hline_vars = character(0),
+  hline_vars_colors = "green",
+  hline_vars_labels = hline_vars,
+  vline_arb = numeric(0),
+  vline_arb_color = "red",
+  vline_arb_label = "Vertical line",
+  vline_vars = character(0),
+  vline_vars_colors = "green",
+  vline_vars_labels = vline_vars,
   plot_height = c(500, 200, 2000),
   plot_width = NULL,
   font_size = c(12, 8, 20),
@@ -78,11 +78,13 @@ TRUE.}
 
 \item{rotate_xlab}{45 degree rotation of x-axis values.}
 
-\item{hline_arb}{numeric value identifying intercept for arbitrary horizontal line.}
+\item{hline_arb}{numeric vector of at most 2 values identifying intercepts for arbitrary horizontal lines.}
 
-\item{hline_arb_color}{a character naming the color for the arbitrary horizontal line}
+\item{hline_arb_color}{a character vector of at most length of \code{hline_arb}.
+naming the color for the arbitrary horizontal lines.}
 
-\item{hline_arb_label}{a character naming the label for the arbitrary horizontal line}
+\item{hline_arb_label}{a character vector of at most length of \code{hline_arb}.
+naming the label for the arbitrary horizontal lines.}
 
 \item{hline_vars}{a character vector to name the columns that will define additional horizontal lines.}
 
@@ -90,11 +92,13 @@ TRUE.}
 
 \item{hline_vars_labels}{a character vector naming the labels for the additional horizontal lines that will appear}
 
-\item{vline_arb}{numeric value identifying intercept for arbitrary vertical line.}
+\item{vline_arb}{numeric vector of at most 2 values identifying intercepts for arbitrary horizontal lines.}
 
-\item{vline_arb_color}{color for the arbitrary vertical line that will appear on the plot.}
+\item{vline_arb_color}{a character vector of at most length of \code{vline_arb}.
+naming the color for the arbitrary horizontal lines.}
 
-\item{vline_arb_label}{label for the arbitrary vertical that will appear on the legend.}
+\item{vline_arb_label}{a character vector of at most length of \code{vline_arb}.
+naming the label for the arbitrary horizontal lines.}
 
 \item{vline_vars}{a character vector to name the columns that will define additional vertical lines.}
 
@@ -293,23 +297,24 @@ app <- init(
        font_size = c(12, 8, 20),
        dot_size = c(1, 1, 12),
        reg_text_size = c(3, 3, 10),
-       hline_arb = 50,
+       hline_arb = c(40, 50),
        hline_arb_label = "arb hori label",
+       hline_arb_color = c("red", "blue"),
        hline_vars = c("ANRHI", "ANRLO", "ULOQN", "LLOQN"),
        hline_vars_colors = c("green", "blue", "purple", "cyan"),
        hline_vars_label =  c("ANRHI Label", "ANRLO Label", "ULOQN Label", "LLOQN Label"),
        vline_vars = c("ANRHI", "ANRLO", "ULOQN", "LLOQN"),
        vline_vars_colors = c("yellow", "orange", "brown", "gold"),
        vline_vars_labels =  c("ANRHI Label", "ANRLO Label", "ULOQN Label", "LLOQN Label"),
-       vline_arb = 50,
-       vline_arb_label = "arb vert label"
+       vline_arb = c(50, 70),
+       vline_arb_label = "arb vert A",
+       vline_arb_color = c("green", "orange")
    )
   )
 )
 
 \dontrun{
 shinyApp(app$ui, app$server)
-
 }
 }
 \author{

@@ -34,9 +34,11 @@
 #' @param plot_width optional, controls plot width.
 #' @param font_size control font size for title, x-axis, y-axis and legend font.
 #' @param group_stats control group mean or median overlay.
-#' @param hline_arb numeric value identifying intercept for arbitrary horizontal line.
-#' @param hline_arb_color a character naming the color for the arbitrary horizontal line
-#' @param hline_arb_label a character naming the label for the arbitrary horizontal line
+#' @param hline_arb numeric vector of at most 2 values identifying intercepts for arbitrary horizontal lines.
+#' @param hline_arb_color a character vector of at most length of \code{hline_arb}.
+#' naming the color for the arbitrary horizontal lines.
+#' @param hline_arb_label a character vector of at most length of \code{hline_arb}.
+#' naming the label for the arbitrary horizontal lines.
 #' @param hline_vars a character vector to name the columns that will define additional horizontal lines.
 #' @param hline_vars_colors a character vector naming the colors for the additional horizontal lines.
 #' @param hline_vars_labels a character vector naming the labels for the additional horizontal lines that will appear
@@ -169,12 +171,11 @@
 #'       man_color = c('Combination' = "#000000",
 #'                    'Placebo' = "#fce300",
 #'                    '150mg QD' = "#5a2f5f"),
-#'       hline_arb = 50,
-#'       hline_arb_color = "grey",
-#'       hline_arb_label = "default hori label",
+#'       hline_arb = c(60, 50),
+#'       hline_arb_color = c("grey", "red"),
+#'       hline_arb_label = c("default A", "default B"),
 #'       hline_vars = c("ANRHI", "ANRLO", "ULOQN", "LLOQN"),
 #'       hline_vars_colors = c("pink", "brown", "purple", "black"),
-#'       hline_vars_labels = NULL
 #'     )
 #'   )
 #' )
@@ -206,12 +207,12 @@ tm_g_gh_spaghettiplot <- function(label,
                                   plot_height = c(600, 200, 2000),
                                   plot_width = NULL,
                                   font_size = c(12, 8, 20),
-                                  hline_arb = NULL,
+                                  hline_arb = numeric(0),
                                   hline_arb_color = "red",
-                                  hline_arb_label = NULL,
-                                  hline_vars = NULL,
-                                  hline_vars_colors = NULL,
-                                  hline_vars_labels = NULL,
+                                  hline_arb_label = "Horizontal line",
+                                  hline_vars = character(0),
+                                  hline_vars_colors = "green",
+                                  hline_vars_labels = hline_vars,
                                   pre_output = NULL,
                                   post_output = NULL) {
 
@@ -220,9 +221,13 @@ tm_g_gh_spaghettiplot <- function(label,
   stopifnot(is.choices_selected(yaxis_var))
   stopifnot(is.choices_selected(trt_group))
   stopifnot(
-    is.null(hline_arb) || is_numeric_single(hline_arb),
-    is.null(hline_arb) || is.null(hline_arb_color) || is_character_single(hline_arb_color),
-    is.null(hline_arb) || is.null(hline_arb_label) || is_character_single(hline_arb_label)
+    is.null(hline_arb) || is_numeric_vector(hline_arb, min_length = 1),
+    is.null(hline_arb) ||
+      is.null(hline_arb_color) ||
+      (is_character_vector(hline_arb_color) && length(hline_arb_color) %in% c(1, length(hline_arb))),
+    is.null(hline_arb) ||
+      is.null(hline_arb_label) ||
+      (is_character_vector(hline_arb_label) && length(hline_arb_label) %in% c(1, length(hline_arb)))
   )
   check_slider_input(plot_height, allow_null = FALSE)
   check_slider_input(plot_width)
@@ -261,7 +266,6 @@ tm_g_gh_spaghettiplot <- function(label,
       param_var_label = param_var_label,
       xtick = xtick,
       xlabel = xlabel,
-      hline_arb_color = hline_arb_color,
       plot_height = plot_height,
       plot_width = plot_width,
       hline_vars_colors = hline_vars_colors,
@@ -307,35 +311,10 @@ g_ui_spaghettiplot <- function(id, ...) {
           ns("hline_vars"),
           label = "Add Range Line(s):",
           choices = a$hline_vars,
-          selected = a$hline_vars[1],
+          selected = NULL,
           multiple = TRUE)
       },
-      tags$b("Add Arbitrary Horizontal Line/Label:"),
-      div(
-        style = "display: flex",
-        div(
-          style = "padding: 0px;",
-          div(
-            style = "display: inline-block;vertical-align:moddle; width: 100%;",
-            tags$b("Line Value:")
-          ),
-          div(
-            style = "display: inline-block;vertical-align:middle; width: 100%;",
-            numericInput(ns("hline"), "", a$hline_arb)
-          )
-        ),
-        div(
-          style = "padding: 0px;",
-          div(
-            style = "display: inline-block;vertical-align:moddle; width: 100%;",
-            tags$b("Line Label:")
-          ),
-          div(
-            style = "display: inline-block;vertical-align:middle; width: 100%;",
-            textInput(ns("hline_label"), "", a$hline_arb_label)
-          )
-        )
-      ),
+      ui_arbitrary_lines(id = ns("hline_arb"), a$hline_arb, a$hline_arb_label, a$hline_arb_color),
       templ_ui_constraint(ns), # required by constr_anl_chunks
       toggle_slider_ui(
         ns("yrange_scale"),
@@ -388,8 +367,7 @@ srv_g_spaghettiplot <- function(input,
                                 plot_height,
                                 plot_width,
                                 hline_vars_colors,
-                                hline_vars_labels,
-                                hline_arb_color) {
+                                hline_vars_labels) {
   init_chunks()
   # reused in all modules
   anl_chunks <- constr_anl_chunks(
@@ -402,6 +380,8 @@ srv_g_spaghettiplot <- function(input,
   keep_range_slider_updated(session, input, yrange_slider$update_state, "yaxis_var", "xaxis_param", anl_chunks)
   keep_data_const_opts_updated(session, input, anl_chunks, "xaxis_param")
 
+  horizontal_line <- srv_arbitrary_lines("hline_arb")
+
   plot_r <- reactive({
     # nolint start
     private_chunks <- anl_chunks()$chunks$clone(deep = TRUE)
@@ -410,8 +390,9 @@ srv_g_spaghettiplot <- function(input,
     validate(need(is.na(facet_ncol) || (as.numeric(facet_ncol) > 0 && as.numeric(facet_ncol) %% 1 == 0),
       "Number of plots per row must be a positive integer"))
     rotate_xlab <- input$rotate_xlab
-    hline <- input$hline
-    hline_label <- input$hline_label
+    hline_arb <- horizontal_line()$line_arb
+    hline_arb_label <- horizontal_line()$line_arb_label
+    hline_arb_color <- horizontal_line()$line_arb_color
     group_stats <- input$group_stats
     font_size <- input$font_size
     alpha <- input$alpha
@@ -445,8 +426,8 @@ srv_g_spaghettiplot <- function(input,
           color_comb = .(color_comb),
           ylim = .(ylim),
           facet_ncol = .(facet_ncol),
-          hline_arb = .(`if`(is.na(hline), NULL, as.numeric(hline))),
-          hline_arb_label = .(`if`(is.na(hline), NULL, hline_label)),
+          hline_arb = .(hline_arb),
+          hline_arb_label = .(hline_arb_label),
           hline_arb_color = .(hline_arb_color),
           xtick = .(xtick),
           xlabel = .(xlabel),

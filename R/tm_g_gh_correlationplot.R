@@ -22,15 +22,19 @@
 #'   TRUE.
 #' @param loq_legend loq legend toggle.
 #' @param rotate_xlab 45 degree rotation of x-axis values.
-#' @param hline_arb numeric value identifying intercept for arbitrary horizontal line.
-#' @param hline_arb_color a character naming the color for the arbitrary horizontal line
-#' @param hline_arb_label a character naming the label for the arbitrary horizontal line
+#' @param hline_arb numeric vector of at most 2 values identifying intercepts for arbitrary horizontal lines.
+#' @param hline_arb_color a character vector of at most length of \code{hline_arb}.
+#' naming the color for the arbitrary horizontal lines.
+#' @param hline_arb_label a character vector of at most length of \code{hline_arb}.
+#' naming the label for the arbitrary horizontal lines.
 #' @param hline_vars a character vector to name the columns that will define additional horizontal lines.
 #' @param hline_vars_colors a character vector naming the colors for the additional horizontal lines.
 #' @param hline_vars_labels a character vector naming the labels for the additional horizontal lines that will appear
-#' @param vline_arb numeric value identifying intercept for arbitrary vertical line.
-#' @param vline_arb_color color for the arbitrary vertical line that will appear on the plot.
-#' @param vline_arb_label label for the arbitrary vertical that will appear on the legend.
+#' @param vline_arb numeric vector of at most 2 values identifying intercepts for arbitrary horizontal lines.
+#' @param vline_arb_color a character vector of at most length of \code{vline_arb}.
+#' naming the color for the arbitrary horizontal lines.
+#' @param vline_arb_label a character vector of at most length of \code{vline_arb}.
+#' naming the label for the arbitrary horizontal lines.
 #' @param vline_vars a character vector to name the columns that will define additional vertical lines.
 #' @param vline_vars_colors a character vector naming the colors for the additional vertical lines.
 #' @param vline_vars_labels a character vector naming the labels for the additional vertical lines that will appear
@@ -216,23 +220,24 @@
 #'        font_size = c(12, 8, 20),
 #'        dot_size = c(1, 1, 12),
 #'        reg_text_size = c(3, 3, 10),
-#'        hline_arb = 50,
+#'        hline_arb = c(40, 50),
 #'        hline_arb_label = "arb hori label",
+#'        hline_arb_color = c("red", "blue"),
 #'        hline_vars = c("ANRHI", "ANRLO", "ULOQN", "LLOQN"),
 #'        hline_vars_colors = c("green", "blue", "purple", "cyan"),
 #'        hline_vars_label =  c("ANRHI Label", "ANRLO Label", "ULOQN Label", "LLOQN Label"),
 #'        vline_vars = c("ANRHI", "ANRLO", "ULOQN", "LLOQN"),
 #'        vline_vars_colors = c("yellow", "orange", "brown", "gold"),
 #'        vline_vars_labels =  c("ANRHI Label", "ANRLO Label", "ULOQN Label", "LLOQN Label"),
-#'        vline_arb = 50,
-#'        vline_arb_label = "arb vert label"
+#'        vline_arb = c(50, 70),
+#'        vline_arb_label = "arb vert A",
+#'        vline_arb_color = c("green", "orange")
 #'    )
 #'   )
 #' )
 #'
 #' \dontrun{
 #' shinyApp(app$ui, app$server)
-#'
 #' }
 tm_g_gh_correlationplot <- function(label,
                                     dataname,
@@ -250,18 +255,18 @@ tm_g_gh_correlationplot <- function(label,
                                     reg_line = FALSE,
                                     loq_legend = TRUE,
                                     rotate_xlab = FALSE,
-                                    hline_arb = NULL,
+                                    hline_arb = numeric(0),
                                     hline_arb_color = "red",
-                                    hline_arb_label = NULL,
-                                    hline_vars = NULL,
-                                    hline_vars_colors = NULL,
-                                    hline_vars_labels = NULL,
-                                    vline_arb = NULL,
-                                    vline_arb_color = "green",
-                                    vline_arb_label = NULL,
-                                    vline_vars = NULL,
-                                    vline_vars_colors = NULL,
-                                    vline_vars_labels = NULL,
+                                    hline_arb_label = "Horizontal line",
+                                    hline_vars = character(0),
+                                    hline_vars_colors = "green",
+                                    hline_vars_labels = hline_vars,
+                                    vline_arb = numeric(0),
+                                    vline_arb_color = "red",
+                                    vline_arb_label = "Vertical line",
+                                    vline_vars = character(0),
+                                    vline_vars_colors = "green",
+                                    vline_vars_labels = vline_vars,
                                     plot_height = c(500, 200, 2000),
                                     plot_width = NULL,
                                     font_size = c(12, 8, 20),
@@ -280,14 +285,22 @@ tm_g_gh_correlationplot <- function(label,
   check_slider_input(plot_width)
 
   stopifnot(
-    is.null(hline_arb) || is_numeric_single(hline_arb),
-    is.null(hline_arb) || is.null(hline_arb_color) || is_character_single(hline_arb_color),
-    is.null(hline_arb) || is.null(hline_arb_label) || is_character_single(hline_arb_label)
+    is.null(hline_arb) || is_numeric_vector(hline_arb, min_length = 1),
+    is.null(hline_arb) ||
+      is.null(hline_arb_color) ||
+      (is_character_vector(hline_arb_color) && length(hline_arb_color) %in% c(1, length(hline_arb))),
+    is.null(hline_arb) ||
+      is.null(hline_arb_label) ||
+      (is_character_vector(hline_arb_label) && length(hline_arb_label) %in% c(1, length(hline_arb)))
   )
   stopifnot(
-    is.null(vline_arb) || is_numeric_single(vline_arb),
-    is.null(vline_arb) || is.null(vline_arb_color) || is_character_single(vline_arb_color),
-    is.null(vline_arb) || is.null(vline_arb_label) || is_character_single(vline_arb_label)
+    is.null(vline_arb) || is_numeric_vector(vline_arb, min_length = 1),
+    is.null(vline_arb) ||
+      is.null(vline_arb_color) ||
+      (is_character_vector(vline_arb_color) && length(vline_arb_color) %in% c(1, length(vline_arb))),
+    is.null(vline_arb) ||
+      is.null(vline_arb_label) ||
+      (is_character_vector(vline_arb_label) && length(vline_arb_label) %in% c(1, length(vline_arb)))
   )
 
   if (!is.null(hline_vars)) {
@@ -338,10 +351,8 @@ tm_g_gh_correlationplot <- function(label,
                        shape_manual = shape_manual,
                        plot_height = plot_height,
                        plot_width = plot_width,
-                       hline_arb_color = hline_arb_color,
                        hline_vars_colors = hline_vars_colors,
                        hline_vars_labels = hline_vars_labels,
-                       vline_arb_color = vline_arb_color,
                        vline_vars_colors = vline_vars_colors,
                        vline_vars_labels = vline_vars_labels
     ),
@@ -364,7 +375,8 @@ ui_g_correlationplot <- function(id, ...) {
         label = "Select Treatment Variable",
         choices = a$trt_group$choices,
         selected = a$trt_group$selected,
-        multiple = FALSE),
+        multiple = FALSE
+      ),
       templ_ui_params_vars(
         ns,
         xparam_choices = a$xaxis_param$choices, xparam_selected = a$xaxis_param$selected,
@@ -378,68 +390,25 @@ ui_g_correlationplot <- function(id, ...) {
           ns("hline_vars"),
           label = "Add Horizontal Range Line(s):",
           choices = a$hline_vars,
-          selected = a$hline_vars[1],
+          selected = NULL,
           multiple = TRUE)
       },
-      tags$b("Add Arbitrary Horizontal Line/Label:"),
-      div(
-        style = "display: flex",
-        div(
-          style = "padding: 0px;",
-          div(
-            style = "display: inline-block;vertical-align:moddle; width: 100%;",
-            tags$b("Line Value:")
-          ),
-          div(
-            style = "display: inline-block;vertical-align:middle; width: 100%;",
-            numericInput(ns("hline"), "", a$hline_arb)
-          )
-        ),
-        div(
-          style = "padding: 0px;",
-          div(
-            style = "display: inline-block;vertical-align:moddle; width: 100%;",
-            tags$b("Line Label:")
-          ),
-          div(
-            style = "display: inline-block;vertical-align:middle; width: 100%;",
-            textInput(ns("hline_label"), "", a$hline_arb_label)
-          )
-        )
-      ),
+      ui_arbitrary_lines(id = ns("hline_arb"), a$hline_arb, a$hline_arb_label, a$hline_arb_color),
       if (!is.null(a$vline_vars)) {
         optionalSelectInput(
           ns("vline_vars"),
           label = "Add Vertical Range Line(s):",
           choices = a$vline_vars,
-          selected = a$vline_vars[1],
-          multiple = TRUE)
-      },
-      tags$b("Add Arbitrary Vertical Line/Label:"),
-      div(
-        style = "display: flex",
-        div(
-          style = "padding: 0px;",
-          div(
-            style = "display: inline-block;vertical-align:moddle; width: 100%;",
-            tags$b("Line Value:")
-          ),
-          div(
-            style = "display: inline-block;vertical-align:middle; width: 100%;",
-            numericInput(ns("vline"), "", a$vline_arb)
-          )
-        ),
-        div(
-          style = "padding: 0px;",
-          div(
-            style = "display: inline-block;vertical-align:moddle; width: 100%;",
-            tags$b("Line Label:")
-          ),
-          div(
-            style = "display: inline-block;vertical-align:middle; width: 100%;",
-            textInput(ns("vline_label"), "", a$vline_arb_label)
-          )
+          selected = NULL,
+          multiple = TRUE
         )
+      },
+      ui_arbitrary_lines(
+        id = ns("vline_arb"),
+        a$vline_arb,
+        a$vline_arb_label,
+        a$vline_arb_color,
+        title = "Arbitrary Vertical Lines:"
       ),
       panel_group(
         panel_item(
@@ -486,10 +455,8 @@ srv_g_correlationplot <- function(input,
                                   shape_manual,
                                   plot_height,
                                   plot_width,
-                                  hline_arb_color,
                                   hline_vars_colors,
                                   hline_vars_labels,
-                                  vline_arb_color,
                                   vline_vars_colors,
                                   vline_vars_labels) {
   init_chunks()
@@ -792,6 +759,9 @@ srv_g_correlationplot <- function(input,
     list(title_text = title_text, xaxis_lab = xaxis_lab, yaxis_lab = yaxis_lab)
   })
 
+  horizontal_line <- srv_arbitrary_lines("hline_arb")
+  vertical_line <- srv_arbitrary_lines("vline_arb")
+
   # plot
   plot_r <- reactive({
     private_chunks <- plot_data_transpose()$chunks$clone(deep = TRUE)
@@ -807,15 +777,17 @@ srv_g_correlationplot <- function(input,
     font_size <- input$font_size
     dot_size <- input$dot_size
     reg_text_size <- input$reg_text_size
-    hline <- input$hline
-    hline_label <- input$hline_label
+    hline_arb <- horizontal_line()$line_arb
+    hline_arb_label <- horizontal_line()$line_arb_label
+    hline_arb_color <- horizontal_line()$line_arb_color
     hline_vars <- if (is_empty(input$hline_vars)) {
       NULL
     } else {
       paste0(input$hline_vars, ".", yaxis_param)
     }
-    vline <- input$vline
-    vline_label <- input$vline_label
+    vline_arb <- vertical_line()$line_arb
+    vline_arb_label <- vertical_line()$line_arb_label
+    vline_arb_color <- vertical_line()$line_arb_color
     vline_vars <- if (is_empty(input$vline_vars)) {
       NULL
     } else {
@@ -870,18 +842,18 @@ srv_g_correlationplot <- function(input,
           reg_text_size = .(reg_text_size),
           loq_legend = .(loq_legend),
           rotate_xlab = .(rotate_xlab),
-          hline_arb = .(`if`(is.na(hline), NULL, as.numeric(hline))),
-          hline_arb_label = .(`if`(is.na(hline), NULL, hline_label)),
+          hline_arb = .(hline_arb),
+          hline_arb_label = .(hline_arb_label),
           hline_arb_color = .(hline_arb_color),
           hline_vars = .(hline_vars),
           hline_vars_colors = .(hline_vars_colors[seq_along(hline_vars)]),
           hline_vars_labels = .(paste(hline_vars_labels[seq_along(hline_vars)], "-", yaxis_param)),
-          vline_arb = .(`if`(is.na(vline), NULL, as.numeric(vline))),
-          vline_arb_label = .(`if`(is.na(vline), NULL, vline_label)),
+          vline_arb = .(vline_arb),
+          vline_arb_label = .(vline_arb_label),
           vline_arb_color = .(vline_arb_color),
           vline_vars = .(vline_vars),
           vline_vars_colors = .(vline_vars_colors[seq_along(vline_vars)]),
-          vline_vars_labels = .(paste(vline_vars_labels[seq_along(vline_vars)], "-", xaxis_param)),
+          vline_vars_labels = .(paste(vline_vars_labels[seq_along(vline_vars)], "-", xaxis_param))
         )
         print(p)
       })
