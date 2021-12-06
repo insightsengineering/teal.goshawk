@@ -19,7 +19,7 @@ Description: Modules that produce web interfaces through which
     variables, Limit of Quantification flag variable (LOQFL) is expected
     with levels 'Y', 'N' or NA.
 License: Apache License 2.0 | file LICENSE
-Depends: 
+Depends:
     goshawk (>= 0.1.10),
     R (>= 3.6),
     shiny,
@@ -37,14 +37,13 @@ Imports:
     tidyr (>= 1.0.0),
     utils,
     utils.nest (>= 0.2.11)
-Suggests: 
+Suggests:
     knitr,
     rmarkdown,
     scda (>= 0.1.1),
     scda.2021 (>= 0.1.1),
     stringr,
     tern (>= 0.7.5),
-    test.nest (>= 0.2.11),
     testthat (>= 2.0)
 Encoding: UTF-8
 LazyData: true
