@@ -220,34 +220,10 @@ tm_g_gh_spaghettiplot <- function(label,
   stopifnot(is.choices_selected(xaxis_var))
   stopifnot(is.choices_selected(yaxis_var))
   stopifnot(is.choices_selected(trt_group))
-  stopifnot(
-    is.null(hline_arb) || is_numeric_vector(hline_arb, min_length = 1),
-    is.null(hline_arb) ||
-      is.null(hline_arb_color) ||
-      (is_character_vector(hline_arb_color) && length(hline_arb_color) %in% c(1, length(hline_arb))),
-    is.null(hline_arb) ||
-      is.null(hline_arb_label) ||
-      (is_character_vector(hline_arb_label) && length(hline_arb_label) %in% c(1, length(hline_arb)))
-  )
+  validate_line_arb_arg(hline_arb, hline_arb_color, hline_arb_label)
+  validate_line_vars_arg(hline_vars, hline_vars_colors, hline_vars_labels)
   check_slider_input(plot_height, allow_null = FALSE)
   check_slider_input(plot_width)
-
-  if (!is.null(hline_vars)) {
-    stopifnot(is_character_vector(hline_vars, min_length = 1))
-    if (!is.null(hline_vars_labels)) {
-      stopifnot(is_character_vector(
-        hline_vars_labels, min_length = length(hline_vars),
-        max_length = (length(hline_vars)))
-      )
-    }
-    if (!is.null(hline_vars_colors)) {
-      stopifnot(is_character_vector(
-        hline_vars_colors,
-        min_length = length(hline_vars),
-        max_length = (length(hline_vars)))
-      )
-    }
-  }
 
   args <- as.list(environment())
 
@@ -306,7 +282,7 @@ g_ui_spaghettiplot <- function(id, ...) {
         c("None" = "NONE", "Mean" = "MEAN", "Median" = "MEDIAN"),
         inline = TRUE
       ),
-      if (!is.null(a$hline_vars)) {
+      if (length(a$hline_vars) > 0) {
         optionalSelectInput(
           ns("hline_vars"),
           label = "Add Range Line(s):",

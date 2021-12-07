@@ -283,59 +283,10 @@ tm_g_gh_correlationplot <- function(label,
   stopifnot(is_logical_single(trt_facet))
   check_slider_input(plot_height, allow_null = FALSE)
   check_slider_input(plot_width)
-
-  stopifnot(
-    is.null(hline_arb) || is_numeric_vector(hline_arb, min_length = 1),
-    is.null(hline_arb) ||
-      is.null(hline_arb_color) ||
-      (is_character_vector(hline_arb_color) && length(hline_arb_color) %in% c(1, length(hline_arb))),
-    is.null(hline_arb) ||
-      is.null(hline_arb_label) ||
-      (is_character_vector(hline_arb_label) && length(hline_arb_label) %in% c(1, length(hline_arb)))
-  )
-  stopifnot(
-    is.null(vline_arb) || is_numeric_vector(vline_arb, min_length = 1),
-    is.null(vline_arb) ||
-      is.null(vline_arb_color) ||
-      (is_character_vector(vline_arb_color) && length(vline_arb_color) %in% c(1, length(vline_arb))),
-    is.null(vline_arb) ||
-      is.null(vline_arb_label) ||
-      (is_character_vector(vline_arb_label) && length(vline_arb_label) %in% c(1, length(vline_arb)))
-  )
-
-  if (!is.null(hline_vars)) {
-    stopifnot(is_character_vector(hline_vars, min_length = 1))
-    if (!is.null(hline_vars_labels)) {
-      stopifnot(is_character_vector(
-        hline_vars_labels, min_length = length(hline_vars),
-        max_length = (length(hline_vars)))
-      )
-    }
-    if (!is.null(hline_vars_colors)) {
-      stopifnot(is_character_vector(
-        hline_vars_colors,
-        min_length = length(hline_vars),
-        max_length = (length(hline_vars)))
-      )
-    }
-  }
-
-  if (!is.null(vline_vars)) {
-    stopifnot(is_character_vector(vline_vars, min_length = 1))
-    if (!is.null(vline_vars_labels)) {
-      stopifnot(is_character_vector(
-        vline_vars_labels, min_length = length(vline_vars),
-        max_length = (length(vline_vars)))
-      )
-    }
-    if (!is.null(vline_vars_colors)) {
-      stopifnot(is_character_vector(
-        vline_vars_colors,
-        min_length = length(vline_vars),
-        max_length = (length(vline_vars)))
-      )
-    }
-  }
+  validate_line_arb_arg(hline_arb, hline_arb_color, hline_arb_label)
+  validate_line_arb_arg(vline_arb, vline_arb_color, vline_arb_label)
+  validate_line_vars_arg(hline_vars, hline_vars_colors, hline_vars_labels)
+  validate_line_vars_arg(vline_vars, vline_vars_colors, vline_vars_labels)
 
   args <- as.list(environment())
 
@@ -385,7 +336,7 @@ ui_g_correlationplot <- function(id, ...) {
         ychoices = a$yaxis_var$choices, yselected = a$yaxis_var$selected
       ),
       templ_ui_constraint(ns, "X-Axis Data Constraint"), # required by constr_anl_chunks
-      if (!is.null(a$hline_vars)) {
+      if (length(a$hline_vars) > 0) {
         optionalSelectInput(
           ns("hline_vars"),
           label = "Add Horizontal Range Line(s):",
@@ -394,7 +345,7 @@ ui_g_correlationplot <- function(id, ...) {
           multiple = TRUE)
       },
       ui_arbitrary_lines(id = ns("hline_arb"), a$hline_arb, a$hline_arb_label, a$hline_arb_color),
-      if (!is.null(a$vline_vars)) {
+      if (length(a$vline_vars) > 0) {
         optionalSelectInput(
           ns("vline_vars"),
           label = "Add Vertical Range Line(s):",
