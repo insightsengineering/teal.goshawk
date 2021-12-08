@@ -170,10 +170,15 @@ tm_g_gh_lineplot <- function(label,
   stopifnot(is.choices_selected(xaxis_var))
   stopifnot(is.choices_selected(yaxis_var))
   stopifnot(is.choices_selected(param))
-  check_slider_input(plot_height, allow_null = FALSE)
-  check_slider_input(plot_width)
+
+  checkmate::assert_numeric(plot_height, len = 3, any.missing = FALSE, finite = TRUE)
+  checkmate::assert_numeric(plot_height[c(2, 1, 3)], sorted = TRUE, .var.name = "plot_height")
+  checkmate::assert_numeric(plot_width, len = 3, any.missing = FALSE, null.ok = TRUE, finite = TRUE)
+  checkmate::assert_numeric(plot_width[c(2, 1, 3)], sorted = TRUE, null.ok = TRUE, .var.name = "plot_width")
+
   stopifnot(is.choices_selected(trt_group))
-  check_slider_input(table_font_size)
+  checkmate::assert_numeric(table_font_size, len = 3, any.missing = FALSE, null.ok = TRUE, finite = TRUE)
+  checkmate::assert_numeric(table_font_size[c(2, 1, 3)], sorted = TRUE, null.ok = TRUE, .var.name = "table_font_size")
   stopifnot(is_numeric_single(count_threshold))
 
   args <- as.list(environment())

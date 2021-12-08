@@ -229,8 +229,11 @@ tm_g_gh_spaghettiplot <- function(label,
       is.null(hline_arb_label) ||
       (is_character_vector(hline_arb_label) && length(hline_arb_label) %in% c(1, length(hline_arb)))
   )
-  check_slider_input(plot_height, allow_null = FALSE)
-  check_slider_input(plot_width)
+
+  checkmate::assert_numeric(plot_height, len = 3, any.missing = FALSE, finite = TRUE)
+  checkmate::assert_numeric(plot_height[c(2, 1, 3)], sorted = TRUE, .var.name = "plot_height")
+  checkmate::assert_numeric(plot_width, len = 3, any.missing = FALSE, null.ok = TRUE, finite = TRUE)
+  checkmate::assert_numeric(plot_width[c(2, 1, 3)], sorted = TRUE, null.ok = TRUE, .var.name = "plot_width")
 
   if (!is.null(hline_vars)) {
     stopifnot(is_character_vector(hline_vars, min_length = 1))
