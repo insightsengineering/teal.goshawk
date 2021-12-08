@@ -226,10 +226,15 @@ tm_g_gh_boxplot <- function(label,
     is_numeric_vector(alpha) && length(alpha) == 3,
     is.choices_selected(trt_group)
   )
+
   validate_line_arb_arg(hline_arb, hline_arb_color, hline_arb_label)
   validate_line_vars_arg(hline_vars, hline_vars_colors, hline_vars_labels)
-  check_slider_input(plot_height, allow_null = FALSE)
-  check_slider_input(plot_width)
+
+  checkmate::assert_numeric(plot_height, len = 3, any.missing = FALSE, finite = TRUE)
+  checkmate::assert_numeric(plot_height[1], lower = plot_height[2], upper = plot_height[3], .var.name = "plot_height")
+  checkmate::assert_numeric(plot_width, len = 3, any.missing = FALSE, null.ok = TRUE, finite = TRUE)
+  checkmate::assert_numeric(plot_width[1], lower = plot_width[2], upper = plot_width[3], null.ok = TRUE,
+                            .var.name = "plot_width")
 
   args <- as.list(environment())
 

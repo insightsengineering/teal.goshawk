@@ -281,12 +281,16 @@ tm_g_gh_correlationplot <- function(label,
   stopifnot(is.choices_selected(yaxis_var))
   stopifnot(is.choices_selected(trt_group))
   stopifnot(is_logical_single(trt_facet))
-  check_slider_input(plot_height, allow_null = FALSE)
-  check_slider_input(plot_width)
   validate_line_arb_arg(hline_arb, hline_arb_color, hline_arb_label)
   validate_line_arb_arg(vline_arb, vline_arb_color, vline_arb_label)
   validate_line_vars_arg(hline_vars, hline_vars_colors, hline_vars_labels)
   validate_line_vars_arg(vline_vars, vline_vars_colors, vline_vars_labels)
+
+  checkmate::assert_numeric(plot_height, len = 3, any.missing = FALSE, finite = TRUE)
+  checkmate::assert_numeric(plot_height[1], lower = plot_height[2], upper = plot_height[3], .var.name = "plot_height")
+  checkmate::assert_numeric(plot_width, len = 3, any.missing = FALSE, null.ok = TRUE, finite = TRUE)
+  checkmate::assert_numeric(plot_width[1], lower = plot_width[2], upper = plot_width[3], null.ok = TRUE,
+                            .var.name = "plot_width")
 
   args <- as.list(environment())
 
