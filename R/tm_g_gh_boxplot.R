@@ -221,34 +221,14 @@ tm_g_gh_boxplot <- function(label,
     is.null(facet_ncol) || is_integer_single(facet_ncol),
     is_logical_single(loq_legend),
     is_logical_single(rotate_xlab),
-    is.null(hline_arb) || is_numeric_vector(hline_arb, min_length = 1),
-    is.null(hline_arb) ||
-      is.null(hline_arb_color) ||
-      (is_character_vector(hline_arb_color) && length(hline_arb_color) %in% c(1, length(hline_arb))),
-    is.null(hline_arb) ||
-      is.null(hline_arb_label) ||
-      (is_character_vector(hline_arb_label) && length(hline_arb_label) %in% c(1, length(hline_arb))),
     is_numeric_vector(font_size) && length(font_size) == 3,
     is_numeric_vector(dot_size) && length(dot_size) == 3,
     is_numeric_vector(alpha) && length(alpha) == 3,
     is.choices_selected(trt_group)
   )
-  if (!is.null(hline_vars)) {
-    stopifnot(is_character_vector(hline_vars, min_length = 1))
-    if (!is.null(hline_vars_labels)) {
-      stopifnot(is_character_vector(
-        hline_vars_labels, min_length = length(hline_vars),
-        max_length = (length(hline_vars)))
-      )
-    }
-    if (!is.null(hline_vars_colors)) {
-      stopifnot(is_character_vector(
-        hline_vars_colors,
-        min_length = length(hline_vars),
-        max_length = (length(hline_vars)))
-      )
-    }
-  }
+
+  validate_line_arb_arg(hline_arb, hline_arb_color, hline_arb_label)
+  validate_line_vars_arg(hline_vars, hline_vars_colors, hline_vars_labels)
 
   checkmate::assert_numeric(plot_height, len = 3, any.missing = FALSE, finite = TRUE)
   checkmate::assert_numeric(plot_height[1], lower = plot_height[2], upper = plot_height[3], .var.name = "plot_height")
@@ -326,7 +306,7 @@ ui_g_boxplot <- function(id, ...) {
         selected = a$facet_var$selected,
         multiple = FALSE),
       templ_ui_constraint(ns, label = "Data Constraint"), # required by constr_anl_chunks
-      if (!is.null(a$hline_vars)) {
+      if (length(a$hline_vars) > 0) {
         optionalSelectInput(
           ns("hline_vars"),
           label = "Add Range Line(s):",

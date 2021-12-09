@@ -150,7 +150,7 @@ tm_g_gh_density_distribution_plot <- function(label, # nolint
                                               plot_width = NULL,
                                               font_size = c(12, 8, 20),
                                               line_size = c(1, .25, 3),
-                                              hline_arb = character(0),
+                                              hline_arb = numeric(0),
                                               hline_arb_color = "red",
                                               hline_arb_label = "Horizontal line",
                                               facet_ncol = 2L,
@@ -169,18 +169,12 @@ tm_g_gh_density_distribution_plot <- function(label, # nolint
     # color_manual, color_comb
     is_numeric_vector(font_size) && length(font_size) == 3,
     is_numeric_vector(line_size) && length(line_size) == 3,
-    is.null(hline_arb) || is_numeric_vector(hline_arb, min_length = 1),
-    is.null(hline_arb) ||
-      is.null(hline_arb_color) ||
-      (is_character_vector(hline_arb_color) && length(hline_arb_color) %in% c(1, length(hline_arb))),
-    is.null(hline_arb) ||
-      is.null(hline_arb_label) ||
-      (is_character_vector(hline_arb_label) && length(hline_arb_label) %in% c(1, length(hline_arb))),
     is_integer_single(facet_ncol),
     is_logical_single(comb_line),
     is_logical_single(rotate_xlab),
     is.choices_selected(trt_group)
   )
+  validate_line_arb_arg(hline_arb, hline_arb_color, hline_arb_label)
 
   checkmate::assert_numeric(plot_height, len = 3, any.missing = FALSE, finite = TRUE)
   checkmate::assert_numeric(plot_height[1], lower = plot_height[2], upper = plot_height[3], .var.name = "plot_height")

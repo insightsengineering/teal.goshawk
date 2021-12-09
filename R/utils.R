@@ -444,3 +444,25 @@ srv_arbitrary_lines <- function(id) {
     })
   })
 }
+
+# to check the arbitrary line arguments
+validate_line_arb_arg <- function(line_arb, line_arb_color, line_arb_label) {
+  stopifnot(
+    is_numeric_vector(line_arb, min_length = 0),
+    length(line_arb) == 0 ||
+      (is_character_vector(line_arb_color) && length(line_arb_color) %in% c(1, length(line_arb))),
+    length(line_arb) == 0 ||
+      (is_character_vector(line_arb_label) && length(line_arb_label) %in% c(1, length(line_arb)))
+  )
+}
+
+# to check the variable line arguments
+validate_line_vars_arg <- function(line_vars, line_vars_colors, line_vars_labels) {
+  stopifnot(
+    is_character_vector(line_vars, min_length = 0),
+    length(line_vars) == 0 ||
+      (is_character_vector(line_vars_colors) && length(line_vars_colors) %in% c(1, length(line_vars))),
+    length(line_vars) == 0 ||
+      (is_character_vector(line_vars_labels) && length(line_vars_labels) %in% c(length(line_vars)))
+  )
+}

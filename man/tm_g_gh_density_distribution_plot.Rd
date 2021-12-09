@@ -17,7 +17,7 @@ tm_g_gh_density_distribution_plot(
   plot_width = NULL,
   font_size = c(12, 8, 20),
   line_size = c(1, 0.25, 3),
-  hline_arb = character(0),
+  hline_arb = numeric(0),
   hline_arb_color = "red",
   hline_arb_label = "Horizontal line",
   facet_ncol = 2L,
