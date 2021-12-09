@@ -445,6 +445,7 @@ srv_arbitrary_lines <- function(id) {
   })
 }
 
+# to check the arbitrary line arguments
 validate_line_arb_arg <- function(line_arb, line_arb_color, line_arb_label) {
   stopifnot(
     is_numeric_vector(line_arb, min_length = 0),
@@ -455,6 +456,7 @@ validate_line_arb_arg <- function(line_arb, line_arb_color, line_arb_label) {
   )
 }
 
+# to check the variable line arguments
 validate_line_vars_arg <- function(line_vars, line_vars_colors, line_vars_labels) {
   stopifnot(
     is_character_vector(line_vars, min_length = 0),
