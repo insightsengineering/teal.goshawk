@@ -62,44 +62,53 @@
 #' library(scda)
 #'
 #' # original ARM value = dose value
-#' arm_mapping <- list("A: Drug X" = "150mg QD",
-#'                     "B: Placebo" = "Placebo",
-#'                     "C: Combination" = "Combination")
+#' arm_mapping <- list(
+#'   "A: Drug X" = "150mg QD",
+#'   "B: Placebo" = "Placebo",
+#'   "C: Combination" = "Combination"
+#' )
 #' set.seed(1)
 #' ADSL <- synthetic_cdisc_data("latest")$adsl
 #' ADLB <- synthetic_cdisc_data("latest")$adlb
 #' var_labels <- lapply(ADLB, function(x) attributes(x)$label)
 #' ADLB <- ADLB %>%
-#'   mutate(AVISITCD = case_when(
-#'     AVISIT == "SCREENING" ~ "SCR",
-#'     AVISIT == "BASELINE" ~ "BL",
-#'     grepl("WEEK", AVISIT) ~ paste("W", stringr::str_extract(AVISIT, "(?<=(WEEK ))[0-9]+")),
-#'     TRUE ~ as.character(NA)),
+#'   mutate(
+#'     AVISITCD = case_when(
+#'       AVISIT == "SCREENING" ~ "SCR",
+#'       AVISIT == "BASELINE" ~ "BL",
+#'       grepl("WEEK", AVISIT) ~ paste("W", stringr::str_extract(AVISIT, "(?<=(WEEK ))[0-9]+")),
+#'       TRUE ~ as.character(NA)
+#'     ),
 #'     AVISITCDN = case_when(
 #'       AVISITCD == "SCR" ~ -2,
 #'       AVISITCD == "BL" ~ 0,
 #'       grepl("W", AVISITCD) ~ as.numeric(gsub("[^0-9]*", "", AVISITCD)),
-#'       TRUE ~ as.numeric(NA)),
+#'       TRUE ~ as.numeric(NA)
+#'     ),
 #'     AVISITCD = factor(AVISITCD) %>% reorder(AVISITCDN),
 #'     TRTORD = case_when(
 #'       ARMCD == "ARM C" ~ 1,
 #'       ARMCD == "ARM B" ~ 2,
-#'       ARMCD == "ARM A" ~ 3),
+#'       ARMCD == "ARM A" ~ 3
+#'     ),
 #'     ARM = as.character(arm_mapping[match(ARM, names(arm_mapping))]),
 #'     ARM = factor(ARM) %>% reorder(TRTORD),
 #'     ACTARM = as.character(arm_mapping[match(ACTARM, names(arm_mapping))]),
 #'     ACTARM = factor(ACTARM) %>% reorder(TRTORD),
 #'     ANRLO = 30,
-#'     ANRHI = 75) %>%
-#'     rowwise() %>%
-#'     group_by(PARAMCD) %>%
-#'     mutate(LBSTRESC = ifelse(USUBJID %in% sample(USUBJID, 1, replace = TRUE),
-#'     paste('<', round(runif(1, min = 25, max = 30))), LBSTRESC)) %>%
-#'     mutate(LBSTRESC = ifelse(USUBJID %in% sample(USUBJID, 1, replace = TRUE),
-#'     paste( '>', round(runif(1, min = 70, max = 75))), LBSTRESC)) %>%
-#'     ungroup
+#'     ANRHI = 75
+#'   ) %>%
+#'   rowwise() %>%
+#'   group_by(PARAMCD) %>%
+#'   mutate(LBSTRESC = ifelse(USUBJID %in% sample(USUBJID, 1, replace = TRUE),
+#'     paste("<", round(runif(1, min = 25, max = 30))), LBSTRESC
+#'   )) %>%
+#'   mutate(LBSTRESC = ifelse(USUBJID %in% sample(USUBJID, 1, replace = TRUE),
+#'     paste(">", round(runif(1, min = 70, max = 75))), LBSTRESC
+#'   )) %>%
+#'   ungroup()
 #' attr(ADLB[["ARM"]], "label") <- var_labels[["ARM"]]
-#' attr(ADLB[["ACTARM"]], 'label') <- var_labels[["ACTARM"]]
+#' attr(ADLB[["ACTARM"]], "label") <- var_labels[["ACTARM"]]
 #' attr(ADLB[["ANRLO"]], "label") <- "Analysis Normal Range Lower Limit"
 #' attr(ADLB[["ANRHI"]], "label") <- "Analysis Normal Range Upper Limit"
 #'
@@ -152,9 +161,10 @@
 #'                attr(ADLB[['ANRHI']], 'label') <- 'Analysis Normal Range Upper Limit'
 #'                ALB_LOQS <- goshawk:::h_identify_loq_values(ADLB)
 #'                ADLB <- left_join(ADLB, ALB_LOQS, by = 'PARAM')",
-#'       vars = list(arm_mapping = arm_mapping)),
-#'       check = FALSE
+#'       vars = list(arm_mapping = arm_mapping)
 #'     ),
+#'     check = FALSE
+#'   ),
 #'   modules = root_modules(
 #'     tm_g_gh_spaghettiplot(
 #'       label = "Spaghetti Plot",
@@ -163,14 +173,18 @@
 #'       param = choices_selected(c("ALT", "CRP", "IGA"), "ALT"),
 #'       idvar = "USUBJID",
 #'       xaxis_var = choices_selected(c("Analysis Visit Code" = "AVISITCD"), "AVISITCD"),
-#'       yaxis_var = choices_selected(c("AVAL","CHG", "PCHG"), "AVAL"),
-#'       filter_var = choices_selected(c("None" = "NONE", "Screening" = "BASE2", "Baseline" = "BASE"),
-#'        "NONE"),
+#'       yaxis_var = choices_selected(c("AVAL", "CHG", "PCHG"), "AVAL"),
+#'       filter_var = choices_selected(
+#'         c("None" = "NONE", "Screening" = "BASE2", "Baseline" = "BASE"),
+#'         "NONE"
+#'       ),
 #'       trt_group = choices_selected(c("ARM", "ACTARM"), "ARM"),
 #'       color_comb = "#39ff14",
-#'       man_color = c('Combination' = "#000000",
-#'                    'Placebo' = "#fce300",
-#'                    '150mg QD' = "#5a2f5f"),
+#'       man_color = c(
+#'         "Combination" = "#000000",
+#'         "Placebo" = "#fce300",
+#'         "150mg QD" = "#5a2f5f"
+#'       ),
 #'       hline_arb = c(60, 50),
 #'       hline_arb_color = c("grey", "red"),
 #'       hline_arb_label = c("default A", "default B"),
@@ -179,10 +193,8 @@
 #'     )
 #'   )
 #' )
-#'
 #' \dontrun{
 #' shinyApp(app$ui, app$server)
-#'
 #' }
 #'
 tm_g_gh_spaghettiplot <- function(label,
@@ -215,7 +227,6 @@ tm_g_gh_spaghettiplot <- function(label,
                                   hline_vars_labels = hline_vars,
                                   pre_output = NULL,
                                   post_output = NULL) {
-
   stopifnot(is.choices_selected(param))
   stopifnot(is.choices_selected(xaxis_var))
   stopifnot(is.choices_selected(yaxis_var))
@@ -226,8 +237,10 @@ tm_g_gh_spaghettiplot <- function(label,
   checkmate::assert_numeric(plot_height, len = 3, any.missing = FALSE, finite = TRUE)
   checkmate::assert_numeric(plot_height[1], lower = plot_height[2], upper = plot_height[3], .var.name = "plot_height")
   checkmate::assert_numeric(plot_width, len = 3, any.missing = FALSE, null.ok = TRUE, finite = TRUE)
-  checkmate::assert_numeric(plot_width[1], lower = plot_width[2], upper = plot_width[3], null.ok = TRUE,
-                            .var.name = "plot_width")
+  checkmate::assert_numeric(plot_width[1],
+    lower = plot_width[2], upper = plot_width[3], null.ok = TRUE,
+    .var.name = "plot_width"
+  )
 
   args <- as.list(environment())
 
@@ -255,11 +268,9 @@ tm_g_gh_spaghettiplot <- function(label,
     ui_args = args,
     filters = dataname
   )
-
 }
 
 g_ui_spaghettiplot <- function(id, ...) {
-
   ns <- NS(id)
   a <- list(...)
 
@@ -272,7 +283,8 @@ g_ui_spaghettiplot <- function(id, ...) {
         label = "Select Treatment Variable",
         choices = a$trt_group$choices,
         selected = a$trt_group$selected,
-        multiple = FALSE),
+        multiple = FALSE
+      ),
       templ_ui_params_vars(
         ns,
         # xparam and yparam are identical, so we only show the user one
@@ -292,7 +304,8 @@ g_ui_spaghettiplot <- function(id, ...) {
           label = "Add Range Line(s):",
           choices = a$hline_vars,
           selected = NULL,
-          multiple = TRUE)
+          multiple = TRUE
+        )
       },
       ui_arbitrary_lines(id = ns("hline_arb"), a$hline_arb, a$hline_arb_label, a$hline_arb_color),
       templ_ui_constraint(ns), # required by constr_anl_chunks
@@ -301,15 +314,21 @@ g_ui_spaghettiplot <- function(id, ...) {
         label = "Y-Axis Range Zoom",
         min = -1000000,
         max = 1000000,
-        value = c(-1000000, 1000000)),
+        value = c(-1000000, 1000000)
+      ),
       panel_group(
         panel_item(
           title = "Plot Aesthetic Settings",
-          div(style = "padding: 0px;",
-            div(style = "display: inline-block;vertical-align:middle; width: 175px;",
-              tags$b("Number of Plots Per Row:")),
-            div(style = "display: inline-block;vertical-align:middle; width: 100px;",
-              numericInput(ns("facet_ncol"), "", a$facet_ncol, min = 1))
+          div(
+            style = "padding: 0px;",
+            div(
+              style = "display: inline-block;vertical-align:middle; width: 175px;",
+              tags$b("Number of Plots Per Row:")
+            ),
+            div(
+              style = "display: inline-block;vertical-align:middle; width: 100px;",
+              numericInput(ns("facet_ncol"), "", a$facet_ncol, min = 1)
+            )
           ),
           checkboxInput(ns("rotate_xlab"), "Rotate X-Axis Label", a$rotate_xlab),
           optionalSliderInputValMinMax(ns("font_size"), "Font Size", a$font_size, ticks = FALSE),
@@ -317,7 +336,8 @@ g_ui_spaghettiplot <- function(id, ...) {
             ns("alpha"),
             "Line Alpha",
             a$alpha,
-            value_min_max =  c(0.8, 0.0, 1.0), step = 0.1, ticks = FALSE)
+            value_min_max =  c(0.8, 0.0, 1.0), step = 0.1, ticks = FALSE
+          )
         )
       )
     ),
@@ -367,8 +387,10 @@ srv_g_spaghettiplot <- function(input,
     private_chunks <- anl_chunks()$chunks$clone(deep = TRUE)
     ylim <- yrange_slider$state()$value
     facet_ncol <- input$facet_ncol
-    validate(need(is.na(facet_ncol) || (as.numeric(facet_ncol) > 0 && as.numeric(facet_ncol) %% 1 == 0),
-      "Number of plots per row must be a positive integer"))
+    validate(need(
+      is.na(facet_ncol) || (as.numeric(facet_ncol) > 0 && as.numeric(facet_ncol) %% 1 == 0),
+      "Number of plots per row must be a positive integer"
+    ))
     rotate_xlab <- input$rotate_xlab
     hline_arb <- horizontal_line()$line_arb
     hline_arb_label <- horizontal_line()$line_arb_label
@@ -470,5 +492,4 @@ srv_g_spaghettiplot <- function(input,
     datasets = datasets,
     modal_title = "Spaghetti Plot"
   )
-
 }

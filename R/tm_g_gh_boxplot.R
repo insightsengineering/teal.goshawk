@@ -57,48 +57,57 @@
 #' library(scda)
 #'
 #' # original ARM value = dose value
-#' arm_mapping <- list("A: Drug X" = "150mg QD",
-#'                     "B: Placebo" = "Placebo",
-#'                     "C: Combination" = "Combination")
+#' arm_mapping <- list(
+#'   "A: Drug X" = "150mg QD",
+#'   "B: Placebo" = "Placebo",
+#'   "C: Combination" = "Combination"
+#' )
 #'
 #' set.seed(1)
 #' ADSL <- synthetic_cdisc_data("latest")$adsl
 #' ADLB <- synthetic_cdisc_data("latest")$adlb
 #' var_labels <- lapply(ADLB, function(x) attributes(x)$label)
 #' ADLB <- ADLB %>%
-#'   mutate(AVISITCD = case_when(
-#'     AVISIT == "SCREENING" ~ "SCR",
-#'     AVISIT == "BASELINE" ~ "BL",
-#'     grepl("WEEK", AVISIT) ~ paste("W", stringr::str_extract(AVISIT, "(?<=(WEEK ))[0-9]+")),
-#'     TRUE ~ as.character(NA)),
+#'   mutate(
+#'     AVISITCD = case_when(
+#'       AVISIT == "SCREENING" ~ "SCR",
+#'       AVISIT == "BASELINE" ~ "BL",
+#'       grepl("WEEK", AVISIT) ~ paste("W", stringr::str_extract(AVISIT, "(?<=(WEEK ))[0-9]+")),
+#'       TRUE ~ as.character(NA)
+#'     ),
 #'     AVISITCDN = case_when(
 #'       AVISITCD == "SCR" ~ -2,
 #'       AVISITCD == "BL" ~ 0,
 #'       grepl("W", AVISITCD) ~ as.numeric(gsub("[^0-9]*", "", AVISITCD)),
-#'       TRUE ~ as.numeric(NA)),
-#'             AVISITCD = factor(AVISITCD) %>% reorder(AVISITCDN),
+#'       TRUE ~ as.numeric(NA)
+#'     ),
+#'     AVISITCD = factor(AVISITCD) %>% reorder(AVISITCDN),
 #'     TRTORD = case_when(
 #'       ARMCD == "ARM C" ~ 1,
 #'       ARMCD == "ARM B" ~ 2,
-#'       ARMCD == "ARM A" ~ 3),
+#'       ARMCD == "ARM A" ~ 3
+#'     ),
 #'     ARM = as.character(arm_mapping[match(ARM, names(arm_mapping))]),
 #'     ARM = factor(ARM) %>% reorder(TRTORD),
 #'     ACTARM = as.character(arm_mapping[match(ACTARM, names(arm_mapping))]),
 #'     ACTARM = factor(ACTARM) %>% reorder(TRTORD),
 #'     ANRLO = 50,
-#'     ANRHI = 75) %>%
+#'     ANRHI = 75
+#'   ) %>%
 #'   rowwise() %>%
 #'   group_by(PARAMCD) %>%
 #'   mutate(LBSTRESC = ifelse(
 #'     USUBJID %in% sample(USUBJID, 1, replace = TRUE),
-#'     paste("<", round(runif(1, min = 25, max = 30))), LBSTRESC)) %>%
+#'     paste("<", round(runif(1, min = 25, max = 30))), LBSTRESC
+#'   )) %>%
 #'   mutate(LBSTRESC = ifelse(
 #'     USUBJID %in% sample(USUBJID, 1, replace = TRUE),
-#'     paste( ">", round(runif(1, min = 70, max = 75))), LBSTRESC)) %>%
+#'     paste(">", round(runif(1, min = 70, max = 75))), LBSTRESC
+#'   )) %>%
 #'   ungroup()
 #'
 #' attr(ADLB[["ARM"]], "label") <- var_labels[["ARM"]]
-#' attr(ADLB[["ACTARM"]], 'label') <- var_labels[["ACTARM"]]
+#' attr(ADLB[["ACTARM"]], "label") <- var_labels[["ACTARM"]]
 #' attr(ADLB[["ANRLO"]], "label") <- "Analysis Normal Range Lower Limit"
 #' attr(ADLB[["ANRHI"]], "label") <- "Analysis Normal Range Upper Limit"
 #'
@@ -147,7 +156,6 @@
 #'             USUBJID %in% sample(USUBJID, 1, replace = TRUE),
 #'             paste( '>', round(runif(1, min = 70, max = 75))), LBSTRESC)) %>%
 #'           ungroup()
-
 #'         attr(ADLB[['ARM']], 'label') <- var_labels[['ARM']]
 #'         attr(ADLB[['ACTARM']], 'label') <- var_labels[['ACTARM']]
 #'         attr(ADLB[['ANRLO']], 'label') <- 'Analysis Normal Range Lower Limit'
@@ -155,34 +163,33 @@
 #'         # add LLOQ and ULOQ variables
 #'         ALB_LOQS <- goshawk:::h_identify_loq_values(ADLB)
 #'         ADLB <- left_join(ADLB, ALB_LOQS, by = 'PARAM')",
-#'       vars = list(ADSL = adsl, arm_mapping = arm_mapping)),
+#'       vars = list(ADSL = adsl, arm_mapping = arm_mapping)
+#'     ),
 #'     check = TRUE
 #'   ),
 #'   modules = root_modules(
-#'       tm_g_gh_boxplot(
-#'         label = "Box Plot",
-#'         dataname = "ADLB",
-#'         param_var = "PARAMCD",
-#'         param = choices_selected(c("ALT", "CRP", "IGA"), "ALT"),
-#'         yaxis_var = choices_selected(c("AVAL", "BASE", "CHG"), "AVAL"),
-#'         xaxis_var = choices_selected(c("ACTARM", "ARM", "AVISITCD", "STUDYID"), "ARM"),
-#'         facet_var = choices_selected(c("ACTARM", "ARM", "AVISITCD", "SEX"), "AVISITCD"),
-#'         trt_group = choices_selected(c("ARM", "ACTARM"), "ARM"),
-#'         loq_legend = TRUE,
-#'         rotate_xlab = FALSE,
-#'         hline_arb = c(60, 55),
-#'         hline_arb_color = c("grey", "red"),
-#'         hline_arb_label = c("default_hori_A", "default_hori_B"),
-#'         hline_vars = c("ANRHI", "ANRLO", "ULOQN", "LLOQN"),
-#'         hline_vars_colors = c("pink", "brown", "purple", "black"),
-#'       )
+#'     tm_g_gh_boxplot(
+#'       label = "Box Plot",
+#'       dataname = "ADLB",
+#'       param_var = "PARAMCD",
+#'       param = choices_selected(c("ALT", "CRP", "IGA"), "ALT"),
+#'       yaxis_var = choices_selected(c("AVAL", "BASE", "CHG"), "AVAL"),
+#'       xaxis_var = choices_selected(c("ACTARM", "ARM", "AVISITCD", "STUDYID"), "ARM"),
+#'       facet_var = choices_selected(c("ACTARM", "ARM", "AVISITCD", "SEX"), "AVISITCD"),
+#'       trt_group = choices_selected(c("ARM", "ACTARM"), "ARM"),
+#'       loq_legend = TRUE,
+#'       rotate_xlab = FALSE,
+#'       hline_arb = c(60, 55),
+#'       hline_arb_color = c("grey", "red"),
+#'       hline_arb_label = c("default_hori_A", "default_hori_B"),
+#'       hline_vars = c("ANRHI", "ANRLO", "ULOQN", "LLOQN"),
+#'       hline_vars_colors = c("pink", "brown", "purple", "black"),
+#'     )
 #'   )
 #' )
-#'
-#'\dontrun{
+#' \dontrun{
 #' shinyApp(app$ui, app$server)
-#'
-#'}
+#' }
 #'
 tm_g_gh_boxplot <- function(label,
                             dataname,
@@ -233,8 +240,10 @@ tm_g_gh_boxplot <- function(label,
   checkmate::assert_numeric(plot_height, len = 3, any.missing = FALSE, finite = TRUE)
   checkmate::assert_numeric(plot_height[1], lower = plot_height[2], upper = plot_height[3], .var.name = "plot_height")
   checkmate::assert_numeric(plot_width, len = 3, any.missing = FALSE, null.ok = TRUE, finite = TRUE)
-  checkmate::assert_numeric(plot_width[1], lower = plot_width[2], upper = plot_width[3], null.ok = TRUE,
-                            .var.name = "plot_width")
+  checkmate::assert_numeric(plot_width[1],
+    lower = plot_width[2], upper = plot_width[3], null.ok = TRUE,
+    .var.name = "plot_width"
+  )
 
   args <- as.list(environment())
 
@@ -242,16 +251,17 @@ tm_g_gh_boxplot <- function(label,
     label = label,
     filters = dataname,
     server = srv_g_boxplot,
-    server_args = list(dataname = dataname,
-                       param_var = param_var,
-                       trt_group = trt_group,
-                       facet_var = facet_var,
-                       color_manual = color_manual,
-                       shape_manual = shape_manual,
-                       plot_height = plot_height,
-                       plot_width = plot_width,
-                       hline_vars_colors = hline_vars_colors,
-                       hline_vars_labels = hline_vars_labels
+    server_args = list(
+      dataname = dataname,
+      param_var = param_var,
+      trt_group = trt_group,
+      facet_var = facet_var,
+      color_manual = color_manual,
+      shape_manual = shape_manual,
+      plot_height = plot_height,
+      plot_width = plot_width,
+      hline_vars_colors = hline_vars_colors,
+      hline_vars_labels = hline_vars_labels
     ),
     ui = ui_g_boxplot,
     ui_args = args
@@ -259,7 +269,6 @@ tm_g_gh_boxplot <- function(label,
 }
 
 ui_g_boxplot <- function(id, ...) {
-
   ns <- NS(id)
   a <- list(...)
 
@@ -281,14 +290,15 @@ ui_g_boxplot <- function(id, ...) {
         DT::dataTableOutput(ns("table_ui"))
       ))
     ),
-    encoding =  div(
+    encoding = div(
       templ_ui_dataname(a$dataname),
       optionalSelectInput(
         ns("trt_group"),
         label = "Select Treatment Variable",
         choices = a$trt_group$choices,
         selected = a$trt_group$selected,
-        multiple = FALSE),
+        multiple = FALSE
+      ),
       templ_ui_params_vars(
         ns,
         xparam_choices = a$param$choices,
@@ -304,7 +314,8 @@ ui_g_boxplot <- function(id, ...) {
         label = "Facet by",
         choices = a$facet_var$choices,
         selected = a$facet_var$selected,
-        multiple = FALSE),
+        multiple = FALSE
+      ),
       templ_ui_constraint(ns, label = "Data Constraint"), # required by constr_anl_chunks
       if (length(a$hline_vars) > 0) {
         optionalSelectInput(
@@ -324,14 +335,15 @@ ui_g_boxplot <- function(id, ...) {
             label = "Y-Axis Range Zoom",
             min = -1000000,
             max = 1000000,
-            value = c(-1000000, 1000000)),
+            value = c(-1000000, 1000000)
+          ),
           numericInput(ns("facet_ncol"), "Number of Plots Per Row:", a$facet_ncol, min = 1),
           checkboxInput(ns("loq_legend"), "Display LoQ Legend", a$loq_legend),
           checkboxInput(ns("rotate_xlab"), "Rotate X-axis Label", a$rotate_xlab)
         ),
         panel_item(
           title = "Plot settings",
-          optionalSliderInputValMinMax(ns("font_size"),  "Font Size", a$font_size, ticks = FALSE),
+          optionalSliderInputValMinMax(ns("font_size"), "Font Size", a$font_size, ticks = FALSE),
           optionalSliderInputValMinMax(ns("dot_size"), "Dot Size", a$dot_size, ticks = FALSE),
           optionalSliderInputValMinMax(ns("alpha"), "Dot Alpha", a$alpha, ticks = FALSE)
         )
@@ -388,8 +400,10 @@ srv_g_boxplot <- function(input,
     facet_var <- if_null(input$facet_var, "None")
     yrange_scale <- yrange_slider$state()$value
     facet_ncol <- input$facet_ncol
-    validate(need(is.na(facet_ncol) || (as.numeric(facet_ncol) > 0 && as.numeric(facet_ncol) %% 1 == 0),
-      "Number of plots per row must be a positive integer"))
+    validate(need(
+      is.na(facet_ncol) || (as.numeric(facet_ncol) > 0 && as.numeric(facet_ncol) %% 1 == 0),
+      "Number of plots per row must be a positive integer"
+    ))
     alpha <- input$alpha
     font_size <- input$font_size
     dot_size <- input$dot_size
@@ -409,23 +423,26 @@ srv_g_boxplot <- function(input,
     validate_has_variable(
       anl_chunks()$ANL,
       yaxis,
-      sprintf("Variable %s is not available in data %s", yaxis, dataname))
+      sprintf("Variable %s is not available in data %s", yaxis, dataname)
+    )
     validate_has_variable(
       anl_chunks()$ANL,
       xaxis,
-      sprintf("Variable %s is not available in data %s", xaxis, dataname))
+      sprintf("Variable %s is not available in data %s", xaxis, dataname)
+    )
 
     if (!facet_var == "None") {
       validate_has_variable(
         anl_chunks()$ANL,
         facet_var,
-        sprintf("Variable %s is not available in data %s", facet_var, dataname))
+        sprintf("Variable %s is not available in data %s", facet_var, dataname)
+      )
     }
 
     validate(need(
       !facet_var %in% c("ACTARM", "ARM")[!c("ACTARM", "ARM") %in% trt_group],
       sprintf("You can not choose %s as facetting variable for treatment variable %s.", facet_var, trt_group)
-      ))
+    ))
     validate(need(
       !xaxis %in% c("ACTARM", "ARM")[!c("ACTARM", "ARM") %in% trt_group],
       sprintf("You can not choose %s as x-axis variable for treatment variable %s.", xaxis, trt_group)
@@ -472,7 +489,7 @@ srv_g_boxplot <- function(input,
     private_chunks <- create_plot()$clone(deep = TRUE)
 
     param <- input$xaxis_param
-    xaxis_var <- input$yaxis_var #nolint
+    xaxis_var <- input$yaxis_var # nolint
     font_size <- input$font_size
     trt_group <- input$trt_group
 
@@ -531,14 +548,13 @@ srv_g_boxplot <- function(input,
 
     DT::datatable(tbl, rownames = FALSE, options = list(scrollX = TRUE)) %>%
       DT::formatRound(numeric_cols, 4)
-
   })
 
   # highlight plot area
   output$brush_data <- DT::renderDataTable({
     boxplot_brush <- boxplot_data$brush()
 
-    ANL <- isolate(anl_chunks()$ANL) %>% droplevels() #nolint
+    ANL <- isolate(anl_chunks()$ANL) %>% droplevels() # nolint
     validate_has_data(ANL, 2)
 
     xvar <- isolate(input$xaxis_var)

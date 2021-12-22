@@ -128,44 +128,53 @@ library(dplyr)
 library(scda)
 
 # original ARM value = dose value
-arm_mapping <- list("A: Drug X" = "150mg QD",
-                    "B: Placebo" = "Placebo",
-                    "C: Combination" = "Combination")
+arm_mapping <- list(
+  "A: Drug X" = "150mg QD",
+  "B: Placebo" = "Placebo",
+  "C: Combination" = "Combination"
+)
 set.seed(1)
 ADSL <- synthetic_cdisc_data("latest")$adsl
 ADLB <- synthetic_cdisc_data("latest")$adlb
 var_labels <- lapply(ADLB, function(x) attributes(x)$label)
 ADLB <- ADLB \%>\%
-  mutate(AVISITCD = case_when(
-    AVISIT == "SCREENING" ~ "SCR",
-    AVISIT == "BASELINE" ~ "BL",
-    grepl("WEEK", AVISIT) ~ paste("W", stringr::str_extract(AVISIT, "(?<=(WEEK ))[0-9]+")),
-    TRUE ~ as.character(NA)),
+  mutate(
+    AVISITCD = case_when(
+      AVISIT == "SCREENING" ~ "SCR",
+      AVISIT == "BASELINE" ~ "BL",
+      grepl("WEEK", AVISIT) ~ paste("W", stringr::str_extract(AVISIT, "(?<=(WEEK ))[0-9]+")),
+      TRUE ~ as.character(NA)
+    ),
     AVISITCDN = case_when(
       AVISITCD == "SCR" ~ -2,
       AVISITCD == "BL" ~ 0,
       grepl("W", AVISITCD) ~ as.numeric(gsub("[^0-9]*", "", AVISITCD)),
-      TRUE ~ as.numeric(NA)),
+      TRUE ~ as.numeric(NA)
+    ),
     AVISITCD = factor(AVISITCD) \%>\% reorder(AVISITCDN),
     TRTORD = case_when(
       ARMCD == "ARM C" ~ 1,
       ARMCD == "ARM B" ~ 2,
-      ARMCD == "ARM A" ~ 3),
+      ARMCD == "ARM A" ~ 3
+    ),
     ARM = as.character(arm_mapping[match(ARM, names(arm_mapping))]),
     ARM = factor(ARM) \%>\% reorder(TRTORD),
     ACTARM = as.character(arm_mapping[match(ACTARM, names(arm_mapping))]),
     ACTARM = factor(ACTARM) \%>\% reorder(TRTORD),
     ANRLO = 30,
-    ANRHI = 75) \%>\%
-    rowwise() \%>\%
-    group_by(PARAMCD) \%>\%
-    mutate(LBSTRESC = ifelse(USUBJID \%in\% sample(USUBJID, 1, replace = TRUE),
-    paste('<', round(runif(1, min = 25, max = 30))), LBSTRESC)) \%>\%
-    mutate(LBSTRESC = ifelse(USUBJID \%in\% sample(USUBJID, 1, replace = TRUE),
-    paste( '>', round(runif(1, min = 70, max = 75))), LBSTRESC)) \%>\%
-    ungroup
+    ANRHI = 75
+  ) \%>\%
+  rowwise() \%>\%
+  group_by(PARAMCD) \%>\%
+  mutate(LBSTRESC = ifelse(USUBJID \%in\% sample(USUBJID, 1, replace = TRUE),
+    paste("<", round(runif(1, min = 25, max = 30))), LBSTRESC
+  )) \%>\%
+  mutate(LBSTRESC = ifelse(USUBJID \%in\% sample(USUBJID, 1, replace = TRUE),
+    paste(">", round(runif(1, min = 70, max = 75))), LBSTRESC
+  )) \%>\%
+  ungroup()
 attr(ADLB[["ARM"]], "label") <- var_labels[["ARM"]]
-attr(ADLB[["ACTARM"]], 'label') <- var_labels[["ACTARM"]]
+attr(ADLB[["ACTARM"]], "label") <- var_labels[["ACTARM"]]
 attr(ADLB[["ANRLO"]], "label") <- "Analysis Normal Range Lower Limit"
 attr(ADLB[["ANRHI"]], "label") <- "Analysis Normal Range Upper Limit"
 
@@ -218,9 +227,10 @@ app <- teal::init(
                attr(ADLB[['ANRHI']], 'label') <- 'Analysis Normal Range Upper Limit'
                ALB_LOQS <- goshawk:::h_identify_loq_values(ADLB)
                ADLB <- left_join(ADLB, ALB_LOQS, by = 'PARAM')",
-      vars = list(arm_mapping = arm_mapping)),
-      check = FALSE
+      vars = list(arm_mapping = arm_mapping)
     ),
+    check = FALSE
+  ),
   modules = root_modules(
     tm_g_gh_spaghettiplot(
       label = "Spaghetti Plot",
@@ -229,14 +239,18 @@ app <- teal::init(
       param = choices_selected(c("ALT", "CRP", "IGA"), "ALT"),
       idvar = "USUBJID",
       xaxis_var = choices_selected(c("Analysis Visit Code" = "AVISITCD"), "AVISITCD"),
-      yaxis_var = choices_selected(c("AVAL","CHG", "PCHG"), "AVAL"),
-      filter_var = choices_selected(c("None" = "NONE", "Screening" = "BASE2", "Baseline" = "BASE"),
-       "NONE"),
+      yaxis_var = choices_selected(c("AVAL", "CHG", "PCHG"), "AVAL"),
+      filter_var = choices_selected(
+        c("None" = "NONE", "Screening" = "BASE2", "Baseline" = "BASE"),
+        "NONE"
+      ),
       trt_group = choices_selected(c("ARM", "ACTARM"), "ARM"),
       color_comb = "#39ff14",
-      man_color = c('Combination' = "#000000",
-                   'Placebo' = "#fce300",
-                   '150mg QD' = "#5a2f5f"),
+      man_color = c(
+        "Combination" = "#000000",
+        "Placebo" = "#fce300",
+        "150mg QD" = "#5a2f5f"
+      ),
       hline_arb = c(60, 50),
       hline_arb_color = c("grey", "red"),
       hline_arb_label = c("default A", "default B"),
@@ -245,10 +259,8 @@ app <- teal::init(
     )
   )
 )
-
 \dontrun{
 shinyApp(app$ui, app$server)
-
 }
 
 }

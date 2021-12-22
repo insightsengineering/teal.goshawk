@@ -76,29 +76,33 @@
 #'     AVISIT == "SCREENING" ~ "SCR",
 #'     AVISIT == "BASELINE" ~ "BL",
 #'     grepl("WEEK", AVISIT) ~
-#'       paste(
-#'         "W",
-#'         trimws(
-#'           substr(
-#'             AVISIT,
-#'             start = 6,
-#'             stop = stringr::str_locate(AVISIT, "DAY") - 1
-#'           )
+#'     paste(
+#'       "W",
+#'       trimws(
+#'         substr(
+#'           AVISIT,
+#'           start = 6,
+#'           stop = stringr::str_locate(AVISIT, "DAY") - 1
 #'         )
-#'       ),
-#'     TRUE ~ NA_character_)) %>%
+#'       )
+#'     ),
+#'     TRUE ~ NA_character_
+#'   )) %>%
 #'   mutate(AVISITCDN = case_when(
 #'     AVISITCD == "SCR" ~ -2,
 #'     AVISITCD == "BL" ~ 0,
 #'     grepl("W", AVISITCD) ~ as.numeric(gsub("[^0-9]*", "", AVISITCD)),
-#'     TRUE ~ NA_real_)) %>%
+#'     TRUE ~ NA_real_
+#'   )) %>%
 #'   # use ARMCD values to order treatment in visualization legend
 #'   mutate(TRTORD = ifelse(grepl("C", ARMCD), 1,
-#'                          ifelse(grepl("B", ARMCD), 2,
-#'                                 ifelse(grepl("A", ARMCD), 3, NA)))) %>%
+#'     ifelse(grepl("B", ARMCD), 2,
+#'       ifelse(grepl("A", ARMCD), 3, NA)
+#'     )
+#'   )) %>%
 #'   mutate(ARM = as.character(arm_mapping[match(ARM, names(arm_mapping))])) %>%
 #'   mutate(ARM = factor(ARM) %>%
-#'            reorder(TRTORD)) %>%
+#'     reorder(TRTORD)) %>%
 #'   mutate(
 #'     ANRHI = case_when(
 #'       PARAMCD == "ALT" ~ 60,
@@ -111,15 +115,18 @@
 #'       PARAMCD == "CRP" ~ 30,
 #'       PARAMCD == "IGA" ~ 40,
 #'       TRUE ~ NA_real_
-#'     )) %>%
+#'     )
+#'   ) %>%
 #'   rowwise() %>%
 #'   group_by(PARAMCD) %>%
 #'   mutate(LBSTRESC = ifelse(
 #'     USUBJID %in% sample(USUBJID, 1, replace = TRUE),
-#'     paste("<", round(runif(1, min = 25, max = 30))), LBSTRESC)) %>%
+#'     paste("<", round(runif(1, min = 25, max = 30))), LBSTRESC
+#'   )) %>%
 #'   mutate(LBSTRESC = ifelse(
 #'     USUBJID %in% sample(USUBJID, 1, replace = TRUE),
-#'     paste( ">", round(runif(1, min = 70, max = 75))), LBSTRESC)) %>%
+#'     paste(">", round(runif(1, min = 70, max = 75))), LBSTRESC
+#'   )) %>%
 #'   ungroup()
 #' attr(ADLB[["ARM"]], "label") <- var_labels[["ARM"]]
 #' attr(ADLB[["ANRHI"]], "label") <- "Analysis Normal Range Upper Limit"
@@ -195,47 +202,49 @@
 #'               # add LLOQ and ULOQ variables
 #'               ADLB_LOQS <- goshawk:::h_identify_loq_values(ADLB)
 #'               ADLB <- left_join(ADLB, ADLB_LOQS, by = 'PARAM')",
-#'       vars = list(arm_mapping = arm_mapping)),
-#'     check = TRUE
+#'       vars = list(arm_mapping = arm_mapping)
 #'     ),
+#'     check = TRUE
+#'   ),
 #'   modules = root_modules(
 #'     tm_g_gh_correlationplot(
-#'        label = "Correlation Plot",
-#'        dataname = "ADLB",
-#'        param_var = "PARAMCD",
-#'        xaxis_param = choices_selected(c("ALT", "CRP", "IGA"), "ALT"),
-#'        yaxis_param = choices_selected(c("ALT", "CRP", "IGA"), "CRP"),
-#'        xaxis_var = choices_selected(c("AVAL", "BASE", "CHG", "PCHG"), "BASE"),
-#'        yaxis_var = choices_selected(c("AVAL", "BASE", "CHG", "PCHG"), "AVAL"),
-#'        trt_group = choices_selected(c("ARM", "ACTARM"), "ARM"),
-#'        color_manual = c("Drug X 100mg" = "#000000",
-#'                         "Placebo" = "#3498DB",
-#'                         "Combination 100mg" = "#E74C3C"),
-#'        shape_manual = c("N"  = 1, "Y"  = 2, "NA" = 0),
-#'        plot_height = c(500, 200, 2000),
-#'        facet_ncol = 2,
-#'        visit_facet = TRUE,
-#'        reg_line = FALSE,
-#'        loq_legend = TRUE,
-#'        font_size = c(12, 8, 20),
-#'        dot_size = c(1, 1, 12),
-#'        reg_text_size = c(3, 3, 10),
-#'        hline_arb = c(40, 50),
-#'        hline_arb_label = "arb hori label",
-#'        hline_arb_color = c("red", "blue"),
-#'        hline_vars = c("ANRHI", "ANRLO", "ULOQN", "LLOQN"),
-#'        hline_vars_colors = c("green", "blue", "purple", "cyan"),
-#'        hline_vars_label =  c("ANRHI Label", "ANRLO Label", "ULOQN Label", "LLOQN Label"),
-#'        vline_vars = c("ANRHI", "ANRLO", "ULOQN", "LLOQN"),
-#'        vline_vars_colors = c("yellow", "orange", "brown", "gold"),
-#'        vline_vars_labels =  c("ANRHI Label", "ANRLO Label", "ULOQN Label", "LLOQN Label"),
-#'        vline_arb = c(50, 70),
-#'        vline_arb_label = "arb vert A",
-#'        vline_arb_color = c("green", "orange")
-#'    )
+#'       label = "Correlation Plot",
+#'       dataname = "ADLB",
+#'       param_var = "PARAMCD",
+#'       xaxis_param = choices_selected(c("ALT", "CRP", "IGA"), "ALT"),
+#'       yaxis_param = choices_selected(c("ALT", "CRP", "IGA"), "CRP"),
+#'       xaxis_var = choices_selected(c("AVAL", "BASE", "CHG", "PCHG"), "BASE"),
+#'       yaxis_var = choices_selected(c("AVAL", "BASE", "CHG", "PCHG"), "AVAL"),
+#'       trt_group = choices_selected(c("ARM", "ACTARM"), "ARM"),
+#'       color_manual = c(
+#'         "Drug X 100mg" = "#000000",
+#'         "Placebo" = "#3498DB",
+#'         "Combination 100mg" = "#E74C3C"
+#'       ),
+#'       shape_manual = c("N" = 1, "Y" = 2, "NA" = 0),
+#'       plot_height = c(500, 200, 2000),
+#'       facet_ncol = 2,
+#'       visit_facet = TRUE,
+#'       reg_line = FALSE,
+#'       loq_legend = TRUE,
+#'       font_size = c(12, 8, 20),
+#'       dot_size = c(1, 1, 12),
+#'       reg_text_size = c(3, 3, 10),
+#'       hline_arb = c(40, 50),
+#'       hline_arb_label = "arb hori label",
+#'       hline_arb_color = c("red", "blue"),
+#'       hline_vars = c("ANRHI", "ANRLO", "ULOQN", "LLOQN"),
+#'       hline_vars_colors = c("green", "blue", "purple", "cyan"),
+#'       hline_vars_label = c("ANRHI Label", "ANRLO Label", "ULOQN Label", "LLOQN Label"),
+#'       vline_vars = c("ANRHI", "ANRLO", "ULOQN", "LLOQN"),
+#'       vline_vars_colors = c("yellow", "orange", "brown", "gold"),
+#'       vline_vars_labels = c("ANRHI Label", "ANRLO Label", "ULOQN Label", "LLOQN Label"),
+#'       vline_arb = c(50, 70),
+#'       vline_arb_label = "arb vert A",
+#'       vline_arb_color = c("green", "orange")
+#'     )
 #'   )
 #' )
-#'
 #' \dontrun{
 #' shinyApp(app$ui, app$server)
 #' }
@@ -274,7 +283,6 @@ tm_g_gh_correlationplot <- function(label,
                                     reg_text_size = c(3, 3, 10),
                                     pre_output = NULL,
                                     post_output = NULL) {
-
   stopifnot(is.choices_selected(xaxis_param))
   stopifnot(is.choices_selected(yaxis_param))
   stopifnot(is.choices_selected(xaxis_var))
@@ -289,8 +297,10 @@ tm_g_gh_correlationplot <- function(label,
   checkmate::assert_numeric(plot_height, len = 3, any.missing = FALSE, finite = TRUE)
   checkmate::assert_numeric(plot_height[1], lower = plot_height[2], upper = plot_height[3], .var.name = "plot_height")
   checkmate::assert_numeric(plot_width, len = 3, any.missing = FALSE, null.ok = TRUE, finite = TRUE)
-  checkmate::assert_numeric(plot_width[1], lower = plot_width[2], upper = plot_width[3], null.ok = TRUE,
-                            .var.name = "plot_width")
+  checkmate::assert_numeric(plot_width[1],
+    lower = plot_width[2], upper = plot_width[3], null.ok = TRUE,
+    .var.name = "plot_width"
+  )
 
   args <- as.list(environment())
 
@@ -298,23 +308,23 @@ tm_g_gh_correlationplot <- function(label,
     label = label,
     filters = dataname,
     server = srv_g_correlationplot,
-    server_args = list(dataname = dataname,
-                       param_var = param_var,
-                       trt_group = trt_group,
-                       trt_facet = trt_facet,
-                       color_manual = color_manual,
-                       shape_manual = shape_manual,
-                       plot_height = plot_height,
-                       plot_width = plot_width,
-                       hline_vars_colors = hline_vars_colors,
-                       hline_vars_labels = hline_vars_labels,
-                       vline_vars_colors = vline_vars_colors,
-                       vline_vars_labels = vline_vars_labels
+    server_args = list(
+      dataname = dataname,
+      param_var = param_var,
+      trt_group = trt_group,
+      trt_facet = trt_facet,
+      color_manual = color_manual,
+      shape_manual = shape_manual,
+      plot_height = plot_height,
+      plot_width = plot_width,
+      hline_vars_colors = hline_vars_colors,
+      hline_vars_labels = hline_vars_labels,
+      vline_vars_colors = vline_vars_colors,
+      vline_vars_labels = vline_vars_labels
     ),
     ui = ui_g_correlationplot,
     ui_args = args
   )
-
 }
 
 ui_g_correlationplot <- function(id, ...) {
@@ -323,7 +333,7 @@ ui_g_correlationplot <- function(id, ...) {
 
   standard_layout(
     output = templ_ui_output_datatable(ns),
-    encoding =  div(
+    encoding = div(
       templ_ui_dataname(a$dataname),
       optionalSelectInput(
         ns("trt_group"),
@@ -346,7 +356,8 @@ ui_g_correlationplot <- function(id, ...) {
           label = "Add Horizontal Range Line(s):",
           choices = a$hline_vars,
           selected = NULL,
-          multiple = TRUE)
+          multiple = TRUE
+        )
       },
       ui_arbitrary_lines(id = ns("hline_arb"), a$hline_arb, a$hline_arb_label, a$hline_arb_color),
       if (length(a$vline_vars) > 0) {
@@ -369,11 +380,15 @@ ui_g_correlationplot <- function(id, ...) {
         panel_item(
           title = "Plot Aesthetic Settings",
           toggle_slider_ui(
-            ns("xrange_scale"), label = "X-Axis Range Zoom",
-            min = -1000000, max = 1000000, value = c(-1000000, 1000000)),
+            ns("xrange_scale"),
+            label = "X-Axis Range Zoom",
+            min = -1000000, max = 1000000, value = c(-1000000, 1000000)
+          ),
           toggle_slider_ui(
-            ns("yrange_scale"), label = "Y-Axis Range Zoom",
-            min = -1000000, max = 1000000, value = c(-1000000, 1000000)),
+            ns("yrange_scale"),
+            label = "Y-Axis Range Zoom",
+            min = -1000000, max = 1000000, value = c(-1000000, 1000000)
+          ),
           numericInput(ns("facet_ncol"), "Number of Plots Per Row:", a$facet_ncol, min = 1),
           checkboxInput(ns("trt_facet"), "Treatment Variable Facetting", a$trt_facet),
           checkboxInput(ns("visit_facet"), "Visit Facetting", a$visit_facet),
@@ -383,10 +398,11 @@ ui_g_correlationplot <- function(id, ...) {
         ),
         panel_item(
           title = "Plot settings",
-          optionalSliderInputValMinMax(ns("font_size"),  "Font Size", a$font_size, ticks = FALSE),
+          optionalSliderInputValMinMax(ns("font_size"), "Font Size", a$font_size, ticks = FALSE),
           optionalSliderInputValMinMax(ns("dot_size"), "Dot Size", a$dot_size, ticks = FALSE),
           optionalSliderInputValMinMax(ns("reg_text_size"), "Regression Annotations Size", a$reg_text_size,
-                                       ticks = FALSE)
+            ticks = FALSE
+          )
         )
       )
     ),
@@ -394,7 +410,6 @@ ui_g_correlationplot <- function(id, ...) {
     pre_output = a$pre_output,
     post_output = a$post_output
   )
-
 }
 
 #' @importFrom goshawk g_correlationplot
@@ -431,71 +446,86 @@ srv_g_correlationplot <- function(input,
       validate(
         need(
           all(input$hline_vars %in% names(ANL_FILTERED)),
-          "One or more selected horizontal line variable(s) is/are not names to any column in the data"),
+          "One or more selected horizontal line variable(s) is/are not names to any column in the data"
+        ),
         need(
           all(input$vline_vars %in% names(ANL_FILTERED)),
-          "One or more selected vertical line variable(s) is/are not names to any column in the data"))
+          "One or more selected vertical line variable(s) is/are not names to any column in the data"
+        )
+      )
     }
 
     validate_has_variable(ANL_FILTERED, param_var)
 
     validate_in(
       input$xaxis_param, unique(ANL_FILTERED[[param_var]]),
-      sprintf("X-Axis Biomarker %s is not available in data %s", input$xaxis_param, dataname))
+      sprintf("X-Axis Biomarker %s is not available in data %s", input$xaxis_param, dataname)
+    )
 
     validate_in(
       input$yaxis_param, unique(ANL_FILTERED[[param_var]]),
-      sprintf("Y-Axis Biomarker %s is not available in data %s", input$yaxis_param, dataname))
+      sprintf("Y-Axis Biomarker %s is not available in data %s", input$yaxis_param, dataname)
+    )
 
     validate_has_variable(
       ANL_FILTERED,
       "AVISITCD",
-      sprintf("Variable AVISITCD is not available in data %s", dataname))
+      sprintf("Variable AVISITCD is not available in data %s", dataname)
+    )
 
     validate_has_variable(
       ANL_FILTERED,
       "BASE",
-      sprintf("Variable BASE is not available in data %s", dataname))
+      sprintf("Variable BASE is not available in data %s", dataname)
+    )
 
     validate_has_variable(
       ANL_FILTERED,
       "BASE2",
-      sprintf("Variable BASE2 is not available in data %s", dataname))
+      sprintf("Variable BASE2 is not available in data %s", dataname)
+    )
 
     validate_has_variable(
       ANL_FILTERED,
       "LOQFL",
-      sprintf("Variable LOQFL is not available in data %s", dataname))
+      sprintf("Variable LOQFL is not available in data %s", dataname)
+    )
 
     validate_has_variable(
       ANL_FILTERED,
       "PARAM",
-      sprintf("Variable PARAM is not available in data %s", dataname))
+      sprintf("Variable PARAM is not available in data %s", dataname)
+    )
 
     validate_has_variable(
       ANL_FILTERED,
       "LBSTRESC",
-      sprintf("Variable LBSTRESC is not available in data %s", dataname))
+      sprintf("Variable LBSTRESC is not available in data %s", dataname)
+    )
 
     validate_has_variable(
       ANL_FILTERED,
       input$trt_group,
-      sprintf("Variable %s is not available in data %s", input$trt_group, dataname))
+      sprintf("Variable %s is not available in data %s", input$trt_group, dataname)
+    )
 
     validate_has_variable(
       ANL_FILTERED,
       "USUBJID",
-      sprintf("Variable USUBJID is not available in data %s", dataname))
+      sprintf("Variable USUBJID is not available in data %s", dataname)
+    )
 
     validate_has_variable(
       ANL_FILTERED,
       input$xaxis_var,
-      sprintf("Variable %s is not available in data %s", input$xaxis_var, dataname))
+      sprintf("Variable %s is not available in data %s", input$xaxis_var, dataname)
+    )
 
     validate_has_variable(
       ANL_FILTERED,
       input$yaxis_var,
-      sprintf("Variable %s is not available in data %s", input$yaxis_var, dataname))
+      sprintf("Variable %s is not available in data %s", input$yaxis_var, dataname)
+    )
 
     # analysis
     private_chunks <- chunks$new()
@@ -538,10 +568,8 @@ srv_g_correlationplot <- function(input,
 
     # get min max values
     if ((constraint_var == "BASE2" && any(grepl("SCR", visit_freq))) ||
-        (constraint_var == "BASE" && any(grepl("BL", visit_freq)))) {
-
-      val <- na.omit(switch(
-        constraint_var,
+      (constraint_var == "BASE" && any(grepl("BL", visit_freq)))) {
+      val <- na.omit(switch(constraint_var,
         "BASE" = ANL$BASE[ANL$AVISITCD == "BL"],
         "BASE2" = ANL$BASE2[ANL$AVISITCD == "SCR"],
         stop(paste(constraint_var, "not allowed"))
@@ -558,7 +586,7 @@ srv_g_correlationplot <- function(input,
       } else {
         rng <- range(val, na.rm = TRUE)
 
-        minmax <- c(floor(rng[1] * 1000) / 1000,  ceiling(rng[2] * 1000) / 1000)
+        minmax <- c(floor(rng[1] * 1000) / 1000, ceiling(rng[2] * 1000) / 1000)
 
         label_min <- sprintf("Min (%s)", minmax[1])
         label_max <- sprintf("Max (%s)", minmax[2])
@@ -573,7 +601,6 @@ srv_g_correlationplot <- function(input,
         shinyjs::hide("all_na")
       }
     } else if (constraint_var == "NONE") {
-
       shinyjs::hide("constraint_range") # hide before update
       shinyjs::hide("all_na")
 
@@ -621,19 +648,24 @@ srv_g_correlationplot <- function(input,
             .data[[.(param_var)]],
             .data[[.(input$xaxis_var)]],
             .data[[.(input$yaxis_var)]],
-            .(if_empty(unique(c(input$hline_vars, input$vline_vars)), NULL))) %>%
+            .(if_empty(unique(c(input$hline_vars, input$vline_vars)), NULL))
+          ) %>%
           tidyr::pivot_longer(
-            c(.data[[.(input$xaxis_var)]],
-            .data[[.(input$yaxis_var)]],
-            .(if_empty(unique(c(input$hline_vars, input$vline_vars)), NULL))),
+            c(
+              .data[[.(input$xaxis_var)]],
+              .data[[.(input$yaxis_var)]],
+              .(if_empty(unique(c(input$hline_vars, input$vline_vars)), NULL))
+            ),
             names_to = "ANLVARS",
-            values_to = "ANLVALS") %>%
+            values_to = "ANLVALS"
+          ) %>%
           tidyr::unite(
             "ANL.PARAM",
             "ANLVARS",
             .(param_var),
             sep = ".",
-            remove = TRUE) %>%
+            remove = TRUE
+          ) %>%
           tidyr::pivot_wider(names_from = "ANL.PARAM", values_from = "ANLVALS") %>%
           dplyr::filter(!is.na(.data[[.(xvar())]]) & !is.na(.data[[.(yvar())]]))
 
@@ -645,19 +677,24 @@ srv_g_correlationplot <- function(input,
             .data[[.(param_var)]],
             .data[["LOQFL"]],
             .data[["PARAM"]],
-            .data[["LBSTRESC"]]) %>%
+            .data[["LBSTRESC"]]
+          ) %>%
           tidyr::pivot_longer(
-            c(.data[["LOQFL"]],
+            c(
+              .data[["LOQFL"]],
               .data[["PARAM"]],
-              .data[["LBSTRESC"]]),
+              .data[["LBSTRESC"]]
+            ),
             names_to = "ANLVARS",
-            values_to = "ANLVALS") %>%
+            values_to = "ANLVALS"
+          ) %>%
           tidyr::unite(
             "ANL.PARAM",
             "ANLVARS",
             .(param_var),
             sep = "_",
-            remove = TRUE) %>%
+            remove = TRUE
+          ) %>%
           tidyr::pivot_wider(names_from = "ANL.PARAM", values_from = "ANLVALS") %>%
           dplyr::mutate(LOQFL_COMB = case_when(
             .data[[.(xloqfl())]] == "Y" | .data[[.(yloqfl())]] == "Y" ~ "Y",
@@ -665,11 +702,10 @@ srv_g_correlationplot <- function(input,
             .data[[.(xloqfl())]] == "N" & .data[[.(yloqfl())]] == "NA" ~ "N",
             .data[[.(xloqfl())]] == "NA" & .data[[.(yloqfl())]] == "N" ~ "N",
             .data[[.(xloqfl())]] == "NA" & .data[[.(yloqfl())]] == "NA" ~ "NA",
-            TRUE ~ as.character(NA))
-          )
+            TRUE ~ as.character(NA)
+          ))
 
         ANL_TRANSPOSED <- merge(ANL_TRANSPOSED1, ANL_TRANSPOSED2) # nolint
-
       })
     )
 
@@ -683,7 +719,7 @@ srv_g_correlationplot <- function(input,
       chunks = private_chunks,
       id = "ANL_attributes",
       expression =
-        bquote(attr(ANL_TRANSPOSED[[.(trt_group)]], "label") <- attr(ANL[[.(trt_group)]], "label"))
+        bquote(attr(ANL_TRANSPOSED[[.(trt_group)]], "label") <- attr(ANL[[.(trt_group)]], "label")) # nolint
     )
     chunks_push_new_line(private_chunks)
 
@@ -701,7 +737,6 @@ srv_g_correlationplot <- function(input,
       title_text <- paste(xparam, "and", yparam, "@ Visits")
       xaxis_lab <- paste(xparam, input$xaxis_var, "Values")
       yaxis_lab <- paste(yparam, input$yaxis_var, "Values")
-
     } else {
       xunit <- ANL$AVALU[ANL[[param_var]] == input$xaxis_param][1]
       yunit <- ANL$AVALU[ANL[[param_var]] == input$yaxis_param][1]
@@ -749,8 +784,10 @@ srv_g_correlationplot <- function(input,
       paste0(input$vline_vars, ".", xaxis_param)
     }
     facet_ncol <- input$facet_ncol
-    validate(need(is.na(facet_ncol) || (as.numeric(facet_ncol) > 0 && as.numeric(facet_ncol) %% 1 == 0),
-      "Number of plots per row must be a positive integer"))
+    validate(need(
+      is.na(facet_ncol) || (as.numeric(facet_ncol) > 0 && as.numeric(facet_ncol) %% 1 == 0),
+      "Number of plots per row must be a positive integer"
+    ))
     visit_facet <- input$visit_facet
     facet <- input$trt_facet
     reg_line <- input$reg_line
@@ -758,8 +795,8 @@ srv_g_correlationplot <- function(input,
     rotate_xlab <- input$rotate_xlab
     # nolint end
     title_text <- plot_labels()$title_text
-    xaxis_lab  <- plot_labels()$xaxis_lab
-    yaxis_lab  <- plot_labels()$yaxis_lab
+    xaxis_lab <- plot_labels()$xaxis_lab
+    yaxis_lab <- plot_labels()$yaxis_lab
     validate(need(input$trt_group, "Please select a treatment variable"))
     trt_group <- input$trt_group
 

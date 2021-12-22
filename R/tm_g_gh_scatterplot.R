@@ -37,35 +37,42 @@
 #' library(scda)
 #'
 #' # original ARM value = dose value
-#' arm_mapping <- list("A: Drug X" = "150mg QD",
-#'                     "B: Placebo" = "Placebo",
-#'                     "C: Combination" = "Combination")
+#' arm_mapping <- list(
+#'   "A: Drug X" = "150mg QD",
+#'   "B: Placebo" = "Placebo",
+#'   "C: Combination" = "Combination"
+#' )
 #'
 #' ADSL <- synthetic_cdisc_data("latest")$adsl
 #' ADLB <- synthetic_cdisc_data("latest")$adlb
 #' var_labels <- lapply(ADLB, function(x) attributes(x)$label)
 #' ADLB <- ADLB %>%
-#'   mutate(AVISITCD = case_when(
+#'   mutate(
+#'     AVISITCD = case_when(
 #'       AVISIT == "SCREENING" ~ "SCR",
 #'       AVISIT == "BASELINE" ~ "BL",
 #'       grepl("WEEK", AVISIT) ~ paste("W", stringr::str_extract(AVISIT, "(?<=(WEEK ))[0-9]+")),
-#'       TRUE ~ as.character(NA)),
+#'       TRUE ~ as.character(NA)
+#'     ),
 #'     AVISITCDN = case_when(
 #'       AVISITCD == "SCR" ~ -2,
 #'       AVISITCD == "BL" ~ 0,
 #'       grepl("W", AVISITCD) ~ as.numeric(gsub("[^0-9]*", "", AVISITCD)),
-#'       TRUE ~ as.numeric(NA)),
+#'       TRUE ~ as.numeric(NA)
+#'     ),
 #'     AVISITCD = factor(AVISITCD) %>% reorder(AVISITCDN),
 #'     TRTORD = case_when(
 #'       ARMCD == "ARM C" ~ 1,
 #'       ARMCD == "ARM B" ~ 2,
-#'       ARMCD == "ARM A" ~ 3),
+#'       ARMCD == "ARM A" ~ 3
+#'     ),
 #'     ARM = as.character(arm_mapping[match(ARM, names(arm_mapping))]),
 #'     ARM = factor(ARM) %>% reorder(TRTORD),
 #'     ACTARM = as.character(arm_mapping[match(ACTARM, names(arm_mapping))]),
-#'     ACTARM = factor(ACTARM) %>% reorder(TRTORD))
+#'     ACTARM = factor(ACTARM) %>% reorder(TRTORD)
+#'   )
 #' attr(ADLB[["ARM"]], "label") <- var_labels[["ARM"]]
-#' attr(ADLB[["ACTARM"]], 'label') <- var_labels[["ACTARM"]]
+#' attr(ADLB[["ACTARM"]], "label") <- var_labels[["ACTARM"]]
 #'
 #' app <- init(
 #'   data = cdisc_data(
@@ -98,33 +105,35 @@
 #'                   ACTARM = factor(ACTARM) %>% reorder(TRTORD))
 #'                attr(ADLB[['ARM']], 'label') <- var_labels[['ARM']]
 #'                attr(ADLB[['ACTARM']], 'label') <- var_labels[['ACTARM']]",
-#'       vars = list(ADSL = adsl, arm_mapping = arm_mapping)),
-#'     check = TRUE
+#'       vars = list(ADSL = adsl, arm_mapping = arm_mapping)
 #'     ),
+#'     check = TRUE
+#'   ),
 #'   modules = root_modules(
 #'     tm_g_gh_scatterplot(
-#'        label = "Scatter Plot",
-#'        dataname = "ADLB",
-#'        param_var = "PARAMCD",
-#'        param = choices_selected(c("ALT", "CRP", "IGA"), "ALT"),
-#'        xaxis_var = choices_selected(c("AVAL", "BASE", "CHG", "PCHG"), "BASE"),
-#'        yaxis_var = choices_selected(c("AVAL", "BASE", "CHG", "PCHG"), "AVAL"),
-#'        trt_group = choices_selected(c("ARM", "ACTARM"), "ARM"),
-#'        color_manual = c("150mg QD" = "#000000",
-#'                         "Placebo" = "#3498DB",
-#'                         "Combination" = "#E74C3C"),
-#'        shape_manual = c("N"  = 1, "Y"  = 2, "NA" = 0),
-#'        plot_height = c(500, 200, 2000),
-#'        facet_ncol = 2,
-#'        trt_facet = FALSE,
-#'        reg_line = FALSE,
-#'        font_size = c(12, 8, 20),
-#'        dot_size = c(1, 1, 12),
-#'        reg_text_size = c(3, 3, 10)
-#'    )
+#'       label = "Scatter Plot",
+#'       dataname = "ADLB",
+#'       param_var = "PARAMCD",
+#'       param = choices_selected(c("ALT", "CRP", "IGA"), "ALT"),
+#'       xaxis_var = choices_selected(c("AVAL", "BASE", "CHG", "PCHG"), "BASE"),
+#'       yaxis_var = choices_selected(c("AVAL", "BASE", "CHG", "PCHG"), "AVAL"),
+#'       trt_group = choices_selected(c("ARM", "ACTARM"), "ARM"),
+#'       color_manual = c(
+#'         "150mg QD" = "#000000",
+#'         "Placebo" = "#3498DB",
+#'         "Combination" = "#E74C3C"
+#'       ),
+#'       shape_manual = c("N" = 1, "Y" = 2, "NA" = 0),
+#'       plot_height = c(500, 200, 2000),
+#'       facet_ncol = 2,
+#'       trt_facet = FALSE,
+#'       reg_line = FALSE,
+#'       font_size = c(12, 8, 20),
+#'       dot_size = c(1, 1, 12),
+#'       reg_text_size = c(3, 3, 10)
+#'     )
 #'   )
 #' )
-#'
 #' \dontrun{
 #' shinyApp(app$ui, app$server)
 #' }
@@ -151,7 +160,6 @@ tm_g_gh_scatterplot <- function(label,
                                 reg_text_size = c(3, 3, 10),
                                 pre_output = NULL,
                                 post_output = NULL) {
-
   stopifnot(is.choices_selected(param))
   stopifnot(is.choices_selected(xaxis_var))
   stopifnot(is.choices_selected(yaxis_var))
@@ -161,8 +169,10 @@ tm_g_gh_scatterplot <- function(label,
   checkmate::assert_numeric(plot_height, len = 3, any.missing = FALSE, finite = TRUE)
   checkmate::assert_numeric(plot_height[1], lower = plot_height[2], upper = plot_height[3], .var.name = "plot_height")
   checkmate::assert_numeric(plot_width, len = 3, any.missing = FALSE, null.ok = TRUE, finite = TRUE)
-  checkmate::assert_numeric(plot_width[1], lower = plot_width[2], upper = plot_width[3], null.ok = TRUE,
-                            .var.name = "plot_width")
+  checkmate::assert_numeric(plot_width[1],
+    lower = plot_width[2], upper = plot_width[3], null.ok = TRUE,
+    .var.name = "plot_width"
+  )
 
   args <- as.list(environment())
 
@@ -170,19 +180,19 @@ tm_g_gh_scatterplot <- function(label,
     label = label,
     filters = dataname,
     server = srv_g_scatterplot,
-    server_args = list(dataname = dataname,
-                       param_var = param_var,
-                       trt_group = trt_group,
-                       trt_facet = trt_facet,
-                       color_manual = color_manual,
-                       shape_manual = shape_manual,
-                       plot_height = plot_height,
-                       plot_width = plot_width
+    server_args = list(
+      dataname = dataname,
+      param_var = param_var,
+      trt_group = trt_group,
+      trt_facet = trt_facet,
+      color_manual = color_manual,
+      shape_manual = shape_manual,
+      plot_height = plot_height,
+      plot_width = plot_width
     ),
     ui = ui_g_scatterplot,
     ui_args = args
   )
-
 }
 
 #' @importFrom shinyjs hidden
@@ -192,14 +202,15 @@ ui_g_scatterplot <- function(id, ...) {
 
   standard_layout(
     output = templ_ui_output_datatable(ns),
-    encoding =  div(
+    encoding = div(
       templ_ui_dataname(a$dataname),
       optionalSelectInput(
         ns("trt_group"),
         label = "Select Treatment Variable",
         choices = a$trt_group$choices,
         selected = a$trt_group$selected,
-        multiple = FALSE),
+        multiple = FALSE
+      ),
       templ_ui_params_vars(
         ns,
         # xparam and yparam are identical, so we only show the user one
@@ -232,10 +243,11 @@ ui_g_scatterplot <- function(id, ...) {
         ),
         panel_item(
           title = "Plot settings",
-          optionalSliderInputValMinMax(ns("font_size"),  "Font Size", a$font_size, ticks = FALSE),
+          optionalSliderInputValMinMax(ns("font_size"), "Font Size", a$font_size, ticks = FALSE),
           optionalSliderInputValMinMax(ns("dot_size"), "Dot Size", a$dot_size, ticks = FALSE),
           optionalSliderInputValMinMax(ns("reg_text_size"), "Regression Annotations Size", a$reg_text_size,
-                                       ticks = FALSE)
+            ticks = FALSE
+          )
         )
       )
     ),
@@ -243,7 +255,6 @@ ui_g_scatterplot <- function(id, ...) {
     pre_output = a$pre_output,
     post_output = a$post_output
   )
-
 }
 
 #' @importFrom goshawk g_scatterplot
@@ -276,15 +287,16 @@ srv_g_scatterplot <- function(input,
 
   # plot
   plot_r <- reactive({
-
     ac <- anl_chunks()
     private_chunks <- ac$chunks$clone(deep = TRUE)
     # nolint start
     xrange_scale <- xrange_slider$state()$value
     yrange_scale <- yrange_slider$state()$value
     facet_ncol <- input$facet_ncol
-    validate(need(is.na(facet_ncol) || (as.numeric(facet_ncol) > 0 && as.numeric(facet_ncol) %% 1 == 0),
-      "Number of plots per row must be a positive integer"))
+    validate(need(
+      is.na(facet_ncol) || (as.numeric(facet_ncol) > 0 && as.numeric(facet_ncol) %% 1 == 0),
+      "Number of plots per row must be a positive integer"
+    ))
     reg_line <- input$reg_line
     font_size <- input$font_size
     dot_size <- input$dot_size

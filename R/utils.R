@@ -39,25 +39,29 @@ templ_ui_params_vars <- function(ns,
     if (!is.null(xparam_choices)) {
       optionalSelectInput(
         ns("xaxis_param"), if_null(xparam_label, "Select an X-Axis Biomarker"),
-        xparam_choices, if_null(xparam_selected, xparam_choices[1]), multiple = FALSE
+        xparam_choices, if_null(xparam_selected, xparam_choices[1]),
+        multiple = FALSE
       )
     },
     if (!is.null(xchoices)) {
       optionalSelectInput(
         ns("xaxis_var"), if_null(xvar_label, "Select an X-Axis Variable"),
-        xchoices, xselected, multiple = multiple
+        xchoices, xselected,
+        multiple = multiple
       )
     },
     if (!is.null(yparam_choices)) {
       optionalSelectInput(
         ns("yaxis_param"), if_null(yparam_label, "Select an Y-Axis Biomarker"),
-        yparam_choices, if_null(yparam_selected, yparam_choices[1]), multiple = FALSE
+        yparam_choices, if_null(yparam_selected, yparam_choices[1]),
+        multiple = FALSE
       )
     },
     if (!is.null(ychoices)) {
       optionalSelectInput(
         ns("yaxis_var"), if_null(yvar_label, "Select a Y-Axis Variable"),
-        ychoices, yselected, multiple = multiple
+        ychoices, yselected,
+        multiple = multiple
       )
     }
   )
@@ -73,7 +77,7 @@ keep_data_const_opts_updated <- function(session, input, data, id_param_var) {
     data_filtered <- data()$ANL %>% filter(.data$PARAMCD == paramname)
     choices(c("None" = "NONE", "Screening" = "BASE2", "Baseline" = "BASE")[
       c(TRUE, !all(is.na(data_filtered[["BASE2"]])), !all(is.na(data_filtered[["BASE"]])))
-      ])
+    ])
   })
   observeEvent(choices(), {
     updateRadioButtons(session, "constraint_var", choices = choices())
@@ -95,7 +99,7 @@ templ_ui_constraint <- function(ns, label = "Data Constraint") {
       id = ns("constraint_range"),
       div(
         style = "display: inline-block; vertical-align:center",
-        numericInput(ns("constraint_range_min"), label = "Min", value = 0,  min = 0,  max = 0)
+        numericInput(ns("constraint_range_min"), label = "Min", value = 0, min = 0, max = 0)
       ),
       div(
         style = "display: inline-block; vertical-align:center",
@@ -205,10 +209,8 @@ constr_anl_chunks <- function(session, input, datasets, dataname, param_id, para
 
     # get min max values
     if ((constraint_var == "BASE2" && any(grepl("SCR", visit_freq))) ||
-        (constraint_var == "BASE" && any(grepl("BL", visit_freq)))) {
-
-      val <- na.omit(switch(
-        constraint_var,
+      (constraint_var == "BASE" && any(grepl("BL", visit_freq)))) {
+      val <- na.omit(switch(constraint_var,
         "BASE" = ANL$BASE[ANL$AVISITCD == "BL"],
         "BASE2" = ANL$BASE2[ANL$AVISITCD == "SCR"],
         stop(paste(constraint_var, "not allowed"))
@@ -225,7 +227,7 @@ constr_anl_chunks <- function(session, input, datasets, dataname, param_id, para
       } else {
         rng <- range(val, na.rm = TRUE)
 
-        minmax <- c(floor(rng[1] * 1000) / 1000,  ceiling(rng[2] * 1000) / 1000)
+        minmax <- c(floor(rng[1] * 1000) / 1000, ceiling(rng[2] * 1000) / 1000)
 
         label_min <- sprintf("Min (%s)", minmax[1])
         label_max <- sprintf("Max (%s)", minmax[2])
@@ -240,7 +242,6 @@ constr_anl_chunks <- function(session, input, datasets, dataname, param_id, para
         shinyjs::hide("all_na")
       }
     } else if (constraint_var == "NONE") {
-
       shinyjs::hide("constraint_range") # hide before update
       shinyjs::hide("all_na")
 
@@ -354,9 +355,7 @@ update_min_max <- function(session, args) {
 #'
 #' # get treatment ordering code
 #' maptrt(df_armvar = ADSL$ARMCD, code = "O")
-#'
 maptrt <- function(df_armvar, code = c("M", "O")) {
-
   code <- match.arg(code)
 
   # get arm variable
@@ -427,7 +426,8 @@ srv_arbitrary_lines <- function(id) {
           validate(
             need(
               length(line_arb_label) %in% c(1, length(line_arb)),
-              "Line input error: number of labels should be equal to 1 or the number of values")
+              "Line input error: number of labels should be equal to 1 or the number of values"
+            )
           )
         }
         if (length(line_arb_color) == 0 || line_arb_color == "") {
@@ -436,7 +436,8 @@ srv_arbitrary_lines <- function(id) {
           validate(
             need(
               length(line_arb_color) %in% c(1, length(line_arb)),
-              "Line input error: number of colors should be equal to 1 or the number of values")
+              "Line input error: number of colors should be equal to 1 or the number of values"
+            )
           )
         }
       }

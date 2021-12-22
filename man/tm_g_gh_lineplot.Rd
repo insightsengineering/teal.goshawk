@@ -116,35 +116,42 @@ library(scda)
 library(stringr)
 
 # original ARM value = dose value
-arm_mapping <- list("A: Drug X" = "150mg QD",
-                    "B: Placebo" = "Placebo",
-                    "C: Combination" = "Combination")
+arm_mapping <- list(
+  "A: Drug X" = "150mg QD",
+  "B: Placebo" = "Placebo",
+  "C: Combination" = "Combination"
+)
 
 ADSL <- synthetic_cdisc_data("latest")$adsl
 ADLB <- synthetic_cdisc_data("latest")$adlb
 var_labels <- lapply(ADLB, function(x) attributes(x)$label)
 ADLB <- ADLB \%>\%
-  mutate(AVISITCD = case_when(
-    AVISIT == "SCREENING" ~ "SCR",
-    AVISIT == "BASELINE" ~ "BL",
-    grepl("WEEK", AVISIT) ~ paste("W", stringr::str_extract(AVISIT, "(?<=(WEEK ))[0-9]+")),
-    TRUE ~ as.character(NA)),
+  mutate(
+    AVISITCD = case_when(
+      AVISIT == "SCREENING" ~ "SCR",
+      AVISIT == "BASELINE" ~ "BL",
+      grepl("WEEK", AVISIT) ~ paste("W", stringr::str_extract(AVISIT, "(?<=(WEEK ))[0-9]+")),
+      TRUE ~ as.character(NA)
+    ),
     AVISITCDN = case_when(
       AVISITCD == "SCR" ~ -2,
       AVISITCD == "BL" ~ 0,
       grepl("W", AVISITCD) ~ as.numeric(gsub("[^0-9]*", "", AVISITCD)),
-      TRUE ~ as.numeric(NA)),
+      TRUE ~ as.numeric(NA)
+    ),
     AVISITCD = factor(AVISITCD) \%>\% reorder(AVISITCDN),
     TRTORD = case_when(
       ARMCD == "ARM C" ~ 1,
       ARMCD == "ARM B" ~ 2,
-      ARMCD == "ARM A" ~ 3),
+      ARMCD == "ARM A" ~ 3
+    ),
     ARM = as.character(arm_mapping[match(ARM, names(arm_mapping))]),
     ARM = factor(ARM) \%>\% reorder(TRTORD),
     ACTARM = as.character(arm_mapping[match(ACTARM, names(arm_mapping))]),
-    ACTARM = factor(ACTARM) \%>\% reorder(TRTORD))
+    ACTARM = factor(ACTARM) \%>\% reorder(TRTORD)
+  )
 attr(ADLB[["ARM"]], "label") <- var_labels[["ARM"]]
-attr(ADLB[["ACTARM"]], 'label') <- var_labels[["ACTARM"]]
+attr(ADLB[["ACTARM"]], "label") <- var_labels[["ACTARM"]]
 
 app <- teal::init(
   data = cdisc_data(
@@ -175,9 +182,10 @@ app <- teal::init(
                   ACTARM = factor(ACTARM) \%>\% reorder(TRTORD))
                attr(ADLB[['ARM']], 'label') <- var_labels[['ARM']]
                attr(ADLB[['ACTARM']], 'label') <- var_labels[['ACTARM']]",
-      vars = list(ADSL = adsl, arm_mapping = arm_mapping)),
-    check = TRUE
+      vars = list(ADSL = adsl, arm_mapping = arm_mapping)
     ),
+    check = TRUE
+  ),
   modules = root_modules(
     tm_g_gh_lineplot(
       label = "Line Plot",
@@ -185,16 +193,14 @@ app <- teal::init(
       param_var = "PARAMCD",
       param = choices_selected(c("ALT", "CRP", "IGA"), "ALT"),
       shape_choices = c("SEX", "RACE"),
-      xaxis_var =choices_selected("AVISITCD", "AVISITCD"),
+      xaxis_var = choices_selected("AVISITCD", "AVISITCD"),
       yaxis_var = choices_selected(c("AVAL", "BASE", "CHG", "PCHG"), "AVAL"),
       trt_group = choices_selected(c("ARM", "ACTARM"), "ARM")
     )
   )
 )
-
 \dontrun{
 shinyApp(app$ui, app$server)
-
 }
 }
 \author{
