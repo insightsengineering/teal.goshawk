@@ -183,18 +183,18 @@ toggle_slider_server <- function(input, output, session, is_dichotomous_slider =
   })
   # two values for range (dichotomous slider)
   observeEvent(
-    { # nolint
+    eventExpr = { # nolint
       input$value_low
       input$value_high
     },
-    { # nolint
+    handlerExpr = { # nolint
       set_state(list(value = c(input$value_low, input$value_high)))
     }
   )
   # one value for value in range
   observeEvent(
     input$value,
-    { # nolint
+    handlerExpr = { # nolint
       set_state(list(value = input$value))
     }
   )
