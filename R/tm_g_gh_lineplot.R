@@ -564,10 +564,9 @@ srv_lineplot <- function(input,
   symbol_type_defaults <- reactiveVal(symbol_type_start)
 
   # reset shapes when different splitting variable is selected
-  observeEvent(input$shape,
-    handlerExpr{ # nolint
-      symbol_type_defaults(symbol_type_start)
-    },
+  observeEvent(
+    eventExpr = input$shape,
+    handlerExpr = symbol_type_defaults(symbol_type_start),
     ignoreNULL = TRUE
   )
 
