@@ -30,5 +30,4 @@ maptrt(df_armvar = ADSL$ARMCD, code = "M")
 
 # get treatment ordering code
 maptrt(df_armvar = ADSL$ARMCD, code = "O")
-
 }

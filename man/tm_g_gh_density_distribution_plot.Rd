@@ -122,10 +122,11 @@ ADLB <- ADLB \%>\%
     ARM = as.character(arm_mapping[match(ARM, names(arm_mapping))]),
     ARM = factor(ARM) \%>\% reorder(TRTORD),
     ACTARM = as.character(arm_mapping[match(ACTARM, names(arm_mapping))]),
-    ACTARM = factor(ACTARM) \%>\% reorder(TRTORD))
+    ACTARM = factor(ACTARM) \%>\% reorder(TRTORD)
+  )
 
 attr(ADLB[["ARM"]], "label") <- var_labels[["ARM"]]
-attr(ADLB[["ACTARM"]], 'label') <- var_labels[["ACTARM"]]
+attr(ADLB[["ACTARM"]], "label") <- var_labels[["ACTARM"]]
 
 app <- teal::init(
   data = cdisc_data(
@@ -158,7 +159,8 @@ app <- teal::init(
                  ACTARM = factor(ACTARM) \%>\% reorder(TRTORD))
                attr(ADLB[['ARM']], 'label') <- var_labels[['ARM']]
                attr(ADLB[['ACTARM']], 'label') <- var_labels[['ACTARM']]",
-      vars = list(arm_mapping = arm_mapping)),
+      vars = list(arm_mapping = arm_mapping)
+    ),
     check = TRUE
   ),
   modules = root_modules(
@@ -169,9 +171,11 @@ app <- teal::init(
       param = choices_selected(c("ALT", "CRP", "IGA"), "ALT"),
       xaxis_var = choices_selected(c("AVAL", "BASE", "CHG", "PCHG"), "AVAL"),
       trt_group = choices_selected(c("ARM", "ACTARM"), "ARM"),
-      color_manual = c("150mg QD" = "#000000",
-                       "Placebo" = "#3498DB",
-                       "Combination" = "#E74C3C"),
+      color_manual = c(
+        "150mg QD" = "#000000",
+        "Placebo" = "#3498DB",
+        "Combination" = "#E74C3C"
+      ),
       color_comb = "#39ff14",
       comb_line = TRUE,
       plot_height = c(500, 200, 2000),
@@ -183,10 +187,8 @@ app <- teal::init(
     )
   )
 )
-
 \dontrun{
 shinyApp(app$ui, app$server)
-
 }
 }
 \author{

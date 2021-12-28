@@ -58,35 +58,42 @@
 #' library(stringr)
 #'
 #' # original ARM value = dose value
-#' arm_mapping <- list("A: Drug X" = "150mg QD",
-#'                     "B: Placebo" = "Placebo",
-#'                     "C: Combination" = "Combination")
+#' arm_mapping <- list(
+#'   "A: Drug X" = "150mg QD",
+#'   "B: Placebo" = "Placebo",
+#'   "C: Combination" = "Combination"
+#' )
 #'
 #' ADSL <- synthetic_cdisc_data("latest")$adsl
 #' ADLB <- synthetic_cdisc_data("latest")$adlb
 #' var_labels <- lapply(ADLB, function(x) attributes(x)$label)
 #' ADLB <- ADLB %>%
-#'   mutate(AVISITCD = case_when(
-#'     AVISIT == "SCREENING" ~ "SCR",
-#'     AVISIT == "BASELINE" ~ "BL",
-#'     grepl("WEEK", AVISIT) ~ paste("W", stringr::str_extract(AVISIT, "(?<=(WEEK ))[0-9]+")),
-#'     TRUE ~ as.character(NA)),
+#'   mutate(
+#'     AVISITCD = case_when(
+#'       AVISIT == "SCREENING" ~ "SCR",
+#'       AVISIT == "BASELINE" ~ "BL",
+#'       grepl("WEEK", AVISIT) ~ paste("W", stringr::str_extract(AVISIT, "(?<=(WEEK ))[0-9]+")),
+#'       TRUE ~ as.character(NA)
+#'     ),
 #'     AVISITCDN = case_when(
 #'       AVISITCD == "SCR" ~ -2,
 #'       AVISITCD == "BL" ~ 0,
 #'       grepl("W", AVISITCD) ~ as.numeric(gsub("[^0-9]*", "", AVISITCD)),
-#'       TRUE ~ as.numeric(NA)),
+#'       TRUE ~ as.numeric(NA)
+#'     ),
 #'     AVISITCD = factor(AVISITCD) %>% reorder(AVISITCDN),
 #'     TRTORD = case_when(
 #'       ARMCD == "ARM C" ~ 1,
 #'       ARMCD == "ARM B" ~ 2,
-#'       ARMCD == "ARM A" ~ 3),
+#'       ARMCD == "ARM A" ~ 3
+#'     ),
 #'     ARM = as.character(arm_mapping[match(ARM, names(arm_mapping))]),
 #'     ARM = factor(ARM) %>% reorder(TRTORD),
 #'     ACTARM = as.character(arm_mapping[match(ACTARM, names(arm_mapping))]),
-#'     ACTARM = factor(ACTARM) %>% reorder(TRTORD))
+#'     ACTARM = factor(ACTARM) %>% reorder(TRTORD)
+#'   )
 #' attr(ADLB[["ARM"]], "label") <- var_labels[["ARM"]]
-#' attr(ADLB[["ACTARM"]], 'label') <- var_labels[["ACTARM"]]
+#' attr(ADLB[["ACTARM"]], "label") <- var_labels[["ACTARM"]]
 #'
 #' app <- teal::init(
 #'   data = cdisc_data(
@@ -117,9 +124,10 @@
 #'                   ACTARM = factor(ACTARM) %>% reorder(TRTORD))
 #'                attr(ADLB[['ARM']], 'label') <- var_labels[['ARM']]
 #'                attr(ADLB[['ACTARM']], 'label') <- var_labels[['ACTARM']]",
-#'       vars = list(ADSL = adsl, arm_mapping = arm_mapping)),
-#'     check = TRUE
+#'       vars = list(ADSL = adsl, arm_mapping = arm_mapping)
 #'     ),
+#'     check = TRUE
+#'   ),
 #'   modules = root_modules(
 #'     tm_g_gh_lineplot(
 #'       label = "Line Plot",
@@ -127,16 +135,14 @@
 #'       param_var = "PARAMCD",
 #'       param = choices_selected(c("ALT", "CRP", "IGA"), "ALT"),
 #'       shape_choices = c("SEX", "RACE"),
-#'       xaxis_var =choices_selected("AVISITCD", "AVISITCD"),
+#'       xaxis_var = choices_selected("AVISITCD", "AVISITCD"),
 #'       yaxis_var = choices_selected(c("AVAL", "BASE", "CHG", "PCHG"), "AVAL"),
 #'       trt_group = choices_selected(c("ARM", "ACTARM"), "ARM")
 #'     )
 #'   )
 #' )
-#'
-#'\dontrun{
+#' \dontrun{
 #' shinyApp(app$ui, app$server)
-#'
 #' }
 tm_g_gh_lineplot <- function(label,
                              dataname,
@@ -164,9 +170,7 @@ tm_g_gh_lineplot <- function(label,
                              pre_output = NULL,
                              post_output = NULL,
                              count_threshold = 0,
-                             table_font_size = c(12, 4, 20)
-                             ) {
-
+                             table_font_size = c(12, 4, 20)) {
   stopifnot(is.choices_selected(xaxis_var))
   stopifnot(is.choices_selected(yaxis_var))
   stopifnot(is.choices_selected(param))
@@ -174,13 +178,17 @@ tm_g_gh_lineplot <- function(label,
   checkmate::assert_numeric(plot_height, len = 3, any.missing = FALSE, finite = TRUE)
   checkmate::assert_numeric(plot_height[1], lower = plot_height[2], upper = plot_height[3], .var.name = "plot_height")
   checkmate::assert_numeric(plot_width, len = 3, any.missing = FALSE, null.ok = TRUE, finite = TRUE)
-  checkmate::assert_numeric(plot_width[1], lower = plot_width[2], upper = plot_width[3], null.ok = TRUE,
-                            .var.name = "plot_width")
+  checkmate::assert_numeric(plot_width[1],
+    lower = plot_width[2], upper = plot_width[3], null.ok = TRUE,
+    .var.name = "plot_width"
+  )
 
   stopifnot(is.choices_selected(trt_group))
   checkmate::assert_numeric(table_font_size, len = 3, any.missing = FALSE, null.ok = TRUE, finite = TRUE)
-  checkmate::assert_numeric(table_font_size[1], lower = table_font_size[2], upper = table_font_size[3], null.ok = TRUE,
-                            .var.name = "table_font_size")
+  checkmate::assert_numeric(table_font_size[1],
+    lower = table_font_size[2], upper = table_font_size[3], null.ok = TRUE,
+    .var.name = "table_font_size"
+  )
   stopifnot(is_numeric_single(count_threshold))
 
   args <- as.list(environment())
@@ -206,11 +214,9 @@ tm_g_gh_lineplot <- function(label,
     ui_args = args,
     filters = dataname
   )
-
 }
 
 ui_lineplot <- function(id, ...) {
-
   ns <- NS(id)
   a <- list(...)
 
@@ -223,7 +229,8 @@ ui_lineplot <- function(id, ...) {
         label = "Select Treatment Variable",
         choices = a$trt_group$choices,
         selected = a$trt_group$selected,
-        multiple = FALSE),
+        multiple = FALSE
+      ),
       templ_ui_params_vars(
         ns,
         # xparam and yparam are identical, so we only show the user one
@@ -240,12 +247,12 @@ ui_lineplot <- function(id, ...) {
           div(
             "Relative height of plot to table(s)",
             title =
-            paste(
-              "The larger the value selected the greater the size of the plot relative\nto",
-              "the size of the tables. Note the units of this slider are arbitrary.\nTo",
-              "change the total size of the plot and table(s)\nuse",
-              "the plot resizing controls available at the top right of the plot."
-            ),
+              paste(
+                "The larger the value selected the greater the size of the plot relative\nto",
+                "the size of the tables. Note the units of this slider are arbitrary.\nTo",
+                "change the total size of the plot and table(s)\nuse",
+                "the plot resizing controls available at the top right of the plot."
+              ),
             icon("info-circle")
           ),
           min = 500,
@@ -264,7 +271,8 @@ ui_lineplot <- function(id, ...) {
             label = "Y-Axis Range Zoom",
             min = -1000000,
             max = 1000000,
-            value = c(-1000000, 1000000)),
+            value = c(-1000000, 1000000)
+          ),
           checkboxInput(ns("rotate_xlab"), "Rotate X-axis Label", a$rotate_xlab),
           numericInput(ns("hline"), "Add a horizontal line:", a$hline),
           numericInput(ns("count_threshold"), "Contributing Observations Threshold:", a$count_threshold)
@@ -282,7 +290,7 @@ ui_lineplot <- function(id, ...) {
               uiOutput(ns("symbols"))
             )
           ),
-          optionalSliderInputValMinMax(ns("plot_font_size"),  "Font Size", a$plot_font_size, ticks = FALSE)
+          optionalSliderInputValMinMax(ns("plot_font_size"), "Font Size", a$plot_font_size, ticks = FALSE)
         ),
         panel_item(
           title = "Table settings",
@@ -294,7 +302,6 @@ ui_lineplot <- function(id, ...) {
     pre_output = a$pre_output,
     post_output = a$post_output
   )
-
 }
 
 srv_lineplot <- function(input,
@@ -313,7 +320,6 @@ srv_lineplot <- function(input,
                          xlabel,
                          plot_height,
                          plot_width) {
-
   init_chunks()
   ns <- session$ns
   output$shape_ui <- renderUI({
@@ -321,15 +327,15 @@ srv_lineplot <- function(input,
       if (is(shape_choices, "choices_selected")) {
         choices <- shape_choices$choices
         selected <- shape_choices$selected
-      }
-      else {
+      } else {
         choices <- shape_choices
         selected <- NULL
       }
       optionalSelectInput(
         ns("shape"),
         "Select Line Splitting Variable",
-        choices = choices, selected = selected)
+        choices = choices, selected = selected
+      )
     }
   })
 
@@ -339,9 +345,10 @@ srv_lineplot <- function(input,
     datasets = datasets,
     dataname = dataname,
     param_id = "xaxis_param",
-    param_var =  param_var,
+    param_var = param_var,
     trt_group = input$trt_group,
-    min_rows = 2)
+    min_rows = 2
+  )
   keep_data_const_opts_updated(session, input, anl_chunks, "xaxis_param")
 
   yrange_slider <- callModule(toggle_slider_server, "yrange_scale")
@@ -364,23 +371,26 @@ srv_lineplot <- function(input,
     # xaxis_var and yaxis_var are always distinct
     sum_data <- ANL %>%
       group_by_at(c(input$xaxis_var, input$trt_group, shape)) %>%
-      summarise(upper = if (input$stat == "mean") {
-        mean(!!sym(varname), na.rm = TRUE) +
-          1.96 * sd(!!sym(varname), na.rm = TRUE) / sqrt(n())
-      } else {
-        quantile(!!sym(varname), 0.75, na.rm = TRUE)
-      },
-      lower = if (input$stat == "mean") {
-        mean(!!sym(varname), na.rm = TRUE) -
-          1.96 * sd(!!sym(varname), na.rm = TRUE) / sqrt(n())
-      } else {
-        quantile(!!sym(varname), 0.25, na.rm = TRUE)
-      })
+      summarise(
+        upper = if (input$stat == "mean") {
+          mean(!!sym(varname), na.rm = TRUE) +
+            1.96 * sd(!!sym(varname), na.rm = TRUE) / sqrt(n())
+        } else {
+          quantile(!!sym(varname), 0.75, na.rm = TRUE)
+        },
+        lower = if (input$stat == "mean") {
+          mean(!!sym(varname), na.rm = TRUE) -
+            1.96 * sd(!!sym(varname), na.rm = TRUE) / sqrt(n())
+        } else {
+          quantile(!!sym(varname), 0.25, na.rm = TRUE)
+        }
+      )
 
     minmax <- grDevices::extendrange(
       r = c(
         floor(min(sum_data$lower, na.rm = TRUE) * 10) / 10,
-        ceiling(max(sum_data$upper, na.rm = TRUE) * 10) / 10),
+        ceiling(max(sum_data$upper, na.rm = TRUE) * 10) / 10
+      ),
       f = 0.05
     )
 
@@ -395,7 +405,7 @@ srv_lineplot <- function(input,
   })
 
 
-  line_color_start <-  if (is.null(color_manual)) {
+  line_color_start <- if (is.null(color_manual)) {
     c("#ff0000", "#008000", "#4ca3dd", "#8a2be2")
   } else {
     color_manual
@@ -554,9 +564,11 @@ srv_lineplot <- function(input,
   symbol_type_defaults <- reactiveVal(symbol_type_start)
 
   # reset shapes when different splitting variable is selected
-  observeEvent(input$shape, {
-    symbol_type_defaults(symbol_type_start)
-  }, ignoreNULL = TRUE)
+  observeEvent(
+    eventExpr = input$shape,
+    handlerExpr = symbol_type_defaults(symbol_type_start),
+    ignoreNULL = TRUE
+  )
 
   observe({
     req(input$shape)
@@ -611,7 +623,6 @@ srv_lineplot <- function(input,
         }
       )
     )
-
   })
 
   plot_r <- reactive({

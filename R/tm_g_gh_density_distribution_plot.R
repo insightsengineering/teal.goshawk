@@ -72,10 +72,11 @@
 #'     ARM = as.character(arm_mapping[match(ARM, names(arm_mapping))]),
 #'     ARM = factor(ARM) %>% reorder(TRTORD),
 #'     ACTARM = as.character(arm_mapping[match(ACTARM, names(arm_mapping))]),
-#'     ACTARM = factor(ACTARM) %>% reorder(TRTORD))
+#'     ACTARM = factor(ACTARM) %>% reorder(TRTORD)
+#'   )
 #'
 #' attr(ADLB[["ARM"]], "label") <- var_labels[["ARM"]]
-#' attr(ADLB[["ACTARM"]], 'label') <- var_labels[["ACTARM"]]
+#' attr(ADLB[["ACTARM"]], "label") <- var_labels[["ACTARM"]]
 #'
 #' app <- teal::init(
 #'   data = cdisc_data(
@@ -108,7 +109,8 @@
 #'                  ACTARM = factor(ACTARM) %>% reorder(TRTORD))
 #'                attr(ADLB[['ARM']], 'label') <- var_labels[['ARM']]
 #'                attr(ADLB[['ACTARM']], 'label') <- var_labels[['ACTARM']]",
-#'       vars = list(arm_mapping = arm_mapping)),
+#'       vars = list(arm_mapping = arm_mapping)
+#'     ),
 #'     check = TRUE
 #'   ),
 #'   modules = root_modules(
@@ -119,9 +121,11 @@
 #'       param = choices_selected(c("ALT", "CRP", "IGA"), "ALT"),
 #'       xaxis_var = choices_selected(c("AVAL", "BASE", "CHG", "PCHG"), "AVAL"),
 #'       trt_group = choices_selected(c("ARM", "ACTARM"), "ARM"),
-#'       color_manual = c("150mg QD" = "#000000",
-#'                        "Placebo" = "#3498DB",
-#'                        "Combination" = "#E74C3C"),
+#'       color_manual = c(
+#'         "150mg QD" = "#000000",
+#'         "Placebo" = "#3498DB",
+#'         "Combination" = "#E74C3C"
+#'       ),
 #'       color_comb = "#39ff14",
 #'       comb_line = TRUE,
 #'       plot_height = c(500, 200, 2000),
@@ -133,10 +137,8 @@
 #'     )
 #'   )
 #' )
-#'
 #' \dontrun{
 #' shinyApp(app$ui, app$server)
-#'
 #' }
 tm_g_gh_density_distribution_plot <- function(label, # nolint
                                               dataname,
@@ -160,7 +162,6 @@ tm_g_gh_density_distribution_plot <- function(label, # nolint
                                               post_output = NULL) {
   stopifnot(
     is_character_single(label),
-
     is_character_single(dataname),
     is_character_single(param_var),
     is.choices_selected(param),
@@ -179,8 +180,10 @@ tm_g_gh_density_distribution_plot <- function(label, # nolint
   checkmate::assert_numeric(plot_height, len = 3, any.missing = FALSE, finite = TRUE)
   checkmate::assert_numeric(plot_height[1], lower = plot_height[2], upper = plot_height[3], .var.name = "plot_height")
   checkmate::assert_numeric(plot_width, len = 3, any.missing = FALSE, null.ok = TRUE, finite = TRUE)
-  checkmate::assert_numeric(plot_width[1], lower = plot_width[2], upper = plot_width[3], null.ok = TRUE,
-                            .var.name = "plot_width")
+  checkmate::assert_numeric(plot_width[1],
+    lower = plot_width[2], upper = plot_width[3], null.ok = TRUE,
+    .var.name = "plot_width"
+  )
 
   args <- as.list(environment())
 
@@ -226,7 +229,8 @@ ui_g_density_distribution_plot <- function(id, ...) {
         label = "Select Treatment Variable",
         choices = a$trt_group$choices,
         selected = a$trt_group$selected,
-        multiple = FALSE),
+        multiple = FALSE
+      ),
       templ_ui_params_vars(
         ns,
         xparam_choices = a$param$choices, xparam_selected = a$param$selected, xparam_label = "Select a Biomarker",
@@ -242,7 +246,8 @@ ui_g_density_distribution_plot <- function(id, ...) {
             label = "X-Axis Range Zoom",
             min = -1000000,
             max = 1000000,
-            value = c(-1000000, 1000000)),
+            value = c(-1000000, 1000000)
+          ),
           numericInput(ns("facet_ncol"), "Number of Plots Per Row:", a$facet_ncol, min = 1),
           checkboxInput(ns("comb_line"), "Display combination line", a$comb_line),
           checkboxInput(ns("rug_plot"), "Include rug plot", value = FALSE),
@@ -256,7 +261,8 @@ ui_g_density_distribution_plot <- function(id, ...) {
             "Line Size",
             value_min_max = a$line_size,
             step = .25,
-            ticks = FALSE)
+            ticks = FALSE
+          )
         )
       )
     ),
@@ -295,7 +301,7 @@ srv_g_density_distribution_plot <- function(input, # nolint
     validate(need(input$xaxis_var, "Please select an X-Axis Variable"))
     private_chunks <- anl_chunks()$chunks$clone(deep = TRUE)
 
-    #nolint start
+    # nolint start
     param <- input$xaxis_param
     xaxis_var <- input$xaxis_var
     xmin_scale <- xrange_slider$state()$value[[1]]
@@ -306,13 +312,15 @@ srv_g_density_distribution_plot <- function(input, # nolint
     hline_arb_label <- horizontal_line()$line_arb_label
     hline_arb_color <- horizontal_line()$line_arb_color
     facet_ncol <- input$facet_ncol
-    validate(need(is.na(facet_ncol) || (as.numeric(facet_ncol) > 0 && as.numeric(facet_ncol) %% 1 == 0),
-      "Number of plots per row must be a positive integer"))
+    validate(need(
+      is.na(facet_ncol) || (as.numeric(facet_ncol) > 0 && as.numeric(facet_ncol) %% 1 == 0),
+      "Number of plots per row must be a positive integer"
+    ))
     comb_line <- input$comb_line
     rug_plot <- input$rug_plot
     rotate_xlab <- input$rotate_xlab
     trt_group <- input$trt_group
-    #nolint end
+    # nolint end
     validate(need(input$trt_group, "Please select a treatment variable"))
 
     chunks_push(

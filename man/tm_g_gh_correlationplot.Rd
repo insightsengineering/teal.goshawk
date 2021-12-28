@@ -153,29 +153,33 @@ ADLB <- ADLB \%>\%
     AVISIT == "SCREENING" ~ "SCR",
     AVISIT == "BASELINE" ~ "BL",
     grepl("WEEK", AVISIT) ~
-      paste(
-        "W",
-        trimws(
-          substr(
-            AVISIT,
-            start = 6,
-            stop = stringr::str_locate(AVISIT, "DAY") - 1
-          )
+    paste(
+      "W",
+      trimws(
+        substr(
+          AVISIT,
+          start = 6,
+          stop = stringr::str_locate(AVISIT, "DAY") - 1
         )
-      ),
-    TRUE ~ NA_character_)) \%>\%
+      )
+    ),
+    TRUE ~ NA_character_
+  )) \%>\%
   mutate(AVISITCDN = case_when(
     AVISITCD == "SCR" ~ -2,
     AVISITCD == "BL" ~ 0,
     grepl("W", AVISITCD) ~ as.numeric(gsub("[^0-9]*", "", AVISITCD)),
-    TRUE ~ NA_real_)) \%>\%
+    TRUE ~ NA_real_
+  )) \%>\%
   # use ARMCD values to order treatment in visualization legend
   mutate(TRTORD = ifelse(grepl("C", ARMCD), 1,
-                         ifelse(grepl("B", ARMCD), 2,
-                                ifelse(grepl("A", ARMCD), 3, NA)))) \%>\%
+    ifelse(grepl("B", ARMCD), 2,
+      ifelse(grepl("A", ARMCD), 3, NA)
+    )
+  )) \%>\%
   mutate(ARM = as.character(arm_mapping[match(ARM, names(arm_mapping))])) \%>\%
   mutate(ARM = factor(ARM) \%>\%
-           reorder(TRTORD)) \%>\%
+    reorder(TRTORD)) \%>\%
   mutate(
     ANRHI = case_when(
       PARAMCD == "ALT" ~ 60,
@@ -188,15 +192,18 @@ ADLB <- ADLB \%>\%
       PARAMCD == "CRP" ~ 30,
       PARAMCD == "IGA" ~ 40,
       TRUE ~ NA_real_
-    )) \%>\%
+    )
+  ) \%>\%
   rowwise() \%>\%
   group_by(PARAMCD) \%>\%
   mutate(LBSTRESC = ifelse(
     USUBJID \%in\% sample(USUBJID, 1, replace = TRUE),
-    paste("<", round(runif(1, min = 25, max = 30))), LBSTRESC)) \%>\%
+    paste("<", round(runif(1, min = 25, max = 30))), LBSTRESC
+  )) \%>\%
   mutate(LBSTRESC = ifelse(
     USUBJID \%in\% sample(USUBJID, 1, replace = TRUE),
-    paste( ">", round(runif(1, min = 70, max = 75))), LBSTRESC)) \%>\%
+    paste(">", round(runif(1, min = 70, max = 75))), LBSTRESC
+  )) \%>\%
   ungroup()
 attr(ADLB[["ARM"]], "label") <- var_labels[["ARM"]]
 attr(ADLB[["ANRHI"]], "label") <- "Analysis Normal Range Upper Limit"
@@ -272,47 +279,49 @@ app <- init(
               # add LLOQ and ULOQ variables
               ADLB_LOQS <- goshawk:::h_identify_loq_values(ADLB)
               ADLB <- left_join(ADLB, ADLB_LOQS, by = 'PARAM')",
-      vars = list(arm_mapping = arm_mapping)),
-    check = TRUE
+      vars = list(arm_mapping = arm_mapping)
     ),
+    check = TRUE
+  ),
   modules = root_modules(
     tm_g_gh_correlationplot(
-       label = "Correlation Plot",
-       dataname = "ADLB",
-       param_var = "PARAMCD",
-       xaxis_param = choices_selected(c("ALT", "CRP", "IGA"), "ALT"),
-       yaxis_param = choices_selected(c("ALT", "CRP", "IGA"), "CRP"),
-       xaxis_var = choices_selected(c("AVAL", "BASE", "CHG", "PCHG"), "BASE"),
-       yaxis_var = choices_selected(c("AVAL", "BASE", "CHG", "PCHG"), "AVAL"),
-       trt_group = choices_selected(c("ARM", "ACTARM"), "ARM"),
-       color_manual = c("Drug X 100mg" = "#000000",
-                        "Placebo" = "#3498DB",
-                        "Combination 100mg" = "#E74C3C"),
-       shape_manual = c("N"  = 1, "Y"  = 2, "NA" = 0),
-       plot_height = c(500, 200, 2000),
-       facet_ncol = 2,
-       visit_facet = TRUE,
-       reg_line = FALSE,
-       loq_legend = TRUE,
-       font_size = c(12, 8, 20),
-       dot_size = c(1, 1, 12),
-       reg_text_size = c(3, 3, 10),
-       hline_arb = c(40, 50),
-       hline_arb_label = "arb hori label",
-       hline_arb_color = c("red", "blue"),
-       hline_vars = c("ANRHI", "ANRLO", "ULOQN", "LLOQN"),
-       hline_vars_colors = c("green", "blue", "purple", "cyan"),
-       hline_vars_label =  c("ANRHI Label", "ANRLO Label", "ULOQN Label", "LLOQN Label"),
-       vline_vars = c("ANRHI", "ANRLO", "ULOQN", "LLOQN"),
-       vline_vars_colors = c("yellow", "orange", "brown", "gold"),
-       vline_vars_labels =  c("ANRHI Label", "ANRLO Label", "ULOQN Label", "LLOQN Label"),
-       vline_arb = c(50, 70),
-       vline_arb_label = "arb vert A",
-       vline_arb_color = c("green", "orange")
-   )
+      label = "Correlation Plot",
+      dataname = "ADLB",
+      param_var = "PARAMCD",
+      xaxis_param = choices_selected(c("ALT", "CRP", "IGA"), "ALT"),
+      yaxis_param = choices_selected(c("ALT", "CRP", "IGA"), "CRP"),
+      xaxis_var = choices_selected(c("AVAL", "BASE", "CHG", "PCHG"), "BASE"),
+      yaxis_var = choices_selected(c("AVAL", "BASE", "CHG", "PCHG"), "AVAL"),
+      trt_group = choices_selected(c("ARM", "ACTARM"), "ARM"),
+      color_manual = c(
+        "Drug X 100mg" = "#000000",
+        "Placebo" = "#3498DB",
+        "Combination 100mg" = "#E74C3C"
+      ),
+      shape_manual = c("N" = 1, "Y" = 2, "NA" = 0),
+      plot_height = c(500, 200, 2000),
+      facet_ncol = 2,
+      visit_facet = TRUE,
+      reg_line = FALSE,
+      loq_legend = TRUE,
+      font_size = c(12, 8, 20),
+      dot_size = c(1, 1, 12),
+      reg_text_size = c(3, 3, 10),
+      hline_arb = c(40, 50),
+      hline_arb_label = "arb hori label",
+      hline_arb_color = c("red", "blue"),
+      hline_vars = c("ANRHI", "ANRLO", "ULOQN", "LLOQN"),
+      hline_vars_colors = c("green", "blue", "purple", "cyan"),
+      hline_vars_label = c("ANRHI Label", "ANRLO Label", "ULOQN Label", "LLOQN Label"),
+      vline_vars = c("ANRHI", "ANRLO", "ULOQN", "LLOQN"),
+      vline_vars_colors = c("yellow", "orange", "brown", "gold"),
+      vline_vars_labels = c("ANRHI Label", "ANRLO Label", "ULOQN Label", "LLOQN Label"),
+      vline_arb = c(50, 70),
+      vline_arb_label = "arb vert A",
+      vline_arb_color = c("green", "orange")
+    )
   )
 )
-
 \dontrun{
 shinyApp(app$ui, app$server)
 }
