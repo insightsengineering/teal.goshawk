@@ -467,7 +467,7 @@ validate_line_arb_arg <- function(line_arb, line_arb_color, line_arb_label) {
 
 # to check the variable line arguments
 validate_line_vars_arg <- function(line_vars, line_vars_colors, line_vars_labels) {
-  checkmate::assert_numeric(line_vars)
+  checkmate::assert_character(line_vars)
   if (length(line_vars) > 0) {
     checkmate::assert(
       checkmate::check_string(line_vars_colors),
