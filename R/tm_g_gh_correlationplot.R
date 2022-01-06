@@ -442,7 +442,7 @@ srv_g_correlationplot <- function(input,
     ANL_FILTERED <- datasets$get_data(dataname, filtered = TRUE) # nolint
     validate_has_data(ANL_FILTERED, 1)
 
-    if (!is_empty(input$hline_vars)) {
+    if (length(input$hline_vars) > 0) {
       validate(
         need(
           all(input$hline_vars %in% names(ANL_FILTERED)),
@@ -636,6 +636,8 @@ srv_g_correlationplot <- function(input,
     private_chunks <- anl_constraint()$chunks$clone(deep = TRUE)
     ANL <- anl_constraint()$ANL # nolint
     trt_group <- input$trt_group
+    line_vars <- unique(c(input$hline_vars, input$vline_vars))
+
     chunks_push(
       chunks = private_chunks,
       id = "plot_data_transpose",
@@ -648,13 +650,13 @@ srv_g_correlationplot <- function(input,
             .data[[.(param_var)]],
             .data[[.(input$xaxis_var)]],
             .data[[.(input$yaxis_var)]],
-            .(if_empty(unique(c(input$hline_vars, input$vline_vars)), NULL))
+            .(`if`(length(line_vars) == 0, NULL, line_vars))
           ) %>%
           tidyr::pivot_longer(
             c(
               .data[[.(input$xaxis_var)]],
               .data[[.(input$yaxis_var)]],
-              .(if_empty(unique(c(input$hline_vars, input$vline_vars)), NULL))
+              .(`if`(length(line_vars) == 0, NULL, line_vars))
             ),
             names_to = "ANLVARS",
             values_to = "ANLVALS"
@@ -770,7 +772,7 @@ srv_g_correlationplot <- function(input,
     hline_arb <- horizontal_line()$line_arb
     hline_arb_label <- horizontal_line()$line_arb_label
     hline_arb_color <- horizontal_line()$line_arb_color
-    hline_vars <- if (is_empty(input$hline_vars)) {
+    hline_vars <- if (length(input$hline_vars) == 0) {
       NULL
     } else {
       paste0(input$hline_vars, ".", yaxis_param)
@@ -778,7 +780,7 @@ srv_g_correlationplot <- function(input,
     vline_arb <- vertical_line()$line_arb
     vline_arb_label <- vertical_line()$line_arb_label
     vline_arb_color <- vertical_line()$line_arb_color
-    vline_vars <- if (is_empty(input$vline_vars)) {
+    vline_vars <- if (length(input$vline_vars) == 0) {
       NULL
     } else {
       paste0(input$vline_vars, ".", xaxis_param)

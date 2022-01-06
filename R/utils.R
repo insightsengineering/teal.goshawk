@@ -135,10 +135,8 @@ keep_range_slider_updated <- function(session, input, update_slider_fcn, id_var,
     ANL <- reactive_ANL()$ANL %>% filter(.data$PARAMCD == paramname) # nolint
     validate_has_variable(ANL, varname, paste("variable", varname, "does not exist"))
 
-    minmax <- c(
-      floor(min(if_empty(na.omit(ANL[[varname]]), 0))),
-      ceiling(max(if_empty(na.omit(ANL[[varname]]), 0)))
-    )
+    var <- na.omit(ANL[[varname]])
+    minmax <- if (length(var)) c(floor(min(var)), ceiling(max(var))) else c(0, 0)
 
     isolate(update_slider_fcn(
       min = minmax[[1]],
