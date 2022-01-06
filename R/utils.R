@@ -38,28 +38,34 @@ templ_ui_params_vars <- function(ns,
   tagList(
     if (!is.null(xparam_choices)) {
       optionalSelectInput(
-        ns("xaxis_param"), if_null(xparam_label, "Select an X-Axis Biomarker"),
-        xparam_choices, if_null(xparam_selected, xparam_choices[1]),
+        ns("xaxis_param"),
+        `if`(is.null(xparam_label), "Select an X-Axis Biomarker", xparam_label),
+        xparam_choices,
+        `if`(is.null(xparam_selected), xparam_choices[1], xparam_selected),
         multiple = FALSE
       )
     },
     if (!is.null(xchoices)) {
       optionalSelectInput(
-        ns("xaxis_var"), if_null(xvar_label, "Select an X-Axis Variable"),
+        ns("xaxis_var"),
+        `if`(is.null(xvar_label), "Select an X-Axis Variable", xvar_label),
         xchoices, xselected,
         multiple = multiple
       )
     },
     if (!is.null(yparam_choices)) {
       optionalSelectInput(
-        ns("yaxis_param"), if_null(yparam_label, "Select an Y-Axis Biomarker"),
-        yparam_choices, if_null(yparam_selected, yparam_choices[1]),
+        ns("yaxis_param"),
+        `if`(is.null(yparam_label), "Select an Y-Axis Biomarker", yparam_label),
+        yparam_choices,
+        `if`(is.null(yparam_selected), yparam_choices[1], yparam_selected),
         multiple = FALSE
       )
     },
     if (!is.null(ychoices)) {
       optionalSelectInput(
-        ns("yaxis_var"), if_null(yvar_label, "Select a Y-Axis Variable"),
+        ns("yaxis_var"),
+        `if`(is.null(yvar_label), "Select a Y-Axis Variable", yvar_label),
         ychoices, yselected,
         multiple = multiple
       )

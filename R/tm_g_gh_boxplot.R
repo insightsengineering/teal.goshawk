@@ -397,7 +397,7 @@ srv_g_boxplot <- function(input,
     param <- input$xaxis_param
     yaxis <- input$yaxis_var
     xaxis <- input$xaxis_var
-    facet_var <- if_null(input$facet_var, "None")
+    facet_var <- `if`(is.null(input$facet_var), "None", input$facet_var)
     yrange_scale <- yrange_slider$state()$value
     facet_ncol <- input$facet_ncol
     validate(need(

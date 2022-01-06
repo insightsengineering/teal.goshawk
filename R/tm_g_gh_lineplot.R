@@ -453,7 +453,8 @@ srv_lineplot <- function(input,
       vapply(
         seq_len(anl_arm_nlevels),
         function(idx) {
-          if_null(input[[paste0("line_color_", idx)]], isolate(line_color_defaults())[[idx]])
+          x <- input[[paste0("line_color_", idx)]]
+          if (is.null(x)) isolate(line_color_defaults())[[idx]] else x
         },
         character(1)
       ),
@@ -473,7 +474,8 @@ srv_lineplot <- function(input,
       vapply(
         seq_len(anl_arm_nlevels),
         function(idx) {
-          if_null(input[[paste0("line_type_", idx)]], isolate(line_type_defaults())[[idx]])
+          x <- input[[paste0("line_type_", idx)]]
+          if (is.null(x)) isolate(line_type_defaults())[[idx]] else x
         },
         character(1)
       ),
@@ -590,7 +592,8 @@ srv_lineplot <- function(input,
       vapply(
         seq_len(anl_shape_nlevels),
         function(idx) {
-          if_null(input[[paste0("symbol_type_", idx)]], isolate(symbol_type_defaults())[[idx]])
+          x <- input[[paste0("symbol_type_", idx)]]
+          if (is.null(x)) isolate(symbol_type_defaults())[[idx]] else x
         },
         character(1)
       ),
