@@ -4,6 +4,7 @@
 * Fixed error in `tm_g_gh_boxplot` when no facet variable is selected.
 * Added an additional UI input component to add an addition arbitrary horizontal line to `tm_g_gh_spaghettiplot`, `tm_g_gh_boxplot`, `tm_g_gh_density_distribution_plot` as well as two additional UI input components to add an additional horizontal and an additional vertical line to `tm_g_gh_correlationplot`.
 * Replaced calls to `utils.nest::check_slider_input` with `checkmate::assert_numeric`.
+* Replaced calls to `utils.nest::is_<class>_...`, `utils.nest::if_<class>_...`, `utils.nest::stop_if_not` with `checkmate` equivalents.
 
 # teal.goshawk 0.1.10
 

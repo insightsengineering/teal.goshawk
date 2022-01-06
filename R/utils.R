@@ -160,7 +160,7 @@ constr_anl_chunks <- function(session, input, datasets, dataname, param_id, para
   anl_param <- reactive({
     param_var_value <- input[[param_id]] # value to filter PARAMCD for
     validate(need(param_var_value, "Please select a biomarker"))
-    stopifnot(is_character_single(param_var_value))
+    checkmate::assert_string(param_var_value)
 
     ANL_FILTERED <- datasets$get_data(dataname, filtered = TRUE) # nolint
     validate_has_data(ANL_FILTERED, min_rows)
@@ -280,7 +280,7 @@ create_anl_constraint_reactive <- function(anl_param, input, param_id, min_rows)
     constraint_range_min <- input[["constraint_range_min"]]
     constraint_range_max <- input[["constraint_range_max"]]
     param <- input[[param_id]]
-    stopifnot(is_character_single(param))
+    checkmate::assert_string(param)
 
     validate(need(constraint_range_min, "please select proper constraint minimum value"))
     validate(need(constraint_range_max, "please select proper constraint maximum value"))
@@ -452,22 +452,30 @@ srv_arbitrary_lines <- function(id) {
 
 # to check the arbitrary line arguments
 validate_line_arb_arg <- function(line_arb, line_arb_color, line_arb_label) {
-  stopifnot(
-    is_numeric_vector(line_arb, min_length = 0),
-    length(line_arb) == 0 ||
-      (is_character_vector(line_arb_color) && length(line_arb_color) %in% c(1, length(line_arb))),
-    length(line_arb) == 0 ||
-      (is_character_vector(line_arb_label) && length(line_arb_label) %in% c(1, length(line_arb)))
-  )
+  checkmate::assert_numeric(line_arb)
+  if (length(line_arb) > 0) {
+    checkmate::assert(
+      checkmate::check_string(line_arb_color),
+      checkmate::check_character(line_arb_color, len = length(line_arb))
+    )
+    checkmate::assert(
+      checkmate::check_string(line_arb_label),
+      checkmate::check_character(line_arb_label, len = length(line_arb))
+    )
+  }
 }
 
 # to check the variable line arguments
 validate_line_vars_arg <- function(line_vars, line_vars_colors, line_vars_labels) {
-  stopifnot(
-    is_character_vector(line_vars, min_length = 0),
-    length(line_vars) == 0 ||
-      (is_character_vector(line_vars_colors) && length(line_vars_colors) %in% c(1, length(line_vars))),
-    length(line_vars) == 0 ||
-      (is_character_vector(line_vars_labels) && length(line_vars_labels) %in% c(length(line_vars)))
-  )
+  checkmate::assert_numeric(line_vars)
+  if (length(line_vars) > 0) {
+    checkmate::assert(
+      checkmate::check_string(line_vars_colors),
+      checkmate::check_character(line_vars_colors, len = length(line_vars))
+    )
+    checkmate::assert(
+      checkmate::check_string(line_vars_labels),
+      checkmate::check_character(line_vars_labels, len = length(line_vars))
+    )
+  }
 }

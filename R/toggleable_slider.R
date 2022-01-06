@@ -77,16 +77,12 @@ toggle_slider_ui <- function(id,
                              step_slider = NULL,
                              step_numeric = step_slider,
                              width = NULL, ...) {
-  is_numeric_like <- function(x) is_numeric_single(x) || is_integer_single(x)
-
-  stopifnot(
-    is_numeric_like(min),
-    is_numeric_like(max),
-    is_logical_single(slider_initially),
-    is.null(step_slider) || is_numeric_like(step_slider),
-    is.null(step_numeric) || is_numeric_like(step_numeric),
-    is_numeric_vector(value) || is_integer_vector(value), length(value) %in% c(1, 2)
-  )
+  checkmate::assert_number(min)
+  checkmate::assert_number(max)
+  checkmate::assert_flag(slider_initially)
+  checkmate::assert_number(step_slider, null.ok = TRUE)
+  checkmate::assert_number(step_numeric, null.ok = TRUE)
+  checkmate::assert_numeric(value, min.len = 1, max.len = 2)
   if (is.null(step_numeric)) {
     step_numeric <- NA # numericInput does not support NULL
   }

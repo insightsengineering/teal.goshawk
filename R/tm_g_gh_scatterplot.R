@@ -160,18 +160,18 @@ tm_g_gh_scatterplot <- function(label,
                                 reg_text_size = c(3, 3, 10),
                                 pre_output = NULL,
                                 post_output = NULL) {
-  stopifnot(is.choices_selected(param))
-  stopifnot(is.choices_selected(xaxis_var))
-  stopifnot(is.choices_selected(yaxis_var))
-  stopifnot(is.choices_selected(trt_group))
-  stopifnot(is_logical_single(trt_facet))
-
+  checkmate::assert_class(param, "choices_selected")
+  checkmate::assert_class(xaxis_var, "choices_selected")
+  checkmate::assert_class(yaxis_var, "choices_selected")
+  checkmate::assert_class(trt_group, "choices_selected")
+  checkmate::assert_flag(trt_facet)
+  checkmate::assert_flag(reg_line)
+  checkmate::assert_flag(rotate_xlab)
   checkmate::assert_numeric(plot_height, len = 3, any.missing = FALSE, finite = TRUE)
   checkmate::assert_numeric(plot_height[1], lower = plot_height[2], upper = plot_height[3], .var.name = "plot_height")
   checkmate::assert_numeric(plot_width, len = 3, any.missing = FALSE, null.ok = TRUE, finite = TRUE)
-  checkmate::assert_numeric(plot_width[1],
-    lower = plot_width[2], upper = plot_width[3], null.ok = TRUE,
-    .var.name = "plot_width"
+  checkmate::assert_numeric(
+    plot_width[1], lower = plot_width[2], upper = plot_width[3], null.ok = TRUE, .var.name = "plot_width"
   )
 
   args <- as.list(environment())
