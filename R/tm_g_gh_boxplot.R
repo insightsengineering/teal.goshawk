@@ -217,32 +217,28 @@ tm_g_gh_boxplot <- function(label,
                             alpha = c(0.8, 0.0, 1.0),
                             pre_output = NULL,
                             post_output = NULL) {
-  stopifnot(
-    is_character_single(label),
-    is_character_single(dataname),
-    is_character_single(param_var),
-    is.choices_selected(param),
-    is.choices_selected(yaxis_var),
-    is.choices_selected(xaxis_var),
-    is.choices_selected(facet_var),
-    is.null(facet_ncol) || is_integer_single(facet_ncol),
-    is_logical_single(loq_legend),
-    is_logical_single(rotate_xlab),
-    is_numeric_vector(font_size) && length(font_size) == 3,
-    is_numeric_vector(dot_size) && length(dot_size) == 3,
-    is_numeric_vector(alpha) && length(alpha) == 3,
-    is.choices_selected(trt_group)
-  )
 
+  checkmate::assert_string(label)
+  checkmate::assert_string(dataname)
+  checkmate::assert_string(param_var)
+  checkmate::assert_class(param, "choices_selected")
+  checkmate::assert_class(yaxis_var, "choices_selected")
+  checkmate::assert_class(xaxis_var, "choices_selected")
+  checkmate::assert_class(facet_var, "choices_selected")
+  checkmate::assert_class(trt_group, "choices_selected")
+  checkmate::assert_int(facet_ncol, null.ok = TRUE)
+  checkmate::assert_flag(loq_legend)
+  checkmate::assert_flag(rotate_xlab)
+  checkmate::assert_numeric(font_size, len = 3)
+  checkmate::assert_numeric(dot_size, len = 3)
+  checkmate::assert_numeric(alpha, len = 3)
   validate_line_arb_arg(hline_arb, hline_arb_color, hline_arb_label)
   validate_line_vars_arg(hline_vars, hline_vars_colors, hline_vars_labels)
-
   checkmate::assert_numeric(plot_height, len = 3, any.missing = FALSE, finite = TRUE)
   checkmate::assert_numeric(plot_height[1], lower = plot_height[2], upper = plot_height[3], .var.name = "plot_height")
   checkmate::assert_numeric(plot_width, len = 3, any.missing = FALSE, null.ok = TRUE, finite = TRUE)
-  checkmate::assert_numeric(plot_width[1],
-    lower = plot_width[2], upper = plot_width[3], null.ok = TRUE,
-    .var.name = "plot_width"
+  checkmate::assert_numeric(
+    plot_width[1], lower = plot_width[2], upper = plot_width[3], null.ok = TRUE, .var.name = "plot_width"
   )
 
   args <- as.list(environment())
@@ -397,7 +393,7 @@ srv_g_boxplot <- function(input,
     param <- input$xaxis_param
     yaxis <- input$yaxis_var
     xaxis <- input$xaxis_var
-    facet_var <- if_null(input$facet_var, "None")
+    facet_var <- `if`(is.null(input$facet_var), "None", input$facet_var)
     yrange_scale <- yrange_slider$state()$value
     facet_ncol <- input$facet_ncol
     validate(need(

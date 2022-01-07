@@ -16,6 +16,5 @@
 #' @import teal
 #' @import teal.devel
 #' @import tidyr
-#' @import utils.nest
 #'
 NULL

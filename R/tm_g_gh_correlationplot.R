@@ -283,24 +283,25 @@ tm_g_gh_correlationplot <- function(label,
                                     reg_text_size = c(3, 3, 10),
                                     pre_output = NULL,
                                     post_output = NULL) {
-  stopifnot(is.choices_selected(xaxis_param))
-  stopifnot(is.choices_selected(yaxis_param))
-  stopifnot(is.choices_selected(xaxis_var))
-  stopifnot(is.choices_selected(yaxis_var))
-  stopifnot(is.choices_selected(trt_group))
-  stopifnot(is_logical_single(trt_facet))
+  checkmate::assert_class(xaxis_param, "choices_selected")
+  checkmate::assert_class(yaxis_param, "choices_selected")
+  checkmate::assert_class(xaxis_var, "choices_selected")
+  checkmate::assert_class(yaxis_var, "choices_selected")
+  checkmate::assert_class(trt_group, "choices_selected")
+  checkmate::assert_flag(trt_facet)
   validate_line_arb_arg(hline_arb, hline_arb_color, hline_arb_label)
   validate_line_arb_arg(vline_arb, vline_arb_color, vline_arb_label)
   validate_line_vars_arg(hline_vars, hline_vars_colors, hline_vars_labels)
   validate_line_vars_arg(vline_vars, vline_vars_colors, vline_vars_labels)
-
   checkmate::assert_numeric(plot_height, len = 3, any.missing = FALSE, finite = TRUE)
   checkmate::assert_numeric(plot_height[1], lower = plot_height[2], upper = plot_height[3], .var.name = "plot_height")
   checkmate::assert_numeric(plot_width, len = 3, any.missing = FALSE, null.ok = TRUE, finite = TRUE)
-  checkmate::assert_numeric(plot_width[1],
-    lower = plot_width[2], upper = plot_width[3], null.ok = TRUE,
-    .var.name = "plot_width"
+  checkmate::assert_numeric(
+    plot_width[1], lower = plot_width[2], upper = plot_width[3], null.ok = TRUE, .var.name = "plot_width"
   )
+  checkmate::assert_numeric(font_size, len = 3)
+  checkmate::assert_numeric(dot_size, len = 3)
+  checkmate::assert_numeric(reg_text_size, len = 3)
 
   args <- as.list(environment())
 
@@ -442,7 +443,7 @@ srv_g_correlationplot <- function(input,
     ANL_FILTERED <- datasets$get_data(dataname, filtered = TRUE) # nolint
     validate_has_data(ANL_FILTERED, 1)
 
-    if (!is_empty(input$hline_vars)) {
+    if (length(input$hline_vars) > 0) {
       validate(
         need(
           all(input$hline_vars %in% names(ANL_FILTERED)),
@@ -636,6 +637,8 @@ srv_g_correlationplot <- function(input,
     private_chunks <- anl_constraint()$chunks$clone(deep = TRUE)
     ANL <- anl_constraint()$ANL # nolint
     trt_group <- input$trt_group
+    line_vars <- unique(c(input$hline_vars, input$vline_vars))
+
     chunks_push(
       chunks = private_chunks,
       id = "plot_data_transpose",
@@ -648,13 +651,13 @@ srv_g_correlationplot <- function(input,
             .data[[.(param_var)]],
             .data[[.(input$xaxis_var)]],
             .data[[.(input$yaxis_var)]],
-            .(if_empty(unique(c(input$hline_vars, input$vline_vars)), NULL))
+            .(`if`(length(line_vars) == 0, NULL, line_vars))
           ) %>%
           tidyr::pivot_longer(
             c(
               .data[[.(input$xaxis_var)]],
               .data[[.(input$yaxis_var)]],
-              .(if_empty(unique(c(input$hline_vars, input$vline_vars)), NULL))
+              .(`if`(length(line_vars) == 0, NULL, line_vars))
             ),
             names_to = "ANLVARS",
             values_to = "ANLVALS"
@@ -770,7 +773,7 @@ srv_g_correlationplot <- function(input,
     hline_arb <- horizontal_line()$line_arb
     hline_arb_label <- horizontal_line()$line_arb_label
     hline_arb_color <- horizontal_line()$line_arb_color
-    hline_vars <- if (is_empty(input$hline_vars)) {
+    hline_vars <- if (length(input$hline_vars) == 0) {
       NULL
     } else {
       paste0(input$hline_vars, ".", yaxis_param)
@@ -778,7 +781,7 @@ srv_g_correlationplot <- function(input,
     vline_arb <- vertical_line()$line_arb
     vline_arb_label <- vertical_line()$line_arb_label
     vline_arb_color <- vertical_line()$line_arb_color
-    vline_vars <- if (is_empty(input$vline_vars)) {
+    vline_vars <- if (length(input$vline_vars) == 0) {
       NULL
     } else {
       paste0(input$vline_vars, ".", xaxis_param)

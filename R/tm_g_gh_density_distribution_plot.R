@@ -160,29 +160,23 @@ tm_g_gh_density_distribution_plot <- function(label, # nolint
                                               rotate_xlab = FALSE,
                                               pre_output = NULL,
                                               post_output = NULL) {
-  stopifnot(
-    is_character_single(label),
-    is_character_single(dataname),
-    is_character_single(param_var),
-    is.choices_selected(param),
-    is.choices_selected(xaxis_var),
-
-    # color_manual, color_comb
-    is_numeric_vector(font_size) && length(font_size) == 3,
-    is_numeric_vector(line_size) && length(line_size) == 3,
-    is_integer_single(facet_ncol),
-    is_logical_single(comb_line),
-    is_logical_single(rotate_xlab),
-    is.choices_selected(trt_group)
-  )
+  checkmate::assert_string(label)
+  checkmate::assert_string(dataname)
+  checkmate::assert_string(param_var)
+  checkmate::assert_class(param, "choices_selected")
+  checkmate::assert_class(xaxis_var, "choices_selected")
+  checkmate::assert_class(trt_group, "choices_selected")
+  checkmate::assert_numeric(font_size, len = 3)
+  checkmate::assert_numeric(line_size, len = 3)
+  checkmate::assert_int(facet_ncol)
+  checkmate::assert_flag(comb_line)
+  checkmate::assert_flag(rotate_xlab)
   validate_line_arb_arg(hline_arb, hline_arb_color, hline_arb_label)
-
   checkmate::assert_numeric(plot_height, len = 3, any.missing = FALSE, finite = TRUE)
   checkmate::assert_numeric(plot_height[1], lower = plot_height[2], upper = plot_height[3], .var.name = "plot_height")
   checkmate::assert_numeric(plot_width, len = 3, any.missing = FALSE, null.ok = TRUE, finite = TRUE)
-  checkmate::assert_numeric(plot_width[1],
-    lower = plot_width[2], upper = plot_width[3], null.ok = TRUE,
-    .var.name = "plot_width"
+  checkmate::assert_numeric(
+    plot_width[1], lower = plot_width[2], upper = plot_width[3], null.ok = TRUE, .var.name = "plot_width"
   )
 
   args <- as.list(environment())

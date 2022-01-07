@@ -171,25 +171,24 @@ tm_g_gh_lineplot <- function(label,
                              post_output = NULL,
                              count_threshold = 0,
                              table_font_size = c(12, 4, 20)) {
-  stopifnot(is.choices_selected(xaxis_var))
-  stopifnot(is.choices_selected(yaxis_var))
-  stopifnot(is.choices_selected(param))
 
+  checkmate::assert_class(param, "choices_selected")
+  checkmate::assert_class(xaxis_var, "choices_selected")
+  checkmate::assert_class(yaxis_var, "choices_selected")
+  checkmate::assert_class(trt_group, "choices_selected")
+  checkmate::assert_flag(rotate_xlab)
   checkmate::assert_numeric(plot_height, len = 3, any.missing = FALSE, finite = TRUE)
   checkmate::assert_numeric(plot_height[1], lower = plot_height[2], upper = plot_height[3], .var.name = "plot_height")
   checkmate::assert_numeric(plot_width, len = 3, any.missing = FALSE, null.ok = TRUE, finite = TRUE)
-  checkmate::assert_numeric(plot_width[1],
-    lower = plot_width[2], upper = plot_width[3], null.ok = TRUE,
-    .var.name = "plot_width"
+  checkmate::assert_numeric(
+    plot_width[1], lower = plot_width[2], upper = plot_width[3], null.ok = TRUE, .var.name = "plot_width"
   )
-
-  stopifnot(is.choices_selected(trt_group))
   checkmate::assert_numeric(table_font_size, len = 3, any.missing = FALSE, null.ok = TRUE, finite = TRUE)
-  checkmate::assert_numeric(table_font_size[1],
-    lower = table_font_size[2], upper = table_font_size[3], null.ok = TRUE,
-    .var.name = "table_font_size"
+  checkmate::assert_numeric(
+    table_font_size[1], lower = table_font_size[2], upper = table_font_size[3],
+    null.ok = TRUE, .var.name = "table_font_size"
   )
-  stopifnot(is_numeric_single(count_threshold))
+  checkmate::assert_number(count_threshold)
 
   args <- as.list(environment())
 
@@ -453,7 +452,8 @@ srv_lineplot <- function(input,
       vapply(
         seq_len(anl_arm_nlevels),
         function(idx) {
-          if_null(input[[paste0("line_color_", idx)]], isolate(line_color_defaults())[[idx]])
+          x <- input[[paste0("line_color_", idx)]]
+          if (is.null(x)) isolate(line_color_defaults())[[idx]] else x
         },
         character(1)
       ),
@@ -473,7 +473,8 @@ srv_lineplot <- function(input,
       vapply(
         seq_len(anl_arm_nlevels),
         function(idx) {
-          if_null(input[[paste0("line_type_", idx)]], isolate(line_type_defaults())[[idx]])
+          x <- input[[paste0("line_type_", idx)]]
+          if (is.null(x)) isolate(line_type_defaults())[[idx]] else x
         },
         character(1)
       ),
@@ -590,7 +591,8 @@ srv_lineplot <- function(input,
       vapply(
         seq_len(anl_shape_nlevels),
         function(idx) {
-          if_null(input[[paste0("symbol_type_", idx)]], isolate(symbol_type_defaults())[[idx]])
+          x <- input[[paste0("symbol_type_", idx)]]
+          if (is.null(x)) isolate(symbol_type_defaults())[[idx]] else x
         },
         character(1)
       ),
@@ -634,7 +636,7 @@ srv_lineplot <- function(input,
     plot_font_size <- input$plot_font_size
     dodge <- input$dodge
     rotate_xlab <- input$rotate_xlab
-    count_threshold <- if_na(as.numeric(input$count_threshold), 0)
+    count_threshold <- `if`(is.na(as.numeric(input$count_threshold)), 0, as.numeric(input$count_threshold))
     table_font_size <- input$table_font_size
     hline <- if (is.na(input$hline)) NULL else as.numeric(input$hline)
     median <- ifelse(input$stat == "median", TRUE, FALSE)
