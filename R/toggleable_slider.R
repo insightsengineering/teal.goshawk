@@ -145,7 +145,7 @@ toggle_slider_ui <- function(id,
 
 # is_dichotomous_slider `logical` whether it is a dichotomous slider or normal slider
 toggle_slider_server <- function(input, output, session, is_dichotomous_slider = TRUE) {
-  stopifnot(is_logical_single(is_dichotomous_slider))
+  checkmate::assert_flag(is_dichotomous_slider)
   # model view controller: cur_state is the model, the sliderInput and numericInputs are two views/controllers
   # additionally, the module returns the cur_state, so it can be controlled from that end as well
   cur_state <- reactiveVal(NULL) # model, can contain min, max, value etc.
