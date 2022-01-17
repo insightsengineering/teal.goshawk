@@ -1,6 +1,6 @@
 # teal.goshawk 0.1.10.9014
 
-### New features
+### Enhancements
 * Added a UI input component to add additional arbitrary horizontal lines to `tm_g_gh_spaghettiplot`, `tm_g_gh_boxplot`, `tm_g_gh_density_distribution_plot` as well as two additional UI input components to add an additional horizontal and an additional vertical line to `tm_g_gh_correlationplot`.
 
 ### Bug Fixes
@@ -9,7 +9,7 @@
 ### Miscellaneous
 * Updated R version requirement to >= 3.6.
 * Removed dependency on `test.nest` package.
-* Removed dependency on `utils.nest` and replaced those function with equivalents from the `checkmate` package`.
+* Removed dependency on `utils.nest` and replaced those function with equivalents from the `checkmate` package.
 
 # teal.goshawk 0.1.10
 
