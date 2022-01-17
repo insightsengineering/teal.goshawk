@@ -7,9 +7,9 @@
 * Fixed an error in `tm_g_gh_boxplot` when no facet variable is selected.
 
 ### Miscellaneous
-* Updated R version requirement to >= 3.6.
+* Updated R version requirement to `R >= 3.6`.
 * Removed dependency on `test.nest` package.
-* Removed dependency on `utils.nest` and replaced those function with equivalents from the `checkmate` package.
+* Removed dependency on `utils.nest` package and replaced its functions with equivalents from the `checkmate` package.
 
 # teal.goshawk 0.1.10
 
