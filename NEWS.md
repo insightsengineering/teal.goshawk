@@ -1,18 +1,22 @@
 # teal.goshawk 0.1.10.9014
 
+### New features
+* Added a UI input component to add additional arbitrary horizontal lines to `tm_g_gh_spaghettiplot`, `tm_g_gh_boxplot`, `tm_g_gh_density_distribution_plot` as well as two additional UI input components to add an additional horizontal and an additional vertical line to `tm_g_gh_correlationplot`.
+
+### Bug Fixes
+* Fixed an error in `tm_g_gh_boxplot` when no facet variable is selected.
+
+### Miscellaneous
 * Updated R version requirement to >= 3.6.
-* Fixed error in `tm_g_gh_boxplot` when no facet variable is selected.
-* Added an additional UI input component to add an addition arbitrary horizontal line to `tm_g_gh_spaghettiplot`, `tm_g_gh_boxplot`, `tm_g_gh_density_distribution_plot` as well as two additional UI input components to add an additional horizontal and an additional vertical line to `tm_g_gh_correlationplot`.
+* Removed dependency on `test.nest` package.
 * Removed dependency on `utils.nest` and replaced those function with equivalents from the `checkmate` package`.
 
 # teal.goshawk 0.1.10
 
 ### New Features
-
 * Lab normal range and `LOQs` horizontal line feature in `tm_g_gh_spaghettiplot`, `tm_g_gh_boxplot` and `tm_g_gh_correlationplot`.
 
 ### Breaking Changes
-
 * Allow arbitrary horizontal line arguments in `tm_g_gh_spaghettiplot`, `tm_g_gh_boxplot`, `tm_g_gh_density_distribution_plot` and `tm_g_gh_correlationplot` and vertical line arguments in `tm_g_gh_correlationplot`. This functionality has changed the arguments required to use the modules:
   - `hline` replaced by `hline_arb`, `hline_arb_color` and `hline_arb_label` in the above modules.
   - `vline` replaced by `vline_arb_var`, `vline_arb_color` and `vline_arb_label` in `tm_g_gh_correlationplot`. 
