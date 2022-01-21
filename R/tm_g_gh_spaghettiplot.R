@@ -297,29 +297,29 @@ g_ui_spaghettiplot <- function(id, ...) {
         c("None" = "NONE", "Mean" = "MEAN", "Median" = "MEDIAN"),
         inline = TRUE
       ),
+      templ_ui_constraint(ns), # required by constr_anl_chunks
       if (length(a$hline_vars) > 0) {
         optionalSelectInput(
           ns("hline_vars"),
-          label = "Add Range Line(s):",
+          label = "Add Horizontal Range Line(s):",
           choices = a$hline_vars,
           selected = NULL,
           multiple = TRUE
         )
       },
       ui_arbitrary_lines(id = ns("hline_arb"), a$hline_arb, a$hline_arb_label, a$hline_arb_color),
-      templ_ui_constraint(ns), # required by constr_anl_chunks
-      toggle_slider_ui(
-        ns("yrange_scale"),
-        label = "Y-Axis Range Zoom",
-        min = -1000000,
-        max = 1000000,
-        value = c(-1000000, 1000000)
-      ),
       panel_group(
         panel_item(
           title = "Plot Aesthetic Settings",
           div(
             style = "padding: 0px;",
+            toggle_slider_ui(
+              ns("yrange_scale"),
+              label = "Y-Axis Range Zoom",
+              min = -1000000,
+              max = 1000000,
+              value = c(-1000000, 1000000)
+            ),
             div(
               style = "display: inline-block;vertical-align:middle; width: 175px;",
               tags$b("Number of Plots Per Row:")

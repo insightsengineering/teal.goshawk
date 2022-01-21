@@ -91,7 +91,7 @@ toggle_slider_ui <- function(id,
   ns <- NS(id)
   div(
     shinyjs::useShinyjs(),
-    actionButton(ns("toggle"), "Toggle"),
+    actionButton(ns("toggle"), "Toggle", class = "btn-xs", style = "float: right;"),
     show_or_not(slider_initially)(
       sliderInput(
         ns("slider"),
