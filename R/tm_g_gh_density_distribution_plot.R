@@ -243,7 +243,7 @@ ui_g_density_distribution_plot <- function(id, ...) {
             value = c(-1000000, 1000000)
           ),
           numericInput(ns("facet_ncol"), "Number of Plots Per Row:", a$facet_ncol, min = 1),
-          checkboxInput(ns("comb_line"), "Display combination line", a$comb_line),
+          checkboxInput(ns("comb_line"), "Display Combined line", a$comb_line),
           checkboxInput(ns("rug_plot"), "Include rug plot", value = FALSE),
           checkboxInput(ns("rotate_xlab"), "Rotate X-axis Label", a$rotate_xlab)
         ),
