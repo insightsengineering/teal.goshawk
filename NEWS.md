@@ -1,4 +1,4 @@
-# teal.goshawk 0.1.10.9014.1
+# teal.goshawk 0.1.10.9014.2
 
 ### Enhancements
 * Added a UI input component to add additional arbitrary horizontal lines to `tm_g_gh_spaghettiplot`, `tm_g_gh_boxplot`, `tm_g_gh_density_distribution_plot` as well as two additional UI input components to add an additional horizontal and an additional vertical line to `tm_g_gh_correlationplot`.
