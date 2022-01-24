@@ -316,7 +316,7 @@ ui_g_boxplot <- function(id, ...) {
       if (length(a$hline_vars) > 0) {
         optionalSelectInput(
           ns("hline_vars"),
-          label = "Add Range Line(s):",
+          label = "Add Horizontal Range Line(s):",
           choices = a$hline_vars,
           selected = NULL,
           multiple = TRUE
