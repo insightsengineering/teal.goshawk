@@ -43,11 +43,14 @@ laboratory data frame ALB.}
 
 \item{param}{list of biomarkers of interest.}
 
-\item{yaxis_var}{name of variable containing biomarker results displayed on y-axis e.g. AVAL.}
+\item{yaxis_var}{name of variable containing biomarker results displayed on y-axis e.g. AVAL. When not provided,
+it defaults to \code{choices_selected(c("AVAL", "CHG"), "AVAL")}.}
 
-\item{xaxis_var}{variable to categorize the x-axis.}
+\item{xaxis_var}{variable to categorize the x-axis. When not provided, it defaults to
+\code{choices_selected("AVISITCD", "AVISITCD")}.}
 
-\item{facet_var}{variable to facet the plots by.}
+\item{facet_var}{variable to facet the plots by. When not provided, it defaults to
+\code{choices_selected(c("ARM", "ACTARM"), "ARM")}.}
 
 \item{trt_group}{\code{\link[teal]{choices_selected}} object with available choices and pre-selected option
 for variable names representing treatment group e.g. ARM.}
