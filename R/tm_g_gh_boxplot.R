@@ -8,9 +8,12 @@
 #'  laboratory data frame ALB.
 #' @param param_var name of variable containing biomarker codes e.g. PARAMCD.
 #' @param param list of biomarkers of interest.
-#' @param yaxis_var name of variable containing biomarker results displayed on y-axis e.g. AVAL.
-#' @param xaxis_var variable to categorize the x-axis.
-#' @param facet_var variable to facet the plots by.
+#' @param yaxis_var name of variable containing biomarker results displayed on y-axis e.g. AVAL. When not provided,
+#' it defaults to `choices_selected(c("AVAL", "CHG"), "AVAL")`.
+#' @param xaxis_var variable to categorize the x-axis. When not provided, it defaults to
+#' `choices_selected("AVISITCD", "AVISITCD")`.
+#' @param facet_var variable to facet the plots by. When not provided, it defaults to
+#' `choices_selected(c("ARM", "ACTARM"), "ARM")`.
 #' @param trt_group  \code{\link[teal]{choices_selected}} object with available choices and pre-selected option
 #'  for variable names representing treatment group e.g. ARM.
 #' @param color_manual vector of colors applied to treatment values.
@@ -316,7 +319,7 @@ ui_g_boxplot <- function(id, ...) {
       if (length(a$hline_vars) > 0) {
         optionalSelectInput(
           ns("hline_vars"),
-          label = "Add Range Line(s):",
+          label = "Add Horizontal Range Line(s):",
           choices = a$hline_vars,
           selected = NULL,
           multiple = TRUE
