@@ -722,16 +722,14 @@ srv_lineplot <- function(id,
       chunks_get_var("p")
     })
 
-    callModule(
-      plot_with_settings_srv,
+    plot_with_settings_srv(
       id = "plot",
       plot_r = plot_r,
       height = plot_height,
       width = plot_width,
     )
 
-    callModule(
-      get_rcode_srv,
+    get_rcode_srv(
       id = "rcode",
       datasets = datasets,
       modal_title = "Line Plot"

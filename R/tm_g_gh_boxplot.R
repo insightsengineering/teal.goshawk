@@ -530,8 +530,7 @@ srv_g_boxplot <- function(id,
       chunks_get_var("p", main_code())
     })
 
-    boxplot_data <- callModule(
-      plot_with_settings_srv,
+    boxplot_data <- plot_with_settings_srv(
       id = "boxplot",
       plot_r = plot_r,
       height = plot_height,
@@ -573,8 +572,7 @@ srv_g_boxplot <- function(id,
         DT::formatRound(numeric_cols, 4)
     })
 
-    callModule(
-      get_rcode_srv,
+    get_rcode_srv(
       id = "rcode",
       datasets = datasets,
       modal_title = "Box Plot"

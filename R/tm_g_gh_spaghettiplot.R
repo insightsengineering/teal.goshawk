@@ -452,8 +452,7 @@ srv_g_spaghettiplot <- function(id,
       chunks_get_var("p")
     })
 
-    plot_data <- callModule(
-      plot_with_settings_srv,
+    plot_data <- plot_with_settings_srv(
       id = "plot",
       plot_r = plot_r,
       height = plot_height,
@@ -484,8 +483,7 @@ srv_g_spaghettiplot <- function(id,
         DT::formatRound(numeric_cols, 4)
     })
 
-    callModule(
-      get_rcode_srv,
+    get_rcode_srv(
       id = "rcode",
       datasets = datasets,
       modal_title = "Spaghetti Plot"

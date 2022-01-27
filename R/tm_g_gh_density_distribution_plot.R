@@ -395,8 +395,7 @@ srv_g_density_distribution_plot <- function(id, # nolint
       chunks_get_var("p", main_code())
     })
 
-    callModule(
-      plot_with_settings_srv,
+    plot_with_settings_srv(
       id = "plot",
       plot_r = plot_r,
       height = plot_height,
@@ -412,8 +411,7 @@ srv_g_density_distribution_plot <- function(id, # nolint
         DT::formatRound(numeric_cols, 2)
     })
 
-    callModule(
-      get_rcode_srv,
+    get_rcode_srv(
       id = "rcode",
       datasets = datasets,
       modal_title = "Density Distribution Plot"
