@@ -1,8 +1,8 @@
 Type: Package
 Package: teal.goshawk
 Title: Longitudinal visualization teal modules
-Version: 0.1.10.9014.4
-Date: 2021-10-13
+Version: 0.1.11
+Date: 2022-01-27
 Authors@R: c(
     person("Nick", "Paszty", , "nick.paszty@gene.com", role = c("aut", "cre")),
     person("Wenyi", "Liu", , "liu.wenyi@roche.com", role = "aut"),
@@ -20,10 +20,10 @@ Description: Modules that produce web interfaces through which
     with levels 'Y', 'N' or NA.
 License: Apache License 2.0 | file LICENSE
 Depends:
-    goshawk (>= 0.1.10),
+    goshawk (>= 0.1.11),
     R (>= 3.6),
     shiny,
-    teal (>= 0.10.0)
+    teal (>= 0.10.1)
 Imports:
     checkmate,
     colourpicker,
@@ -34,16 +34,16 @@ Imports:
     methods,
     shinyjs,
     stats,
-    teal.devel (>= 0.2.12),
+    teal.devel (>= 0.2.13),
     tidyr (>= 1.0.0),
     utils
 Suggests:
     knitr,
     rmarkdown,
-    scda (>= 0.1.1),
-    scda.2021 (>= 0.1.1),
+    scda (>= 0.1.2),
+    scda.2021 (>= 0.1.2),
     stringr,
-    tern (>= 0.7.5),
+    tern (>= 0.7.6),
     testthat (>= 2.0)
 Encoding: UTF-8
 LazyData: true
