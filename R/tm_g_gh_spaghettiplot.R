@@ -348,9 +348,7 @@ g_ui_spaghettiplot <- function(id, ...) {
 
 
 
-srv_g_spaghettiplot <- function(input,
-                                output,
-                                session,
+srv_g_spaghettiplot <- function(id,
                                 datasets,
                                 dataname,
                                 idvar,
@@ -367,128 +365,130 @@ srv_g_spaghettiplot <- function(input,
                                 plot_width,
                                 hline_vars_colors,
                                 hline_vars_labels) {
-  init_chunks()
-  # reused in all modules
-  anl_chunks <- constr_anl_chunks(
-    session, input, datasets, dataname,
-    param_id = "xaxis_param", param_var = param_var, trt_group = input$trt_group, min_rows = 1
-  )
-
-  # update sliders for axes taking constraints into account
-  yrange_slider <- toggle_slider_server("yrange_scale")
-  keep_range_slider_updated(session, input, yrange_slider$update_state, "yaxis_var", "xaxis_param", anl_chunks)
-  keep_data_const_opts_updated(session, input, anl_chunks, "xaxis_param")
-
-  horizontal_line <- srv_arbitrary_lines("hline_arb")
-
-  plot_r <- reactive({
-    # nolint start
-    private_chunks <- anl_chunks()$chunks$clone(deep = TRUE)
-    ylim <- yrange_slider$state()$value
-    facet_ncol <- input$facet_ncol
-    validate(need(
-      is.na(facet_ncol) || (as.numeric(facet_ncol) > 0 && as.numeric(facet_ncol) %% 1 == 0),
-      "Number of plots per row must be a positive integer"
-    ))
-    rotate_xlab <- input$rotate_xlab
-    hline_arb <- horizontal_line()$line_arb
-    hline_arb_label <- horizontal_line()$line_arb_label
-    hline_arb_color <- horizontal_line()$line_arb_color
-    group_stats <- input$group_stats
-    font_size <- input$font_size
-    alpha <- input$alpha
-    validate(need(input$trt_group, "Please select a treatment variable"))
-    trt_group <- input$trt_group
-
-    # Below inputs should trigger plot via updates of other reactive objects (i.e. anl_chunk()) and some inputs
-    validate(need(input$xaxis_var, "Please select an X-Axis Variable"))
-    validate(need(input$yaxis_var, "Please select a Y-Axis Variable"))
-    param <- input$xaxis_param
-    xaxis_var <- input$xaxis_var
-    yaxis_var <- input$yaxis_var
-    hline_vars <- input$hline_vars
-    # nolint end
-    chunks_push(
-      chunks = private_chunks,
-      id = "g_spaghettiplot",
-      expression = bquote({
-        p <- goshawk::g_spaghettiplot(
-          data = ANL,
-          subj_id = .(idvar),
-          biomarker_var = .(param_var),
-          biomarker_var_label = .(param_var_label),
-          biomarker = .(param),
-          value_var = .(yaxis_var),
-          trt_group = .(trt_group),
-          trt_group_level = .(trt_group_level),
-          time = .(xaxis_var),
-          time_level = .(xaxis_var_level),
-          color_manual = .(man_color),
-          color_comb = .(color_comb),
-          ylim = .(ylim),
-          facet_ncol = .(facet_ncol),
-          hline_arb = .(hline_arb),
-          hline_arb_label = .(hline_arb_label),
-          hline_arb_color = .(hline_arb_color),
-          xtick = .(xtick),
-          xlabel = .(xlabel),
-          rotate_xlab = .(rotate_xlab),
-          font_size = .(font_size),
-          alpha = .(alpha),
-          group_stats = .(group_stats),
-          hline_vars = .(hline_vars),
-          hline_vars_colors = .(hline_vars_colors[seq_along(hline_vars)]),
-          hline_vars_labels = .(hline_vars_labels[seq_along(hline_vars)])
-        )
-        print(p)
-      })
+  moduleServer(id, function(input, output, session) {
+    init_chunks()
+    # reused in all modules
+    anl_chunks <- constr_anl_chunks(
+      session, input, datasets, dataname,
+      param_id = "xaxis_param", param_var = param_var, trt_group = input$trt_group, min_rows = 1
     )
 
-    chunks_safe_eval(private_chunks)
+    # update sliders for axes taking constraints into account
+    yrange_slider <- toggle_slider_server("yrange_scale")
+    keep_range_slider_updated(session, input, yrange_slider$update_state, "yaxis_var", "xaxis_param", anl_chunks)
+    keep_data_const_opts_updated(session, input, anl_chunks, "xaxis_param")
 
-    # promote chunks to be visible in the sessionData by other modules
-    chunks_reset()
-    chunks_push_chunks(private_chunks)
+    horizontal_line <- srv_arbitrary_lines("hline_arb")
 
-    chunks_get_var("p")
-  })
+    plot_r <- reactive({
+      # nolint start
+      private_chunks <- anl_chunks()$chunks$clone(deep = TRUE)
+      ylim <- yrange_slider$state()$value
+      facet_ncol <- input$facet_ncol
+      validate(need(
+        is.na(facet_ncol) || (as.numeric(facet_ncol) > 0 && as.numeric(facet_ncol) %% 1 == 0),
+        "Number of plots per row must be a positive integer"
+      ))
+      rotate_xlab <- input$rotate_xlab
+      hline_arb <- horizontal_line()$line_arb
+      hline_arb_label <- horizontal_line()$line_arb_label
+      hline_arb_color <- horizontal_line()$line_arb_color
+      group_stats <- input$group_stats
+      font_size <- input$font_size
+      alpha <- input$alpha
+      validate(need(input$trt_group, "Please select a treatment variable"))
+      trt_group <- input$trt_group
 
-  plot_data <- callModule(
-    plot_with_settings_srv,
-    id = "plot",
-    plot_r = plot_r,
-    height = plot_height,
-    width = plot_width,
-    brushing = TRUE
-  )
+      # Below inputs should trigger plot via updates of other reactive objects (i.e. anl_chunk()) and some inputs
+      validate(need(input$xaxis_var, "Please select an X-Axis Variable"))
+      validate(need(input$yaxis_var, "Please select a Y-Axis Variable"))
+      param <- input$xaxis_param
+      xaxis_var <- input$xaxis_var
+      yaxis_var <- input$yaxis_var
+      hline_vars <- input$hline_vars
+      # nolint end
+      chunks_push(
+        chunks = private_chunks,
+        id = "g_spaghettiplot",
+        expression = bquote({
+          p <- goshawk::g_spaghettiplot(
+            data = ANL,
+            subj_id = .(idvar),
+            biomarker_var = .(param_var),
+            biomarker_var_label = .(param_var_label),
+            biomarker = .(param),
+            value_var = .(yaxis_var),
+            trt_group = .(trt_group),
+            trt_group_level = .(trt_group_level),
+            time = .(xaxis_var),
+            time_level = .(xaxis_var_level),
+            color_manual = .(man_color),
+            color_comb = .(color_comb),
+            ylim = .(ylim),
+            facet_ncol = .(facet_ncol),
+            hline_arb = .(hline_arb),
+            hline_arb_label = .(hline_arb_label),
+            hline_arb_color = .(hline_arb_color),
+            xtick = .(xtick),
+            xlabel = .(xlabel),
+            rotate_xlab = .(rotate_xlab),
+            font_size = .(font_size),
+            alpha = .(alpha),
+            group_stats = .(group_stats),
+            hline_vars = .(hline_vars),
+            hline_vars_colors = .(hline_vars_colors[seq_along(hline_vars)]),
+            hline_vars_labels = .(hline_vars_labels[seq_along(hline_vars)])
+          )
+          print(p)
+        })
+      )
 
-  output$brush_data <- DT::renderDataTable({
-    plot_brush <- plot_data$brush()
+      chunks_safe_eval(private_chunks)
 
-    ANL <- isolate(anl_chunks()$ANL) # nolint
-    validate_has_data(ANL, 1)
+      # promote chunks to be visible in the sessionData by other modules
+      chunks_reset()
+      chunks_push_chunks(private_chunks)
 
-    xvar <- isolate(input$xaxis_var)
-    yvar <- isolate(input$yaxis_var)
-    trt_group <- isolate(input$trt_group)
+      chunks_get_var("p")
+    })
 
-    req(all(c(xvar, yvar) %in% names(ANL)))
-
-    df <- clean_brushedPoints(
-      select(ANL, "USUBJID", trt_group, "PARAMCD", xvar, yvar, "LOQFL"),
-      plot_brush
+    plot_data <- callModule(
+      plot_with_settings_srv,
+      id = "plot",
+      plot_r = plot_r,
+      height = plot_height,
+      width = plot_width,
+      brushing = TRUE
     )
-    df <- df[order(df$PARAMCD, df[[trt_group]], df$USUBJID, df[[xvar]]), ]
-    numeric_cols <- names(select_if(df, is.numeric))
 
-    DT::datatable(df, rownames = FALSE, options = list(scrollX = TRUE)) %>%
-      DT::formatRound(numeric_cols, 4)
+    output$brush_data <- DT::renderDataTable({
+      plot_brush <- plot_data$brush()
+
+      ANL <- isolate(anl_chunks()$ANL) # nolint
+      validate_has_data(ANL, 1)
+
+      xvar <- isolate(input$xaxis_var)
+      yvar <- isolate(input$yaxis_var)
+      trt_group <- isolate(input$trt_group)
+
+      req(all(c(xvar, yvar) %in% names(ANL)))
+
+      df <- clean_brushedPoints(
+        select(ANL, "USUBJID", trt_group, "PARAMCD", xvar, yvar, "LOQFL"),
+        plot_brush
+      )
+      df <- df[order(df$PARAMCD, df[[trt_group]], df$USUBJID, df[[xvar]]), ]
+      numeric_cols <- names(select_if(df, is.numeric))
+
+      DT::datatable(df, rownames = FALSE, options = list(scrollX = TRUE)) %>%
+        DT::formatRound(numeric_cols, 4)
+    })
+
+    callModule(
+      get_rcode_srv,
+      id = "rcode",
+      datasets = datasets,
+      modal_title = "Spaghetti Plot"
+    )
   })
-
-  callModule(
-    get_rcode_srv,
-    id = "rcode",
-    datasets = datasets,
-    modal_title = "Spaghetti Plot"
-  )
 }

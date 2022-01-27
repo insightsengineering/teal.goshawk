@@ -355,9 +355,7 @@ ui_g_boxplot <- function(id, ...) {
 }
 
 
-srv_g_boxplot <- function(input,
-                          output,
-                          session,
+srv_g_boxplot <- function(id,
                           datasets,
                           dataname,
                           param_var,
@@ -369,215 +367,217 @@ srv_g_boxplot <- function(input,
                           plot_width,
                           hline_vars_colors,
                           hline_vars_labels) {
-  init_chunks()
+  moduleServer(id, function(input, output, session) {
+    init_chunks()
 
-  # reused in all modules
-  anl_chunks <- constr_anl_chunks(
-    session, input, datasets, dataname,
-    param_id = "xaxis_param", param_var = param_var, trt_group = input$trt_group, min_rows = 2
-  )
-  # update sliders for axes taking constraints into account
-  yrange_slider <- toggle_slider_server("yrange_scale")
-  keep_range_slider_updated(
-    session,
-    input,
-    update_slider_fcn = yrange_slider$update_state,
-    id_var = "yaxis_var",
-    id_param_var = "xaxis_param",
-    reactive_ANL = anl_chunks
-  )
-  keep_data_const_opts_updated(session, input, anl_chunks, "xaxis_param")
-
-  horizontal_line <- srv_arbitrary_lines("hline_arb")
-
-  create_plot <- reactive({
-    private_chunks <- anl_chunks()$chunks$clone(deep = TRUE)
-    # nolint start
-    param <- input$xaxis_param
-    yaxis <- input$yaxis_var
-    xaxis <- input$xaxis_var
-    facet_var <- `if`(is.null(input$facet_var), "None", input$facet_var)
-    yrange_scale <- yrange_slider$state()$value
-    facet_ncol <- input$facet_ncol
-    validate(need(
-      is.na(facet_ncol) || (as.numeric(facet_ncol) > 0 && as.numeric(facet_ncol) %% 1 == 0),
-      "Number of plots per row must be a positive integer"
-    ))
-    alpha <- input$alpha
-    font_size <- input$font_size
-    dot_size <- input$dot_size
-    loq_legend <- input$loq_legend
-    rotate_xlab <- input$rotate_xlab
-
-    hline_arb <- horizontal_line()$line_arb
-    hline_arb_label <- horizontal_line()$line_arb_label
-    hline_arb_color <- horizontal_line()$line_arb_color
-
-    hline_vars <- input$hline_vars
-    trt_group <- input$trt_group
-    # nolint end
-    validate(need(input$trt_group, "Please select a treatment variable"))
-    validate(need(!is.null(xaxis), "Please select an X-Axis Variable"))
-    validate(need(!is.null(yaxis), "Please select a Y-Axis Variable"))
-    validate_has_variable(
-      anl_chunks()$ANL,
-      yaxis,
-      sprintf("Variable %s is not available in data %s", yaxis, dataname)
+    # reused in all modules
+    anl_chunks <- constr_anl_chunks(
+      session, input, datasets, dataname,
+      param_id = "xaxis_param", param_var = param_var, trt_group = input$trt_group, min_rows = 2
     )
-    validate_has_variable(
-      anl_chunks()$ANL,
-      xaxis,
-      sprintf("Variable %s is not available in data %s", xaxis, dataname)
+    # update sliders for axes taking constraints into account
+    yrange_slider <- toggle_slider_server("yrange_scale")
+    keep_range_slider_updated(
+      session,
+      input,
+      update_slider_fcn = yrange_slider$update_state,
+      id_var = "yaxis_var",
+      id_param_var = "xaxis_param",
+      reactive_ANL = anl_chunks
     )
+    keep_data_const_opts_updated(session, input, anl_chunks, "xaxis_param")
 
-    if (!facet_var == "None") {
+    horizontal_line <- srv_arbitrary_lines("hline_arb")
+
+    create_plot <- reactive({
+      private_chunks <- anl_chunks()$chunks$clone(deep = TRUE)
+      # nolint start
+      param <- input$xaxis_param
+      yaxis <- input$yaxis_var
+      xaxis <- input$xaxis_var
+      facet_var <- `if`(is.null(input$facet_var), "None", input$facet_var)
+      yrange_scale <- yrange_slider$state()$value
+      facet_ncol <- input$facet_ncol
+      validate(need(
+        is.na(facet_ncol) || (as.numeric(facet_ncol) > 0 && as.numeric(facet_ncol) %% 1 == 0),
+        "Number of plots per row must be a positive integer"
+      ))
+      alpha <- input$alpha
+      font_size <- input$font_size
+      dot_size <- input$dot_size
+      loq_legend <- input$loq_legend
+      rotate_xlab <- input$rotate_xlab
+
+      hline_arb <- horizontal_line()$line_arb
+      hline_arb_label <- horizontal_line()$line_arb_label
+      hline_arb_color <- horizontal_line()$line_arb_color
+
+      hline_vars <- input$hline_vars
+      trt_group <- input$trt_group
+      # nolint end
+      validate(need(input$trt_group, "Please select a treatment variable"))
+      validate(need(!is.null(xaxis), "Please select an X-Axis Variable"))
+      validate(need(!is.null(yaxis), "Please select a Y-Axis Variable"))
       validate_has_variable(
         anl_chunks()$ANL,
-        facet_var,
-        sprintf("Variable %s is not available in data %s", facet_var, dataname)
+        yaxis,
+        sprintf("Variable %s is not available in data %s", yaxis, dataname)
       )
-    }
+      validate_has_variable(
+        anl_chunks()$ANL,
+        xaxis,
+        sprintf("Variable %s is not available in data %s", xaxis, dataname)
+      )
 
-    validate(need(
-      !facet_var %in% c("ACTARM", "ARM")[!c("ACTARM", "ARM") %in% trt_group],
-      sprintf("You can not choose %s as facetting variable for treatment variable %s.", facet_var, trt_group)
-    ))
-    validate(need(
-      !xaxis %in% c("ACTARM", "ARM")[!c("ACTARM", "ARM") %in% trt_group],
-      sprintf("You can not choose %s as x-axis variable for treatment variable %s.", xaxis, trt_group)
-    ))
+      if (!facet_var == "None") {
+        validate_has_variable(
+          anl_chunks()$ANL,
+          facet_var,
+          sprintf("Variable %s is not available in data %s", facet_var, dataname)
+        )
+      }
 
-    chunks_push(
-      chunks = private_chunks,
+      validate(need(
+        !facet_var %in% c("ACTARM", "ARM")[!c("ACTARM", "ARM") %in% trt_group],
+        sprintf("You can not choose %s as facetting variable for treatment variable %s.", facet_var, trt_group)
+      ))
+      validate(need(
+        !xaxis %in% c("ACTARM", "ARM")[!c("ACTARM", "ARM") %in% trt_group],
+        sprintf("You can not choose %s as x-axis variable for treatment variable %s.", xaxis, trt_group)
+      ))
+
+      chunks_push(
+        chunks = private_chunks,
+        id = "boxplot",
+        expression = bquote({
+          p <- goshawk::g_boxplot(
+            data = ANL,
+            biomarker = .(param),
+            xaxis_var = .(xaxis),
+            yaxis_var = .(yaxis),
+            hline_arb = .(hline_arb),
+            hline_arb_label = .(hline_arb_label),
+            hline_arb_color = .(hline_arb_color),
+            hline_vars = .(hline_vars),
+            hline_vars_colors = .(hline_vars_colors[seq_along(hline_vars)]),
+            hline_vars_labels = .(hline_vars_labels[seq_along(hline_vars)]),
+            facet_ncol = .(facet_ncol),
+            loq_legend = .(loq_legend),
+            rotate_xlab = .(rotate_xlab),
+            trt_group = .(trt_group),
+            ymin_scale = .(yrange_scale[[1]]),
+            ymax_scale = .(yrange_scale[[2]]),
+            color_manual = .(color_manual),
+            shape_manual = .(shape_manual),
+            facet_var = .(facet_var),
+            alpha = .(alpha),
+            dot_size = .(dot_size),
+            font_size = .(font_size),
+            unit = .("AVALU")
+          )
+        })
+      )
+
+      chunks_safe_eval(private_chunks)
+
+      private_chunks
+    })
+
+    create_table <- reactive({
+      private_chunks <- create_plot()$clone(deep = TRUE)
+
+      param <- input$xaxis_param
+      xaxis_var <- input$yaxis_var # nolint
+      font_size <- input$font_size
+      trt_group <- input$trt_group
+
+      chunks_push(
+        chunks = private_chunks,
+        id = "table",
+        expression = bquote({
+          tbl <- goshawk::t_summarytable(
+            data = ANL,
+            trt_group = .(trt_group),
+            param_var = .(param_var),
+            param = .(param),
+            xaxis_var = .(xaxis_var),
+            facet_var = .(input$facet_var)
+          )
+        })
+      )
+
+      chunks_safe_eval(private_chunks)
+      private_chunks
+    })
+
+    main_code <- reactive({
+      private_chunks <- create_table()
+      chunks_push(
+        chunks = private_chunks,
+        id = "output",
+        expression = quote(print(p))
+      )
+
+      chunks_safe_eval(private_chunks)
+
+      chunks_reset()
+      chunks_push_chunks(private_chunks)
+
+      private_chunks
+    })
+
+    plot_r <- reactive({
+      chunks_get_var("p", main_code())
+    })
+
+    boxplot_data <- callModule(
+      plot_with_settings_srv,
       id = "boxplot",
-      expression = bquote({
-        p <- goshawk::g_boxplot(
-          data = ANL,
-          biomarker = .(param),
-          xaxis_var = .(xaxis),
-          yaxis_var = .(yaxis),
-          hline_arb = .(hline_arb),
-          hline_arb_label = .(hline_arb_label),
-          hline_arb_color = .(hline_arb_color),
-          hline_vars = .(hline_vars),
-          hline_vars_colors = .(hline_vars_colors[seq_along(hline_vars)]),
-          hline_vars_labels = .(hline_vars_labels[seq_along(hline_vars)]),
-          facet_ncol = .(facet_ncol),
-          loq_legend = .(loq_legend),
-          rotate_xlab = .(rotate_xlab),
-          trt_group = .(trt_group),
-          ymin_scale = .(yrange_scale[[1]]),
-          ymax_scale = .(yrange_scale[[2]]),
-          color_manual = .(color_manual),
-          shape_manual = .(shape_manual),
-          facet_var = .(facet_var),
-          alpha = .(alpha),
-          dot_size = .(dot_size),
-          font_size = .(font_size),
-          unit = .("AVALU")
-        )
-      })
+      plot_r = plot_r,
+      height = plot_height,
+      width = plot_width,
+      brushing = TRUE
     )
 
-    chunks_safe_eval(private_chunks)
+    output$table_ui <- DT::renderDataTable({
+      tbl <- chunks_get_var("tbl", main_code())
 
-    private_chunks
-  })
+      numeric_cols <- setdiff(names(select_if(tbl, is.numeric)), "n")
 
-  create_table <- reactive({
-    private_chunks <- create_plot()$clone(deep = TRUE)
+      DT::datatable(tbl, rownames = FALSE, options = list(scrollX = TRUE)) %>%
+        DT::formatRound(numeric_cols, 4)
+    })
 
-    param <- input$xaxis_param
-    xaxis_var <- input$yaxis_var # nolint
-    font_size <- input$font_size
-    trt_group <- input$trt_group
+    # highlight plot area
+    output$brush_data <- DT::renderDataTable({
+      boxplot_brush <- boxplot_data$brush()
 
-    chunks_push(
-      chunks = private_chunks,
-      id = "table",
-      expression = bquote({
-        tbl <- goshawk::t_summarytable(
-          data = ANL,
-          trt_group = .(trt_group),
-          param_var = .(param_var),
-          param = .(param),
-          xaxis_var = .(xaxis_var),
-          facet_var = .(input$facet_var)
-        )
-      })
+      ANL <- isolate(anl_chunks()$ANL) %>% droplevels() # nolint
+      validate_has_data(ANL, 2)
+
+      xvar <- isolate(input$xaxis_var)
+      yvar <- isolate(input$yaxis_var)
+      facetv <- isolate(input$facet_var)
+      trt_group <- isolate(input$trt_group)
+
+      req(all(c(xvar, yvar, facetv, trt_group) %in% names(ANL)))
+
+      df <- clean_brushedPoints(
+        select(ANL, "USUBJID", trt_group, facetv, "AVISITCD", "PARAMCD", xvar, yvar, "LOQFL"),
+        boxplot_brush
+      )
+
+      numeric_cols <- names(select_if(df, is.numeric))
+
+      DT::datatable(df, rownames = FALSE, options = list(scrollX = TRUE)) %>%
+        DT::formatRound(numeric_cols, 4)
+    })
+
+    callModule(
+      get_rcode_srv,
+      id = "rcode",
+      datasets = datasets,
+      modal_title = "Box Plot"
     )
-
-    chunks_safe_eval(private_chunks)
-    private_chunks
   })
-
-  main_code <- reactive({
-    private_chunks <- create_table()
-    chunks_push(
-      chunks = private_chunks,
-      id = "output",
-      expression = quote(print(p))
-    )
-
-    chunks_safe_eval(private_chunks)
-
-    chunks_reset()
-    chunks_push_chunks(private_chunks)
-
-    private_chunks
-  })
-
-  plot_r <- reactive({
-    chunks_get_var("p", main_code())
-  })
-
-  boxplot_data <- callModule(
-    plot_with_settings_srv,
-    id = "boxplot",
-    plot_r = plot_r,
-    height = plot_height,
-    width = plot_width,
-    brushing = TRUE
-  )
-
-  output$table_ui <- DT::renderDataTable({
-    tbl <- chunks_get_var("tbl", main_code())
-
-    numeric_cols <- setdiff(names(select_if(tbl, is.numeric)), "n")
-
-    DT::datatable(tbl, rownames = FALSE, options = list(scrollX = TRUE)) %>%
-      DT::formatRound(numeric_cols, 4)
-  })
-
-  # highlight plot area
-  output$brush_data <- DT::renderDataTable({
-    boxplot_brush <- boxplot_data$brush()
-
-    ANL <- isolate(anl_chunks()$ANL) %>% droplevels() # nolint
-    validate_has_data(ANL, 2)
-
-    xvar <- isolate(input$xaxis_var)
-    yvar <- isolate(input$yaxis_var)
-    facetv <- isolate(input$facet_var)
-    trt_group <- isolate(input$trt_group)
-
-    req(all(c(xvar, yvar, facetv, trt_group) %in% names(ANL)))
-
-    df <- clean_brushedPoints(
-      select(ANL, "USUBJID", trt_group, facetv, "AVISITCD", "PARAMCD", xvar, yvar, "LOQFL"),
-      boxplot_brush
-    )
-
-    numeric_cols <- names(select_if(df, is.numeric))
-
-    DT::datatable(df, rownames = FALSE, options = list(scrollX = TRUE)) %>%
-      DT::formatRound(numeric_cols, 4)
-  })
-
-  callModule(
-    get_rcode_srv,
-    id = "rcode",
-    datasets = datasets,
-    modal_title = "Box Plot"
-  )
 }

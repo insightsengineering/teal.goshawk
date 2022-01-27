@@ -414,9 +414,7 @@ ui_g_correlationplot <- function(id, ...) {
 }
 
 #' @importFrom goshawk g_correlationplot
-srv_g_correlationplot <- function(input,
-                                  output,
-                                  session,
+srv_g_correlationplot <- function(id,
                                   datasets,
                                   dataname,
                                   param_var,
@@ -430,469 +428,471 @@ srv_g_correlationplot <- function(input,
                                   hline_vars_labels,
                                   vline_vars_colors,
                                   vline_vars_labels) {
-  init_chunks()
-  # filter selected biomarkers
-  anl_param <- reactive({
-    validate(need(input$trt_group, "Please select a Treatment Variable"))
-    validate(need(input$xaxis_param, "Please select an X-Axis Biomarker"))
-    validate(need(input$xaxis_var, "Please select an X-Axis Variable"))
-    validate(need(input$yaxis_param, "Please select a Y-Axis Biomarker"))
-    validate(need(input$yaxis_var, "Please select a Y-Axis Variable"))
+  moduleServer(id, function(input, output, session) {
+    init_chunks()
+    # filter selected biomarkers
+    anl_param <- reactive({
+      validate(need(input$trt_group, "Please select a Treatment Variable"))
+      validate(need(input$xaxis_param, "Please select an X-Axis Biomarker"))
+      validate(need(input$xaxis_var, "Please select an X-Axis Variable"))
+      validate(need(input$yaxis_param, "Please select a Y-Axis Biomarker"))
+      validate(need(input$yaxis_var, "Please select a Y-Axis Variable"))
 
-    dataset_var <- paste0(dataname, "_FILTERED")
-    ANL_FILTERED <- datasets$get_data(dataname, filtered = TRUE) # nolint
-    validate_has_data(ANL_FILTERED, 1)
+      dataset_var <- paste0(dataname, "_FILTERED")
+      ANL_FILTERED <- datasets$get_data(dataname, filtered = TRUE) # nolint
+      validate_has_data(ANL_FILTERED, 1)
 
-    if (length(input$hline_vars) > 0) {
-      validate(
-        need(
-          all(input$hline_vars %in% names(ANL_FILTERED)),
-          "One or more selected horizontal line variable(s) is/are not names to any column in the data"
-        ),
-        need(
-          all(input$vline_vars %in% names(ANL_FILTERED)),
-          "One or more selected vertical line variable(s) is/are not names to any column in the data"
+      if (length(input$hline_vars) > 0) {
+        validate(
+          need(
+            all(input$hline_vars %in% names(ANL_FILTERED)),
+            "One or more selected horizontal line variable(s) is/are not names to any column in the data"
+          ),
+          need(
+            all(input$vline_vars %in% names(ANL_FILTERED)),
+            "One or more selected vertical line variable(s) is/are not names to any column in the data"
+          )
         )
+      }
+
+      validate_has_variable(ANL_FILTERED, param_var)
+
+      validate_in(
+        input$xaxis_param, unique(ANL_FILTERED[[param_var]]),
+        sprintf("X-Axis Biomarker %s is not available in data %s", input$xaxis_param, dataname)
       )
-    }
 
-    validate_has_variable(ANL_FILTERED, param_var)
+      validate_in(
+        input$yaxis_param, unique(ANL_FILTERED[[param_var]]),
+        sprintf("Y-Axis Biomarker %s is not available in data %s", input$yaxis_param, dataname)
+      )
 
-    validate_in(
-      input$xaxis_param, unique(ANL_FILTERED[[param_var]]),
-      sprintf("X-Axis Biomarker %s is not available in data %s", input$xaxis_param, dataname)
-    )
+      validate_has_variable(
+        ANL_FILTERED,
+        "AVISITCD",
+        sprintf("Variable AVISITCD is not available in data %s", dataname)
+      )
 
-    validate_in(
-      input$yaxis_param, unique(ANL_FILTERED[[param_var]]),
-      sprintf("Y-Axis Biomarker %s is not available in data %s", input$yaxis_param, dataname)
-    )
+      validate_has_variable(
+        ANL_FILTERED,
+        "BASE",
+        sprintf("Variable BASE is not available in data %s", dataname)
+      )
 
-    validate_has_variable(
-      ANL_FILTERED,
-      "AVISITCD",
-      sprintf("Variable AVISITCD is not available in data %s", dataname)
-    )
+      validate_has_variable(
+        ANL_FILTERED,
+        "BASE2",
+        sprintf("Variable BASE2 is not available in data %s", dataname)
+      )
 
-    validate_has_variable(
-      ANL_FILTERED,
-      "BASE",
-      sprintf("Variable BASE is not available in data %s", dataname)
-    )
+      validate_has_variable(
+        ANL_FILTERED,
+        "LOQFL",
+        sprintf("Variable LOQFL is not available in data %s", dataname)
+      )
 
-    validate_has_variable(
-      ANL_FILTERED,
-      "BASE2",
-      sprintf("Variable BASE2 is not available in data %s", dataname)
-    )
+      validate_has_variable(
+        ANL_FILTERED,
+        "PARAM",
+        sprintf("Variable PARAM is not available in data %s", dataname)
+      )
 
-    validate_has_variable(
-      ANL_FILTERED,
-      "LOQFL",
-      sprintf("Variable LOQFL is not available in data %s", dataname)
-    )
+      validate_has_variable(
+        ANL_FILTERED,
+        "LBSTRESC",
+        sprintf("Variable LBSTRESC is not available in data %s", dataname)
+      )
 
-    validate_has_variable(
-      ANL_FILTERED,
-      "PARAM",
-      sprintf("Variable PARAM is not available in data %s", dataname)
-    )
+      validate_has_variable(
+        ANL_FILTERED,
+        input$trt_group,
+        sprintf("Variable %s is not available in data %s", input$trt_group, dataname)
+      )
 
-    validate_has_variable(
-      ANL_FILTERED,
-      "LBSTRESC",
-      sprintf("Variable LBSTRESC is not available in data %s", dataname)
-    )
+      validate_has_variable(
+        ANL_FILTERED,
+        "USUBJID",
+        sprintf("Variable USUBJID is not available in data %s", dataname)
+      )
 
-    validate_has_variable(
-      ANL_FILTERED,
-      input$trt_group,
-      sprintf("Variable %s is not available in data %s", input$trt_group, dataname)
-    )
+      validate_has_variable(
+        ANL_FILTERED,
+        input$xaxis_var,
+        sprintf("Variable %s is not available in data %s", input$xaxis_var, dataname)
+      )
 
-    validate_has_variable(
-      ANL_FILTERED,
-      "USUBJID",
-      sprintf("Variable USUBJID is not available in data %s", dataname)
-    )
+      validate_has_variable(
+        ANL_FILTERED,
+        input$yaxis_var,
+        sprintf("Variable %s is not available in data %s", input$yaxis_var, dataname)
+      )
 
-    validate_has_variable(
-      ANL_FILTERED,
-      input$xaxis_var,
-      sprintf("Variable %s is not available in data %s", input$xaxis_var, dataname)
-    )
+      # analysis
+      private_chunks <- chunks$new()
+      chunks_reset(as.environment(setNames(list(ANL_FILTERED), dataset_var)), private_chunks)
 
-    validate_has_variable(
-      ANL_FILTERED,
-      input$yaxis_var,
-      sprintf("Variable %s is not available in data %s", input$yaxis_var, dataname)
-    )
+      # filter biomarker
+      chunks_push(
+        chunks = private_chunks,
+        id = "filter_biomarker",
+        expression = bquote({
+          ANL <- .(as.name(dataset_var)) %>% # nolint
+            dplyr::filter(.data[[.(param_var)]] %in% union(.(input$xaxis_param), .(input$yaxis_param)))
+        })
+      )
 
-    # analysis
-    private_chunks <- chunks$new()
-    chunks_reset(as.environment(setNames(list(ANL_FILTERED), dataset_var)), private_chunks)
+      ANL <- chunks_safe_eval(private_chunks) # nolint
+      validate_has_data(ANL, 1)
 
-    # filter biomarker
-    chunks_push(
-      chunks = private_chunks,
-      id = "filter_biomarker",
-      expression = bquote({
-        ANL <- .(as.name(dataset_var)) %>% # nolint
-          dplyr::filter(.data[[.(param_var)]] %in% union(.(input$xaxis_param), .(input$yaxis_param)))
-      })
-    )
+      return(list(ANL = ANL, chunks = private_chunks))
+    })
 
-    ANL <- chunks_safe_eval(private_chunks) # nolint
-    validate_has_data(ANL, 1)
+    # constraints
+    observe({
+      validate(need(input$xaxis_param, "Please select an X-Axis Biomarker"))
 
-    return(list(ANL = ANL, chunks = private_chunks))
-  })
+      constraint_var <- input$constraint_var
+      validate(need(constraint_var, "select a constraint variable"))
 
-  # constraints
-  observe({
-    validate(need(input$xaxis_param, "Please select an X-Axis Biomarker"))
+      # note that filtered is false thus we cannot use anl_param()$ANL
+      ANL <- datasets$get_data(dataname, filtered = FALSE) # nolint
 
-    constraint_var <- input$constraint_var
-    validate(need(constraint_var, "select a constraint variable"))
+      validate_has_variable(ANL, param_var)
+      validate_has_variable(ANL, "AVISITCD")
+      validate_has_variable(ANL, "BASE")
+      validate_has_variable(ANL, "BASE2")
 
-    # note that filtered is false thus we cannot use anl_param()$ANL
-    ANL <- datasets$get_data(dataname, filtered = FALSE) # nolint
+      ANL <- ANL %>% filter(.data[[param_var]] == input$xaxis_param) # nolint
 
-    validate_has_variable(ANL, param_var)
-    validate_has_variable(ANL, "AVISITCD")
-    validate_has_variable(ANL, "BASE")
-    validate_has_variable(ANL, "BASE2")
+      visit_freq <- unique(ANL$AVISITCD)
 
-    ANL <- ANL %>% filter(.data[[param_var]] == input$xaxis_param) # nolint
+      # get min max values
+      if ((constraint_var == "BASE2" && any(grepl("SCR", visit_freq))) ||
+        (constraint_var == "BASE" && any(grepl("BL", visit_freq)))) {
+        val <- na.omit(switch(constraint_var,
+          "BASE" = ANL$BASE[ANL$AVISITCD == "BL"],
+          "BASE2" = ANL$BASE2[ANL$AVISITCD == "SCR"],
+          stop(paste(constraint_var, "not allowed"))
+        ))
 
-    visit_freq <- unique(ANL$AVISITCD)
+        if (length(val) == 0 || all(is.na(val))) {
+          shinyjs::show("all_na")
+          shinyjs::hide("constraint_range")
+          args <- list(
+            min = list(label = "Min", min = 0, max = 0, value = 0),
+            max = list(label = "Max", min = 0, max = 0, value = 0)
+          )
+          update_min_max(session, args)
+        } else {
+          rng <- range(val, na.rm = TRUE)
 
-    # get min max values
-    if ((constraint_var == "BASE2" && any(grepl("SCR", visit_freq))) ||
-      (constraint_var == "BASE" && any(grepl("BL", visit_freq)))) {
-      val <- na.omit(switch(constraint_var,
-        "BASE" = ANL$BASE[ANL$AVISITCD == "BL"],
-        "BASE2" = ANL$BASE2[ANL$AVISITCD == "SCR"],
-        stop(paste(constraint_var, "not allowed"))
-      ))
+          minmax <- c(floor(rng[1] * 1000) / 1000, ceiling(rng[2] * 1000) / 1000)
 
-      if (length(val) == 0 || all(is.na(val))) {
-        shinyjs::show("all_na")
-        shinyjs::hide("constraint_range")
+          label_min <- sprintf("Min (%s)", minmax[1])
+          label_max <- sprintf("Max (%s)", minmax[2])
+
+          args <- list(
+            min = list(label = label_min, min = minmax[1], max = minmax[2], value = minmax[1]),
+            max = list(label = label_max, min = minmax[1], max = minmax[2], value = minmax[2])
+          )
+
+          update_min_max(session, args)
+          shinyjs::show("constraint_range") # update before show
+          shinyjs::hide("all_na")
+        }
+      } else if (constraint_var == "NONE") {
+        shinyjs::hide("constraint_range") # hide before update
+        shinyjs::hide("all_na")
+
+        # force update (and thus refresh) on different constraint_var -> pass unique value for each constraint_var name
         args <- list(
           min = list(label = "Min", min = 0, max = 0, value = 0),
           max = list(label = "Max", min = 0, max = 0, value = 0)
         )
+
         update_min_max(session, args)
       } else {
-        rng <- range(val, na.rm = TRUE)
-
-        minmax <- c(floor(rng[1] * 1000) / 1000, ceiling(rng[2] * 1000) / 1000)
-
-        label_min <- sprintf("Min (%s)", minmax[1])
-        label_max <- sprintf("Max (%s)", minmax[2])
-
-        args <- list(
-          min = list(label = label_min, min = minmax[1], max = minmax[2], value = minmax[1]),
-          max = list(label = label_max, min = minmax[1], max = minmax[2], value = minmax[2])
-        )
-
-        update_min_max(session, args)
-        shinyjs::show("constraint_range") # update before show
-        shinyjs::hide("all_na")
+        stop("invalid contraint_var", constraint_var)
       }
-    } else if (constraint_var == "NONE") {
-      shinyjs::hide("constraint_range") # hide before update
-      shinyjs::hide("all_na")
+    })
 
-      # force update (and thus refresh) on different constraint_var -> pass unique value for each constraint_var name
-      args <- list(
-        min = list(label = "Min", min = 0, max = 0, value = 0),
-        max = list(label = "Max", min = 0, max = 0, value = 0)
-      )
+    anl_constraint <- create_anl_constraint_reactive(anl_param, input, param_id = "xaxis_param", min_rows = 1)
 
-      update_min_max(session, args)
-    } else {
-      stop("invalid contraint_var", constraint_var)
-    }
-  })
+    # update sliders for axes taking constraints into account
+    xrange_slider <- toggle_slider_server("xrange_scale")
+    yrange_slider <- toggle_slider_server("yrange_scale")
+    keep_range_slider_updated(session, input, xrange_slider$update_state, "xaxis_var", "xaxis_param", anl_constraint)
+    keep_range_slider_updated(session, input, yrange_slider$update_state, "yaxis_var", "yaxis_param", anl_constraint)
+    keep_data_const_opts_updated(session, input, anl_constraint, "xaxis_param")
 
-  anl_constraint <- create_anl_constraint_reactive(anl_param, input, param_id = "xaxis_param", min_rows = 1)
+    # selector names after transposition
+    xvar <- reactive(paste0(input$xaxis_var, ".", input$xaxis_param))
+    yvar <- reactive(paste0(input$yaxis_var, ".", input$yaxis_param))
+    xloqfl <- reactive(paste0("LOQFL_", input$xaxis_param))
+    yloqfl <- reactive(paste0("LOQFL_", input$yaxis_param))
 
-  # update sliders for axes taking constraints into account
-  xrange_slider <- toggle_slider_server("xrange_scale")
-  yrange_slider <- toggle_slider_server("yrange_scale")
-  keep_range_slider_updated(session, input, xrange_slider$update_state, "xaxis_var", "xaxis_param", anl_constraint)
-  keep_range_slider_updated(session, input, yrange_slider$update_state, "yaxis_var", "yaxis_param", anl_constraint)
-  keep_data_const_opts_updated(session, input, anl_constraint, "xaxis_param")
+    # transpose data to plot
+    plot_data_transpose <- reactive({
+      private_chunks <- anl_constraint()$chunks$clone(deep = TRUE)
+      ANL <- anl_constraint()$ANL # nolint
+      trt_group <- input$trt_group
+      line_vars <- unique(c(input$hline_vars, input$vline_vars))
 
-  # selector names after transposition
-  xvar <- reactive(paste0(input$xaxis_var, ".", input$xaxis_param))
-  yvar <- reactive(paste0(input$yaxis_var, ".", input$yaxis_param))
-  xloqfl <- reactive(paste0("LOQFL_", input$xaxis_param))
-  yloqfl <- reactive(paste0("LOQFL_", input$yaxis_param))
-
-  # transpose data to plot
-  plot_data_transpose <- reactive({
-    private_chunks <- anl_constraint()$chunks$clone(deep = TRUE)
-    ANL <- anl_constraint()$ANL # nolint
-    trt_group <- input$trt_group
-    line_vars <- unique(c(input$hline_vars, input$vline_vars))
-
-    chunks_push(
-      chunks = private_chunks,
-      id = "plot_data_transpose",
-      expression = bquote({
-        ANL_TRANSPOSED1 <- ANL %>% # nolint
-          dplyr::select(
-            .data[["USUBJID"]],
-            .data[[.(trt_group)]],
-            .data[["AVISITCD"]],
-            .data[[.(param_var)]],
-            .data[[.(input$xaxis_var)]],
-            .data[[.(input$yaxis_var)]],
-            .(`if`(length(line_vars) == 0, NULL, line_vars))
-          ) %>%
-          tidyr::pivot_longer(
-            c(
+      chunks_push(
+        chunks = private_chunks,
+        id = "plot_data_transpose",
+        expression = bquote({
+          ANL_TRANSPOSED1 <- ANL %>% # nolint
+            dplyr::select(
+              .data[["USUBJID"]],
+              .data[[.(trt_group)]],
+              .data[["AVISITCD"]],
+              .data[[.(param_var)]],
               .data[[.(input$xaxis_var)]],
               .data[[.(input$yaxis_var)]],
               .(`if`(length(line_vars) == 0, NULL, line_vars))
-            ),
-            names_to = "ANLVARS",
-            values_to = "ANLVALS"
-          ) %>%
-          tidyr::unite(
-            "ANL.PARAM",
-            "ANLVARS",
-            .(param_var),
-            sep = ".",
-            remove = TRUE
-          ) %>%
-          tidyr::pivot_wider(names_from = "ANL.PARAM", values_from = "ANLVALS") %>%
-          dplyr::filter(!is.na(.data[[.(xvar())]]) & !is.na(.data[[.(yvar())]]))
+            ) %>%
+            tidyr::pivot_longer(
+              c(
+                .data[[.(input$xaxis_var)]],
+                .data[[.(input$yaxis_var)]],
+                .(`if`(length(line_vars) == 0, NULL, line_vars))
+              ),
+              names_to = "ANLVARS",
+              values_to = "ANLVALS"
+            ) %>%
+            tidyr::unite(
+              "ANL.PARAM",
+              "ANLVARS",
+              .(param_var),
+              sep = ".",
+              remove = TRUE
+            ) %>%
+            tidyr::pivot_wider(names_from = "ANL.PARAM", values_from = "ANLVALS") %>%
+            dplyr::filter(!is.na(.data[[.(xvar())]]) & !is.na(.data[[.(yvar())]]))
 
-        ANL_TRANSPOSED2 <- ANL %>% # nolint
-          dplyr::select(
-            .data[["USUBJID"]],
-            .data[[.(trt_group)]],
-            .data[["AVISITCD"]],
-            .data[[.(param_var)]],
-            .data[["LOQFL"]],
-            .data[["PARAM"]],
-            .data[["LBSTRESC"]]
-          ) %>%
-          tidyr::pivot_longer(
-            c(
+          ANL_TRANSPOSED2 <- ANL %>% # nolint
+            dplyr::select(
+              .data[["USUBJID"]],
+              .data[[.(trt_group)]],
+              .data[["AVISITCD"]],
+              .data[[.(param_var)]],
               .data[["LOQFL"]],
               .data[["PARAM"]],
               .data[["LBSTRESC"]]
-            ),
-            names_to = "ANLVARS",
-            values_to = "ANLVALS"
-          ) %>%
-          tidyr::unite(
-            "ANL.PARAM",
-            "ANLVARS",
-            .(param_var),
-            sep = "_",
-            remove = TRUE
-          ) %>%
-          tidyr::pivot_wider(names_from = "ANL.PARAM", values_from = "ANLVALS") %>%
-          dplyr::mutate(LOQFL_COMB = case_when(
-            .data[[.(xloqfl())]] == "Y" | .data[[.(yloqfl())]] == "Y" ~ "Y",
-            .data[[.(xloqfl())]] == "N" & .data[[.(yloqfl())]] == "N" ~ "N",
-            .data[[.(xloqfl())]] == "N" & .data[[.(yloqfl())]] == "NA" ~ "N",
-            .data[[.(xloqfl())]] == "NA" & .data[[.(yloqfl())]] == "N" ~ "N",
-            .data[[.(xloqfl())]] == "NA" & .data[[.(yloqfl())]] == "NA" ~ "NA",
-            TRUE ~ as.character(NA)
-          ))
+            ) %>%
+            tidyr::pivot_longer(
+              c(
+                .data[["LOQFL"]],
+                .data[["PARAM"]],
+                .data[["LBSTRESC"]]
+              ),
+              names_to = "ANLVARS",
+              values_to = "ANLVALS"
+            ) %>%
+            tidyr::unite(
+              "ANL.PARAM",
+              "ANLVARS",
+              .(param_var),
+              sep = "_",
+              remove = TRUE
+            ) %>%
+            tidyr::pivot_wider(names_from = "ANL.PARAM", values_from = "ANLVALS") %>%
+            dplyr::mutate(LOQFL_COMB = case_when(
+              .data[[.(xloqfl())]] == "Y" | .data[[.(yloqfl())]] == "Y" ~ "Y",
+              .data[[.(xloqfl())]] == "N" & .data[[.(yloqfl())]] == "N" ~ "N",
+              .data[[.(xloqfl())]] == "N" & .data[[.(yloqfl())]] == "NA" ~ "N",
+              .data[[.(xloqfl())]] == "NA" & .data[[.(yloqfl())]] == "N" ~ "N",
+              .data[[.(xloqfl())]] == "NA" & .data[[.(yloqfl())]] == "NA" ~ "NA",
+              TRUE ~ as.character(NA)
+            ))
 
-        ANL_TRANSPOSED <- merge(ANL_TRANSPOSED1, ANL_TRANSPOSED2) # nolint
-      })
+          ANL_TRANSPOSED <- merge(ANL_TRANSPOSED1, ANL_TRANSPOSED2) # nolint
+        })
+      )
+
+      ANL_TRANSPOSED <- chunks_safe_eval(private_chunks) # nolint
+      chunks_push_new_line(private_chunks)
+
+      validate(need(nrow(ANL_TRANSPOSED) > 0, "Plot Data No Observations Left"))
+      validate_has_variable(data = ANL_TRANSPOSED, varname = c(xvar(), yvar(), xloqfl(), yloqfl()))
+
+      chunks_push(
+        chunks = private_chunks,
+        id = "ANL_attributes",
+        expression =
+          bquote(attr(ANL_TRANSPOSED[[.(trt_group)]], "label") <- attr(ANL[[.(trt_group)]], "label")) # nolint
+      )
+      chunks_push_new_line(private_chunks)
+
+      return(list(ANL_TRANSPOSED = ANL_TRANSPOSED, chunks = private_chunks))
+    })
+
+    plot_labels <- reactive({
+      ANL <- chunks_get_var(var = "ANL", anl_constraint()$chunks) # nolint
+
+      xparam <- ANL$PARAM[ANL[[param_var]] == input$xaxis_param][1]
+      yparam <- ANL$PARAM[ANL[[param_var]] == input$yaxis_param][1]
+
+      # setup the x-axis label.  Combine the biomarker and the units (if available)
+      if (is.null(ANL$AVALU) || all(ANL[["AVALU"]] == "")) {
+        title_text <- paste(xparam, "and", yparam, "@ Visits")
+        xaxis_lab <- paste(xparam, input$xaxis_var, "Values")
+        yaxis_lab <- paste(yparam, input$yaxis_var, "Values")
+      } else {
+        xunit <- ANL$AVALU[ANL[[param_var]] == input$xaxis_param][1]
+        yunit <- ANL$AVALU[ANL[[param_var]] == input$yaxis_param][1]
+
+        title_text <- paste0(xparam, " (", xunit, ") and ", yparam, " (", yunit, ") @ Visits")
+        xaxis_lab <- paste0(xparam, " (", xunit, ") ", input$xaxis_var, " Values")
+        yaxis_lab <- paste0(yparam, " (", yunit, ") ", input$yaxis_var, " Values")
+      }
+
+      list(title_text = title_text, xaxis_lab = xaxis_lab, yaxis_lab = yaxis_lab)
+    })
+
+    horizontal_line <- srv_arbitrary_lines("hline_arb")
+    vertical_line <- srv_arbitrary_lines("vline_arb")
+
+    # plot
+    plot_r <- reactive({
+      private_chunks <- plot_data_transpose()$chunks$clone(deep = TRUE)
+      # nolint start
+      xaxis_param <- input$xaxis_param
+      xaxis_var <- input$xaxis_var
+      yaxis_param <- input$yaxis_param
+      yaxis_var <- input$yaxis_var
+      xmin_scale <- xrange_slider$state()$value[[1]]
+      xmax_scale <- xrange_slider$state()$value[[2]]
+      ymin_scale <- yrange_slider$state()$value[[1]]
+      ymax_scale <- yrange_slider$state()$value[[2]]
+      font_size <- input$font_size
+      dot_size <- input$dot_size
+      reg_text_size <- input$reg_text_size
+      hline_arb <- horizontal_line()$line_arb
+      hline_arb_label <- horizontal_line()$line_arb_label
+      hline_arb_color <- horizontal_line()$line_arb_color
+      hline_vars <- if (length(input$hline_vars) == 0) {
+        NULL
+      } else {
+        paste0(input$hline_vars, ".", yaxis_param)
+      }
+      vline_arb <- vertical_line()$line_arb
+      vline_arb_label <- vertical_line()$line_arb_label
+      vline_arb_color <- vertical_line()$line_arb_color
+      vline_vars <- if (length(input$vline_vars) == 0) {
+        NULL
+      } else {
+        paste0(input$vline_vars, ".", xaxis_param)
+      }
+      facet_ncol <- input$facet_ncol
+      validate(need(
+        is.na(facet_ncol) || (as.numeric(facet_ncol) > 0 && as.numeric(facet_ncol) %% 1 == 0),
+        "Number of plots per row must be a positive integer"
+      ))
+      visit_facet <- input$visit_facet
+      facet <- input$trt_facet
+      reg_line <- input$reg_line
+      loq_legend <- input$loq_legend
+      rotate_xlab <- input$rotate_xlab
+      # nolint end
+      title_text <- plot_labels()$title_text
+      xaxis_lab <- plot_labels()$xaxis_lab
+      yaxis_lab <- plot_labels()$yaxis_lab
+      validate(need(input$trt_group, "Please select a treatment variable"))
+      trt_group <- input$trt_group
+
+      chunks_push(
+        chunks = private_chunks,
+        id = "scatterplot",
+        expression = bquote({
+          # re-establish treatment variable label
+          p <- goshawk::g_correlationplot(
+            data = ANL_TRANSPOSED,
+            param_var = .(param_var),
+            xaxis_param = .(xaxis_param),
+            xaxis_var = .(xaxis_var),
+            xvar = .(xvar()),
+            yaxis_param = .(yaxis_param),
+            yaxis_var = .(yaxis_var),
+            yvar = .(yvar()),
+            trt_group = .(trt_group),
+            xmin = .(xmin_scale),
+            xmax = .(xmax_scale),
+            ymin = .(ymin_scale),
+            ymax = .(ymax_scale),
+            title_text = .(title_text),
+            xaxis_lab = .(xaxis_lab),
+            yaxis_lab = .(yaxis_lab),
+            color_manual = .(color_manual),
+            shape_manual = .(shape_manual),
+            facet_ncol = .(facet_ncol),
+            visit_facet = .(visit_facet),
+            facet = .(facet),
+            facet_var = .(trt_group),
+            reg_line = .(reg_line),
+            font_size = .(font_size),
+            dot_size = .(dot_size),
+            reg_text_size = .(reg_text_size),
+            loq_legend = .(loq_legend),
+            rotate_xlab = .(rotate_xlab),
+            hline_arb = .(hline_arb),
+            hline_arb_label = .(hline_arb_label),
+            hline_arb_color = .(hline_arb_color),
+            hline_vars = .(hline_vars),
+            hline_vars_colors = .(hline_vars_colors[seq_along(hline_vars)]),
+            hline_vars_labels = .(paste(hline_vars_labels[seq_along(hline_vars)], "-", yaxis_param)),
+            vline_arb = .(vline_arb),
+            vline_arb_label = .(vline_arb_label),
+            vline_arb_color = .(vline_arb_color),
+            vline_vars = .(vline_vars),
+            vline_vars_colors = .(vline_vars_colors[seq_along(vline_vars)]),
+            vline_vars_labels = .(paste(vline_vars_labels[seq_along(vline_vars)], "-", xaxis_param))
+          )
+          print(p)
+        })
+      )
+
+      chunks_safe_eval(private_chunks)
+
+      # promote chunks to be visible in the sessionData by other modules
+      chunks_reset()
+      chunks_push_chunks(private_chunks)
+      chunks_get_var("p")
+    })
+
+
+    plot_data <- callModule(
+      plot_with_settings_srv,
+      id = "plot",
+      plot_r = plot_r,
+      height = plot_height,
+      width = plot_width,
+      brushing = TRUE
     )
 
-    ANL_TRANSPOSED <- chunks_safe_eval(private_chunks) # nolint
-    chunks_push_new_line(private_chunks)
+    # highlight plot area
+    output$brush_data <- DT::renderDataTable({
+      plot_brush <- plot_data$brush()
 
-    validate(need(nrow(ANL_TRANSPOSED) > 0, "Plot Data No Observations Left"))
-    validate_has_variable(data = ANL_TRANSPOSED, varname = c(xvar(), yvar(), xloqfl(), yloqfl()))
+      ANL_TRANSPOSED <- isolate(plot_data_transpose()$ANL_TRANSPOSED) # nolint
 
-    chunks_push(
-      chunks = private_chunks,
-      id = "ANL_attributes",
-      expression =
-        bquote(attr(ANL_TRANSPOSED[[.(trt_group)]], "label") <- attr(ANL[[.(trt_group)]], "label")) # nolint
+      df <- clean_brushedPoints(
+        select(ANL_TRANSPOSED, "USUBJID", input$trt_group, "AVISITCD", xvar(), yvar(), "LOQFL_COMB"),
+        plot_brush
+      )
+
+      numeric_cols <- names(select_if(df, is.numeric))
+
+      DT::datatable(df, rownames = FALSE, options = list(scrollX = TRUE)) %>%
+        DT::formatRound(numeric_cols, 4)
+    })
+
+    callModule(
+      get_rcode_srv,
+      id = "rcode",
+      datasets = datasets,
+      modal_title = "Correlation Plot"
     )
-    chunks_push_new_line(private_chunks)
-
-    return(list(ANL_TRANSPOSED = ANL_TRANSPOSED, chunks = private_chunks))
   })
-
-  plot_labels <- reactive({
-    ANL <- chunks_get_var(var = "ANL", anl_constraint()$chunks) # nolint
-
-    xparam <- ANL$PARAM[ANL[[param_var]] == input$xaxis_param][1]
-    yparam <- ANL$PARAM[ANL[[param_var]] == input$yaxis_param][1]
-
-    # setup the x-axis label.  Combine the biomarker and the units (if available)
-    if (is.null(ANL$AVALU) || all(ANL[["AVALU"]] == "")) {
-      title_text <- paste(xparam, "and", yparam, "@ Visits")
-      xaxis_lab <- paste(xparam, input$xaxis_var, "Values")
-      yaxis_lab <- paste(yparam, input$yaxis_var, "Values")
-    } else {
-      xunit <- ANL$AVALU[ANL[[param_var]] == input$xaxis_param][1]
-      yunit <- ANL$AVALU[ANL[[param_var]] == input$yaxis_param][1]
-
-      title_text <- paste0(xparam, " (", xunit, ") and ", yparam, " (", yunit, ") @ Visits")
-      xaxis_lab <- paste0(xparam, " (", xunit, ") ", input$xaxis_var, " Values")
-      yaxis_lab <- paste0(yparam, " (", yunit, ") ", input$yaxis_var, " Values")
-    }
-
-    list(title_text = title_text, xaxis_lab = xaxis_lab, yaxis_lab = yaxis_lab)
-  })
-
-  horizontal_line <- srv_arbitrary_lines("hline_arb")
-  vertical_line <- srv_arbitrary_lines("vline_arb")
-
-  # plot
-  plot_r <- reactive({
-    private_chunks <- plot_data_transpose()$chunks$clone(deep = TRUE)
-    # nolint start
-    xaxis_param <- input$xaxis_param
-    xaxis_var <- input$xaxis_var
-    yaxis_param <- input$yaxis_param
-    yaxis_var <- input$yaxis_var
-    xmin_scale <- xrange_slider$state()$value[[1]]
-    xmax_scale <- xrange_slider$state()$value[[2]]
-    ymin_scale <- yrange_slider$state()$value[[1]]
-    ymax_scale <- yrange_slider$state()$value[[2]]
-    font_size <- input$font_size
-    dot_size <- input$dot_size
-    reg_text_size <- input$reg_text_size
-    hline_arb <- horizontal_line()$line_arb
-    hline_arb_label <- horizontal_line()$line_arb_label
-    hline_arb_color <- horizontal_line()$line_arb_color
-    hline_vars <- if (length(input$hline_vars) == 0) {
-      NULL
-    } else {
-      paste0(input$hline_vars, ".", yaxis_param)
-    }
-    vline_arb <- vertical_line()$line_arb
-    vline_arb_label <- vertical_line()$line_arb_label
-    vline_arb_color <- vertical_line()$line_arb_color
-    vline_vars <- if (length(input$vline_vars) == 0) {
-      NULL
-    } else {
-      paste0(input$vline_vars, ".", xaxis_param)
-    }
-    facet_ncol <- input$facet_ncol
-    validate(need(
-      is.na(facet_ncol) || (as.numeric(facet_ncol) > 0 && as.numeric(facet_ncol) %% 1 == 0),
-      "Number of plots per row must be a positive integer"
-    ))
-    visit_facet <- input$visit_facet
-    facet <- input$trt_facet
-    reg_line <- input$reg_line
-    loq_legend <- input$loq_legend
-    rotate_xlab <- input$rotate_xlab
-    # nolint end
-    title_text <- plot_labels()$title_text
-    xaxis_lab <- plot_labels()$xaxis_lab
-    yaxis_lab <- plot_labels()$yaxis_lab
-    validate(need(input$trt_group, "Please select a treatment variable"))
-    trt_group <- input$trt_group
-
-    chunks_push(
-      chunks = private_chunks,
-      id = "scatterplot",
-      expression = bquote({
-        # re-establish treatment variable label
-        p <- goshawk::g_correlationplot(
-          data = ANL_TRANSPOSED,
-          param_var = .(param_var),
-          xaxis_param = .(xaxis_param),
-          xaxis_var = .(xaxis_var),
-          xvar = .(xvar()),
-          yaxis_param = .(yaxis_param),
-          yaxis_var = .(yaxis_var),
-          yvar = .(yvar()),
-          trt_group = .(trt_group),
-          xmin = .(xmin_scale),
-          xmax = .(xmax_scale),
-          ymin = .(ymin_scale),
-          ymax = .(ymax_scale),
-          title_text = .(title_text),
-          xaxis_lab = .(xaxis_lab),
-          yaxis_lab = .(yaxis_lab),
-          color_manual = .(color_manual),
-          shape_manual = .(shape_manual),
-          facet_ncol = .(facet_ncol),
-          visit_facet = .(visit_facet),
-          facet = .(facet),
-          facet_var = .(trt_group),
-          reg_line = .(reg_line),
-          font_size = .(font_size),
-          dot_size = .(dot_size),
-          reg_text_size = .(reg_text_size),
-          loq_legend = .(loq_legend),
-          rotate_xlab = .(rotate_xlab),
-          hline_arb = .(hline_arb),
-          hline_arb_label = .(hline_arb_label),
-          hline_arb_color = .(hline_arb_color),
-          hline_vars = .(hline_vars),
-          hline_vars_colors = .(hline_vars_colors[seq_along(hline_vars)]),
-          hline_vars_labels = .(paste(hline_vars_labels[seq_along(hline_vars)], "-", yaxis_param)),
-          vline_arb = .(vline_arb),
-          vline_arb_label = .(vline_arb_label),
-          vline_arb_color = .(vline_arb_color),
-          vline_vars = .(vline_vars),
-          vline_vars_colors = .(vline_vars_colors[seq_along(vline_vars)]),
-          vline_vars_labels = .(paste(vline_vars_labels[seq_along(vline_vars)], "-", xaxis_param))
-        )
-        print(p)
-      })
-    )
-
-    chunks_safe_eval(private_chunks)
-
-    # promote chunks to be visible in the sessionData by other modules
-    chunks_reset()
-    chunks_push_chunks(private_chunks)
-    chunks_get_var("p")
-  })
-
-
-  plot_data <- callModule(
-    plot_with_settings_srv,
-    id = "plot",
-    plot_r = plot_r,
-    height = plot_height,
-    width = plot_width,
-    brushing = TRUE
-  )
-
-  # highlight plot area
-  output$brush_data <- DT::renderDataTable({
-    plot_brush <- plot_data$brush()
-
-    ANL_TRANSPOSED <- isolate(plot_data_transpose()$ANL_TRANSPOSED) # nolint
-
-    df <- clean_brushedPoints(
-      select(ANL_TRANSPOSED, "USUBJID", input$trt_group, "AVISITCD", xvar(), yvar(), "LOQFL_COMB"),
-      plot_brush
-    )
-
-    numeric_cols <- names(select_if(df, is.numeric))
-
-    DT::datatable(df, rownames = FALSE, options = list(scrollX = TRUE)) %>%
-      DT::formatRound(numeric_cols, 4)
-  })
-
-  callModule(
-    get_rcode_srv,
-    id = "rcode",
-    datasets = datasets,
-    modal_title = "Correlation Plot"
-  )
 }
