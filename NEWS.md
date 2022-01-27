@@ -1,3 +1,6 @@
+# teal.goshawk 0.1.11.9000
+* Added basic logging to the modules.
+
 # teal.goshawk 0.1.11
 
 ### Enhancements
@@ -19,7 +22,7 @@
 ### Breaking Changes
 * Allow arbitrary horizontal line arguments in `tm_g_gh_spaghettiplot`, `tm_g_gh_boxplot`, `tm_g_gh_density_distribution_plot` and `tm_g_gh_correlationplot` and vertical line arguments in `tm_g_gh_correlationplot`. This functionality has changed the arguments required to use the modules:
   - `hline` replaced by `hline_arb`, `hline_arb_color` and `hline_arb_label` in the above modules.
-  - `vline` replaced by `vline_arb_var`, `vline_arb_color` and `vline_arb_label` in `tm_g_gh_correlationplot`. 
+  - `vline` replaced by `vline_arb_var`, `vline_arb_color` and `vline_arb_label` in `tm_g_gh_correlationplot`.
 
 ### Bug Fixes
 * Fixed bug in `tm_g_gh_boxplot` module that always used the `AVISITCD` variable as the `Visit` Column of the table.
