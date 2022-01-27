@@ -24,7 +24,7 @@ summary table."><!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/l
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">teal.goshawk</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.1.10.9013</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.1.11</span>
       </span>
     </div>
 
@@ -35,15 +35,6 @@ summary table."><!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/l
 <li>
   <a href="../news/index.html">Changelog</a>
 </li>
-<!-- start_releases -->
-<li class="dropdown">
-	<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
-Other releases
-<span class="caret"></span></a><ul class="dropdown-menu" role="menu">
-   <li><a href="../index.html">latest</a></li>
-   <li><a href="..//index.html"></a></li>
-</ul></li>
-<!-- end_releases -->
       </ul><ul class="nav navbar-nav navbar-right"><li>
   <a href="https://github.com/insightsengineering/teal.goshawk">
     <span class="fa fa-github"></span>
@@ -112,11 +103,14 @@ laboratory data frame ALB.</p></dd>
 <dt>param</dt>
 <dd><p>list of biomarkers of interest.</p></dd>
 <dt>yaxis_var</dt>
-<dd><p>name of variable containing biomarker results displayed on y-axis e.g. AVAL.</p></dd>
+<dd><p>name of variable containing biomarker results displayed on y-axis e.g. AVAL. When not provided,
+it defaults to <code>choices_selected(c("AVAL", "CHG"), "AVAL")</code>.</p></dd>
 <dt>xaxis_var</dt>
-<dd><p>variable to categorize the x-axis.</p></dd>
+<dd><p>variable to categorize the x-axis. When not provided, it defaults to
+<code>choices_selected("AVISITCD", "AVISITCD")</code>.</p></dd>
 <dt>facet_var</dt>
-<dd><p>variable to facet the plots by.</p></dd>
+<dd><p>variable to facet the plots by. When not provided, it defaults to
+<code>choices_selected(c("ARM", "ACTARM"), "ARM")</code>.</p></dd>
 <dt>trt_group</dt>
 <dd><p><code><a href="https://rdrr.io/pkg/teal/man/choices_selected.html" class="external-link">choices_selected</a></code> object with available choices and pre-selected option
 for variable names representing treatment group e.g. ARM.</p></dd>
@@ -289,7 +283,7 @@ output to put the output into context. For example the
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.1.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.2.</p>
 </div>
 
       </footer></div>
