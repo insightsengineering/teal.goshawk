@@ -67,7 +67,7 @@ app <- shinyApp(
   ),
   server = function(input, output, session) {
     is_dichotomous_slider <- (length(value) == 2)
-    range_value <- callModule(teal.goshawk:::toggle_slider_server, "toggle_slider",
+    range_value <- toggle_slider_server("toggle_slider",
       is_dichotomous_slider = is_dichotomous_slider
     )
     messages <- reactiveVal() # to keep history
