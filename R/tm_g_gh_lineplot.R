@@ -171,7 +171,7 @@ tm_g_gh_lineplot <- function(label,
                              post_output = NULL,
                              count_threshold = 0,
                              table_font_size = c(12, 4, 20)) {
-
+  logger::log_info("Initializing tm_g_gh_lineplot")
   checkmate::assert_class(param, "choices_selected")
   checkmate::assert_class(xaxis_var, "choices_selected")
   checkmate::assert_class(yaxis_var, "choices_selected")

@@ -160,6 +160,7 @@ tm_g_gh_scatterplot <- function(label,
                                 reg_text_size = c(3, 3, 10),
                                 pre_output = NULL,
                                 post_output = NULL) {
+  logger::log_info("Initializing tm_g_gh_scatterplot")
   checkmate::assert_class(param, "choices_selected")
   checkmate::assert_class(xaxis_var, "choices_selected")
   checkmate::assert_class(yaxis_var, "choices_selected")
