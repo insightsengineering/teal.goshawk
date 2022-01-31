@@ -303,9 +303,7 @@ ui_lineplot <- function(id, ...) {
   )
 }
 
-srv_lineplot <- function(input,
-                         output,
-                         session,
+srv_lineplot <- function(id,
                          datasets,
                          dataname,
                          param_var,
@@ -319,422 +317,422 @@ srv_lineplot <- function(input,
                          xlabel,
                          plot_height,
                          plot_width) {
-  init_chunks()
-  ns <- session$ns
-  output$shape_ui <- renderUI({
-    if (!is.null(shape_choices)) {
-      if (is(shape_choices, "choices_selected")) {
-        choices <- shape_choices$choices
-        selected <- shape_choices$selected
-      } else {
-        choices <- shape_choices
-        selected <- NULL
-      }
-      optionalSelectInput(
-        ns("shape"),
-        "Select Line Splitting Variable",
-        choices = choices, selected = selected
-      )
-    }
-  })
-
-  anl_chunks <- constr_anl_chunks(
-    session = session,
-    input = input,
-    datasets = datasets,
-    dataname = dataname,
-    param_id = "xaxis_param",
-    param_var = param_var,
-    trt_group = input$trt_group,
-    min_rows = 2
-  )
-  keep_data_const_opts_updated(session, input, anl_chunks, "xaxis_param")
-
-  yrange_slider <- callModule(toggle_slider_server, "yrange_scale")
-
-  # update sliders for axes
-  observe({
-    varname <- input[["yaxis_var"]]
-    validate(need(varname, "Please select variable"))
-
-    ANL <- anl_chunks()$ANL # nolint
-    validate_has_variable(ANL, varname, paste("variable", varname, "does not exist"))
-
-    shape <- if (!(is.null(input$shape) || input$shape == "None")) {
-      input$shape
-    } else {
-      NULL
-    }
-
-    # we don't need to additionally filter for paramvar here as in keep_range_slider_updated because
-    # xaxis_var and yaxis_var are always distinct
-    sum_data <- ANL %>%
-      group_by_at(c(input$xaxis_var, input$trt_group, shape)) %>%
-      summarise(
-        upper = if (input$stat == "mean") {
-          mean(!!sym(varname), na.rm = TRUE) +
-            1.96 * sd(!!sym(varname), na.rm = TRUE) / sqrt(n())
+  moduleServer(id, function(input, output, session) {
+    init_chunks()
+    ns <- session$ns
+    output$shape_ui <- renderUI({
+      if (!is.null(shape_choices)) {
+        if (is(shape_choices, "choices_selected")) {
+          choices <- shape_choices$choices
+          selected <- shape_choices$selected
         } else {
-          quantile(!!sym(varname), 0.75, na.rm = TRUE)
-        },
-        lower = if (input$stat == "mean") {
-          mean(!!sym(varname), na.rm = TRUE) -
-            1.96 * sd(!!sym(varname), na.rm = TRUE) / sqrt(n())
-        } else {
-          quantile(!!sym(varname), 0.25, na.rm = TRUE)
+          choices <- shape_choices
+          selected <- NULL
         }
+        optionalSelectInput(
+          ns("shape"),
+          "Select Line Splitting Variable",
+          choices = choices, selected = selected
+        )
+      }
+    })
+
+    anl_chunks <- constr_anl_chunks(
+      session = session,
+      input = input,
+      datasets = datasets,
+      dataname = dataname,
+      param_id = "xaxis_param",
+      param_var = param_var,
+      trt_group = input$trt_group,
+      min_rows = 2
+    )
+    keep_data_const_opts_updated(session, input, anl_chunks, "xaxis_param")
+
+    yrange_slider <- toggle_slider_server("yrange_scale")
+
+    # update sliders for axes
+    observe({
+      varname <- input[["yaxis_var"]]
+      validate(need(varname, "Please select variable"))
+
+      ANL <- anl_chunks()$ANL # nolint
+      validate_has_variable(ANL, varname, paste("variable", varname, "does not exist"))
+
+      shape <- if (!(is.null(input$shape) || input$shape == "None")) {
+        input$shape
+      } else {
+        NULL
+      }
+
+      # we don't need to additionally filter for paramvar here as in keep_range_slider_updated because
+      # xaxis_var and yaxis_var are always distinct
+      sum_data <- ANL %>%
+        group_by_at(c(input$xaxis_var, input$trt_group, shape)) %>%
+        summarise(
+          upper = if (input$stat == "mean") {
+            mean(!!sym(varname), na.rm = TRUE) +
+              1.96 * sd(!!sym(varname), na.rm = TRUE) / sqrt(n())
+          } else {
+            quantile(!!sym(varname), 0.75, na.rm = TRUE)
+          },
+          lower = if (input$stat == "mean") {
+            mean(!!sym(varname), na.rm = TRUE) -
+              1.96 * sd(!!sym(varname), na.rm = TRUE) / sqrt(n())
+          } else {
+            quantile(!!sym(varname), 0.25, na.rm = TRUE)
+          }
+        )
+
+      minmax <- grDevices::extendrange(
+        r = c(
+          floor(min(sum_data$lower, na.rm = TRUE) * 10) / 10,
+          ceiling(max(sum_data$upper, na.rm = TRUE) * 10) / 10
+        ),
+        f = 0.05
       )
 
-    minmax <- grDevices::extendrange(
-      r = c(
-        floor(min(sum_data$lower, na.rm = TRUE) * 10) / 10,
-        ceiling(max(sum_data$upper, na.rm = TRUE) * 10) / 10
-      ),
-      f = 0.05
-    )
-
-    # we don't use keep_range_slider_updated because this module computes the min, max
-    # not from the constrained ANL, but rather by first grouping and computing confidence
-    # intervals
-    isolate(yrange_slider$update_state(
-      min = minmax[[1]],
-      max = minmax[[2]],
-      value = minmax
-    ))
-  })
+      # we don't use keep_range_slider_updated because this module computes the min, max
+      # not from the constrained ANL, but rather by first grouping and computing confidence
+      # intervals
+      isolate(yrange_slider$update_state(
+        min = minmax[[1]],
+        max = minmax[[2]],
+        value = minmax
+      ))
+    })
 
 
-  line_color_start <- if (is.null(color_manual)) {
-    c("#ff0000", "#008000", "#4ca3dd", "#8a2be2")
-  } else {
-    color_manual
-  }
-  line_color_defaults <- reactiveVal(line_color_start)
-
-  line_type_defaults <- reactiveVal("solid")
-
-  observeEvent(input$trt_group, {
-    req(input$trt_group)
-    anl_arm <- anl_chunks()$ANL[[input$trt_group]]
-    anl_arm_nlevels <- nlevels(anl_arm)
-
-    if (is.null(names(line_color_defaults()))) {
-      # if color_manual did not specify arms (i.e. didn't have names) then order
-      # of the vector does not need to match order of level(anl_arm)
-      line_color_to_set <- line_color_defaults()[seq_len(anl_arm_nlevels)]
+    line_color_start <- if (is.null(color_manual)) {
+      c("#ff0000", "#008000", "#4ca3dd", "#8a2be2")
     } else {
-      # if color_manual did specify arms then we need to make sure the order of
-      # line_color_to_set matches the order of level(anl_arm) and if any arms are invalid
-      # or missing then we fill with a random colour
-      line_color_to_set <- setNames(line_color_defaults()[levels(anl_arm)], nm = levels(anl_arm))
+      color_manual
     }
-    line_color_to_set[is.na(line_color_to_set)] <- rainbow(anl_arm_nlevels)[is.na(line_color_to_set)]
-    line_color_defaults(line_color_to_set)
+    line_color_defaults <- reactiveVal(line_color_start)
 
-    line_type_to_set <- if (length(line_type_defaults()) <= anl_arm_nlevels) {
-      c(line_type_defaults(), rep(line_type_defaults(), anl_arm_nlevels - length(line_type_defaults())))
-    } else {
-      line_type_defaults()[seq_len(anl_arm_nlevels)]
-    }
+    line_type_defaults <- reactiveVal("solid")
 
-    line_type_defaults(line_type_to_set)
-  })
+    observeEvent(input$trt_group, {
+      req(input$trt_group)
+      anl_arm <- anl_chunks()$ANL[[input$trt_group]]
+      anl_arm_nlevels <- nlevels(anl_arm)
 
-  line_color_selected <- reactive({
-    if (is.null(input$trt_group)) {
-      return(NULL)
-    }
-    anl_arm <- isolate(anl_chunks()$ANL[[input$trt_group]])
-    anl_arm_nlevels <- nlevels(anl_arm)
-    anl_arm_levels <- levels(anl_arm)
+      if (is.null(names(line_color_defaults()))) {
+        # if color_manual did not specify arms (i.e. didn't have names) then order
+        # of the vector does not need to match order of level(anl_arm)
+        line_color_to_set <- line_color_defaults()[seq_len(anl_arm_nlevels)]
+      } else {
+        # if color_manual did specify arms then we need to make sure the order of
+        # line_color_to_set matches the order of level(anl_arm) and if any arms are invalid
+        # or missing then we fill with a random colour
+        line_color_to_set <- setNames(line_color_defaults()[levels(anl_arm)], nm = levels(anl_arm))
+      }
+      line_color_to_set[is.na(line_color_to_set)] <- rainbow(anl_arm_nlevels)[is.na(line_color_to_set)]
+      line_color_defaults(line_color_to_set)
 
-    setNames(
-      vapply(
-        seq_len(anl_arm_nlevels),
-        function(idx) {
-          x <- input[[paste0("line_color_", idx)]]
-          if (is.null(x)) isolate(line_color_defaults())[[idx]] else x
-        },
-        character(1)
-      ),
-      anl_arm_levels
-    )
-  })
+      line_type_to_set <- if (length(line_type_defaults()) <= anl_arm_nlevels) {
+        c(line_type_defaults(), rep(line_type_defaults(), anl_arm_nlevels - length(line_type_defaults())))
+      } else {
+        line_type_defaults()[seq_len(anl_arm_nlevels)]
+      }
 
-  line_type_selected <- reactive({
-    if (is.null(input$trt_group)) {
-      return(NULL)
-    }
-    anl_arm <- isolate(anl_chunks()$ANL[[input$trt_group]])
-    anl_arm_nlevels <- nlevels(anl_arm)
-    anl_arm_levels <- levels(anl_arm)
+      line_type_defaults(line_type_to_set)
+    })
 
-    setNames(
-      vapply(
-        seq_len(anl_arm_nlevels),
-        function(idx) {
-          x <- input[[paste0("line_type_", idx)]]
-          if (is.null(x)) isolate(line_type_defaults())[[idx]] else x
-        },
-        character(1)
-      ),
-      anl_arm_levels
-    )
-  })
+    line_color_selected <- reactive({
+      if (is.null(input$trt_group)) {
+        return(NULL)
+      }
+      anl_arm <- isolate(anl_chunks()$ANL[[input$trt_group]])
+      anl_arm_nlevels <- nlevels(anl_arm)
+      anl_arm_levels <- levels(anl_arm)
 
-  output$lines <- renderUI({
-    req(input$trt_group)
-    anl_arm <- isolate(anl_chunks()$ANL[[input$trt_group]])
-    anl_arm_nlevels <- nlevels(anl_arm)
-    anl_arm_levels <- levels(anl_arm)
-    color_def <- line_color_defaults()
-    type_def <- line_type_defaults()
-    tagList(
-      lapply(
-        seq_len(anl_arm_nlevels),
-        function(idx) {
-          x <- anl_arm_levels[[idx]]
-          x_color <- color_def[[idx]]
-          color_input <- colourpicker::colourInput(
-            ns(paste0("line_color_", idx)),
-            "Color:",
-            x_color
-          )
-          x_type <- type_def[[idx]]
-          type_input <- selectInput(
-            ns(paste0("line_type_", idx)),
-            "Type:",
-            choices = c(
-              "blank",
-              "solid",
-              "dashed",
-              "dotted",
-              "dotdash",
-              "longdash",
-              "twodash",
-              "1F",
-              "F1",
-              "4C88C488",
-              "12345678"
-            ),
-            selected = x_type
-          )
-          fluidRow(
-            column(
-              width = 12,
-              tags$label("Line configuration for:", tags$code(x))
-            ),
-            column(
-              width = 12,
-              div(
-                style = "width: 50%; float: left;",
-                color_input
+      setNames(
+        vapply(
+          seq_len(anl_arm_nlevels),
+          function(idx) {
+            x <- input[[paste0("line_color_", idx)]]
+            if (is.null(x)) isolate(line_color_defaults())[[idx]] else x
+          },
+          character(1)
+        ),
+        anl_arm_levels
+      )
+    })
+
+    line_type_selected <- reactive({
+      if (is.null(input$trt_group)) {
+        return(NULL)
+      }
+      anl_arm <- isolate(anl_chunks()$ANL[[input$trt_group]])
+      anl_arm_nlevels <- nlevels(anl_arm)
+      anl_arm_levels <- levels(anl_arm)
+
+      setNames(
+        vapply(
+          seq_len(anl_arm_nlevels),
+          function(idx) {
+            x <- input[[paste0("line_type_", idx)]]
+            if (is.null(x)) isolate(line_type_defaults())[[idx]] else x
+          },
+          character(1)
+        ),
+        anl_arm_levels
+      )
+    })
+
+    output$lines <- renderUI({
+      req(input$trt_group)
+      anl_arm <- isolate(anl_chunks()$ANL[[input$trt_group]])
+      anl_arm_nlevels <- nlevels(anl_arm)
+      anl_arm_levels <- levels(anl_arm)
+      color_def <- line_color_defaults()
+      type_def <- line_type_defaults()
+      tagList(
+        lapply(
+          seq_len(anl_arm_nlevels),
+          function(idx) {
+            x <- anl_arm_levels[[idx]]
+            x_color <- color_def[[idx]]
+            color_input <- colourpicker::colourInput(
+              ns(paste0("line_color_", idx)),
+              "Color:",
+              x_color
+            )
+            x_type <- type_def[[idx]]
+            type_input <- selectInput(
+              ns(paste0("line_type_", idx)),
+              "Type:",
+              choices = c(
+                "blank",
+                "solid",
+                "dashed",
+                "dotted",
+                "dotdash",
+                "longdash",
+                "twodash",
+                "1F",
+                "F1",
+                "4C88C488",
+                "12345678"
               ),
-              div(
-                style = "width: 50%; float: left;",
-                type_input
+              selected = x_type
+            )
+            fluidRow(
+              column(
+                width = 12,
+                tags$label("Line configuration for:", tags$code(x))
+              ),
+              column(
+                width = 12,
+                div(
+                  style = "width: 50%; float: left;",
+                  color_input
+                ),
+                div(
+                  style = "width: 50%; float: left;",
+                  type_input
+                )
               )
             )
-          )
-        }
+          }
+        )
       )
+    })
+
+
+    symbol_type_start <- c(
+      "circle",
+      "square",
+      "diamond",
+      "triangle",
+      "circle open",
+      "square open",
+      "diamond open",
+      "triangle open",
+      "triangle down open",
+      "circle cross",
+      "square cross",
+      "circle plus",
+      "square plus",
+      "diamond plus",
+      "square triangle",
+      "plus",
+      "cross",
+      "asterisk"
     )
-  })
+    symbol_type_defaults <- reactiveVal(symbol_type_start)
 
-
-  symbol_type_start <- c(
-    "circle",
-    "square",
-    "diamond",
-    "triangle",
-    "circle open",
-    "square open",
-    "diamond open",
-    "triangle open",
-    "triangle down open",
-    "circle cross",
-    "square cross",
-    "circle plus",
-    "square plus",
-    "diamond plus",
-    "square triangle",
-    "plus",
-    "cross",
-    "asterisk"
-  )
-  symbol_type_defaults <- reactiveVal(symbol_type_start)
-
-  # reset shapes when different splitting variable is selected
-  observeEvent(
-    eventExpr = input$shape,
-    handlerExpr = symbol_type_defaults(symbol_type_start),
-    ignoreNULL = TRUE
-  )
-
-  observe({
-    req(input$shape)
-    anl_shape <- anl_chunks()$ANL[[input$shape]]
-    anl_shape_nlevels <- nlevels(anl_shape)
-    symbol_type_to_set <- symbol_type_defaults()[pmin(length(symbol_type_defaults()), seq_len(anl_shape_nlevels))]
-    symbol_type_defaults(symbol_type_to_set)
-  })
-
-  symbol_type_selected <- reactive({
-    if (is.null(input$shape)) {
-      return(NULL)
-    }
-    anl_shape <- isolate(anl_chunks()$ANL[[input$shape]])
-    anl_shape_nlevels <- nlevels(anl_shape)
-    anl_shape_levels <- levels(anl_shape)
-
-    setNames(
-      vapply(
-        seq_len(anl_shape_nlevels),
-        function(idx) {
-          x <- input[[paste0("symbol_type_", idx)]]
-          if (is.null(x)) isolate(symbol_type_defaults())[[idx]] else x
-        },
-        character(1)
-      ),
-      anl_shape_levels
+    # reset shapes when different splitting variable is selected
+    observeEvent(
+      eventExpr = input$shape,
+      handlerExpr = symbol_type_defaults(symbol_type_start),
+      ignoreNULL = TRUE
     )
-  })
 
-  output$symbols <- renderUI({
-    validate(need(input$shape, "Please select line splitting variable first."))
+    observe({
+      req(input$shape)
+      anl_shape <- anl_chunks()$ANL[[input$shape]]
+      anl_shape_nlevels <- nlevels(anl_shape)
+      symbol_type_to_set <- symbol_type_defaults()[pmin(length(symbol_type_defaults()), seq_len(anl_shape_nlevels))]
+      symbol_type_defaults(symbol_type_to_set)
+    })
 
-    anl_shape <- isolate(anl_chunks()$ANL[[input$shape]])
-    validate(need(is.factor(anl_shape), "Line splitting variable must be a factor."))
+    symbol_type_selected <- reactive({
+      if (is.null(input$shape)) {
+        return(NULL)
+      }
+      anl_shape <- isolate(anl_chunks()$ANL[[input$shape]])
+      anl_shape_nlevels <- nlevels(anl_shape)
+      anl_shape_levels <- levels(anl_shape)
 
-    anl_shape_nlevels <- nlevels(anl_shape)
-    anl_shape_levels <- levels(anl_shape)
-    symbol_def <- symbol_type_defaults()
-
-    tagList(
-      lapply(
-        seq_len(anl_shape_nlevels),
-        function(idx) {
-          x <- anl_shape_levels[[idx]]
-          x_color <- symbol_def[[idx]]
-          selectInput(
-            ns(paste0("symbol_type_", idx)),
-            HTML(paste0("Symbol for: ", tags$code(x))),
-            choices = symbol_type_start,
-            selected = x_color
-          )
-        }
+      setNames(
+        vapply(
+          seq_len(anl_shape_nlevels),
+          function(idx) {
+            x <- input[[paste0("symbol_type_", idx)]]
+            if (is.null(x)) isolate(symbol_type_defaults())[[idx]] else x
+          },
+          character(1)
+        ),
+        anl_shape_levels
       )
-    )
-  })
+    })
 
-  plot_r <- reactive({
-    ac <- anl_chunks()
-    private_chunks <- ac$chunks$clone(deep = TRUE)
+    output$symbols <- renderUI({
+      validate(need(input$shape, "Please select line splitting variable first."))
 
-    # nolint start
-    yrange_scale <- yrange_slider$state()$value
-    plot_font_size <- input$plot_font_size
-    dodge <- input$dodge
-    rotate_xlab <- input$rotate_xlab
-    count_threshold <- `if`(is.na(as.numeric(input$count_threshold)), 0, as.numeric(input$count_threshold))
-    table_font_size <- input$table_font_size
-    hline <- if (is.na(input$hline)) NULL else as.numeric(input$hline)
-    median <- ifelse(input$stat == "median", TRUE, FALSE)
-    relative_height <- input$relative_height
-    validate(need(input$trt_group, "Please select a treatment variable"))
-    trt_group <- input$trt_group
-    color_selected <- line_color_selected()
-    type_selected <- line_type_selected()
-    symbol_selected <- symbol_type_selected()
-    include_stat <- input$include_stat
-    # nolint end
+      anl_shape <- isolate(anl_chunks()$ANL[[input$shape]])
+      validate(need(is.factor(anl_shape), "Line splitting variable must be a factor."))
 
-    validate(need(input$xaxis_var, "Please select an X-Axis Variable"))
-    validate(need(input$yaxis_var, "Please select a Y-Axis Variable"))
+      anl_shape_nlevels <- nlevels(anl_shape)
+      anl_shape_levels <- levels(anl_shape)
+      symbol_def <- symbol_type_defaults()
 
-    # nolint start
-    param <- input$xaxis_param
-    xaxis <- input$xaxis_var
-    yaxis <- input$yaxis_var
-    # nolint end
+      tagList(
+        lapply(
+          seq_len(anl_shape_nlevels),
+          function(idx) {
+            x <- anl_shape_levels[[idx]]
+            x_color <- symbol_def[[idx]]
+            selectInput(
+              ns(paste0("symbol_type_", idx)),
+              HTML(paste0("Symbol for: ", tags$code(x))),
+              choices = symbol_type_start,
+              selected = x_color
+            )
+          }
+        )
+      )
+    })
 
-    shape <- if (!(is.null(input$shape) || input$shape == "None")) {
-      input$shape
-    } else {
-      NULL
-    }
+    plot_r <- reactive({
+      ac <- anl_chunks()
+      private_chunks <- ac$chunks$clone(deep = TRUE)
 
-    chunks_validate_custom(
-      bquote(nrow(ANL[complete.cases(ANL[, c(.(yaxis), .(xaxis))]), ]) >= 2),
-      "Number of complete rows on x and y axis variables is less than 2",
-      chunks = private_chunks
-    )
+      # nolint start
+      yrange_scale <- yrange_slider$state()$value
+      plot_font_size <- input$plot_font_size
+      dodge <- input$dodge
+      rotate_xlab <- input$rotate_xlab
+      count_threshold <- `if`(is.na(as.numeric(input$count_threshold)), 0, as.numeric(input$count_threshold))
+      table_font_size <- input$table_font_size
+      hline <- if (is.na(input$hline)) NULL else as.numeric(input$hline)
+      median <- ifelse(input$stat == "median", TRUE, FALSE)
+      relative_height <- input$relative_height
+      validate(need(input$trt_group, "Please select a treatment variable"))
+      trt_group <- input$trt_group
+      color_selected <- line_color_selected()
+      type_selected <- line_type_selected()
+      symbol_selected <- symbol_type_selected()
+      include_stat <- input$include_stat
+      # nolint end
 
-    if (!is(xtick, "waiver") && !is.null(xtick)) {
+      validate(need(input$xaxis_var, "Please select an X-Axis Variable"))
+      validate(need(input$yaxis_var, "Please select a Y-Axis Variable"))
+
+      # nolint start
+      param <- input$xaxis_param
+      xaxis <- input$xaxis_var
+      yaxis <- input$yaxis_var
+      # nolint end
+
+      shape <- if (!(is.null(input$shape) || input$shape == "None")) {
+        input$shape
+      } else {
+        NULL
+      }
+
+      chunks_validate_custom(
+        bquote(nrow(ANL[complete.cases(ANL[, c(.(yaxis), .(xaxis))]), ]) >= 2),
+        "Number of complete rows on x and y axis variables is less than 2",
+        chunks = private_chunks
+      )
+
+      if (!is(xtick, "waiver") && !is.null(xtick)) {
+        chunks_push(
+          chunks = private_chunks,
+          expression = bquote({
+            keep_index <- which(.(xtick) %in% ANL[[.(xaxis)]])
+            xtick <- (.(xtick))[keep_index] # extra parentheses needed for edge case, e.g. 1:5[keep_index]
+            xlabel <- (.(xlabel))[keep_index]
+          })
+        )
+      }
       chunks_push(
         chunks = private_chunks,
+        id = "lineplot",
         expression = bquote({
-          keep_index <- which(.(xtick) %in% ANL[[.(xaxis)]])
-          xtick <- (.(xtick))[keep_index] # extra parentheses needed for edge case, e.g. 1:5[keep_index]
-          xlabel <- (.(xlabel))[keep_index]
+          p <- goshawk::g_lineplot(
+            data = ANL[complete.cases(ANL[, c(.(yaxis), .(xaxis))]), ],
+            biomarker_var = .(param_var),
+            biomarker_var_label = .(param_var_label),
+            biomarker = .(param),
+            value_var = .(yaxis),
+            ylim = .(yrange_scale),
+            trt_group = .(trt_group),
+            trt_group_level = .(trt_group_level),
+            shape = .(shape),
+            shape_type = .(symbol_selected),
+            time = .(xaxis),
+            time_level = .(xvar_level),
+            color_manual = .(color_selected),
+            line_type = .(type_selected),
+            median = .(median),
+            hline = .(hline),
+            xtick = .(if (!is(xtick, "waiver") && !is.null(xtick)) quote(xtick) else xtick),
+            xlabel = .(if (!is(xtick, "waiver") && !is.null(xtick)) quote(xlabel) else xlabel),
+            rotate_xlab = .(rotate_xlab),
+            plot_height = .(relative_height), # in g_lineplot this is relative height of plot to table
+            plot_font_size = .(plot_font_size),
+            dodge = .(dodge),
+            count_threshold = .(count_threshold),
+            table_font_size = .(table_font_size),
+            display_center_tbl = .(include_stat)
+          )
+          print(p)
         })
       )
-    }
-    chunks_push(
-      chunks = private_chunks,
-      id = "lineplot",
-      expression = bquote({
-        p <- goshawk::g_lineplot(
-          data = ANL[complete.cases(ANL[, c(.(yaxis), .(xaxis))]), ],
-          biomarker_var = .(param_var),
-          biomarker_var_label = .(param_var_label),
-          biomarker = .(param),
-          value_var = .(yaxis),
-          ylim = .(yrange_scale),
-          trt_group = .(trt_group),
-          trt_group_level = .(trt_group_level),
-          shape = .(shape),
-          shape_type = .(symbol_selected),
-          time = .(xaxis),
-          time_level = .(xvar_level),
-          color_manual = .(color_selected),
-          line_type = .(type_selected),
-          median = .(median),
-          hline = .(hline),
-          xtick = .(if (!is(xtick, "waiver") && !is.null(xtick)) quote(xtick) else xtick),
-          xlabel = .(if (!is(xtick, "waiver") && !is.null(xtick)) quote(xlabel) else xlabel),
-          rotate_xlab = .(rotate_xlab),
-          plot_height = .(relative_height), # in g_lineplot this is relative height of plot to table
-          plot_font_size = .(plot_font_size),
-          dodge = .(dodge),
-          count_threshold = .(count_threshold),
-          table_font_size = .(table_font_size),
-          display_center_tbl = .(include_stat)
-        )
-        print(p)
-      })
+
+      chunks_safe_eval(private_chunks)
+
+      chunks_reset()
+      chunks_push_chunks(private_chunks)
+
+      chunks_get_var("p")
+    })
+
+    plot_with_settings_srv(
+      id = "plot",
+      plot_r = plot_r,
+      height = plot_height,
+      width = plot_width,
     )
 
-    chunks_safe_eval(private_chunks)
-
-    chunks_reset()
-    chunks_push_chunks(private_chunks)
-
-    chunks_get_var("p")
+    get_rcode_srv(
+      id = "rcode",
+      datasets = datasets,
+      modal_title = "Line Plot"
+    )
   })
-
-  callModule(
-    plot_with_settings_srv,
-    id = "plot",
-    plot_r = plot_r,
-    height = plot_height,
-    width = plot_width,
-  )
-
-  callModule(
-    get_rcode_srv,
-    id = "rcode",
-    datasets = datasets,
-    modal_title = "Line Plot"
-  )
 }

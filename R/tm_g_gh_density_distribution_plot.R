@@ -177,7 +177,8 @@ tm_g_gh_density_distribution_plot <- function(label, # nolint
   checkmate::assert_numeric(plot_height[1], lower = plot_height[2], upper = plot_height[3], .var.name = "plot_height")
   checkmate::assert_numeric(plot_width, len = 3, any.missing = FALSE, null.ok = TRUE, finite = TRUE)
   checkmate::assert_numeric(
-    plot_width[1], lower = plot_width[2], upper = plot_width[3], null.ok = TRUE, .var.name = "plot_width"
+    plot_width[1],
+    lower = plot_width[2], upper = plot_width[3], null.ok = TRUE, .var.name = "plot_width"
   )
 
   args <- as.list(environment())
@@ -267,9 +268,7 @@ ui_g_density_distribution_plot <- function(id, ...) {
   )
 }
 
-srv_g_density_distribution_plot <- function(input, # nolint
-                                            output,
-                                            session,
+srv_g_density_distribution_plot <- function(id, # nolint
                                             datasets,
                                             dataname,
                                             param_var,
@@ -279,144 +278,144 @@ srv_g_density_distribution_plot <- function(input, # nolint
                                             color_comb,
                                             plot_height,
                                             plot_width) {
-  init_chunks()
-  anl_chunks <- constr_anl_chunks(
-    session, input, datasets, dataname,
-    param_id = "xaxis_param", param_var = param_var, trt_group = input$trt_group, min_rows = 2
-  )
-
-  # update sliders for axes taking constraints into account
-  xrange_slider <- callModule(toggle_slider_server, "xrange_scale")
-  keep_range_slider_updated(session, input, xrange_slider$update_state, "xaxis_var", "xaxis_param", anl_chunks)
-  keep_data_const_opts_updated(session, input, anl_chunks, "xaxis_param")
-
-  horizontal_line <- srv_arbitrary_lines("hline_arb")
-
-  create_plot <- reactive({
-    validate(need(input$xaxis_var, "Please select an X-Axis Variable"))
-    private_chunks <- anl_chunks()$chunks$clone(deep = TRUE)
-
-    # nolint start
-    param <- input$xaxis_param
-    xaxis_var <- input$xaxis_var
-    xmin_scale <- xrange_slider$state()$value[[1]]
-    xmax_scale <- xrange_slider$state()$value[[2]]
-    font_size <- input$font_size
-    line_size <- input$line_size
-    hline_arb <- horizontal_line()$line_arb
-    hline_arb_label <- horizontal_line()$line_arb_label
-    hline_arb_color <- horizontal_line()$line_arb_color
-    facet_ncol <- input$facet_ncol
-    validate(need(
-      is.na(facet_ncol) || (as.numeric(facet_ncol) > 0 && as.numeric(facet_ncol) %% 1 == 0),
-      "Number of plots per row must be a positive integer"
-    ))
-    comb_line <- input$comb_line
-    rug_plot <- input$rug_plot
-    rotate_xlab <- input$rotate_xlab
-    trt_group <- input$trt_group
-    # nolint end
-    validate(need(input$trt_group, "Please select a treatment variable"))
-
-    chunks_push(
-      chunks = private_chunks,
-      id = "density_distribution",
-      expression = bquote({
-        p <- goshawk::g_density_distribution_plot(
-          data = ANL,
-          param_var = .(param_var),
-          param = .(param),
-          xaxis_var = .(xaxis_var),
-          trt_group = .(trt_group),
-          xmin = .(xmin_scale),
-          xmax = .(xmax_scale),
-          color_manual = .(color_manual),
-          color_comb = .(color_comb),
-          font_size = .(font_size),
-          line_size = .(line_size),
-          facet_ncol = .(facet_ncol),
-          comb_line = .(comb_line),
-          hline_arb = .(hline_arb),
-          hline_arb_label = .(hline_arb_label),
-          hline_arb_color = .(hline_arb_color),
-          rug_plot = .(rug_plot)
-        )
-      })
+  moduleServer(id, function(input, output, session) {
+    init_chunks()
+    anl_chunks <- constr_anl_chunks(
+      session, input, datasets, dataname,
+      param_id = "xaxis_param", param_var = param_var, trt_group = input$trt_group, min_rows = 2
     )
 
-    chunks_safe_eval(private_chunks)
+    # update sliders for axes taking constraints into account
+    xrange_slider <- toggle_slider_server("xrange_scale")
+    keep_range_slider_updated(session, input, xrange_slider$update_state, "xaxis_var", "xaxis_param", anl_chunks)
+    keep_data_const_opts_updated(session, input, anl_chunks, "xaxis_param")
 
-    private_chunks
-  })
+    horizontal_line <- srv_arbitrary_lines("hline_arb")
 
-  create_table <- reactive({
-    private_chunks <- create_plot()$clone(deep = TRUE)
+    create_plot <- reactive({
+      validate(need(input$xaxis_var, "Please select an X-Axis Variable"))
+      private_chunks <- anl_chunks()$chunks$clone(deep = TRUE)
 
-    param <- input$xaxis_param
-    xaxis_var <- input$xaxis_var
-    font_size <- input$font_size
-    trt_group <- input$trt_group
+      # nolint start
+      param <- input$xaxis_param
+      xaxis_var <- input$xaxis_var
+      xmin_scale <- xrange_slider$state()$value[[1]]
+      xmax_scale <- xrange_slider$state()$value[[2]]
+      font_size <- input$font_size
+      line_size <- input$line_size
+      hline_arb <- horizontal_line()$line_arb
+      hline_arb_label <- horizontal_line()$line_arb_label
+      hline_arb_color <- horizontal_line()$line_arb_color
+      facet_ncol <- input$facet_ncol
+      validate(need(
+        is.na(facet_ncol) || (as.numeric(facet_ncol) > 0 && as.numeric(facet_ncol) %% 1 == 0),
+        "Number of plots per row must be a positive integer"
+      ))
+      comb_line <- input$comb_line
+      rug_plot <- input$rug_plot
+      rotate_xlab <- input$rotate_xlab
+      trt_group <- input$trt_group
+      # nolint end
+      validate(need(input$trt_group, "Please select a treatment variable"))
 
-    chunks_push(
-      chunks = private_chunks,
-      id = "table",
-      expression = bquote({
-        tbl <- goshawk::t_summarytable(
-          data = ANL,
-          trt_group = .(trt_group),
-          param_var = .(param_var),
-          param = .(param),
-          xaxis_var = .(xaxis_var),
-          font_size = .(font_size)
-        )
-      })
+      chunks_push(
+        chunks = private_chunks,
+        id = "density_distribution",
+        expression = bquote({
+          p <- goshawk::g_density_distribution_plot(
+            data = ANL,
+            param_var = .(param_var),
+            param = .(param),
+            xaxis_var = .(xaxis_var),
+            trt_group = .(trt_group),
+            xmin = .(xmin_scale),
+            xmax = .(xmax_scale),
+            color_manual = .(color_manual),
+            color_comb = .(color_comb),
+            font_size = .(font_size),
+            line_size = .(line_size),
+            facet_ncol = .(facet_ncol),
+            comb_line = .(comb_line),
+            hline_arb = .(hline_arb),
+            hline_arb_label = .(hline_arb_label),
+            hline_arb_color = .(hline_arb_color),
+            rug_plot = .(rug_plot)
+          )
+        })
+      )
+
+      chunks_safe_eval(private_chunks)
+
+      private_chunks
+    })
+
+    create_table <- reactive({
+      private_chunks <- create_plot()$clone(deep = TRUE)
+
+      param <- input$xaxis_param
+      xaxis_var <- input$xaxis_var
+      font_size <- input$font_size
+      trt_group <- input$trt_group
+
+      chunks_push(
+        chunks = private_chunks,
+        id = "table",
+        expression = bquote({
+          tbl <- goshawk::t_summarytable(
+            data = ANL,
+            trt_group = .(trt_group),
+            param_var = .(param_var),
+            param = .(param),
+            xaxis_var = .(xaxis_var),
+            font_size = .(font_size)
+          )
+        })
+      )
+
+      chunks_safe_eval(private_chunks)
+      private_chunks
+    })
+
+    main_code <- reactive({
+      private_chunks <- create_table()
+      chunks_push(
+        chunks = private_chunks,
+        id = "output",
+        expression = quote(print(p))
+      )
+
+      chunks_safe_eval(private_chunks)
+
+      chunks_reset()
+      chunks_push_chunks(private_chunks)
+
+      private_chunks
+    })
+
+    plot_r <- reactive({
+      chunks_get_var("p", main_code())
+    })
+
+    plot_with_settings_srv(
+      id = "plot",
+      plot_r = plot_r,
+      height = plot_height,
+      width = plot_width,
     )
 
-    chunks_safe_eval(private_chunks)
-    private_chunks
-  })
+    output$table_ui <- DT::renderDataTable({
+      tbl <- chunks_get_var("tbl", main_code())
 
-  main_code <- reactive({
-    private_chunks <- create_table()
-    chunks_push(
-      chunks = private_chunks,
-      id = "output",
-      expression = quote(print(p))
+      numeric_cols <- names(select_if(tbl, is.numeric))
+
+      DT::datatable(tbl, rownames = FALSE, options = list(scrollX = TRUE)) %>%
+        DT::formatRound(numeric_cols, 2)
+    })
+
+    get_rcode_srv(
+      id = "rcode",
+      datasets = datasets,
+      modal_title = "Density Distribution Plot"
     )
-
-    chunks_safe_eval(private_chunks)
-
-    chunks_reset()
-    chunks_push_chunks(private_chunks)
-
-    private_chunks
   })
-
-  plot_r <- reactive({
-    chunks_get_var("p", main_code())
-  })
-
-  callModule(
-    plot_with_settings_srv,
-    id = "plot",
-    plot_r = plot_r,
-    height = plot_height,
-    width = plot_width,
-  )
-
-  output$table_ui <- DT::renderDataTable({
-    tbl <- chunks_get_var("tbl", main_code())
-
-    numeric_cols <- names(select_if(tbl, is.numeric))
-
-    DT::datatable(tbl, rownames = FALSE, options = list(scrollX = TRUE)) %>%
-      DT::formatRound(numeric_cols, 2)
-  })
-
-  callModule(
-    get_rcode_srv,
-    id = "rcode",
-    datasets = datasets,
-    modal_title = "Density Distribution Plot"
-  )
 }

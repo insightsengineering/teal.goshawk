@@ -259,9 +259,7 @@ ui_g_scatterplot <- function(id, ...) {
 }
 
 #' @importFrom goshawk g_scatterplot
-srv_g_scatterplot <- function(input,
-                              output,
-                              session,
+srv_g_scatterplot <- function(id,
                               datasets,
                               dataname,
                               param_var,
@@ -271,131 +269,131 @@ srv_g_scatterplot <- function(input,
                               shape_manual,
                               plot_height,
                               plot_width) {
-  init_chunks()
+  moduleServer(id, function(input, output, session) {
+    init_chunks()
 
-  # reused in all modules
-  anl_chunks <- constr_anl_chunks(
-    session, input, datasets, dataname,
-    param_id = "xaxis_param", param_var = param_var, trt_group = input$trt_group, min_rows = 1
-  )
-
-  # update sliders for axes taking constraints into account
-  xrange_slider <- callModule(toggle_slider_server, "xrange_scale")
-  yrange_slider <- callModule(toggle_slider_server, "yrange_scale")
-  keep_range_slider_updated(session, input, xrange_slider$update_state, "xaxis_var", "xaxis_param", anl_chunks)
-  keep_range_slider_updated(session, input, yrange_slider$update_state, "yaxis_var", "xaxis_param", anl_chunks)
-  keep_data_const_opts_updated(session, input, anl_chunks, "xaxis_param")
-
-  # plot
-  plot_r <- reactive({
-    ac <- anl_chunks()
-    private_chunks <- ac$chunks$clone(deep = TRUE)
-    # nolint start
-    xrange_scale <- xrange_slider$state()$value
-    yrange_scale <- yrange_slider$state()$value
-    facet_ncol <- input$facet_ncol
-    validate(need(
-      is.na(facet_ncol) || (as.numeric(facet_ncol) > 0 && as.numeric(facet_ncol) %% 1 == 0),
-      "Number of plots per row must be a positive integer"
-    ))
-    reg_line <- input$reg_line
-    font_size <- input$font_size
-    dot_size <- input$dot_size
-    reg_text_size <- input$reg_text_size
-    rotate_xlab <- input$rotate_xlab
-    hline <- input$hline
-    vline <- input$vline
-    trt_group <- input$trt_group
-    facet <- input$trt_facet
-    validate(need(trt_group, "Please select a treatment variable"))
-
-    # Below inputs should trigger plot via updates of other reactive objects (i.e. anl_chunk()) and some inputs
-    validate(need(input$xaxis_var, "Please select an X-Axis Variable"))
-    validate(need(input$yaxis_var, "Please select a Y-Axis Variable"))
-    param <- input$xaxis_param
-    xaxis <- input$xaxis_var
-    yaxis <- input$yaxis_var
-
-    # nolint end
-    chunks_push(
-      chunks = private_chunks,
-      id = "scatterplot",
-      expression = bquote({
-        # re-establish treatment variable label
-        p <- goshawk::g_scatterplot(
-          data = ANL,
-          param_var = .(param_var),
-          param = .(param),
-          xaxis_var = .(xaxis),
-          yaxis_var = .(yaxis),
-          trt_group = .(trt_group),
-          xmin = .(xrange_scale[[1]]),
-          xmax = .(xrange_scale[[2]]),
-          ymin = .(yrange_scale[[1]]),
-          ymax = .(yrange_scale[[2]]),
-          color_manual = .(color_manual),
-          shape_manual = .(shape_manual),
-          facet_ncol = .(facet_ncol),
-          facet = .(facet),
-          facet_var = .(trt_group),
-          reg_line = .(reg_line),
-          font_size = .(font_size),
-          dot_size = .(dot_size),
-          reg_text_size = .(reg_text_size),
-          rotate_xlab = .(rotate_xlab),
-          hline = .(`if`(is.na(hline), NULL, as.numeric(hline))),
-          vline = .(`if`(is.na(vline), NULL, as.numeric(vline)))
-        )
-        print(p)
-      })
+    # reused in all modules
+    anl_chunks <- constr_anl_chunks(
+      session, input, datasets, dataname,
+      param_id = "xaxis_param", param_var = param_var, trt_group = input$trt_group, min_rows = 1
     )
 
-    chunks_safe_eval(private_chunks)
+    # update sliders for axes taking constraints into account
+    xrange_slider <- toggle_slider_server("xrange_scale")
+    yrange_slider <- toggle_slider_server("yrange_scale")
+    keep_range_slider_updated(session, input, xrange_slider$update_state, "xaxis_var", "xaxis_param", anl_chunks)
+    keep_range_slider_updated(session, input, yrange_slider$update_state, "yaxis_var", "xaxis_param", anl_chunks)
+    keep_data_const_opts_updated(session, input, anl_chunks, "xaxis_param")
 
-    # promote chunks to be visible in the sessionData by other modules
-    chunks_reset()
-    chunks_push_chunks(private_chunks)
+    # plot
+    plot_r <- reactive({
+      ac <- anl_chunks()
+      private_chunks <- ac$chunks$clone(deep = TRUE)
+      # nolint start
+      xrange_scale <- xrange_slider$state()$value
+      yrange_scale <- yrange_slider$state()$value
+      facet_ncol <- input$facet_ncol
+      validate(need(
+        is.na(facet_ncol) || (as.numeric(facet_ncol) > 0 && as.numeric(facet_ncol) %% 1 == 0),
+        "Number of plots per row must be a positive integer"
+      ))
+      reg_line <- input$reg_line
+      font_size <- input$font_size
+      dot_size <- input$dot_size
+      reg_text_size <- input$reg_text_size
+      rotate_xlab <- input$rotate_xlab
+      hline <- input$hline
+      vline <- input$vline
+      trt_group <- input$trt_group
+      facet <- input$trt_facet
+      validate(need(trt_group, "Please select a treatment variable"))
 
-    chunks_get_var("p")
-  })
+      # Below inputs should trigger plot via updates of other reactive objects (i.e. anl_chunk()) and some inputs
+      validate(need(input$xaxis_var, "Please select an X-Axis Variable"))
+      validate(need(input$yaxis_var, "Please select a Y-Axis Variable"))
+      param <- input$xaxis_param
+      xaxis <- input$xaxis_var
+      yaxis <- input$yaxis_var
 
-  plot_data <- callModule(
-    plot_with_settings_srv,
-    id = "plot",
-    plot_r = plot_r,
-    height = plot_height,
-    width = plot_width,
-    brushing = TRUE
-  )
+      # nolint end
+      chunks_push(
+        chunks = private_chunks,
+        id = "scatterplot",
+        expression = bquote({
+          # re-establish treatment variable label
+          p <- goshawk::g_scatterplot(
+            data = ANL,
+            param_var = .(param_var),
+            param = .(param),
+            xaxis_var = .(xaxis),
+            yaxis_var = .(yaxis),
+            trt_group = .(trt_group),
+            xmin = .(xrange_scale[[1]]),
+            xmax = .(xrange_scale[[2]]),
+            ymin = .(yrange_scale[[1]]),
+            ymax = .(yrange_scale[[2]]),
+            color_manual = .(color_manual),
+            shape_manual = .(shape_manual),
+            facet_ncol = .(facet_ncol),
+            facet = .(facet),
+            facet_var = .(trt_group),
+            reg_line = .(reg_line),
+            font_size = .(font_size),
+            dot_size = .(dot_size),
+            reg_text_size = .(reg_text_size),
+            rotate_xlab = .(rotate_xlab),
+            hline = .(`if`(is.na(hline), NULL, as.numeric(hline))),
+            vline = .(`if`(is.na(vline), NULL, as.numeric(vline)))
+          )
+          print(p)
+        })
+      )
 
-  # highlight plot area
-  output$brush_data <- DT::renderDataTable({
-    plot_brush <- plot_data$brush()
+      chunks_safe_eval(private_chunks)
 
-    ANL <- isolate(anl_chunks()$ANL) # nolint
-    validate_has_data(ANL, 1)
+      # promote chunks to be visible in the sessionData by other modules
+      chunks_reset()
+      chunks_push_chunks(private_chunks)
 
-    xvar <- isolate(input$xaxis_var)
-    yvar <- isolate(input$yaxis_var)
-    trt_group <- isolate(input$trt_group)
+      chunks_get_var("p")
+    })
 
-    req(all(c(xvar, yvar) %in% names(ANL)))
-
-    df <- clean_brushedPoints(
-      select(ANL, "USUBJID", trt_group, "AVISITCD", "PARAMCD", xvar, yvar, "LOQFL"),
-      plot_brush
+    plot_data <- plot_with_settings_srv(
+      id = "plot",
+      plot_r = plot_r,
+      height = plot_height,
+      width = plot_width,
+      brushing = TRUE
     )
 
-    numeric_cols <- names(select_if(df, is.numeric))
+    # highlight plot area
+    output$brush_data <- DT::renderDataTable({
+      plot_brush <- plot_data$brush()
 
-    DT::datatable(df, rownames = FALSE, options = list(scrollX = TRUE)) %>%
-      DT::formatRound(numeric_cols, 4)
+      ANL <- isolate(anl_chunks()$ANL) # nolint
+      validate_has_data(ANL, 1)
+
+      xvar <- isolate(input$xaxis_var)
+      yvar <- isolate(input$yaxis_var)
+      trt_group <- isolate(input$trt_group)
+
+      req(all(c(xvar, yvar) %in% names(ANL)))
+
+      df <- clean_brushedPoints(
+        select(ANL, "USUBJID", trt_group, "AVISITCD", "PARAMCD", xvar, yvar, "LOQFL"),
+        plot_brush
+      )
+
+      numeric_cols <- names(select_if(df, is.numeric))
+
+      DT::datatable(df, rownames = FALSE, options = list(scrollX = TRUE)) %>%
+        DT::formatRound(numeric_cols, 4)
+    })
+
+    get_rcode_srv(
+      id = "rcode",
+      datasets = datasets,
+      modal_title = "Scatter Plot"
+    )
   })
-
-  callModule(
-    get_rcode_srv,
-    id = "rcode",
-    datasets = datasets,
-    modal_title = "Scatter Plot"
-  )
 }
