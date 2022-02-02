@@ -98,3 +98,4 @@ app <- shinyApp(
 )
 shinyApp(app$ui, app$server) \%>\% invisible()
 }
+\keyword{internal}

@@ -16,5 +16,5 @@
 #' @import teal
 #' @import teal.devel
 #' @import tidyr
-#'
+#' @keywords internal
 NULL

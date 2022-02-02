@@ -392,6 +392,7 @@ maptrt <- function(df_armvar, code = c("M", "O")) {
 #'  title of the arbitrary lines input. The default is "Arbitrary Horizontal Lines".
 #' @return (`shiny.tag`) an input to define values, colors and labels for arbitrary
 #' straight lines.
+#' @keywords internal
 ui_arbitrary_lines <- function(id, line_arb, line_arb_label, line_arb_color, title = "Arbitrary Horizontal Lines:") {
   ns <- NS(id)
   div(
@@ -408,6 +409,7 @@ ui_arbitrary_lines <- function(id, line_arb, line_arb_label, line_arb_color, tit
 #' @inheritParams shiny::moduleServer
 #' @return (`reactive`) returning a `list` containing `line_arb`, `line_arb_color`,
 #'  `line_arb_label` which are validated and could be passed to `goshawk` plot functions.
+#' @keywords internal
 srv_arbitrary_lines <- function(id) {
   moduleServer(id, function(input, output, session) {
     reactive({

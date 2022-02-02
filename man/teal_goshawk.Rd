@@ -8,3 +8,4 @@
 The teal.goshawk package renders the UI and calls the respective biomarker visualization
 functions.
 }
+\keyword{internal}
