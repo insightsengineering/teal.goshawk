@@ -23,6 +23,7 @@
 #' @param ... additional parameters to pass to `sliderInput`
 #'
 #' @return Shiny HTML UI
+#' @keywords internal
 #'
 #' @examples
 #' value <- c(20.3, 81.5) # dichotomous slider

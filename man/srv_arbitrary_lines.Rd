@@ -18,3 +18,4 @@ UI function.}
 Server to validate and transform the comma separated values into vectors of values
 to be passed into goshawk functions.
 }
+\keyword{internal}

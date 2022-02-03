@@ -35,3 +35,4 @@ straight lines.
 \description{
 UI module to input either horizontal or vertical lines to a plot via comma separated values
 }
+\keyword{internal}

@@ -18,25 +18,9 @@ reference:
   - title: Modules
     desc: These modules render the UI and call the respective longitudinal visualization function
     contents:
-      - tm_g_gh_boxplot
-      - tm_g_gh_correlationplot
-      - tm_g_gh_density_distribution_plot
-      - tm_g_gh_lineplot
-      - tm_g_gh_scatterplot
-      - tm_g_gh_spaghettiplot
+      - starts_with("tm_g_gh")
 
-  - title: helper functions
+  - title: Helper
+    desc: Utility functions
     contents:
       - maptrt
-      - toggle_slider_ui
-
-  - title: Utility modules
-    contents:
-      - ui_arbitrary_lines
-      - srv_arbitrary_lines
-
-  - title: Package Build Related
-    desc: These files facilitate package build.
-    contents:
-      - teal_goshawk
-
