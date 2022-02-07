@@ -181,11 +181,13 @@ tm_g_gh_lineplot <- function(label,
   checkmate::assert_numeric(plot_height[1], lower = plot_height[2], upper = plot_height[3], .var.name = "plot_height")
   checkmate::assert_numeric(plot_width, len = 3, any.missing = FALSE, null.ok = TRUE, finite = TRUE)
   checkmate::assert_numeric(
-    plot_width[1], lower = plot_width[2], upper = plot_width[3], null.ok = TRUE, .var.name = "plot_width"
+    plot_width[1],
+    lower = plot_width[2], upper = plot_width[3], null.ok = TRUE, .var.name = "plot_width"
   )
   checkmate::assert_numeric(table_font_size, len = 3, any.missing = FALSE, null.ok = TRUE, finite = TRUE)
   checkmate::assert_numeric(
-    table_font_size[1], lower = table_font_size[2], upper = table_font_size[3],
+    table_font_size[1],
+    lower = table_font_size[2], upper = table_font_size[3],
     null.ok = TRUE, .var.name = "table_font_size"
   )
   checkmate::assert_number(count_threshold)
