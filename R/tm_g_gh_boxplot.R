@@ -170,7 +170,7 @@
 #'     ),
 #'     check = TRUE
 #'   ),
-#'   modules = root_modules(
+#'   modules = modules(
 #'     tm_g_gh_boxplot(
 #'       label = "Box Plot",
 #'       dataname = "ADLB",

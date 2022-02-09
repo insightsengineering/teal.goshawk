@@ -165,7 +165,7 @@
 #'     ),
 #'     check = FALSE
 #'   ),
-#'   modules = root_modules(
+#'   modules = modules(
 #'     tm_g_gh_spaghettiplot(
 #'       label = "Spaghetti Plot",
 #'       dataname = "ADLB",
