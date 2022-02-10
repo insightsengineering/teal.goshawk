@@ -336,7 +336,7 @@ g_ui_spaghettiplot <- function(id, ...) {
             ns("alpha"),
             "Line Alpha",
             a$alpha,
-            value_min_max =  c(0.8, 0.0, 1.0), step = 0.1, ticks = FALSE
+            value_min_max = c(0.8, 0.0, 1.0), step = 0.1, ticks = FALSE
           )
         )
       )
