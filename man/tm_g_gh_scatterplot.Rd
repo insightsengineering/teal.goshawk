@@ -160,7 +160,7 @@ app <- init(
     ),
     check = TRUE
   ),
-  modules = root_modules(
+  modules = modules(
     tm_g_gh_scatterplot(
       label = "Scatter Plot",
       dataname = "ADLB",

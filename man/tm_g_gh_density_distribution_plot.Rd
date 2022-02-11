@@ -163,7 +163,7 @@ app <- teal::init(
     ),
     check = TRUE
   ),
-  modules = root_modules(
+  modules = modules(
     tm_g_gh_density_distribution_plot(
       label = "Density Distribution Plot",
       dataname = "ADLB",
