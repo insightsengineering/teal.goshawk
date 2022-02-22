@@ -194,7 +194,7 @@ app <- teal::init(
     ),
     check = TRUE
   ),
-  modules = root_modules(
+  modules = modules(
     tm_g_gh_lineplot(
       label = "Line Plot",
       dataname = "ADLB",

@@ -1,4 +1,4 @@
-# teal.goshawk 0.1.11.9004
+# teal.goshawk 0.1.11.9005
 
 ### Breaking Changes
 * Converted the `hline` parameter of `tm_g_gh_lineplot` to three parameters: `hline_arb`, `hline_arb_color` and `hline_arb_label`.
@@ -6,6 +6,7 @@
 ### Miscellaneous
 * Added basic logging to the modules.
 * Rewrote modules to use `moduleServer` and updated calls to `teal.devel` modules which have also been written to use `moduleServer`.
+* Replaced calls to `teal::root_modules` with `teal::modules` following deprecation of `teal::root_modules`.
 
 # teal.goshawk 0.1.11
 
