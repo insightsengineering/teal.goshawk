@@ -3,12 +3,12 @@ The teal.goshawk package provides `teal` modules of the longitudinal visualizati
 This enables `teal` app developers to easily create applications to explore longitudinal clinical trial data.
 
 ## Modules
-- tm_g_gh_boxplot
-- tm_g_gh_correlationplot
-- tm_g_gh_density_distribution_plot
-- tm_g_gh_lineplot
-- tm_g_gh_scatterplot
-- tm_g_gh_spaghettiplot
+- `tm_g_gh_boxplot`
+- `tm_g_gh_correlationplot`
+- `tm_g_gh_density_distribution_plot`
+- `tm_g_gh_lineplot`
+- `tm_g_gh_scatterplot`
+- `tm_g_gh_spaghettiplot`
 
 ## Installation
 
