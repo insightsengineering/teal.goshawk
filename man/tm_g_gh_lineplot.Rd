@@ -19,7 +19,9 @@ tm_g_gh_lineplot(
   trt_group_level = NULL,
   shape_choices = NULL,
   stat = "mean",
-  hline = NULL,
+  hline_arb = numeric(0),
+  hline_arb_color = "red",
+  hline_arb_label = "Horizontal line",
   color_manual = NULL,
   xtick = waiver(),
   xlabel = xtick,
@@ -69,7 +71,13 @@ can be used to change shape}
 
 \item{stat}{string of statistics}
 
-\item{hline}{numeric value to add horizontal line to plot}
+\item{hline_arb}{numeric vector of at most 2 values identifying intercepts for arbitrary horizontal lines.}
+
+\item{hline_arb_color}{a character vector of at most length of \code{hline_arb}.
+naming the color for the arbitrary horizontal lines.}
+
+\item{hline_arb_label}{a character vector of at most length of \code{hline_arb}.
+naming the label for the arbitrary horizontal lines.}
 
 \item{color_manual}{string vector representing customized colors}
 
@@ -195,7 +203,10 @@ app <- teal::init(
       shape_choices = c("SEX", "RACE"),
       xaxis_var = choices_selected("AVISITCD", "AVISITCD"),
       yaxis_var = choices_selected(c("AVAL", "BASE", "CHG", "PCHG"), "AVAL"),
-      trt_group = choices_selected(c("ARM", "ACTARM"), "ARM")
+      trt_group = choices_selected(c("ARM", "ACTARM"), "ARM"),
+      hline_arb = c(20.5, 19.5),
+      hline_arb_color = c("red", "green"),
+      hline_arb_label = c("A", "B"),
     )
   )
 )

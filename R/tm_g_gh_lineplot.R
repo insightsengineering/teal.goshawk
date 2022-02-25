@@ -24,7 +24,11 @@
 #' can be used to change shape
 #' @param color_manual string vector representing customized colors
 #' @param stat string of statistics
-#' @param hline numeric value to add horizontal line to plot
+#' @param hline_arb numeric vector of at most 2 values identifying intercepts for arbitrary horizontal lines.
+#' @param hline_arb_color a character vector of at most length of \code{hline_arb}.
+#' naming the color for the arbitrary horizontal lines.
+#' @param hline_arb_label a character vector of at most length of \code{hline_arb}.
+#' naming the label for the arbitrary horizontal lines.
 #' @param xtick numeric vector to define the tick values of x-axis when x variable is numeric.
 #' Default value is waive().
 #' @param xlabel vector with same length of xtick to define the label of x-axis tick values.
@@ -137,7 +141,10 @@
 #'       shape_choices = c("SEX", "RACE"),
 #'       xaxis_var = choices_selected("AVISITCD", "AVISITCD"),
 #'       yaxis_var = choices_selected(c("AVAL", "BASE", "CHG", "PCHG"), "AVAL"),
-#'       trt_group = choices_selected(c("ARM", "ACTARM"), "ARM")
+#'       trt_group = choices_selected(c("ARM", "ACTARM"), "ARM"),
+#'       hline_arb = c(20.5, 19.5),
+#'       hline_arb_color = c("red", "green"),
+#'       hline_arb_label = c("A", "B"),
 #'     )
 #'   )
 #' )
@@ -158,7 +165,9 @@ tm_g_gh_lineplot <- function(label,
                              trt_group_level = NULL,
                              shape_choices = NULL,
                              stat = "mean",
-                             hline = NULL,
+                             hline_arb = numeric(0),
+                             hline_arb_color = "red",
+                             hline_arb_label = "Horizontal line",
                              color_manual = NULL,
                              xtick = waiver(),
                              xlabel = xtick,
@@ -191,7 +200,7 @@ tm_g_gh_lineplot <- function(label,
     null.ok = TRUE, .var.name = "table_font_size"
   )
   checkmate::assert_number(count_threshold)
-
+  validate_line_arb_arg(hline_arb, hline_arb_color, hline_arb_label)
   args <- as.list(environment())
 
   module(
@@ -264,6 +273,7 @@ ui_lineplot <- function(id, ...) {
         ),
       ),
       templ_ui_constraint(ns), # required by constr_anl_chunks
+      ui_arbitrary_lines(id = ns("hline_arb"), a$hline_arb, a$hline_arb_label, a$hline_arb_color),
       panel_group(
         panel_item(
           title = "Plot Aesthetic Settings",
@@ -275,7 +285,6 @@ ui_lineplot <- function(id, ...) {
             value = c(-1000000, 1000000)
           ),
           checkboxInput(ns("rotate_xlab"), "Rotate X-axis Label", a$rotate_xlab),
-          numericInput(ns("hline"), "Add a horizontal line:", a$hline),
           numericInput(ns("count_threshold"), "Contributing Observations Threshold:", a$count_threshold)
         ),
         panel_item(
@@ -628,6 +637,8 @@ srv_lineplot <- function(id,
       )
     })
 
+    horizontal_line <- srv_arbitrary_lines("hline_arb")
+
     plot_r <- reactive({
       ac <- anl_chunks()
       private_chunks <- ac$chunks$clone(deep = TRUE)
@@ -639,7 +650,7 @@ srv_lineplot <- function(id,
       rotate_xlab <- input$rotate_xlab
       count_threshold <- `if`(is.na(as.numeric(input$count_threshold)), 0, as.numeric(input$count_threshold))
       table_font_size <- input$table_font_size
-      hline <- if (is.na(input$hline)) NULL else as.numeric(input$hline)
+
       median <- ifelse(input$stat == "median", TRUE, FALSE)
       relative_height <- input$relative_height
       validate(need(input$trt_group, "Please select a treatment variable"))
@@ -681,6 +692,11 @@ srv_lineplot <- function(id,
           })
         )
       }
+
+      hline_arb <- horizontal_line()$line_arb
+      hline_arb_label <- horizontal_line()$line_arb_label
+      hline_arb_color <- horizontal_line()$line_arb_color
+
       chunks_push(
         chunks = private_chunks,
         id = "lineplot",
@@ -701,7 +717,9 @@ srv_lineplot <- function(id,
             color_manual = .(color_selected),
             line_type = .(type_selected),
             median = .(median),
-            hline = .(hline),
+            hline_arb = .(hline_arb),
+            hline_arb_label = .(hline_arb_label),
+            hline_arb_color = .(hline_arb_color),
             xtick = .(if (!is(xtick, "waiver") && !is.null(xtick)) quote(xtick) else xtick),
             xlabel = .(if (!is(xtick, "waiver") && !is.null(xtick)) quote(xlabel) else xlabel),
             rotate_xlab = .(rotate_xlab),
