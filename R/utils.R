@@ -155,7 +155,7 @@ keep_range_slider_updated <- function(
       min = minmax[[1]],
       max = minmax[[2]],
       value = minmax,
-      step = step
+      step <- step
     ))
   })
 }
