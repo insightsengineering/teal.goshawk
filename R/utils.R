@@ -148,7 +148,7 @@ keep_range_slider_updated <- function(
 
     if (isTRUE(is_density)) {
       minmax <- c(0, round(max(density(na.omit(ANL[[varname]]))$y) * 1.5, 5))
-      step =  round(max(density(na.omit(ANL[[varname]]))$y) / 100, 5)
+      step <-  round(max(density(na.omit(ANL[[varname]]))$y) / 100, 5)
     }
 
     isolate(update_slider_fcn(
