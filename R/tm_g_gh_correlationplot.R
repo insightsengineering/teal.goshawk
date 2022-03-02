@@ -644,7 +644,8 @@ srv_g_correlationplot <- function(id,
         chunks = private_chunks,
         id = "plot_data_transpose",
         expression = bquote({
-          ANL_TRANSPOSED1 <- ANL %>% # nolint
+          ANL_TRANSPOSED1 <- ANL %>%
+            # nolint
             dplyr::select(
               .data[["USUBJID"]],
               .data[[.(trt_group)]],
@@ -673,7 +674,8 @@ srv_g_correlationplot <- function(id,
             tidyr::pivot_wider(names_from = "ANL.PARAM", values_from = "ANLVALS") %>%
             dplyr::filter(!is.na(.data[[.(xvar())]]) & !is.na(.data[[.(yvar())]]))
 
-          ANL_TRANSPOSED2 <- ANL %>% # nolint
+          ANL_TRANSPOSED2 <- ANL %>%
+            # nolint
             dplyr::select(
               .data[["USUBJID"]],
               .data[[.(trt_group)]],
