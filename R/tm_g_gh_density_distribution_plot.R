@@ -244,6 +244,13 @@ ui_g_density_distribution_plot <- function(id, ...) {
             max = 1000000,
             value = c(-1000000, 1000000)
           ),
+          toggle_slider_ui(
+            ns("yrange_scale"),
+            label = "Y-Axis Range Zoom",
+            min = -1000000,
+            max = 1000000,
+            value = c(-1000000, 1000000)
+          ),
           numericInput(ns("facet_ncol"), "Number of Plots Per Row:", a$facet_ncol, min = 1),
           checkboxInput(ns("comb_line"), "Display Combined line", a$comb_line),
           checkboxInput(ns("rug_plot"), "Include rug plot", value = FALSE),
@@ -287,7 +294,17 @@ srv_g_density_distribution_plot <- function(id, # nolint
 
     # update sliders for axes taking constraints into account
     xrange_slider <- toggle_slider_server("xrange_scale")
+    yrange_slider <- toggle_slider_server("yrange_scale")
     keep_range_slider_updated(session, input, xrange_slider$update_state, "xaxis_var", "xaxis_param", anl_chunks)
+    keep_range_slider_updated(
+      session,
+      input,
+      yrange_slider$update_state,
+      "xaxis_var",
+      "xaxis_param",
+      anl_chunks,
+      is_density = TRUE
+    )
     keep_data_const_opts_updated(session, input, anl_chunks, "xaxis_param")
 
     horizontal_line <- srv_arbitrary_lines("hline_arb")
@@ -299,8 +316,8 @@ srv_g_density_distribution_plot <- function(id, # nolint
       # nolint start
       param <- input$xaxis_param
       xaxis_var <- input$xaxis_var
-      xmin_scale <- xrange_slider$state()$value[[1]]
-      xmax_scale <- xrange_slider$state()$value[[2]]
+      xlim <- xrange_slider$state()$value
+      ylim <- yrange_slider$state()$value
       font_size <- input$font_size
       line_size <- input$line_size
       hline_arb <- horizontal_line()$line_arb
@@ -328,8 +345,8 @@ srv_g_density_distribution_plot <- function(id, # nolint
             param = .(param),
             xaxis_var = .(xaxis_var),
             trt_group = .(trt_group),
-            xmin = .(xmin_scale),
-            xmax = .(xmax_scale),
+            xlim = .(xlim),
+            ylim = .(ylim),
             color_manual = .(color_manual),
             color_comb = .(color_comb),
             font_size = .(font_size),

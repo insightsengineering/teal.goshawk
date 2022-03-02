@@ -764,10 +764,8 @@ srv_g_correlationplot <- function(id,
       xaxis_var <- input$xaxis_var
       yaxis_param <- input$yaxis_param
       yaxis_var <- input$yaxis_var
-      xmin_scale <- xrange_slider$state()$value[[1]]
-      xmax_scale <- xrange_slider$state()$value[[2]]
-      ymin_scale <- yrange_slider$state()$value[[1]]
-      ymax_scale <- yrange_slider$state()$value[[2]]
+      xlim <- xrange_slider$state()$value
+      ylim <- yrange_slider$state()$value
       font_size <- input$font_size
       dot_size <- input$dot_size
       reg_text_size <- input$reg_text_size
@@ -819,10 +817,8 @@ srv_g_correlationplot <- function(id,
             yaxis_var = .(yaxis_var),
             yvar = .(yvar()),
             trt_group = .(trt_group),
-            xmin = .(xmin_scale),
-            xmax = .(xmax_scale),
-            ymin = .(ymin_scale),
-            ymax = .(ymax_scale),
+            xlim = .(xlim),
+            ylim = .(ylim),
             title_text = .(title_text),
             xaxis_lab = .(xaxis_lab),
             yaxis_lab = .(yaxis_lab),

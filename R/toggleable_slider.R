@@ -77,7 +77,8 @@ toggle_slider_ui <- function(id,
                              slider_initially = TRUE,
                              step_slider = NULL,
                              step_numeric = step_slider,
-                             width = NULL, ...) {
+                             width = NULL,
+                             ...) {
   checkmate::assert_number(min)
   checkmate::assert_number(max)
   checkmate::assert_flag(slider_initially)

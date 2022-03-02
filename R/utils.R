@@ -119,7 +119,13 @@ templ_ui_constraint <- function(ns, label = "Data Constraint") {
   )
 }
 
-keep_range_slider_updated <- function(session, input, update_slider_fcn, id_var, id_param_var, reactive_ANL) { # nolint
+keep_range_slider_updated <- function(session,
+                                      input,
+                                      update_slider_fcn,
+                                      id_var,
+                                      id_param_var,
+                                      reactive_ANL, # nolint
+                                      is_density = FALSE) {
   stopifnot(is.function(update_slider_fcn))
 
   observe({
@@ -137,11 +143,18 @@ keep_range_slider_updated <- function(session, input, update_slider_fcn, id_var,
 
     var <- na.omit(ANL[[varname]])
     minmax <- if (length(var)) c(floor(min(var)), ceiling(max(var))) else c(0, 0)
+    step <- NULL
+
+    if (isTRUE(is_density)) {
+      minmax <- c(0, round(max(density(na.omit(ANL[[varname]]))$y) * 1.5, 5))
+      step <- round(max(density(na.omit(ANL[[varname]]))$y) / 100, 5)
+    }
 
     isolate(update_slider_fcn(
       min = minmax[[1]],
       max = minmax[[2]],
-      value = minmax
+      value = minmax,
+      step = step
     ))
   })
 }
