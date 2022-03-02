@@ -125,8 +125,8 @@ keep_range_slider_updated <- function(
   update_slider_fcn,
   id_var,
   id_param_var,
-  reactive_ANL,
-  is_density = FALSE) { # nolint
+  reactive_ANL, # nolint
+  is_density = FALSE) {
   stopifnot(is.function(update_slider_fcn))
 
   observe({
