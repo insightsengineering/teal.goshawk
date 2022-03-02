@@ -644,8 +644,7 @@ srv_g_correlationplot <- function(id,
         chunks = private_chunks,
         id = "plot_data_transpose",
         expression = bquote({
-          ANL_TRANSPOSED1 <- ANL %>%
-            # nolint
+          ANL_TRANSPOSED1 <- ANL %>% # nolint
             dplyr::select(
               .data[["USUBJID"]],
               .data[[.(trt_group)]],
@@ -674,8 +673,7 @@ srv_g_correlationplot <- function(id,
             tidyr::pivot_wider(names_from = "ANL.PARAM", values_from = "ANLVALS") %>%
             dplyr::filter(!is.na(.data[[.(xvar())]]) & !is.na(.data[[.(yvar())]]))
 
-          ANL_TRANSPOSED2 <- ANL %>%
-            # nolint
+          ANL_TRANSPOSED2 <- ANL %>% # nolint
             dplyr::select(
               .data[["USUBJID"]],
               .data[[.(trt_group)]],
@@ -766,10 +764,8 @@ srv_g_correlationplot <- function(id,
       xaxis_var <- input$xaxis_var
       yaxis_param <- input$yaxis_param
       yaxis_var <- input$yaxis_var
-      xmin_scale <- xrange_slider$state()$value[[1]]
-      xmax_scale <- xrange_slider$state()$value[[2]]
-      ymin_scale <- yrange_slider$state()$value[[1]]
-      ymax_scale <- yrange_slider$state()$value[[2]]
+      xlim <- xrange_slider$state()$value
+      ylim <- yrange_slider$state()$value
       font_size <- input$font_size
       dot_size <- input$dot_size
       reg_text_size <- input$reg_text_size
@@ -821,8 +817,8 @@ srv_g_correlationplot <- function(id,
             yaxis_var = .(yaxis_var),
             yvar = .(yvar()),
             trt_group = .(trt_group),
-            xlim = .(c(xmin_scale, xmax_scale)),
-            ylim = .(c(ymin_scale, ymax_scale)),
+            xlim = .(xlim),
+            ylim = .(ylim),
             title_text = .(title_text),
             xaxis_lab = .(xaxis_lab),
             yaxis_lab = .(yaxis_lab),

@@ -644,7 +644,7 @@ srv_lineplot <- function(id,
       private_chunks <- ac$chunks$clone(deep = TRUE)
 
       # nolint start
-      yrange_scale <- yrange_slider$state()$value
+      ylim <- yrange_slider$state()$value
       plot_font_size <- input$plot_font_size
       dodge <- input$dodge
       rotate_xlab <- input$rotate_xlab
@@ -707,7 +707,7 @@ srv_lineplot <- function(id,
             biomarker_var_label = .(param_var_label),
             biomarker = .(param),
             value_var = .(yaxis),
-            ylim = .(yrange_scale),
+            ylim = .(ylim),
             trt_group = .(trt_group),
             trt_group_level = .(trt_group_level),
             shape = .(shape),

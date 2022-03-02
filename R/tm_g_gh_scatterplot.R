@@ -291,8 +291,8 @@ srv_g_scatterplot <- function(id,
       ac <- anl_chunks()
       private_chunks <- ac$chunks$clone(deep = TRUE)
       # nolint start
-      xrange_scale <- xrange_slider$state()$value
-      yrange_scale <- yrange_slider$state()$value
+      xlim <- xrange_slider$state()$value
+      ylim <- yrange_slider$state()$value
       facet_ncol <- input$facet_ncol
       validate(need(
         is.na(facet_ncol) || (as.numeric(facet_ncol) > 0 && as.numeric(facet_ncol) %% 1 == 0),
@@ -329,8 +329,8 @@ srv_g_scatterplot <- function(id,
             xaxis_var = .(xaxis),
             yaxis_var = .(yaxis),
             trt_group = .(trt_group),
-            xlim = .(xrange_scale),
-            ylim = .(yrange_scale),
+            xlim = .(xlim),
+            ylim = .(ylim),
             color_manual = .(color_manual),
             shape_manual = .(shape_manual),
             facet_ncol = .(facet_ncol),
