@@ -3,6 +3,9 @@
 ### Breaking Changes
 * Converted the `hline` parameter of `tm_g_gh_lineplot` to three parameters: `hline_arb`, `hline_arb_color` and `hline_arb_label`.
 
+### Enhancements
+* Added checkbox UI to replace the y and / or x axes with new break points derived from horizontal and or vertical lines.
+
 ### Miscellaneous
 * Added basic logging to the modules.
 * Rewrote modules to use `moduleServer` and updated calls to `teal.devel` modules which have also been written to use `moduleServer`.

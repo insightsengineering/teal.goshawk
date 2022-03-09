@@ -412,6 +412,7 @@ srv_g_boxplot <- function(id,
       hline_arb <- horizontal_line()$line_arb
       hline_arb_label <- horizontal_line()$line_arb_label
       hline_arb_color <- horizontal_line()$line_arb_color
+      replace_y_axis <- horizontal_line()$replace_axis
 
       hline_vars <- input$hline_vars
       trt_group <- input$trt_group
@@ -473,6 +474,7 @@ srv_g_boxplot <- function(id,
             alpha = .(alpha),
             dot_size = .(dot_size),
             font_size = .(font_size),
+            replace_y_axis = .(replace_y_axis),
             unit = .("AVALU")
           )
         })

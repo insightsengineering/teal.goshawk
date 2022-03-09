@@ -412,7 +412,8 @@ ui_arbitrary_lines <- function(id, line_arb, line_arb_label, line_arb_color, tit
     tags$b(title),
     textInput(ns("line_arb"), label = "Value:", value = paste(line_arb, collapse = ", ")),
     textInput(ns("line_arb_label"), label = "Label:", value = paste(line_arb_label, collapse = ", ")),
-    textInput(ns("line_arb_color"), label = "Color:", value = paste(line_arb_color, collapse = ", "))
+    textInput(ns("line_arb_color"), label = "Color:", value = paste(line_arb_color, collapse = ", ")),
+    checkboxInput(ns("replace_axis"), label = "Replace axis break points", value = FALSE)
   )
 }
 #' Server module to arbitrary lines
@@ -460,7 +461,11 @@ srv_arbitrary_lines <- function(id) {
           )
         }
       }
-      list(line_arb = line_arb, line_arb_label = line_arb_label, line_arb_color = line_arb_color)
+      list(
+        line_arb = line_arb,
+        line_arb_label = line_arb_label,
+        line_arb_color = line_arb_color,
+        replace_axis = input$replace_axis)
     })
   })
 }

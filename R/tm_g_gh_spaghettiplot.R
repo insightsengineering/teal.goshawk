@@ -394,6 +394,7 @@ srv_g_spaghettiplot <- function(id,
       hline_arb <- horizontal_line()$line_arb
       hline_arb_label <- horizontal_line()$line_arb_label
       hline_arb_color <- horizontal_line()$line_arb_color
+      replace_y_axis <- horizontal_line()$replace_axis
       group_stats <- input$group_stats
       font_size <- input$font_size
       alpha <- input$alpha
@@ -438,7 +439,8 @@ srv_g_spaghettiplot <- function(id,
             group_stats = .(group_stats),
             hline_vars = .(hline_vars),
             hline_vars_colors = .(hline_vars_colors[seq_along(hline_vars)]),
-            hline_vars_labels = .(hline_vars_labels[seq_along(hline_vars)])
+            hline_vars_labels = .(hline_vars_labels[seq_along(hline_vars)]),
+            replace_y_axis = .(replace_y_axis)
           )
           print(p)
         })

@@ -696,6 +696,7 @@ srv_lineplot <- function(id,
       hline_arb <- horizontal_line()$line_arb
       hline_arb_label <- horizontal_line()$line_arb_label
       hline_arb_color <- horizontal_line()$line_arb_color
+      replace_y_axis <- horizontal_line()$replace_axis
 
       chunks_push(
         chunks = private_chunks,
@@ -728,7 +729,8 @@ srv_lineplot <- function(id,
             dodge = .(dodge),
             count_threshold = .(count_threshold),
             table_font_size = .(table_font_size),
-            display_center_tbl = .(include_stat)
+            display_center_tbl = .(include_stat),
+            replace_y_axis = .(replace_y_axis)
           )
           print(p)
         })

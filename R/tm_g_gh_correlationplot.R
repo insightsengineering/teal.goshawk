@@ -772,6 +772,7 @@ srv_g_correlationplot <- function(id,
       hline_arb <- horizontal_line()$line_arb
       hline_arb_label <- horizontal_line()$line_arb_label
       hline_arb_color <- horizontal_line()$line_arb_color
+      replace_y_axis <- horizontal_line()$replace_axis
       hline_vars <- if (length(input$hline_vars) == 0) {
         NULL
       } else {
@@ -780,6 +781,7 @@ srv_g_correlationplot <- function(id,
       vline_arb <- vertical_line()$line_arb
       vline_arb_label <- vertical_line()$line_arb_label
       vline_arb_color <- vertical_line()$line_arb_color
+      replace_x_axis <- vertical_line()$replace_axis
       vline_vars <- if (length(input$vline_vars) == 0) {
         NULL
       } else {
@@ -845,7 +847,9 @@ srv_g_correlationplot <- function(id,
             vline_arb_color = .(vline_arb_color),
             vline_vars = .(vline_vars),
             vline_vars_colors = .(vline_vars_colors[seq_along(vline_vars)]),
-            vline_vars_labels = .(paste(vline_vars_labels[seq_along(vline_vars)], "-", xaxis_param))
+            vline_vars_labels = .(paste(vline_vars_labels[seq_along(vline_vars)], "-", xaxis_param)),
+            replace_x_axis = .(replace_x_axis),
+            replace_y_axis = .(replace_y_axis)
           )
           print(p)
         })

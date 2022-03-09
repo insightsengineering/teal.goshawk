@@ -323,6 +323,7 @@ srv_g_density_distribution_plot <- function(id, # nolint
       hline_arb <- horizontal_line()$line_arb
       hline_arb_label <- horizontal_line()$line_arb_label
       hline_arb_color <- horizontal_line()$line_arb_color
+      replace_y_axis <- horizontal_line()$replace_axis
       facet_ncol <- input$facet_ncol
       validate(need(
         is.na(facet_ncol) || (as.numeric(facet_ncol) > 0 && as.numeric(facet_ncol) %% 1 == 0),
@@ -356,7 +357,8 @@ srv_g_density_distribution_plot <- function(id, # nolint
             hline_arb = .(hline_arb),
             hline_arb_label = .(hline_arb_label),
             hline_arb_color = .(hline_arb_color),
-            rug_plot = .(rug_plot)
+            rug_plot = .(rug_plot),
+            replace_y_axis = .(replace_y_axis)
           )
         })
       )
