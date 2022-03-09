@@ -465,7 +465,8 @@ srv_arbitrary_lines <- function(id) {
         line_arb = line_arb,
         line_arb_label = line_arb_label,
         line_arb_color = line_arb_color,
-        replace_axis = input$replace_axis)
+        replace_axis = input$replace_axis
+      )
     })
   })
 }
