@@ -97,12 +97,11 @@ Default value is waive().}
 
 \item{dodge}{controls the position dodge of error bar}
 
-\item{pre_output}{optional, \code{shiny.tag} with text placed before the
-output to put the output into context. For example a title.}
+\item{pre_output}{(\code{shiny.tag}, optional)\cr
+with text placed before the output to put the output into context. For example a title.}
 
-\item{post_output}{optional, \code{shiny.tag} with text placed after the
-output to put the output into context. For example the
-\code{\link[shiny]{helpText}} elements are useful.}
+\item{post_output}{(\code{shiny.tag}, optional) with text placed after the output to put the output
+into context. For example the \code{\link[shiny:helpText]{shiny::helpText()}} elements are useful.}
 
 \item{count_threshold}{minimum count of observations (as listed in the output table) to plot
 nodes on the graph}

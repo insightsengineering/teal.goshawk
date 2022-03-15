@@ -21,7 +21,7 @@
 #' @param comb_line display combined treatment line toggle.
 #' @param rotate_xlab 45 degree rotation of x-axis values.
 #'
-#' @inheritParams teal.devel::standard_layout
+#' @inheritParams teal.widgets::standard_layout
 #' @inheritParams tm_g_gh_scatterplot
 #'
 #'
@@ -206,10 +206,10 @@ ui_g_density_distribution_plot <- function(id, ...) {
   ns <- NS(id)
   a <- list(...)
 
-  standard_layout(
+  teal.widgets::standard_layout(
     output = div(
       fluidRow(
-        plot_with_settings_ui(id = ns("plot"))
+        teal.widgets::plot_with_settings_ui(id = ns("plot"))
       ),
       fluidRow(column(
         width = 12,
@@ -220,7 +220,7 @@ ui_g_density_distribution_plot <- function(id, ...) {
     ),
     encoding = div(
       templ_ui_dataname(a$dataname),
-      optionalSelectInput(
+      teal.widgets::optionalSelectInput(
         ns("trt_group"),
         label = "Select Treatment Variable",
         choices = a$trt_group$choices,
@@ -234,8 +234,8 @@ ui_g_density_distribution_plot <- function(id, ...) {
       ),
       templ_ui_constraint(ns, label = "Data Constraint"),
       ui_arbitrary_lines(id = ns("hline_arb"), a$hline_arb, a$hline_arb_label, a$hline_arb_color),
-      panel_group(
-        panel_item(
+      teal.widgets::panel_group(
+        teal.widgets::panel_item(
           title = "Plot Aesthetic Settings",
           toggle_slider_ui(
             ns("xrange_scale"),
@@ -256,10 +256,10 @@ ui_g_density_distribution_plot <- function(id, ...) {
           checkboxInput(ns("rug_plot"), "Include rug plot", value = FALSE),
           checkboxInput(ns("rotate_xlab"), "Rotate X-axis Label", a$rotate_xlab)
         ),
-        panel_item(
+        teal.widgets::panel_item(
           title = "Plot settings",
-          optionalSliderInputValMinMax(ns("font_size"), "Font Size", a$font_size, ticks = FALSE),
-          optionalSliderInputValMinMax(
+          teal.widgets::optionalSliderInputValMinMax(ns("font_size"), "Font Size", a$font_size, ticks = FALSE),
+          teal.widgets::optionalSliderInputValMinMax(
             ns("line_size"),
             "Line Size",
             value_min_max = a$line_size,
@@ -286,7 +286,7 @@ srv_g_density_distribution_plot <- function(id, # nolint
                                             plot_height,
                                             plot_width) {
   moduleServer(id, function(input, output, session) {
-    init_chunks()
+    teal.code::init_chunks()
     anl_chunks <- constr_anl_chunks(
       session, input, datasets, dataname,
       param_id = "xaxis_param", param_var = param_var, trt_group = input$trt_group, min_rows = 2

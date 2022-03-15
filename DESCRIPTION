@@ -35,7 +35,9 @@ Imports:
     methods,
     shinyjs,
     stats,
-    teal.devel (>= 0.2.13),
+    teal.code,
+    teal.transform,
+    teal.widgets,
     tidyr (>= 1.0.0),
     utils
 Suggests:

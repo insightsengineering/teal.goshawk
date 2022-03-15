@@ -2,7 +2,7 @@
 #'
 #' @description Scatter Plot Teal Module For Biomarker Analysis
 #'
-#' @inheritParams teal.devel::standard_layout
+#' @inheritParams teal.widgets::standard_layout
 #' @param label menu item label of the module in the teal app.
 #' @param dataname analysis data passed to the data argument of teal init. E.g. ADaM structured laboratory data frame
 #'   \code{ADLB}.
@@ -334,11 +334,11 @@ ui_g_correlationplot <- function(id, ...) {
   ns <- NS(id)
   a <- list(...)
 
-  standard_layout(
+  teal.widgets::standard_layout(
     output = templ_ui_output_datatable(ns),
     encoding = div(
       templ_ui_dataname(a$dataname),
-      optionalSelectInput(
+      teal.widgets::optionalSelectInput(
         ns("trt_group"),
         label = "Select Treatment Variable",
         choices = a$trt_group$choices,
@@ -354,7 +354,7 @@ ui_g_correlationplot <- function(id, ...) {
       ),
       templ_ui_constraint(ns, "X-Axis Data Constraint"), # required by constr_anl_chunks
       if (length(a$hline_vars) > 0) {
-        optionalSelectInput(
+        teal.widgets::optionalSelectInput(
           ns("hline_vars"),
           label = "Add Horizontal Range Line(s):",
           choices = a$hline_vars,
@@ -364,7 +364,7 @@ ui_g_correlationplot <- function(id, ...) {
       },
       ui_arbitrary_lines(id = ns("hline_arb"), a$hline_arb, a$hline_arb_label, a$hline_arb_color),
       if (length(a$vline_vars) > 0) {
-        optionalSelectInput(
+        teal.widgets::optionalSelectInput(
           ns("vline_vars"),
           label = "Add Vertical Range Line(s):",
           choices = a$vline_vars,
@@ -379,8 +379,8 @@ ui_g_correlationplot <- function(id, ...) {
         a$vline_arb_color,
         title = "Arbitrary Vertical Lines:"
       ),
-      panel_group(
-        panel_item(
+      teal.widgets::panel_group(
+        teal.widgets::panel_item(
           title = "Plot Aesthetic Settings",
           toggle_slider_ui(
             ns("xrange_scale"),
@@ -399,11 +399,11 @@ ui_g_correlationplot <- function(id, ...) {
           checkboxInput(ns("loq_legend"), "Display LoQ Legend", a$loq_legend),
           checkboxInput(ns("rotate_xlab"), "Rotate X-axis Label", a$rotate_xlab)
         ),
-        panel_item(
+        teal.widgets::panel_item(
           title = "Plot settings",
-          optionalSliderInputValMinMax(ns("font_size"), "Font Size", a$font_size, ticks = FALSE),
-          optionalSliderInputValMinMax(ns("dot_size"), "Dot Size", a$dot_size, ticks = FALSE),
-          optionalSliderInputValMinMax(ns("reg_text_size"), "Regression Annotations Size", a$reg_text_size,
+          teal.widgets::optionalSliderInputValMinMax(ns("font_size"), "Font Size", a$font_size, ticks = FALSE),
+          teal.widgets::optionalSliderInputValMinMax(ns("dot_size"), "Dot Size", a$dot_size, ticks = FALSE),
+          teal.widgets::optionalSliderInputValMinMax(ns("reg_text_size"), "Regression Annotations Size", a$reg_text_size,
             ticks = FALSE
           )
         )
@@ -431,7 +431,7 @@ srv_g_correlationplot <- function(id,
                                   vline_vars_colors,
                                   vline_vars_labels) {
   moduleServer(id, function(input, output, session) {
-    init_chunks()
+    teal.code::init_chunks()
     # filter selected biomarkers
     anl_param <- reactive({
       validate(need(input$trt_group, "Please select a Treatment Variable"))

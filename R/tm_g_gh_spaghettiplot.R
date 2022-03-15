@@ -43,7 +43,7 @@
 #' @param hline_vars_colors a character vector naming the colors for the additional horizontal lines.
 #' @param hline_vars_labels a character vector naming the labels for the additional horizontal lines that will appear
 #'  in the legend.
-#' @inheritParams teal.devel::standard_layout
+#' @inheritParams teal.widgets::standard_layout
 #'
 #' @import goshawk
 #'
@@ -274,11 +274,11 @@ g_ui_spaghettiplot <- function(id, ...) {
   ns <- NS(id)
   a <- list(...)
 
-  standard_layout(
+  teal.widgets::standard_layout(
     output = templ_ui_output_datatable(ns),
     encoding = div(
       templ_ui_dataname(a$dataname),
-      optionalSelectInput(
+      teal.widgets::optionalSelectInput(
         ns("trt_group"),
         label = "Select Treatment Variable",
         choices = a$trt_group$choices,
@@ -300,7 +300,7 @@ g_ui_spaghettiplot <- function(id, ...) {
       ),
       templ_ui_constraint(ns), # required by constr_anl_chunks
       if (length(a$hline_vars) > 0) {
-        optionalSelectInput(
+        teal.widgets::optionalSelectInput(
           ns("hline_vars"),
           label = "Add Horizontal Range Line(s):",
           choices = a$hline_vars,
@@ -309,8 +309,8 @@ g_ui_spaghettiplot <- function(id, ...) {
         )
       },
       ui_arbitrary_lines(id = ns("hline_arb"), a$hline_arb, a$hline_arb_label, a$hline_arb_color),
-      panel_group(
-        panel_item(
+      teal.widgets::panel_group(
+        teal.widgets::panel_item(
           title = "Plot Aesthetic Settings",
           div(
             style = "padding: 0px;",
@@ -331,8 +331,8 @@ g_ui_spaghettiplot <- function(id, ...) {
             )
           ),
           checkboxInput(ns("rotate_xlab"), "Rotate X-Axis Label", a$rotate_xlab),
-          optionalSliderInputValMinMax(ns("font_size"), "Font Size", a$font_size, ticks = FALSE),
-          optionalSliderInputValMinMax(
+          teal.widgets::optionalSliderInputValMinMax(ns("font_size"), "Font Size", a$font_size, ticks = FALSE),
+          teal.widgets::optionalSliderInputValMinMax(
             ns("alpha"),
             "Line Alpha",
             a$alpha,
@@ -367,7 +367,7 @@ srv_g_spaghettiplot <- function(id,
                                 hline_vars_colors,
                                 hline_vars_labels) {
   moduleServer(id, function(input, output, session) {
-    init_chunks()
+    teal.code::init_chunks()
     # reused in all modules
     anl_chunks <- constr_anl_chunks(
       session, input, datasets, dataname,

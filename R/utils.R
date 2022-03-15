@@ -1,6 +1,6 @@
 templ_ui_output_datatable <- function(ns) {
   div(
-    plot_with_settings_ui(id = ns("plot")),
+    teal.widgets::plot_with_settings_ui(id = ns("plot")),
     br(), hr(),
     h4("Selected Data Points"),
     DT::dataTableOutput(ns("brush_data"))
@@ -37,7 +37,7 @@ templ_ui_params_vars <- function(ns,
   }
   tagList(
     if (!is.null(xparam_choices)) {
-      optionalSelectInput(
+      teal.widgets::optionalSelectInput(
         ns("xaxis_param"),
         `if`(is.null(xparam_label), "Select an X-Axis Biomarker", xparam_label),
         xparam_choices,
@@ -46,7 +46,7 @@ templ_ui_params_vars <- function(ns,
       )
     },
     if (!is.null(xchoices)) {
-      optionalSelectInput(
+      teal.widgets::optionalSelectInput(
         ns("xaxis_var"),
         `if`(is.null(xvar_label), "Select an X-Axis Variable", xvar_label),
         xchoices, xselected,
@@ -54,7 +54,7 @@ templ_ui_params_vars <- function(ns,
       )
     },
     if (!is.null(yparam_choices)) {
-      optionalSelectInput(
+      teal.widgets::optionalSelectInput(
         ns("yaxis_param"),
         `if`(is.null(yparam_label), "Select an Y-Axis Biomarker", yparam_label),
         yparam_choices,
@@ -63,7 +63,7 @@ templ_ui_params_vars <- function(ns,
       )
     },
     if (!is.null(ychoices)) {
-      optionalSelectInput(
+      teal.widgets::optionalSelectInput(
         ns("yaxis_var"),
         `if`(is.null(yvar_label), "Select a Y-Axis Variable", yvar_label),
         ychoices, yselected,
