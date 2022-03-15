@@ -247,7 +247,10 @@ ui_g_scatterplot <- function(id, ...) {
           title = "Plot settings",
           teal.widgets::optionalSliderInputValMinMax(ns("font_size"), "Font Size", a$font_size, ticks = FALSE),
           teal.widgets::optionalSliderInputValMinMax(ns("dot_size"), "Dot Size", a$dot_size, ticks = FALSE),
-          teal.widgets::optionalSliderInputValMinMax(ns("reg_text_size"), "Regression Annotations Size", a$reg_text_size,
+          teal.widgets::optionalSliderInputValMinMax(
+            ns("reg_text_size"),
+            "Regression Annotations Size",
+            a$reg_text_size,
             ticks = FALSE
           )
         )

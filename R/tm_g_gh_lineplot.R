@@ -304,7 +304,12 @@ ui_lineplot <- function(id, ...) {
         ),
         teal.widgets::panel_item(
           title = "Table settings",
-          teal.widgets::optionalSliderInputValMinMax(ns("table_font_size"), "Table Font Size", a$table_font_size, ticks = FALSE)
+          teal.widgets::optionalSliderInputValMinMax(
+            ns("table_font_size"),
+            "Table Font Size",
+            a$table_font_size,
+            ticks = FALSE
+          )
         )
       )
     ),
