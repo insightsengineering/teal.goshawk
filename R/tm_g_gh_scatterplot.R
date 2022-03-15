@@ -317,7 +317,7 @@ srv_g_scatterplot <- function(id,
       yaxis <- input$yaxis_var
 
       # nolint end
-      chunks_push(
+      teal.code::chunks_push(
         chunks = private_chunks,
         id = "scatterplot",
         expression = bquote({
@@ -348,16 +348,16 @@ srv_g_scatterplot <- function(id,
         })
       )
 
-      chunks_safe_eval(private_chunks)
+      teal.code::chunks_safe_eval(private_chunks)
 
       # promote chunks to be visible in the sessionData by other modules
-      chunks_reset()
-      chunks_push_chunks(private_chunks)
+      teal.code::chunks_reset()
+      teal.code::chunks_push_chunks(private_chunks)
 
-      chunks_get_var("p")
+      teal.code::chunks_get_var("p")
     })
 
-    plot_data <- plot_with_settings_srv(
+    plot_data <- teal.widgets::plot_with_settings_srv(
       id = "plot",
       plot_r = plot_r,
       height = plot_height,

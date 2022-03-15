@@ -529,7 +529,7 @@ srv_g_boxplot <- function(id,
       teal.code::chunks_get_var("p", main_code())
     })
 
-    boxplot_data <- plot_with_settings_srv(
+    boxplot_data <- teal.widgets::plot_with_settings_srv(
       id = "boxplot",
       plot_r = plot_r,
       height = plot_height,

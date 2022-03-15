@@ -186,10 +186,10 @@ constr_anl_chunks <- function(session, input, datasets, dataname, param_id, para
 
     # analysis
     private_chunks <- chunks$new()
-    chunks_reset(as.environment(setNames(list(ANL_FILTERED), dataset_var)), private_chunks)
+    teal.code::chunks_reset(as.environment(setNames(list(ANL_FILTERED), dataset_var)), private_chunks)
 
     # filter biomarker
-    chunks_push(
+    teal.code::chunks_push(
       chunks = private_chunks,
       id = "filter_biomarker",
       expression = bquote({
@@ -198,7 +198,7 @@ constr_anl_chunks <- function(session, input, datasets, dataname, param_id, para
       })
     )
 
-    ANL <- chunks_safe_eval(private_chunks) # nolint
+    ANL <- teal.code::chunks_safe_eval(private_chunks) # nolint
     validate_has_data(ANL, min_rows)
 
     return(list(ANL = ANL, chunks = private_chunks))
@@ -301,7 +301,7 @@ create_anl_constraint_reactive <- function(anl_param, input, param_id, min_rows)
 
     # filter constraint
     if (constraint_var != "NONE") {
-      chunks_push(
+      teal.code::chunks_push(
         chunks = private_chunks,
         id = "filter_constraint",
         expression = bquote({
@@ -329,12 +329,12 @@ create_anl_constraint_reactive <- function(anl_param, input, param_id, min_rows)
         })
       )
 
-      ANL <- chunks_safe_eval(private_chunks) # nolint
+      ANL <- teal.code::chunks_safe_eval(private_chunks) # nolint
       validate_has_data(ANL, min_rows)
     }
 
-    chunks_push_new_line(private_chunks)
-    chunks_safe_eval(private_chunks)
+    teal.code::chunks_push_new_line(private_chunks)
+    teal.code::chunks_safe_eval(private_chunks)
 
     return(list(ANL = private_chunks$get("ANL"), chunks = private_chunks))
   })

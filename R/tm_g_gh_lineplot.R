@@ -676,14 +676,14 @@ srv_lineplot <- function(id,
         NULL
       }
 
-      chunks_validate_custom(
+      teal.code::chunks_validate_custom(
         bquote(nrow(ANL[complete.cases(ANL[, c(.(yaxis), .(xaxis))]), ]) >= 2),
         "Number of complete rows on x and y axis variables is less than 2",
         chunks = private_chunks
       )
 
       if (!is(xtick, "waiver") && !is.null(xtick)) {
-        chunks_push(
+        teal.code::chunks_push(
           chunks = private_chunks,
           expression = bquote({
             keep_index <- which(.(xtick) %in% ANL[[.(xaxis)]])
@@ -697,7 +697,7 @@ srv_lineplot <- function(id,
       hline_arb_label <- horizontal_line()$line_arb_label
       hline_arb_color <- horizontal_line()$line_arb_color
 
-      chunks_push(
+      teal.code::chunks_push(
         chunks = private_chunks,
         id = "lineplot",
         expression = bquote({
@@ -734,15 +734,15 @@ srv_lineplot <- function(id,
         })
       )
 
-      chunks_safe_eval(private_chunks)
+      teal.code::chunks_safe_eval(private_chunks)
 
-      chunks_reset()
-      chunks_push_chunks(private_chunks)
+      teal.code::chunks_reset()
+      teal.code::chunks_push_chunks(private_chunks)
 
-      chunks_get_var("p")
+      teal.code::chunks_get_var("p")
     })
 
-    plot_with_settings_srv(
+    teal.widgets::plot_with_settings_srv(
       id = "plot",
       plot_r = plot_r,
       height = plot_height,

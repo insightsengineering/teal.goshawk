@@ -335,7 +335,7 @@ srv_g_density_distribution_plot <- function(id, # nolint
       # nolint end
       validate(need(input$trt_group, "Please select a treatment variable"))
 
-      chunks_push(
+      teal.code::chunks_push(
         chunks = private_chunks,
         id = "density_distribution",
         expression = bquote({
@@ -361,7 +361,7 @@ srv_g_density_distribution_plot <- function(id, # nolint
         })
       )
 
-      chunks_safe_eval(private_chunks)
+      teal.code::chunks_safe_eval(private_chunks)
 
       private_chunks
     })
@@ -374,7 +374,7 @@ srv_g_density_distribution_plot <- function(id, # nolint
       font_size <- input$font_size
       trt_group <- input$trt_group
 
-      chunks_push(
+      teal.code::chunks_push(
         chunks = private_chunks,
         id = "table",
         expression = bquote({
@@ -389,31 +389,31 @@ srv_g_density_distribution_plot <- function(id, # nolint
         })
       )
 
-      chunks_safe_eval(private_chunks)
+      teal.code::chunks_safe_eval(private_chunks)
       private_chunks
     })
 
     main_code <- reactive({
       private_chunks <- create_table()
-      chunks_push(
+      teal.code::chunks_push(
         chunks = private_chunks,
         id = "output",
         expression = quote(print(p))
       )
 
-      chunks_safe_eval(private_chunks)
+      teal.code::chunks_safe_eval(private_chunks)
 
-      chunks_reset()
-      chunks_push_chunks(private_chunks)
+      teal.code::chunks_reset()
+      teal.code::chunks_push_chunks(private_chunks)
 
       private_chunks
     })
 
     plot_r <- reactive({
-      chunks_get_var("p", main_code())
+      teal.code::chunks_get_var("p", main_code())
     })
 
-    plot_with_settings_srv(
+    teal.widgets::plot_with_settings_srv(
       id = "plot",
       plot_r = plot_r,
       height = plot_height,
@@ -421,7 +421,7 @@ srv_g_density_distribution_plot <- function(id, # nolint
     )
 
     output$table_ui <- DT::renderDataTable({
-      tbl <- chunks_get_var("tbl", main_code())
+      tbl <- teal.code::chunks_get_var("tbl", main_code())
 
       numeric_cols <- names(select_if(tbl, is.numeric))
 

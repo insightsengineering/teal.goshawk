@@ -531,10 +531,10 @@ srv_g_correlationplot <- function(id,
 
       # analysis
       private_chunks <- chunks$new()
-      chunks_reset(as.environment(setNames(list(ANL_FILTERED), dataset_var)), private_chunks)
+      teal.code::chunks_reset(as.environment(setNames(list(ANL_FILTERED), dataset_var)), private_chunks)
 
       # filter biomarker
-      chunks_push(
+      teal.code::chunks_push(
         chunks = private_chunks,
         id = "filter_biomarker",
         expression = bquote({
@@ -543,7 +543,7 @@ srv_g_correlationplot <- function(id,
         })
       )
 
-      ANL <- chunks_safe_eval(private_chunks) # nolint
+      ANL <- teal.code::chunks_safe_eval(private_chunks) # nolint
       validate_has_data(ANL, 1)
 
       return(list(ANL = ANL, chunks = private_chunks))
@@ -640,7 +640,7 @@ srv_g_correlationplot <- function(id,
       trt_group <- input$trt_group
       line_vars <- unique(c(input$hline_vars, input$vline_vars))
 
-      chunks_push(
+      teal.code::chunks_push(
         chunks = private_chunks,
         id = "plot_data_transpose",
         expression = bquote({
@@ -713,25 +713,25 @@ srv_g_correlationplot <- function(id,
         })
       )
 
-      ANL_TRANSPOSED <- chunks_safe_eval(private_chunks) # nolint
-      chunks_push_new_line(private_chunks)
+      ANL_TRANSPOSED <- teal.code::chunks_safe_eval(private_chunks) # nolint
+      teal.code::chunks_push_new_line(private_chunks)
 
       validate(need(nrow(ANL_TRANSPOSED) > 0, "Plot Data No Observations Left"))
       validate_has_variable(data = ANL_TRANSPOSED, varname = c(xvar(), yvar(), xloqfl(), yloqfl()))
 
-      chunks_push(
+      teal.code::chunks_push(
         chunks = private_chunks,
         id = "ANL_attributes",
         expression =
           bquote(attr(ANL_TRANSPOSED[[.(trt_group)]], "label") <- attr(ANL[[.(trt_group)]], "label")) # nolint
       )
-      chunks_push_new_line(private_chunks)
+      teal.code::chunks_push_new_line(private_chunks)
 
       return(list(ANL_TRANSPOSED = ANL_TRANSPOSED, chunks = private_chunks))
     })
 
     plot_labels <- reactive({
-      ANL <- chunks_get_var(var = "ANL", anl_constraint()$chunks) # nolint
+      ANL <- teal.code::chunks_get_var(var = "ANL", anl_constraint()$chunks) # nolint
 
       xparam <- ANL$PARAM[ANL[[param_var]] == input$xaxis_param][1]
       yparam <- ANL$PARAM[ANL[[param_var]] == input$yaxis_param][1]
@@ -802,7 +802,7 @@ srv_g_correlationplot <- function(id,
       validate(need(input$trt_group, "Please select a treatment variable"))
       trt_group <- input$trt_group
 
-      chunks_push(
+      teal.code::chunks_push(
         chunks = private_chunks,
         id = "scatterplot",
         expression = bquote({
@@ -851,16 +851,16 @@ srv_g_correlationplot <- function(id,
         })
       )
 
-      chunks_safe_eval(private_chunks)
+      teal.code::chunks_safe_eval(private_chunks)
 
       # promote chunks to be visible in the sessionData by other modules
-      chunks_reset()
-      chunks_push_chunks(private_chunks)
-      chunks_get_var("p")
+      teal.code::chunks_reset()
+      teal.code::chunks_push_chunks(private_chunks)
+      teal.code::chunks_get_var("p")
     })
 
 
-    plot_data <- plot_with_settings_srv(
+    plot_data <- teal.widgets::plot_with_settings_srv(
       id = "plot",
       plot_r = plot_r,
       height = plot_height,
