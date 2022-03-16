@@ -27,6 +27,7 @@
 ^man-roxygen$
 ^Meta$
 ^outputdir$
+^\.pre-commit-config\.yaml$
 ^scratch$
 ^stubs$
 ^temp$

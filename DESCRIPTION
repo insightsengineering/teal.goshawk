@@ -36,7 +36,6 @@ Imports:
     shinyjs,
     stats,
     teal.code,
-    teal.transform,
     teal.widgets,
     tidyr (>= 1.0.0),
     utils
