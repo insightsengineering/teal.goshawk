@@ -2,7 +2,7 @@
 #'
 #' This teal module renders the UI and calls the function that creates a line plot.
 #'
-#' @inheritParams teal.devel::standard_layout
+#' @inheritParams teal.widgets::standard_layout
 #' @param label menu item label of the module in the teal app.
 #' @param dataname analysis data passed to the data argument of teal init. E.g. ADaM structured
 #' laboratory data frame ADLB.
@@ -230,11 +230,11 @@ ui_lineplot <- function(id, ...) {
   ns <- NS(id)
   a <- list(...)
 
-  standard_layout(
-    output = plot_with_settings_ui(id = ns("plot")),
+  teal.widgets::standard_layout(
+    output = teal.widgets::plot_with_settings_ui(id = ns("plot")),
     encoding = div(
       templ_ui_dataname(a$dataname),
-      optionalSelectInput(
+      teal.widgets::optionalSelectInput(
         ns("trt_group"),
         label = "Select Treatment Variable",
         choices = a$trt_group$choices,
@@ -274,8 +274,8 @@ ui_lineplot <- function(id, ...) {
       ),
       templ_ui_constraint(ns), # required by constr_anl_chunks
       ui_arbitrary_lines(id = ns("hline_arb"), a$hline_arb, a$hline_arb_label, a$hline_arb_color),
-      panel_group(
-        panel_item(
+      teal.widgets::panel_group(
+        teal.widgets::panel_item(
           title = "Plot Aesthetic Settings",
           toggle_slider_ui(
             ns("yrange_scale"),
@@ -287,24 +287,29 @@ ui_lineplot <- function(id, ...) {
           checkboxInput(ns("rotate_xlab"), "Rotate X-axis Label", a$rotate_xlab),
           numericInput(ns("count_threshold"), "Contributing Observations Threshold:", a$count_threshold)
         ),
-        panel_item(
+        teal.widgets::panel_item(
           title = "Plot settings",
-          optionalSliderInputValMinMax(ns("dodge"), "Error Bar Position Dodge", a$dodge, ticks = FALSE),
-          panel_group(
-            panel_item(
+          teal.widgets::optionalSliderInputValMinMax(ns("dodge"), "Error Bar Position Dodge", a$dodge, ticks = FALSE),
+          teal.widgets::panel_group(
+            teal.widgets::panel_item(
               title = "Line Settings",
               uiOutput(ns("lines"))
             ),
-            panel_item(
+            teal.widgets::panel_item(
               title = "Symbol settings",
               uiOutput(ns("symbols"))
             )
           ),
-          optionalSliderInputValMinMax(ns("plot_font_size"), "Font Size", a$plot_font_size, ticks = FALSE)
+          teal.widgets::optionalSliderInputValMinMax(ns("plot_font_size"), "Font Size", a$plot_font_size, ticks = FALSE)
         ),
-        panel_item(
+        teal.widgets::panel_item(
           title = "Table settings",
-          optionalSliderInputValMinMax(ns("table_font_size"), "Table Font Size", a$table_font_size, ticks = FALSE)
+          teal.widgets::optionalSliderInputValMinMax(
+            ns("table_font_size"),
+            "Table Font Size",
+            a$table_font_size,
+            ticks = FALSE
+          )
         )
       )
     ),
@@ -329,7 +334,7 @@ srv_lineplot <- function(id,
                          plot_height,
                          plot_width) {
   moduleServer(id, function(input, output, session) {
-    init_chunks()
+    teal.code::init_chunks()
     ns <- session$ns
     output$shape_ui <- renderUI({
       if (!is.null(shape_choices)) {
@@ -340,7 +345,7 @@ srv_lineplot <- function(id,
           choices <- shape_choices
           selected <- NULL
         }
-        optionalSelectInput(
+        teal.widgets::optionalSelectInput(
           ns("shape"),
           "Select Line Splitting Variable",
           choices = choices, selected = selected
@@ -676,14 +681,14 @@ srv_lineplot <- function(id,
         NULL
       }
 
-      chunks_validate_custom(
+      teal.code::chunks_validate_custom(
         bquote(nrow(ANL[complete.cases(ANL[, c(.(yaxis), .(xaxis))]), ]) >= 2),
         "Number of complete rows on x and y axis variables is less than 2",
         chunks = private_chunks
       )
 
       if (!is(xtick, "waiver") && !is.null(xtick)) {
-        chunks_push(
+        teal.code::chunks_push(
           chunks = private_chunks,
           expression = bquote({
             keep_index <- which(.(xtick) %in% ANL[[.(xaxis)]])
@@ -697,7 +702,7 @@ srv_lineplot <- function(id,
       hline_arb_label <- horizontal_line()$line_arb_label
       hline_arb_color <- horizontal_line()$line_arb_color
 
-      chunks_push(
+      teal.code::chunks_push(
         chunks = private_chunks,
         id = "lineplot",
         expression = bquote({
@@ -734,15 +739,15 @@ srv_lineplot <- function(id,
         })
       )
 
-      chunks_safe_eval(private_chunks)
+      teal.code::chunks_safe_eval(private_chunks)
 
-      chunks_reset()
-      chunks_push_chunks(private_chunks)
+      teal.code::chunks_reset()
+      teal.code::chunks_push_chunks(private_chunks)
 
-      chunks_get_var("p")
+      teal.code::chunks_get_var("p")
     })
 
-    plot_with_settings_srv(
+    teal.widgets::plot_with_settings_srv(
       id = "plot",
       plot_r = plot_r,
       height = plot_height,

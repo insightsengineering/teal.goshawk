@@ -14,7 +14,6 @@
 #' @import shiny
 #' @rawNamespace import(stats, except = c(filter, lag))
 #' @import teal
-#' @import teal.devel
 #' @import tidyr
 #' @keywords internal
 NULL

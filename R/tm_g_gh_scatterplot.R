@@ -1,7 +1,7 @@
 #' Scatter Plot Teal Module For Biomarker Analysis
 #'
 #'
-#' @inheritParams teal.devel::standard_layout
+#' @inheritParams teal.widgets::standard_layout
 #' @param label menu item label of the module in the teal app.
 #' @param dataname analysis data passed to the data argument of teal init. E.g. ADaM structured laboratory data frame
 #'   \code{ADLB}.
@@ -202,11 +202,11 @@ ui_g_scatterplot <- function(id, ...) {
   ns <- NS(id)
   a <- list(...)
 
-  standard_layout(
+  teal.widgets::standard_layout(
     output = templ_ui_output_datatable(ns),
     encoding = div(
       templ_ui_dataname(a$dataname),
-      optionalSelectInput(
+      teal.widgets::optionalSelectInput(
         ns("trt_group"),
         label = "Select Treatment Variable",
         choices = a$trt_group$choices,
@@ -221,8 +221,8 @@ ui_g_scatterplot <- function(id, ...) {
         ychoices = a$yaxis_var$choices, yselected = a$yaxis_var$selected
       ),
       templ_ui_constraint(ns), # required by constr_anl_chunks
-      panel_group(
-        panel_item(
+      teal.widgets::panel_group(
+        teal.widgets::panel_item(
           title = "Plot Aesthetic Settings",
           toggle_slider_ui(ns("xrange_scale"),
             label = "X-Axis Range Zoom",
@@ -243,11 +243,14 @@ ui_g_scatterplot <- function(id, ...) {
           numericInput(ns("hline"), "Add a horizontal line:", a$hline),
           numericInput(ns("vline"), "Add a vertical line:", a$vline)
         ),
-        panel_item(
+        teal.widgets::panel_item(
           title = "Plot settings",
-          optionalSliderInputValMinMax(ns("font_size"), "Font Size", a$font_size, ticks = FALSE),
-          optionalSliderInputValMinMax(ns("dot_size"), "Dot Size", a$dot_size, ticks = FALSE),
-          optionalSliderInputValMinMax(ns("reg_text_size"), "Regression Annotations Size", a$reg_text_size,
+          teal.widgets::optionalSliderInputValMinMax(ns("font_size"), "Font Size", a$font_size, ticks = FALSE),
+          teal.widgets::optionalSliderInputValMinMax(ns("dot_size"), "Dot Size", a$dot_size, ticks = FALSE),
+          teal.widgets::optionalSliderInputValMinMax(
+            ns("reg_text_size"),
+            "Regression Annotations Size",
+            a$reg_text_size,
             ticks = FALSE
           )
         )
@@ -271,7 +274,7 @@ srv_g_scatterplot <- function(id,
                               plot_height,
                               plot_width) {
   moduleServer(id, function(input, output, session) {
-    init_chunks()
+    teal.code::init_chunks()
 
     # reused in all modules
     anl_chunks <- constr_anl_chunks(
@@ -317,7 +320,7 @@ srv_g_scatterplot <- function(id,
       yaxis <- input$yaxis_var
 
       # nolint end
-      chunks_push(
+      teal.code::chunks_push(
         chunks = private_chunks,
         id = "scatterplot",
         expression = bquote({
@@ -348,16 +351,16 @@ srv_g_scatterplot <- function(id,
         })
       )
 
-      chunks_safe_eval(private_chunks)
+      teal.code::chunks_safe_eval(private_chunks)
 
       # promote chunks to be visible in the sessionData by other modules
-      chunks_reset()
-      chunks_push_chunks(private_chunks)
+      teal.code::chunks_reset()
+      teal.code::chunks_push_chunks(private_chunks)
 
-      chunks_get_var("p")
+      teal.code::chunks_get_var("p")
     })
 
-    plot_data <- plot_with_settings_srv(
+    plot_data <- teal.widgets::plot_with_settings_srv(
       id = "plot",
       plot_r = plot_r,
       height = plot_height,
