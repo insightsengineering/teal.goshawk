@@ -18,7 +18,7 @@
 #' @param filter_var data constraint variable.
 #' @param yaxis_var single name of variable in analysis data that is used as
 #' summary variable in the respective gshawk function.
-#' @param trt_group \code{\link[teal]{choices_selected}} object with available choices and pre-selected option
+#' @param trt_group \code{\link[teal.transform]{choices_selected}} object with available choices and pre-selected option
 #' for variable names representing treatment group e.g. ARM.
 #' @param trt_group_level vector that can be used to define factor
 #' level of trt_group.
@@ -473,7 +473,7 @@ srv_g_spaghettiplot <- function(id,
 
       req(all(c(xvar, yvar) %in% names(ANL)))
 
-      df <- clean_brushedPoints(
+      df <- teal.widgets::clean_brushedPoints(
         select(ANL, "USUBJID", trt_group, "PARAMCD", xvar, yvar, "LOQFL"),
         plot_brush
       )

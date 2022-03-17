@@ -14,7 +14,7 @@
 #' `choices_selected("AVISITCD", "AVISITCD")`.
 #' @param facet_var variable to facet the plots by. When not provided, it defaults to
 #' `choices_selected(c("ARM", "ACTARM"), "ARM")`.
-#' @param trt_group  \code{\link[teal]{choices_selected}} object with available choices and pre-selected option
+#' @param trt_group  \code{\link[teal.transform]{choices_selected}} object with available choices and pre-selected option
 #'  for variable names representing treatment group e.g. ARM.
 #' @param color_manual vector of colors applied to treatment values.
 #' @param shape_manual vector of symbols applied to LOQ values.
@@ -197,9 +197,9 @@ tm_g_gh_boxplot <- function(label,
                             dataname,
                             param_var,
                             param,
-                            yaxis_var = choices_selected(c("AVAL", "CHG"), "AVAL"),
-                            xaxis_var = choices_selected("AVISITCD", "AVISITCD"),
-                            facet_var = choices_selected(c("ARM", "ACTARM"), "ARM"),
+                            yaxis_var = teal.transform::choices_selected(c("AVAL", "CHG"), "AVAL"),
+                            xaxis_var = teal.transform::choices_selected("AVISITCD", "AVISITCD"),
+                            facet_var = teal.transform::choices_selected(c("ARM", "ACTARM"), "ARM"),
                             trt_group,
                             color_manual = NULL,
                             shape_manual = NULL,
@@ -560,7 +560,7 @@ srv_g_boxplot <- function(id,
 
       req(all(c(xvar, yvar, facetv, trt_group) %in% names(ANL)))
 
-      df <- clean_brushedPoints(
+      df <- teal.widgets::clean_brushedPoints(
         select(ANL, "USUBJID", trt_group, facetv, "AVISITCD", "PARAMCD", xvar, yvar, "LOQFL"),
         boxplot_brush
       )

@@ -185,7 +185,7 @@ constr_anl_chunks <- function(session, input, datasets, dataname, param_id, para
     validate_has_variable(ANL_FILTERED, trt_group)
 
     # analysis
-    private_chunks <- chunks$new()
+    private_chunks <- teal.code::chunks$new()
     teal.code::chunks_reset(as.environment(setNames(list(ANL_FILTERED), dataset_var)), private_chunks)
 
     # filter biomarker

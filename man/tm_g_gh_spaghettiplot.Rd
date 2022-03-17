@@ -63,7 +63,7 @@ Only use it when xaxis_var is character or factor.}
 
 \item{filter_var}{data constraint variable.}
 
-\item{trt_group}{\code{\link[teal]{choices_selected}} object with available choices and pre-selected option
+\item{trt_group}{\code{\link[teal.transform]{choices_selected}} object with available choices and pre-selected option
 for variable names representing treatment group e.g. ARM.}
 
 \item{trt_group_level}{vector that can be used to define factor
