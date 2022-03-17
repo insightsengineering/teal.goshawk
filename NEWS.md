@@ -7,6 +7,7 @@
 * Added basic logging to the modules.
 * Rewrote modules to use `moduleServer` and updated calls to `teal.devel` modules which have also been written to use `moduleServer`.
 * Replaced calls to `teal::root_modules` with `teal::modules` following deprecation of `teal::root_modules`.
+* Adjusted package imports to take into account changes to the `teal` framework.
 
 # teal.goshawk 0.1.11
 
