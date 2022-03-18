@@ -14,8 +14,8 @@
 #' `choices_selected("AVISITCD", "AVISITCD")`.
 #' @param facet_var variable to facet the plots by. When not provided, it defaults to
 #' `choices_selected(c("ARM", "ACTARM"), "ARM")`.
-#' @param trt_group  \code{\link[teal.transform]{choices_selected}} object with available choices and pre-selected option
-#'  for variable names representing treatment group e.g. ARM.
+#' @param trt_group  \code{\link[teal.transform]{choices_selected}} object with available choices and pre-selected
+#'  option for variable names representing treatment group e.g. ARM.
 #' @param color_manual vector of colors applied to treatment values.
 #' @param shape_manual vector of symbols applied to LOQ values.
 #' @param facet_ncol numeric value indicating number of facets per row.

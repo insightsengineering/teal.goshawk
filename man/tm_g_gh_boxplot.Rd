@@ -52,8 +52,8 @@ it defaults to \code{choices_selected(c("AVAL", "CHG"), "AVAL")}.}
 \item{facet_var}{variable to facet the plots by. When not provided, it defaults to
 \code{choices_selected(c("ARM", "ACTARM"), "ARM")}.}
 
-\item{trt_group}{\code{\link[teal.transform]{choices_selected}} object with available choices and pre-selected option
-for variable names representing treatment group e.g. ARM.}
+\item{trt_group}{\code{\link[teal.transform]{choices_selected}} object with available choices and pre-selected
+option for variable names representing treatment group e.g. ARM.}
 
 \item{color_manual}{vector of colors applied to treatment values.}
 
