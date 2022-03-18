@@ -24,7 +24,7 @@ summary table."><!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/l
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">teal.goshawk</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.1.11.9006</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.1.11.9009</span>
       </span>
     </div>
 
@@ -35,15 +35,6 @@ summary table."><!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/l
 <li>
   <a href="../news/index.html">Changelog</a>
 </li>
-<!-- start_releases -->
-<li class="dropdown">
-	<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
-Other releases
-<span class="caret"></span></a><ul class="dropdown-menu" role="menu">
-   <li><a href="../index.html">latest</a></li>
-   <li><a href="..//index.html"></a></li>
-</ul></li>
-<!-- end_releases -->
       </ul><ul class="nav navbar-nav navbar-right"><li>
   <a href="https://github.com/insightsengineering/teal.goshawk">
     <span class="fa fa-github"></span>
@@ -75,9 +66,9 @@ summary table.</p>
   <span class="va">dataname</span>,
   <span class="va">param_var</span>,
   <span class="va">param</span>,
-  yaxis_var <span class="op">=</span> <span class="fu">choices_selected</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"AVAL"</span>, <span class="st">"CHG"</span><span class="op">)</span>, <span class="st">"AVAL"</span><span class="op">)</span>,
-  xaxis_var <span class="op">=</span> <span class="fu">choices_selected</span><span class="op">(</span><span class="st">"AVISITCD"</span>, <span class="st">"AVISITCD"</span><span class="op">)</span>,
-  facet_var <span class="op">=</span> <span class="fu">choices_selected</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"ARM"</span>, <span class="st">"ACTARM"</span><span class="op">)</span>, <span class="st">"ARM"</span><span class="op">)</span>,
+  yaxis_var <span class="op">=</span> <span class="fu">teal.transform</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/teal.transform/man/choices_selected.html" class="external-link">choices_selected</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"AVAL"</span>, <span class="st">"CHG"</span><span class="op">)</span>, <span class="st">"AVAL"</span><span class="op">)</span>,
+  xaxis_var <span class="op">=</span> <span class="fu">teal.transform</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/teal.transform/man/choices_selected.html" class="external-link">choices_selected</a></span><span class="op">(</span><span class="st">"AVISITCD"</span>, <span class="st">"AVISITCD"</span><span class="op">)</span>,
+  facet_var <span class="op">=</span> <span class="fu">teal.transform</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/teal.transform/man/choices_selected.html" class="external-link">choices_selected</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"ARM"</span>, <span class="st">"ACTARM"</span><span class="op">)</span>, <span class="st">"ARM"</span><span class="op">)</span>,
   <span class="va">trt_group</span>,
   color_manual <span class="op">=</span> <span class="cn">NULL</span>,
   shape_manual <span class="op">=</span> <span class="cn">NULL</span>,
@@ -121,8 +112,8 @@ it defaults to <code>choices_selected(c("AVAL", "CHG"), "AVAL")</code>.</p></dd>
 <dd><p>variable to facet the plots by. When not provided, it defaults to
 <code>choices_selected(c("ARM", "ACTARM"), "ARM")</code>.</p></dd>
 <dt>trt_group</dt>
-<dd><p><code><a href="https://rdrr.io/pkg/teal/man/choices_selected.html" class="external-link">choices_selected</a></code> object with available choices and pre-selected option
-for variable names representing treatment group e.g. ARM.</p></dd>
+<dd><p><code><a href="https://rdrr.io/pkg/teal.transform/man/choices_selected.html" class="external-link">choices_selected</a></code> object with available choices and pre-selected
+option for variable names representing treatment group e.g. ARM.</p></dd>
 <dt>color_manual</dt>
 <dd><p>vector of colors applied to treatment values.</p></dd>
 <dt>shape_manual</dt>
@@ -159,12 +150,11 @@ in the legend.</p></dd>
 <dt>alpha</dt>
 <dd><p>numeric vector to define transparency of plotted points.</p></dd>
 <dt>pre_output</dt>
-<dd><p>optional, <code>shiny.tag</code> with text placed before the
-output to put the output into context. For example a title.</p></dd>
+<dd><p>(<code>shiny.tag</code>, optional)<br>
+with text placed before the output to put the output into context. For example a title.</p></dd>
 <dt>post_output</dt>
-<dd><p>optional, <code>shiny.tag</code> with text placed after the
-output to put the output into context. For example the
-<code><a href="https://rdrr.io/pkg/shiny/man/helpText.html" class="external-link">helpText</a></code> elements are useful.</p></dd>
+<dd><p>(<code>shiny.tag</code>, optional) with text placed after the output to put the output
+into context. For example the <code><a href="https://rdrr.io/pkg/shiny/man/helpText.html" class="external-link">shiny::helpText()</a></code> elements are useful.</p></dd>
 </dl></div>
     <div id="value">
     <h2>Value</h2>
@@ -274,7 +264,7 @@ output to put the output into context. For example the
 <span class="r-in">    <span class="op">)</span></span>
 <span class="r-in">  <span class="op">)</span></span>
 <span class="r-in"><span class="op">)</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [INFO] 2022-02-25 15:01:11.7970 pid:1179 token:[] teal.goshawk Initializing tm_g_gh_boxplot</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [INFO] 2022-03-18 15:38:38.1845 pid:1529 token:[] teal.goshawk Initializing tm_g_gh_boxplot</span>
 <span class="r-in"><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span></span>
 <span class="r-in"><span class="fu">shinyApp</span><span class="op">(</span><span class="va">app</span><span class="op">$</span><span class="va">ui</span>, <span class="va">app</span><span class="op">$</span><span class="va">server</span><span class="op">)</span></span>
 <span class="r-in"><span class="op">}</span></span>

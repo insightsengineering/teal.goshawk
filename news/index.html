@@ -23,7 +23,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">teal.goshawk</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.1.11.9006</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.1.11.9009</span>
       </span>
     </div>
 
@@ -34,15 +34,6 @@
 <li>
   <a href="../news/index.html">Changelog</a>
 </li>
-<!-- start_releases -->
-<li class="dropdown">
-	<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
-Other releases
-<span class="caret"></span></a><ul class="dropdown-menu" role="menu">
-   <li><a href="../index.html">latest</a></li>
-   <li><a href="..//index.html"></a></li>
-</ul></li>
-<!-- end_releases -->
       </ul><ul class="nav navbar-nav navbar-right"><li>
   <a href="https://github.com/insightsengineering/teal.goshawk">
     <span class="fa fa-github"></span>
@@ -63,16 +54,16 @@ Other releases
     </div>
 
     <div class="section level2">
-<h2 class="page-header" data-toc-text="0.1.11.9006" id="tealgoshawk-01119006">teal.goshawk 0.1.11.9006<a class="anchor" aria-label="anchor" href="#tealgoshawk-01119006"></a></h2>
+<h2 class="page-header" data-toc-text="0.1.11.9009" id="tealgoshawk-01119009">teal.goshawk 0.1.11.9009<a class="anchor" aria-label="anchor" href="#tealgoshawk-01119009"></a></h2>
 <div class="section level4">
-<h4 id="breaking-changes-0-1-11-9006">Breaking Changes<a class="anchor" aria-label="anchor" href="#breaking-changes-0-1-11-9006"></a></h4>
+<h4 id="breaking-changes-0-1-11-9009">Breaking Changes<a class="anchor" aria-label="anchor" href="#breaking-changes-0-1-11-9009"></a></h4>
 <ul><li>Converted the <code>hline</code> parameter of
 <code>tm_g_gh_lineplot</code> to three parameters:
 <code>hline_arb</code>, <code>hline_arb_color</code> and
 <code>hline_arb_label</code>.</li>
 </ul></div>
 <div class="section level4">
-<h4 id="miscellaneous-0-1-11-9006">Miscellaneous<a class="anchor" aria-label="anchor" href="#miscellaneous-0-1-11-9006"></a></h4>
+<h4 id="miscellaneous-0-1-11-9009">Miscellaneous<a class="anchor" aria-label="anchor" href="#miscellaneous-0-1-11-9009"></a></h4>
 <ul><li>Added basic logging to the modules.</li>
 <li>Rewrote modules to use <code>moduleServer</code> and updated calls
 to <code>teal.devel</code> modules which have also been written to use
@@ -80,6 +71,8 @@ to <code>teal.devel</code> modules which have also been written to use
 <li>Replaced calls to <code><a href="https://rdrr.io/pkg/teal/man/root_modules.html" class="external-link">teal::root_modules</a></code> with
 <code><a href="https://rdrr.io/pkg/teal/man/modules.html" class="external-link">teal::modules</a></code> following deprecation of
 <code><a href="https://rdrr.io/pkg/teal/man/root_modules.html" class="external-link">teal::root_modules</a></code>.</li>
+<li>Adjusted package imports to take into account changes to the
+<code>teal</code> framework.</li>
 </ul></div>
 </div>
     <div class="section level2">
