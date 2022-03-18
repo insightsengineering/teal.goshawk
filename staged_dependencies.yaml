@@ -1,3 +1,4 @@
+---
 current_repo:
   repo: insightsengineering/teal.goshawk
   host: https://github.com
@@ -8,8 +9,14 @@ upstream_repos:
   insightsengineering/teal.widgets:
     repo: insightsengineering/teal.widgets
     host: https://github.com
+  insightsengineering/teal.logger:
+    repo: insightsengineering/teal.logger
+    host: https://github.com
   insightsengineering/teal.code:
     repo: insightsengineering/teal.code
+    host: https://github.com
+  insightsengineering/teal.transform:
+    repo: insightsengineering/teal.transform
     host: https://github.com
   insightsengineering/teal:
     repo: insightsengineering/teal

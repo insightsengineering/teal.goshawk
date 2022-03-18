@@ -17,7 +17,7 @@
 #' @param filter_var_choices data constraint variable choices.
 #' @param yaxis_var single name of variable in analysis data that is used as summary variable in the
 #' respective gshawk function.
-#' @param trt_group \code{\link[teal]{choices_selected}} object with available choices and pre-selected option
+#' @param trt_group \code{\link[teal.transform]{choices_selected}} object with available choices and pre-selected option
 #' for variable names representing treatment group e.g. ARM.
 #' @param trt_group_level vector that can be used to define factor level of trt_group.
 #' @param shape_choices Vector or \code{choices_selected} object with names of ADSL variables which

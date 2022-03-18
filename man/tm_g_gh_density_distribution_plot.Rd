@@ -39,7 +39,7 @@ tm_g_gh_density_distribution_plot(
 
 \item{xaxis_var}{name of variable containing biomarker results displayed on x-axis e.g. \code{BASE}.}
 
-\item{trt_group}{\code{\link[teal]{choices_selected}} object with available choices and pre-selected option
+\item{trt_group}{\code{\link[teal.transform]{choices_selected}} object with available choices and pre-selected option
 for variable names representing treatment group e.g. ARM.}
 
 \item{color_manual}{vector of colors applied to treatment values.}

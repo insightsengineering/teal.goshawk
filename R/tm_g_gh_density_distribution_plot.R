@@ -4,7 +4,7 @@
 #' and an accompanying summary table.
 #'
 #' @param label menu item label of the module in the teal app.
-#' @param trt_group \code{\link[teal]{choices_selected}} object with available choices and pre-selected option
+#' @param trt_group \code{\link[teal.transform]{choices_selected}} object with available choices and pre-selected option
 #' for variable names representing treatment group e.g. ARM.
 #' @param color_manual vector of colors applied to treatment values.
 #' @param color_comb name or hex value for combined treatment color.

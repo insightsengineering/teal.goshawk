@@ -9,7 +9,7 @@
 #' @param param biomarker selected.
 #' @param xaxis_var name of variable containing biomarker results displayed on x-axis e.g. \code{BASE}.
 #' @param yaxis_var name of variable containing biomarker results displayed on y-axis e.g. \code{AVAL}.
-#' @param trt_group \code{\link[teal]{choices_selected}} object with available choices and pre-selected option
+#' @param trt_group \code{\link[teal.transform]{choices_selected}} object with available choices and pre-selected option
 #' for variable names representing treatment group e.g. ARM.
 #' @param color_manual vector of colors applied to treatment values.
 #' @param shape_manual vector of symbols applied to LOQ values.
@@ -381,7 +381,7 @@ srv_g_scatterplot <- function(id,
 
       req(all(c(xvar, yvar) %in% names(ANL)))
 
-      df <- clean_brushedPoints(
+      df <- teal.widgets::clean_brushedPoints(
         select(ANL, "USUBJID", trt_group, "AVISITCD", "PARAMCD", xvar, yvar, "LOQFL"),
         plot_brush
       )

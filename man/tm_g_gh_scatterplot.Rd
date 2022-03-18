@@ -43,7 +43,7 @@ tm_g_gh_scatterplot(
 
 \item{yaxis_var}{name of variable containing biomarker results displayed on y-axis e.g. \code{AVAL}.}
 
-\item{trt_group}{\code{\link[teal]{choices_selected}} object with available choices and pre-selected option
+\item{trt_group}{\code{\link[teal.transform]{choices_selected}} object with available choices and pre-selected option
 for variable names representing treatment group e.g. ARM.}
 
 \item{color_manual}{vector of colors applied to treatment values.}
