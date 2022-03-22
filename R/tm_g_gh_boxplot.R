@@ -38,12 +38,6 @@
 #'
 #' @inheritParams teal.widgets::standard_layout
 #'
-#' @import DescTools
-#' @import utils
-#' @import dplyr
-#' @import goshawk
-#' @import teal
-#'
 #' @author Jeff Tomlinson (tomlinsj) jeffrey.tomlinson@roche.com
 #' @author Balazs Toth (tothb2) toth.balazs@gene.com
 #'
@@ -70,7 +64,7 @@
 #' ADLB <- synthetic_cdisc_data("latest")$adlb
 #' var_labels <- lapply(ADLB, function(x) attributes(x)$label)
 #' ADLB <- ADLB %>%
-#'   mutate(
+#'   dplyr::mutate(
 #'     AVISITCD = case_when(
 #'       AVISIT == "SCREENING" ~ "SCR",
 #'       AVISIT == "BASELINE" ~ "BL",
@@ -98,11 +92,11 @@
 #'   ) %>%
 #'   rowwise() %>%
 #'   group_by(PARAMCD) %>%
-#'   mutate(LBSTRESC = ifelse(
+#'   dplyr::mutate(LBSTRESC = ifelse(
 #'     USUBJID %in% sample(USUBJID, 1, replace = TRUE),
 #'     paste("<", round(runif(1, min = 25, max = 30))), LBSTRESC
 #'   )) %>%
-#'   mutate(LBSTRESC = ifelse(
+#'   dplyr::mutate(LBSTRESC = ifelse(
 #'     USUBJID %in% sample(USUBJID, 1, replace = TRUE),
 #'     paste(">", round(runif(1, min = 70, max = 75))), LBSTRESC
 #'   )) %>%
@@ -128,7 +122,7 @@
 #'         ADLB <- synthetic_cdisc_data('latest')$adlb
 #'         var_labels <- lapply(ADLB, function(x) attributes(x)$label)
 #'         ADLB <- ADLB %>%
-#'           mutate(AVISITCD = case_when(
+#'           dplyr::mutate(AVISITCD = case_when(
 #'             AVISIT == 'SCREENING' ~ 'SCR',
 #'             AVISIT == 'BASELINE' ~ 'BL',
 #'             grepl('WEEK', AVISIT) ~ paste('W', stringr::str_extract(AVISIT, '(?<=(WEEK ))[0-9]+')),
@@ -151,10 +145,10 @@
 #'             ANRHI = 75) %>%
 #'           rowwise() %>%
 #'           group_by(PARAMCD) %>%
-#'           mutate(LBSTRESC = ifelse(
+#'           dplyr::mutate(LBSTRESC = ifelse(
 #'             USUBJID %in% sample(USUBJID, 1, replace = TRUE),
 #'             paste('<', round(runif(1, min = 25, max = 30))), LBSTRESC)) %>%
-#'           mutate(LBSTRESC = ifelse(
+#'           dplyr::mutate(LBSTRESC = ifelse(
 #'             USUBJID %in% sample(USUBJID, 1, replace = TRUE),
 #'             paste( '>', round(runif(1, min = 70, max = 75))), LBSTRESC)) %>%
 #'           ungroup()
@@ -540,7 +534,7 @@ srv_g_boxplot <- function(id,
     output$table_ui <- DT::renderDataTable({
       tbl <- teal.code::chunks_get_var("tbl", main_code())
 
-      numeric_cols <- setdiff(names(select_if(tbl, is.numeric)), "n")
+      numeric_cols <- setdiff(names(dplyr::select_if(tbl, is.numeric)), "n")
 
       DT::datatable(tbl, rownames = FALSE, options = list(scrollX = TRUE)) %>%
         DT::formatRound(numeric_cols, 4)
@@ -561,11 +555,11 @@ srv_g_boxplot <- function(id,
       req(all(c(xvar, yvar, facetv, trt_group) %in% names(ANL)))
 
       df <- teal.widgets::clean_brushedPoints(
-        select(ANL, "USUBJID", trt_group, facetv, "AVISITCD", "PARAMCD", xvar, yvar, "LOQFL"),
+        dplyr::select(ANL, "USUBJID", trt_group, facetv, "AVISITCD", "PARAMCD", xvar, yvar, "LOQFL"),
         boxplot_brush
       )
 
-      numeric_cols <- names(select_if(df, is.numeric))
+      numeric_cols <- names(dplyr::select_if(df, is.numeric))
 
       DT::datatable(df, rownames = FALSE, options = list(scrollX = TRUE)) %>%
         DT::formatRound(numeric_cols, 4)

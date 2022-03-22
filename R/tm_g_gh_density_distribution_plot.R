@@ -50,7 +50,7 @@
 #' ADLB <- synthetic_cdisc_data("latest")$adlb
 #' var_labels <- lapply(ADLB, function(x) attributes(x)$label)
 #' ADLB <- ADLB %>%
-#'   mutate(
+#'   dplyr::mutate(
 #'     AVISITCD = case_when(
 #'       AVISIT == "SCREENING" ~ "SCR",
 #'       AVISIT == "BASELINE" ~ "BL",
@@ -87,7 +87,7 @@
 #'       code = "ADLB <- synthetic_cdisc_data(\"latest\")$adlb
 #'               var_labels <- lapply(ADLB, function(x) attributes(x)$label)
 #'               ADLB <- ADLB %>%
-#'                 mutate(AVISITCD = case_when(
+#'                 dplyr::mutate(AVISITCD = case_when(
 #'                     AVISIT == 'SCREENING' ~ 'SCR',
 #'                     AVISIT == 'BASELINE' ~ 'BL',
 #'                     grepl('WEEK', AVISIT) ~
@@ -423,7 +423,7 @@ srv_g_density_distribution_plot <- function(id, # nolint
     output$table_ui <- DT::renderDataTable({
       tbl <- teal.code::chunks_get_var("tbl", main_code())
 
-      numeric_cols <- names(select_if(tbl, is.numeric))
+      numeric_cols <- names(dplyr::select_if(tbl, is.numeric))
 
       DT::datatable(tbl, rownames = FALSE, options = list(scrollX = TRUE)) %>%
         DT::formatRound(numeric_cols, 2)

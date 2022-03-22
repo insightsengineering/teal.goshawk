@@ -47,7 +47,7 @@
 #' ADLB <- synthetic_cdisc_data("latest")$adlb
 #' var_labels <- lapply(ADLB, function(x) attributes(x)$label)
 #' ADLB <- ADLB %>%
-#'   mutate(
+#'   dplyr::mutate(
 #'     AVISITCD = case_when(
 #'       AVISIT == "SCREENING" ~ "SCR",
 #'       AVISIT == "BASELINE" ~ "BL",
@@ -83,7 +83,7 @@
 #'       code = "ADLB <- synthetic_cdisc_data(\"latest\")$adlb
 #'               var_labels <- lapply(ADLB, function(x) attributes(x)$label)
 #'               ADLB <- ADLB %>%
-#'                 mutate(AVISITCD = case_when(
+#'                 dplyr::mutate(AVISITCD = case_when(
 #'                     AVISIT == 'SCREENING' ~ 'SCR',
 #'                     AVISIT == 'BASELINE' ~ 'BL',
 #'                     grepl('WEEK', AVISIT) ~
@@ -197,7 +197,6 @@ tm_g_gh_scatterplot <- function(label,
   )
 }
 
-#' @importFrom shinyjs hidden
 ui_g_scatterplot <- function(id, ...) {
   ns <- NS(id)
   a <- list(...)
@@ -262,7 +261,6 @@ ui_g_scatterplot <- function(id, ...) {
   )
 }
 
-#' @importFrom goshawk g_scatterplot
 srv_g_scatterplot <- function(id,
                               datasets,
                               dataname,
@@ -382,11 +380,11 @@ srv_g_scatterplot <- function(id,
       req(all(c(xvar, yvar) %in% names(ANL)))
 
       df <- teal.widgets::clean_brushedPoints(
-        select(ANL, "USUBJID", trt_group, "AVISITCD", "PARAMCD", xvar, yvar, "LOQFL"),
+        dplyr::select(ANL, "USUBJID", trt_group, "AVISITCD", "PARAMCD", xvar, yvar, "LOQFL"),
         plot_brush
       )
 
-      numeric_cols <- names(select_if(df, is.numeric))
+      numeric_cols <- names(dplyr::select_if(df, is.numeric))
 
       DT::datatable(df, rownames = FALSE, options = list(scrollX = TRUE)) %>%
         DT::formatRound(numeric_cols, 4)

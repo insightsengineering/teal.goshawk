@@ -7,13 +7,16 @@
 #'
 #' @name teal_goshawk
 #'
-#' @import DescTools
-#' @import dplyr
-#' @importFrom ggplot2 waiver
-#' @rawNamespace import(methods, except = show)
+#' @import goshawk
 #' @import shiny
-#' @rawNamespace import(stats, except = c(filter, lag))
 #' @import teal
-#' @import tidyr
+#' @importFrom colourpicker colourInput
+#' @importFrom ggplot2 waiver
+#' @importFrom methods is
+#' @importFrom rlang !! sym .data
+#' @importFrom shinyjs show
+#' @importFrom stats setNames
+#' @importFrom teal.transform choices_selected
+#' @importFrom tidyr pivot_longer
 #' @keywords internal
 NULL

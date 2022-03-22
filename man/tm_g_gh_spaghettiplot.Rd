@@ -137,7 +137,7 @@ ADSL <- synthetic_cdisc_data("latest")$adsl
 ADLB <- synthetic_cdisc_data("latest")$adlb
 var_labels <- lapply(ADLB, function(x) attributes(x)$label)
 ADLB <- ADLB \%>\%
-  mutate(
+  dplyr::mutate(
     AVISITCD = case_when(
       AVISIT == "SCREENING" ~ "SCR",
       AVISIT == "BASELINE" ~ "BL",
@@ -165,10 +165,10 @@ ADLB <- ADLB \%>\%
   ) \%>\%
   rowwise() \%>\%
   group_by(PARAMCD) \%>\%
-  mutate(LBSTRESC = ifelse(USUBJID \%in\% sample(USUBJID, 1, replace = TRUE),
+  dplyr::mutate(LBSTRESC = ifelse(USUBJID \%in\% sample(USUBJID, 1, replace = TRUE),
     paste("<", round(runif(1, min = 25, max = 30))), LBSTRESC
   )) \%>\%
-  mutate(LBSTRESC = ifelse(USUBJID \%in\% sample(USUBJID, 1, replace = TRUE),
+  dplyr::mutate(LBSTRESC = ifelse(USUBJID \%in\% sample(USUBJID, 1, replace = TRUE),
     paste(">", round(runif(1, min = 70, max = 75))), LBSTRESC
   )) \%>\%
   ungroup()
@@ -191,7 +191,7 @@ app <- teal::init(
               ADLB <- synthetic_cdisc_data(\"latest\")$adlb
               var_labels <- lapply(ADLB, function(x) attributes(x)$label)
               ADLB <- ADLB \%>\%
-                mutate(AVISITCD = case_when(
+                dplyr::mutate(AVISITCD = case_when(
                     AVISIT == 'SCREENING' ~ 'SCR',
                     AVISIT == 'BASELINE' ~ 'BL',
                     grepl('WEEK', AVISIT) ~
@@ -215,9 +215,9 @@ app <- teal::init(
                   ANRHI = 75) \%>\%
                   rowwise() \%>\%
                   group_by(PARAMCD) \%>\%
-                  mutate(LBSTRESC = ifelse(USUBJID \%in\% sample(USUBJID, 1, replace = TRUE),
+                  dplyr::mutate(LBSTRESC = ifelse(USUBJID \%in\% sample(USUBJID, 1, replace = TRUE),
                   paste('<', round(runif(1, min = 25, max = 30))), LBSTRESC)) \%>\%
-                  mutate(LBSTRESC = ifelse(USUBJID \%in\% sample(USUBJID, 1, replace = TRUE),
+                  dplyr::mutate(LBSTRESC = ifelse(USUBJID \%in\% sample(USUBJID, 1, replace = TRUE),
                   paste( '>', round(runif(1, min = 70, max = 75))), LBSTRESC)) \%>\%
                   ungroup
                attr(ADLB[['ARM']], 'label') <- var_labels[['ARM']]

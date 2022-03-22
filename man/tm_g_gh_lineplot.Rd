@@ -133,7 +133,7 @@ ADSL <- synthetic_cdisc_data("latest")$adsl
 ADLB <- synthetic_cdisc_data("latest")$adlb
 var_labels <- lapply(ADLB, function(x) attributes(x)$label)
 ADLB <- ADLB \%>\%
-  mutate(
+  dplyr::mutate(
     AVISITCD = case_when(
       AVISIT == "SCREENING" ~ "SCR",
       AVISIT == "BASELINE" ~ "BL",
@@ -167,7 +167,7 @@ app <- teal::init(
       code = "ADLB <- synthetic_cdisc_data(\"latest\")$adlb
               var_labels <- lapply(ADLB, function(x) attributes(x)$label)
               ADLB <- ADLB \%>\%
-                mutate(AVISITCD = case_when(
+                dplyr::mutate(AVISITCD = case_when(
                     AVISIT == 'SCREENING' ~ 'SCR',
                     AVISIT == 'BASELINE' ~ 'BL',
                     grepl('WEEK', AVISIT) ~
