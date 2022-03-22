@@ -128,8 +128,6 @@ Scatter Plot Teal Module For Biomarker Analysis
 \examples{
 
 # Example using ADaM structure analysis dataset.
-
-library(dplyr)
 library(scda)
 
 # original ARM value = dose value
@@ -148,7 +146,7 @@ set.seed(1)
 ADLB <- synthetic_cdisc_data("latest")$adlb
 var_labels <- lapply(ADLB, function(x) attributes(x)$label)
 ADLB <- ADLB \%>\%
-  dplyr::mutate(AVISITCD = case_when(
+  dplyr::mutate(AVISITCD = dplyr::case_when(
     AVISIT == "SCREENING" ~ "SCR",
     AVISIT == "BASELINE" ~ "BL",
     grepl("WEEK", AVISIT) ~
@@ -164,7 +162,7 @@ ADLB <- ADLB \%>\%
       ),
     TRUE ~ NA_character_
   )) \%>\%
-  dplyr::mutate(AVISITCDN = case_when(
+  dplyr::mutate(AVISITCDN = dplyr::case_when(
     AVISITCD == "SCR" ~ -2,
     AVISITCD == "BL" ~ 0,
     grepl("W", AVISITCD) ~ as.numeric(gsub("[^0-9]*", "", AVISITCD)),
@@ -180,21 +178,21 @@ ADLB <- ADLB \%>\%
   dplyr::mutate(ARM = factor(ARM) \%>\%
     reorder(TRTORD)) \%>\%
   dplyr::mutate(
-    ANRHI = case_when(
+    ANRHI = dplyr::case_when(
       PARAMCD == "ALT" ~ 60,
       PARAMCD == "CRP" ~ 70,
       PARAMCD == "IGA" ~ 80,
       TRUE ~ NA_real_
     ),
-    ANRLO = case_when(
+    ANRLO = dplyr::case_when(
       PARAMCD == "ALT" ~ 20,
       PARAMCD == "CRP" ~ 30,
       PARAMCD == "IGA" ~ 40,
       TRUE ~ NA_real_
     )
   ) \%>\%
-  rowwise() \%>\%
-  group_by(PARAMCD) \%>\%
+  dplyr::rowwise() \%>\%
+  dplyr::group_by(PARAMCD) \%>\%
   dplyr::mutate(LBSTRESC = ifelse(
     USUBJID \%in\% sample(USUBJID, 1, replace = TRUE),
     paste("<", round(runif(1, min = 25, max = 30))), LBSTRESC
@@ -222,7 +220,7 @@ app <- init(
               ADLB <- synthetic_cdisc_data('latest')$adlb
               var_labels <- lapply(ADLB, function(x) attributes(x)$label)
               ADLB <- ADLB \%>\%
-                dplyr::mutate(AVISITCD = case_when(
+                dplyr::mutate(AVISITCD = dplyr::case_when(
                   AVISIT == 'SCREENING' ~ 'SCR',
                   AVISIT == 'BASELINE' ~ 'BL',
                   grepl('WEEK', AVISIT) ~
@@ -237,7 +235,7 @@ app <- init(
                       )
                     ),
                   TRUE ~ NA_character_)) \%>\%
-                dplyr::mutate(AVISITCDN = case_when(
+                dplyr::mutate(AVISITCDN = dplyr::case_when(
                   AVISITCD == 'SCR' ~ -2,
                   AVISITCD == 'BL' ~ 0,
                   grepl('W', AVISITCD) ~ as.numeric(gsub('[^0-9]*', '', AVISITCD)),
@@ -250,20 +248,20 @@ app <- init(
                 dplyr::mutate(ARM = factor(ARM) \%>\%
                          reorder(TRTORD)) \%>\%
                 dplyr::mutate(
-                  ANRHI = case_when(
+                  ANRHI = dplyr::case_when(
                     PARAMCD == 'ALT' ~ 60,
                     PARAMCD == 'CRP' ~ 70,
                     PARAMCD == 'IGA' ~ 80,
                     TRUE ~ NA_real_
                   ),
-                  ANRLO = case_when(
+                  ANRLO = dplyr::case_when(
                     PARAMCD == 'ALT' ~ 20,
                     PARAMCD == 'CRP' ~ 30,
                     PARAMCD == 'IGA' ~ 40,
                     TRUE ~ NA_real_
                   )) \%>\%
-                rowwise() \%>\%
-                group_by(PARAMCD) \%>\%
+                dplyr::rowwise() \%>\%
+                dplyr::group_by(PARAMCD) \%>\%
                 dplyr::mutate(LBSTRESC = ifelse(
                   USUBJID \%in\% sample(USUBJID, 1, replace = TRUE),
                   paste('<', round(runif(1, min = 25, max = 30))), LBSTRESC)) \%>\%

@@ -23,7 +23,7 @@ tm_g_gh_lineplot(
   hline_arb_color = "red",
   hline_arb_label = "Horizontal line",
   color_manual = NULL,
-  xtick = waiver(),
+  xtick = ggplot2::waiver(),
   xlabel = xtick,
   rotate_xlab = FALSE,
   plot_height = c(600, 200, 4000),
@@ -134,20 +134,20 @@ ADLB <- synthetic_cdisc_data("latest")$adlb
 var_labels <- lapply(ADLB, function(x) attributes(x)$label)
 ADLB <- ADLB \%>\%
   dplyr::mutate(
-    AVISITCD = case_when(
+    AVISITCD = dplyr::case_when(
       AVISIT == "SCREENING" ~ "SCR",
       AVISIT == "BASELINE" ~ "BL",
       grepl("WEEK", AVISIT) ~ paste("W", stringr::str_extract(AVISIT, "(?<=(WEEK ))[0-9]+")),
       TRUE ~ as.character(NA)
     ),
-    AVISITCDN = case_when(
+    AVISITCDN = dplyr::case_when(
       AVISITCD == "SCR" ~ -2,
       AVISITCD == "BL" ~ 0,
       grepl("W", AVISITCD) ~ as.numeric(gsub("[^0-9]*", "", AVISITCD)),
       TRUE ~ as.numeric(NA)
     ),
     AVISITCD = factor(AVISITCD) \%>\% reorder(AVISITCDN),
-    TRTORD = case_when(
+    TRTORD = dplyr::case_when(
       ARMCD == "ARM C" ~ 1,
       ARMCD == "ARM B" ~ 2,
       ARMCD == "ARM A" ~ 3
@@ -167,19 +167,19 @@ app <- teal::init(
       code = "ADLB <- synthetic_cdisc_data(\"latest\")$adlb
               var_labels <- lapply(ADLB, function(x) attributes(x)$label)
               ADLB <- ADLB \%>\%
-                dplyr::mutate(AVISITCD = case_when(
+                dplyr::mutate(AVISITCD = dplyr::case_when(
                     AVISIT == 'SCREENING' ~ 'SCR',
                     AVISIT == 'BASELINE' ~ 'BL',
                     grepl('WEEK', AVISIT) ~
                       paste('W', stringr::str_extract(AVISIT, '(?<=(WEEK ))[0-9]+')),
                     TRUE ~ as.character(NA)),
-                  AVISITCDN = case_when(
+                  AVISITCDN = dplyr::case_when(
                     AVISITCD == 'SCR' ~ -2,
                     AVISITCD == 'BL' ~ 0,
                     grepl('W', AVISITCD) ~ as.numeric(gsub('[^0-9]*', '', AVISITCD)),
                     TRUE ~ as.numeric(NA)),
                   AVISITCD = factor(AVISITCD) \%>\% reorder(AVISITCDN),
-                  TRTORD = case_when(
+                  TRTORD = dplyr::case_when(
                     ARMCD == 'ARM C' ~ 1,
                     ARMCD == 'ARM B' ~ 2,
                     ARMCD == 'ARM A' ~ 3),

@@ -10,13 +10,8 @@
 #' @import goshawk
 #' @import shiny
 #' @import teal
-#' @importFrom colourpicker colourInput
-#' @importFrom ggplot2 waiver
-#' @importFrom methods is
-#' @importFrom rlang !! sym .data
-#' @importFrom shinyjs show
-#' @importFrom stats setNames
+#' @importFrom ggplot2 ggplot
+#' @importFrom rlang .data sym
 #' @importFrom teal.transform choices_selected
-#' @importFrom tidyr pivot_longer
 #' @keywords internal
 NULL

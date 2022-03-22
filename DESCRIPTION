@@ -30,6 +30,7 @@ Imports:
     dplyr,
     DT,
     ggplot2,
+    grDevices,
     logger (>= 0.2.0),
     methods,
     rlang,

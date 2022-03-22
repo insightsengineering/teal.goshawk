@@ -71,20 +71,20 @@
 #' var_labels <- lapply(ADLB, function(x) attributes(x)$label)
 #' ADLB <- ADLB %>%
 #'   dplyr::mutate(
-#'     AVISITCD = case_when(
+#'     AVISITCD = dplyr::case_when(
 #'       AVISIT == "SCREENING" ~ "SCR",
 #'       AVISIT == "BASELINE" ~ "BL",
 #'       grepl("WEEK", AVISIT) ~ paste("W", stringr::str_extract(AVISIT, "(?<=(WEEK ))[0-9]+")),
 #'       TRUE ~ as.character(NA)
 #'     ),
-#'     AVISITCDN = case_when(
+#'     AVISITCDN = dplyr::case_when(
 #'       AVISITCD == "SCR" ~ -2,
 #'       AVISITCD == "BL" ~ 0,
 #'       grepl("W", AVISITCD) ~ as.numeric(gsub("[^0-9]*", "", AVISITCD)),
 #'       TRUE ~ as.numeric(NA)
 #'     ),
 #'     AVISITCD = factor(AVISITCD) %>% reorder(AVISITCDN),
-#'     TRTORD = case_when(
+#'     TRTORD = dplyr::case_when(
 #'       ARMCD == "ARM C" ~ 1,
 #'       ARMCD == "ARM B" ~ 2,
 #'       ARMCD == "ARM A" ~ 3
@@ -96,8 +96,8 @@
 #'     ANRLO = 30,
 #'     ANRHI = 75
 #'   ) %>%
-#'   rowwise() %>%
-#'   group_by(PARAMCD) %>%
+#'   dplyr::rowwise() %>%
+#'   dplyr::group_by(PARAMCD) %>%
 #'   dplyr::mutate(LBSTRESC = ifelse(USUBJID %in% sample(USUBJID, 1, replace = TRUE),
 #'     paste("<", round(runif(1, min = 25, max = 30))), LBSTRESC
 #'   )) %>%
@@ -124,19 +124,19 @@
 #'               ADLB <- synthetic_cdisc_data(\"latest\")$adlb
 #'               var_labels <- lapply(ADLB, function(x) attributes(x)$label)
 #'               ADLB <- ADLB %>%
-#'                 dplyr::mutate(AVISITCD = case_when(
+#'                 dplyr::mutate(AVISITCD = dplyr::case_when(
 #'                     AVISIT == 'SCREENING' ~ 'SCR',
 #'                     AVISIT == 'BASELINE' ~ 'BL',
 #'                     grepl('WEEK', AVISIT) ~
 #'                       paste('W', stringr::str_extract(AVISIT, '(?<=(WEEK ))[0-9]+')),
 #'                     TRUE ~ as.character(NA)),
-#'                   AVISITCDN = case_when(
+#'                   AVISITCDN = dplyr::case_when(
 #'                     AVISITCD == 'SCR' ~ -2,
 #'                     AVISITCD == 'BL' ~ 0,
 #'                     grepl('W', AVISITCD) ~ as.numeric(gsub('[^0-9]*', '', AVISITCD)),
 #'                     TRUE ~ as.numeric(NA)),
 #'                   AVISITCD = factor(AVISITCD) %>% reorder(AVISITCDN),
-#'                   TRTORD = case_when(
+#'                   TRTORD = dplyr::case_when(
 #'                     ARMCD == 'ARM C' ~ 1,
 #'                     ARMCD == 'ARM B' ~ 2,
 #'                     ARMCD == 'ARM A' ~ 3),
@@ -146,8 +146,8 @@
 #'                   ACTARM = factor(ACTARM) %>% reorder(TRTORD),
 #'                   ANRLO = 30,
 #'                   ANRHI = 75) %>%
-#'                   rowwise() %>%
-#'                   group_by(PARAMCD) %>%
+#'                   dplyr::rowwise() %>%
+#'                   dplyr::group_by(PARAMCD) %>%
 #'                   dplyr::mutate(LBSTRESC = ifelse(USUBJID %in% sample(USUBJID, 1, replace = TRUE),
 #'                   paste('<', round(runif(1, min = 25, max = 30))), LBSTRESC)) %>%
 #'                   dplyr::mutate(LBSTRESC = ifelse(USUBJID %in% sample(USUBJID, 1, replace = TRUE),
@@ -210,7 +210,7 @@ tm_g_gh_spaghettiplot <- function(label,
                                   group_stats = "NONE",
                                   man_color = NULL,
                                   color_comb = NULL,
-                                  xtick = waiver(),
+                                  xtick = ggplot2::waiver(),
                                   xlabel = xtick,
                                   rotate_xlab = FALSE,
                                   facet_ncol = 2,
