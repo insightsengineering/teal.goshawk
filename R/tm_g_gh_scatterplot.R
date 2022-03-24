@@ -60,16 +60,16 @@
 #'       grepl("W", AVISITCD) ~ as.numeric(gsub("[^0-9]*", "", AVISITCD)),
 #'       TRUE ~ as.numeric(NA)
 #'     ),
-#'     AVISITCD = factor(AVISITCD) %>% reorder(AVISITCDN),
+#'     AVISITCD = factor(AVISITCD) %>% stats::reorder(AVISITCDN),
 #'     TRTORD = dplyr::case_when(
 #'       ARMCD == "ARM C" ~ 1,
 #'       ARMCD == "ARM B" ~ 2,
 #'       ARMCD == "ARM A" ~ 3
 #'     ),
 #'     ARM = as.character(arm_mapping[match(ARM, names(arm_mapping))]),
-#'     ARM = factor(ARM) %>% reorder(TRTORD),
+#'     ARM = factor(ARM) %>% stats::reorder(TRTORD),
 #'     ACTARM = as.character(arm_mapping[match(ACTARM, names(arm_mapping))]),
-#'     ACTARM = factor(ACTARM) %>% reorder(TRTORD)
+#'     ACTARM = factor(ACTARM) %>% stats::reorder(TRTORD)
 #'   )
 #' attr(ADLB[["ARM"]], "label") <- var_labels[["ARM"]]
 #' attr(ADLB[["ACTARM"]], "label") <- var_labels[["ACTARM"]]
