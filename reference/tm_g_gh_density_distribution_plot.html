@@ -24,7 +24,7 @@ and an accompanying summary table."><!-- mathjax --><script src="https://cdnjs.c
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">teal.goshawk</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.1.11.9009</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.1.11.9010</span>
       </span>
     </div>
 
@@ -35,15 +35,6 @@ and an accompanying summary table."><!-- mathjax --><script src="https://cdnjs.c
 <li>
   <a href="../news/index.html">Changelog</a>
 </li>
-<!-- start_releases -->
-<li class="dropdown">
-	<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
-Other releases
-<span class="caret"></span></a><ul class="dropdown-menu" role="menu">
-   <li><a href="../index.html">latest</a></li>
-   <li><a href="..//index.html"></a></li>
-</ul></li>
-<!-- end_releases -->
       </ul><ul class="nav navbar-nav navbar-right"><li>
   <a href="https://github.com/insightsengineering/teal.goshawk">
     <span class="fa fa-github"></span>
@@ -172,21 +163,21 @@ into context. For example the <code><a href="https://rdrr.io/pkg/shiny/man/helpT
 <span class="r-in"><span class="va">ADLB</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/scda/man/synthetic_cdisc_data.html" class="external-link">synthetic_cdisc_data</a></span><span class="op">(</span><span class="st">"latest"</span><span class="op">)</span><span class="op">$</span><span class="va">adlb</span></span>
 <span class="r-in"><span class="va">var_labels</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">lapply</a></span><span class="op">(</span><span class="va">ADLB</span>, <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/base/attributes.html" class="external-link">attributes</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span><span class="op">$</span><span class="va">label</span><span class="op">)</span></span>
 <span class="r-in"><span class="va">ADLB</span> <span class="op">&lt;-</span> <span class="va">ADLB</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
-<span class="r-in">  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span></span>
-<span class="r-in">    AVISITCD <span class="op">=</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/case_when.html" class="external-link">case_when</a></span><span class="op">(</span></span>
+<span class="r-in">  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span></span>
+<span class="r-in">    AVISITCD <span class="op">=</span> <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/case_when.html" class="external-link">case_when</a></span><span class="op">(</span></span>
 <span class="r-in">      <span class="va">AVISIT</span> <span class="op">==</span> <span class="st">"SCREENING"</span> <span class="op">~</span> <span class="st">"SCR"</span>,</span>
 <span class="r-in">      <span class="va">AVISIT</span> <span class="op">==</span> <span class="st">"BASELINE"</span> <span class="op">~</span> <span class="st">"BL"</span>,</span>
 <span class="r-in">      <span class="fu"><a href="https://rdrr.io/r/base/grep.html" class="external-link">grepl</a></span><span class="op">(</span><span class="st">"WEEK"</span>, <span class="va">AVISIT</span><span class="op">)</span> <span class="op">~</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="st">"W"</span>, <span class="fu">stringr</span><span class="fu">::</span><span class="fu"><a href="https://stringr.tidyverse.org/reference/str_extract.html" class="external-link">str_extract</a></span><span class="op">(</span><span class="va">AVISIT</span>, <span class="st">"(?&lt;=(WEEK ))[0-9]+"</span><span class="op">)</span><span class="op">)</span>,</span>
 <span class="r-in">      <span class="cn">TRUE</span> <span class="op">~</span> <span class="fu"><a href="https://rdrr.io/r/base/character.html" class="external-link">as.character</a></span><span class="op">(</span><span class="cn">NA</span><span class="op">)</span></span>
 <span class="r-in">    <span class="op">)</span>,</span>
-<span class="r-in">    AVISITCDN <span class="op">=</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/case_when.html" class="external-link">case_when</a></span><span class="op">(</span></span>
+<span class="r-in">    AVISITCDN <span class="op">=</span> <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/case_when.html" class="external-link">case_when</a></span><span class="op">(</span></span>
 <span class="r-in">      <span class="va">AVISITCD</span> <span class="op">==</span> <span class="st">"SCR"</span> <span class="op">~</span> <span class="op">-</span><span class="fl">2</span>,</span>
 <span class="r-in">      <span class="va">AVISITCD</span> <span class="op">==</span> <span class="st">"BL"</span> <span class="op">~</span> <span class="fl">0</span>,</span>
 <span class="r-in">      <span class="fu"><a href="https://rdrr.io/r/base/grep.html" class="external-link">grepl</a></span><span class="op">(</span><span class="st">"W"</span>, <span class="va">AVISITCD</span><span class="op">)</span> <span class="op">~</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html" class="external-link">as.numeric</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/grep.html" class="external-link">gsub</a></span><span class="op">(</span><span class="st">"[^0-9]*"</span>, <span class="st">""</span>, <span class="va">AVISITCD</span><span class="op">)</span><span class="op">)</span>,</span>
 <span class="r-in">      <span class="cn">TRUE</span> <span class="op">~</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html" class="external-link">as.numeric</a></span><span class="op">(</span><span class="cn">NA</span><span class="op">)</span></span>
 <span class="r-in">    <span class="op">)</span>,</span>
 <span class="r-in">    AVISITCD <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">factor</a></span><span class="op">(</span><span class="va">AVISITCD</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="https://rdrr.io/r/stats/reorder.factor.html" class="external-link">reorder</a></span><span class="op">(</span><span class="va">AVISITCDN</span><span class="op">)</span>,</span>
-<span class="r-in">    TRTORD <span class="op">=</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/case_when.html" class="external-link">case_when</a></span><span class="op">(</span></span>
+<span class="r-in">    TRTORD <span class="op">=</span> <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/case_when.html" class="external-link">case_when</a></span><span class="op">(</span></span>
 <span class="r-in">      <span class="va">ARMCD</span> <span class="op">==</span> <span class="st">"ARM C"</span> <span class="op">~</span> <span class="fl">1</span>,</span>
 <span class="r-in">      <span class="va">ARMCD</span> <span class="op">==</span> <span class="st">"ARM B"</span> <span class="op">~</span> <span class="fl">2</span>,</span>
 <span class="r-in">      <span class="va">ARMCD</span> <span class="op">==</span> <span class="st">"ARM A"</span> <span class="op">~</span> <span class="fl">3</span></span>
@@ -206,7 +197,7 @@ into context. For example the <code><a href="https://rdrr.io/pkg/shiny/man/helpT
 <span class="r-in">    <span class="fu">cdisc_dataset</span><span class="op">(</span></span>
 <span class="r-in">      <span class="st">"ADLB"</span>,</span>
 <span class="r-in">      <span class="va">ADLB</span>,</span>
-<span class="r-in">      code <span class="op">=</span> <span class="st">[1388 chars quoted with '"']</span>,</span>
+<span class="r-in">      code <span class="op">=</span> <span class="st">[1416 chars quoted with '"']</span>,</span>
 <span class="r-in">      vars <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>arm_mapping <span class="op">=</span> <span class="va">arm_mapping</span><span class="op">)</span></span>
 <span class="r-in">    <span class="op">)</span>,</span>
 <span class="r-in">    check <span class="op">=</span> <span class="cn">TRUE</span></span>
@@ -235,7 +226,7 @@ into context. For example the <code><a href="https://rdrr.io/pkg/shiny/man/helpT
 <span class="r-in">    <span class="op">)</span></span>
 <span class="r-in">  <span class="op">)</span></span>
 <span class="r-in"><span class="op">)</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [INFO] 2022-03-18 15:38:48.9382 pid:1529 token:[] teal.goshawk Initializing tm_g_gh_density_distribution_plot</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [INFO] 2022-03-25 08:52:05.4676 pid:1531 token:[] teal.goshawk Initializing tm_g_gh_density_distribution_plot</span>
 <span class="r-in"><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span></span>
 <span class="r-in"><span class="fu">shinyApp</span><span class="op">(</span><span class="va">app</span><span class="op">$</span><span class="va">ui</span>, <span class="va">app</span><span class="op">$</span><span class="va">server</span><span class="op">)</span></span>
 <span class="r-in"><span class="op">}</span></span>
