@@ -27,20 +27,20 @@ Depends:
 Imports:
     checkmate,
     colourpicker,
-    DescTools,
     dplyr,
     DT,
     ggplot2,
+    grDevices,
     logger (>= 0.2.0),
     methods,
+    rlang,
     shinyjs,
     stats,
     teal.code,
     teal.logger,
     teal.transform,
     teal.widgets,
-    tidyr (>= 1.0.0),
-    utils
+    tidyr,
 Suggests:
     knitr,
     rmarkdown,
@@ -48,7 +48,8 @@ Suggests:
     scda.2021 (>= 0.1.2),
     stringr,
     tern (>= 0.7.6),
-    testthat (>= 2.0)
+    testthat (>= 2.0),
+    utils
 Encoding: UTF-8
 LazyData: true
 Roxygen: list(markdown = TRUE)

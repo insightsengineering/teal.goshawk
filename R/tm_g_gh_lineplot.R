@@ -42,10 +42,6 @@
 #' nodes on the graph
 #' @param table_font_size controls the font size of values in the table
 #'
-#' @importFrom ggplot2 waiver
-#' @importFrom grDevices extendrange rainbow
-#' @importFrom colourpicker colourInput
-#'
 #' @author Wenyi Liu (luiw2) wenyi.liu@roche.com
 #' @author Balazs Toth (tothb2) toth.balazs@gene.com
 #'
@@ -72,21 +68,21 @@
 #' ADLB <- synthetic_cdisc_data("latest")$adlb
 #' var_labels <- lapply(ADLB, function(x) attributes(x)$label)
 #' ADLB <- ADLB %>%
-#'   mutate(
-#'     AVISITCD = case_when(
+#'   dplyr::mutate(
+#'     AVISITCD = dplyr::case_when(
 #'       AVISIT == "SCREENING" ~ "SCR",
 #'       AVISIT == "BASELINE" ~ "BL",
 #'       grepl("WEEK", AVISIT) ~ paste("W", stringr::str_extract(AVISIT, "(?<=(WEEK ))[0-9]+")),
 #'       TRUE ~ as.character(NA)
 #'     ),
-#'     AVISITCDN = case_when(
+#'     AVISITCDN = dplyr::case_when(
 #'       AVISITCD == "SCR" ~ -2,
 #'       AVISITCD == "BL" ~ 0,
 #'       grepl("W", AVISITCD) ~ as.numeric(gsub("[^0-9]*", "", AVISITCD)),
 #'       TRUE ~ as.numeric(NA)
 #'     ),
 #'     AVISITCD = factor(AVISITCD) %>% reorder(AVISITCDN),
-#'     TRTORD = case_when(
+#'     TRTORD = dplyr::case_when(
 #'       ARMCD == "ARM C" ~ 1,
 #'       ARMCD == "ARM B" ~ 2,
 #'       ARMCD == "ARM A" ~ 3
@@ -106,19 +102,19 @@
 #'       code = "ADLB <- synthetic_cdisc_data(\"latest\")$adlb
 #'               var_labels <- lapply(ADLB, function(x) attributes(x)$label)
 #'               ADLB <- ADLB %>%
-#'                 mutate(AVISITCD = case_when(
+#'                 dplyr::mutate(AVISITCD = dplyr::case_when(
 #'                     AVISIT == 'SCREENING' ~ 'SCR',
 #'                     AVISIT == 'BASELINE' ~ 'BL',
 #'                     grepl('WEEK', AVISIT) ~
 #'                       paste('W', stringr::str_extract(AVISIT, '(?<=(WEEK ))[0-9]+')),
 #'                     TRUE ~ as.character(NA)),
-#'                   AVISITCDN = case_when(
+#'                   AVISITCDN = dplyr::case_when(
 #'                     AVISITCD == 'SCR' ~ -2,
 #'                     AVISITCD == 'BL' ~ 0,
 #'                     grepl('W', AVISITCD) ~ as.numeric(gsub('[^0-9]*', '', AVISITCD)),
 #'                     TRUE ~ as.numeric(NA)),
 #'                   AVISITCD = factor(AVISITCD) %>% reorder(AVISITCDN),
-#'                   TRTORD = case_when(
+#'                   TRTORD = dplyr::case_when(
 #'                     ARMCD == 'ARM C' ~ 1,
 #'                     ARMCD == 'ARM B' ~ 2,
 #'                     ARMCD == 'ARM A' ~ 3),
@@ -169,7 +165,7 @@ tm_g_gh_lineplot <- function(label,
                              hline_arb_color = "red",
                              hline_arb_label = "Horizontal line",
                              color_manual = NULL,
-                             xtick = waiver(),
+                             xtick = ggplot2::waiver(),
                              xlabel = xtick,
                              rotate_xlab = FALSE,
                              plot_height = c(600, 200, 4000),
@@ -338,7 +334,7 @@ srv_lineplot <- function(id,
     ns <- session$ns
     output$shape_ui <- renderUI({
       if (!is.null(shape_choices)) {
-        if (is(shape_choices, "choices_selected")) {
+        if (methods::is(shape_choices, "choices_selected")) {
           choices <- shape_choices$choices
           selected <- shape_choices$selected
         } else {
@@ -384,19 +380,19 @@ srv_lineplot <- function(id,
       # we don't need to additionally filter for paramvar here as in keep_range_slider_updated because
       # xaxis_var and yaxis_var are always distinct
       sum_data <- ANL %>%
-        group_by_at(c(input$xaxis_var, input$trt_group, shape)) %>%
-        summarise(
+        dplyr::group_by_at(c(input$xaxis_var, input$trt_group, shape)) %>%
+        dplyr::summarise(
           upper = if (input$stat == "mean") {
             mean(!!sym(varname), na.rm = TRUE) +
-              1.96 * sd(!!sym(varname), na.rm = TRUE) / sqrt(n())
+              1.96 * stats::sd(!!sym(varname), na.rm = TRUE) / sqrt(dplyr::n())
           } else {
-            quantile(!!sym(varname), 0.75, na.rm = TRUE)
+            stats::quantile(!!sym(varname), 0.75, na.rm = TRUE)
           },
           lower = if (input$stat == "mean") {
             mean(!!sym(varname), na.rm = TRUE) -
-              1.96 * sd(!!sym(varname), na.rm = TRUE) / sqrt(n())
+              1.96 * stats::sd(!!sym(varname), na.rm = TRUE) / sqrt(dplyr::n())
           } else {
-            quantile(!!sym(varname), 0.25, na.rm = TRUE)
+            stats::quantile(!!sym(varname), 0.25, na.rm = TRUE)
           }
         )
 
@@ -441,9 +437,9 @@ srv_lineplot <- function(id,
         # if color_manual did specify arms then we need to make sure the order of
         # line_color_to_set matches the order of level(anl_arm) and if any arms are invalid
         # or missing then we fill with a random colour
-        line_color_to_set <- setNames(line_color_defaults()[levels(anl_arm)], nm = levels(anl_arm))
+        line_color_to_set <- stats::setNames(line_color_defaults()[levels(anl_arm)], nm = levels(anl_arm))
       }
-      line_color_to_set[is.na(line_color_to_set)] <- rainbow(anl_arm_nlevels)[is.na(line_color_to_set)]
+      line_color_to_set[is.na(line_color_to_set)] <- grDevices::rainbow(anl_arm_nlevels)[is.na(line_color_to_set)]
       line_color_defaults(line_color_to_set)
 
       line_type_to_set <- if (length(line_type_defaults()) <= anl_arm_nlevels) {
@@ -463,7 +459,7 @@ srv_lineplot <- function(id,
       anl_arm_nlevels <- nlevels(anl_arm)
       anl_arm_levels <- levels(anl_arm)
 
-      setNames(
+      stats::setNames(
         vapply(
           seq_len(anl_arm_nlevels),
           function(idx) {
@@ -484,7 +480,7 @@ srv_lineplot <- function(id,
       anl_arm_nlevels <- nlevels(anl_arm)
       anl_arm_levels <- levels(anl_arm)
 
-      setNames(
+      stats::setNames(
         vapply(
           seq_len(anl_arm_nlevels),
           function(idx) {
@@ -602,7 +598,7 @@ srv_lineplot <- function(id,
       anl_shape_nlevels <- nlevels(anl_shape)
       anl_shape_levels <- levels(anl_shape)
 
-      setNames(
+      stats::setNames(
         vapply(
           seq_len(anl_shape_nlevels),
           function(idx) {
@@ -687,7 +683,7 @@ srv_lineplot <- function(id,
         chunks = private_chunks
       )
 
-      if (!is(xtick, "waiver") && !is.null(xtick)) {
+      if (!methods::is(xtick, "waiver") && !is.null(xtick)) {
         teal.code::chunks_push(
           chunks = private_chunks,
           expression = bquote({
@@ -725,8 +721,8 @@ srv_lineplot <- function(id,
             hline_arb = .(hline_arb),
             hline_arb_label = .(hline_arb_label),
             hline_arb_color = .(hline_arb_color),
-            xtick = .(if (!is(xtick, "waiver") && !is.null(xtick)) quote(xtick) else xtick),
-            xlabel = .(if (!is(xtick, "waiver") && !is.null(xtick)) quote(xlabel) else xlabel),
+            xtick = .(if (!methods::is(xtick, "waiver") && !is.null(xtick)) quote(xtick) else xtick),
+            xlabel = .(if (!methods::is(xtick, "waiver") && !is.null(xtick)) quote(xlabel) else xlabel),
             rotate_xlab = .(rotate_xlab),
             plot_height = .(relative_height), # in g_lineplot this is relative height of plot to table
             plot_font_size = .(plot_font_size),

@@ -52,8 +52,6 @@
 #' @examples
 #'
 #' # Example using ADaM structure analysis dataset.
-#'
-#' library(dplyr)
 #' library(scda)
 #'
 #' # original ARM value = dose value
@@ -72,7 +70,7 @@
 #' ADLB <- synthetic_cdisc_data("latest")$adlb
 #' var_labels <- lapply(ADLB, function(x) attributes(x)$label)
 #' ADLB <- ADLB %>%
-#'   mutate(AVISITCD = case_when(
+#'   dplyr::mutate(AVISITCD = dplyr::case_when(
 #'     AVISIT == "SCREENING" ~ "SCR",
 #'     AVISIT == "BASELINE" ~ "BL",
 #'     grepl("WEEK", AVISIT) ~
@@ -88,42 +86,42 @@
 #'       ),
 #'     TRUE ~ NA_character_
 #'   )) %>%
-#'   mutate(AVISITCDN = case_when(
+#'   dplyr::mutate(AVISITCDN = dplyr::case_when(
 #'     AVISITCD == "SCR" ~ -2,
 #'     AVISITCD == "BL" ~ 0,
 #'     grepl("W", AVISITCD) ~ as.numeric(gsub("[^0-9]*", "", AVISITCD)),
 #'     TRUE ~ NA_real_
 #'   )) %>%
 #'   # use ARMCD values to order treatment in visualization legend
-#'   mutate(TRTORD = ifelse(grepl("C", ARMCD), 1,
+#'   dplyr::mutate(TRTORD = ifelse(grepl("C", ARMCD), 1,
 #'     ifelse(grepl("B", ARMCD), 2,
 #'       ifelse(grepl("A", ARMCD), 3, NA)
 #'     )
 #'   )) %>%
-#'   mutate(ARM = as.character(arm_mapping[match(ARM, names(arm_mapping))])) %>%
-#'   mutate(ARM = factor(ARM) %>%
+#'   dplyr::mutate(ARM = as.character(arm_mapping[match(ARM, names(arm_mapping))])) %>%
+#'   dplyr::mutate(ARM = factor(ARM) %>%
 #'     reorder(TRTORD)) %>%
-#'   mutate(
-#'     ANRHI = case_when(
+#'   dplyr::mutate(
+#'     ANRHI = dplyr::case_when(
 #'       PARAMCD == "ALT" ~ 60,
 #'       PARAMCD == "CRP" ~ 70,
 #'       PARAMCD == "IGA" ~ 80,
 #'       TRUE ~ NA_real_
 #'     ),
-#'     ANRLO = case_when(
+#'     ANRLO = dplyr::case_when(
 #'       PARAMCD == "ALT" ~ 20,
 #'       PARAMCD == "CRP" ~ 30,
 #'       PARAMCD == "IGA" ~ 40,
 #'       TRUE ~ NA_real_
 #'     )
 #'   ) %>%
-#'   rowwise() %>%
-#'   group_by(PARAMCD) %>%
-#'   mutate(LBSTRESC = ifelse(
+#'   dplyr::rowwise() %>%
+#'   dplyr::group_by(PARAMCD) %>%
+#'   dplyr::mutate(LBSTRESC = ifelse(
 #'     USUBJID %in% sample(USUBJID, 1, replace = TRUE),
 #'     paste("<", round(runif(1, min = 25, max = 30))), LBSTRESC
 #'   )) %>%
-#'   mutate(LBSTRESC = ifelse(
+#'   dplyr::mutate(LBSTRESC = ifelse(
 #'     USUBJID %in% sample(USUBJID, 1, replace = TRUE),
 #'     paste(">", round(runif(1, min = 70, max = 75))), LBSTRESC
 #'   )) %>%
@@ -146,7 +144,7 @@
 #'               ADLB <- synthetic_cdisc_data('latest')$adlb
 #'               var_labels <- lapply(ADLB, function(x) attributes(x)$label)
 #'               ADLB <- ADLB %>%
-#'                 mutate(AVISITCD = case_when(
+#'                 dplyr::mutate(AVISITCD = dplyr::case_when(
 #'                   AVISIT == 'SCREENING' ~ 'SCR',
 #'                   AVISIT == 'BASELINE' ~ 'BL',
 #'                   grepl('WEEK', AVISIT) ~
@@ -161,37 +159,37 @@
 #'                       )
 #'                     ),
 #'                   TRUE ~ NA_character_)) %>%
-#'                 mutate(AVISITCDN = case_when(
+#'                 dplyr::mutate(AVISITCDN = dplyr::case_when(
 #'                   AVISITCD == 'SCR' ~ -2,
 #'                   AVISITCD == 'BL' ~ 0,
 #'                   grepl('W', AVISITCD) ~ as.numeric(gsub('[^0-9]*', '', AVISITCD)),
 #'                   TRUE ~ NA_real_)) %>%
 #'                 # use ARMCD values to order treatment in visualization legend
-#'                 mutate(TRTORD = ifelse(grepl('C', ARMCD), 1,
+#'                 dplyr::mutate(TRTORD = ifelse(grepl('C', ARMCD), 1,
 #'                                        ifelse(grepl('B', ARMCD), 2,
 #'                                               ifelse(grepl('A', ARMCD), 3, NA)))) %>%
-#'                 mutate(ARM = as.character(arm_mapping[match(ARM, names(arm_mapping))])) %>%
-#'                 mutate(ARM = factor(ARM) %>%
+#'                 dplyr::mutate(ARM = as.character(arm_mapping[match(ARM, names(arm_mapping))])) %>%
+#'                 dplyr::mutate(ARM = factor(ARM) %>%
 #'                          reorder(TRTORD)) %>%
-#'                 mutate(
-#'                   ANRHI = case_when(
+#'                 dplyr::mutate(
+#'                   ANRHI = dplyr::case_when(
 #'                     PARAMCD == 'ALT' ~ 60,
 #'                     PARAMCD == 'CRP' ~ 70,
 #'                     PARAMCD == 'IGA' ~ 80,
 #'                     TRUE ~ NA_real_
 #'                   ),
-#'                   ANRLO = case_when(
+#'                   ANRLO = dplyr::case_when(
 #'                     PARAMCD == 'ALT' ~ 20,
 #'                     PARAMCD == 'CRP' ~ 30,
 #'                     PARAMCD == 'IGA' ~ 40,
 #'                     TRUE ~ NA_real_
 #'                   )) %>%
-#'                 rowwise() %>%
-#'                 group_by(PARAMCD) %>%
-#'                 mutate(LBSTRESC = ifelse(
+#'                 dplyr::rowwise() %>%
+#'                 dplyr::group_by(PARAMCD) %>%
+#'                 dplyr::mutate(LBSTRESC = ifelse(
 #'                   USUBJID %in% sample(USUBJID, 1, replace = TRUE),
 #'                   paste('<', round(runif(1, min = 25, max = 30))), LBSTRESC)) %>%
-#'                 mutate(LBSTRESC = ifelse(
+#'                 dplyr::mutate(LBSTRESC = ifelse(
 #'                   USUBJID %in% sample(USUBJID, 1, replace = TRUE),
 #'                   paste( '>', round(runif(1, min = 70, max = 75))), LBSTRESC)) %>%
 #'                 ungroup()
@@ -418,7 +416,6 @@ ui_g_correlationplot <- function(id, ...) {
   )
 }
 
-#' @importFrom goshawk g_correlationplot
 srv_g_correlationplot <- function(id,
                                   datasets,
                                   dataname,
@@ -534,7 +531,7 @@ srv_g_correlationplot <- function(id,
 
       # analysis
       private_chunks <- teal.code::chunks$new()
-      teal.code::chunks_reset(as.environment(setNames(list(ANL_FILTERED), dataset_var)), private_chunks)
+      teal.code::chunks_reset(as.environment(stats::setNames(list(ANL_FILTERED), dataset_var)), private_chunks)
 
       # filter biomarker
       teal.code::chunks_push(
@@ -567,14 +564,14 @@ srv_g_correlationplot <- function(id,
       validate_has_variable(ANL, "BASE")
       validate_has_variable(ANL, "BASE2")
 
-      ANL <- ANL %>% filter(.data[[param_var]] == input$xaxis_param) # nolint
+      ANL <- ANL %>% dplyr::filter(.data[[param_var]] == input$xaxis_param) # nolint
 
       visit_freq <- unique(ANL$AVISITCD)
 
       # get min max values
       if ((constraint_var == "BASE2" && any(grepl("SCR", visit_freq))) ||
         (constraint_var == "BASE" && any(grepl("BL", visit_freq)))) {
-        val <- na.omit(switch(constraint_var,
+        val <- stats::na.omit(switch(constraint_var,
           "BASE" = ANL$BASE[ANL$AVISITCD == "BL"],
           "BASE2" = ANL$BASE2[ANL$AVISITCD == "SCR"],
           stop(paste(constraint_var, "not allowed"))
@@ -703,7 +700,7 @@ srv_g_correlationplot <- function(id,
               remove = TRUE
             ) %>%
             tidyr::pivot_wider(names_from = "ANL.PARAM", values_from = "ANLVALS") %>%
-            dplyr::mutate(LOQFL_COMB = case_when(
+            dplyr::mutate(LOQFL_COMB = dplyr::case_when(
               .data[[.(xloqfl())]] == "Y" | .data[[.(yloqfl())]] == "Y" ~ "Y",
               .data[[.(xloqfl())]] == "N" & .data[[.(yloqfl())]] == "N" ~ "N",
               .data[[.(xloqfl())]] == "N" & .data[[.(yloqfl())]] == "NA" ~ "N",
@@ -878,11 +875,11 @@ srv_g_correlationplot <- function(id,
       ANL_TRANSPOSED <- isolate(plot_data_transpose()$ANL_TRANSPOSED) # nolint
 
       df <- teal.widgets::clean_brushedPoints(
-        select(ANL_TRANSPOSED, "USUBJID", input$trt_group, "AVISITCD", xvar(), yvar(), "LOQFL_COMB"),
+        dplyr::select(ANL_TRANSPOSED, "USUBJID", input$trt_group, "AVISITCD", xvar(), yvar(), "LOQFL_COMB"),
         plot_brush
       )
 
-      numeric_cols <- names(select_if(df, is.numeric))
+      numeric_cols <- names(dplyr::select_if(df, is.numeric))
 
       DT::datatable(df, rownames = FALSE, options = list(scrollX = TRUE)) %>%
         DT::formatRound(numeric_cols, 4)

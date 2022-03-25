@@ -47,29 +47,29 @@
 #' ADLB <- synthetic_cdisc_data("latest")$adlb
 #' var_labels <- lapply(ADLB, function(x) attributes(x)$label)
 #' ADLB <- ADLB %>%
-#'   mutate(
-#'     AVISITCD = case_when(
+#'   dplyr::mutate(
+#'     AVISITCD = dplyr::case_when(
 #'       AVISIT == "SCREENING" ~ "SCR",
 #'       AVISIT == "BASELINE" ~ "BL",
 #'       grepl("WEEK", AVISIT) ~ paste("W", stringr::str_extract(AVISIT, "(?<=(WEEK ))[0-9]+")),
 #'       TRUE ~ as.character(NA)
 #'     ),
-#'     AVISITCDN = case_when(
+#'     AVISITCDN = dplyr::case_when(
 #'       AVISITCD == "SCR" ~ -2,
 #'       AVISITCD == "BL" ~ 0,
 #'       grepl("W", AVISITCD) ~ as.numeric(gsub("[^0-9]*", "", AVISITCD)),
 #'       TRUE ~ as.numeric(NA)
 #'     ),
-#'     AVISITCD = factor(AVISITCD) %>% reorder(AVISITCDN),
-#'     TRTORD = case_when(
+#'     AVISITCD = factor(AVISITCD) %>% stats::reorder(AVISITCDN),
+#'     TRTORD = dplyr::case_when(
 #'       ARMCD == "ARM C" ~ 1,
 #'       ARMCD == "ARM B" ~ 2,
 #'       ARMCD == "ARM A" ~ 3
 #'     ),
 #'     ARM = as.character(arm_mapping[match(ARM, names(arm_mapping))]),
-#'     ARM = factor(ARM) %>% reorder(TRTORD),
+#'     ARM = factor(ARM) %>% stats::reorder(TRTORD),
 #'     ACTARM = as.character(arm_mapping[match(ACTARM, names(arm_mapping))]),
-#'     ACTARM = factor(ACTARM) %>% reorder(TRTORD)
+#'     ACTARM = factor(ACTARM) %>% stats::reorder(TRTORD)
 #'   )
 #' attr(ADLB[["ARM"]], "label") <- var_labels[["ARM"]]
 #' attr(ADLB[["ACTARM"]], "label") <- var_labels[["ACTARM"]]
@@ -83,19 +83,19 @@
 #'       code = "ADLB <- synthetic_cdisc_data(\"latest\")$adlb
 #'               var_labels <- lapply(ADLB, function(x) attributes(x)$label)
 #'               ADLB <- ADLB %>%
-#'                 mutate(AVISITCD = case_when(
+#'                 dplyr::mutate(AVISITCD = dplyr::case_when(
 #'                     AVISIT == 'SCREENING' ~ 'SCR',
 #'                     AVISIT == 'BASELINE' ~ 'BL',
 #'                     grepl('WEEK', AVISIT) ~
 #'                       paste('W', stringr::str_extract(AVISIT, '(?<=(WEEK ))[0-9]+')),
 #'                     TRUE ~ as.character(NA)),
-#'                   AVISITCDN = case_when(
+#'                   AVISITCDN = dplyr::case_when(
 #'                     AVISITCD == 'SCR' ~ -2,
 #'                     AVISITCD == 'BL' ~ 0,
 #'                     grepl('W', AVISITCD) ~ as.numeric(gsub('[^0-9]*', '', AVISITCD)),
 #'                     TRUE ~ as.numeric(NA)),
 #'                   AVISITCD = factor(AVISITCD) %>% reorder(AVISITCDN),
-#'                   TRTORD = case_when(
+#'                   TRTORD = dplyr::case_when(
 #'                     ARMCD == 'ARM C' ~ 1,
 #'                     ARMCD == 'ARM B' ~ 2,
 #'                     ARMCD == 'ARM A' ~ 3),
@@ -197,7 +197,6 @@ tm_g_gh_scatterplot <- function(label,
   )
 }
 
-#' @importFrom shinyjs hidden
 ui_g_scatterplot <- function(id, ...) {
   ns <- NS(id)
   a <- list(...)
@@ -262,7 +261,6 @@ ui_g_scatterplot <- function(id, ...) {
   )
 }
 
-#' @importFrom goshawk g_scatterplot
 srv_g_scatterplot <- function(id,
                               datasets,
                               dataname,
@@ -382,11 +380,11 @@ srv_g_scatterplot <- function(id,
       req(all(c(xvar, yvar) %in% names(ANL)))
 
       df <- teal.widgets::clean_brushedPoints(
-        select(ANL, "USUBJID", trt_group, "AVISITCD", "PARAMCD", xvar, yvar, "LOQFL"),
+        dplyr::select(ANL, "USUBJID", trt_group, "AVISITCD", "PARAMCD", xvar, yvar, "LOQFL"),
         plot_brush
       )
 
-      numeric_cols <- names(select_if(df, is.numeric))
+      numeric_cols <- names(dplyr::select_if(df, is.numeric))
 
       DT::datatable(df, rownames = FALSE, options = list(scrollX = TRUE)) %>%
         DT::formatRound(numeric_cols, 4)

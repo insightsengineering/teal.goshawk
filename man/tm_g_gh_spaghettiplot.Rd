@@ -20,7 +20,7 @@ tm_g_gh_spaghettiplot(
   group_stats = "NONE",
   man_color = NULL,
   color_comb = NULL,
-  xtick = waiver(),
+  xtick = ggplot2::waiver(),
   xlabel = xtick,
   rotate_xlab = FALSE,
   facet_ncol = 2,
@@ -137,21 +137,21 @@ ADSL <- synthetic_cdisc_data("latest")$adsl
 ADLB <- synthetic_cdisc_data("latest")$adlb
 var_labels <- lapply(ADLB, function(x) attributes(x)$label)
 ADLB <- ADLB \%>\%
-  mutate(
-    AVISITCD = case_when(
+  dplyr::mutate(
+    AVISITCD = dplyr::case_when(
       AVISIT == "SCREENING" ~ "SCR",
       AVISIT == "BASELINE" ~ "BL",
       grepl("WEEK", AVISIT) ~ paste("W", stringr::str_extract(AVISIT, "(?<=(WEEK ))[0-9]+")),
       TRUE ~ as.character(NA)
     ),
-    AVISITCDN = case_when(
+    AVISITCDN = dplyr::case_when(
       AVISITCD == "SCR" ~ -2,
       AVISITCD == "BL" ~ 0,
       grepl("W", AVISITCD) ~ as.numeric(gsub("[^0-9]*", "", AVISITCD)),
       TRUE ~ as.numeric(NA)
     ),
     AVISITCD = factor(AVISITCD) \%>\% reorder(AVISITCDN),
-    TRTORD = case_when(
+    TRTORD = dplyr::case_when(
       ARMCD == "ARM C" ~ 1,
       ARMCD == "ARM B" ~ 2,
       ARMCD == "ARM A" ~ 3
@@ -163,12 +163,12 @@ ADLB <- ADLB \%>\%
     ANRLO = 30,
     ANRHI = 75
   ) \%>\%
-  rowwise() \%>\%
-  group_by(PARAMCD) \%>\%
-  mutate(LBSTRESC = ifelse(USUBJID \%in\% sample(USUBJID, 1, replace = TRUE),
+  dplyr::rowwise() \%>\%
+  dplyr::group_by(PARAMCD) \%>\%
+  dplyr::mutate(LBSTRESC = ifelse(USUBJID \%in\% sample(USUBJID, 1, replace = TRUE),
     paste("<", round(runif(1, min = 25, max = 30))), LBSTRESC
   )) \%>\%
-  mutate(LBSTRESC = ifelse(USUBJID \%in\% sample(USUBJID, 1, replace = TRUE),
+  dplyr::mutate(LBSTRESC = ifelse(USUBJID \%in\% sample(USUBJID, 1, replace = TRUE),
     paste(">", round(runif(1, min = 70, max = 75))), LBSTRESC
   )) \%>\%
   ungroup()
@@ -191,19 +191,19 @@ app <- teal::init(
               ADLB <- synthetic_cdisc_data(\"latest\")$adlb
               var_labels <- lapply(ADLB, function(x) attributes(x)$label)
               ADLB <- ADLB \%>\%
-                mutate(AVISITCD = case_when(
+                dplyr::mutate(AVISITCD = dplyr::case_when(
                     AVISIT == 'SCREENING' ~ 'SCR',
                     AVISIT == 'BASELINE' ~ 'BL',
                     grepl('WEEK', AVISIT) ~
                       paste('W', stringr::str_extract(AVISIT, '(?<=(WEEK ))[0-9]+')),
                     TRUE ~ as.character(NA)),
-                  AVISITCDN = case_when(
+                  AVISITCDN = dplyr::case_when(
                     AVISITCD == 'SCR' ~ -2,
                     AVISITCD == 'BL' ~ 0,
                     grepl('W', AVISITCD) ~ as.numeric(gsub('[^0-9]*', '', AVISITCD)),
                     TRUE ~ as.numeric(NA)),
                   AVISITCD = factor(AVISITCD) \%>\% reorder(AVISITCDN),
-                  TRTORD = case_when(
+                  TRTORD = dplyr::case_when(
                     ARMCD == 'ARM C' ~ 1,
                     ARMCD == 'ARM B' ~ 2,
                     ARMCD == 'ARM A' ~ 3),
@@ -213,11 +213,11 @@ app <- teal::init(
                   ACTARM = factor(ACTARM) \%>\% reorder(TRTORD),
                   ANRLO = 30,
                   ANRHI = 75) \%>\%
-                  rowwise() \%>\%
-                  group_by(PARAMCD) \%>\%
-                  mutate(LBSTRESC = ifelse(USUBJID \%in\% sample(USUBJID, 1, replace = TRUE),
+                  dplyr::rowwise() \%>\%
+                  dplyr::group_by(PARAMCD) \%>\%
+                  dplyr::mutate(LBSTRESC = ifelse(USUBJID \%in\% sample(USUBJID, 1, replace = TRUE),
                   paste('<', round(runif(1, min = 25, max = 30))), LBSTRESC)) \%>\%
-                  mutate(LBSTRESC = ifelse(USUBJID \%in\% sample(USUBJID, 1, replace = TRUE),
+                  dplyr::mutate(LBSTRESC = ifelse(USUBJID \%in\% sample(USUBJID, 1, replace = TRUE),
                   paste( '>', round(runif(1, min = 70, max = 75))), LBSTRESC)) \%>\%
                   ungroup
                attr(ADLB[['ARM']], 'label') <- var_labels[['ARM']]

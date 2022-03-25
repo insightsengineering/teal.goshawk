@@ -50,21 +50,21 @@
 #' ADLB <- synthetic_cdisc_data("latest")$adlb
 #' var_labels <- lapply(ADLB, function(x) attributes(x)$label)
 #' ADLB <- ADLB %>%
-#'   mutate(
-#'     AVISITCD = case_when(
+#'   dplyr::mutate(
+#'     AVISITCD = dplyr::case_when(
 #'       AVISIT == "SCREENING" ~ "SCR",
 #'       AVISIT == "BASELINE" ~ "BL",
 #'       grepl("WEEK", AVISIT) ~ paste("W", stringr::str_extract(AVISIT, "(?<=(WEEK ))[0-9]+")),
 #'       TRUE ~ as.character(NA)
 #'     ),
-#'     AVISITCDN = case_when(
+#'     AVISITCDN = dplyr::case_when(
 #'       AVISITCD == "SCR" ~ -2,
 #'       AVISITCD == "BL" ~ 0,
 #'       grepl("W", AVISITCD) ~ as.numeric(gsub("[^0-9]*", "", AVISITCD)),
 #'       TRUE ~ as.numeric(NA)
 #'     ),
 #'     AVISITCD = factor(AVISITCD) %>% reorder(AVISITCDN),
-#'     TRTORD = case_when(
+#'     TRTORD = dplyr::case_when(
 #'       ARMCD == "ARM C" ~ 1,
 #'       ARMCD == "ARM B" ~ 2,
 #'       ARMCD == "ARM A" ~ 3
@@ -87,19 +87,19 @@
 #'       code = "ADLB <- synthetic_cdisc_data(\"latest\")$adlb
 #'               var_labels <- lapply(ADLB, function(x) attributes(x)$label)
 #'               ADLB <- ADLB %>%
-#'                 mutate(AVISITCD = case_when(
+#'                 dplyr::mutate(AVISITCD = dplyr::case_when(
 #'                     AVISIT == 'SCREENING' ~ 'SCR',
 #'                     AVISIT == 'BASELINE' ~ 'BL',
 #'                     grepl('WEEK', AVISIT) ~
 #'                       paste('W', stringr::str_extract(AVISIT, '(?<=(WEEK ))[0-9]+')),
 #'                     TRUE ~ as.character(NA)),
-#'                   AVISITCDN = case_when(
+#'                   AVISITCDN = dplyr::case_when(
 #'                     AVISITCD == 'SCR' ~ -2,
 #'                     AVISITCD == 'BL' ~ 0,
 #'                     grepl('W', AVISITCD) ~ as.numeric(gsub('[^0-9]*', '', AVISITCD)),
 #'                     TRUE ~ as.numeric(NA)),
 #'                   AVISITCD = factor(AVISITCD) %>% reorder(AVISITCDN),
-#'                   TRTORD = case_when(
+#'                   TRTORD = dplyr::case_when(
 #'                     ARMCD == 'ARM C' ~ 1,
 #'                     ARMCD == 'ARM B' ~ 2,
 #'                    ARMCD == 'ARM A' ~ 3),
@@ -423,7 +423,7 @@ srv_g_density_distribution_plot <- function(id, # nolint
     output$table_ui <- DT::renderDataTable({
       tbl <- teal.code::chunks_get_var("tbl", main_code())
 
-      numeric_cols <- names(select_if(tbl, is.numeric))
+      numeric_cols <- names(dplyr::select_if(tbl, is.numeric))
 
       DT::datatable(tbl, rownames = FALSE, options = list(scrollX = TRUE)) %>%
         DT::formatRound(numeric_cols, 2)

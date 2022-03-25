@@ -80,7 +80,7 @@ keep_data_const_opts_updated <- function(session, input, data, id_param_var) {
     paramname <- input[[id_param_var]]
     stopifnot(length(paramname) == 1)
 
-    data_filtered <- data()$ANL %>% filter(.data$PARAMCD == paramname)
+    data_filtered <- data()$ANL %>% dplyr::filter(.data$PARAMCD == paramname)
     choices(c("None" = "NONE", "Screening" = "BASE2", "Baseline" = "BASE")[
       c(TRUE, !all(is.na(data_filtered[["BASE2"]])), !all(is.na(data_filtered[["BASE"]])))
     ])
@@ -96,7 +96,6 @@ keep_data_const_opts_updated <- function(session, input, data, id_param_var) {
   })
 }
 
-#' @importFrom shinyjs hidden
 templ_ui_constraint <- function(ns, label = "Data Constraint") {
   div(
     id = ns("constraint_var_whole"), # give an id to hide it
@@ -138,16 +137,16 @@ keep_range_slider_updated <- function(session,
     # we need id_param_var (e.g. ALT) to filter down because the y-axis may have a different
     # param var and the range of id_var (e.g. BASE) values may be larger due to this
     # therefore, we need to filter
-    ANL <- reactive_ANL()$ANL %>% filter(.data$PARAMCD == paramname) # nolint
+    ANL <- reactive_ANL()$ANL %>% dplyr::filter(.data$PARAMCD == paramname) # nolint
     validate_has_variable(ANL, varname, paste("variable", varname, "does not exist"))
 
-    var <- na.omit(ANL[[varname]])
+    var <- stats::na.omit(ANL[[varname]])
     minmax <- if (length(var)) c(floor(min(var)), ceiling(max(var))) else c(0, 0)
     step <- NULL
 
     if (isTRUE(is_density)) {
-      minmax <- c(0, round(max(density(na.omit(ANL[[varname]]))$y) * 1.5, 5))
-      step <- round(max(density(na.omit(ANL[[varname]]))$y) / 100, 5)
+      minmax <- c(0, round(max(stats::density(stats::na.omit(ANL[[varname]]))$y) * 1.5, 5))
+      step <- round(max(stats::density(stats::na.omit(ANL[[varname]]))$y) / 100, 5)
     }
 
     isolate(update_slider_fcn(
@@ -161,8 +160,6 @@ keep_range_slider_updated <- function(session,
 
 # param_id: input id that contains values of PARAMCD to filter for
 # param_var: currently only "PARAMCD" is supported
-#' @importFrom dplyr filter sym
-#' @importFrom shinyjs hide show
 constr_anl_chunks <- function(session, input, datasets, dataname, param_id, param_var, trt_group, min_rows) {
   dataset_var <- paste0(dataname, "_FILTERED")
   if (!identical(param_var, "PARAMCD")) {
@@ -186,7 +183,7 @@ constr_anl_chunks <- function(session, input, datasets, dataname, param_id, para
 
     # analysis
     private_chunks <- teal.code::chunks$new()
-    teal.code::chunks_reset(as.environment(setNames(list(ANL_FILTERED), dataset_var)), private_chunks)
+    teal.code::chunks_reset(as.environment(stats::setNames(list(ANL_FILTERED), dataset_var)), private_chunks)
 
     # filter biomarker
     teal.code::chunks_push(
@@ -219,7 +216,7 @@ constr_anl_chunks <- function(session, input, datasets, dataname, param_id, para
     validate_has_variable(ANL, "BASE")
     validate_has_variable(ANL, "BASE2")
 
-    ANL <- ANL %>% filter(!!sym(param_var) == param_var_value) # nolint
+    ANL <- ANL %>% dplyr::filter(!!sym(param_var) == param_var_value) # nolint
 
     visit_freq <- unique(ANL$AVISITCD)
 
@@ -227,7 +224,7 @@ constr_anl_chunks <- function(session, input, datasets, dataname, param_id, para
     # get min max values
     if ((constraint_var == "BASE2" && any(grepl("SCR", visit_freq))) ||
       (constraint_var == "BASE" && any(grepl("BL", visit_freq)))) {
-      val <- na.omit(switch(constraint_var,
+      val <- stats::na.omit(switch(constraint_var,
         "BASE" = ANL$BASE[ANL$AVISITCD == "BL"],
         "BASE2" = ANL$BASE2[ANL$AVISITCD == "SCR"],
         stop(paste(constraint_var, "not allowed"))
@@ -320,12 +317,12 @@ create_anl_constraint_reactive <- function(anl_param, input, param_id, min_rows)
             filtered_usubjids,
             ANL %>%
               dplyr::filter(PARAMCD == .(param)) %>%
-              group_by(USUBJID) %>%
-              summarize(all_na = all(is.na(.data[[.(constraint_var)]]))) %>%
-              filter(all_na) %>%
-              pull(USUBJID)
+              dplyr::group_by(USUBJID) %>%
+              dplyr::summarize(all_na = all(is.na(.data[[.(constraint_var)]]))) %>%
+              dplyr::filter(all_na) %>%
+              dplyr::pull(USUBJID)
           )
-          ANL <- ANL %>% filter(USUBJID %in% filtered_usubjids) # nolint
+          ANL <- ANL %>% dplyr::filter(USUBJID %in% filtered_usubjids) # nolint
         })
       )
 
@@ -358,8 +355,6 @@ update_min_max <- function(session, args) {
 #' @param df_armvar the dataframe and column name containing treatment code. e.g. ADSL$ARMCD
 #' @param code controls whether mapping or ordering code is written to console. Valid values: "M" and "O".
 #'
-#' @import dplyr
-#'
 #' @export
 #'
 #' @examples
@@ -379,8 +374,8 @@ maptrt <- function(df_armvar, code = c("M", "O")) {
   trtvar <- strsplit(deparse(substitute(df_armvar)), "[$]")[[1]][2]
 
   dftrt <- data.frame(unique(df_armvar)) %>%
-    mutate(trt_mapping = paste0("\"", unique(df_armvar), "\"", " = \"\",")) %>%
-    mutate(trt_ordering = paste0(eval(trtvar), " == \"", unique(df_armvar), "\"", " ~  ,"))
+    dplyr::mutate(trt_mapping = paste0("\"", unique(df_armvar), "\"", " = \"\",")) %>%
+    dplyr::mutate(trt_ordering = paste0(eval(trtvar), " == \"", unique(df_armvar), "\"", " ~  ,"))
 
   if (toupper(code) == "M") {
     print(unname(dftrt["trt_mapping"]), row.names = FALSE)
