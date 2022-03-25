@@ -1,4 +1,4 @@
-# teal.goshawk 0.1.11.9010
+# teal.goshawk 0.1.11.9011
 
 ### Breaking Changes
 * Converted the `hline` parameter of `tm_g_gh_lineplot` to three parameters: `hline_arb`, `hline_arb_color` and `hline_arb_label`.
