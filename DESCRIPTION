@@ -5,10 +5,16 @@ Version: 0.1.12.9002
 Date: 2022-04-07
 Authors@R: c(
     person("Nick", "Paszty", , "nick.paszty@gene.com", role = c("aut", "cre")),
+    person("Junlue", "Zhao", , "zhaoj88@gene.com", role = "aut"),
+    person("Dawid", "Kaledkowski", , "dawid.kaledkowski@roche.com", role = "aut"),
+    person("Maciej", "Nasinski", , "maciej.nasinski@contractors.roche.com", role = "aut"),
+    person("Mahmoud", "Hallal", , "mahmoud.hallal@roche.com", role = "aut"),
+    person("Pawel", "Rucki", , "pawel.rucki@roche.com", role = "aut"),
     person("Wenyi", "Liu", , "liu.wenyi@roche.com", role = "aut"),
     person("Jeffrey", "Tomlinson", , "tomlinson.jeffrey@roche.com", role = "aut"),
     person("Bali", "Toth", , "toth.balazs@gene.com", role = "aut"),
-    person("Adrian", "Waddell", , "adrian.waddell@roche.com", role = "ctb")
+    person("F. Hoffmann-La Roche AG", role = c("cph", "fnd")),
+    person("Maximilian", "Mordig", role = "ctb")
   )
 Description: Modules that produce web interfaces through which
     longitudinal visualizations can be dynamically modified and displayed.
