@@ -384,7 +384,7 @@ srv_g_boxplot <- function(id,
     horizontal_line <- srv_arbitrary_lines("hline_arb")
 
     create_plot <- reactive({
-      private_chunks <- anl_chunks()$chunks$clone(deep = TRUE)
+      private_chunks <- teal.code::chunks_deep_clone(anl_chunks()$chunks)
       # nolint start
       param <- input$xaxis_param
       yaxis <- input$yaxis_var
@@ -477,7 +477,7 @@ srv_g_boxplot <- function(id,
     })
 
     create_table <- reactive({
-      private_chunks <- create_plot()$clone(deep = TRUE)
+      private_chunks <- teal.code::chunks_deep_clone(create_plot())
 
       param <- input$xaxis_param
       xaxis_var <- input$yaxis_var # nolint

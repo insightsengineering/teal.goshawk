@@ -635,7 +635,7 @@ srv_g_correlationplot <- function(id,
 
     # transpose data to plot
     plot_data_transpose <- reactive({
-      private_chunks <- anl_constraint()$chunks$clone(deep = TRUE)
+      private_chunks <- teal.code::chunks_deep_clone(anl_constraint()$chunks)
       ANL <- anl_constraint()$ANL # nolint
       trt_group <- input$trt_group
       line_vars <- unique(c(input$hline_vars, input$vline_vars))
@@ -758,7 +758,7 @@ srv_g_correlationplot <- function(id,
 
     # plot
     plot_r <- reactive({
-      private_chunks <- plot_data_transpose()$chunks$clone(deep = TRUE)
+      private_chunks <- teal.code::chunks_deep_clone(plot_data_transpose()$chunks)
       # nolint start
       xaxis_param <- input$xaxis_param
       xaxis_var <- input$xaxis_var

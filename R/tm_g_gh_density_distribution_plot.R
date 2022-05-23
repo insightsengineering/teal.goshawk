@@ -311,7 +311,7 @@ srv_g_density_distribution_plot <- function(id, # nolint
 
     create_plot <- reactive({
       validate(need(input$xaxis_var, "Please select an X-Axis Variable"))
-      private_chunks <- anl_chunks()$chunks$clone(deep = TRUE)
+      private_chunks <- teal.code::chunks_deep_clone(anl_chunks()$chunks)
 
       # nolint start
       param <- input$xaxis_param
@@ -367,7 +367,7 @@ srv_g_density_distribution_plot <- function(id, # nolint
     })
 
     create_table <- reactive({
-      private_chunks <- create_plot()$clone(deep = TRUE)
+      private_chunks <- teal.code::chunks_deep_clone(create_plot())
 
       param <- input$xaxis_param
       xaxis_var <- input$xaxis_var
