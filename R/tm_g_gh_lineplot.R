@@ -642,7 +642,7 @@ srv_lineplot <- function(id,
 
     plot_r <- reactive({
       ac <- anl_chunks()
-      private_chunks <- ac$chunks$clone(deep = TRUE)
+      private_chunks <- teal.code::chunks_deep_clone(ac$chunks)
 
       # nolint start
       ylim <- yrange_slider$state()$value

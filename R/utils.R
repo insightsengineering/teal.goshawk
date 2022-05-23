@@ -283,7 +283,7 @@ constr_anl_chunks <- function(session, input, datasets, dataname, param_id, para
 # e.g. `ALT.BASE2` (i.e. `PARAMCD = ALT & range_filter_on(BASE2)`)
 create_anl_constraint_reactive <- function(anl_param, input, param_id, min_rows) {
   reactive({
-    private_chunks <- anl_param()$chunks$clone(deep = TRUE)
+    private_chunks <- teal.code::chunks_deep_clone(anl_param()$chunks)
 
     # it is assumed that constraint_var is triggering constraint_range which then trigger this clause
     constraint_var <- isolate(input[["constraint_var"]])

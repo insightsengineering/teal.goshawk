@@ -381,7 +381,7 @@ srv_g_spaghettiplot <- function(id,
 
     plot_r <- reactive({
       # nolint start
-      private_chunks <- anl_chunks()$chunks$clone(deep = TRUE)
+      private_chunks <- teal.code::chunks_deep_clone(anl_chunks()$chunks)
       ylim <- yrange_slider$state()$value
       facet_ncol <- input$facet_ncol
       validate(need(
