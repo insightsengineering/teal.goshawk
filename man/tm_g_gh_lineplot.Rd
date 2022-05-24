@@ -40,7 +40,7 @@ tm_g_gh_lineplot(
 \item{label}{menu item label of the module in the teal app.}
 
 \item{dataname}{analysis data passed to the data argument of teal init. E.g. ADaM structured
-laboratory data frame ADLB.}
+laboratory data frame ADLB. This table must contain the columns AVISITCD, BASE, BASE2, AVALU, LBSTRESC.}
 
 \item{param_var}{name of variable containing biomarker codes e.g. PARAMCD.}
 
