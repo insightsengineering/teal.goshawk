@@ -5,7 +5,7 @@
 #' @inheritParams teal.widgets::standard_layout
 #' @param label menu item label of the module in the teal app.
 #' @param dataname analysis data passed to the data argument of teal init. E.g. ADaM structured
-#' laboratory data frame ADLB. This table must contain the columns AVISITCD, BASE, BASE2, AVALU, LBSTRESC.
+#' laboratory data frame ADLB. This table must contain the columns `AVISITCD`, `BASE`, `BASE2`, `AVALU`, `LBSTRESC`
 #' @param param_var name of variable containing biomarker codes e.g. PARAMCD.
 #' @param param biomarker selected.
 #' @param param_var_label single name of variable in analysis data that includes parameter labels.
