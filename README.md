@@ -1,4 +1,5 @@
 # teal.goshawk
+
 The teal.goshawk package provides `teal` modules of the longitudinal visualization functions from the [goshawk](https://github.com/insightsengineering/goshawk) R package.
 This enables `teal` app developers to easily create applications to explore longitudinal clinical trial data.
 
@@ -15,7 +16,7 @@ This enables `teal` app developers to easily create applications to explore long
 
 ## Installation
 
-This repository requires a personal access token to install see here [creating and using PAT](https://docs.github.com/en/github/authenticating-to-github/keeping-your-account-and-data-secure/creating-a-personal-access-token). Once this is set up, to install the latest released version of the package run:
+It is recommended that you [create and use a Github PAT](https://docs.github.com/en/github/authenticating-to-github/keeping-your-account-and-data-secure/creating-a-personal-access-token) to install the latest version of this package. Once you have the PAT, run the following:
 
 ```r
 Sys.setenv(GITHUB_PAT = "your_access_token_here")
