@@ -3,7 +3,7 @@
 #' The teal.goshawk package renders the UI and calls the respective biomarker visualization functions.
 #'
 #' The data used for teal.goshawk have some constraints.
-#' It must contain the columns `AVISITCD`, `BASE`, `BASE2`, `AVALU`, `LBSTRESC`, `LBSTRESC`.
+#' It must contain the columns `AVISITCD`, `BASE`, `BASE2`, `AVALU`, `LBSTRESC`, `LBSTRESC`, `LOQFL`.
 #'
 #' @docType package
 #'
