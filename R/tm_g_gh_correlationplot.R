@@ -530,7 +530,7 @@ srv_g_correlationplot <- function(id,
       )
 
       # analysis
-      private_chunks <- teal.code::chunks$new()
+      private_chunks <- teal.code::chunks_new()
       teal.code::chunks_reset(as.environment(stats::setNames(list(ANL_FILTERED), dataset_var)), private_chunks)
 
       # filter biomarker
