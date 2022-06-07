@@ -1,4 +1,4 @@
-# teal.goshawk 0.1.12.9006.1
+# teal.goshawk 0.1.12.9006.2
 
 ### Miscellaneous
 * Added a template to the `pkgdown` site.
