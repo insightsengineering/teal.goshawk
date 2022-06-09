@@ -182,7 +182,7 @@ constr_anl_chunks <- function(session, input, datasets, dataname, param_id, para
     validate_has_variable(ANL_FILTERED, trt_group)
 
     # analysis
-    private_chunks <- teal.code::chunks$new()
+    private_chunks <- teal.code::chunks_new()
     teal.code::chunks_reset(as.environment(stats::setNames(list(ANL_FILTERED), dataset_var)), private_chunks)
 
     # filter biomarker
@@ -333,7 +333,7 @@ create_anl_constraint_reactive <- function(anl_param, input, param_id, min_rows)
     teal.code::chunks_push_new_line(private_chunks)
     teal.code::chunks_safe_eval(private_chunks)
 
-    return(list(ANL = private_chunks$get("ANL"), chunks = private_chunks))
+    return(list(ANL = teal.code::chunks_get_var("ANL", chunks = private_chunks), chunks = private_chunks))
   })
 }
 
