@@ -1,5 +1,7 @@
 # teal.goshawk 0.1.13.9000
 
+# teal.goshawk 0.1.13
+
 ### Miscellaneous
 * Added a template to the `pkgdown` site.
 * Updated package authors.
