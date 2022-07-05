@@ -335,6 +335,14 @@ ui_g_correlationplot <- function(id, ...) {
   teal.widgets::standard_layout(
     output = templ_ui_output_datatable(ns),
     encoding = div(
+      ### Reporter
+      shiny::tags$div(
+        teal.reporter::add_card_button_ui(ns("addReportCard")),
+        teal.reporter::download_report_button_ui(ns("downloadButton")),
+        teal.reporter::reset_report_button_ui(ns("resetButton"))
+      ),
+      shiny::tags$br(),
+      ###
       templ_ui_dataname(a$dataname),
       teal.widgets::optionalSelectInput(
         ns("trt_group"),
@@ -418,6 +426,7 @@ ui_g_correlationplot <- function(id, ...) {
 
 srv_g_correlationplot <- function(id,
                                   datasets,
+                                  reporter,
                                   dataname,
                                   param_var,
                                   trt_group,
@@ -430,6 +439,8 @@ srv_g_correlationplot <- function(id,
                                   hline_vars_labels,
                                   vline_vars_colors,
                                   vline_vars_labels) {
+  with_reporter <- !missing(reporter) && inherits(reporter, "Reporter")
+
   moduleServer(id, function(input, output, session) {
     teal.code::init_chunks()
     # filter selected biomarkers
@@ -867,6 +878,37 @@ srv_g_correlationplot <- function(id,
       width = plot_width,
       brushing = TRUE
     )
+
+
+    ### REPORTER
+    if (with_reporter) {
+      card_fun <- function(comment) {
+        card <- teal.reporter::TealReportCard$new()
+        card$set_name("Correlation plot")
+        card$append_text("Correlation plot", "header2")
+        card$append_text("Filter State", "header3")
+        card$append_fs(datasets$get_filter_state())
+        card$append_text("Correlation plot", "header3")
+        card$append_plot(plot_r(), dim = plot_data$dim())
+        if (!comment == "") {
+          card$append_text("Comment", "header3")
+          card$append_text(comment)
+        }
+        card$append_text("Show R Code", "header3")
+        card$append_src(paste(get_rcode(
+          chunks = teal.code::get_chunks_object(parent_idx = 1L),
+          datasets = datasets,
+          title = "",
+          description = ""
+        ), collapse = "\n"))
+        card
+      }
+
+      teal.reporter::add_card_button_srv("addReportCard", reporter = reporter, card_fun = card_fun)
+      teal.reporter::download_report_button_srv("downloadButton", reporter = reporter)
+      teal.reporter::reset_report_button_srv("resetButton", reporter)
+    }
+    ###
 
     # highlight plot area
     output$brush_data <- DT::renderDataTable({

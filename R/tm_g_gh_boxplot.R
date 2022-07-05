@@ -550,7 +550,6 @@ srv_g_boxplot <- function(id,
         DT::formatRound(numeric_cols, 4)
     })
 
-
     ### REPORTER
     if (with_reporter) {
       card_fun <- function(comment) {
@@ -580,8 +579,6 @@ srv_g_boxplot <- function(id,
       teal.reporter::reset_report_button_srv("resetButton", reporter)
     }
     ###
-
-
 
     # highlight plot area
     output$brush_data <- DT::renderDataTable({
