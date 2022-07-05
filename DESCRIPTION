@@ -44,6 +44,7 @@ Imports:
     stats,
     teal.code (>= 0.1.1),
     teal.logger (>= 0.1.0),
+    teal.reporter (>= 0.1.0)
     teal.transform (>= 0.1.1),
     teal.widgets (>= 0.1.1),
     tidyr
