@@ -275,6 +275,14 @@ g_ui_spaghettiplot <- function(id, ...) {
   teal.widgets::standard_layout(
     output = templ_ui_output_datatable(ns),
     encoding = div(
+      ### Reporter
+      shiny::tags$div(
+        teal.reporter::add_card_button_ui(ns("addReportCard")),
+        teal.reporter::download_report_button_ui(ns("downloadButton")),
+        teal.reporter::reset_report_button_ui(ns("resetButton"))
+      ),
+      shiny::tags$br(),
+      ###
       templ_ui_dataname(a$dataname),
       teal.widgets::optionalSelectInput(
         ns("trt_group"),
@@ -349,6 +357,7 @@ g_ui_spaghettiplot <- function(id, ...) {
 
 srv_g_spaghettiplot <- function(id,
                                 datasets,
+                                reporter,
                                 dataname,
                                 idvar,
                                 param_var,
@@ -364,6 +373,7 @@ srv_g_spaghettiplot <- function(id,
                                 plot_width,
                                 hline_vars_colors,
                                 hline_vars_labels) {
+  with_reporter <- !missing(reporter) && inherits(reporter, "Reporter")
   moduleServer(id, function(input, output, session) {
     teal.code::init_chunks()
     # reused in all modules
@@ -458,6 +468,35 @@ srv_g_spaghettiplot <- function(id,
       width = plot_width,
       brushing = TRUE
     )
+
+    ### REPORTER
+    if (with_reporter) {
+      card_fun <- function(comment) {
+        card <- teal.reporter::TealReportCard$new()
+        card$set_name("Spaghetti plot")
+        card$append_text("Spaghetti plot", "header2")
+        card$append_text("Filter State", "header3")
+        card$append_fs(datasets$get_filter_state())
+        card$append_text("Spaghetti plot", "header3")
+        card$append_plot(plot_r(), dim = plot_data$dim())
+        if (!comment == "") {
+          card$append_text("Comment", "header3")
+          card$append_text(comment)
+        }
+        card$append_text("Show R Code", "header3")
+        card$append_src(paste(get_rcode(
+          chunks = teal.code::get_chunks_object(parent_idx = 1L),
+          datasets = datasets,
+          title = "",
+          description = ""
+        ), collapse = "\n"))
+        card
+      }
+      teal.reporter::add_card_button_srv("addReportCard", reporter = reporter, card_fun = card_fun)
+      teal.reporter::download_report_button_srv("downloadButton", reporter = reporter)
+      teal.reporter::reset_report_button_srv("resetButton", reporter)
+    }
+    ###
 
     output$brush_data <- DT::renderDataTable({
       plot_brush <- plot_data$brush()
