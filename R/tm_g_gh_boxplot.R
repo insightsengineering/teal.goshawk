@@ -433,7 +433,7 @@ srv_g_boxplot <- function(id,
 
       validate(need(
         !facet_var %in% c("ACTARM", "ARM")[!c("ACTARM", "ARM") %in% trt_group],
-        sprintf("You can not choose %s as facetting variable for treatment variable %s.", facet_var, trt_group)
+        sprintf("You can not choose %s as faceting variable for treatment variable %s.", facet_var, trt_group)
       ))
       validate(need(
         !xaxis %in% c("ACTARM", "ARM")[!c("ACTARM", "ARM") %in% trt_group],
