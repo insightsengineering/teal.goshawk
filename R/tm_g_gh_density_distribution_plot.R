@@ -438,6 +438,10 @@ srv_g_density_distribution_plot <- function(id, # nolint
         card$append_text("Density distribution plot", "header2")
         card$append_text("Filter State", "header3")
         card$append_fs(datasets$get_filter_state())
+        card$append_text("Data constraint", "header3")
+        card$append_text(
+          formatted_data_constraint(input$constraint_var, input$constraint_range_min, input$constraint_range_max)
+        )
         card$append_text("Density distribution plot", "header3")
         card$append_plot(plot_r(), dim = plot_data$dim())
         card$append_text("Descriptive Statistics", "header3")

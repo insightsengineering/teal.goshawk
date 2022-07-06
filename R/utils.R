@@ -118,6 +118,21 @@ templ_ui_constraint <- function(ns, label = "Data Constraint") {
   )
 }
 
+# for outputting the constaint in the report
+formatted_data_constraint <- function(constraint_var, constraint_range_min, constraint_range_max) {
+  constraint_var_label <- switch(constraint_var,
+    "BASE2" = "Screening",
+    "BASE" = "Baseline",
+    "None"
+  )
+  msg <- paste("Data constraint:", constraint_var_label)
+  if (constraint_var_label != "None") {
+    msg <- paste(msg, "from", constraint_range_min, "to", constraint_range_max)
+  }
+  msg
+}
+
+
 keep_range_slider_updated <- function(session,
                                       input,
                                       update_slider_fcn,
