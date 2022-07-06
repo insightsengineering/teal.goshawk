@@ -56,6 +56,13 @@ Suggests:
     tern (>= 0.7.8),
     testthat (>= 2.0),
     utils
+Remotes:
+    insightsengineering/teal.code@*release
+    insightsengineering/teal.transform@*release
+    insightsengineering/teal.logger@*release
+    insightsengineering/teal.widgets@*release
+    insightsengineering/scda@*release
+    insightsengineering/scda.2021@*release
 Config/Needs/website: insightsengineering/nesttemplate
 Encoding: UTF-8
 Language: en-US
