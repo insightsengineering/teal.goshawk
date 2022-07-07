@@ -388,7 +388,7 @@ srv_g_scatterplot <- function(id,
         card$append_text(
           paste(
             formatted_data_constraint(input$constraint_var, input$constraint_range_min, input$constraint_range_max),
-            "\nTreatment Variable Facetting:",
+            "\nTreatment Variable Faceting:",
             input$trt_facet,
             "\nRegression Line:",
             input$reg_line
