@@ -1,7 +1,7 @@
 Type: Package
 Package: teal.goshawk
 Title: Longitudinal visualization teal modules
-Version: 0.1.13.9004
+Version: 0.1.13.9005
 Date: 2022-06-09
 Authors@R: c(
     person("Nick", "Paszty", , "nick.paszty@gene.com", role = c("aut", "cre")),
@@ -44,6 +44,7 @@ Imports:
     stats,
     teal.code (>= 0.1.1),
     teal.logger (>= 0.1.0),
+    teal.reporter (>= 0.1.0),
     teal.transform (>= 0.1.1),
     teal.widgets (>= 0.1.1),
     tidyr

@@ -229,6 +229,14 @@ ui_lineplot <- function(id, ...) {
   teal.widgets::standard_layout(
     output = teal.widgets::plot_with_settings_ui(id = ns("plot")),
     encoding = div(
+      ### Reporter
+      shiny::tags$div(
+        teal.reporter::add_card_button_ui(ns("addReportCard")),
+        teal.reporter::download_report_button_ui(ns("downloadButton")),
+        teal.reporter::reset_report_button_ui(ns("resetButton"))
+      ),
+      shiny::tags$br(),
+      ###
       templ_ui_dataname(a$dataname),
       teal.widgets::optionalSelectInput(
         ns("trt_group"),
@@ -317,6 +325,7 @@ ui_lineplot <- function(id, ...) {
 
 srv_lineplot <- function(id,
                          datasets,
+                         reporter,
                          dataname,
                          param_var,
                          trt_group,
@@ -329,6 +338,7 @@ srv_lineplot <- function(id,
                          xlabel,
                          plot_height,
                          plot_width) {
+  with_reporter <- !missing(reporter) && inherits(reporter, "Reporter")
   moduleServer(id, function(input, output, session) {
     teal.code::init_chunks()
     ns <- session$ns
@@ -743,12 +753,53 @@ srv_lineplot <- function(id,
       teal.code::chunks_get_var("p")
     })
 
-    teal.widgets::plot_with_settings_srv(
+
+    plot_data <- teal.widgets::plot_with_settings_srv(
       id = "plot",
       plot_r = plot_r,
       height = plot_height,
       width = plot_width,
     )
+
+    ### REPORTER
+    if (with_reporter) {
+      card_fun <- function(comment) {
+        card <- teal.reporter::TealReportCard$new()
+        card$set_name("Line Plot")
+        card$append_text("Line Plot", "header2")
+        card$append_text("Filter State", "header3")
+        card$append_fs(datasets$get_filter_state())
+        card$append_text("Selected Options", "header3")
+        card$append_text(
+          paste(
+            formatted_data_constraint(input$constraint_var, input$constraint_range_min, input$constraint_range_max),
+            "\nSelect Line Splitting Variable:",
+            if (!is.null(input$shape)) input$shape else "None",
+            "\nContributing Observations Threshold:",
+            input$count_threshold
+          ),
+          style = "verbatim"
+        )
+        card$append_text("Plot", "header3")
+        card$append_plot(plot_r(), dim = plot_data$dim())
+        if (!comment == "") {
+          card$append_text("Comment", "header3")
+          card$append_text(comment)
+        }
+        card$append_text("Show R Code", "header3")
+        card$append_src(paste(get_rcode(
+          chunks = teal.code::get_chunks_object(parent_idx = 1L),
+          datasets = datasets,
+          title = "",
+          description = ""
+        ), collapse = "\n"))
+        card
+      }
+      teal.reporter::add_card_button_srv("addReportCard", reporter = reporter, card_fun = card_fun)
+      teal.reporter::download_report_button_srv("downloadButton", reporter = reporter)
+      teal.reporter::reset_report_button_srv("resetButton", reporter)
+    }
+    ###
 
     get_rcode_srv(
       id = "rcode",
