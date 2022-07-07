@@ -554,15 +554,22 @@ srv_g_boxplot <- function(id,
     if (with_reporter) {
       card_fun <- function(comment) {
         card <- teal.reporter::TealReportCard$new()
-        card$set_name("Box plot")
-        card$append_text("Box plot", "header2")
+        card$set_name("Box Plot")
+        card$append_text("Box Plot", "header2")
         card$append_text("Filter State", "header3")
         card$append_fs(datasets$get_filter_state())
-        card$append_text("Data constraint", "header3")
+        card$append_text("Selected Options", "header3")
         card$append_text(
-          formatted_data_constraint(input$constraint_var, input$constraint_range_min, input$constraint_range_max)
+          paste(
+            formatted_data_constraint(input$constraint_var, input$constraint_range_min, input$constraint_range_max),
+            "\nFacet By:",
+            if (length(input$facet_var) != 0) input$facet_var else "None",
+            "\nSelect an X-axis Variable:",
+            input$xaxis_var
+          ),
+          style = "verbatim"
         )
-        card$append_text("Box plot", "header3")
+        card$append_text("Plot", "header3")
         card$append_plot(plot_r(), dim = boxplot_data$dim())
         if (!comment == "") {
           card$append_text("Comment", "header3")

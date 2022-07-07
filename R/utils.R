@@ -125,7 +125,7 @@ formatted_data_constraint <- function(constraint_var, constraint_range_min, cons
     "BASE" = "Baseline",
     "None"
   )
-  msg <- paste("Data constraint:", constraint_var_label)
+  msg <- paste("Data Constraint:", constraint_var_label)
   if (constraint_var_label != "None") {
     msg <- paste(msg, "from", constraint_range_min, "to", constraint_range_max)
   }

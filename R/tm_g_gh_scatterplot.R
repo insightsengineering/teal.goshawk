@@ -380,15 +380,22 @@ srv_g_scatterplot <- function(id,
     if (with_reporter) {
       card_fun <- function(comment) {
         card <- teal.reporter::TealReportCard$new()
-        card$set_name("Scatter plot")
-        card$append_text("Scatter plot", "header2")
+        card$set_name("Scatter Plot")
+        card$append_text("Scatter Plot", "header2")
         card$append_text("Filter State", "header3")
         card$append_fs(datasets$get_filter_state())
-        card$append_text("Data constraint", "header3")
+        card$append_text("Selected Options", "header3")
         card$append_text(
-          formatted_data_constraint(input$constraint_var, input$constraint_range_min, input$constraint_range_max)
+          paste(
+            formatted_data_constraint(input$constraint_var, input$constraint_range_min, input$constraint_range_max),
+            "\nTreatment Variable Facetting:",
+            input$trt_facet,
+            "\nRegression Line:",
+            input$reg_line
+          ),
+          style = "verbatim"
         )
-        card$append_text("Scatter plot", "header3")
+        card$append_text("Scatter Plot", "header3")
         card$append_plot(plot_r(), dim = plot_data$dim())
         if (!comment == "") {
           card$append_text("Comment", "header3")
