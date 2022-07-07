@@ -244,7 +244,7 @@ ui_g_scatterplot <- function(id, ...) {
             value = c(-1000000, 1000000)
           ),
           numericInput(ns("facet_ncol"), "Number of Plots Per Row:", a$facet_ncol, min = 1),
-          checkboxInput(ns("trt_facet"), "Treatment Variable Facetting", a$trt_facet),
+          checkboxInput(ns("trt_facet"), "Treatment Variable Faceting", a$trt_facet),
           checkboxInput(ns("reg_line"), "Regression Line", a$reg_line),
           checkboxInput(ns("rotate_xlab"), "Rotate X-axis Label", a$rotate_xlab),
           numericInput(ns("hline"), "Add a horizontal line:", a$hline),
