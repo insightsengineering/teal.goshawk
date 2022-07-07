@@ -284,6 +284,14 @@ ui_g_boxplot <- function(id, ...) {
       ))
     ),
     encoding = div(
+      ### Reporter
+      shiny::tags$div(
+        teal.reporter::add_card_button_ui(ns("addReportCard")),
+        teal.reporter::download_report_button_ui(ns("downloadButton")),
+        teal.reporter::reset_report_button_ui(ns("resetButton"))
+      ),
+      shiny::tags$br(),
+      ###
       templ_ui_dataname(a$dataname),
       teal.widgets::optionalSelectInput(
         ns("trt_group"),
@@ -351,6 +359,7 @@ ui_g_boxplot <- function(id, ...) {
 
 srv_g_boxplot <- function(id,
                           datasets,
+                          reporter,
                           dataname,
                           param_var,
                           trt_group,
@@ -361,6 +370,7 @@ srv_g_boxplot <- function(id,
                           plot_width,
                           hline_vars_colors,
                           hline_vars_labels) {
+  with_reporter <- !missing(reporter) && inherits(reporter, "Reporter")
   moduleServer(id, function(input, output, session) {
     teal.code::init_chunks()
 
@@ -539,6 +549,47 @@ srv_g_boxplot <- function(id,
       DT::datatable(tbl, rownames = FALSE, options = list(scrollX = TRUE)) %>%
         DT::formatRound(numeric_cols, 4)
     })
+
+    ### REPORTER
+    if (with_reporter) {
+      card_fun <- function(comment) {
+        card <- teal.reporter::TealReportCard$new()
+        card$set_name("Box Plot")
+        card$append_text("Box Plot", "header2")
+        card$append_text("Filter State", "header3")
+        card$append_fs(datasets$get_filter_state())
+        card$append_text("Selected Options", "header3")
+        card$append_text(
+          paste(
+            formatted_data_constraint(input$constraint_var, input$constraint_range_min, input$constraint_range_max),
+            "\nFacet By:",
+            if (length(input$facet_var) != 0) input$facet_var else "None",
+            "\nSelect an X-axis Variable:",
+            input$xaxis_var
+          ),
+          style = "verbatim"
+        )
+        card$append_text("Plot", "header3")
+        card$append_plot(plot_r(), dim = boxplot_data$dim())
+        if (!comment == "") {
+          card$append_text("Comment", "header3")
+          card$append_text(comment)
+        }
+        card$append_text("Show R Code", "header3")
+        card$append_src(paste(get_rcode(
+          chunks = teal.code::get_chunks_object(parent_idx = 1L),
+          datasets = datasets,
+          title = "",
+          description = ""
+        ), collapse = "\n"))
+        card
+      }
+
+      teal.reporter::add_card_button_srv("addReportCard", reporter = reporter, card_fun = card_fun)
+      teal.reporter::download_report_button_srv("downloadButton", reporter = reporter)
+      teal.reporter::reset_report_button_srv("resetButton", reporter)
+    }
+    ###
 
     # highlight plot area
     output$brush_data <- DT::renderDataTable({

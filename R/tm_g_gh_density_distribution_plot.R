@@ -219,6 +219,14 @@ ui_g_density_distribution_plot <- function(id, ...) {
       ))
     ),
     encoding = div(
+      ### Reporter
+      shiny::tags$div(
+        teal.reporter::add_card_button_ui(ns("addReportCard")),
+        teal.reporter::download_report_button_ui(ns("downloadButton")),
+        teal.reporter::reset_report_button_ui(ns("resetButton"))
+      ),
+      shiny::tags$br(),
+      ###
       templ_ui_dataname(a$dataname),
       teal.widgets::optionalSelectInput(
         ns("trt_group"),
@@ -277,6 +285,7 @@ ui_g_density_distribution_plot <- function(id, ...) {
 
 srv_g_density_distribution_plot <- function(id, # nolint
                                             datasets,
+                                            reporter,
                                             dataname,
                                             param_var,
                                             param,
@@ -285,6 +294,7 @@ srv_g_density_distribution_plot <- function(id, # nolint
                                             color_comb,
                                             plot_height,
                                             plot_width) {
+  with_reporter <- !missing(reporter) && inherits(reporter, "Reporter")
   moduleServer(id, function(input, output, session) {
     teal.code::init_chunks()
     anl_chunks <- constr_anl_chunks(
@@ -413,16 +423,54 @@ srv_g_density_distribution_plot <- function(id, # nolint
       teal.code::chunks_get_var("p", main_code())
     })
 
-    teal.widgets::plot_with_settings_srv(
+    plot_data <- teal.widgets::plot_with_settings_srv(
       id = "plot",
       plot_r = plot_r,
       height = plot_height,
       width = plot_width,
     )
 
+    ### REPORTER
+    if (with_reporter) {
+      card_fun <- function(comment) {
+        card <- teal.reporter::TealReportCard$new()
+        card$set_name("Density Distribution Plot")
+        card$append_text("Density Distribution Plot", "header2")
+        card$append_text("Filter State", "header3")
+        card$append_fs(datasets$get_filter_state())
+        card$append_text("Selected Options", "header3")
+        card$append_text(
+          formatted_data_constraint(input$constraint_var, input$constraint_range_min, input$constraint_range_max)
+        )
+        card$append_text("Plot", "header3")
+        card$append_plot(plot_r(), dim = plot_data$dim())
+        card$append_text("Descriptive Statistics", "header3")
+        card$append_table(
+          teal.code::chunks_get_var("tbl", main_code()) %>%
+            dplyr::mutate_if(is.numeric, round, 2)
+        )
+        if (!comment == "") {
+          card$append_text("Comment", "header3")
+          card$append_text(comment)
+        }
+        card$append_text("Show R Code", "header3")
+        card$append_src(paste(get_rcode(
+          chunks = teal.code::get_chunks_object(parent_idx = 1L),
+          datasets = datasets,
+          title = "",
+          description = ""
+        ), collapse = "\n"))
+        card
+      }
+
+      teal.reporter::add_card_button_srv("addReportCard", reporter = reporter, card_fun = card_fun)
+      teal.reporter::download_report_button_srv("downloadButton", reporter = reporter)
+      teal.reporter::reset_report_button_srv("resetButton", reporter)
+    }
+    ###
+
     output$table_ui <- DT::renderDataTable({
       tbl <- teal.code::chunks_get_var("tbl", main_code())
-
       numeric_cols <- names(dplyr::select_if(tbl, is.numeric))
 
       DT::datatable(tbl, rownames = FALSE, options = list(scrollX = TRUE)) %>%
