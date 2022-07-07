@@ -391,8 +391,8 @@ ui_g_correlationplot <- function(id, ...) {
             min = -1000000, max = 1000000, value = c(-1000000, 1000000)
           ),
           numericInput(ns("facet_ncol"), "Number of Plots Per Row:", a$facet_ncol, min = 1),
-          checkboxInput(ns("trt_facet"), "Treatment Variable Facetting", a$trt_facet),
-          checkboxInput(ns("visit_facet"), "Visit Facetting", a$visit_facet),
+          checkboxInput(ns("trt_facet"), "Treatment Variable Faceting", a$trt_facet),
+          checkboxInput(ns("visit_facet"), "Visit Faceting", a$visit_facet),
           checkboxInput(ns("reg_line"), "Regression Line", a$reg_line),
           checkboxInput(ns("loq_legend"), "Display LoQ Legend", a$loq_legend),
           checkboxInput(ns("rotate_xlab"), "Rotate X-axis Label", a$rotate_xlab)
