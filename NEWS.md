@@ -1,4 +1,4 @@
-# teal.goshawk 0.1.13.9004
+# teal.goshawk 0.1.13.9005
 
 ### Enhancements
 * Added `teal.reporter` reporting into all the package modules.
