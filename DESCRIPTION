@@ -1,7 +1,7 @@
 Type: Package
 Package: teal.goshawk
 Title: Longitudinal visualization teal modules
-Version: 0.1.13.9002
+Version: 0.1.13.9003
 Date: 2022-06-09
 Authors@R: c(
     person("Nick", "Paszty", , "nick.paszty@gene.com", role = c("aut", "cre")),
@@ -57,14 +57,14 @@ Suggests:
     testthat (>= 2.0),
     utils
 Remotes:
-    insightsengineering/teal@*release,
-    insightsengineering/tern@*release,
-    insightsengineering/teal.code@*release,
-    insightsengineering/teal.transform@*release,
-    insightsengineering/teal.logger@*release,
-    insightsengineering/teal.widgets@*release,
+    insightsengineering/scda.2021@*release,
     insightsengineering/scda@*release,
-    insightsengineering/scda.2021@*release
+    insightsengineering/teal.code@*release,
+    insightsengineering/teal.logger@*release,
+    insightsengineering/teal.transform@*release,
+    insightsengineering/teal.widgets@*release,
+    insightsengineering/teal@*release,
+    insightsengineering/tern@*release
 Config/Needs/website: insightsengineering/nesttemplate
 Encoding: UTF-8
 Language: en-US
