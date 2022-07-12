@@ -459,7 +459,7 @@ srv_arbitrary_lines <- function(id) {
             )
           )
         }
-        if (length(line_arb_color) == 0 || line_arb_color == "") {
+        if (length(line_arb_color) == 0 || all(line_arb_color == "")) {
           line_arb_color <- "red"
         } else {
           validate(
