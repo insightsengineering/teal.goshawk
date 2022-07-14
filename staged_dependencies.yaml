@@ -33,4 +33,7 @@ upstream_repos:
   insightsengineering/teal.reporter:
     repo: insightsengineering/teal.reporter
     host: https://github.com
+  insightsengineering/nestcolor:
+    repo: insightsengineering/nestcolor
+    host: https://github.com
 downstream_repos:

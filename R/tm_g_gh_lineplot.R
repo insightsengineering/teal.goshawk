@@ -56,6 +56,7 @@
 #' library(dplyr)
 #' library(scda)
 #' library(stringr)
+#' library(nestcolor)
 #'
 #' # original ARM value = dose value
 #' arm_mapping <- list(
@@ -426,7 +427,11 @@ srv_lineplot <- function(id,
 
 
     line_color_start <- if (is.null(color_manual)) {
-      c("#ff0000", "#008000", "#4ca3dd", "#8a2be2")
+      if (!is.null(getOption("ggplot2.discrete.colour"))){
+        getOption("ggplot2.discrete.colour")[1:4]
+      } else {
+        c("#ff0000", "#008000", "#4ca3dd", "#8a2be2")
+      }
     } else {
       color_manual
     }
