@@ -2,7 +2,7 @@
 
 ### Enhancements
 * Added `teal.reporter` reporting into all the package modules.
-* Implemented `nestcolor` with slight refactoring to `tm_g_gh_lineplot`. Added `nestcolor` in examples without custom colour manuals.
+* Implemented `nestcolor` with slight refactoring to `tm_g_gh_lineplot`. Added `nestcolor` in examples without custom color manuals.
 
 ### Miscellaneous
 * Fixed minor type coercion warning in `srv_arbitrary_lines`.
