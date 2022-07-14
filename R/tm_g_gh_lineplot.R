@@ -427,7 +427,7 @@ srv_lineplot <- function(id,
 
 
     line_color_start <- if (is.null(color_manual)) {
-      if (!is.null(getOption("ggplot2.discrete.colour"))){
+      if (!is.null(getOption("ggplot2.discrete.colour"))) {
         getOption("ggplot2.discrete.colour")[1:4]
       } else {
         c("#ff0000", "#008000", "#4ca3dd", "#8a2be2")
