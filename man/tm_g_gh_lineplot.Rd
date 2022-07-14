@@ -121,6 +121,7 @@ This teal module renders the UI and calls the function that creates a line plot.
 library(dplyr)
 library(scda)
 library(stringr)
+library(nestcolor)
 
 # original ARM value = dose value
 arm_mapping <- list(
