@@ -41,7 +41,8 @@
 #' @param count_threshold minimum count of observations (as listed in the output table) to plot
 #' nodes on the graph
 #' @param table_font_size controls the font size of values in the table
-#'
+#' @param plot_relative_height_value numeric value between 500 and 5000 fro controlling the starting value
+#' of the relative plot height slider
 #' @author Wenyi Liu (luiw2) wenyi.liu@roche.com
 #' @author Balazs Toth (tothb2) toth.balazs@gene.com
 #'
@@ -140,7 +141,7 @@
 #'       trt_group = choices_selected(c("ARM", "ACTARM"), "ARM"),
 #'       hline_arb = c(20.5, 19.5),
 #'       hline_arb_color = c("red", "green"),
-#'       hline_arb_label = c("A", "B"),
+#'       hline_arb_label = c("A", "B")
 #'     )
 #'   )
 #' )
@@ -175,7 +176,8 @@ tm_g_gh_lineplot <- function(label,
                              pre_output = NULL,
                              post_output = NULL,
                              count_threshold = 0,
-                             table_font_size = c(12, 4, 20)) {
+                             table_font_size = c(12, 4, 20),
+                             plot_relative_height_value = 1000) {
   logger::log_info("Initializing tm_g_gh_lineplot")
   checkmate::assert_class(param, "choices_selected")
   checkmate::assert_class(xaxis_var, "choices_selected")
@@ -195,6 +197,9 @@ tm_g_gh_lineplot <- function(label,
     lower = table_font_size[2], upper = table_font_size[3],
     null.ok = TRUE, .var.name = "table_font_size"
   )
+
+  checkmate::assert_number(plot_relative_height_value, lower = 500, upper = 5000)
+
   checkmate::assert_number(count_threshold)
   validate_line_arb_arg(hline_arb, hline_arb_color, hline_arb_label)
   args <- as.list(environment())
@@ -272,7 +277,7 @@ ui_lineplot <- function(id, ...) {
           min = 500,
           max = 5000,
           step = 50,
-          value = 1000,
+          value = a$plot_relative_height_value,
           ticks = FALSE
         ),
       ),
