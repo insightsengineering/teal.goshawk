@@ -59,7 +59,6 @@ Suggests:
     testthat (>= 2.0),
     utils
 Remotes:
-    insightsengineering/nestcolor@*release,
     insightsengineering/scda.2021@*release,
     insightsengineering/scda@*release,
     insightsengineering/teal.code@*release,
