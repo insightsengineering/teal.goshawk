@@ -22,7 +22,8 @@ tm_g_gh_lineplot(
   hline_arb = numeric(0),
   hline_arb_color = "red",
   hline_arb_label = "Horizontal line",
-  color_manual = NULL,
+  color_manual = c(getOption("ggplot2.discrete.colour"), c("#ff0000", "#008000",
+    "#4ca3dd", "#8a2be2"))[1:4],
   xtick = ggplot2::waiver(),
   xlabel = xtick,
   rotate_xlab = FALSE,
@@ -125,6 +126,7 @@ This teal module renders the UI and calls the function that creates a line plot.
 library(dplyr)
 library(scda)
 library(stringr)
+library(nestcolor)
 
 # original ARM value = dose value
 arm_mapping <- list(

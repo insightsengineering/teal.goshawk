@@ -109,6 +109,7 @@ summary table.
 
 library(dplyr)
 library(scda)
+library(nestcolor)
 
 # original ARM value = dose value
 arm_mapping <- list(

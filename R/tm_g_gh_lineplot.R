@@ -57,6 +57,7 @@
 #' library(dplyr)
 #' library(scda)
 #' library(stringr)
+#' library(nestcolor)
 #'
 #' # original ARM value = dose value
 #' arm_mapping <- list(
@@ -165,7 +166,8 @@ tm_g_gh_lineplot <- function(label,
                              hline_arb = numeric(0),
                              hline_arb_color = "red",
                              hline_arb_label = "Horizontal line",
-                             color_manual = NULL,
+                             color_manual = c(getOption("ggplot2.discrete.colour"),
+                                              c("#ff0000", "#008000", "#4ca3dd", "#8a2be2"))[1:4],
                              xtick = ggplot2::waiver(),
                              xlabel = xtick,
                              rotate_xlab = FALSE,
@@ -429,13 +431,7 @@ srv_lineplot <- function(id,
       ))
     })
 
-
-    line_color_start <- if (is.null(color_manual)) {
-      c("#ff0000", "#008000", "#4ca3dd", "#8a2be2")
-    } else {
-      color_manual
-    }
-    line_color_defaults <- reactiveVal(line_color_start)
+    line_color_defaults <- reactiveVal(color_manual)
 
     line_type_defaults <- reactiveVal("solid")
 
