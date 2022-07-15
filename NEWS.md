@@ -2,6 +2,7 @@
 
 ### Enhancements
 * Added `teal.reporter` reporting into all the package modules.
+* Added `plot_relative_height_value` argument to `tm_g_gh_lineplot` to control initial value of the relative plot height slider. 
 
 ### Miscellaneous
 * Fixed minor type coercion warning in `srv_arbitrary_lines`.
