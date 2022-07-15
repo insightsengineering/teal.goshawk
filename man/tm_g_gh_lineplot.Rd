@@ -34,7 +34,8 @@ tm_g_gh_lineplot(
   pre_output = NULL,
   post_output = NULL,
   count_threshold = 0,
-  table_font_size = c(12, 4, 20)
+  table_font_size = c(12, 4, 20),
+  plot_relative_height_value = 1000
 )
 }
 \arguments{
@@ -108,6 +109,9 @@ into context. For example the \code{\link[shiny:helpText]{shiny::helpText()}} el
 nodes on the graph}
 
 \item{table_font_size}{controls the font size of values in the table}
+
+\item{plot_relative_height_value}{numeric value between 500 and 5000 for controlling the starting value
+of the relative plot height slider}
 }
 \value{
 \code{shiny} object
@@ -207,7 +211,7 @@ app <- teal::init(
       trt_group = choices_selected(c("ARM", "ACTARM"), "ARM"),
       hline_arb = c(20.5, 19.5),
       hline_arb_color = c("red", "green"),
-      hline_arb_label = c("A", "B"),
+      hline_arb_label = c("A", "B")
     )
   )
 )
