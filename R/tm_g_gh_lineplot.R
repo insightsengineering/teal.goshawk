@@ -166,8 +166,10 @@ tm_g_gh_lineplot <- function(label,
                              hline_arb = numeric(0),
                              hline_arb_color = "red",
                              hline_arb_label = "Horizontal line",
-                             color_manual = c(getOption("ggplot2.discrete.colour"),
-                                              c("#ff0000", "#008000", "#4ca3dd", "#8a2be2"))[1:4],
+                             color_manual = c(
+                               getOption("ggplot2.discrete.colour"),
+                               c("#ff0000", "#008000", "#4ca3dd", "#8a2be2")
+                             )[1:4],
                              xtick = ggplot2::waiver(),
                              xlabel = xtick,
                              rotate_xlab = FALSE,
