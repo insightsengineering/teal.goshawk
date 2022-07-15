@@ -41,7 +41,7 @@
 #' @param count_threshold minimum count of observations (as listed in the output table) to plot
 #' nodes on the graph
 #' @param table_font_size controls the font size of values in the table
-#' @param plot_relative_height_value numeric value between 500 and 5000 fro controlling the starting value
+#' @param plot_relative_height_value numeric value between 500 and 5000 for controlling the starting value
 #' of the relative plot height slider
 #' @author Wenyi Liu (luiw2) wenyi.liu@roche.com
 #' @author Balazs Toth (tothb2) toth.balazs@gene.com
