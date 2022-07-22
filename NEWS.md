@@ -7,6 +7,7 @@
 
 ### Miscellaneous
 * Fixed minor type coercion warning in `srv_arbitrary_lines`.
+* Updated modules to not use datanames with suffix `_FILTERED` so the package works with the breaking changes in `teal.slice`. 
 
 # teal.goshawk 0.1.13
 
