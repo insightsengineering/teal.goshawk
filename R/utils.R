@@ -187,7 +187,7 @@ constr_anl_chunks <- function(session, input, datasets, dataname, param_id, para
     validate(need(param_var_value, "Please select a biomarker"))
     checkmate::assert_string(param_var_value)
 
-    ANL <- datasets$get_data(dataname, filtered = TRUE)
+    ANL <- datasets$get_data(dataname, filtered = TRUE) # nolint
     validate_has_data(ANL, min_rows)
 
     validate_has_variable(ANL, param_var)

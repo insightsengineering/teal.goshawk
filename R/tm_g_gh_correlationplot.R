@@ -452,7 +452,7 @@ srv_g_correlationplot <- function(id,
       validate(need(input$yaxis_var, "Please select a Y-Axis Variable"))
 
       dataset_var <- dataname
-      ANL <- datasets$get_data(dataname, filtered = TRUE)
+      ANL <- datasets$get_data(dataname, filtered = TRUE) # nolint
       validate_has_data(ANL, 1)
 
       if (length(input$hline_vars) > 0) {
