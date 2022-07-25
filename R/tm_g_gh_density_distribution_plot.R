@@ -221,7 +221,6 @@ ui_g_density_distribution_plot <- function(id, ...) {
     encoding = div(
       ### Reporter
       teal.reporter::simple_reporter_ui(ns("simple_reporter")),
-      shiny::tags$br(),
       ###
       templ_ui_dataname(a$dataname),
       teal.widgets::optionalSelectInput(
