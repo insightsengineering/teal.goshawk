@@ -176,7 +176,7 @@ keep_range_slider_updated <- function(session,
 # param_id: input id that contains values of PARAMCD to filter for
 # param_var: currently only "PARAMCD" is supported
 constr_anl_chunks <- function(session, input, datasets, dataname, param_id, param_var, trt_group, min_rows) {
-  dataset_var <- paste0(dataname, "_FILTERED")
+  dataset_var <- dataname
   if (!identical(param_var, "PARAMCD")) {
     # why is there a variable param_id which is provided to this function and always equal to "param"?
     stop("param_var must be 'PARAMCD'. Otherwise, we cannot currently guarantee the correctness of the code.")
@@ -187,18 +187,18 @@ constr_anl_chunks <- function(session, input, datasets, dataname, param_id, para
     validate(need(param_var_value, "Please select a biomarker"))
     checkmate::assert_string(param_var_value)
 
-    ANL_FILTERED <- datasets$get_data(dataname, filtered = TRUE) # nolint
-    validate_has_data(ANL_FILTERED, min_rows)
+    ANL <- datasets$get_data(dataname, filtered = TRUE) # nolint
+    validate_has_data(ANL, min_rows)
 
-    validate_has_variable(ANL_FILTERED, param_var)
-    validate_has_variable(ANL_FILTERED, "AVISITCD")
-    validate_has_variable(ANL_FILTERED, "BASE")
-    validate_has_variable(ANL_FILTERED, "BASE2")
-    validate_has_variable(ANL_FILTERED, trt_group)
+    validate_has_variable(ANL, param_var)
+    validate_has_variable(ANL, "AVISITCD")
+    validate_has_variable(ANL, "BASE")
+    validate_has_variable(ANL, "BASE2")
+    validate_has_variable(ANL, trt_group)
 
     # analysis
     private_chunks <- teal.code::chunks_new()
-    teal.code::chunks_reset(as.environment(stats::setNames(list(ANL_FILTERED), dataset_var)), private_chunks)
+    teal.code::chunks_reset(as.environment(stats::setNames(list(ANL), dataset_var)), private_chunks)
 
     # filter biomarker
     teal.code::chunks_push(

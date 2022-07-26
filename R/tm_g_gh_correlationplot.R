@@ -446,98 +446,98 @@ srv_g_correlationplot <- function(id,
       validate(need(input$yaxis_param, "Please select a Y-Axis Biomarker"))
       validate(need(input$yaxis_var, "Please select a Y-Axis Variable"))
 
-      dataset_var <- paste0(dataname, "_FILTERED")
-      ANL_FILTERED <- datasets$get_data(dataname, filtered = TRUE) # nolint
-      validate_has_data(ANL_FILTERED, 1)
+      dataset_var <- dataname
+      ANL <- datasets$get_data(dataname, filtered = TRUE) # nolint
+      validate_has_data(ANL, 1)
 
       if (length(input$hline_vars) > 0) {
         validate(
           need(
-            all(input$hline_vars %in% names(ANL_FILTERED)),
+            all(input$hline_vars %in% names(ANL)),
             "One or more selected horizontal line variable(s) is/are not names to any column in the data"
           ),
           need(
-            all(input$vline_vars %in% names(ANL_FILTERED)),
+            all(input$vline_vars %in% names(ANL)),
             "One or more selected vertical line variable(s) is/are not names to any column in the data"
           )
         )
       }
 
-      validate_has_variable(ANL_FILTERED, param_var)
+      validate_has_variable(ANL, param_var)
 
       validate_in(
-        input$xaxis_param, unique(ANL_FILTERED[[param_var]]),
+        input$xaxis_param, unique(ANL[[param_var]]),
         sprintf("X-Axis Biomarker %s is not available in data %s", input$xaxis_param, dataname)
       )
 
       validate_in(
-        input$yaxis_param, unique(ANL_FILTERED[[param_var]]),
+        input$yaxis_param, unique(ANL[[param_var]]),
         sprintf("Y-Axis Biomarker %s is not available in data %s", input$yaxis_param, dataname)
       )
 
       validate_has_variable(
-        ANL_FILTERED,
+        ANL,
         "AVISITCD",
         sprintf("Variable AVISITCD is not available in data %s", dataname)
       )
 
       validate_has_variable(
-        ANL_FILTERED,
+        ANL,
         "BASE",
         sprintf("Variable BASE is not available in data %s", dataname)
       )
 
       validate_has_variable(
-        ANL_FILTERED,
+        ANL,
         "BASE2",
         sprintf("Variable BASE2 is not available in data %s", dataname)
       )
 
       validate_has_variable(
-        ANL_FILTERED,
+        ANL,
         "LOQFL",
         sprintf("Variable LOQFL is not available in data %s", dataname)
       )
 
       validate_has_variable(
-        ANL_FILTERED,
+        ANL,
         "PARAM",
         sprintf("Variable PARAM is not available in data %s", dataname)
       )
 
       validate_has_variable(
-        ANL_FILTERED,
+        ANL,
         "LBSTRESC",
         sprintf("Variable LBSTRESC is not available in data %s", dataname)
       )
 
       validate_has_variable(
-        ANL_FILTERED,
+        ANL,
         input$trt_group,
         sprintf("Variable %s is not available in data %s", input$trt_group, dataname)
       )
 
       validate_has_variable(
-        ANL_FILTERED,
+        ANL,
         "USUBJID",
         sprintf("Variable USUBJID is not available in data %s", dataname)
       )
 
       validate_has_variable(
-        ANL_FILTERED,
+        ANL,
         input$xaxis_var,
         sprintf("Variable %s is not available in data %s", input$xaxis_var, dataname)
       )
 
       validate_has_variable(
-        ANL_FILTERED,
+        ANL,
         input$yaxis_var,
         sprintf("Variable %s is not available in data %s", input$yaxis_var, dataname)
       )
 
       # analysis
       private_chunks <- teal.code::chunks_new()
-      teal.code::chunks_reset(as.environment(stats::setNames(list(ANL_FILTERED), dataset_var)), private_chunks)
+      teal.code::chunks_reset(as.environment(stats::setNames(list(ANL), dataset_var)), private_chunks)
 
       # filter biomarker
       teal.code::chunks_push(
