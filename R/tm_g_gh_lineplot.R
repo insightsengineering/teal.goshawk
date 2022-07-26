@@ -271,7 +271,7 @@ ui_lineplot <- function(id, ...) {
                 "change the total size of the plot and table(s)\nuse",
                 "the plot resizing controls available at the top right of the plot."
               ),
-            icon("info-circle")
+            icon("circle-info")
           ),
           min = 500,
           max = 5000,
