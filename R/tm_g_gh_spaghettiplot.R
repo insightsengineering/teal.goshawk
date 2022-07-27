@@ -276,18 +276,35 @@ g_ui_spaghettiplot <- function(id, ...) {
     shiny::singleton(
       shiny::tags$head(shiny::includeCSS(system.file("css/custom.css", package = "teal.goshawk")))
     ),
-    teal.widgets::standard_layout(
-      output = templ_ui_output_datatable(ns),
-      encoding = div(
-        ### Reporter
-        shiny::tags$div(
-          teal.reporter::add_card_button_ui(ns("addReportCard")),
-          teal.reporter::download_report_button_ui(ns("downloadButton")),
-          teal.reporter::reset_report_button_ui(ns("resetButton"))
-        ),
-        shiny::tags$br(),
-        ###
-        templ_ui_dataname(a$dataname),
+  teal.widgets::standard_layout(
+    output = templ_ui_output_datatable(ns),
+    encoding = div(
+      ### Reporter
+      teal.reporter::simple_reporter_ui(ns("simple_reporter")),
+      ###
+      templ_ui_dataname(a$dataname),
+      teal.widgets::optionalSelectInput(
+        ns("trt_group"),
+        label = "Select Treatment Variable",
+        choices = a$trt_group$choices,
+        selected = a$trt_group$selected,
+        multiple = FALSE
+      ),
+      templ_ui_params_vars(
+        ns,
+        # xparam and yparam are identical, so we only show the user one
+        xparam_choices = a$param$choices, xparam_selected = a$param$selected, xparam_label = "Select a Biomarker",
+        xchoices = a$xaxis_var$choices, xselected = a$xaxis_var$selected,
+        ychoices = a$yaxis_var$choices, yselected = a$yaxis_var$selected
+      ),
+      radioButtons(
+        ns("group_stats"),
+        "Group Statistics",
+        c("None" = "NONE", "Mean" = "MEAN", "Median" = "MEDIAN"),
+        inline = TRUE
+      ),
+      templ_ui_constraint(ns), # required by constr_anl_chunks
+      if (length(a$hline_vars) > 0) {
         teal.widgets::optionalSelectInput(
           ns("trt_group"),
           label = "Select Treatment Variable",
@@ -482,7 +499,6 @@ srv_g_spaghettiplot <- function(id,
         card <- teal.reporter::TealReportCard$new()
         card$set_name("Spaghetti Plot")
         card$append_text("Spaghetti Plot", "header2")
-        card$append_text("Filter State", "header3")
         card$append_fs(datasets$get_filter_state())
         card$append_text("Selected Options", "header3")
         card$append_text(
@@ -494,18 +510,15 @@ srv_g_spaghettiplot <- function(id,
           card$append_text("Comment", "header3")
           card$append_text(comment)
         }
-        card$append_text("Show R Code", "header3")
         card$append_src(paste(get_rcode(
-          chunks = teal.code::get_chunks_object(parent_idx = 1L),
+          chunks = teal.code::get_chunks_object(parent_idx = 2L),
           datasets = datasets,
           title = "",
           description = ""
         ), collapse = "\n"))
         card
       }
-      teal.reporter::add_card_button_srv("addReportCard", reporter = reporter, card_fun = card_fun)
-      teal.reporter::download_report_button_srv("downloadButton", reporter = reporter)
-      teal.reporter::reset_report_button_srv("resetButton", reporter)
+      teal.reporter::simple_reporter_srv("simple_reporter", reporter = reporter, card_fun = card_fun)
     }
     ###
 
