@@ -239,51 +239,11 @@ ui_lineplot <- function(id, ...) {
     shiny::singleton(
       shiny::tags$head(shiny::includeCSS(system.file("css/custom.css", package = "teal.goshawk")))
     ),
-  teal.widgets::standard_layout(
-    output = teal.widgets::plot_with_settings_ui(id = ns("plot")),
-    encoding = div(
-      ### Reporter
-      teal.reporter::simple_reporter_ui(ns("simple_reporter")),
-      ###
-      templ_ui_dataname(a$dataname),
-      teal.widgets::optionalSelectInput(
-        ns("trt_group"),
-        label = "Select Treatment Variable",
-        choices = a$trt_group$choices,
-        selected = a$trt_group$selected,
-        multiple = FALSE
-      ),
-      templ_ui_params_vars(
-        ns,
-        # xparam and yparam are identical, so we only show the user one
-        xparam_choices = a$param$choices, xparam_selected = a$param$selected, xparam_label = "Select a Biomarker",
-        xchoices = a$xaxis_var$choices, xselected = a$xaxis_var$selected,
-        ychoices = a$yaxis_var$choices, yselected = a$yaxis_var$selected
-      ),
-      uiOutput(ns("shape_ui")),
-      radioButtons(ns("stat"), "Select a Statistic:", c("mean", "median"), a$stat),
-      checkboxInput(ns("include_stat"), "Include Statistic Table", value = TRUE),
-      div(
-        sliderInput(
-          ns("relative_height"),
-          div(
-            "Relative height of plot to table(s)",
-            title =
-              paste(
-                "The larger the value selected the greater the size of the plot relative\nto",
-                "the size of the tables. Note the units of this slider are arbitrary.\nTo",
-                "change the total size of the plot and table(s)\nuse",
-                "the plot resizing controls available at the top right of the plot."
-              ),
-            icon("circle-info")
-          ),
-          min = 500,
-          max = 5000,
-          step = 50,
-          value = a$plot_relative_height_value,
-          ticks = FALSE
-        ),
-        shiny::tags$br(),
+    teal.widgets::standard_layout(
+      output = teal.widgets::plot_with_settings_ui(id = ns("plot")),
+      encoding = div(
+        ### Reporter
+        teal.reporter::simple_reporter_ui(ns("simple_reporter")),
         ###
         templ_ui_dataname(a$dataname),
         teal.widgets::optionalSelectInput(
