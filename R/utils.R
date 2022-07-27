@@ -103,11 +103,11 @@ templ_ui_constraint <- function(ns, label = "Data Constraint") {
     shinyjs::hidden(div(
       id = ns("constraint_range"),
       div(
-        style = "display: inline-block; vertical-align:center",
+        class = "inline-block;",
         numericInput(ns("constraint_range_min"), label = "Min", value = 0, min = 0, max = 0)
       ),
       div(
-        style = "display: inline-block; vertical-align:center",
+        class = "inline-block;",
         numericInput(ns("constraint_range_max"), label = "Min", value = 0, min = 0, max = 0)
       )
     )),

@@ -93,11 +93,15 @@ toggle_slider_ui <- function(id,
   ns <- NS(id)
   div(
     shinyjs::useShinyjs(),
-    actionButton(ns("toggle"), "Toggle", class = "btn-xs", style = "float: right;"),
+    div(
+      class = "flex justify-between mb-1",
+      tags$span(tags$strong(label)),
+      actionButton(ns("toggle"), "Toggle", class = "btn-xs")
+    ),
     show_or_not(slider_initially)(
       sliderInput(
         ns("slider"),
-        label = label,
+        label = NULL,
         min = min,
         max = max,
         value = value,
