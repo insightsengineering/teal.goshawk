@@ -92,6 +92,9 @@ toggle_slider_ui <- function(id,
   show_or_not <- function(show) if (show) identity else shinyjs::hidden
   ns <- NS(id)
   div(
+    shiny::singleton(
+      shiny::tags$head(shiny::includeCSS(system.file("css/custom.css", package = "teal.goshawk")))
+    ),
     shinyjs::useShinyjs(),
     div(
       class = "flex justify-between mb-1",
@@ -115,7 +118,7 @@ toggle_slider_ui <- function(id,
       if (length(value) == 1) {
         numericInput(
           ns("value"),
-          label = label,
+          label = NULL,
           min = min,
           max = max,
           value = value[[1]],
@@ -124,7 +127,6 @@ toggle_slider_ui <- function(id,
         )
       } else {
         div(
-          tags$label(label),
           numericInput(
             ns("value_low"),
             "From:",
