@@ -92,9 +92,7 @@ toggle_slider_ui <- function(id,
   show_or_not <- function(show) if (show) identity else shinyjs::hidden
   ns <- NS(id)
   div(
-    shiny::singleton(
-      shiny::tags$head(shiny::includeCSS(system.file("css/custom.css", package = "teal.goshawk")))
-    ),
+    include_css_files("custom"),
     shinyjs::useShinyjs(),
     div(
       class = "flex justify-between mb-1",

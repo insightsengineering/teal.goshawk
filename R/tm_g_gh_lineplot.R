@@ -236,9 +236,7 @@ ui_lineplot <- function(id, ...) {
   a <- list(...)
 
   shiny::tagList(
-    shiny::singleton(
-      shiny::tags$head(shiny::includeCSS(system.file("css/custom.css", package = "teal.goshawk")))
-    ),
+    include_css_files("custom"),
     teal.widgets::standard_layout(
       output = teal.widgets::plot_with_settings_ui(id = ns("plot")),
       encoding = div(

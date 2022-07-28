@@ -273,9 +273,7 @@ g_ui_spaghettiplot <- function(id, ...) {
   a <- list(...)
 
   shiny::tagList(
-    shiny::singleton(
-      shiny::tags$head(shiny::includeCSS(system.file("css/custom.css", package = "teal.goshawk")))
-    ),
+    include_css_files("custom"),
     teal.widgets::standard_layout(
       output = templ_ui_output_datatable(ns),
       encoding = div(
