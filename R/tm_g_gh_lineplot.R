@@ -235,95 +235,103 @@ ui_lineplot <- function(id, ...) {
   ns <- NS(id)
   a <- list(...)
 
-  teal.widgets::standard_layout(
-    output = teal.widgets::plot_with_settings_ui(id = ns("plot")),
-    encoding = div(
-      ### Reporter
-      teal.reporter::simple_reporter_ui(ns("simple_reporter")),
-      ###
-      templ_ui_dataname(a$dataname),
-      teal.widgets::optionalSelectInput(
-        ns("trt_group"),
-        label = "Select Treatment Variable",
-        choices = a$trt_group$choices,
-        selected = a$trt_group$selected,
-        multiple = FALSE
-      ),
-      templ_ui_params_vars(
-        ns,
-        # xparam and yparam are identical, so we only show the user one
-        xparam_choices = a$param$choices, xparam_selected = a$param$selected, xparam_label = "Select a Biomarker",
-        xchoices = a$xaxis_var$choices, xselected = a$xaxis_var$selected,
-        ychoices = a$yaxis_var$choices, yselected = a$yaxis_var$selected
-      ),
-      uiOutput(ns("shape_ui")),
-      radioButtons(ns("stat"), "Select a Statistic:", c("mean", "median"), a$stat),
-      checkboxInput(ns("include_stat"), "Include Statistic Table", value = TRUE),
-      div(
-        sliderInput(
-          ns("relative_height"),
-          div(
-            "Relative height of plot to table(s)",
-            title =
-              paste(
-                "The larger the value selected the greater the size of the plot relative\nto",
-                "the size of the tables. Note the units of this slider are arbitrary.\nTo",
-                "change the total size of the plot and table(s)\nuse",
-                "the plot resizing controls available at the top right of the plot."
-              ),
-            icon("circle-info")
-          ),
-          min = 500,
-          max = 5000,
-          step = 50,
-          value = a$plot_relative_height_value,
-          ticks = FALSE
+  shiny::tagList(
+    include_css_files("custom"),
+    teal.widgets::standard_layout(
+      output = teal.widgets::plot_with_settings_ui(id = ns("plot")),
+      encoding = div(
+        ### Reporter
+        teal.reporter::simple_reporter_ui(ns("simple_reporter")),
+        ###
+        templ_ui_dataname(a$dataname),
+        teal.widgets::optionalSelectInput(
+          ns("trt_group"),
+          label = "Select Treatment Variable",
+          choices = a$trt_group$choices,
+          selected = a$trt_group$selected,
+          multiple = FALSE
         ),
-      ),
-      templ_ui_constraint(ns), # required by constr_anl_chunks
-      ui_arbitrary_lines(id = ns("hline_arb"), a$hline_arb, a$hline_arb_label, a$hline_arb_color),
-      teal.widgets::panel_group(
-        teal.widgets::panel_item(
-          title = "Plot Aesthetic Settings",
-          toggle_slider_ui(
-            ns("yrange_scale"),
-            label = "Y-Axis Range Zoom",
-            min = -1000000,
-            max = 1000000,
-            value = c(-1000000, 1000000)
-          ),
-          checkboxInput(ns("rotate_xlab"), "Rotate X-axis Label", a$rotate_xlab),
-          numericInput(ns("count_threshold"), "Contributing Observations Threshold:", a$count_threshold)
+        templ_ui_params_vars(
+          ns,
+          # xparam and yparam are identical, so we only show the user one
+          xparam_choices = a$param$choices, xparam_selected = a$param$selected, xparam_label = "Select a Biomarker",
+          xchoices = a$xaxis_var$choices, xselected = a$xaxis_var$selected,
+          ychoices = a$yaxis_var$choices, yselected = a$yaxis_var$selected
         ),
-        teal.widgets::panel_item(
-          title = "Plot settings",
-          teal.widgets::optionalSliderInputValMinMax(ns("dodge"), "Error Bar Position Dodge", a$dodge, ticks = FALSE),
-          teal.widgets::panel_group(
-            teal.widgets::panel_item(
-              title = "Line Settings",
-              uiOutput(ns("lines"))
+        uiOutput(ns("shape_ui")),
+        radioButtons(ns("stat"), "Select a Statistic:", c("mean", "median"), a$stat),
+        checkboxInput(ns("include_stat"), "Include Statistic Table", value = TRUE),
+        div(
+          sliderInput(
+            ns("relative_height"),
+            div(
+              "Relative height of plot to table(s)",
+              title =
+                paste(
+                  "The larger the value selected the greater the size of the plot relative\nto",
+                  "the size of the tables. Note the units of this slider are arbitrary.\nTo",
+                  "change the total size of the plot and table(s)\nuse",
+                  "the plot resizing controls available at the top right of the plot."
+                ),
+              icon("circle-info")
             ),
-            teal.widgets::panel_item(
-              title = "Symbol settings",
-              uiOutput(ns("symbols"))
+            min = 500,
+            max = 5000,
+            step = 50,
+            value = a$plot_relative_height_value,
+            ticks = FALSE
+          ),
+        ),
+        templ_ui_constraint(ns), # required by constr_anl_chunks
+        ui_arbitrary_lines(id = ns("hline_arb"), a$hline_arb, a$hline_arb_label, a$hline_arb_color),
+        teal.widgets::panel_group(
+          teal.widgets::panel_item(
+            title = "Plot Aesthetic Settings",
+            toggle_slider_ui(
+              ns("yrange_scale"),
+              label = "Y-Axis Range Zoom",
+              min = -1000000,
+              max = 1000000,
+              value = c(-1000000, 1000000)
+            ),
+            checkboxInput(ns("rotate_xlab"), "Rotate X-axis Label", a$rotate_xlab),
+            numericInput(ns("count_threshold"), "Contributing Observations Threshold:", a$count_threshold)
+          ),
+          teal.widgets::panel_item(
+            title = "Plot settings",
+            teal.widgets::optionalSliderInputValMinMax(ns("dodge"), "Error Bar Position Dodge", a$dodge, ticks = FALSE),
+            teal.widgets::panel_group(
+              teal.widgets::panel_item(
+                title = "Line Settings",
+                uiOutput(ns("lines"))
+              ),
+              teal.widgets::panel_item(
+                title = "Symbol settings",
+                uiOutput(ns("symbols"))
+              )
+            ),
+            teal.widgets::optionalSliderInputValMinMax(
+              ns("plot_font_size"),
+              "Font Size",
+              a$plot_font_size,
+              ticks = FALSE
             )
           ),
-          teal.widgets::optionalSliderInputValMinMax(ns("plot_font_size"), "Font Size", a$plot_font_size, ticks = FALSE)
-        ),
-        teal.widgets::panel_item(
-          title = "Table settings",
-          teal.widgets::optionalSliderInputValMinMax(
-            ns("table_font_size"),
-            "Table Font Size",
-            a$table_font_size,
-            ticks = FALSE
+          teal.widgets::panel_item(
+            title = "Table settings",
+            teal.widgets::optionalSliderInputValMinMax(
+              ns("table_font_size"),
+              "Table Font Size",
+              a$table_font_size,
+              ticks = FALSE
+            )
           )
         )
-      )
-    ),
-    forms = get_rcode_ui(ns("rcode")),
-    pre_output = a$pre_output,
-    post_output = a$post_output
+      ),
+      forms = get_rcode_ui(ns("rcode")),
+      pre_output = a$pre_output,
+      post_output = a$post_output
+    )
   )
 }
 
@@ -538,19 +546,16 @@ srv_lineplot <- function(id,
               ),
               selected = x_type
             )
-            fluidRow(
-              column(
-                width = 12,
-                tags$label("Line configuration for:", tags$code(x))
-              ),
-              column(
-                width = 12,
+            div(
+              tags$label("Line configuration for:", tags$code(x)),
+              div(
+                class = "flex",
                 div(
-                  style = "width: 50%; float: left;",
+                  class = "flex-grow-1",
                   color_input
                 ),
                 div(
-                  style = "width: 50%; float: left;",
+                  class = "flex-grow-1",
                   type_input
                 )
               )

@@ -92,12 +92,17 @@ toggle_slider_ui <- function(id,
   show_or_not <- function(show) if (show) identity else shinyjs::hidden
   ns <- NS(id)
   div(
+    include_css_files("custom"),
     shinyjs::useShinyjs(),
-    actionButton(ns("toggle"), "Toggle", class = "btn-xs", style = "float: right;"),
+    div(
+      class = "flex justify-between mb-1",
+      tags$span(tags$strong(label)),
+      actionButton(ns("toggle"), "Toggle", class = "btn-xs")
+    ),
     show_or_not(slider_initially)(
       sliderInput(
         ns("slider"),
-        label = label,
+        label = NULL,
         min = min,
         max = max,
         value = value,
@@ -111,7 +116,7 @@ toggle_slider_ui <- function(id,
       if (length(value) == 1) {
         numericInput(
           ns("value"),
-          label = label,
+          label = NULL,
           min = min,
           max = max,
           value = value[[1]],
@@ -120,7 +125,6 @@ toggle_slider_ui <- function(id,
         )
       } else {
         div(
-          tags$label(label),
           numericInput(
             ns("value_low"),
             "From:",

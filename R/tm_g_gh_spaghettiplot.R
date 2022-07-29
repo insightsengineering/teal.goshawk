@@ -272,79 +272,84 @@ g_ui_spaghettiplot <- function(id, ...) {
   ns <- NS(id)
   a <- list(...)
 
-  teal.widgets::standard_layout(
-    output = templ_ui_output_datatable(ns),
-    encoding = div(
-      ### Reporter
-      teal.reporter::simple_reporter_ui(ns("simple_reporter")),
-      ###
-      templ_ui_dataname(a$dataname),
-      teal.widgets::optionalSelectInput(
-        ns("trt_group"),
-        label = "Select Treatment Variable",
-        choices = a$trt_group$choices,
-        selected = a$trt_group$selected,
-        multiple = FALSE
-      ),
-      templ_ui_params_vars(
-        ns,
-        # xparam and yparam are identical, so we only show the user one
-        xparam_choices = a$param$choices, xparam_selected = a$param$selected, xparam_label = "Select a Biomarker",
-        xchoices = a$xaxis_var$choices, xselected = a$xaxis_var$selected,
-        ychoices = a$yaxis_var$choices, yselected = a$yaxis_var$selected
-      ),
-      radioButtons(
-        ns("group_stats"),
-        "Group Statistics",
-        c("None" = "NONE", "Mean" = "MEAN", "Median" = "MEDIAN"),
-        inline = TRUE
-      ),
-      templ_ui_constraint(ns), # required by constr_anl_chunks
-      if (length(a$hline_vars) > 0) {
+  shiny::tagList(
+    include_css_files("custom"),
+    teal.widgets::standard_layout(
+      output = templ_ui_output_datatable(ns),
+      encoding = div(
+        ### Reporter
+        teal.reporter::simple_reporter_ui(ns("simple_reporter")),
+        ###
+        templ_ui_dataname(a$dataname),
         teal.widgets::optionalSelectInput(
-          ns("hline_vars"),
-          label = "Add Horizontal Range Line(s):",
-          choices = a$hline_vars,
-          selected = NULL,
-          multiple = TRUE
-        )
-      },
-      ui_arbitrary_lines(id = ns("hline_arb"), a$hline_arb, a$hline_arb_label, a$hline_arb_color),
-      teal.widgets::panel_group(
-        teal.widgets::panel_item(
-          title = "Plot Aesthetic Settings",
-          div(
-            style = "padding: 0px;",
-            toggle_slider_ui(
-              ns("yrange_scale"),
-              label = "Y-Axis Range Zoom",
-              min = -1000000,
-              max = 1000000,
-              value = c(-1000000, 1000000)
-            ),
+          ns("trt_group"),
+          label = "Select Treatment Variable",
+          choices = a$trt_group$choices,
+          selected = a$trt_group$selected,
+          multiple = FALSE
+        ),
+        templ_ui_params_vars(
+          ns,
+          # xparam and yparam are identical, so we only show the user one
+          xparam_choices = a$param$choices, xparam_selected = a$param$selected, xparam_label = "Select a Biomarker",
+          xchoices = a$xaxis_var$choices, xselected = a$xaxis_var$selected,
+          ychoices = a$yaxis_var$choices, yselected = a$yaxis_var$selected
+        ),
+        radioButtons(
+          ns("group_stats"),
+          "Group Statistics",
+          c("None" = "NONE", "Mean" = "MEAN", "Median" = "MEDIAN"),
+          inline = TRUE
+        ),
+        templ_ui_constraint(ns), # required by constr_anl_chunks
+        if (length(a$hline_vars) > 0) {
+          teal.widgets::optionalSelectInput(
+            ns("hline_vars"),
+            label = "Add Horizontal Range Line(s):",
+            choices = a$hline_vars,
+            selected = NULL,
+            multiple = TRUE
+          )
+        },
+        ui_arbitrary_lines(id = ns("hline_arb"), a$hline_arb, a$hline_arb_label, a$hline_arb_color),
+        teal.widgets::panel_group(
+          teal.widgets::panel_item(
+            title = "Plot Aesthetic Settings",
             div(
-              style = "display: inline-block;vertical-align:middle; width: 175px;",
-              tags$b("Number of Plots Per Row:")
+              toggle_slider_ui(
+                ns("yrange_scale"),
+                label = "Y-Axis Range Zoom",
+                min = -1000000,
+                max = 1000000,
+                value = c(-1000000, 1000000)
+              ),
+              tags$div(
+                class = "flex flex-wrap items-center",
+                tags$div(
+                  class = "mr-1",
+                  tags$span(tags$strong("Number of Plots Per Row:"))
+                ),
+                tags$div(
+                  class = "w-65px",
+                  numericInput(ns("facet_ncol"), "", a$facet_ncol, min = 1)
+                )
+              )
             ),
-            div(
-              style = "display: inline-block;vertical-align:middle; width: 100px;",
-              numericInput(ns("facet_ncol"), "", a$facet_ncol, min = 1)
+            checkboxInput(ns("rotate_xlab"), "Rotate X-Axis Label", a$rotate_xlab),
+            teal.widgets::optionalSliderInputValMinMax(ns("font_size"), "Font Size", a$font_size, ticks = FALSE),
+            teal.widgets::optionalSliderInputValMinMax(
+              ns("alpha"),
+              "Line Alpha",
+              a$alpha,
+              value_min_max = c(0.8, 0.0, 1.0), step = 0.1, ticks = FALSE
             )
-          ),
-          checkboxInput(ns("rotate_xlab"), "Rotate X-Axis Label", a$rotate_xlab),
-          teal.widgets::optionalSliderInputValMinMax(ns("font_size"), "Font Size", a$font_size, ticks = FALSE),
-          teal.widgets::optionalSliderInputValMinMax(
-            ns("alpha"),
-            "Line Alpha",
-            a$alpha,
-            value_min_max = c(0.8, 0.0, 1.0), step = 0.1, ticks = FALSE
           )
         )
-      )
-    ),
-    forms = get_rcode_ui(ns("rcode")),
-    pre_output = a$pre_output,
-    post_output = a$post_output
+      ),
+      forms = get_rcode_ui(ns("rcode")),
+      pre_output = a$pre_output,
+      post_output = a$post_output
+    )
   )
 }
 
