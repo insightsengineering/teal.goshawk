@@ -909,7 +909,7 @@ srv_g_correlationplot <- function(id,
     teal.widgets::verbatim_popup_srv(
       id = "rcode",
       verbatim_content = reactive(teal.code::get_code(plot_q())),
-      title = "Show R Code for Correlation plot"
+      title = "Show R Code for Correlation Plot"
     )
   })
 }
