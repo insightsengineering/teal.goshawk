@@ -423,21 +423,27 @@ srv_g_spaghettiplot <- function(id,
 
       # this code is needed to make sure the waiver attribute
       # of ggplot2::waiver is correctly passed to goshawk's spaghettiplot
-      if (!methods::is(xtick, "waiver") && !is.null(xtick)) {
+      if (!methods::is(xtick, "waiver")) {
         private_quosure <- teal.code::eval_code(
           object = private_quosure,
-          code = bquote({
-            xtick <- .(xtick)
-            xlabel <- .(xlabel)
-          })
+          code = bquote(xtick <- .(xtick))
         )
-      } else if (methods::is(xtick, "waiver")) {
+      } else {
         private_quosure <- teal.code::eval_code(
           object = private_quosure,
-          code = "
-            xtick <- ggplot2::waiver()
-            xlabel <- xtick
-          "
+          code = xtick <- ggplot2::waiver()
+        )
+      }
+
+      if (!methods::is(xlabel, "waiver")) {
+        private_quosure <- teal.code::eval_code(
+          object = private_quosure,
+          code = bquote(xlabel <- .(xlabel))
+        )
+      } else {
+        private_quosure <- teal.code::eval_code(
+          object = private_quosure,
+          code = xlabel <- ggplot2::waiver()
         )
       }
 
