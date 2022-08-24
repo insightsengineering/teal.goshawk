@@ -426,6 +426,7 @@ ui_arbitrary_lines <- function(id, line_arb, line_arb_label, line_arb_color, tit
 srv_arbitrary_lines <- function(id) {
   moduleServer(id, function(input, output, session) {
     reactive({
+      req(!is.null(input$line_arb), !is.null(input$line_arb_label), !is.null(input$line_arb_color))
       line_arb <- strsplit(input$line_arb, "\\s{0,},\\s{0,}")[[1]] %>%
         as.numeric()
       if ((length(line_arb) == 1 && is.na(line_arb)) || length(line_arb) == 0) {

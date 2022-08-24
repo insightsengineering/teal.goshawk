@@ -479,7 +479,6 @@ srv_g_boxplot <- function(id,
       )
     })
 
-    # table and plot
     create_table <- reactive({
       param <- input$xaxis_param
       xaxis_var <- input$yaxis_var # nolint
