@@ -375,7 +375,7 @@ srv_g_spaghettiplot <- function(id,
                                 hline_vars_colors,
                                 hline_vars_labels) {
   with_reporter <- !missing(reporter) && inherits(reporter, "Reporter")
-  with_filter <- !missing(filter_panel_api) && inherits(filter_panel_api, "FilterPanelApi")
+  with_filter <- !missing(filter_panel_api) && inherits(filter_panel_api, "FilterPanelAPI")
 
   moduleServer(id, function(input, output, session) {
 

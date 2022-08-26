@@ -436,7 +436,7 @@ srv_g_correlationplot <- function(id,
                                   vline_vars_colors,
                                   vline_vars_labels) {
   with_reporter <- !missing(reporter) && inherits(reporter, "Reporter")
-  with_filter <- !missing(filter_panel_api) && inherits(filter_panel_api, "FilterPanelApi")
+  with_filter <- !missing(filter_panel_api) && inherits(filter_panel_api, "FilterPanelAPI")
 
   moduleServer(id, function(input, output, session) {
 
