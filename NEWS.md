@@ -1,6 +1,6 @@
 # teal.goshawk 0.1.13.9013
 
-### Breking changes
+### Breaking changes
 
 * Replaced `chunks` with simpler `Quosure` class.
 * Replaced `datasets` argument containing `FilteredData` with the new arguments `data` (list of reactive datasets) and `filter_panel_api` (`FilterPanelAPI`).
