@@ -221,6 +221,8 @@ constr_anl_q <- function(session, input, data, dataname, param_id, param_var, tr
 
     # note that filtered is false thus we cannot use anl_param()$ANL
     ANL <- data[[dataname]]() # nolint
+    validate_has_data(ANL, min_rows)
+
     validate_has_variable(ANL, param_var)
     validate_has_variable(ANL, "AVISITCD")
     validate_has_variable(ANL, "BASE")
@@ -229,7 +231,6 @@ constr_anl_q <- function(session, input, data, dataname, param_id, param_var, tr
     ANL <- ANL %>% dplyr::filter(!!sym(param_var) == param_var_value) # nolint
 
     visit_freq <- unique(ANL$AVISITCD)
-
 
     # get min max values
     if ((constraint_var == "BASE2" && any(grepl("SCR", visit_freq))) ||
