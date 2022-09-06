@@ -199,7 +199,7 @@ constr_anl_q <- function(session, input, data, dataname, param_id, param_var, tr
     # analysis
     private_quosure <- teal.code::new_quosure(data) %>%
       teal.code::eval_code(
-        substitute(ANL <- dataname, list(dataname = as.name(dataname)))
+        substitute(ANL <- dataname, list(dataname = as.name(dataname))) # nolint
       ) %>%
       teal.code::eval_code(
         code = bquote({
@@ -220,7 +220,7 @@ constr_anl_q <- function(session, input, data, dataname, param_id, param_var, tr
     validate(need(constraint_var, "select a constraint variable"))
 
     # note that filtered is false thus we cannot use anl_param()$ANL
-    ANL <- data[[dataname]]()
+    ANL <- data[[dataname]]() # nolint
     validate_has_variable(ANL, param_var)
     validate_has_variable(ANL, "AVISITCD")
     validate_has_variable(ANL, "BASE")
