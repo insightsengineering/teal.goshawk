@@ -27,3 +27,17 @@ remotes::install_github("insightsengineering/teal.goshawk@*release")
 A stable release of all `NEST` packages from June 2022 is also available [here](https://github.com/insightsengineering/depository#readme).
 
 In order to run many of the examples you will also need to install the [`scda`](https://insightsengineering.github.io/scda) package.
+
+## Stargazers and Forkers
+
+### Stargazers over time
+
+[![Stargazers over time](https://starchart.cc/insightsengineering/teal.goshawk.svg)](https://starchart.cc/insightsengineering/teal.goshawk)
+
+### Stargazers
+
+[![Stargazers repo roster for @insightsengineering/teal.goshawk](https://reporoster.com/stars/insightsengineering/teal.goshawk)](https://github.com/insightsengineering/teal.goshawk/stargazers)
+
+### Forkers
+
+[![Forkers repo roster for @insightsengineering/teal.goshawk](https://reporoster.com/forks/insightsengineering/teal.goshawk)](https://github.com/insightsengineering/teal.goshawk/network/members)
