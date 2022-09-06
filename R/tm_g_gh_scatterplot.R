@@ -425,6 +425,5 @@ srv_g_scatterplot <- function(id,
       verbatim_content = reactive(teal.code::get_code(plot_q())),
       title = "Show R Code for Scatterplot"
     )
-
   })
 }

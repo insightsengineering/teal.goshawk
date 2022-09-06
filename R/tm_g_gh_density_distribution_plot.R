@@ -294,7 +294,6 @@ srv_g_density_distribution_plot <- function(id, # nolint
   with_filter <- !missing(filter_panel_api) && inherits(filter_panel_api, "FilterPanelAPI")
 
   moduleServer(id, function(input, output, session) {
-
     anl_q <- constr_anl_q(
       session, input, data, dataname,
       param_id = "xaxis_param", param_var = param_var, trt_group = input$trt_group, min_rows = 2
@@ -370,7 +369,6 @@ srv_g_density_distribution_plot <- function(id, # nolint
     })
 
     create_table <- reactive({
-
       param <- input$xaxis_param
       xaxis_var <- input$xaxis_var
       font_size <- input$font_size

@@ -636,7 +636,6 @@ srv_g_correlationplot <- function(id,
 
     # transpose data to plot
     plot_data_transpose <- reactive({
-
       ANL <- anl_constraint()$ANL # nolint
       trt_group <- input$trt_group
       line_vars <- unique(c(input$hline_vars, input$vline_vars))
