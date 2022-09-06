@@ -317,6 +317,7 @@ srv_g_density_distribution_plot <- function(id, # nolint
     horizontal_line <- srv_arbitrary_lines("hline_arb")
 
     create_plot <- reactive({
+      req(anl_q())
       validate(need(input$xaxis_var, "Please select an X-Axis Variable"))
 
       # nolint start
@@ -369,6 +370,7 @@ srv_g_density_distribution_plot <- function(id, # nolint
     })
 
     create_table <- reactive({
+      req(anl_q())
       param <- input$xaxis_param
       xaxis_var <- input$xaxis_var
       font_size <- input$font_size

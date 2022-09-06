@@ -393,6 +393,7 @@ srv_g_spaghettiplot <- function(id,
     horizontal_line <- srv_arbitrary_lines("hline_arb")
 
     plot_q <- reactive({
+      req(anl_q())
       # nolint start
       ylim <- yrange_slider$state()$value
       facet_ncol <- input$facet_ncol

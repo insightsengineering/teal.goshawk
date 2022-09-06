@@ -296,6 +296,7 @@ srv_g_scatterplot <- function(id,
 
     # plot
     plot_q <- reactive({
+      req(anl_q())
       # nolint start
       xlim <- xrange_slider$state()$value
       ylim <- yrange_slider$state()$value

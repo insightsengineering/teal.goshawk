@@ -636,6 +636,7 @@ srv_g_correlationplot <- function(id,
 
     # transpose data to plot
     plot_data_transpose <- reactive({
+      req(anl_constraint())
       ANL <- anl_constraint()$ANL # nolint
       trt_group <- input$trt_group
       line_vars <- unique(c(input$hline_vars, input$vline_vars))
@@ -725,6 +726,7 @@ srv_g_correlationplot <- function(id,
     })
 
     plot_labels <- reactive({
+      req(anl_constraint())
       ANL <- anl_constraint()$quosure[["ANL"]] # nolint
 
       xparam <- ANL$PARAM[ANL[[param_var]] == input$xaxis_param][1]
@@ -752,7 +754,7 @@ srv_g_correlationplot <- function(id,
 
     # plot
     plot_q <- reactive({
-
+      req(plot_data_transpose())
       # nolint start
       xaxis_param <- input$xaxis_param
       xaxis_var <- input$xaxis_var

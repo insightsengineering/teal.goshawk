@@ -443,6 +443,7 @@ srv_lineplot <- function(id,
     line_type_defaults <- reactiveVal("solid")
 
     observeEvent(input$trt_group, {
+      req(anl_q())
       req(input$trt_group)
       anl_arm <- anl_q()$ANL[[input$trt_group]]
       anl_arm_nlevels <- nlevels(anl_arm)
@@ -470,6 +471,7 @@ srv_lineplot <- function(id,
     })
 
     line_color_selected <- reactive({
+      req(anl_q())
       if (is.null(input$trt_group)) {
         return(NULL)
       }
@@ -491,6 +493,7 @@ srv_lineplot <- function(id,
     })
 
     line_type_selected <- reactive({
+      req(anl_q())
       if (is.null(input$trt_group)) {
         return(NULL)
       }
@@ -512,6 +515,7 @@ srv_lineplot <- function(id,
     })
 
     output$lines <- renderUI({
+      req(anl_q())
       req(input$trt_group)
       anl_arm <- isolate(anl_q()$ANL[[input$trt_group]])
       anl_arm_nlevels <- nlevels(anl_arm)
@@ -599,6 +603,7 @@ srv_lineplot <- function(id,
 
     observe({
       req(input$shape)
+      req(anl_q())
       anl_shape <- anl_q()$ANL[[input$shape]]
       anl_shape_nlevels <- nlevels(anl_shape)
       symbol_type_to_set <- symbol_type_defaults()[pmin(length(symbol_type_defaults()), seq_len(anl_shape_nlevels))]
@@ -606,6 +611,7 @@ srv_lineplot <- function(id,
     })
 
     symbol_type_selected <- reactive({
+      req(anl_q())
       if (is.null(input$shape)) {
         return(NULL)
       }
@@ -627,6 +633,7 @@ srv_lineplot <- function(id,
     })
 
     output$symbols <- renderUI({
+      req(symbol_type_defaults())
       validate(need(input$shape, "Please select line splitting variable first."))
 
       anl_shape <- isolate(anl_q()$ANL[[input$shape]])
@@ -656,6 +663,7 @@ srv_lineplot <- function(id,
     horizontal_line <- srv_arbitrary_lines("hline_arb")
 
     plot_q <- reactive({
+      req(anl_q(), line_color_selected(), line_type_selected(), symbol_type_selected())
       # nolint start
       ylim <- yrange_slider$state()$value
       plot_font_size <- input$plot_font_size

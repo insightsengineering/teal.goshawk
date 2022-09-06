@@ -392,7 +392,7 @@ srv_g_boxplot <- function(id,
     horizontal_line <- srv_arbitrary_lines("hline_arb")
 
     create_plot <- reactive({
-
+      req(anl_q())
       # nolint start
       param <- input$xaxis_param
       yaxis <- input$yaxis_var
@@ -480,6 +480,7 @@ srv_g_boxplot <- function(id,
     })
 
     create_table <- reactive({
+      req(anl_q())
       param <- input$xaxis_param
       xaxis_var <- input$yaxis_var # nolint
       font_size <- input$font_size
@@ -513,6 +514,7 @@ srv_g_boxplot <- function(id,
     )
 
     output$table_ui <- DT::renderDataTable({
+      req(create_table())
       tbl <- create_table()[["tbl"]]
 
       numeric_cols <- setdiff(names(dplyr::select_if(tbl, is.numeric)), "n")
