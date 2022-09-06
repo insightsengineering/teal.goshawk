@@ -432,7 +432,7 @@ srv_g_spaghettiplot <- function(id,
       } else {
         private_quosure <- teal.code::eval_code(
           object = private_quosure,
-          code = xtick <- ggplot2::waiver()
+          code = quote(xtick <- ggplot2::waiver())
         )
       }
 
@@ -444,7 +444,7 @@ srv_g_spaghettiplot <- function(id,
       } else {
         private_quosure <- teal.code::eval_code(
           object = private_quosure,
-          code = xlabel <- ggplot2::waiver()
+          code = quote(xlabel <- ggplot2::waiver())
         )
       }
 
