@@ -175,7 +175,7 @@ keep_range_slider_updated <- function(session,
 
 # param_id: input id that contains values of PARAMCD to filter for
 # param_var: currently only "PARAMCD" is supported
-constr_anl_chunks <- function(session, input, datasets, dataname, param_id, param_var, trt_group, min_rows) {
+constr_anl_q <- function(session, input, data, dataname, param_id, param_var, trt_group, min_rows) {
   dataset_var <- dataname
   if (!identical(param_var, "PARAMCD")) {
     # why is there a variable param_id which is provided to this function and always equal to "param"?
@@ -187,7 +187,7 @@ constr_anl_chunks <- function(session, input, datasets, dataname, param_id, para
     validate(need(param_var_value, "Please select a biomarker"))
     checkmate::assert_string(param_var_value)
 
-    ANL <- datasets$get_data(dataname, filtered = TRUE) # nolint
+    ANL <- data[[dataname]]() # nolint
     validate_has_data(ANL, min_rows)
 
     validate_has_variable(ANL, param_var)
@@ -197,23 +197,19 @@ constr_anl_chunks <- function(session, input, datasets, dataname, param_id, para
     validate_has_variable(ANL, trt_group)
 
     # analysis
-    private_chunks <- teal.code::chunks_new()
-    teal.code::chunks_reset(as.environment(stats::setNames(list(ANL), dataset_var)), private_chunks)
-
-    # filter biomarker
-    teal.code::chunks_push(
-      chunks = private_chunks,
-      id = "filter_biomarker",
-      expression = bquote({
-        ANL <- .(as.name(dataset_var)) %>% # nolint
-          dplyr::filter(.(as.name(param_var)) == .(param_var_value))
-      })
-    )
-
-    ANL <- teal.code::chunks_safe_eval(private_chunks) # nolint
-    validate_has_data(ANL, min_rows)
-
-    return(list(ANL = ANL, chunks = private_chunks))
+    private_quosure <- teal.code::new_quosure(data) %>%
+      teal.code::eval_code(
+        substitute(ANL <- dataname, list(dataname = as.name(dataname)))
+      ) %>%
+      teal.code::eval_code(
+        code = bquote({
+          ANL <- .(as.name(dataset_var)) %>% # nolint
+            dplyr::filter(.(as.name(param_var)) == .(param_var_value))
+        }),
+        name = "filter_biomarker"
+      )
+    validate_has_data(private_quosure[["ANL"]], min_rows)
+    list(ANL = ANL, quosure = private_quosure)
   })
 
   observe({
@@ -224,8 +220,7 @@ constr_anl_chunks <- function(session, input, datasets, dataname, param_id, para
     validate(need(constraint_var, "select a constraint variable"))
 
     # note that filtered is false thus we cannot use anl_param()$ANL
-    ANL <- datasets$get_data(dataname, filtered = FALSE) # nolint
-
+    ANL <- data[[dataname]]()
     validate_has_variable(ANL, param_var)
     validate_has_variable(ANL, "AVISITCD")
     validate_has_variable(ANL, "BASE")
@@ -298,7 +293,7 @@ constr_anl_chunks <- function(session, input, datasets, dataname, param_id, para
 # e.g. `ALT.BASE2` (i.e. `PARAMCD = ALT & range_filter_on(BASE2)`)
 create_anl_constraint_reactive <- function(anl_param, input, param_id, min_rows) {
   reactive({
-    private_chunks <- teal.code::chunks_deep_clone(anl_param()$chunks)
+    private_quosure <- anl_param()$quosure
 
     # it is assumed that constraint_var is triggering constraint_range which then trigger this clause
     constraint_var <- isolate(input[["constraint_var"]])
@@ -313,10 +308,9 @@ create_anl_constraint_reactive <- function(anl_param, input, param_id, min_rows)
 
     # filter constraint
     if (constraint_var != "NONE") {
-      teal.code::chunks_push(
-        chunks = private_chunks,
-        id = "filter_constraint",
-        expression = bquote({
+      private_quosure <- teal.code::eval_code(
+        object = private_quosure,
+        code = bquote({
           # the below includes patients who have at least one non-NA BASE value
           # ideally, a patient should either have all NA values or none at all
           # this could be achieved through preprocessing; otherwise, this is easily overseen
@@ -326,7 +320,7 @@ create_anl_constraint_reactive <- function(anl_param, input, param_id, min_rows)
               (.(constraint_range_min) <= .data[[.(constraint_var)]]) &
                 (.data[[.(constraint_var)]] <= .(constraint_range_max))
             ) %>%
-            pull(USUBJID)
+            dplyr::pull(USUBJID)
           # include patients with all NA values for constraint_var
           filtered_usubjids <- c(
             filtered_usubjids,
@@ -338,17 +332,13 @@ create_anl_constraint_reactive <- function(anl_param, input, param_id, min_rows)
               dplyr::pull(USUBJID)
           )
           ANL <- ANL %>% dplyr::filter(USUBJID %in% filtered_usubjids) # nolint
-        })
+        }),
+        name = "filter_constraint"
       )
-
-      ANL <- teal.code::chunks_safe_eval(private_chunks) # nolint
-      validate_has_data(ANL, min_rows)
+      validate_has_data(private_quosure[["ANL"]], min_rows)
     }
 
-    teal.code::chunks_push_new_line(private_chunks)
-    teal.code::chunks_safe_eval(private_chunks)
-
-    return(list(ANL = teal.code::chunks_get_var("ANL", chunks = private_chunks), chunks = private_chunks))
+    return(list(ANL = private_quosure[["ANL"]], quosure = private_quosure))
   })
 }
 
@@ -436,6 +426,7 @@ ui_arbitrary_lines <- function(id, line_arb, line_arb_label, line_arb_color, tit
 srv_arbitrary_lines <- function(id) {
   moduleServer(id, function(input, output, session) {
     reactive({
+      req(!is.null(input$line_arb), !is.null(input$line_arb_label), !is.null(input$line_arb_color))
       line_arb <- strsplit(input$line_arb, "\\s{0,},\\s{0,}")[[1]] %>%
         as.numeric()
       if ((length(line_arb) == 1 && is.na(line_arb)) || length(line_arb) == 0) {

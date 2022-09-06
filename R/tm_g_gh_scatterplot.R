@@ -222,7 +222,7 @@ ui_g_scatterplot <- function(id, ...) {
         xchoices = a$xaxis_var$choices, xselected = a$xaxis_var$selected,
         ychoices = a$yaxis_var$choices, yselected = a$yaxis_var$selected
       ),
-      templ_ui_constraint(ns), # required by constr_anl_chunks
+      templ_ui_constraint(ns), # required by constr_anl_q
       teal.widgets::panel_group(
         teal.widgets::panel_item(
           title = "Plot Aesthetic Settings",
@@ -258,15 +258,16 @@ ui_g_scatterplot <- function(id, ...) {
         )
       )
     ),
-    forms = get_rcode_ui(ns("rcode")),
+    forms = teal.widgets::verbatim_popup_ui(ns("rcode"), "Show R code"),
     pre_output = a$pre_output,
     post_output = a$post_output
   )
 }
 
 srv_g_scatterplot <- function(id,
-                              datasets,
+                              data,
                               reporter,
+                              filter_panel_api,
                               dataname,
                               param_var,
                               trt_group,
@@ -276,26 +277,25 @@ srv_g_scatterplot <- function(id,
                               plot_height,
                               plot_width) {
   with_reporter <- !missing(reporter) && inherits(reporter, "Reporter")
+  with_filter <- !missing(filter_panel_api) && inherits(filter_panel_api, "FilterPanelAPI")
+
   moduleServer(id, function(input, output, session) {
-    teal.code::init_chunks()
 
     # reused in all modules
-    anl_chunks <- constr_anl_chunks(
-      session, input, datasets, dataname,
+    anl_q <- constr_anl_q(
+      session, input, data, dataname,
       param_id = "xaxis_param", param_var = param_var, trt_group = input$trt_group, min_rows = 1
     )
 
     # update sliders for axes taking constraints into account
     xrange_slider <- toggle_slider_server("xrange_scale")
     yrange_slider <- toggle_slider_server("yrange_scale")
-    keep_range_slider_updated(session, input, xrange_slider$update_state, "xaxis_var", "xaxis_param", anl_chunks)
-    keep_range_slider_updated(session, input, yrange_slider$update_state, "yaxis_var", "xaxis_param", anl_chunks)
-    keep_data_const_opts_updated(session, input, anl_chunks, "xaxis_param")
+    keep_range_slider_updated(session, input, xrange_slider$update_state, "xaxis_var", "xaxis_param", anl_q)
+    keep_range_slider_updated(session, input, yrange_slider$update_state, "yaxis_var", "xaxis_param", anl_q)
+    keep_data_const_opts_updated(session, input, anl_q, "xaxis_param")
 
     # plot
-    plot_r <- reactive({
-      ac <- anl_chunks()
-      private_chunks <- teal.code::chunks_deep_clone(ac$chunks)
+    plot_q <- reactive({
       # nolint start
       xlim <- xrange_slider$state()$value
       ylim <- yrange_slider$state()$value
@@ -315,7 +315,7 @@ srv_g_scatterplot <- function(id,
       facet <- input$trt_facet
       validate(need(trt_group, "Please select a treatment variable"))
 
-      # Below inputs should trigger plot via updates of other reactive objects (i.e. anl_chunk()) and some inputs
+      # Below inputs should trigger plot via updates of other reactive objects (i.e. anl_q()) and some inputs
       validate(need(input$xaxis_var, "Please select an X-Axis Variable"))
       validate(need(input$yaxis_var, "Please select a Y-Axis Variable"))
       param <- input$xaxis_param
@@ -323,10 +323,10 @@ srv_g_scatterplot <- function(id,
       yaxis <- input$yaxis_var
 
       # nolint end
-      teal.code::chunks_push(
-        chunks = private_chunks,
-        id = "scatterplot",
-        expression = bquote({
+      teal.code::eval_code(
+        object = anl_q()$quosure,
+        name = "scatterplot",
+        code = bquote({
           # re-establish treatment variable label
           p <- goshawk::g_scatterplot(
             data = ANL,
@@ -353,15 +353,9 @@ srv_g_scatterplot <- function(id,
           print(p)
         })
       )
-
-      teal.code::chunks_safe_eval(private_chunks)
-
-      # promote chunks to be visible in the sessionData by other modules
-      teal.code::chunks_reset()
-      teal.code::chunks_push_chunks(private_chunks)
-
-      teal.code::chunks_get_var("p")
     })
+
+    plot_r <- reactive(plot_q()[["p"]])
 
     plot_data <- teal.widgets::plot_with_settings_srv(
       id = "plot",
@@ -377,7 +371,7 @@ srv_g_scatterplot <- function(id,
         card <- teal.reporter::TealReportCard$new()
         card$set_name("Scatter Plot")
         card$append_text("Scatter Plot", "header2")
-        card$append_fs(datasets$get_filter_state())
+        if (with_filter) card$append_fs(filter_panel_api$get_filter_state())
         card$append_text("Selected Options", "header3")
         card$append_text(
           paste(
@@ -395,12 +389,7 @@ srv_g_scatterplot <- function(id,
           card$append_text("Comment", "header3")
           card$append_text(comment)
         }
-        card$append_src(paste(get_rcode(
-          chunks = teal.code::get_chunks_object(parent_idx = 2L),
-          datasets = datasets,
-          title = "",
-          description = ""
-        ), collapse = "\n"))
+        card$append_src(paste(teal.code::get_code(plot_q()), collapse = "\n"))
         card
       }
       teal.reporter::simple_reporter_srv("simple_reporter", reporter = reporter, card_fun = card_fun)
@@ -411,7 +400,7 @@ srv_g_scatterplot <- function(id,
     output$brush_data <- DT::renderDataTable({
       plot_brush <- plot_data$brush()
 
-      ANL <- isolate(anl_chunks()$ANL) # nolint
+      ANL <- isolate(anl_q()$ANL) # nolint
       validate_has_data(ANL, 1)
 
       xvar <- isolate(input$xaxis_var)
@@ -431,10 +420,11 @@ srv_g_scatterplot <- function(id,
         DT::formatRound(numeric_cols, 4)
     })
 
-    get_rcode_srv(
+    teal.widgets::verbatim_popup_srv(
       id = "rcode",
-      datasets = datasets,
-      modal_title = "Scatter Plot"
+      verbatim_content = reactive(teal.code::get_code(plot_q())),
+      title = "Show R Code for Scatterplot"
     )
+
   })
 }

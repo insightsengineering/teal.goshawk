@@ -272,15 +272,16 @@ ui_g_density_distribution_plot <- function(id, ...) {
         )
       )
     ),
-    forms = get_rcode_ui(ns("rcode")),
+    forms = teal.widgets::verbatim_popup_ui(ns("rcode"), "Show R code"),
     pre_output = a$pre_output,
     post_output = a$post_output
   )
 }
 
 srv_g_density_distribution_plot <- function(id, # nolint
-                                            datasets,
+                                            data,
                                             reporter,
+                                            filter_panel_api,
                                             dataname,
                                             param_var,
                                             param,
@@ -290,33 +291,34 @@ srv_g_density_distribution_plot <- function(id, # nolint
                                             plot_height,
                                             plot_width) {
   with_reporter <- !missing(reporter) && inherits(reporter, "Reporter")
+  with_filter <- !missing(filter_panel_api) && inherits(filter_panel_api, "FilterPanelAPI")
+
   moduleServer(id, function(input, output, session) {
-    teal.code::init_chunks()
-    anl_chunks <- constr_anl_chunks(
-      session, input, datasets, dataname,
+
+    anl_q <- constr_anl_q(
+      session, input, data, dataname,
       param_id = "xaxis_param", param_var = param_var, trt_group = input$trt_group, min_rows = 2
     )
 
     # update sliders for axes taking constraints into account
     xrange_slider <- toggle_slider_server("xrange_scale")
     yrange_slider <- toggle_slider_server("yrange_scale")
-    keep_range_slider_updated(session, input, xrange_slider$update_state, "xaxis_var", "xaxis_param", anl_chunks)
+    keep_range_slider_updated(session, input, xrange_slider$update_state, "xaxis_var", "xaxis_param", anl_q)
     keep_range_slider_updated(
       session,
       input,
       yrange_slider$update_state,
       "xaxis_var",
       "xaxis_param",
-      anl_chunks,
+      anl_q,
       is_density = TRUE
     )
-    keep_data_const_opts_updated(session, input, anl_chunks, "xaxis_param")
+    keep_data_const_opts_updated(session, input, anl_q, "xaxis_param")
 
     horizontal_line <- srv_arbitrary_lines("hline_arb")
 
     create_plot <- reactive({
       validate(need(input$xaxis_var, "Please select an X-Axis Variable"))
-      private_chunks <- teal.code::chunks_deep_clone(anl_chunks()$chunks)
 
       # nolint start
       param <- input$xaxis_param
@@ -340,10 +342,10 @@ srv_g_density_distribution_plot <- function(id, # nolint
       # nolint end
       validate(need(input$trt_group, "Please select a treatment variable"))
 
-      teal.code::chunks_push(
-        chunks = private_chunks,
-        id = "density_distribution",
-        expression = bquote({
+      teal.code::eval_code(
+        object = anl_q()$quosure,
+        name = "density_distribution",
+        code = bquote({
           p <- goshawk::g_density_distribution_plot(
             data = ANL,
             param_var = .(param_var),
@@ -365,24 +367,19 @@ srv_g_density_distribution_plot <- function(id, # nolint
           )
         })
       )
-
-      teal.code::chunks_safe_eval(private_chunks)
-
-      private_chunks
     })
 
     create_table <- reactive({
-      private_chunks <- teal.code::chunks_deep_clone(create_plot())
 
       param <- input$xaxis_param
       xaxis_var <- input$xaxis_var
       font_size <- input$font_size
       trt_group <- input$trt_group
 
-      teal.code::chunks_push(
-        chunks = private_chunks,
-        id = "table",
-        expression = bquote({
+      teal.code::eval_code(
+        object = anl_q()$quosure,
+        name = "table",
+        code = bquote({
           tbl <- goshawk::t_summarytable(
             data = ANL,
             trt_group = .(trt_group),
@@ -393,29 +390,10 @@ srv_g_density_distribution_plot <- function(id, # nolint
           )
         })
       )
-
-      teal.code::chunks_safe_eval(private_chunks)
-      private_chunks
-    })
-
-    main_code <- reactive({
-      private_chunks <- create_table()
-      teal.code::chunks_push(
-        chunks = private_chunks,
-        id = "output",
-        expression = quote(print(p))
-      )
-
-      teal.code::chunks_safe_eval(private_chunks)
-
-      teal.code::chunks_reset()
-      teal.code::chunks_push_chunks(private_chunks)
-
-      private_chunks
     })
 
     plot_r <- reactive({
-      teal.code::chunks_get_var("p", main_code())
+      create_plot()[["p"]]
     })
 
     plot_data <- teal.widgets::plot_with_settings_srv(
@@ -431,7 +409,7 @@ srv_g_density_distribution_plot <- function(id, # nolint
         card <- teal.reporter::TealReportCard$new()
         card$set_name("Density Distribution Plot")
         card$append_text("Density Distribution Plot", "header2")
-        card$append_fs(datasets$get_filter_state())
+        if (with_filter) card$append_fs(filter_panel_api$get_filter_state())
         card$append_text("Selected Options", "header3")
         card$append_text(
           formatted_data_constraint(input$constraint_var, input$constraint_range_min, input$constraint_range_max)
@@ -440,19 +418,20 @@ srv_g_density_distribution_plot <- function(id, # nolint
         card$append_plot(plot_r(), dim = plot_data$dim())
         card$append_text("Descriptive Statistics", "header3")
         card$append_table(
-          teal.code::chunks_get_var("tbl", main_code()) %>%
-            dplyr::mutate_if(is.numeric, round, 2)
+          create_table()[["tbl"]] %>% dplyr::mutate_if(is.numeric, round, 2)
         )
         if (!comment == "") {
           card$append_text("Comment", "header3")
           card$append_text(comment)
         }
-        card$append_src(paste(get_rcode(
-          chunks = teal.code::get_chunks_object(parent_idx = 2L),
-          datasets = datasets,
-          title = "",
-          description = ""
-        ), collapse = "\n"))
+        card$append_src(
+          paste(
+            teal.code::get_code(
+              teal.code::join(create_plot(), create_table())
+            ),
+            collapse = "\n"
+          )
+        )
         card
       }
       teal.reporter::simple_reporter_srv("simple_reporter", reporter = reporter, card_fun = card_fun)
@@ -460,17 +439,21 @@ srv_g_density_distribution_plot <- function(id, # nolint
     ###
 
     output$table_ui <- DT::renderDataTable({
-      tbl <- teal.code::chunks_get_var("tbl", main_code())
+      tbl <- create_table()[["tbl"]]
       numeric_cols <- names(dplyr::select_if(tbl, is.numeric))
 
       DT::datatable(tbl, rownames = FALSE, options = list(scrollX = TRUE)) %>%
         DT::formatRound(numeric_cols, 2)
     })
 
-    get_rcode_srv(
+    teal.widgets::verbatim_popup_srv(
       id = "rcode",
-      datasets = datasets,
-      modal_title = "Density Distribution Plot"
+      verbatim_content = reactive(
+        teal.code::get_code(
+          teal.code::join(create_plot(), create_table())
+        )
+      ),
+      title = "Show R Code for Density Distribution Plot"
     )
   })
 }
