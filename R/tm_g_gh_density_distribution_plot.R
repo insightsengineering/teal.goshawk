@@ -376,10 +376,13 @@ srv_g_density_distribution_plot <- function(id, # nolint
       font_size <- input$font_size
       trt_group <- input$trt_group
 
+      validate(need(xaxis_var, "Please select an X-Axis Variable"))
+      validate(need(trt_group, "Please select a treatment variable"))
+
       teal.code::eval_code(
         object = anl_q()$quosure,
         name = "table",
-        code = bquote({
+        code = bquote(
           tbl <- goshawk::t_summarytable(
             data = ANL,
             trt_group = .(trt_group),
@@ -388,7 +391,7 @@ srv_g_density_distribution_plot <- function(id, # nolint
             xaxis_var = .(xaxis_var),
             font_size = .(font_size)
           )
-        })
+        )
       )
     })
 
@@ -401,6 +404,25 @@ srv_g_density_distribution_plot <- function(id, # nolint
       plot_r = plot_r,
       height = plot_height,
       width = plot_width,
+    )
+
+    output$table_ui <- DT::renderDataTable({
+      req(create_table())
+      tbl <- create_table()[["tbl"]]
+      numeric_cols <- names(dplyr::select_if(tbl, is.numeric))
+
+      DT::datatable(tbl, rownames = FALSE, options = list(scrollX = TRUE)) %>%
+        DT::formatRound(numeric_cols, 2)
+    })
+
+    teal.widgets::verbatim_popup_srv(
+      id = "rcode",
+      verbatim_content = reactive(
+        teal.code::get_code(
+          teal.code::join(create_plot(), create_table())
+        )
+      ),
+      title = "Show R Code for Density Distribution Plot"
     )
 
     ### REPORTER
@@ -437,23 +459,5 @@ srv_g_density_distribution_plot <- function(id, # nolint
       teal.reporter::simple_reporter_srv("simple_reporter", reporter = reporter, card_fun = card_fun)
     }
     ###
-
-    output$table_ui <- DT::renderDataTable({
-      tbl <- create_table()[["tbl"]]
-      numeric_cols <- names(dplyr::select_if(tbl, is.numeric))
-
-      DT::datatable(tbl, rownames = FALSE, options = list(scrollX = TRUE)) %>%
-        DT::formatRound(numeric_cols, 2)
-    })
-
-    teal.widgets::verbatim_popup_srv(
-      id = "rcode",
-      verbatim_content = reactive(
-        teal.code::get_code(
-          teal.code::join(create_plot(), create_table())
-        )
-      ),
-      title = "Show R Code for Density Distribution Plot"
-    )
   })
 }
