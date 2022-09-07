@@ -559,6 +559,7 @@ srv_g_correlationplot <- function(id,
 
       # note that filtered is false thus we cannot use anl_param()$ANL
       ANL <- data[[dataname]]() # nolint
+      validate_has_data(ANL, 1)
 
       validate_has_variable(ANL, param_var)
       validate_has_variable(ANL, "AVISITCD")
