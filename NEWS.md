@@ -1,5 +1,10 @@
 # teal.goshawk 0.1.13.9014
 
+### Breaking changes
+
+* Replaced `chunks` with simpler `Quosure` class.
+* Replaced `datasets` argument containing `FilteredData` with the new arguments `data` (list of reactive datasets) and `filter_panel_api` (`FilterPanelAPI`).
+
 ### Enhancements
 * Added `teal.reporter` reporting into all the package modules.
 * Added `plot_relative_height_value` argument to `tm_g_gh_lineplot` to control initial value of the relative plot height slider. 

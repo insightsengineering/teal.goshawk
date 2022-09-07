@@ -353,7 +353,7 @@ ui_g_correlationplot <- function(id, ...) {
         yparam_choices = a$yaxis_param$choices, yparam_selected = a$yaxis_param$selected,
         ychoices = a$yaxis_var$choices, yselected = a$yaxis_var$selected
       ),
-      templ_ui_constraint(ns, "X-Axis Data Constraint"), # required by constr_anl_chunks
+      templ_ui_constraint(ns, "X-Axis Data Constraint"), # required by constr_anl_q
       if (length(a$hline_vars) > 0) {
         teal.widgets::optionalSelectInput(
           ns("hline_vars"),
@@ -413,15 +413,16 @@ ui_g_correlationplot <- function(id, ...) {
         )
       )
     ),
-    forms = get_rcode_ui(ns("rcode")),
+    forms = teal.widgets::verbatim_popup_ui(ns("rcode"), "Show R code"),
     pre_output = a$pre_output,
     post_output = a$post_output
   )
 }
 
 srv_g_correlationplot <- function(id,
-                                  datasets,
+                                  data,
                                   reporter,
+                                  filter_panel_api,
                                   dataname,
                                   param_var,
                                   trt_group,
@@ -435,9 +436,10 @@ srv_g_correlationplot <- function(id,
                                   vline_vars_colors,
                                   vline_vars_labels) {
   with_reporter <- !missing(reporter) && inherits(reporter, "Reporter")
+  with_filter <- !missing(filter_panel_api) && inherits(filter_panel_api, "FilterPanelAPI")
 
   moduleServer(id, function(input, output, session) {
-    teal.code::init_chunks()
+
     # filter selected biomarkers
     anl_param <- reactive({
       validate(need(input$trt_group, "Please select a Treatment Variable"))
@@ -447,7 +449,7 @@ srv_g_correlationplot <- function(id,
       validate(need(input$yaxis_var, "Please select a Y-Axis Variable"))
 
       dataset_var <- dataname
-      ANL <- datasets$get_data(dataname, filtered = TRUE) # nolint
+      ANL <- data[[dataname]]() # nolint
       validate_has_data(ANL, 1)
 
       if (length(input$hline_vars) > 0) {
@@ -536,23 +538,16 @@ srv_g_correlationplot <- function(id,
       )
 
       # analysis
-      private_chunks <- teal.code::chunks_new()
-      teal.code::chunks_reset(as.environment(stats::setNames(list(ANL), dataset_var)), private_chunks)
-
-      # filter biomarker
-      teal.code::chunks_push(
-        chunks = private_chunks,
-        id = "filter_biomarker",
-        expression = bquote({
-          ANL <- .(as.name(dataset_var)) %>% # nolint
-            dplyr::filter(.data[[.(param_var)]] %in% union(.(input$xaxis_param), .(input$yaxis_param)))
-        })
-      )
-
-      ANL <- teal.code::chunks_safe_eval(private_chunks) # nolint
-      validate_has_data(ANL, 1)
-
-      return(list(ANL = ANL, chunks = private_chunks))
+      private_quosure <- teal.code::new_quosure(data) %>%
+        teal.code::eval_code(
+          code = bquote({
+            ANL <- .(as.name(dataset_var)) %>% # nolint
+              dplyr::filter(.data[[.(param_var)]] %in% union(.(input$xaxis_param), .(input$yaxis_param)))
+          }),
+          name = "filter_biomarker"
+        )
+      validate_has_data(private_quosure[["ANL"]], 1)
+      return(list(ANL = ANL, quosure = private_quosure))
     })
 
     # constraints
@@ -563,7 +558,8 @@ srv_g_correlationplot <- function(id,
       validate(need(constraint_var, "select a constraint variable"))
 
       # note that filtered is false thus we cannot use anl_param()$ANL
-      ANL <- datasets$get_data(dataname, filtered = FALSE) # nolint
+      ANL <- data[[dataname]]() # nolint
+      validate_has_data(ANL, 1)
 
       validate_has_variable(ANL, param_var)
       validate_has_variable(ANL, "AVISITCD")
@@ -641,15 +637,14 @@ srv_g_correlationplot <- function(id,
 
     # transpose data to plot
     plot_data_transpose <- reactive({
-      private_chunks <- teal.code::chunks_deep_clone(anl_constraint()$chunks)
+      req(anl_constraint())
       ANL <- anl_constraint()$ANL # nolint
       trt_group <- input$trt_group
       line_vars <- unique(c(input$hline_vars, input$vline_vars))
 
-      teal.code::chunks_push(
-        chunks = private_chunks,
-        id = "plot_data_transpose",
-        expression = bquote({
+      private_q <- anl_constraint()$quosure %>% teal.code::eval_code(
+        name = "plot_data_transpose",
+        code = bquote({
           ANL_TRANSPOSED1 <- ANL %>% # nolint
             dplyr::select(
               .data[["USUBJID"]],
@@ -719,25 +714,21 @@ srv_g_correlationplot <- function(id,
         })
       )
 
-      ANL_TRANSPOSED <- teal.code::chunks_safe_eval(private_chunks) # nolint
-      teal.code::chunks_push_new_line(private_chunks)
+      validate(need(nrow(private_q[["ANL_TRANSPOSED"]]) > 0, "Plot Data No Observations Left"))
+      validate_has_variable(data = private_q[["ANL_TRANSPOSED"]], varname = c(xvar(), yvar(), xloqfl(), yloqfl()))
 
-      validate(need(nrow(ANL_TRANSPOSED) > 0, "Plot Data No Observations Left"))
-      validate_has_variable(data = ANL_TRANSPOSED, varname = c(xvar(), yvar(), xloqfl(), yloqfl()))
-
-      teal.code::chunks_push(
-        chunks = private_chunks,
-        id = "ANL_attributes",
-        expression =
+      private_q <- teal.code::eval_code(
+        object = private_q,
+        name = "ANL_attributes",
+        code =
           bquote(attr(ANL_TRANSPOSED[[.(trt_group)]], "label") <- attr(ANL[[.(trt_group)]], "label")) # nolint
       )
-      teal.code::chunks_push_new_line(private_chunks)
-
-      return(list(ANL_TRANSPOSED = ANL_TRANSPOSED, chunks = private_chunks))
+      return(list(ANL_TRANSPOSED = private_q[["ANL_TRANSPOSED"]], quosure = private_q))
     })
 
     plot_labels <- reactive({
-      ANL <- teal.code::chunks_get_var(var = "ANL", anl_constraint()$chunks) # nolint
+      req(anl_constraint())
+      ANL <- anl_constraint()$quosure[["ANL"]] # nolint
 
       xparam <- ANL$PARAM[ANL[[param_var]] == input$xaxis_param][1]
       yparam <- ANL$PARAM[ANL[[param_var]] == input$yaxis_param][1]
@@ -763,8 +754,8 @@ srv_g_correlationplot <- function(id,
     vertical_line <- srv_arbitrary_lines("vline_arb")
 
     # plot
-    plot_r <- reactive({
-      private_chunks <- teal.code::chunks_deep_clone(plot_data_transpose()$chunks)
+    plot_q <- reactive({
+      req(plot_data_transpose())
       # nolint start
       xaxis_param <- input$xaxis_param
       xaxis_var <- input$xaxis_var
@@ -808,10 +799,10 @@ srv_g_correlationplot <- function(id,
       validate(need(input$trt_group, "Please select a treatment variable"))
       trt_group <- input$trt_group
 
-      teal.code::chunks_push(
-        chunks = private_chunks,
-        id = "scatterplot",
-        expression = bquote({
+      teal.code::eval_code(
+        object = plot_data_transpose()$quosure,
+        name = "scatterplot",
+        code = bquote({
           # re-establish treatment variable label
           p <- goshawk::g_correlationplot(
             data = ANL_TRANSPOSED,
@@ -856,15 +847,9 @@ srv_g_correlationplot <- function(id,
           print(p)
         })
       )
-
-      teal.code::chunks_safe_eval(private_chunks)
-
-      # promote chunks to be visible in the sessionData by other modules
-      teal.code::chunks_reset()
-      teal.code::chunks_push_chunks(private_chunks)
-      teal.code::chunks_get_var("p")
     })
 
+    plot_r <- reactive(plot_q()[["p"]])
 
     plot_data <- teal.widgets::plot_with_settings_srv(
       id = "plot",
@@ -881,7 +866,7 @@ srv_g_correlationplot <- function(id,
         card <- teal.reporter::TealReportCard$new()
         card$set_name("Correlation Plot")
         card$append_text("Correlation Plot", "header2")
-        card$append_fs(datasets$get_filter_state())
+        if (with_filter) card$append_fs(filter_panel_api$get_filter_state())
         card$append_text("Selected Options", "header3")
         card$append_text(
           paste(
@@ -899,12 +884,7 @@ srv_g_correlationplot <- function(id,
           card$append_text("Comment", "header3")
           card$append_text(comment)
         }
-        card$append_src(paste(get_rcode(
-          chunks = teal.code::get_chunks_object(parent_idx = 2L),
-          datasets = datasets,
-          title = "",
-          description = ""
-        ), collapse = "\n"))
+        card$append_src(paste(teal.code::get_code(plot_q()), collapse = "\n"))
         card
       }
       teal.reporter::simple_reporter_srv("simple_reporter", reporter = reporter, card_fun = card_fun)
@@ -928,10 +908,10 @@ srv_g_correlationplot <- function(id,
         DT::formatRound(numeric_cols, 4)
     })
 
-    get_rcode_srv(
+    teal.widgets::verbatim_popup_srv(
       id = "rcode",
-      datasets = datasets,
-      modal_title = "Correlation Plot"
+      verbatim_content = reactive(teal.code::get_code(plot_q())),
+      title = "Show R Code for Correlation Plot"
     )
   })
 }
