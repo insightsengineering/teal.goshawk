@@ -1,6 +1,6 @@
 Type: Package
 Package: teal.goshawk
-Title: Longitudinal visualization teal modules
+Title: Longitudinal Visualization `teal` Modules
 Version: 0.1.13.9014
 Date: 2022-09-06
 Authors@R: c(

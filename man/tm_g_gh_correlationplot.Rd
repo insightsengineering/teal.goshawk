@@ -140,10 +140,11 @@ color_manual <- c("150mg QD" = "#000000", "Placebo" = "#3498DB", "Combination" =
 # assign LOQ flag symbols: circles for "N" and triangles for "Y", squares for "NA"
 shape_manual <- c("N" = 1, "Y" = 2, "NA" = 0)
 
-ADSL <- synthetic_cdisc_data("latest")$adsl
+cached_data <- synthetic_cdisc_data("latest")
+ADSL <- cached_data$adsl
 
 set.seed(1)
-ADLB <- synthetic_cdisc_data("latest")$adlb
+ADLB <- cached_data$adlb
 var_labels <- lapply(ADLB, function(x) attributes(x)$label)
 ADLB <- ADLB \%>\%
   dplyr::mutate(AVISITCD = dplyr::case_when(

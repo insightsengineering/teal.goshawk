@@ -61,8 +61,9 @@
 #' )
 #'
 #' set.seed(1)
-#' ADSL <- synthetic_cdisc_data("latest")$adsl
-#' ADLB <- synthetic_cdisc_data("latest")$adlb
+#' cached_data <- synthetic_cdisc_data("latest")
+#' ADSL <- cached_data$adsl
+#' ADLB <- cached_data$adlb
 #' var_labels <- lapply(ADLB, function(x) attributes(x)$label)
 #' ADLB <- ADLB %>%
 #'   dplyr::mutate(
@@ -162,7 +163,7 @@
 #'         ADLB <- left_join(ADLB, ALB_LOQS, by = 'PARAM')",
 #'       vars = list(ADSL = adsl, arm_mapping = arm_mapping)
 #'     ),
-#'     check = TRUE
+#'     check = FALSE # to shorten the example check = FALSE, in real scenarios use check = TRUE
 #'   ),
 #'   modules = modules(
 #'     tm_g_gh_boxplot(
