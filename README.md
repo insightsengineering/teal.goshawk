@@ -1,6 +1,6 @@
 # teal.goshawk
 
-The teal.goshawk package provides `teal` modules of the longitudinal visualization functions from the [goshawk](https://insightsengineering.github.io/goshawk) R package.
+The teal.goshawk package provides `teal` modules of the longitudinal visualization functions from the [goshawk](https://insightsengineering.github.io/goshawk/) R package.
 This enables `teal` app developers to easily create applications to explore longitudinal clinical trial data.
 
 ## Modules
@@ -26,7 +26,7 @@ remotes::install_github("insightsengineering/teal.goshawk@*release")
 
 A stable release of all `NEST` packages from June 2022 is also available [here](https://github.com/insightsengineering/depository#readme).
 
-In order to run many of the examples you will also need to install the [`scda`](https://insightsengineering.github.io/scda) package.
+In order to run many of the examples you will also need to install the [`scda`](https://insightsengineering.github.io/scda/) package.
 
 ## Stargazers and Forkers
 

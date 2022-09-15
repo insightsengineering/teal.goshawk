@@ -45,9 +45,9 @@
 #'   "B: Placebo" = "Placebo",
 #'   "C: Combination" = "Combination"
 #' )
-#'
-#' ADSL <- synthetic_cdisc_data("latest")$adsl
-#' ADLB <- synthetic_cdisc_data("latest")$adlb
+#' cached_data <- synthetic_cdisc_data("latest")
+#' ADSL <- cached_data$adsl
+#' ADLB <- cached_data$adlb
 #' var_labels <- lapply(ADLB, function(x) attributes(x)$label)
 #' ADLB <- ADLB %>%
 #'   dplyr::mutate(
