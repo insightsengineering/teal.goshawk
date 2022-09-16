@@ -344,7 +344,6 @@ srv_g_density_distribution_plot <- function(id, # nolint
 
       teal.code::eval_code(
         object = anl_q()$quosure,
-        name = "density_distribution",
         code = bquote({
           p <- goshawk::g_density_distribution_plot(
             data = ANL,
@@ -381,7 +380,6 @@ srv_g_density_distribution_plot <- function(id, # nolint
 
       teal.code::eval_code(
         object = anl_q()$quosure,
-        name = "table",
         code = bquote(
           tbl <- goshawk::t_summarytable(
             data = ANL,

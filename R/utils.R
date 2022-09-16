@@ -205,8 +205,7 @@ constr_anl_q <- function(session, input, data, dataname, param_id, param_var, tr
         code = bquote({
           ANL <- .(as.name(dataset_var)) %>% # nolint
             dplyr::filter(.(as.name(param_var)) == .(param_var_value))
-        }),
-        name = "filter_biomarker"
+        })
       )
     validate_has_data(private_quosure[["ANL"]], min_rows)
     list(ANL = ANL, quosure = private_quosure)
@@ -333,8 +332,7 @@ create_anl_constraint_reactive <- function(anl_param, input, param_id, min_rows)
               dplyr::pull(USUBJID)
           )
           ANL <- ANL %>% dplyr::filter(USUBJID %in% filtered_usubjids) # nolint
-        }),
-        name = "filter_constraint"
+        })
       )
       validate_has_data(private_quosure[["ANL"]], min_rows)
     }

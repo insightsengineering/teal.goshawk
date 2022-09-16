@@ -544,8 +544,7 @@ srv_g_correlationplot <- function(id,
           code = bquote({
             ANL <- .(as.name(dataset_var)) %>% # nolint
               dplyr::filter(.data[[.(param_var)]] %in% union(.(input$xaxis_param), .(input$yaxis_param)))
-          }),
-          name = "filter_biomarker"
+          })
         )
       validate_has_data(private_quosure[["ANL"]], 1)
       return(list(ANL = ANL, quosure = private_quosure))
@@ -644,7 +643,6 @@ srv_g_correlationplot <- function(id,
       line_vars <- unique(c(input$hline_vars, input$vline_vars))
 
       private_q <- anl_constraint()$quosure %>% teal.code::eval_code(
-        name = "plot_data_transpose",
         code = bquote({
           ANL_TRANSPOSED1 <- ANL %>% # nolint
             dplyr::select(
@@ -720,7 +718,6 @@ srv_g_correlationplot <- function(id,
 
       private_q <- teal.code::eval_code(
         object = private_q,
-        name = "ANL_attributes",
         code =
           bquote(attr(ANL_TRANSPOSED[[.(trt_group)]], "label") <- attr(ANL[[.(trt_group)]], "label")) # nolint
       )
@@ -802,7 +799,6 @@ srv_g_correlationplot <- function(id,
 
       teal.code::eval_code(
         object = plot_data_transpose()$quosure,
-        name = "scatterplot",
         code = bquote({
           # re-establish treatment variable label
           p <- goshawk::g_correlationplot(

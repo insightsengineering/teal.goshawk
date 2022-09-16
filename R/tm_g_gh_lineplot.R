@@ -732,7 +732,6 @@ srv_lineplot <- function(id,
 
       teal.code::eval_code(
         object = private_quosure,
-        name = "lineplot",
         code = bquote({
           p <- goshawk::g_lineplot(
             data = ANL[complete.cases(ANL[, c(.(yaxis), .(xaxis))]), ],
