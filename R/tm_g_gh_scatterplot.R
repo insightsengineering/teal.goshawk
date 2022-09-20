@@ -327,7 +327,6 @@ srv_g_scatterplot <- function(id,
       # nolint end
       teal.code::eval_code(
         object = anl_q()$quosure,
-        name = "scatterplot",
         code = bquote({
           # re-establish treatment variable label
           p <- goshawk::g_scatterplot(

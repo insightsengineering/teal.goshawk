@@ -664,8 +664,9 @@ srv_lineplot <- function(id,
     horizontal_line <- srv_arbitrary_lines("hline_arb")
 
     plot_q <- reactive({
-      req(anl_q(), line_color_selected(), line_type_selected(), symbol_type_selected())
+      req(anl_q(), line_color_selected(), line_type_selected())
       # nolint start
+
       ylim <- yrange_slider$state()$value
       plot_font_size <- input$plot_font_size
       dodge <- input$dodge
@@ -732,7 +733,6 @@ srv_lineplot <- function(id,
 
       teal.code::eval_code(
         object = private_quosure,
-        name = "lineplot",
         code = bquote({
           p <- goshawk::g_lineplot(
             data = ANL[complete.cases(ANL[, c(.(yaxis), .(xaxis))]), ],

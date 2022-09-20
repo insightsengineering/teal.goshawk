@@ -450,7 +450,6 @@ srv_g_spaghettiplot <- function(id,
 
       teal.code::eval_code(
         object = private_quosure,
-        name = "g_spaghettiplot",
         code = bquote({
           p <- goshawk::g_spaghettiplot(
             data = ANL,

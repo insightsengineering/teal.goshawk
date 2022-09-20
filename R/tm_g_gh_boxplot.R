@@ -450,7 +450,6 @@ srv_g_boxplot <- function(id,
       ))
 
       anl_q()$quosure %>% teal.code::eval_code(
-        name = "boxplot",
         code = bquote({
           p <- goshawk::g_boxplot(
             data = ANL,
@@ -488,7 +487,6 @@ srv_g_boxplot <- function(id,
       trt_group <- input$trt_group
 
       anl_q()$quosure %>% teal.code::eval_code(
-        name = "table",
         code = bquote({
           tbl <- goshawk::t_summarytable(
             data = ANL,
