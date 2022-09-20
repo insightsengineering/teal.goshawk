@@ -191,8 +191,8 @@
 #'     )
 #'   )
 #' )
-#' \dontrun{
-#' shinyApp(app$ui, app$server)
+#' if (interactive()) {
+#'   shinyApp(app$ui, app$server)
 #' }
 #'
 tm_g_gh_spaghettiplot <- function(label,
@@ -420,36 +420,36 @@ srv_g_spaghettiplot <- function(id,
       hline_vars <- input$hline_vars
       # nolint end
 
-      private_quosure <- anl_q()$quosure
+      private_qenv <- anl_q()$qenv
 
       # this code is needed to make sure the waiver attribute
       # of ggplot2::waiver is correctly passed to goshawk's spaghettiplot
       if (!methods::is(xtick, "waiver")) {
-        private_quosure <- teal.code::eval_code(
-          object = private_quosure,
+        private_qenv <- teal.code::eval_code(
+          object = private_qenv,
           code = bquote(xtick <- .(xtick))
         )
       } else {
-        private_quosure <- teal.code::eval_code(
-          object = private_quosure,
+        private_qenv <- teal.code::eval_code(
+          object = private_qenv,
           code = quote(xtick <- ggplot2::waiver())
         )
       }
 
       if (!methods::is(xlabel, "waiver")) {
-        private_quosure <- teal.code::eval_code(
-          object = private_quosure,
+        private_qenv <- teal.code::eval_code(
+          object = private_qenv,
           code = bquote(xlabel <- .(xlabel))
         )
       } else {
-        private_quosure <- teal.code::eval_code(
-          object = private_quosure,
+        private_qenv <- teal.code::eval_code(
+          object = private_qenv,
           code = quote(xlabel <- ggplot2::waiver())
         )
       }
 
       teal.code::eval_code(
-        object = private_quosure,
+        object = private_qenv,
         code = bquote({
           p <- goshawk::g_spaghettiplot(
             data = ANL,

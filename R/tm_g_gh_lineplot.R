@@ -147,8 +147,8 @@
 #'     )
 #'   )
 #' )
-#' \dontrun{
-#' shinyApp(app$ui, app$server)
+#' if (interactive()) {
+#'   shinyApp(app$ui, app$server)
 #' }
 tm_g_gh_lineplot <- function(label,
                              dataname,
@@ -706,11 +706,11 @@ srv_lineplot <- function(id,
         )
       )
 
-      private_quosure <- anl_q()$quosure
+      private_qenv <- anl_q()$qenv
 
       if (!methods::is(xtick, "waiver") && !is.null(xtick)) {
-        private_quosure <- teal.code::eval_code(
-          object = private_quosure,
+        private_qenv <- teal.code::eval_code(
+          object = private_qenv,
           code = bquote({
             keep_index <- which(.(xtick) %in% ANL[[.(xaxis)]])
             xtick <- (.(xtick))[keep_index] # extra parentheses needed for edge case, e.g. 1:5[keep_index]
@@ -718,8 +718,8 @@ srv_lineplot <- function(id,
           })
         )
       } else if (methods::is(xtick, "waiver")) {
-        private_quosure <- teal.code::eval_code(
-          object = private_quosure,
+        private_qenv <- teal.code::eval_code(
+          object = private_qenv,
           code = "
             xtick <- ggplot2::waiver()
             xlabel <- ggplot2::waiver()
@@ -732,7 +732,7 @@ srv_lineplot <- function(id,
       hline_arb_color <- horizontal_line()$line_arb_color
 
       teal.code::eval_code(
-        object = private_quosure,
+        object = private_qenv,
         code = bquote({
           p <- goshawk::g_lineplot(
             data = ANL[complete.cases(ANL[, c(.(yaxis), .(xaxis))]), ],

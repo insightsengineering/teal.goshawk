@@ -137,8 +137,8 @@
 #'     )
 #'   )
 #' )
-#' \dontrun{
-#' shinyApp(app$ui, app$server)
+#' if (interactive()) {
+#'   shinyApp(app$ui, app$server)
 #' }
 tm_g_gh_density_distribution_plot <- function(label, # nolint
                                               dataname,
@@ -343,7 +343,7 @@ srv_g_density_distribution_plot <- function(id, # nolint
       validate(need(input$trt_group, "Please select a treatment variable"))
 
       teal.code::eval_code(
-        object = anl_q()$quosure,
+        object = anl_q()$qenv,
         code = bquote({
           p <- goshawk::g_density_distribution_plot(
             data = ANL,
@@ -379,7 +379,7 @@ srv_g_density_distribution_plot <- function(id, # nolint
       validate(need(trt_group, "Please select a treatment variable"))
 
       teal.code::eval_code(
-        object = anl_q()$quosure,
+        object = anl_q()$qenv,
         code = bquote(
           tbl <- goshawk::t_summarytable(
             data = ANL,

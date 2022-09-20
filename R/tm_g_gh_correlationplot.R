@@ -244,8 +244,8 @@
 #'     )
 #'   )
 #' )
-#' \dontrun{
-#' shinyApp(app$ui, app$server)
+#' if (interactive()) {
+#'   shinyApp(app$ui, app$server)
 #' }
 tm_g_gh_correlationplot <- function(label,
                                     dataname,
@@ -539,15 +539,15 @@ srv_g_correlationplot <- function(id,
       )
 
       # analysis
-      private_quosure <- teal.code::new_quosure(data) %>%
+      private_qenv <- teal.code::new_qenv(data) %>%
         teal.code::eval_code(
           code = bquote({
             ANL <- .(as.name(dataset_var)) %>% # nolint
               dplyr::filter(.data[[.(param_var)]] %in% union(.(input$xaxis_param), .(input$yaxis_param)))
           })
         )
-      validate_has_data(private_quosure[["ANL"]], 1)
-      return(list(ANL = ANL, quosure = private_quosure))
+      validate_has_data(private_qenv[["ANL"]], 1)
+      return(list(ANL = ANL, qenv = private_qenv))
     })
 
     # constraints
@@ -642,7 +642,7 @@ srv_g_correlationplot <- function(id,
       trt_group <- input$trt_group
       line_vars <- unique(c(input$hline_vars, input$vline_vars))
 
-      private_q <- anl_constraint()$quosure %>% teal.code::eval_code(
+      private_q <- anl_constraint()$qenv %>% teal.code::eval_code(
         code = bquote({
           ANL_TRANSPOSED1 <- ANL %>% # nolint
             dplyr::select(
@@ -721,12 +721,12 @@ srv_g_correlationplot <- function(id,
         code =
           bquote(attr(ANL_TRANSPOSED[[.(trt_group)]], "label") <- attr(ANL[[.(trt_group)]], "label")) # nolint
       )
-      return(list(ANL_TRANSPOSED = private_q[["ANL_TRANSPOSED"]], quosure = private_q))
+      return(list(ANL_TRANSPOSED = private_q[["ANL_TRANSPOSED"]], qenv = private_q))
     })
 
     plot_labels <- reactive({
       req(anl_constraint())
-      ANL <- anl_constraint()$quosure[["ANL"]] # nolint
+      ANL <- anl_constraint()$qenv[["ANL"]] # nolint
 
       xparam <- ANL$PARAM[ANL[[param_var]] == input$xaxis_param][1]
       yparam <- ANL$PARAM[ANL[[param_var]] == input$yaxis_param][1]
@@ -798,7 +798,7 @@ srv_g_correlationplot <- function(id,
       trt_group <- input$trt_group
 
       teal.code::eval_code(
-        object = plot_data_transpose()$quosure,
+        object = plot_data_transpose()$qenv,
         code = bquote({
           # re-establish treatment variable label
           p <- goshawk::g_correlationplot(

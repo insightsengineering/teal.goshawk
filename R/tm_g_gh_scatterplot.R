@@ -135,8 +135,8 @@
 #'     )
 #'   )
 #' )
-#' \dontrun{
-#' shinyApp(app$ui, app$server)
+#' if (interactive()) {
+#'   shinyApp(app$ui, app$server)
 #' }
 #'
 tm_g_gh_scatterplot <- function(label,
@@ -326,7 +326,7 @@ srv_g_scatterplot <- function(id,
 
       # nolint end
       teal.code::eval_code(
-        object = anl_q()$quosure,
+        object = anl_q()$qenv,
         code = bquote({
           # re-establish treatment variable label
           p <- goshawk::g_scatterplot(

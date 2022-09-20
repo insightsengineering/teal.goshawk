@@ -185,8 +185,8 @@
 #'     )
 #'   )
 #' )
-#' \dontrun{
-#' shinyApp(app$ui, app$server)
+#' if (interactive()) {
+#'   shinyApp(app$ui, app$server)
 #' }
 #'
 tm_g_gh_boxplot <- function(label,
@@ -449,7 +449,7 @@ srv_g_boxplot <- function(id,
         sprintf("You can not choose %s as x-axis variable for treatment variable %s.", xaxis, trt_group)
       ))
 
-      anl_q()$quosure %>% teal.code::eval_code(
+      anl_q()$qenv %>% teal.code::eval_code(
         code = bquote({
           p <- goshawk::g_boxplot(
             data = ANL,
@@ -486,7 +486,7 @@ srv_g_boxplot <- function(id,
       font_size <- input$font_size
       trt_group <- input$trt_group
 
-      anl_q()$quosure %>% teal.code::eval_code(
+      anl_q()$qenv %>% teal.code::eval_code(
         code = bquote({
           tbl <- goshawk::t_summarytable(
             data = ANL,
