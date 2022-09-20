@@ -438,6 +438,7 @@ srv_g_correlationplot <- function(id,
                                   vline_vars_labels) {
   with_reporter <- !missing(reporter) && inherits(reporter, "Reporter")
   with_filter <- !missing(filter_panel_api) && inherits(filter_panel_api, "FilterPanelAPI")
+  checkmate::assert_class(data, "tdata")
 
   moduleServer(id, function(input, output, session) {
 
@@ -539,7 +540,7 @@ srv_g_correlationplot <- function(id,
       )
 
       # analysis
-      private_qenv <- teal.code::new_qenv(data) %>%
+      private_qenv <- teal.code::new_qenv(tdata2env(data), code = get_code(data)) %>%
         teal.code::eval_code(
           code = bquote({
             ANL <- .(as.name(dataset_var)) %>% # nolint
