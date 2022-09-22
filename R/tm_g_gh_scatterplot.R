@@ -135,8 +135,8 @@
 #'     )
 #'   )
 #' )
-#' \dontrun{
-#' shinyApp(app$ui, app$server)
+#' if (interactive()) {
+#'   shinyApp(app$ui, app$server)
 #' }
 #'
 tm_g_gh_scatterplot <- function(label,
@@ -279,6 +279,7 @@ srv_g_scatterplot <- function(id,
                               plot_width) {
   with_reporter <- !missing(reporter) && inherits(reporter, "Reporter")
   with_filter <- !missing(filter_panel_api) && inherits(filter_panel_api, "FilterPanelAPI")
+  checkmate::assert_class(data, "tdata")
 
   moduleServer(id, function(input, output, session) {
 
@@ -326,7 +327,7 @@ srv_g_scatterplot <- function(id,
 
       # nolint end
       teal.code::eval_code(
-        object = anl_q()$quosure,
+        object = anl_q()$qenv,
         code = bquote({
           # re-establish treatment variable label
           p <- goshawk::g_scatterplot(

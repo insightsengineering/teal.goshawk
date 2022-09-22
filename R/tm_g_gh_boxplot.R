@@ -185,8 +185,8 @@
 #'     )
 #'   )
 #' )
-#' \dontrun{
-#' shinyApp(app$ui, app$server)
+#' if (interactive()) {
+#'   shinyApp(app$ui, app$server)
 #' }
 #'
 tm_g_gh_boxplot <- function(label,
@@ -370,6 +370,7 @@ srv_g_boxplot <- function(id,
                           hline_vars_labels) {
   with_reporter <- !missing(reporter) && inherits(reporter, "Reporter")
   with_filter <- !missing(filter_panel_api) && inherits(filter_panel_api, "FilterPanelAPI")
+  checkmate::assert_class(data, "tdata")
 
   moduleServer(id, function(input, output, session) {
 
@@ -449,7 +450,7 @@ srv_g_boxplot <- function(id,
         sprintf("You can not choose %s as x-axis variable for treatment variable %s.", xaxis, trt_group)
       ))
 
-      anl_q()$quosure %>% teal.code::eval_code(
+      anl_q()$qenv %>% teal.code::eval_code(
         code = bquote({
           p <- goshawk::g_boxplot(
             data = ANL,
@@ -486,7 +487,7 @@ srv_g_boxplot <- function(id,
       font_size <- input$font_size
       trt_group <- input$trt_group
 
-      anl_q()$quosure %>% teal.code::eval_code(
+      anl_q()$qenv %>% teal.code::eval_code(
         code = bquote({
           tbl <- goshawk::t_summarytable(
             data = ANL,

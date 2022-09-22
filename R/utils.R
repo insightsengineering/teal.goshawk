@@ -197,7 +197,7 @@ constr_anl_q <- function(session, input, data, dataname, param_id, param_var, tr
     validate_has_variable(ANL, trt_group)
 
     # analysis
-    private_quosure <- teal.code::new_quosure(data) %>%
+    private_qenv <- teal.code::new_qenv(tdata2env(data), code = get_code(data)) %>%
       teal.code::eval_code(
         substitute(ANL <- dataname, list(dataname = as.name(dataname))) # nolint
       ) %>%
@@ -207,8 +207,8 @@ constr_anl_q <- function(session, input, data, dataname, param_id, param_var, tr
             dplyr::filter(.(as.name(param_var)) == .(param_var_value))
         })
       )
-    validate_has_data(private_quosure[["ANL"]], min_rows)
-    list(ANL = ANL, quosure = private_quosure)
+    validate_has_data(private_qenv[["ANL"]], min_rows)
+    list(ANL = ANL, qenv = private_qenv)
   })
 
   observe({
@@ -293,7 +293,7 @@ constr_anl_q <- function(session, input, data, dataname, param_id, param_var, tr
 # e.g. `ALT.BASE2` (i.e. `PARAMCD = ALT & range_filter_on(BASE2)`)
 create_anl_constraint_reactive <- function(anl_param, input, param_id, min_rows) {
   reactive({
-    private_quosure <- anl_param()$quosure
+    private_qenv <- anl_param()$qenv
 
     # it is assumed that constraint_var is triggering constraint_range which then trigger this clause
     constraint_var <- isolate(input[["constraint_var"]])
@@ -308,8 +308,8 @@ create_anl_constraint_reactive <- function(anl_param, input, param_id, min_rows)
 
     # filter constraint
     if (constraint_var != "NONE") {
-      private_quosure <- teal.code::eval_code(
-        object = private_quosure,
+      private_qenv <- teal.code::eval_code(
+        object = private_qenv,
         code = bquote({
           # the below includes patients who have at least one non-NA BASE value
           # ideally, a patient should either have all NA values or none at all
@@ -334,10 +334,10 @@ create_anl_constraint_reactive <- function(anl_param, input, param_id, min_rows)
           ANL <- ANL %>% dplyr::filter(USUBJID %in% filtered_usubjids) # nolint
         })
       )
-      validate_has_data(private_quosure[["ANL"]], min_rows)
+      validate_has_data(private_qenv[["ANL"]], min_rows)
     }
 
-    return(list(ANL = private_quosure[["ANL"]], quosure = private_quosure))
+    return(list(ANL = private_qenv[["ANL"]], qenv = private_qenv))
   })
 }
 
