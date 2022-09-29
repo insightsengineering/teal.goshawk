@@ -414,7 +414,10 @@ ui_g_correlationplot <- function(id, ...) {
         )
       )
     ),
-    forms = teal.widgets::verbatim_popup_ui(ns("rcode"), "Show R code"),
+    forms = tagList(
+      teal.widgets::verbatim_popup_ui(ns("warning"), "Show Warnings"),
+      teal.widgets::verbatim_popup_ui(ns("rcode"), "Show R code")
+    ),
     pre_output = a$pre_output,
     post_output = a$post_output
   )
@@ -540,7 +543,7 @@ srv_g_correlationplot <- function(id,
       )
 
       # analysis
-      private_qenv <- teal.code::new_qenv(tdata2env(data), code = get_code(data)) %>%
+      private_qenv <- teal.code::new_qenv(tdata2env(data), code = get_code_tdata(data)) %>%
         teal.code::eval_code(
           code = bquote({
             ANL <- .(as.name(dataset_var)) %>% # nolint
@@ -905,6 +908,13 @@ srv_g_correlationplot <- function(id,
       DT::datatable(df, rownames = FALSE, options = list(scrollX = TRUE)) %>%
         DT::formatRound(numeric_cols, 4)
     })
+
+    teal.widgets::verbatim_popup_srv(
+      id = "warning",
+      verbatim_content = reactive(teal.code::get_warnings(plot_q())),
+      title = "Warning",
+      disabled = reactive(is.null(plot_q()) || is.null(teal.code::get_warnings(plot_q())))
+    )
 
     teal.widgets::verbatim_popup_srv(
       id = "rcode",
