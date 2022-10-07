@@ -97,7 +97,9 @@ Several variables are required to realize the full functionality of `teal.goshaw
 #### LOQFL
 **Definition:** This is not an ADaM standard variable but represents the Limit of Quantitation Flag
 
-**Rationale:** Set to "Y" when LBSTRESC value is used to populate AVAL and LBSTRESC value is either below a limit of quantitation for the assay or above the limit of quantitation for the assay.
+**Rationale:** Set to "Y" when LBSTRESC value is used to populate AVAL and LBSTRESC value is either below a limit of quantitation for the assay or above the limit of quantitation for the assay. Derivations for AVAL and LOQFL could look like the following in a mutate() statement.
+- AVAL = if_else(grepl("<|>", LBSTRESC), as.numeric(gsub("[^0-9, .]+", "", LBSTRESC)), AVAL)
+- LOQFL = if_else(grepl("<|>", LBSTRESC), "Y", "N")
 
 **Alternative:** If the limit of quantitation concept is not relevant then please set LOQFL <- "N"
 <br><br>
