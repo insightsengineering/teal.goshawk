@@ -99,7 +99,7 @@ Several variables are required to realize the full functionality of `teal.goshaw
 
 **Rationale:** Set to "Y" when LBSTRESC value is used to populate AVAL and LBSTRESC value is either below a limit of quantitation for the assay or above the limit of quantitation for the assay.
 
-**Alternative:** If the limit of quantitation concept is not relevant then please set LOQFL <- NA
+**Alternative:** If the limit of quantitation concept is not relevant then please set LOQFL <- "N"
 <br><br>
 
 #### BASE2
