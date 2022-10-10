@@ -1,8 +1,8 @@
-pandoc: '2.18'
+pandoc: 2.19.2
 pkgdown: 2.0.6
 pkgdown_sha: ~
 articles: {}
-last_built: 2022-09-13T08:03Z
+last_built: 2022-10-10T21:54Z
 urls:
   reference: https://insightsengineering.github.io/teal.goshawk/main/reference
   article: https://insightsengineering.github.io/teal.goshawk/main/articles
