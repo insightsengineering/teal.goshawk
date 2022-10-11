@@ -99,8 +99,8 @@ app <- teal::init(
 if (interactive()) shiny::shinyApp(app$ui, app$server)
 ```
 
-Refer to the [Get Started](https://insightsengineering.github.io/teal.modules.clinical/get-started) section of the
-teal.modules.clinical package that provides additional detail on `teal` concepts as applied in another simple app
+Refer to the [Get Started](https://insightsengineering.github.io/teal.modules.clinical/articles/teal-modules-clinical.html) 
+section of the teal.modules.clinical package that provides additional detail on `teal` concepts as applied in another simple app
 example.
 
 Please see additional information under [Articles]() for data expectations, requirements and pre/post-processing rationale
