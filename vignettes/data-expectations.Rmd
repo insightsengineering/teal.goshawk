@@ -15,7 +15,7 @@ vignette: >
 ---
 ## Introduction
 `teal.goshawk` expects to be provided ADSL and an accompanying ADLB clinical trials data set in ADaM format. For more information
-on ADaM please the [`ADaM standards herer`](https://www.cdisc.org/standards/foundational/adam).
+on ADaM please the [`ADaM standards`](https://www.cdisc.org/standards/foundational/adam).
 
 The package provides ready-to-use `teal` modules you can embed in your `teal` application. The modules
 generate highly customizable plots and outputs often used in exploratory data analysis, e.g.:
