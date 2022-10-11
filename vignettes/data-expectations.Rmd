@@ -137,4 +137,3 @@ There are additional data manipulations that are performed to create variables t
 
 **Rationale:** This transformation addresses data variance to improve the interpretability or appearance of plots.
 
-**Alternative:** Please see the "Generic Data Post Processing" section in the [Sample Longitudinal Analyses App]() for example code that includes using this concept. User can choose to specify or not.

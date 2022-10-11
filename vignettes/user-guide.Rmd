@@ -44,10 +44,9 @@ Selecting specific data points to reveal Subject ID and other data are available
 ### Log2 -  Points to Consider
 
 - Some biomarker/lab values are already log2 transformed or represent a change value. These are excluded from log2 transformation applied to biomarkers/labs
-  at large as illustrated in the [Sample Longitudinal Analyses App]() using the exclude_l2 and exclude_chg objects.
+  at large.
 
-- Biomarkers/labs having a value of 0 are log2 transformed by taking log2 of the minimum non-zero value for that biomarker/lab, divided by 2 
-  as illustrated in the [Sample Longitudinal Analyses App]() generic data post processing section.
+- Biomarkers/labs having a value of 0 are log2 transformed by taking log2 of the minimum non-zero value for that biomarker/lab, divided by 2.
 
 ### Right Hand Data Filter Panel
 

@@ -35,14 +35,6 @@ generate highly customizable plots and outputs often used in exploratory data an
 
 See [`package functions / modules`](https://insightsengineering.github.io/teal.goshawk/reference/index.html).
 
-### Sample Longitudinal Analysis App
-Please see the [Sample Longitudinal Analyses App]() for a full demonstration of how `teal.goshawk` can be deployed as a stand alone app that includes the following tabs:
-
-- User Guide
-- Data Source
-- View Variables
-- View Data
-- Nested Visualizations
 
 ### A simple application
 A `teal.goshawk` module needs to be embedded inside a `shiny` / `teal` application to interact with it. 
