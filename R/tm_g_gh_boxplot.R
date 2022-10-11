@@ -598,7 +598,10 @@ srv_g_boxplot <- function(id,
       req(all(c(xvar, yvar, facetv, trt_group) %in% names(ANL)))
 
       df <- teal.widgets::clean_brushedPoints(
-        dplyr::select(ANL, "USUBJID", trt_group, facetv, "AVISITCD", "PARAMCD", xvar, yvar, "LOQFL"),
+        dplyr::select(
+          ANL, "USUBJID", dplyr::all_of(c(trt_group, facetv)),
+          "AVISITCD", "PARAMCD", dplyr::all_of(c(xvar, yvar)), "LOQFL"
+        ),
         boxplot_brush
       )
 
