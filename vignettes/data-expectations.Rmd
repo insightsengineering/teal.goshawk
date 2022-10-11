@@ -65,7 +65,7 @@ Several variables are required to realize the full functionality of `teal.goshaw
 
 **Rationale:** Many AVISIT values are long and contain arguably superfluous information in some cases. Using these long values as x-axis tick labels can really chew into the real estate area available for the plot. Using thoughtful abbreviations conveys chronology with no substantive loss of information and maximizes the  area available for the plot.
 
-**Alternative:** If in cases creating abbreviations is not helpful then simply set AVISITCD <- AVISIT
+**Alternative:** If in cases creating abbreviations is not helpful then simply set `AVISITCD <- AVISIT`
 <br><br>
 
 #### AVISITCDN
@@ -73,7 +73,7 @@ Several variables are required to realize the full functionality of `teal.goshaw
 
 **Rationale:** Often AVISITN contains values that are not particularly helpful to reflect the proportional chronology of visits. Once AVISITCD is created then it is helpful to create the numeric values from AVISITCD values that can be seen as intuitively reflecting the visit chronology. For example: 0, 2, 4, 12, 24, 56, 84 etc. for weeks or 0, 14, 28, 84, 168, 392, 588 etc. for days. Using these, the longitudinal visualization x-axis will nicely reflect proportional distances between visits.
 
-**Alternative:** If in cases creating a more intuitive numeric chronology is not helpful then simply set AVISITCDN <- AVISITN
+**Alternative:** If in cases creating a more intuitive numeric chronology is not helpful then simply set `AVISITCDN <- AVISITN`
 <br><br>
 
 #### AVALU
@@ -98,10 +98,10 @@ Several variables are required to realize the full functionality of `teal.goshaw
 **Definition:** This is not an ADaM standard variable but represents the Limit of Quantitation Flag
 
 **Rationale:** Set to "Y" when LBSTRESC value is used to populate AVAL and LBSTRESC value is either below a limit of quantitation for the assay or above the limit of quantitation for the assay. Derivations for AVAL and LOQFL could look like the following in a mutate() statement.
-- AVAL = if_else(grepl("<|>", LBSTRESC), as.numeric(gsub("[^0-9, .]+", "", LBSTRESC)), AVAL)
-- LOQFL = if_else(grepl("<|>", LBSTRESC), "Y", "N")
+- `AVAL = if_else(grepl("<|>", LBSTRESC), as.numeric(gsub("[^0-9, .]+", "", LBSTRESC)), AVAL)`
+- `LOQFL = if_else(grepl("<|>", LBSTRESC), "Y", "N")`
 
-**Alternative:** If the limit of quantitation concept is not relevant then please set LOQFL <- "N"
+**Alternative:** If the limit of quantitation concept is not relevant then please set `LOQFL <- "N"`
 <br><br>
 
 #### BASE2
@@ -109,7 +109,7 @@ Several variables are required to realize the full functionality of `teal.goshaw
 
 **Rationale:** When change from Screening visit analyses are needed then this variable contains the assay value at Screening
 
-**Alternative:** If Screening visit analyses are not relevant then please set BASE2 <- NA
+**Alternative:** If Screening visit analyses are not relevant then please set `BASE2 <- NA`
 <br><br>
 
 #### CHG2
@@ -117,7 +117,7 @@ Several variables are required to realize the full functionality of `teal.goshaw
 
 **Rationale:** When change from Screening visit analyses are needed then this variable contains the assay value change between Screening and subsequent visit
 
-**Alternative:** If Screening visit analyses are not relevant then please set CHG2 <- NA
+**Alternative:** If Screening visit analyses are not relevant then please set `CHG2 <- NA`
 <br><br>
 
 #### PCHG2
@@ -125,7 +125,7 @@ Several variables are required to realize the full functionality of `teal.goshaw
 
 **Rationale:** When percent change from Screening visit analyses are needed then this variable contains the assay value percent change between Screening and subsequent visit
 
-**Alternative:** If Screening visit analyses are not relevant then please set PCHG2 <- NA
+**Alternative:** If Screening visit analyses are not relevant then please set `PCHG2 <- NA`
 <br><br>
 
 ## Additional Variables

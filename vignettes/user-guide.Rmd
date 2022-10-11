@@ -25,7 +25,7 @@ The "Parameter Code" (PARAMCD) variable is used to select biomarker/lab of inter
 Those containing many items include search functionality to ease finding menu items.
 
 ### AVISIT
-The "Analysis Visit" (AVISIT) variable is used to display visit as an abbreviated analysis visit value (AVISITCD). See the [Data Expections]() article for more detail on the AVISITCD variable.
+The "Analysis Visit" (AVISIT) variable is used to display visit as an abbreviated analysis visit value (AVISITCD). See the [Data Expectations]() article for more detail on the AVISITCD variable.
 
 ### The Data Constraint Filter
 
