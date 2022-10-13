@@ -412,7 +412,10 @@ srv_g_scatterplot <- function(id,
       req(all(c(xvar, yvar) %in% names(ANL)))
 
       df <- teal.widgets::clean_brushedPoints(
-        dplyr::select(ANL, "USUBJID", trt_group, "AVISITCD", "PARAMCD", xvar, yvar, "LOQFL"),
+        dplyr::select(
+          ANL, "USUBJID", dplyr::all_of(trt_group), "AVISITCD", "PARAMCD",
+          dplyr::all_of(c(xvar, yvar)), "LOQFL"
+        ),
         plot_brush
       )
 

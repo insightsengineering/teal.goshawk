@@ -1,0 +1,70 @@
+---
+title: "User Guide"
+author: "NEST CoreDev Team"
+date: "10.11.2022"
+output:
+  rmarkdown::html_document:
+    theme: "spacelab"
+    highlight: "kate"
+    toc: true
+    toc_float: true
+vignette: >
+  %\VignetteIndexEntry{User Guide}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+## User Guide
+
+### PARAMCD 
+The "Parameter Code" (PARAMCD) variable is used to select biomarker/lab of interest. The biomarker/lab selection pull down menu items are a concatenation of PARAMCD with PARAM for ease of identification.
+
+### Pull down menus
+Those containing many items include search functionality to ease finding menu items.
+
+### AVISIT
+The "Analysis Visit" (AVISIT) variable is used to display visit as an abbreviated analysis visit value (AVISITCD). See the [Data Expectations](data-expectations.html) article for more detail on the AVISITCD variable.
+
+### The Data Constraint Filter
+
+- Selecting the Screening constraint will remove subjects who do not satisfy the filter range based on their screening value for the given assay.
+
+- Selecting the Baseline constraint will remove subjects who do not satisfy the filter range based on their baseline value for the given assay.
+
+- Example: Consider subject #58 has a baseline value of 5 for assay x and the range of assay x across all subjects is 1 to 10. 
+             If the the baseline constraint is selected and the value is changed to a range of 7 to 10 then subjects who do not meet
+             that condition are removed from the visualizations. Since subject #58 baseline value is 5 for assay x they are one of the 
+             subjects who would be removed.
+
+### Data Point Brushing
+Selecting specific data points to reveal Subject ID and other data are available for Box, Correlation and Spaghetti Plot visualizations.
+
+### Log2 -  Points to Consider
+
+- Some biomarker/lab values are already log2 transformed or represent a change value. These are excluded from log2 transformation applied to biomarkers/labs
+  at large.
+
+- Biomarkers/labs having a value of 0 are log2 transformed by taking log2 of the minimum non-zero value for that biomarker/lab, divided by 2.
+
+### Right Hand Data Filter Panel
+
+- These filters are not hierarchical so should not be used to filter on analysis variables. 
+    To filter on analysis variables please use the filtering controls available in the left hand panel.
+
+- Use right hand data panel filters to filter on categorical variables:
+  - AVISIT to exclude/include specific visits in visualizations.
+  - LOQFL to exclude/include LOQ flagged values.
+  - SEX to exclude/include specific gender.
+  - etc.
+
+### Visualization Specifics
+  
+- Box Plot: Selecting STUDYID as X-Axis variable will produce the visualization with all subjects combined and identify the study on the x-axis.
+
+- Correlation Plot
+  - The data constraint that can be placed on Screening or Baseline records is associated with the analysis variable and biomarker/lab
+    selected for the x-axis only.
+  - The Limit of Quantification (LOQFL) flag is set if either of the biomarker/lab values is identified as LOQ. The brushing table column header reflects this as LOQFL_COMB.
+  - The "Regression Line" option should only be used in conjunction with the "Treatment Faceting" option. Otherwise the per treatment regression formula and coefficient annotations will overlay.
+
+- Line Plot: If an error is displayed related to plot height it's best to first alter the relative plot height in the left panel using the slider. For additional plot height control, use the icons in the upper right corner of the visualization.
