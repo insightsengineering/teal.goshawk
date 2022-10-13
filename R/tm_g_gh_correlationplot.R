@@ -899,7 +899,10 @@ srv_g_correlationplot <- function(id,
       ANL_TRANSPOSED <- isolate(plot_data_transpose()$ANL_TRANSPOSED) # nolint
 
       df <- teal.widgets::clean_brushedPoints(
-        dplyr::select(ANL_TRANSPOSED, "USUBJID", input$trt_group, "AVISITCD", xvar(), yvar(), "LOQFL_COMB"),
+        dplyr::select(
+          ANL_TRANSPOSED, "USUBJID", dplyr::all_of(input$trt_group), "AVISITCD",
+          dplyr::all_of(c(xvar(), yvar())), "LOQFL_COMB"
+        ),
         plot_brush
       )
 

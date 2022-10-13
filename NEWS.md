@@ -1,4 +1,4 @@
-# teal.goshawk 0.1.13.9015
+# teal.goshawk 0.1.13.9018
 
 ### Breaking changes
 
@@ -7,12 +7,12 @@
 
 ### Enhancements
 * Added `teal.reporter` reporting into all the package modules.
-* Added `plot_relative_height_value` argument to `tm_g_gh_lineplot` to control initial value of the relative plot height slider. 
-* Implemented `nestcolor` with slight refactoring to `tm_g_gh_lineplot`. Added `nestcolor` in examples with no custom color manuals.
+* Added optional argument `plot_relative_height_value` to `tm_g_gh_lineplot` to control initial value of the relative plot height slider.
+* Implemented `nestcolor` with slight refactoring to `tm_g_gh_lineplot` and added `nestcolor` in examples with no custom color manuals.
 
 ### Miscellaneous
 * Fixed minor type coercion warning in `srv_arbitrary_lines`.
-* Updated modules to not use datasets with suffix `_FILTERED` so the package works with the breaking changes in `teal.slice`. 
+* Updated modules to not use datasets with suffix `_FILTERED` so the package works with the breaking changes in `teal.slice`.
 
 # teal.goshawk 0.1.13
 
