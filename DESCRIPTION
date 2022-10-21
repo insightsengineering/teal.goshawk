@@ -52,7 +52,7 @@ Suggests:
     knitr,
     nestcolor (>= 0.1.0),
     rmarkdown,
-    scda (>= 0.1.3),
+    scda (>= 0.1.5),
     scda.2022 (>= 0.1.3),
     stringr,
     tern (>= 0.7.10),
