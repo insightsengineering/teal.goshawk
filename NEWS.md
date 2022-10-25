@@ -1,11 +1,11 @@
 # teal.goshawk 0.1.14.9000
 
-# teal.goshawk 0.1.14
-
 ### Breaking changes
 
 * Replaced `chunks` with simpler `qenv` class.
 * Replaced `datasets` argument containing `FilteredData` with the new arguments `data` (list of reactive datasets) and `filter_panel_api` (`FilterPanelAPI`).
+
+# teal.goshawk 0.1.14
 
 ### Enhancements
 * Added `teal.reporter` reporting into all the package modules.
