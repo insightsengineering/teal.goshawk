@@ -598,7 +598,7 @@ srv_g_boxplot <- function(id,
       id = "warning",
       verbatim_content = reactive(teal.code::get_warnings(joined_qenvs())),
       title = "Warning",
-      disabled = reactive(is.null(create_plot()) || is.null(teal.code::get_warnings(joined_qenvs())))
+      disabled = reactive(is.null(teal.code::get_warnings(joined_qenvs())))
     )
 
     teal.widgets::verbatim_popup_srv(

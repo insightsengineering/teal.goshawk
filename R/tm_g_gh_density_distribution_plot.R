@@ -423,7 +423,7 @@ srv_g_density_distribution_plot <- function(id, # nolint
       id = "warning",
       verbatim_content = reactive(teal.code::get_warnings(joined_qenvs())),
       title = "Warning",
-      disabled = reactive(is.null(create_plot()) || is.null(teal.code::get_warnings(joined_qenvs())))
+      disabled = reactive(is.null(teal.code::get_warnings(joined_qenvs())))
     )
 
     teal.widgets::verbatim_popup_srv(

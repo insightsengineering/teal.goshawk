@@ -432,7 +432,7 @@ srv_g_scatterplot <- function(id,
       id = "warning",
       verbatim_content = reactive(teal.code::get_warnings(plot_q)),
       title = "Warning",
-      disabled = reactive(is.null(plot_q()) || is.null(teal.code::get_warnings(plot_q())))
+      disabled = reactive(is.null(teal.code::get_warnings(plot_q())))
     )
 
     teal.widgets::verbatim_popup_srv(
