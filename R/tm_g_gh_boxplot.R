@@ -347,7 +347,10 @@ ui_g_boxplot <- function(id, ...) {
         )
       )
     ),
-    forms = teal.widgets::verbatim_popup_ui(ns("rcode"), "Show R code"),
+    forms = tagList(
+      teal.widgets::verbatim_popup_ui(ns("warning"), "Show Warnings"),
+      teal.widgets::verbatim_popup_ui(ns("rcode"), "Show R code")
+    ),
     pre_output = a$pre_output,
     post_output = a$post_output
   )
@@ -589,13 +592,18 @@ srv_g_boxplot <- function(id,
         DT::formatRound(numeric_cols, 4)
     })
 
+    joined_qenvs <- reactive(teal.code::join(create_plot(), create_table()))
+
+    teal.widgets::verbatim_popup_srv(
+      id = "warning",
+      verbatim_content = reactive(teal.code::get_warnings(joined_qenvs())),
+      title = "Warning",
+      disabled = reactive(is.null(teal.code::get_warnings(joined_qenvs())))
+    )
+
     teal.widgets::verbatim_popup_srv(
       id = "rcode",
-      verbatim_content = reactive(
-        teal.code::get_code(
-          teal.code::join(create_plot(), create_table())
-        )
-      ),
+      verbatim_content = reactive(teal.code::get_code(joined_qenvs())),
       title = "Show R Code for Boxplot"
     )
   })
