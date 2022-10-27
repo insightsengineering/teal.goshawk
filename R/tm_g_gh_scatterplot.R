@@ -285,7 +285,6 @@ srv_g_scatterplot <- function(id,
   checkmate::assert_class(data, "tdata")
 
   moduleServer(id, function(input, output, session) {
-
     # reused in all modules
     anl_q <- constr_anl_q(
       session, input, data, dataname,
