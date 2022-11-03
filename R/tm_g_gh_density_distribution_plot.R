@@ -417,7 +417,10 @@ srv_g_density_distribution_plot <- function(id, # nolint
         DT::formatRound(numeric_cols, 2)
     })
 
-    joined_qenvs <- reactive(teal.code::join(create_plot(), create_table()))
+    joined_qenvs <- reactive({
+      req(create_plot(), create_table())
+      teal.code::join(create_plot(), create_table())
+    })
 
     teal.widgets::verbatim_popup_srv(
       id = "warning",
