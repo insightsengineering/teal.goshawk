@@ -277,7 +277,7 @@ constr_anl_q <- function(session, input, data, dataname, param_id, param_var, tr
 
       update_min_max(session, args)
     } else {
-      stop("invalid contraint_var", constraint_var)
+      validate(need(FALSE, "This is an invalid data contraint for the filtered data"))
     }
   })
 
