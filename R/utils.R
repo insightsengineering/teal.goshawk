@@ -218,7 +218,7 @@ constr_anl_q <- function(session, input, data, dataname, param_id, param_var, tr
     constraint_var <- input[["constraint_var"]]
     validate(need(constraint_var, "select a constraint variable"))
 
-    # note that filtered is false thus we cannot use anl_param()$ANL
+    
     ANL <- data[[dataname]]() # nolint
     validate_has_data(ANL, min_rows)
 
