@@ -191,8 +191,8 @@
 #'     )
 #'   )
 #' )
-#' \dontrun{
-#' shinyApp(app$ui, app$server)
+#' if (interactive()) {
+#'   shinyApp(app$ui, app$server)
 #' }
 #'
 tm_g_gh_spaghettiplot <- function(label,
@@ -301,7 +301,7 @@ g_ui_spaghettiplot <- function(id, ...) {
           c("None" = "NONE", "Mean" = "MEAN", "Median" = "MEDIAN"),
           inline = TRUE
         ),
-        templ_ui_constraint(ns), # required by constr_anl_chunks
+        templ_ui_constraint(ns), # required by constr_anl_q
         if (length(a$hline_vars) > 0) {
           teal.widgets::optionalSelectInput(
             ns("hline_vars"),
@@ -346,7 +346,10 @@ g_ui_spaghettiplot <- function(id, ...) {
           )
         )
       ),
-      forms = get_rcode_ui(ns("rcode")),
+      forms = tagList(
+        teal.widgets::verbatim_popup_ui(ns("warning"), "Show Warnings"),
+        teal.widgets::verbatim_popup_ui(ns("rcode"), "Show R code")
+      ),
       pre_output = a$pre_output,
       post_output = a$post_output
     )
@@ -356,8 +359,9 @@ g_ui_spaghettiplot <- function(id, ...) {
 
 
 srv_g_spaghettiplot <- function(id,
-                                datasets,
+                                data,
                                 reporter,
+                                filter_panel_api,
                                 dataname,
                                 idvar,
                                 param_var,
@@ -374,24 +378,26 @@ srv_g_spaghettiplot <- function(id,
                                 hline_vars_colors,
                                 hline_vars_labels) {
   with_reporter <- !missing(reporter) && inherits(reporter, "Reporter")
+  with_filter <- !missing(filter_panel_api) && inherits(filter_panel_api, "FilterPanelAPI")
+  checkmate::assert_class(data, "tdata")
+
   moduleServer(id, function(input, output, session) {
-    teal.code::init_chunks()
     # reused in all modules
-    anl_chunks <- constr_anl_chunks(
-      session, input, datasets, dataname,
+    anl_q <- constr_anl_q(
+      session, input, data, dataname,
       param_id = "xaxis_param", param_var = param_var, trt_group = input$trt_group, min_rows = 1
     )
 
     # update sliders for axes taking constraints into account
     yrange_slider <- toggle_slider_server("yrange_scale")
-    keep_range_slider_updated(session, input, yrange_slider$update_state, "yaxis_var", "xaxis_param", anl_chunks)
-    keep_data_const_opts_updated(session, input, anl_chunks, "xaxis_param")
+    keep_range_slider_updated(session, input, yrange_slider$update_state, "yaxis_var", "xaxis_param", anl_q)
+    keep_data_const_opts_updated(session, input, anl_q, "xaxis_param")
 
     horizontal_line <- srv_arbitrary_lines("hline_arb")
 
-    plot_r <- reactive({
+    plot_q <- reactive({
+      req(anl_q())
       # nolint start
-      private_chunks <- teal.code::chunks_deep_clone(anl_chunks()$chunks)
       ylim <- yrange_slider$state()$value
       facet_ncol <- input$facet_ncol
       validate(need(
@@ -408,7 +414,7 @@ srv_g_spaghettiplot <- function(id,
       validate(need(input$trt_group, "Please select a treatment variable"))
       trt_group <- input$trt_group
 
-      # Below inputs should trigger plot via updates of other reactive objects (i.e. anl_chunk()) and some inputs
+      # Below inputs should trigger plot via updates of other reactive objects (i.e. anl_q()) and some inputs
       validate(need(input$xaxis_var, "Please select an X-Axis Variable"))
       validate(need(input$yaxis_var, "Please select a Y-Axis Variable"))
       param <- input$xaxis_param
@@ -416,10 +422,38 @@ srv_g_spaghettiplot <- function(id,
       yaxis_var <- input$yaxis_var
       hline_vars <- input$hline_vars
       # nolint end
-      teal.code::chunks_push(
-        chunks = private_chunks,
-        id = "g_spaghettiplot",
-        expression = bquote({
+
+      private_qenv <- anl_q()$qenv
+
+      # this code is needed to make sure the waiver attribute
+      # of ggplot2::waiver is correctly passed to goshawk's spaghettiplot
+      if (!methods::is(xtick, "waiver")) {
+        private_qenv <- teal.code::eval_code(
+          object = private_qenv,
+          code = bquote(xtick <- .(xtick))
+        )
+      } else {
+        private_qenv <- teal.code::eval_code(
+          object = private_qenv,
+          code = quote(xtick <- ggplot2::waiver())
+        )
+      }
+
+      if (!methods::is(xlabel, "waiver")) {
+        private_qenv <- teal.code::eval_code(
+          object = private_qenv,
+          code = bquote(xlabel <- .(xlabel))
+        )
+      } else {
+        private_qenv <- teal.code::eval_code(
+          object = private_qenv,
+          code = quote(xlabel <- ggplot2::waiver())
+        )
+      }
+
+      teal.code::eval_code(
+        object = private_qenv,
+        code = bquote({
           p <- goshawk::g_spaghettiplot(
             data = ANL,
             subj_id = .(idvar),
@@ -438,8 +472,8 @@ srv_g_spaghettiplot <- function(id,
             hline_arb = .(hline_arb),
             hline_arb_label = .(hline_arb_label),
             hline_arb_color = .(hline_arb_color),
-            xtick = .(xtick),
-            xlabel = .(xlabel),
+            xtick = xtick,
+            xlabel = xlabel,
             rotate_xlab = .(rotate_xlab),
             font_size = .(font_size),
             alpha = .(alpha),
@@ -451,14 +485,10 @@ srv_g_spaghettiplot <- function(id,
           print(p)
         })
       )
+    })
 
-      teal.code::chunks_safe_eval(private_chunks)
-
-      # promote chunks to be visible in the sessionData by other modules
-      teal.code::chunks_reset()
-      teal.code::chunks_push_chunks(private_chunks)
-
-      teal.code::chunks_get_var("p")
+    plot_r <- reactive({
+      plot_q()[["p"]]
     })
 
     plot_data <- teal.widgets::plot_with_settings_srv(
@@ -475,7 +505,7 @@ srv_g_spaghettiplot <- function(id,
         card <- teal.reporter::TealReportCard$new()
         card$set_name("Spaghetti Plot")
         card$append_text("Spaghetti Plot", "header2")
-        card$append_fs(datasets$get_filter_state())
+        if (with_filter) card$append_fs(filter_panel_api$get_filter_state())
         card$append_text("Selected Options", "header3")
         card$append_text(
           formatted_data_constraint(input$constraint_var, input$constraint_range_min, input$constraint_range_max)
@@ -486,12 +516,7 @@ srv_g_spaghettiplot <- function(id,
           card$append_text("Comment", "header3")
           card$append_text(comment)
         }
-        card$append_src(paste(get_rcode(
-          chunks = teal.code::get_chunks_object(parent_idx = 2L),
-          datasets = datasets,
-          title = "",
-          description = ""
-        ), collapse = "\n"))
+        card$append_src(paste(teal.code::get_code(plot_q()), collapse = "\n"))
         card
       }
       teal.reporter::simple_reporter_srv("simple_reporter", reporter = reporter, card_fun = card_fun)
@@ -501,7 +526,7 @@ srv_g_spaghettiplot <- function(id,
     output$brush_data <- DT::renderDataTable({
       plot_brush <- plot_data$brush()
 
-      ANL <- isolate(anl_chunks()$ANL) # nolint
+      ANL <- isolate(anl_q()$ANL) # nolint
       validate_has_data(ANL, 1)
 
       xvar <- isolate(input$xaxis_var)
@@ -524,10 +549,17 @@ srv_g_spaghettiplot <- function(id,
         DT::formatRound(numeric_cols, 4)
     })
 
-    get_rcode_srv(
+    teal.widgets::verbatim_popup_srv(
+      id = "warning",
+      verbatim_content = reactive(teal.code::get_warnings(plot_q())),
+      title = "Warning",
+      disabled = reactive(is.null(teal.code::get_warnings(plot_q())))
+    )
+
+    teal.widgets::verbatim_popup_srv(
       id = "rcode",
-      datasets = datasets,
-      modal_title = "Spaghetti Plot"
+      verbatim_content = reactive(teal.code::get_code(plot_q())),
+      title = "Show R Code for Spaghetti Plot"
     )
   })
 }

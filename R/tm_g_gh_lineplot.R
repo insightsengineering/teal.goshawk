@@ -147,8 +147,8 @@
 #'     )
 #'   )
 #' )
-#' \dontrun{
-#' shinyApp(app$ui, app$server)
+#' if (interactive()) {
+#'   shinyApp(app$ui, app$server)
 #' }
 tm_g_gh_lineplot <- function(label,
                              dataname,
@@ -283,7 +283,7 @@ ui_lineplot <- function(id, ...) {
             ticks = FALSE
           ),
         ),
-        templ_ui_constraint(ns), # required by constr_anl_chunks
+        templ_ui_constraint(ns), # required by constr_anl_q
         ui_arbitrary_lines(id = ns("hline_arb"), a$hline_arb, a$hline_arb_label, a$hline_arb_color),
         teal.widgets::panel_group(
           teal.widgets::panel_item(
@@ -329,7 +329,10 @@ ui_lineplot <- function(id, ...) {
           )
         )
       ),
-      forms = get_rcode_ui(ns("rcode")),
+      forms = tagList(
+        teal.widgets::verbatim_popup_ui(ns("warning"), "Show Warnings"),
+        teal.widgets::verbatim_popup_ui(ns("rcode"), "Show R code")
+      ),
       pre_output = a$pre_output,
       post_output = a$post_output
     )
@@ -337,8 +340,9 @@ ui_lineplot <- function(id, ...) {
 }
 
 srv_lineplot <- function(id,
-                         datasets,
+                         data,
                          reporter,
+                         filter_panel_api,
                          dataname,
                          param_var,
                          trt_group,
@@ -352,8 +356,10 @@ srv_lineplot <- function(id,
                          plot_height,
                          plot_width) {
   with_reporter <- !missing(reporter) && inherits(reporter, "Reporter")
+  with_filter <- !missing(filter_panel_api) && inherits(filter_panel_api, "FilterPanelAPI")
+  checkmate::assert_class(data, "tdata")
+
   moduleServer(id, function(input, output, session) {
-    teal.code::init_chunks()
     ns <- session$ns
     output$shape_ui <- renderUI({
       if (!is.null(shape_choices)) {
@@ -372,17 +378,17 @@ srv_lineplot <- function(id,
       }
     })
 
-    anl_chunks <- constr_anl_chunks(
+    anl_q <- constr_anl_q(
       session = session,
       input = input,
-      datasets = datasets,
+      data = data,
       dataname = dataname,
       param_id = "xaxis_param",
       param_var = param_var,
       trt_group = input$trt_group,
       min_rows = 2
     )
-    keep_data_const_opts_updated(session, input, anl_chunks, "xaxis_param")
+    keep_data_const_opts_updated(session, input, anl_q, "xaxis_param")
 
     yrange_slider <- toggle_slider_server("yrange_scale")
 
@@ -391,7 +397,7 @@ srv_lineplot <- function(id,
       varname <- input[["yaxis_var"]]
       validate(need(varname, "Please select variable"))
 
-      ANL <- anl_chunks()$ANL # nolint
+      ANL <- anl_q()$ANL # nolint
       validate_has_variable(ANL, varname, paste("variable", varname, "does not exist"))
 
       shape <- if (!(is.null(input$shape) || input$shape == "None")) {
@@ -442,8 +448,9 @@ srv_lineplot <- function(id,
     line_type_defaults <- reactiveVal("solid")
 
     observeEvent(input$trt_group, {
+      req(anl_q())
       req(input$trt_group)
-      anl_arm <- anl_chunks()$ANL[[input$trt_group]]
+      anl_arm <- anl_q()$ANL[[input$trt_group]]
       anl_arm_nlevels <- nlevels(anl_arm)
 
       if (is.null(names(line_color_defaults()))) {
@@ -469,10 +476,11 @@ srv_lineplot <- function(id,
     })
 
     line_color_selected <- reactive({
+      req(anl_q())
       if (is.null(input$trt_group)) {
         return(NULL)
       }
-      anl_arm <- isolate(anl_chunks()$ANL[[input$trt_group]])
+      anl_arm <- isolate(anl_q()$ANL[[input$trt_group]])
       anl_arm_nlevels <- nlevels(anl_arm)
       anl_arm_levels <- levels(anl_arm)
 
@@ -490,10 +498,11 @@ srv_lineplot <- function(id,
     })
 
     line_type_selected <- reactive({
+      req(anl_q())
       if (is.null(input$trt_group)) {
         return(NULL)
       }
-      anl_arm <- isolate(anl_chunks()$ANL[[input$trt_group]])
+      anl_arm <- isolate(anl_q()$ANL[[input$trt_group]])
       anl_arm_nlevels <- nlevels(anl_arm)
       anl_arm_levels <- levels(anl_arm)
 
@@ -511,8 +520,9 @@ srv_lineplot <- function(id,
     })
 
     output$lines <- renderUI({
+      req(anl_q())
       req(input$trt_group)
-      anl_arm <- isolate(anl_chunks()$ANL[[input$trt_group]])
+      anl_arm <- isolate(anl_q()$ANL[[input$trt_group]])
       anl_arm_nlevels <- nlevels(anl_arm)
       anl_arm_levels <- levels(anl_arm)
       color_def <- line_color_defaults()
@@ -598,17 +608,19 @@ srv_lineplot <- function(id,
 
     observe({
       req(input$shape)
-      anl_shape <- anl_chunks()$ANL[[input$shape]]
+      req(anl_q())
+      anl_shape <- anl_q()$ANL[[input$shape]]
       anl_shape_nlevels <- nlevels(anl_shape)
       symbol_type_to_set <- symbol_type_defaults()[pmin(length(symbol_type_defaults()), seq_len(anl_shape_nlevels))]
       symbol_type_defaults(symbol_type_to_set)
     })
 
     symbol_type_selected <- reactive({
+      req(anl_q())
       if (is.null(input$shape)) {
         return(NULL)
       }
-      anl_shape <- isolate(anl_chunks()$ANL[[input$shape]])
+      anl_shape <- isolate(anl_q()$ANL[[input$shape]])
       anl_shape_nlevels <- nlevels(anl_shape)
       anl_shape_levels <- levels(anl_shape)
 
@@ -626,9 +638,10 @@ srv_lineplot <- function(id,
     })
 
     output$symbols <- renderUI({
+      req(symbol_type_defaults())
       validate(need(input$shape, "Please select line splitting variable first."))
 
-      anl_shape <- isolate(anl_chunks()$ANL[[input$shape]])
+      anl_shape <- isolate(anl_q()$ANL[[input$shape]])
       validate(need(is.factor(anl_shape), "Line splitting variable must be a factor."))
 
       anl_shape_nlevels <- nlevels(anl_shape)
@@ -654,11 +667,10 @@ srv_lineplot <- function(id,
 
     horizontal_line <- srv_arbitrary_lines("hline_arb")
 
-    plot_r <- reactive({
-      ac <- anl_chunks()
-      private_chunks <- teal.code::chunks_deep_clone(ac$chunks)
-
+    plot_q <- reactive({
+      req(anl_q(), line_color_selected(), line_type_selected())
       # nolint start
+
       ylim <- yrange_slider$state()$value
       plot_font_size <- input$plot_font_size
       dodge <- input$dodge
@@ -691,20 +703,31 @@ srv_lineplot <- function(id,
         NULL
       }
 
-      teal.code::chunks_validate_custom(
-        bquote(nrow(ANL[complete.cases(ANL[, c(.(yaxis), .(xaxis))]), ]) >= 2),
-        "Number of complete rows on x and y axis variables is less than 2",
-        chunks = private_chunks
+      validate(
+        need(
+          nrow(anl_q()$ANL[complete.cases(anl_q()$ANL[, c(yaxis, xaxis)]), ]) >= 2,
+          "Number of complete rows on x and y axis variables is less than 2"
+        )
       )
 
+      private_qenv <- anl_q()$qenv
+
       if (!methods::is(xtick, "waiver") && !is.null(xtick)) {
-        teal.code::chunks_push(
-          chunks = private_chunks,
-          expression = bquote({
+        private_qenv <- teal.code::eval_code(
+          object = private_qenv,
+          code = bquote({
             keep_index <- which(.(xtick) %in% ANL[[.(xaxis)]])
             xtick <- (.(xtick))[keep_index] # extra parentheses needed for edge case, e.g. 1:5[keep_index]
             xlabel <- (.(xlabel))[keep_index]
           })
+        )
+      } else if (methods::is(xtick, "waiver")) {
+        private_qenv <- teal.code::eval_code(
+          object = private_qenv,
+          code = "
+            xtick <- ggplot2::waiver()
+            xlabel <- ggplot2::waiver()
+          "
         )
       }
 
@@ -712,10 +735,9 @@ srv_lineplot <- function(id,
       hline_arb_label <- horizontal_line()$line_arb_label
       hline_arb_color <- horizontal_line()$line_arb_color
 
-      teal.code::chunks_push(
-        chunks = private_chunks,
-        id = "lineplot",
-        expression = bquote({
+      teal.code::eval_code(
+        object = private_qenv,
+        code = bquote({
           p <- goshawk::g_lineplot(
             data = ANL[complete.cases(ANL[, c(.(yaxis), .(xaxis))]), ],
             biomarker_var = .(param_var),
@@ -735,8 +757,8 @@ srv_lineplot <- function(id,
             hline_arb = .(hline_arb),
             hline_arb_label = .(hline_arb_label),
             hline_arb_color = .(hline_arb_color),
-            xtick = .(if (!methods::is(xtick, "waiver") && !is.null(xtick)) quote(xtick) else xtick),
-            xlabel = .(if (!methods::is(xtick, "waiver") && !is.null(xtick)) quote(xlabel) else xlabel),
+            xtick = .(if (!is.null(xtick)) quote(xtick) else xtick),
+            xlabel = .(if (!is.null(xtick)) quote(xlabel) else xlabel),
             rotate_xlab = .(rotate_xlab),
             plot_height = .(relative_height), # in g_lineplot this is relative height of plot to table
             plot_font_size = .(plot_font_size),
@@ -748,15 +770,9 @@ srv_lineplot <- function(id,
           print(p)
         })
       )
-
-      teal.code::chunks_safe_eval(private_chunks)
-
-      teal.code::chunks_reset()
-      teal.code::chunks_push_chunks(private_chunks)
-
-      teal.code::chunks_get_var("p")
     })
 
+    plot_r <- reactive(plot_q()[["p"]])
 
     plot_data <- teal.widgets::plot_with_settings_srv(
       id = "plot",
@@ -771,7 +787,7 @@ srv_lineplot <- function(id,
         card <- teal.reporter::TealReportCard$new()
         card$set_name("Line Plot")
         card$append_text("Line Plot", "header2")
-        card$append_fs(datasets$get_filter_state())
+        if (with_filter) card$append_fs(filter_panel_api$get_filter_state())
         card$append_text("Selected Options", "header3")
         card$append_text(
           paste(
@@ -789,22 +805,24 @@ srv_lineplot <- function(id,
           card$append_text("Comment", "header3")
           card$append_text(comment)
         }
-        card$append_src(paste(get_rcode(
-          chunks = teal.code::get_chunks_object(parent_idx = 2L),
-          datasets = datasets,
-          title = "",
-          description = ""
-        ), collapse = "\n"))
+        card$append_src(paste(teal.code::get_code(plot_q()), collapse = "\n"))
         card
       }
       teal.reporter::simple_reporter_srv("simple_reporter", reporter = reporter, card_fun = card_fun)
     }
     ###
 
-    get_rcode_srv(
+    teal.widgets::verbatim_popup_srv(
+      id = "warning",
+      verbatim_content = reactive(teal.code::get_warnings(plot_q())),
+      title = "Warning",
+      disabled = reactive(is.null(teal.code::get_warnings(plot_q())))
+    )
+
+    teal.widgets::verbatim_popup_srv(
       id = "rcode",
-      datasets = datasets,
-      modal_title = "Line Plot"
+      verbatim_content = reactive(teal.code::get_code(plot_q())),
+      title = "Show R Code for Line Plot"
     )
   })
 }
