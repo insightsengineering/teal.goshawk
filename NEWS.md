@@ -4,6 +4,7 @@
 
 ### Breaking changes
 
+* Constraints range is calculated on the filtered data instead of the unfiltered.
 * Replaced `chunks` with simpler `qenv` class.
 * Replaced `datasets` argument containing `FilteredData` with the new arguments `data` (`tdata` object) and `filter_panel_api` (`FilterPanelAPI`).
 
