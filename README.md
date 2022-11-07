@@ -1,5 +1,9 @@
 # teal.goshawk
 
+<!-- start badges -->
+[![Code Coverage](https://raw.githubusercontent.com/insightsengineering/teal.goshawk/_xml_coverage_reports/data/main/badge.svg)](https://raw.githubusercontent.com/insightsengineering/teal.goshawk/_xml_coverage_reports/data/main/coverage.xml)
+<!-- end badges -->
+
 The teal.goshawk package provides `teal` modules of the longitudinal visualization functions from the [goshawk](https://insightsengineering.github.io/goshawk/) R package.
 This enables `teal` app developers to easily create applications to explore longitudinal clinical trial data.
 
