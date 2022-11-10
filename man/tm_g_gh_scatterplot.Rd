@@ -80,7 +80,10 @@ with text placed before the output to put the output into context. For example a
 into context. For example the \code{\link[shiny:helpText]{shiny::helpText()}} elements are useful.}
 }
 \description{
-Scatter Plot Teal Module For Biomarker Analysis
+\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#deprecated}{\figure{lifecycle-deprecated.svg}{options: alt='[Deprecated]'}}}{\strong{[Deprecated]}}
+
+\code{tm_g_gh_scatterplot} is deprecated. Please use \link{tm_g_gh_correlationplot}
+instead.
 }
 \examples{
 # Example using ADaM structure analysis dataset.

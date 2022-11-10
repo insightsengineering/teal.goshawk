@@ -37,6 +37,7 @@ Imports:
     DT,
     ggplot2,
     grDevices,
+    lifecycle,
     logger (>= 0.2.0),
     methods,
     rlang,

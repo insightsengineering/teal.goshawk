@@ -1,5 +1,10 @@
 #' Scatter Plot Teal Module For Biomarker Analysis
 #'
+#' @description
+#' `r lifecycle::badge("deprecated")`
+#'
+#'  `tm_g_gh_scatterplot` is deprecated. Please use [tm_g_gh_correlationplot]
+#'   instead.
 #'
 #' @inheritParams teal.widgets::standard_layout
 #' @param label menu item label of the module in the teal app.
@@ -161,6 +166,12 @@ tm_g_gh_scatterplot <- function(label,
                                 reg_text_size = c(3, 3, 10),
                                 pre_output = NULL,
                                 post_output = NULL) {
+  lifecycle::deprecate_soft(
+    when = "0.1.15",
+    what = "tm_g_gh_scatterplot()",
+    details = "You should use teal.goshawk::tm_g_gh_correlationplot instead of teal.goshawk::tm_g_gh_scatterplot"
+  )
+
   logger::log_info("Initializing tm_g_gh_scatterplot")
   checkmate::assert_class(param, "choices_selected")
   checkmate::assert_class(xaxis_var, "choices_selected")

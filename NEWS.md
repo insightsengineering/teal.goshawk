@@ -8,6 +8,10 @@
 * Replaced `chunks` with simpler `qenv` class.
 * Replaced `datasets` argument containing `FilteredData` with the new arguments `data` (`tdata` object) and `filter_panel_api` (`FilterPanelAPI`).
 
+### Miscellaneous
+
+* Deprecated `tm_g_gh_scatterplot`. Use `tm_g_gh_correlationplot` instead.
+
 # teal.goshawk 0.1.14
 
 ### Enhancements

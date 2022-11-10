@@ -17,8 +17,14 @@ reference:
     desc: These modules render the UI and call the respective longitudinal visualization function
     contents:
       - starts_with("tm_g_gh")
+      - -ends_with("scatterplot")
 
   - title: Helper
     desc: Utility functions
     contents:
       - maptrt
+
+  - title: Deprecated
+    desc: These functions have been deprecated
+    contents:
+      - tm_g_gh_scatterplot
