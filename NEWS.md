@@ -2,6 +2,10 @@
 
 # Examples now use `scda.2022` data instead of `scda.2021`.
 
+### Enhancements
+
+* Added new function `with_tooltip` to add tooltips to `shiny` tags.
+
 ### Breaking changes
 
 * Constraints range is calculated on the filtered data instead of the unfiltered.
