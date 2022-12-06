@@ -4,7 +4,7 @@
 
 ### Enhancements
 
-* Added new function `with_tooltip` to add tooltips to `shiny` tags.
+* Added a tooltip to value input of `ui_arbitrary_lines` to explain how to supply multiple values.
 
 ### Breaking changes
 

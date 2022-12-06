@@ -19,9 +19,20 @@ ui_arbitrary_lines <- function(id, line_arb, line_arb_label, line_arb_color, tit
   ns <- NS(id)
   div(
     tags$b(title),
-    with_tooltip(
-      textInput(ns("line_arb"), label = "Value:", value = paste(line_arb, collapse = ", ")),
-      title = "For multiple lines, supply a comma separated list of values."
+    textInput(
+      ns("line_arb"),
+      div(
+        class = "teal-tooltip",
+        tagList(
+          "Value:",
+          icon("circle-info"),
+          span(
+            class = "tooltiptext",
+            "For multiple lines, supply a comma separated list of values."
+          )
+        )
+      ),
+      value = paste(line_arb, collapse = ", ")
     ),
     textInput(ns("line_arb_label"), label = "Label:", value = paste(line_arb_label, collapse = ", ")),
     textInput(ns("line_arb_color"), label = "Color:", value = paste(line_arb_color, collapse = ", "))
@@ -78,34 +89,6 @@ srv_arbitrary_lines <- function(id) {
   })
 }
 
-#' Add a tooltip to an input tag
-#'
-#'
-#' @param tag The input tag to place the tooltip on.
-#' @param title The title (text content) of the tooltip.
-#' @param placement Where to place the tooltip relative to the input tag. One of
-#'  'top' (the default), 'bottom', 'left', 'right', or 'auto'.
-#' @keywords internal
-with_tooltip <- function(tag, title, placement = "top") {
-  checkmate::assert_class(tag, "shiny.tag")
-  checkmate::assert(
-    checkmate::check_string(placement),
-    checkmate::check_choice(
-      placement,
-      choices = c("top", "bottom", "left", "right", "auto")
-    ),
-    combine = "and"
-  )
-
-  id <- shiny::tagGetAttribute(tag, "id")
-  tag <- shiny::tagAppendAttributes(
-    tag,
-    `data-toggle` = "tooltip",
-    title = title
-  )
-
-  tag
-}
 
 # to check the arbitrary line arguments
 validate_line_arb_arg <- function(line_arb, line_arb_color, line_arb_label) {
