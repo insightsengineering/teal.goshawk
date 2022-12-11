@@ -19,7 +19,6 @@
 [![Open Issues](https://img.shields.io/github/issues-raw/insightsengineering/teal.goshawk?color=red\&label=open%20issues)](https://github.com/insightsengineering/teal.goshawk/issues?q=is%3Aissue+is%3Aopen+sort%3Aupdated-desc)
 <!-- end badges -->
 
-
 The teal.goshawk package provides `teal` modules of the longitudinal visualization functions from the [goshawk](https://insightsengineering.github.io/goshawk/) R package.
 This enables `teal` app developers to easily create applications to explore longitudinal clinical trial data.
 
