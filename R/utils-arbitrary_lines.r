@@ -19,7 +19,21 @@ ui_arbitrary_lines <- function(id, line_arb, line_arb_label, line_arb_color, tit
   ns <- NS(id)
   div(
     tags$b(title),
-    textInput(ns("line_arb"), label = "Value:", value = paste(line_arb, collapse = ", ")),
+    textInput(
+      ns("line_arb"),
+      div(
+        class = "teal-tooltip",
+        tagList(
+          "Value:",
+          icon("circle-info"),
+          span(
+            class = "tooltiptext",
+            "For multiple lines, supply a comma separated list of values."
+          )
+        )
+      ),
+      value = paste(line_arb, collapse = ", ")
+    ),
     textInput(ns("line_arb_label"), label = "Label:", value = paste(line_arb_label, collapse = ", ")),
     textInput(ns("line_arb_color"), label = "Color:", value = paste(line_arb_color, collapse = ", "))
   )
@@ -74,6 +88,7 @@ srv_arbitrary_lines <- function(id) {
     })
   })
 }
+
 
 # to check the arbitrary line arguments
 validate_line_arb_arg <- function(line_arb, line_arb_color, line_arb_label) {

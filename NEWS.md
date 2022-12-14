@@ -2,6 +2,10 @@
 
 # Examples now use `scda.2022` data instead of `scda.2021`.
 
+### Enhancements
+
+* Added a tooltip to value input of `ui_arbitrary_lines` to explain how to supply multiple values.
+
 ### Breaking changes
 
 * Constraints range is calculated on the filtered data instead of the unfiltered.
