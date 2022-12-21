@@ -378,7 +378,7 @@ srv_lineplot <- function(id,
       }
     })
 
-    anl_q <- constr_anl_q(
+    anl_q_output <- constr_anl_q(
       session = session,
       input = input,
       data = data,
@@ -388,6 +388,9 @@ srv_lineplot <- function(id,
       trt_group = input$trt_group,
       min_rows = 2
     )
+
+    anl_q <- anl_q_output()$value
+
     keep_data_const_opts_updated(session, input, anl_q, "xaxis_param")
 
     yrange_slider <- toggle_slider_server("yrange_scale")

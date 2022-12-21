@@ -383,10 +383,12 @@ srv_g_spaghettiplot <- function(id,
 
   moduleServer(id, function(input, output, session) {
     # reused in all modules
-    anl_q <- constr_anl_q(
+    anl_q_output <- constr_anl_q(
       session, input, data, dataname,
       param_id = "xaxis_param", param_var = param_var, trt_group = input$trt_group, min_rows = 1
     )
+
+    anl_q <- anl_q_output()$value
 
     # update sliders for axes taking constraints into account
     yrange_slider <- toggle_slider_server("yrange_scale")
