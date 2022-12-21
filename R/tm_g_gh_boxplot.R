@@ -382,6 +382,7 @@ srv_g_boxplot <- function(id,
       session, input, data, dataname,
       param_id = "xaxis_param", param_var = param_var, trt_group = input$trt_group, min_rows = 2
     )
+
     # update sliders for axes taking constraints into account
     yrange_slider <- toggle_slider_server("yrange_scale")
     keep_range_slider_updated(
@@ -396,7 +397,32 @@ srv_g_boxplot <- function(id,
 
     horizontal_line <- srv_arbitrary_lines("hline_arb")
 
+    iv_r <- reactive({
+      iv <- shinyvalidate::InputValidator$new()
+
+      iv$add_rule("trt_group", shinyvalidate::sv_required("Please select a treatment variable"))
+      iv$add_rule("xaxis_var", shinyvalidate::sv_required("Please select an X-Axis variable"))
+      iv$add_rule("yaxis_var", shinyvalidate::sv_required("Please select a Y-Axis variable"))
+
+      iv_facet <- shinyvalidate::InputValidator$new()
+      iv_facet$condition(~ !is.null(input$facet_var))
+      iv_facet$add_rule("facet_ncol", shinyvalidate::sv_optional())
+      iv_facet$add_rule("facet_ncol", shinyvalidate::sv_integer("Number of plots per row must be a positive integer"))
+      iv_facet$add_rule(
+        "facet_ncol", shinyvalidate::sv_gt(0, message_fmt = "Number of plots per row must be a positive integer")
+      )
+      iv$add_validator(iv_facet)
+
+      iv$add_validator(horizontal_line()$iv_r())
+      iv$enable()
+      iv
+    })
+
+
     create_plot <- reactive({
+
+      teal::validate_inputs(iv_r())
+
       req(anl_q())
       # nolint start
       param <- input$xaxis_param
@@ -405,10 +431,7 @@ srv_g_boxplot <- function(id,
       facet_var <- `if`(is.null(input$facet_var), "None", input$facet_var)
       ylim <- yrange_slider$state()$value
       facet_ncol <- input$facet_ncol
-      validate(need(
-        is.na(facet_ncol) || (as.numeric(facet_ncol) > 0 && as.numeric(facet_ncol) %% 1 == 0),
-        "Number of plots per row must be a positive integer"
-      ))
+
       alpha <- input$alpha
       font_size <- input$font_size
       dot_size <- input$dot_size
@@ -422,9 +445,7 @@ srv_g_boxplot <- function(id,
       hline_vars <- input$hline_vars
       trt_group <- input$trt_group
       # nolint end
-      validate(need(input$trt_group, "Please select a treatment variable"))
-      validate(need(!is.null(xaxis), "Please select an X-Axis Variable"))
-      validate(need(!is.null(yaxis), "Please select a Y-Axis Variable"))
+
       validate_has_variable(
         anl_q()$ANL,
         yaxis,
@@ -484,6 +505,7 @@ srv_g_boxplot <- function(id,
     })
 
     create_table <- reactive({
+      req(iv_r()$is_valid())
       req(anl_q())
       param <- input$xaxis_param
       xaxis_var <- input$yaxis_var # nolint

@@ -48,44 +48,100 @@ ui_arbitrary_lines <- function(id, line_arb, line_arb_label, line_arb_color, tit
 #' @keywords internal
 srv_arbitrary_lines <- function(id) {
   moduleServer(id, function(input, output, session) {
-    reactive({
-      req(!is.null(input$line_arb), !is.null(input$line_arb_label), !is.null(input$line_arb_color))
-      line_arb <- strsplit(input$line_arb, "\\s{0,},\\s{0,}")[[1]] %>%
-        as.numeric()
-      if ((length(line_arb) == 1 && is.na(line_arb)) || length(line_arb) == 0) {
-        line_arb <- numeric(0)
-        line_arb_label <- character(0)
-        line_arb_color <- character(0)
-      } else {
-        validate(need(all(!is.na(line_arb)), "Invalid arbitrary line values"))
 
-        line_arb_label <- strsplit(input$line_arb_label, "\\s{0,},\\s{0,}")[[1]] %>%
-          trimws()
-        line_arb_color <- strsplit(input$line_arb_color, "\\s{0,},\\s{0,}")[[1]] %>%
-          trimws()
-        if (length(line_arb_label) == 0) {
-          line_arb_label <- ""
-        } else {
-          validate(
-            need(
-              length(line_arb_label) %in% c(1, length(line_arb)),
-              "Line input error: number of labels should be equal to 1 or the number of values"
-            )
-          )
-        }
-        if (length(line_arb_color) == 0 || all(line_arb_color == "")) {
-          line_arb_color <- "red"
-        } else {
-          validate(
-            need(
-              length(line_arb_color) %in% c(1, length(line_arb)),
-              "Line input error: number of colors should be equal to 1 or the number of values"
-            )
-          )
-        }
-      }
-      list(line_arb = line_arb, line_arb_label = line_arb_label, line_arb_color = line_arb_color)
+    comma_sep_to_values <- function(values, wrapper_fun = trimws, suppress_warnings = FALSE) {
+      vals <- strsplit(values, "\\s{0,},\\s{0,}")[[1]]
+      if (suppress_warnings) suppressWarnings(wrapper_fun(vals)) else wrapper_fun(vals)
+    }
+
+    iv_r <- reactive({
+      iv <- shinyvalidate::InputValidator$new()
+      iv$add_rule("line_arb", shinyvalidate::sv_optional())
+      iv$add_rule(
+        "line_arb",
+        ~ if (all(is.na(comma_sep_to_values(., as.numeric, TRUE))))
+          "Arbitrary lines values should be a comma separate list of numbers"
+      )
+      iv
     })
+
+    line_arb <- reactive({
+      req(!is.null(input$line_arb))
+      comma_sep_to_values(input$line_arb, as.numeric, TRUE)
+    })
+
+    line_arb_label <- reactive({
+      if (length(line_arb()) == 0) {
+        return(character(0))
+      }
+      val <- comma_sep_to_values(input$line_arb_label, suppress_warnings = FALSE)
+      if (length(val) == 0) {
+        val <- ""
+      }
+      val
+    })
+
+    line_arb_color <- reactive({
+      if (length(line_arb()) == 0) {
+        return(character(0))
+      }
+      val <- comma_sep_to_values(input$line_arb_color, suppress_warnings = FALSE)
+      if (length(val) == 0 || all(val == "")) {
+        val <- "red"
+      }
+      val
+    })
+
+    return(
+      reactive(
+        list(
+          iv_r = iv_r,
+          line_arb = line_arb(),
+          line_arb_color = line_arb_color(),
+          line_arb_label = line_arb_label()
+        )
+      )
+    )
+
+
+    # reactive({
+    #   req(!is.null(input$line_arb), !is.null(input$line_arb_label), !is.null(input$line_arb_color))
+    #   line_arb <- strsplit(input$line_arb, "\\s{0,},\\s{0,}")[[1]] %>%
+    #     as.numeric()
+    #   if ((length(line_arb) == 1 && is.na(line_arb)) || length(line_arb) == 0) {
+    #     line_arb <- numeric(0)
+    #     line_arb_label <- character(0)
+    #     line_arb_color <- character(0)
+    #   } else {
+    #     validate(need(all(!is.na(line_arb)), "Invalid arbitrary line values"))
+    #
+    #     line_arb_label <- strsplit(input$line_arb_label, "\\s{0,},\\s{0,}")[[1]] %>%
+    #       trimws()
+    #     line_arb_color <- strsplit(input$line_arb_color, "\\s{0,},\\s{0,}")[[1]] %>%
+    #       trimws()
+    #     if (length(line_arb_label) == 0) {
+    #       line_arb_label <- ""
+    #     } else {
+    #       validate(
+    #         need(
+    #           length(line_arb_label) %in% c(1, length(line_arb)),
+    #           "Line input error: number of labels should be equal to 1 or the number of values"
+    #         )
+    #       )
+    #     }
+    #     if (length(line_arb_color) == 0 || all(line_arb_color == "")) {
+    #       line_arb_color <- "red"
+    #     } else {
+    #       validate(
+    #         need(
+    #           length(line_arb_color) %in% c(1, length(line_arb)),
+    #           "Line input error: number of colors should be equal to 1 or the number of values"
+    #         )
+    #       )
+    #     }
+    #   }
+    #   list(line_arb = line_arb, line_arb_label = line_arb_label, line_arb_color = line_arb_color, iv_r = iv_r)
+    # })
   })
 }
 

@@ -42,6 +42,7 @@ Imports:
     methods,
     rlang,
     shinyjs,
+    shinyvalidate,
     stats,
     teal.code (>= 0.2.0),
     teal.logger (>= 0.1.1),
