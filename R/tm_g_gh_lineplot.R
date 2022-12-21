@@ -395,6 +395,22 @@ srv_lineplot <- function(id,
 
     yrange_slider <- toggle_slider_server("yrange_scale")
 
+    horizontal_line <- srv_arbitrary_lines("hline_arb")
+
+    iv_r <- reactive({
+      iv <- shinyvalidate::InputValidator$new()
+      iv$add_rule("xaxis_param", shinyvalidate::sv_required("Please select a biomarker"))
+      iv$add_rule("trt_group", shinyvalidate::sv_required("Please select a treatment variable"))
+      iv$add_rule("xaxis_var", shinyvalidate::sv_required("Please select an X-Axis variable"))
+      iv$add_rule("yaxis_var", shinyvalidate::sv_required("Please select a Y-Axis variable"))
+
+      iv$add_validator(horizontal_line()$iv_r())
+      iv$add_validator(anl_q_output()$iv_r())
+      iv$enable()
+      iv
+    })
+
+
     # update sliders for axes
     observe({
       varname <- input[["yaxis_var"]]
@@ -668,9 +684,8 @@ srv_lineplot <- function(id,
       )
     })
 
-    horizontal_line <- srv_arbitrary_lines("hline_arb")
-
     plot_q <- reactive({
+      teal::validate_inputs(iv_r())
       req(anl_q(), line_color_selected(), line_type_selected())
       # nolint start
 
@@ -683,18 +698,12 @@ srv_lineplot <- function(id,
 
       median <- ifelse(input$stat == "median", TRUE, FALSE)
       relative_height <- input$relative_height
-      validate(need(input$trt_group, "Please select a treatment variable"))
       trt_group <- input$trt_group
       color_selected <- line_color_selected()
       type_selected <- line_type_selected()
       symbol_selected <- symbol_type_selected()
       include_stat <- input$include_stat
-      # nolint end
 
-      validate(need(input$xaxis_var, "Please select an X-Axis Variable"))
-      validate(need(input$yaxis_var, "Please select a Y-Axis Variable"))
-
-      # nolint start
       param <- input$xaxis_param
       xaxis <- input$xaxis_var
       yaxis <- input$yaxis_var
