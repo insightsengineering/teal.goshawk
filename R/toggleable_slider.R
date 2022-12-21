@@ -163,6 +163,14 @@ toggle_slider_server <- function(id, is_dichotomous_slider = TRUE) {
       iv$condition(~ input$toggle %% 2 == 1)
       iv$add_rule("value_low", shinyvalidate::sv_required("A 'from' value is required"))
       iv$add_rule("value_high", shinyvalidate::sv_required("A 'to' value is required") )
+      iv$add_rule(
+        "value_high",
+        ~ if (isTRUE(input$value_low) && (.) < input$value_low) "'From' value must be lower than 'to' value"
+      )
+      iv$add_rule(
+        "value_low",
+        ~ if (isTRUE(input$value_high) && (.) > input$value_high) "'From' value must be lower than 'to' value"
+      )
       iv$enable()
       iv
     })
