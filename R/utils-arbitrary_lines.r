@@ -133,46 +133,6 @@ srv_arbitrary_lines <- function(id) {
         )
       )
     )
-
-
-    # reactive({
-    #   req(!is.null(input$line_arb), !is.null(input$line_arb_label), !is.null(input$line_arb_color))
-    #   line_arb <- strsplit(input$line_arb, "\\s{0,},\\s{0,}")[[1]] %>%
-    #     as.numeric()
-    #   if ((length(line_arb) == 1 && is.na(line_arb)) || length(line_arb) == 0) {
-    #     line_arb <- numeric(0)
-    #     line_arb_label <- character(0)
-    #     line_arb_color <- character(0)
-    #   } else {
-    #     validate(need(all(!is.na(line_arb)), "Invalid arbitrary line values"))
-    #
-    #     line_arb_label <- strsplit(input$line_arb_label, "\\s{0,},\\s{0,}")[[1]] %>%
-    #       trimws()
-    #     line_arb_color <- strsplit(input$line_arb_color, "\\s{0,},\\s{0,}")[[1]] %>%
-    #       trimws()
-    #     if (length(line_arb_label) == 0) {
-    #       line_arb_label <- ""
-    #     } else {
-    #       validate(
-    #         need(
-    #           length(line_arb_label) %in% c(1, length(line_arb)),
-    #           "Line input error: number of labels should be equal to 1 or the number of values"
-    #         )
-    #       )
-    #     }
-    #     if (length(line_arb_color) == 0 || all(line_arb_color == "")) {
-    #       line_arb_color <- "red"
-    #     } else {
-    #       validate(
-    #         need(
-    #           length(line_arb_color) %in% c(1, length(line_arb)),
-    #           "Line input error: number of colors should be equal to 1 or the number of values"
-    #         )
-    #       )
-    #     }
-    #   }
-    #   list(line_arb = line_arb, line_arb_label = line_arb_label, line_arb_color = line_arb_color, iv_r = iv_r)
-    # })
   })
 }
 

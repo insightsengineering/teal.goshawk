@@ -376,12 +376,13 @@ srv_g_boxplot <- function(id,
   checkmate::assert_class(data, "tdata")
 
   moduleServer(id, function(input, output, session) {
-
     # reused in all modules
-    anl_q <- constr_anl_q(
+    anl_q_output <- constr_anl_q(
       session, input, data, dataname,
       param_id = "xaxis_param", param_var = param_var, trt_group = input$trt_group, min_rows = 2
     )
+
+    anl_q <- anl_q_output()$value
 
     # update sliders for axes taking constraints into account
     yrange_slider <- toggle_slider_server("yrange_scale")
@@ -397,12 +398,25 @@ srv_g_boxplot <- function(id,
 
     horizontal_line <- srv_arbitrary_lines("hline_arb")
 
+    trt_group <- reactive({
+      input$trt_group
+    })
+
     iv_r <- reactive({
       iv <- shinyvalidate::InputValidator$new()
 
+      iv$add_rule("xaxis_param", shinyvalidate::sv_required("Please select a biomarker"))
       iv$add_rule("trt_group", shinyvalidate::sv_required("Please select a treatment variable"))
       iv$add_rule("xaxis_var", shinyvalidate::sv_required("Please select an X-Axis variable"))
+      iv$add_rule("xaxis_var", ~ if ((.) %in% c("ACTARM", "ARM") && isTRUE((.) != trt_group())) {
+        sprintf("You can not choose %s as x-axis variable for treatment variable %s.", (.), trt_group())
+      })
       iv$add_rule("yaxis_var", shinyvalidate::sv_required("Please select a Y-Axis variable"))
+
+      iv$add_rule("facet_var", shinyvalidate::sv_optional())
+      iv$add_rule("facet_var", ~ if ((.) %in% c("ACTARM", "ARM") && isTRUE((.) != trt_group())) {
+        sprintf("You can not choose %s as faceting variable for treatment variable %s.", (.), trt_group())
+      })
 
       iv_facet <- shinyvalidate::InputValidator$new()
       iv_facet$condition(~ !is.null(input$facet_var))
@@ -414,10 +428,10 @@ srv_g_boxplot <- function(id,
       iv$add_validator(iv_facet)
 
       iv$add_validator(horizontal_line()$iv_r())
+      iv$add_validator(anl_q_output()$iv_r())
       iv$enable()
       iv
     })
-
 
     create_plot <- reactive({
 
@@ -464,15 +478,6 @@ srv_g_boxplot <- function(id,
           sprintf("Variable %s is not available in data %s", facet_var, dataname)
         )
       }
-
-      validate(need(
-        !facet_var %in% c("ACTARM", "ARM")[!c("ACTARM", "ARM") %in% trt_group],
-        sprintf("You can not choose %s as faceting variable for treatment variable %s.", facet_var, trt_group)
-      ))
-      validate(need(
-        !xaxis %in% c("ACTARM", "ARM")[!c("ACTARM", "ARM") %in% trt_group],
-        sprintf("You can not choose %s as x-axis variable for treatment variable %s.", xaxis, trt_group)
-      ))
 
       anl_q()$qenv %>% teal.code::eval_code(
         code = bquote({
