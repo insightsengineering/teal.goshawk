@@ -345,7 +345,6 @@ srv_g_density_distribution_plot <- function(id, # nolint
     create_plot <- reactive({
       teal::validate_inputs(iv_r())
       req(anl_q())
-      validate(need(input$xaxis_var, "Please select an X-Axis Variable"))
 
       # nolint start
       param <- input$xaxis_param
@@ -358,16 +357,13 @@ srv_g_density_distribution_plot <- function(id, # nolint
       hline_arb_label <- horizontal_line()$line_arb_label
       hline_arb_color <- horizontal_line()$line_arb_color
       facet_ncol <- input$facet_ncol
-      validate(need(
-        is.na(facet_ncol) || (as.numeric(facet_ncol) > 0 && as.numeric(facet_ncol) %% 1 == 0),
-        "Number of plots per row must be a positive integer"
-      ))
+
       comb_line <- input$comb_line
       rug_plot <- input$rug_plot
       rotate_xlab <- input$rotate_xlab
       trt_group <- input$trt_group
       # nolint end
-      validate(need(input$trt_group, "Please select a treatment variable"))
+
 
       teal.code::eval_code(
         object = anl_q()$qenv,
@@ -396,14 +392,12 @@ srv_g_density_distribution_plot <- function(id, # nolint
     })
 
     create_table <- reactive({
+      req(iv_r()$is_valid())
       req(anl_q())
       param <- input$xaxis_param
       xaxis_var <- input$xaxis_var
       font_size <- input$font_size
       trt_group <- input$trt_group
-
-      validate(need(xaxis_var, "Please select an X-Axis Variable"))
-      validate(need(trt_group, "Please select a treatment variable"))
 
       teal.code::eval_code(
         object = anl_q()$qenv,
