@@ -4,6 +4,7 @@
 
 ### Enhancements
 
+* Updated encodings input checks to use `shinyvalidate::InputValidator` instead of `shiny::validate` for better UI experience.
 * Added a tooltip to value input of `ui_arbitrary_lines` to explain how to supply multiple values.
 
 ### Breaking changes

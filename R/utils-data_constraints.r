@@ -25,7 +25,7 @@ keep_data_const_opts_updated <- function(session, input, data, id_param_var) {
   choices <- reactiveVal()
   observeEvent(data(), {
     paramname <- input[[id_param_var]]
-    stopifnot(length(paramname) == 1)
+    req(length(paramname) == 1)
 
     data_filtered <- data()$ANL %>% dplyr::filter(.data$PARAMCD == paramname)
     choices(c("None" = "NONE", "Screening" = "BASE2", "Baseline" = "BASE")[
@@ -165,7 +165,27 @@ constr_anl_q <- function(session, input, data, dataname, param_id, param_var, tr
 # constraint var means that `param_id.constraint_var` is constrained to the filtered range (or NA),
 # e.g. `ALT.BASE2` (i.e. `PARAMCD = ALT & range_filter_on(BASE2)`)
 create_anl_constraint_reactive <- function(anl_param, input, param_id, min_rows) {
-  reactive({
+
+  iv_r <- reactive({
+    iv <- shinyvalidate::InputValidator$new()
+    iv$condition(~ isTRUE(input$constraint_var != "NONE"))
+    iv$add_rule("constraint_range_min", shinyvalidate::sv_required("A contraint minimum value is required"))
+    iv$add_rule("constraint_range_max", shinyvalidate::sv_required("A contraint maximum value is required"))
+    iv$add_rule(
+      "constraint_range_min",
+      ~ if (!is.na(input$constraint_range_max) && (.) > input$constraint_range_max)
+        "constraint min needs to be smaller than max"
+    )
+    iv$add_rule(
+      "constraint_range_max",
+      ~ if (!is.na(input$constraint_range_min) && (.) < input$constraint_range_min)
+        "constraint min needs to be smaller than max"
+    )
+    iv
+  })
+
+
+  return_val <- reactive({
     private_qenv <- anl_param()$qenv
 
     # it is assumed that constraint_var is triggering constraint_range which then trigger this clause
@@ -173,11 +193,7 @@ create_anl_constraint_reactive <- function(anl_param, input, param_id, min_rows)
     constraint_range_min <- input[["constraint_range_min"]]
     constraint_range_max <- input[["constraint_range_max"]]
     param <- input[[param_id]]
-    checkmate::assert_string(param)
-
-    validate(need(constraint_range_min, "please select proper constraint minimum value"))
-    validate(need(constraint_range_max, "please select proper constraint maximum value"))
-    validate(need(constraint_range_min <= constraint_range_max, "constraint min needs to be smaller than max"))
+    req(param)
 
     # filter constraint
     if (constraint_var != "NONE") {
@@ -207,11 +223,17 @@ create_anl_constraint_reactive <- function(anl_param, input, param_id, min_rows)
           ANL <- ANL %>% dplyr::filter(USUBJID %in% filtered_usubjids) # nolint
         })
       )
-      validate_has_data(private_qenv[["ANL"]], min_rows)
+     validate_has_data(private_qenv[["ANL"]], min_rows)
     }
-
-    return(list(ANL = private_qenv[["ANL"]], qenv = private_qenv))
+    list(ANL = private_qenv[["ANL"]], qenv = private_qenv)
   })
+
+  reactive(
+    list(
+      value = return_val,
+      iv_r = iv_r
+    )
+  )
 }
 
 # for outputting the constaint in the report

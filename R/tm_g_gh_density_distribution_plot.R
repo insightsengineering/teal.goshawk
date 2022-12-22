@@ -298,10 +298,12 @@ srv_g_density_distribution_plot <- function(id, # nolint
   checkmate::assert_class(data, "tdata")
 
   moduleServer(id, function(input, output, session) {
-    anl_q <- constr_anl_q(
+    anl_q_output <- constr_anl_q(
       session, input, data, dataname,
       param_id = "xaxis_param", param_var = param_var, trt_group = input$trt_group, min_rows = 2
     )
+
+    anl_q <- anl_q_output()$value
 
     # update sliders for axes taking constraints into account
     xrange_slider <- toggle_slider_server("xrange_scale")

@@ -12,7 +12,7 @@ keep_range_slider_updated <- function(session,
     validate(need(varname, "Please select variable"))
     paramname <- input[[id_param_var]]
     validate(need(paramname, "Please select variable"))
-    stopifnot(length(paramname) == 1)
+    req(length(paramname) == 1)
 
     # we need id_param_var (e.g. ALT) to filter down because the y-axis may have a different
     # param var and the range of id_var (e.g. BASE) values may be larger due to this
