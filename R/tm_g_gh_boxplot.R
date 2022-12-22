@@ -434,7 +434,6 @@ srv_g_boxplot <- function(id,
     })
 
     create_plot <- reactive({
-
       teal::validate_inputs(iv_r())
 
       req(anl_q())
