@@ -69,7 +69,7 @@ srv_arbitrary_lines <- function(id) {
       iv_color$add_rule("line_arb_color", shinyvalidate::sv_optional())
       iv_color$add_rule(
         "line_arb_color",
-        ~ if(!length(comma_sep_to_values(.)) %in% c(1, length(line_arb())))
+        ~ if (!length(comma_sep_to_values(.)) %in% c(1, length(line_arb())))
           sprintf(
             "Line input error: number of colors should be equal to 1, the number of lines (%d) or left blank for 'red'",
             length(line_arb())
@@ -80,13 +80,13 @@ srv_arbitrary_lines <- function(id) {
       iv$add_validator(iv_color)
 
 
-      iv_label<- shinyvalidate::InputValidator$new()
+      iv_label <- shinyvalidate::InputValidator$new()
       iv_label$condition(~ length(line_arb()) != 0)
 
       iv_label$add_rule("line_arb_label", shinyvalidate::sv_optional())
       iv_label$add_rule(
         "line_arb_label",
-        ~ if(!length(comma_sep_to_values(.)) %in% c(1, length(line_arb())))
+        ~ if (!length(comma_sep_to_values(.)) %in% c(1, length(line_arb())))
           sprintf(
             "Line input error: number of labels should be equal to 1, the number of lines (%d) or left blank",
             length(line_arb())
