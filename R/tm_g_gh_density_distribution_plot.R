@@ -322,7 +322,28 @@ srv_g_density_distribution_plot <- function(id, # nolint
 
     horizontal_line <- srv_arbitrary_lines("hline_arb")
 
+    iv_r <- reactive({
+      iv <- shinyvalidate::InputValidator$new()
+
+      iv$add_rule("xaxis_param", shinyvalidate::sv_required("Please select a biomarker"))
+      iv$add_rule("trt_group", shinyvalidate::sv_required("Please select a treatment variable"))
+      iv$add_rule("xaxis_var", shinyvalidate::sv_required("Please select an X-Axis variable"))
+
+      iv$add_rule("facet_ncol", shinyvalidate::sv_required("Number of plots per row must be a positive integer"))
+      iv$add_rule("facet_ncol", shinyvalidate::sv_integer("Number of plots per row must be a positive integer"))
+      iv$add_rule(
+        "facet_ncol", shinyvalidate::sv_gt(0, message_fmt = "Number of plots per row must be a positive integer")
+      )
+
+      iv$add_validator(horizontal_line()$iv_r())
+      iv$add_validator(anl_q_output()$iv_r())
+      iv$enable()
+      iv
+    })
+
+
     create_plot <- reactive({
+      teal::validate_inputs(iv_r())
       req(anl_q())
       validate(need(input$xaxis_var, "Please select an X-Axis Variable"))
 
