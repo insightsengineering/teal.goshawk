@@ -172,7 +172,7 @@ toggle_slider_server <- function(id, is_dichotomous_slider = TRUE) {
       iv$add_rule(
         "value_low",
         ~ if (!is.na(input$value_high) && (.) > input$value_high) {
-          "'From' value should be lower than 'to' value - axis has been flipped"
+          "'To' value should be greater than 'from' value - axis has been flipped"
         }
       )
       iv$enable()

@@ -18,3 +18,16 @@ include_css_files <- function(pattern = "*") {
   }
   return(shiny::singleton(shiny::tags$head(lapply(css_files, shiny::includeCSS))))
 }
+
+plots_per_row_validate_rules <- function(required = TRUE) {
+  msg <- "Number of plots per row must be a positive integer"
+  shinyvalidate::compose_rules(
+    if (required) {
+      shinyvalidate::sv_required(msg)
+    } else {
+      shinyvalidate::sv_optional()
+    },
+    shinyvalidate::sv_integer(msg),
+    shinyvalidate::sv_gt(0, message_fmt = msg)
+  )
+}

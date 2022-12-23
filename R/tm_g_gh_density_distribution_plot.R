@@ -328,12 +328,7 @@ srv_g_density_distribution_plot <- function(id, # nolint
       iv$add_rule("xaxis_param", shinyvalidate::sv_required("Please select a biomarker"))
       iv$add_rule("trt_group", shinyvalidate::sv_required("Please select a treatment variable"))
       iv$add_rule("xaxis_var", shinyvalidate::sv_required("Please select an X-Axis variable"))
-
-      iv$add_rule("facet_ncol", shinyvalidate::sv_required("Number of plots per row must be a positive integer"))
-      iv$add_rule("facet_ncol", shinyvalidate::sv_integer("Number of plots per row must be a positive integer"))
-      iv$add_rule(
-        "facet_ncol", shinyvalidate::sv_gt(0, message_fmt = "Number of plots per row must be a positive integer")
-      )
+      iv$add_rule("facet_ncol", plots_per_row_validate_rules())
 
       iv$add_validator(horizontal_line()$iv_r())
       iv$add_validator(anl_q_output()$iv_r())

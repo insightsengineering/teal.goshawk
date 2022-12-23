@@ -420,11 +420,7 @@ srv_g_boxplot <- function(id,
 
       iv_facet <- shinyvalidate::InputValidator$new()
       iv_facet$condition(~ !is.null(input$facet_var))
-      iv_facet$add_rule("facet_ncol", shinyvalidate::sv_optional())
-      iv_facet$add_rule("facet_ncol", shinyvalidate::sv_integer("Number of plots per row must be a positive integer"))
-      iv_facet$add_rule(
-        "facet_ncol", shinyvalidate::sv_gt(0, message_fmt = "Number of plots per row must be a positive integer")
-      )
+      iv_facet$add_rule("facet_ncol", plots_per_row_validate_rules(required = FALSE))
       iv$add_validator(iv_facet)
 
       iv$add_validator(horizontal_line()$iv_r())

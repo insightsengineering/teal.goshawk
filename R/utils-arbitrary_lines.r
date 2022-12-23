@@ -59,8 +59,8 @@ srv_arbitrary_lines <- function(id) {
       iv$add_rule("line_arb", shinyvalidate::sv_optional())
       iv$add_rule(
         "line_arb",
-        ~ if (all(is.na(comma_sep_to_values(., as.numeric))))
-          "Arbitrary lines values should be a comma separate list of numbers"
+        ~ if (any(is.na(comma_sep_to_values(., as.numeric))))
+          "Arbitrary lines values should be a comma separated list of numbers"
       )
 
       iv_color <- shinyvalidate::InputValidator$new()

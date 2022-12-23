@@ -174,12 +174,12 @@ create_anl_constraint_reactive <- function(anl_param, input, param_id, min_rows)
     iv$add_rule(
       "constraint_range_min",
       ~ if (!is.na(input$constraint_range_max) && (.) > input$constraint_range_max)
-        "constraint min needs to be smaller than max"
+        "constraint min needs to be less than max"
     )
     iv$add_rule(
       "constraint_range_max",
       ~ if (!is.na(input$constraint_range_min) && (.) < input$constraint_range_min)
-        "constraint min needs to be smaller than max"
+        "constraint min needs to be less than max"
     )
     iv
   })
