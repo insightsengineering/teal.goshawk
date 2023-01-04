@@ -157,20 +157,31 @@ toggle_slider_server <- function(id, is_dichotomous_slider = TRUE) {
     # additionally, the module returns the cur_state, so it can be controlled from that end as well
     cur_state <- reactiveVal(NULL) # model, can contain min, max, value etc.
 
+
+    iv_r <- reactive({
+      iv <- shinyvalidate::InputValidator$new()
+      iv$condition(~ input$toggle %% 2 == 1)
+      iv$add_rule("value_low", shinyvalidate::sv_required("A 'from' value is required - a default is used instead"))
+      iv$add_rule("value_high", shinyvalidate::sv_required("A 'to' value is required - a default is used instead)"))
+      iv$add_rule(
+        "value_high",
+        ~ if (!is.na(input$value_low) && (.) < input$value_low) {
+          "'From' value should be lower than 'to' value - axis has been flipped"
+        }
+      )
+      iv$add_rule(
+        "value_low",
+        ~ if (!is.na(input$value_high) && (.) > input$value_high) {
+          "'To' value should be greater than 'from' value - axis has been flipped"
+        }
+      )
+      iv$enable()
+      iv
+    })
+
     set_state <- function(new_state) {
       stopifnot(all(names(new_state) %in% c("min", "max", "step", "value")))
-      if (all(c("min", "max") %in% names(new_state))) {
-        validate(need(
-          (new_state$min <= new_state$max),
-          "Minimum value needs to be smaller than or equal to maximum value."
-        ))
-      }
-      if (!is.null(new_state$value) && (length(new_state$value) == 2)) {
-        validate(need(
-          new_state$value[[1]] <= new_state$value[[2]],
-          "Minimum value needs to be smaller than or equal to maximum value."
-        ))
-      }
+      iv_r()$is_valid()
       # when value does not fall into min, max range, it will automatically get truncated
 
       # only update provided components, do not discasrd others
@@ -201,7 +212,6 @@ toggle_slider_server <- function(id, is_dichotomous_slider = TRUE) {
         set_state(list(value = input$value))
       }
     )
-
 
     update_widgets <- function() {
       state_slider <- cur_state()

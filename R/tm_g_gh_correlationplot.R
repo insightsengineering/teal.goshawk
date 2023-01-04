@@ -444,14 +444,27 @@ srv_g_correlationplot <- function(id,
   checkmate::assert_class(data, "tdata")
 
   moduleServer(id, function(input, output, session) {
+    iv_r <- reactive({
+      iv <- shinyvalidate::InputValidator$new()
+
+      iv$add_rule("xaxis_param", shinyvalidate::sv_required("Please select an X-Axis biomarker"))
+      iv$add_rule("yaxis_param", shinyvalidate::sv_required("Please select a Y-Axis biomarker"))
+      iv$add_rule("trt_group", shinyvalidate::sv_required("Please select a treatment variable"))
+      iv$add_rule("xaxis_var", shinyvalidate::sv_required("Please select an X-Axis variable"))
+      iv$add_rule("yaxis_var", shinyvalidate::sv_required("Please select a Y-Axis variable"))
+      iv$add_rule("facet_ncol", plots_per_row_validate_rules())
+
+      iv$add_validator(anl_constraint_output()$iv_r())
+      iv$add_validator(horizontal_line()$iv_r())
+      iv$add_validator(vertical_line()$iv_r())
+      iv$enable()
+      iv
+    })
+
+
+
     # filter selected biomarkers
     anl_param <- reactive({
-      validate(need(input$trt_group, "Please select a Treatment Variable"))
-      validate(need(input$xaxis_param, "Please select an X-Axis Biomarker"))
-      validate(need(input$xaxis_var, "Please select an X-Axis Variable"))
-      validate(need(input$yaxis_param, "Please select a Y-Axis Biomarker"))
-      validate(need(input$yaxis_var, "Please select a Y-Axis Variable"))
-
       dataset_var <- dataname
       ANL <- data[[dataname]]() # nolint
       validate_has_data(ANL, 1)
@@ -555,10 +568,10 @@ srv_g_correlationplot <- function(id,
 
     # constraints
     observe({
-      validate(need(input$xaxis_param, "Please select an X-Axis Biomarker"))
+      req(input$xaxis_param)
 
       constraint_var <- input$constraint_var
-      validate(need(constraint_var, "select a constraint variable"))
+      req(constraint_var)
 
       # note that filtered is false thus we cannot use anl_param()$ANL
       ANL <- data[[dataname]]() # nolint
@@ -623,7 +636,8 @@ srv_g_correlationplot <- function(id,
       }
     })
 
-    anl_constraint <- create_anl_constraint_reactive(anl_param, input, param_id = "xaxis_param", min_rows = 1)
+    anl_constraint_output <- create_anl_constraint_reactive(anl_param, input, param_id = "xaxis_param", min_rows = 1)
+    anl_constraint <- anl_constraint_output()$value
 
     # update sliders for axes taking constraints into account
     xrange_slider <- toggle_slider_server("xrange_scale")
@@ -640,6 +654,8 @@ srv_g_correlationplot <- function(id,
 
     # transpose data to plot
     plot_data_transpose <- reactive({
+      teal::validate_inputs(iv_r())
+
       req(anl_constraint())
       ANL <- anl_constraint()$ANL # nolint
       trt_group <- input$trt_group
@@ -893,6 +909,7 @@ srv_g_correlationplot <- function(id,
 
     # highlight plot area
     output$brush_data <- DT::renderDataTable({
+      req(iv_r()$is_valid())
       plot_brush <- plot_data$brush()
 
       ANL_TRANSPOSED <- isolate(plot_data_transpose()$ANL_TRANSPOSED) # nolint

@@ -298,10 +298,12 @@ srv_g_density_distribution_plot <- function(id, # nolint
   checkmate::assert_class(data, "tdata")
 
   moduleServer(id, function(input, output, session) {
-    anl_q <- constr_anl_q(
+    anl_q_output <- constr_anl_q(
       session, input, data, dataname,
       param_id = "xaxis_param", param_var = param_var, trt_group = input$trt_group, min_rows = 2
     )
+
+    anl_q <- anl_q_output()$value
 
     # update sliders for axes taking constraints into account
     xrange_slider <- toggle_slider_server("xrange_scale")
@@ -320,9 +322,24 @@ srv_g_density_distribution_plot <- function(id, # nolint
 
     horizontal_line <- srv_arbitrary_lines("hline_arb")
 
+    iv_r <- reactive({
+      iv <- shinyvalidate::InputValidator$new()
+
+      iv$add_rule("xaxis_param", shinyvalidate::sv_required("Please select a biomarker"))
+      iv$add_rule("trt_group", shinyvalidate::sv_required("Please select a treatment variable"))
+      iv$add_rule("xaxis_var", shinyvalidate::sv_required("Please select an X-Axis variable"))
+      iv$add_rule("facet_ncol", plots_per_row_validate_rules())
+
+      iv$add_validator(horizontal_line()$iv_r())
+      iv$add_validator(anl_q_output()$iv_r())
+      iv$enable()
+      iv
+    })
+
+
     create_plot <- reactive({
+      teal::validate_inputs(iv_r())
       req(anl_q())
-      validate(need(input$xaxis_var, "Please select an X-Axis Variable"))
 
       # nolint start
       param <- input$xaxis_param
@@ -335,16 +352,13 @@ srv_g_density_distribution_plot <- function(id, # nolint
       hline_arb_label <- horizontal_line()$line_arb_label
       hline_arb_color <- horizontal_line()$line_arb_color
       facet_ncol <- input$facet_ncol
-      validate(need(
-        is.na(facet_ncol) || (as.numeric(facet_ncol) > 0 && as.numeric(facet_ncol) %% 1 == 0),
-        "Number of plots per row must be a positive integer"
-      ))
+
       comb_line <- input$comb_line
       rug_plot <- input$rug_plot
       rotate_xlab <- input$rotate_xlab
       trt_group <- input$trt_group
       # nolint end
-      validate(need(input$trt_group, "Please select a treatment variable"))
+
 
       teal.code::eval_code(
         object = anl_q()$qenv,
@@ -373,14 +387,12 @@ srv_g_density_distribution_plot <- function(id, # nolint
     })
 
     create_table <- reactive({
+      req(iv_r()$is_valid())
       req(anl_q())
       param <- input$xaxis_param
       xaxis_var <- input$xaxis_var
       font_size <- input$font_size
       trt_group <- input$trt_group
-
-      validate(need(xaxis_var, "Please select an X-Axis Variable"))
-      validate(need(trt_group, "Please select a treatment variable"))
 
       teal.code::eval_code(
         object = anl_q()$qenv,
