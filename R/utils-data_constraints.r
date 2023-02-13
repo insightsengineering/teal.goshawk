@@ -70,7 +70,7 @@ constr_anl_q <- function(session, input, data, dataname, param_id, param_var, tr
     validate_has_variable(ANL, trt_group)
 
     # analysis
-    private_qenv <- teal.code::new_qenv(tdata2env(data), code = get_code(data)) %>%
+    private_qenv <- teal.code::new_qenv(tdata2env(data), code = teal.data::get_code(data)) %>%
       teal.code::eval_code(
         substitute(ANL <- dataname, list(dataname = as.name(dataname))) # nolint
       ) %>%
