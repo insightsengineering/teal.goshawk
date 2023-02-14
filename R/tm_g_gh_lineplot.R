@@ -717,7 +717,7 @@ srv_lineplot <- function(id,
 
       validate(
         need(
-          nrow(anl_q()$ANL[complete.cases(anl_q()$ANL[, c(yaxis, xaxis)]), ]) >= 2,
+          nrow(anl_q()$ANL[stats::complete.cases(anl_q()$ANL[, c(yaxis, xaxis)]), ]) >= 2,
           "Number of complete rows on x and y axis variables is less than 2"
         )
       )
@@ -751,7 +751,7 @@ srv_lineplot <- function(id,
         object = private_qenv,
         code = bquote({
           p <- goshawk::g_lineplot(
-            data = ANL[complete.cases(ANL[, c(.(yaxis), .(xaxis))]), ],
+            data = ANL[stats::complete.cases(ANL[, c(.(yaxis), .(xaxis))]), ],
             biomarker_var = .(param_var),
             biomarker_var_label = .(param_var_label),
             biomarker = .(param),
