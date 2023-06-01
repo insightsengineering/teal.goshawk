@@ -1,12 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<coverage line-rate="0" branch-rate="0" lines-covered="0" lines-valid="2812" branches-covered="0" branches-valid="0" complexity="0" version="3.6.1" timestamp="2023-02-14 11:14:11">
-  <sources/>
+<!DOCTYPE coverage SYSTEM "https://raw.githubusercontent.com/cobertura/cobertura/master/cobertura/src/site/htdocs/xml/coverage-04.dtd">
+<coverage line-rate="0" branch-rate="0" lines-covered="0" lines-valid="2812" branches-covered="0" branches-valid="0" complexity="0" version="3.6.2" timestamp="2023-06-01 17:37:09">
+  <sources>
+    <source>/__w/teal.goshawk/teal.goshawk/teal.goshawk</source>
+  </sources>
   <packages>
     <package name="teal.goshawk" line-rate="0" branch-rate="0" complexity="0">
       <classes>
         <class name="tm_g_gh_boxplot.R" filename="R/tm_g_gh_boxplot.R" line-rate="0" branch-rate="0" complexity="0">
           <methods>
-            <method name="tm_g_gh_boxplot" signature="" line-rate="0" branch-rate="0">
+            <method name="tm_g_gh_boxplot" signature="" line-rate="0" branch-rate="0" complexity="0">
               <lines>
                 <line number="218" hits="0" branch="false"/>
                 <line number="219" hits="0" branch="false"/>
@@ -54,7 +57,7 @@
                 <line number="263" hits="0" branch="false"/>
               </lines>
             </method>
-            <method name="ui_g_boxplot" signature="" line-rate="0" branch-rate="0">
+            <method name="ui_g_boxplot" signature="" line-rate="0" branch-rate="0" complexity="0">
               <lines>
                 <line number="267" hits="0" branch="false"/>
                 <line number="268" hits="0" branch="false"/>
@@ -145,7 +148,7 @@
                 <line number="356" hits="0" branch="false"/>
               </lines>
             </method>
-            <method name="srv_g_boxplot" signature="" line-rate="0" branch-rate="0">
+            <method name="srv_g_boxplot" signature="" line-rate="0" branch-rate="0" complexity="0">
               <lines>
                 <line number="374" hits="0" branch="false"/>
                 <line number="375" hits="0" branch="false"/>
@@ -722,7 +725,7 @@
         </class>
         <class name="tm_g_gh_correlationplot.R" filename="R/tm_g_gh_correlationplot.R" line-rate="0" branch-rate="0" complexity="0">
           <methods>
-            <method name="tm_g_gh_correlationplot" signature="" line-rate="0" branch-rate="0">
+            <method name="tm_g_gh_correlationplot" signature="" line-rate="0" branch-rate="0" complexity="0">
               <lines>
                 <line number="285" hits="0" branch="false"/>
                 <line number="286" hits="0" branch="false"/>
@@ -769,7 +772,7 @@
                 <line number="329" hits="0" branch="false"/>
               </lines>
             </method>
-            <method name="ui_g_correlationplot" signature="" line-rate="0" branch-rate="0">
+            <method name="ui_g_correlationplot" signature="" line-rate="0" branch-rate="0" complexity="0">
               <lines>
                 <line number="333" hits="0" branch="false"/>
                 <line number="334" hits="0" branch="false"/>
@@ -861,7 +864,7 @@
                 <line number="423" hits="0" branch="false"/>
               </lines>
             </method>
-            <method name="srv_g_correlationplot" signature="" line-rate="0" branch-rate="0">
+            <method name="srv_g_correlationplot" signature="" line-rate="0" branch-rate="0" complexity="0">
               <lines>
                 <line number="442" hits="0" branch="false"/>
                 <line number="443" hits="0" branch="false"/>
@@ -1844,7 +1847,7 @@
         </class>
         <class name="tm_g_gh_density_distribution_plot.R" filename="R/tm_g_gh_density_distribution_plot.R" line-rate="0" branch-rate="0" complexity="0">
           <methods>
-            <method name="tm_g_gh_density_distribution_plot" signature="" line-rate="0" branch-rate="0">
+            <method name="tm_g_gh_density_distribution_plot" signature="" line-rate="0" branch-rate="0" complexity="0">
               <lines>
                 <line number="163" hits="0" branch="false"/>
                 <line number="164" hits="0" branch="false"/>
@@ -1886,7 +1889,7 @@
                 <line number="202" hits="0" branch="false"/>
               </lines>
             </method>
-            <method name="ui_g_density_distribution_plot" signature="" line-rate="0" branch-rate="0">
+            <method name="ui_g_density_distribution_plot" signature="" line-rate="0" branch-rate="0" complexity="0">
               <lines>
                 <line number="206" hits="0" branch="false"/>
                 <line number="207" hits="0" branch="false"/>
@@ -1963,7 +1966,7 @@
                 <line number="281" hits="0" branch="false"/>
               </lines>
             </method>
-            <method name="srv_g_density_distribution_plot" signature="" line-rate="0" branch-rate="0">
+            <method name="srv_g_density_distribution_plot" signature="" line-rate="0" branch-rate="0" complexity="0">
               <lines>
                 <line number="296" hits="0" branch="false"/>
                 <line number="297" hits="0" branch="false"/>
@@ -2410,7 +2413,7 @@
         </class>
         <class name="tm_g_gh_lineplot.R" filename="R/tm_g_gh_lineplot.R" line-rate="0" branch-rate="0" complexity="0">
           <methods>
-            <method name="tm_g_gh_lineplot" signature="" line-rate="0" branch-rate="0">
+            <method name="tm_g_gh_lineplot" signature="" line-rate="0" branch-rate="0" complexity="0">
               <lines>
                 <line number="186" hits="0" branch="false"/>
                 <line number="187" hits="0" branch="false"/>
@@ -2458,7 +2461,7 @@
                 <line number="232" hits="0" branch="false"/>
               </lines>
             </method>
-            <method name="ui_lineplot" signature="" line-rate="0" branch-rate="0">
+            <method name="ui_lineplot" signature="" line-rate="0" branch-rate="0" complexity="0">
               <lines>
                 <line number="236" hits="0" branch="false"/>
                 <line number="237" hits="0" branch="false"/>
@@ -2562,7 +2565,7 @@
                 <line number="339" hits="0" branch="false"/>
               </lines>
             </method>
-            <method name="srv_lineplot" signature="" line-rate="0" branch-rate="0">
+            <method name="srv_lineplot" signature="" line-rate="0" branch-rate="0" complexity="0">
               <lines>
                 <line number="358" hits="0" branch="false"/>
                 <line number="359" hits="0" branch="false"/>
@@ -3546,7 +3549,7 @@
         </class>
         <class name="tm_g_gh_scatterplot.R" filename="R/tm_g_gh_scatterplot.R" line-rate="0" branch-rate="0" complexity="0">
           <methods>
-            <method name="tm_g_gh_scatterplot" signature="" line-rate="0" branch-rate="0">
+            <method name="tm_g_gh_scatterplot" signature="" line-rate="0" branch-rate="0" complexity="0">
               <lines>
                 <line number="169" hits="0" branch="false"/>
                 <line number="170" hits="0" branch="false"/>
@@ -3588,7 +3591,7 @@
                 <line number="209" hits="0" branch="false"/>
               </lines>
             </method>
-            <method name="ui_g_scatterplot" signature="" line-rate="0" branch-rate="0">
+            <method name="ui_g_scatterplot" signature="" line-rate="0" branch-rate="0" complexity="0">
               <lines>
                 <line number="213" hits="0" branch="false"/>
                 <line number="214" hits="0" branch="false"/>
@@ -3655,7 +3658,7 @@
                 <line number="279" hits="0" branch="false"/>
               </lines>
             </method>
-            <method name="srv_g_scatterplot" signature="" line-rate="0" branch-rate="0">
+            <method name="srv_g_scatterplot" signature="" line-rate="0" branch-rate="0" complexity="0">
               <lines>
                 <line number="294" hits="0" branch="false"/>
                 <line number="295" hits="0" branch="false"/>
@@ -4034,7 +4037,7 @@
         </class>
         <class name="tm_g_gh_spaghettiplot.R" filename="R/tm_g_gh_spaghettiplot.R" line-rate="0" branch-rate="0" complexity="0">
           <methods>
-            <method name="tm_g_gh_spaghettiplot" signature="" line-rate="0" branch-rate="0">
+            <method name="tm_g_gh_spaghettiplot" signature="" line-rate="0" branch-rate="0" complexity="0">
               <lines>
                 <line number="228" hits="0" branch="false"/>
                 <line number="229" hits="0" branch="false"/>
@@ -4077,7 +4080,7 @@
                 <line number="268" hits="0" branch="false"/>
               </lines>
             </method>
-            <method name="g_ui_spaghettiplot" signature="" line-rate="0" branch-rate="0">
+            <method name="g_ui_spaghettiplot" signature="" line-rate="0" branch-rate="0" complexity="0">
               <lines>
                 <line number="272" hits="0" branch="false"/>
                 <line number="273" hits="0" branch="false"/>
@@ -4162,7 +4165,7 @@
                 <line number="356" hits="0" branch="false"/>
               </lines>
             </method>
-            <method name="srv_g_spaghettiplot" signature="" line-rate="0" branch-rate="0">
+            <method name="srv_g_spaghettiplot" signature="" line-rate="0" branch-rate="0" complexity="0">
               <lines>
                 <line number="380" hits="0" branch="false"/>
                 <line number="381" hits="0" branch="false"/>
@@ -4620,7 +4623,7 @@
         </class>
         <class name="toggleable_slider.R" filename="R/toggleable_slider.R" line-rate="0" branch-rate="0" complexity="0">
           <methods>
-            <method name="toggle_slider_ui" signature="" line-rate="0" branch-rate="0">
+            <method name="toggle_slider_ui" signature="" line-rate="0" branch-rate="0" complexity="0">
               <lines>
                 <line number="82" hits="0" branch="false"/>
                 <line number="83" hits="0" branch="false"/>
@@ -4690,7 +4693,7 @@
                 <line number="149" hits="0" branch="false"/>
               </lines>
             </method>
-            <method name="toggle_slider_server" signature="" line-rate="0" branch-rate="0">
+            <method name="toggle_slider_server" signature="" line-rate="0" branch-rate="0" complexity="0">
               <lines>
                 <line number="154" hits="0" branch="false"/>
                 <line number="155" hits="0" branch="false"/>
@@ -4942,7 +4945,7 @@
         </class>
         <class name="utils-arbitrary_lines.r" filename="R/utils-arbitrary_lines.r" line-rate="0" branch-rate="0" complexity="0">
           <methods>
-            <method name="ui_arbitrary_lines" signature="" line-rate="0" branch-rate="0">
+            <method name="ui_arbitrary_lines" signature="" line-rate="0" branch-rate="0" complexity="0">
               <lines>
                 <line number="19" hits="0" branch="false"/>
                 <line number="20" hits="0" branch="false"/>
@@ -4967,7 +4970,7 @@
                 <line number="39" hits="0" branch="false"/>
               </lines>
             </method>
-            <method name="srv_arbitrary_lines" signature="" line-rate="0" branch-rate="0">
+            <method name="srv_arbitrary_lines" signature="" line-rate="0" branch-rate="0" complexity="0">
               <lines>
                 <line number="50" hits="0" branch="false"/>
                 <line number="52" hits="0" branch="false"/>
@@ -5047,7 +5050,7 @@
                 <line number="136" hits="0" branch="false"/>
               </lines>
             </method>
-            <method name="check_color" signature="" line-rate="0" branch-rate="0">
+            <method name="check_color" signature="" line-rate="0" branch-rate="0" complexity="0">
               <lines>
                 <line number="140" hits="0" branch="false"/>
                 <line number="141" hits="0" branch="false"/>
@@ -5055,7 +5058,7 @@
                 <line number="143" hits="0" branch="false"/>
               </lines>
             </method>
-            <method name="validate_line_arb_arg" signature="" line-rate="0" branch-rate="0">
+            <method name="validate_line_arb_arg" signature="" line-rate="0" branch-rate="0" complexity="0">
               <lines>
                 <line number="148" hits="0" branch="false"/>
                 <line number="149" hits="0" branch="false"/>
@@ -5069,7 +5072,7 @@
                 <line number="157" hits="0" branch="false"/>
               </lines>
             </method>
-            <method name="validate_line_vars_arg" signature="" line-rate="0" branch-rate="0">
+            <method name="validate_line_vars_arg" signature="" line-rate="0" branch-rate="0" complexity="0">
               <lines>
                 <line number="163" hits="0" branch="false"/>
                 <line number="164" hits="0" branch="false"/>
@@ -5210,7 +5213,7 @@
         </class>
         <class name="utils-data_constraints.r" filename="R/utils-data_constraints.r" line-rate="0" branch-rate="0" complexity="0">
           <methods>
-            <method name="templ_ui_constraint" signature="" line-rate="0" branch-rate="0">
+            <method name="templ_ui_constraint" signature="" line-rate="0" branch-rate="0" complexity="0">
               <lines>
                 <line number="2" hits="0" branch="false"/>
                 <line number="3" hits="0" branch="false"/>
@@ -5233,7 +5236,7 @@
                 <line number="20" hits="0" branch="false"/>
               </lines>
             </method>
-            <method name="keep_data_const_opts_updated" signature="" line-rate="0" branch-rate="0">
+            <method name="keep_data_const_opts_updated" signature="" line-rate="0" branch-rate="0" complexity="0">
               <lines>
                 <line number="25" hits="0" branch="false"/>
                 <line number="26" hits="0" branch="false"/>
@@ -5254,7 +5257,7 @@
                 <line number="43" hits="0" branch="false"/>
               </lines>
             </method>
-            <method name="constr_anl_q" signature="" line-rate="0" branch-rate="0">
+            <method name="constr_anl_q" signature="" line-rate="0" branch-rate="0" complexity="0">
               <lines>
                 <line number="52" hits="0" branch="false"/>
                 <line number="53" hits="0" branch="false"/>
@@ -5340,7 +5343,7 @@
                 <line number="159" hits="0" branch="false"/>
               </lines>
             </method>
-            <method name="create_anl_constraint_reactive" signature="" line-rate="0" branch-rate="0">
+            <method name="create_anl_constraint_reactive" signature="" line-rate="0" branch-rate="0" complexity="0">
               <lines>
                 <line number="169" hits="0" branch="false"/>
                 <line number="170" hits="0" branch="false"/>
@@ -5401,7 +5404,7 @@
                 <line number="236" hits="0" branch="false"/>
               </lines>
             </method>
-            <method name="formatted_data_constraint" signature="" line-rate="0" branch-rate="0">
+            <method name="formatted_data_constraint" signature="" line-rate="0" branch-rate="0" complexity="0">
               <lines>
                 <line number="241" hits="0" branch="false"/>
                 <line number="242" hits="0" branch="false"/>
@@ -5414,7 +5417,7 @@
                 <line number="250" hits="0" branch="false"/>
               </lines>
             </method>
-            <method name="update_min_max" signature="" line-rate="0" branch-rate="0">
+            <method name="update_min_max" signature="" line-rate="0" branch-rate="0" complexity="0">
               <lines>
                 <line number="254" hits="0" branch="false"/>
                 <line number="255" hits="0" branch="false"/>
@@ -5612,7 +5615,7 @@
         </class>
         <class name="utils-keep_range_slider_updated.r" filename="R/utils-keep_range_slider_updated.r" line-rate="0" branch-rate="0" complexity="0">
           <methods>
-            <method name="keep_range_slider_updated" signature="" line-rate="0" branch-rate="0">
+            <method name="keep_range_slider_updated" signature="" line-rate="0" branch-rate="0" complexity="0">
               <lines>
                 <line number="8" hits="0" branch="false"/>
                 <line number="10" hits="0" branch="false"/>
@@ -5668,7 +5671,7 @@
         </class>
         <class name="utils-maptrt.r" filename="R/utils-maptrt.r" line-rate="0" branch-rate="0" complexity="0">
           <methods>
-            <method name="maptrt" signature="" line-rate="0" branch-rate="0">
+            <method name="maptrt" signature="" line-rate="0" branch-rate="0" complexity="0">
               <lines>
                 <line number="26" hits="0" branch="false"/>
                 <line number="29" hits="0" branch="false"/>
@@ -5696,7 +5699,7 @@
         </class>
         <class name="utils-templ_ui.r" filename="R/utils-templ_ui.r" line-rate="0" branch-rate="0" complexity="0">
           <methods>
-            <method name="templ_ui_output_datatable" signature="" line-rate="0" branch-rate="0">
+            <method name="templ_ui_output_datatable" signature="" line-rate="0" branch-rate="0" complexity="0">
               <lines>
                 <line number="2" hits="0" branch="false"/>
                 <line number="3" hits="0" branch="false"/>
@@ -5706,12 +5709,12 @@
                 <line number="7" hits="0" branch="false"/>
               </lines>
             </method>
-            <method name="templ_ui_dataname" signature="" line-rate="0" branch-rate="0">
+            <method name="templ_ui_dataname" signature="" line-rate="0" branch-rate="0" complexity="0">
               <lines>
                 <line number="11" hits="0" branch="false"/>
               </lines>
             </method>
-            <method name="templ_ui_params_vars" signature="" line-rate="0" branch-rate="0">
+            <method name="templ_ui_params_vars" signature="" line-rate="0" branch-rate="0" complexity="0">
               <lines>
                 <line number="31" hits="0" branch="false"/>
                 <line number="33" hits="0" branch="false"/>
@@ -5810,7 +5813,7 @@
         </class>
         <class name="utils.R" filename="R/utils.R" line-rate="0" branch-rate="0" complexity="0">
           <methods>
-            <method name="include_css_files" signature="" line-rate="0" branch-rate="0">
+            <method name="include_css_files" signature="" line-rate="0" branch-rate="0" complexity="0">
               <lines>
                 <line number="12" hits="0" branch="false"/>
                 <line number="13" hits="0" branch="false"/>
@@ -5821,7 +5824,7 @@
                 <line number="19" hits="0" branch="false"/>
               </lines>
             </method>
-            <method name="plots_per_row_validate_rules" signature="" line-rate="0" branch-rate="0">
+            <method name="plots_per_row_validate_rules" signature="" line-rate="0" branch-rate="0" complexity="0">
               <lines>
                 <line number="23" hits="0" branch="false"/>
                 <line number="24" hits="0" branch="false"/>
@@ -5858,7 +5861,7 @@
         </class>
         <class name="zzz.R" filename="R/zzz.R" line-rate="0" branch-rate="0" complexity="0">
           <methods>
-            <method name=".onLoad" signature="" line-rate="0" branch-rate="0">
+            <method name=".onLoad" signature="" line-rate="0" branch-rate="0" complexity="0">
               <lines>
                 <line number="2" hits="0" branch="false"/>
               </lines>
