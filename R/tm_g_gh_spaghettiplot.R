@@ -5,34 +5,34 @@
 #'
 #' @param label menu item label of the module in the teal app.
 #' @param dataname analysis data passed to the data argument of teal init.
-#' E.g. ADaM structured laboratory data frame ADLB.
-#' @param param_var name of variable containing biomarker codes e.g. PARAMCD.
+#' E.g. `ADaM` structured laboratory data frame `ADLB`.
+#' @param param_var name of variable containing biomarker codes e.g. `PARAMCD`.
 #' @param param biomarker selected.
 #' @param param_var_label single name of variable in analysis data
 #' that includes parameter labels.
 #' @param idvar name of unique subject id variable.
 #' @param xaxis_var single name of variable in analysis data
 #' that is used as x-axis in the plot for the respective goshawk function.
-#' @param xaxis_var_level vector that can be used to define the factor level of xaxis_var.
-#' Only use it when xaxis_var is character or factor.
+#' @param xaxis_var_level vector that can be used to define the factor level of `xaxis_var`.
+#' Only use it when `xaxis_var` is character or factor.
 #' @param filter_var data constraint variable.
 #' @param yaxis_var single name of variable in analysis data that is used as
-#' summary variable in the respective gshawk function.
+#' summary variable in the respective `goshawk` function.
 #' @param trt_group \code{\link[teal.transform]{choices_selected}} object with available choices and pre-selected option
-#' for variable names representing treatment group e.g. ARM.
+#' for variable names representing treatment group e.g. `ARM`.
 #' @param trt_group_level vector that can be used to define factor
-#' level of trt_group.
+#' level of `trt_group`.
 #' @param man_color string vector representing customized colors
 #' @param color_comb name or hex value for combined treatment color.
-#' @param xtick numeric vector to define the tick values of x-axis
-#' when x variable is numeric. Default value is waive().
-#' @param xlabel vector with same length of xtick to define the
-#' label of x-axis tick values. Default value is waive().
-#' @param rotate_xlab boolean value indicating whether to rotate x-axis labels
+#' @param xtick numeric vector to define the tick values of `x-axis`
+#' when x variable is numeric. Default value is `waive()`.
+#' @param xlabel vector with same length of `xtick` to define the
+#' label of `x-axis` tick values. Default value is `waive()`.
+#' @param rotate_xlab `logical(1)` value indicating whether to rotate `x-axis` labels
 #' @param facet_ncol numeric value indicating number of facets per row.
 #' @param plot_height controls plot height.
 #' @param plot_width optional, controls plot width.
-#' @param font_size control font size for title, x-axis, y-axis and legend font.
+#' @param font_size control font size for title, `x-axis`, `y-axis` and legend font.
 #' @param group_stats control group mean or median overlay.
 #' @param hline_arb numeric vector of at most 2 values identifying intercepts for arbitrary horizontal lines.
 #' @param hline_arb_color a character vector of at most length of \code{hline_arb}.
