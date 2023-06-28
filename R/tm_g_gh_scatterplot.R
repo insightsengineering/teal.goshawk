@@ -8,8 +8,8 @@
 #'
 #' @inheritParams teal.widgets::standard_layout
 #' @param label menu item label of the module in the teal app.
-#' @param dataname analysis data passed to the data argument of \code{\link[teal]{init}}. E.g. `ADaM` structured laboratory data frame
-#'   \code{ADLB}.
+#' @param dataname analysis data passed to the data argument of \code{\link[teal]{init}}. E.g. `ADaM` structured
+#' laboratory data frame \code{ADLB}.
 #' @param param_var name of variable containing biomarker codes e.g. \code{PARAMCD}.
 #' @param param biomarker selected.
 #' @param xaxis_var name of variable containing biomarker results displayed on `x-axis` e.g. \code{BASE}.
