@@ -41,8 +41,8 @@ tm_g_gh_lineplot(
 \arguments{
 \item{label}{menu item label of the module in the teal app.}
 
-\item{dataname}{analysis data passed to the data argument of teal init. E.g. \code{ADaM} structured
-laboratory data frame ADLB.}
+\item{dataname}{analysis data passed to the data argument of \code{\link[teal]{init}}. E.g. \code{ADaM} structured
+laboratory data frame \code{ADLB}.}
 
 \item{param_var}{name of variable containing biomarker codes e.g. \code{PARAMCD}.}
 
@@ -64,11 +64,11 @@ respective \code{goshawk} function.}
 \item{filter_var_choices}{data constraint variable choices.}
 
 \item{trt_group}{\code{\link[teal.transform]{choices_selected}} object with available choices and pre-selected option
-for variable names representing treatment group e.g. ARM.}
+for variable names representing treatment group e.g. \code{ARM}.}
 
 \item{trt_group_level}{vector that can be used to define factor level of \code{trt_group}.}
 
-\item{shape_choices}{Vector or \code{choices_selected} object with names of ADSL variables which
+\item{shape_choices}{Vector or \code{choices_selected} object with names of \code{ADSL} variables which
 can be used to change shape}
 
 \item{stat}{string of statistics}

@@ -2,13 +2,13 @@
 #'
 #' Provides lines of code for left hand side of arm mapping. user must provide right hand side
 #'
-#' @details SPA configure study specific pre-processing for deploying goshawk. writing the code for ARM mapping and
+#' @details SPA configure study specific pre-processing for deploying `goshawk`. writing the code for `ARM` mapping and
 #' ordering is tedious. this function helps to get that started by providing the left hand side of the
 #' mapping and ordering syntax. call the function and then copy and paste the resulting code from the console
 #' into the app.R file.
 #'
-#' @param df_armvar the dataframe and column name containing treatment code. e.g. ADSL$ARMCD
-#' @param code controls whether mapping or ordering code is written to console. Valid values: "M" and "O".
+#' @param df_armvar the dataframe and column name containing treatment code. e.g. `ADSL$ARMCD`
+#' @param code controls whether mapping or ordering code is written to console. Valid values: `"M"` and `"O"`.
 #'
 #' @export
 #'

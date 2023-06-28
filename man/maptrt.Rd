@@ -7,15 +7,15 @@
 maptrt(df_armvar, code = c("M", "O"))
 }
 \arguments{
-\item{df_armvar}{the dataframe and column name containing treatment code. e.g. ADSL$ARMCD}
+\item{df_armvar}{the dataframe and column name containing treatment code. e.g. \code{ADSL$ARMCD}}
 
-\item{code}{controls whether mapping or ordering code is written to console. Valid values: "M" and "O".}
+\item{code}{controls whether mapping or ordering code is written to console. Valid values: \code{"M"} and \code{"O"}.}
 }
 \description{
 Provides lines of code for left hand side of arm mapping. user must provide right hand side
 }
 \details{
-SPA configure study specific pre-processing for deploying goshawk. writing the code for ARM mapping and
+SPA configure study specific pre-processing for deploying \code{goshawk}. writing the code for \code{ARM} mapping and
 ordering is tedious. this function helps to get that started by providing the left hand side of the
 mapping and ordering syntax. call the function and then copy and paste the resulting code from the console
 into the app.R file.

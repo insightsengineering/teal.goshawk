@@ -4,7 +4,7 @@
 #' that creates a spaghetti plot.
 #'
 #' @param label menu item label of the module in the teal app.
-#' @param dataname analysis data passed to the data argument of teal init.
+#' @param dataname analysis data passed to the data argument of \code{\link[teal]{init}}.
 #' E.g. `ADaM` structured laboratory data frame `ADLB`.
 #' @param param_var name of variable containing biomarker codes e.g. `PARAMCD`.
 #' @param param biomarker selected.

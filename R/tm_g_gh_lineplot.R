@@ -4,8 +4,8 @@
 #'
 #' @inheritParams teal.widgets::standard_layout
 #' @param label menu item label of the module in the teal app.
-#' @param dataname analysis data passed to the data argument of teal init. E.g. `ADaM` structured
-#' laboratory data frame ADLB.
+#' @param dataname analysis data passed to the data argument of \code{\link[teal]{init}}. E.g. `ADaM` structured
+#' laboratory data frame `ADLB`.
 #' @param param_var name of variable containing biomarker codes e.g. `PARAMCD`.
 #' @param param biomarker selected.
 #' @param param_var_label single name of variable in analysis data that includes parameter labels.
@@ -18,9 +18,9 @@
 #' @param yaxis_var single name of variable in analysis data that is used as summary variable in the
 #' respective `goshawk` function.
 #' @param trt_group \code{\link[teal.transform]{choices_selected}} object with available choices and pre-selected option
-#' for variable names representing treatment group e.g. ARM.
+#' for variable names representing treatment group e.g. `ARM`.
 #' @param trt_group_level vector that can be used to define factor level of `trt_group`.
-#' @param shape_choices Vector or \code{choices_selected} object with names of ADSL variables which
+#' @param shape_choices Vector or \code{choices_selected} object with names of `ADSL` variables which
 #' can be used to change shape
 #' @param color_manual string vector representing customized colors
 #' @param stat string of statistics

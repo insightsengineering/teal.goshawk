@@ -4,23 +4,23 @@
 #' summary table.
 #'
 #' @param label menu item label of the module in the teal app.
-#' @param dataname analysis data passed to the data argument of teal init. E.g. ADaM structured
-#'  laboratory data frame ALB.
-#' @param param_var name of variable containing biomarker codes e.g. PARAMCD.
+#' @param dataname analysis data passed to the data argument of \code{\link[teal]{init}}. E.g. `ADaM` structured
+#'  laboratory data frame `ALB`.
+#' @param param_var name of variable containing biomarker codes e.g. `PARAMCD`.
 #' @param param list of biomarkers of interest.
-#' @param yaxis_var name of variable containing biomarker results displayed on y-axis e.g. AVAL. When not provided,
+#' @param yaxis_var name of variable containing biomarker results displayed on y-axis e.g. `AVAL`. When not provided,
 #' it defaults to `choices_selected(c("AVAL", "CHG"), "AVAL")`.
 #' @param xaxis_var variable to categorize the x-axis. When not provided, it defaults to
 #' `choices_selected("AVISITCD", "AVISITCD")`.
 #' @param facet_var variable to facet the plots by. When not provided, it defaults to
 #' `choices_selected(c("ARM", "ACTARM"), "ARM")`.
 #' @param trt_group  \code{\link[teal.transform]{choices_selected}} object with available choices and pre-selected
-#'  option for variable names representing treatment group e.g. ARM.
+#'  option for variable names representing treatment group e.g. `ARM`.
 #' @param color_manual vector of colors applied to treatment values.
-#' @param shape_manual vector of symbols applied to LOQ values.
+#' @param shape_manual vector of symbols applied to `LOQ` values.
 #' @param facet_ncol numeric value indicating number of facets per row.
-#' @param loq_legend loq legend toggle.
-#' @param rotate_xlab 45 degree rotation of x-axis values.
+#' @param loq_legend `loq` legend toggle.
+#' @param rotate_xlab 45 degree rotation of `x-axis` values.
 #' @param hline_arb numeric vector of at most 2 values identifying intercepts for arbitrary horizontal lines.
 #' @param hline_arb_color a character vector of at most length of \code{hline_arb}.
 #' naming the color for the arbitrary horizontal lines.
@@ -32,7 +32,7 @@
 #'  in the legend.
 #' @param plot_height controls plot height.
 #' @param plot_width optional, controls plot width.
-#' @param font_size font size control for title, x-axis label, y-axis label and legend.
+#' @param font_size font size control for title, `x-axis` label, `y-axis` label and legend.
 #' @param dot_size plot dot size.
 #' @param alpha numeric vector to define transparency of plotted points.
 #'

@@ -5,12 +5,12 @@
 #'
 #' @param label menu item label of the module in the teal app.
 #' @param trt_group \code{\link[teal.transform]{choices_selected}} object with available choices and pre-selected option
-#' for variable names representing treatment group e.g. ARM.
+#' for variable names representing treatment group e.g. `ARM`.
 #' @param color_manual vector of colors applied to treatment values.
 #' @param color_comb name or hex value for combined treatment color.
 #' @param plot_height controls plot height.
 #' @param plot_width optional, controls plot width.
-#' @param font_size font size control for title, x-axis label, y-axis label and legend.
+#' @param font_size font size control for title, `x-axis` label, `y-axis` label and legend.
 #' @param line_size plot line thickness.
 #' @param hline_arb numeric vector of at most 2 values identifying intercepts for arbitrary horizontal lines.
 #' @param hline_arb_color a character vector of at most length of \code{hline_arb}.
@@ -19,7 +19,7 @@
 #' naming the label for the arbitrary horizontal lines.
 #' @param facet_ncol numeric value indicating number of facets per row.
 #' @param comb_line display combined treatment line toggle.
-#' @param rotate_xlab 45 degree rotation of x-axis values.
+#' @param rotate_xlab 45 degree rotation of `x-axis` values.
 #'
 #' @inheritParams teal.widgets::standard_layout
 #' @inheritParams tm_g_gh_scatterplot
