@@ -30,17 +30,17 @@ tm_g_gh_density_distribution_plot(
 \arguments{
 \item{label}{menu item label of the module in the teal app.}
 
-\item{dataname}{analysis data passed to the data argument of teal init. E.g. ADaM structured laboratory data frame
-\code{ADLB}.}
+\item{dataname}{analysis data passed to the data argument of \code{\link[teal]{init}}. E.g. \code{ADaM} structured
+laboratory data frame \code{ADLB}.}
 
 \item{param_var}{name of variable containing biomarker codes e.g. \code{PARAMCD}.}
 
 \item{param}{biomarker selected.}
 
-\item{xaxis_var}{name of variable containing biomarker results displayed on x-axis e.g. \code{BASE}.}
+\item{xaxis_var}{name of variable containing biomarker results displayed on \code{x-axis} e.g. \code{BASE}.}
 
 \item{trt_group}{\code{\link[teal.transform]{choices_selected}} object with available choices and pre-selected option
-for variable names representing treatment group e.g. ARM.}
+for variable names representing treatment group e.g. \code{ARM}.}
 
 \item{color_manual}{vector of colors applied to treatment values.}
 
@@ -50,7 +50,7 @@ for variable names representing treatment group e.g. ARM.}
 
 \item{plot_width}{optional, controls plot width.}
 
-\item{font_size}{font size control for title, x-axis label, y-axis label and legend.}
+\item{font_size}{font size control for title, \code{x-axis} label, \code{y-axis} label and legend.}
 
 \item{line_size}{plot line thickness.}
 
@@ -66,7 +66,7 @@ naming the label for the arbitrary horizontal lines.}
 
 \item{comb_line}{display combined treatment line toggle.}
 
-\item{rotate_xlab}{45 degree rotation of x-axis values.}
+\item{rotate_xlab}{45 degree rotation of \code{x-axis} values.}
 
 \item{pre_output}{(\code{shiny.tag}, optional)\cr
 with text placed before the output to put the output into context. For example a title.}

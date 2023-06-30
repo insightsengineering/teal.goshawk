@@ -16,14 +16,14 @@ vignette: >
 
 ## User Guide
 
-### PARAMCD 
-The "Parameter Code" (PARAMCD) variable is used to select biomarker/lab of interest. The biomarker/lab selection pull down menu items are a concatenation of PARAMCD with PARAM for ease of identification.
+### `PARAMCD` 
+The "Parameter Code" (`PARAMCD`) variable is used to select biomarker/lab of interest. The biomarker/lab selection pull down menu items are a concatenation of `PARAMCD` with `PARAM` for ease of identification.
 
 ### Pull down menus
 Those containing many items include search functionality to ease finding menu items.
 
-### AVISIT
-The "Analysis Visit" (AVISIT) variable is used to display visit as an abbreviated analysis visit value (AVISITCD). See the [Data Expectations](data-expectations.html) article for more detail on the AVISITCD variable.
+### `AVISIT`
+The "Analysis Visit" (`AVISIT`) variable is used to display visit as an abbreviated analysis visit value (`AVISITCD`). See the [Data Expectations](data-expectations.html) article for more detail on the `AVISITCD` variable.
 
 ### The Data Constraint Filter
 
@@ -52,19 +52,19 @@ Selecting specific data points to reveal Subject ID and other data are available
     To filter on analysis variables please use the filtering controls available in the left hand panel.
 
 - Use right hand data panel filters to filter on categorical variables:
-  - AVISIT to exclude/include specific visits in visualizations.
-  - LOQFL to exclude/include LOQ flagged values.
-  - SEX to exclude/include specific gender.
+  - `AVISIT` to exclude/include specific visits in visualizations.
+  - `LOQFL` to exclude/include `LOQ` flagged values.
+  - `SEX` to exclude/include specific gender.
   - etc.
 
 ### Visualization Specifics
   
-- Box Plot: Selecting STUDYID as X-Axis variable will produce the visualization with all subjects combined and identify the study on the x-axis.
+- Box Plot: Selecting `STUDYID` as X-Axis variable will produce the visualization with all subjects combined and identify the study on the x-axis.
 
 - Correlation Plot
   - The data constraint that can be placed on Screening or Baseline records is associated with the analysis variable and biomarker/lab
     selected for the x-axis only.
-  - The Limit of Quantification (LOQFL) flag is set if either of the biomarker/lab values is identified as LOQ. The brushing table column header reflects this as LOQFL_COMB.
+  - The Limit of Quantification (`LOQFL`) flag is set if either of the biomarker/lab values is identified as `LOQ`. The brushing table column header reflects this as `LOQFL_COMB`.
   - The "Regression Line" option should only be used in conjunction with the "Treatment Faceting" option. Otherwise the per treatment regression formula and coefficient annotations will overlay.
 
 - Line Plot: If an error is displayed related to plot height it's best to first alter the relative plot height in the left panel using the slider. For additional plot height control, use the icons in the upper right corner of the visualization.

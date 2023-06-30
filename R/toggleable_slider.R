@@ -1,4 +1,4 @@
-#' UI with a toggable slider to change between slider and numeric input fields
+#' UI with a toggleable slider to change between slider and numeric input fields
 #'
 #' This is useful when a slider should be shown, but it is sometimes hard to configure sliders,
 #' so one can toggle to one or two numeric input fields to set slider instead.

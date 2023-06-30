@@ -32,23 +32,23 @@ tm_g_gh_scatterplot(
 \arguments{
 \item{label}{menu item label of the module in the teal app.}
 
-\item{dataname}{analysis data passed to the data argument of teal init. E.g. ADaM structured laboratory data frame
-\code{ADLB}.}
+\item{dataname}{analysis data passed to the data argument of \code{\link[teal]{init}}. E.g. \code{ADaM} structured
+laboratory data frame \code{ADLB}.}
 
 \item{param_var}{name of variable containing biomarker codes e.g. \code{PARAMCD}.}
 
 \item{param}{biomarker selected.}
 
-\item{xaxis_var}{name of variable containing biomarker results displayed on x-axis e.g. \code{BASE}.}
+\item{xaxis_var}{name of variable containing biomarker results displayed on \code{x-axis} e.g. \code{BASE}.}
 
-\item{yaxis_var}{name of variable containing biomarker results displayed on y-axis e.g. \code{AVAL}.}
+\item{yaxis_var}{name of variable containing biomarker results displayed on \code{y-axis} e.g. \code{AVAL}.}
 
 \item{trt_group}{\code{\link[teal.transform]{choices_selected}} object with available choices and pre-selected option
-for variable names representing treatment group e.g. ARM.}
+for variable names representing treatment group e.g. \code{ARM}.}
 
 \item{color_manual}{vector of colors applied to treatment values.}
 
-\item{shape_manual}{vector of symbols applied to LOQ values.}
+\item{shape_manual}{vector of symbols applied to \code{LOQ} values.}
 
 \item{facet_ncol}{numeric value indicating number of facets per row.}
 
@@ -57,7 +57,7 @@ for variable names representing treatment group e.g. ARM.}
 \item{reg_line}{include regression line and annotations for slope and coefficient in visualization. Use with facet
 TRUE.}
 
-\item{rotate_xlab}{45 degree rotation of x-axis values.}
+\item{rotate_xlab}{45 degree rotation of \code{x-axis} values.}
 
 \item{hline}{y-axis value to position of horizontal line.}
 
@@ -67,7 +67,7 @@ TRUE.}
 
 \item{plot_width}{optional, controls plot width.}
 
-\item{font_size}{font size control for title, x-axis label, y-axis label and legend.}
+\item{font_size}{font size control for title, \code{x-axis} label, \code{y-axis} label and legend.}
 
 \item{dot_size}{plot dot size.}
 

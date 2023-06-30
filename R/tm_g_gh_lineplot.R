@@ -4,23 +4,23 @@
 #'
 #' @inheritParams teal.widgets::standard_layout
 #' @param label menu item label of the module in the teal app.
-#' @param dataname analysis data passed to the data argument of teal init. E.g. ADaM structured
-#' laboratory data frame ADLB.
-#' @param param_var name of variable containing biomarker codes e.g. PARAMCD.
+#' @param dataname analysis data passed to the data argument of \code{\link[teal]{init}}. E.g. `ADaM` structured
+#' laboratory data frame `ADLB`.
+#' @param param_var name of variable containing biomarker codes e.g. `PARAMCD`.
 #' @param param biomarker selected.
 #' @param param_var_label single name of variable in analysis data that includes parameter labels.
 #' @param xaxis_var single name of variable in analysis data that is used as x-axis in the plot for the
-#' respective goshawk function.
-#' @param xvar_level vector that can be used to define the factor level of xvar. Only use it when
-#' xvar is character or factor.
+#' respective `goshawk` function.
+#' @param xvar_level vector that can be used to define the factor level of `xvar`. Only use it when
+#' `xvar` is character or factor.
 #' @param filter_var data constraint variable.
 #' @param filter_var_choices data constraint variable choices.
 #' @param yaxis_var single name of variable in analysis data that is used as summary variable in the
-#' respective gshawk function.
+#' respective `goshawk` function.
 #' @param trt_group \code{\link[teal.transform]{choices_selected}} object with available choices and pre-selected option
-#' for variable names representing treatment group e.g. ARM.
-#' @param trt_group_level vector that can be used to define factor level of trt_group.
-#' @param shape_choices Vector or \code{choices_selected} object with names of ADSL variables which
+#' for variable names representing treatment group e.g. `ARM`.
+#' @param trt_group_level vector that can be used to define factor level of `trt_group`.
+#' @param shape_choices Vector or \code{choices_selected} object with names of `ADSL` variables which
 #' can be used to change shape
 #' @param color_manual string vector representing customized colors
 #' @param stat string of statistics
@@ -31,12 +31,12 @@
 #' naming the label for the arbitrary horizontal lines.
 #' @param xtick numeric vector to define the tick values of x-axis when x variable is numeric.
 #' Default value is waive().
-#' @param xlabel vector with same length of xtick to define the label of x-axis tick values.
+#' @param xlabel vector with same length of `xtick` to define the label of x-axis tick values.
 #' Default value is waive().
-#' @param rotate_xlab boolean value indicating whether to rotate x-axis labels.
+#' @param rotate_xlab `logical(1)` value indicating whether to rotate `x-axis` labels.
 #' @param plot_height controls plot height.
 #' @param plot_width optional, controls plot width.
-#' @param plot_font_size control font size for title, x-axis, y-axis and legend font.
+#' @param plot_font_size control font size for title, `x-axis`, `y-axis` and legend font.
 #' @param dodge controls the position dodge of error bar
 #' @param count_threshold minimum count of observations (as listed in the output table) to plot
 #' nodes on the graph

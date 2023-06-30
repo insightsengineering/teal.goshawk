@@ -41,34 +41,34 @@ tm_g_gh_lineplot(
 \arguments{
 \item{label}{menu item label of the module in the teal app.}
 
-\item{dataname}{analysis data passed to the data argument of teal init. E.g. ADaM structured
-laboratory data frame ADLB.}
+\item{dataname}{analysis data passed to the data argument of \code{\link[teal]{init}}. E.g. \code{ADaM} structured
+laboratory data frame \code{ADLB}.}
 
-\item{param_var}{name of variable containing biomarker codes e.g. PARAMCD.}
+\item{param_var}{name of variable containing biomarker codes e.g. \code{PARAMCD}.}
 
 \item{param}{biomarker selected.}
 
 \item{param_var_label}{single name of variable in analysis data that includes parameter labels.}
 
 \item{xaxis_var}{single name of variable in analysis data that is used as x-axis in the plot for the
-respective goshawk function.}
+respective \code{goshawk} function.}
 
 \item{yaxis_var}{single name of variable in analysis data that is used as summary variable in the
-respective gshawk function.}
+respective \code{goshawk} function.}
 
-\item{xvar_level}{vector that can be used to define the factor level of xvar. Only use it when
-xvar is character or factor.}
+\item{xvar_level}{vector that can be used to define the factor level of \code{xvar}. Only use it when
+\code{xvar} is character or factor.}
 
 \item{filter_var}{data constraint variable.}
 
 \item{filter_var_choices}{data constraint variable choices.}
 
 \item{trt_group}{\code{\link[teal.transform]{choices_selected}} object with available choices and pre-selected option
-for variable names representing treatment group e.g. ARM.}
+for variable names representing treatment group e.g. \code{ARM}.}
 
-\item{trt_group_level}{vector that can be used to define factor level of trt_group.}
+\item{trt_group_level}{vector that can be used to define factor level of \code{trt_group}.}
 
-\item{shape_choices}{Vector or \code{choices_selected} object with names of ADSL variables which
+\item{shape_choices}{Vector or \code{choices_selected} object with names of \code{ADSL} variables which
 can be used to change shape}
 
 \item{stat}{string of statistics}
@@ -86,16 +86,16 @@ naming the label for the arbitrary horizontal lines.}
 \item{xtick}{numeric vector to define the tick values of x-axis when x variable is numeric.
 Default value is waive().}
 
-\item{xlabel}{vector with same length of xtick to define the label of x-axis tick values.
+\item{xlabel}{vector with same length of \code{xtick} to define the label of x-axis tick values.
 Default value is waive().}
 
-\item{rotate_xlab}{boolean value indicating whether to rotate x-axis labels.}
+\item{rotate_xlab}{\code{logical(1)} value indicating whether to rotate \code{x-axis} labels.}
 
 \item{plot_height}{controls plot height.}
 
 \item{plot_width}{optional, controls plot width.}
 
-\item{plot_font_size}{control font size for title, x-axis, y-axis and legend font.}
+\item{plot_font_size}{control font size for title, \code{x-axis}, \code{y-axis} and legend font.}
 
 \item{dodge}{controls the position dodge of error bar}
 
