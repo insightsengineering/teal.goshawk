@@ -10,7 +10,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">teal.goshawk</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.14.9010</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.14.9011</small>
 
     <div style="width: 140px; margin-left: 0.5rem;"> <small class="nav-text text-muted me-auto">part of</small> <img src="https://github.com/insightsengineering/hex-stickers/blob/main/PNG/nest.png?raw=true" alt="NEST" style="height: 30px;"><a href="https://pharmaverse.org/" class="external-link"><img src="https://github.com/insightsengineering/hex-stickers/blob/main/PNG/pharmaverse.png?raw=true" alt="pharmaverse" style="height: 28px;"></a> </div>
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -34,14 +34,6 @@
 <li class="nav-item">
   <a class="nav-link" href="../news/index.html">Changelog</a>
 </li>
-<!-- start dropdown for versions --> <li class="nav-item dropdown">
-        <a href="#" class="nav-link dropdown-toggle"
-          data-bs-toggle="dropdown" role="button"
-          aria-expanded="false" aria-haspopup="true"
-          id="dropdown-versions">Versions</a> <div class="dropdown-menu" aria-labelledby="dropdown-versions"> <a class="dropdown-item" data-toggle="tooltip" title="" href="https://insightsengineering.github.io/teal.goshawk/main">main</a>
-<a class="dropdown-item" data-toggle="tooltip" title="" href="https://insightsengineering.github.io/teal.goshawk/latest-tag">latest-tag</a>
-<a class="dropdown-item" data-toggle="tooltip" title="" href="https://insightsengineering.github.io/teal.goshawk/v0.1.14">v0.1.14</a> </div></li>
-<!-- end dropdown for versions -->
 <li class="nav-item dropdown">
   <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-expanded="false" aria-haspopup="true" id="dropdown-reports">Reports</a>
   <div class="dropdown-menu" aria-labelledby="dropdown-reports">
@@ -118,12 +110,12 @@
 
 
 <dt>dataname</dt>
-<dd><p>analysis data passed to the data argument of teal init. E.g. ADaM structured
-laboratory data frame ADLB.</p></dd>
+<dd><p>analysis data passed to the data argument of <code><a href="https://rdrr.io/pkg/teal/man/init.html" class="external-link">init</a></code>. E.g. <code>ADaM</code> structured
+laboratory data frame <code>ADLB</code>.</p></dd>
 
 
 <dt>param_var</dt>
-<dd><p>name of variable containing biomarker codes e.g. PARAMCD.</p></dd>
+<dd><p>name of variable containing biomarker codes e.g. <code>PARAMCD</code>.</p></dd>
 
 
 <dt>param</dt>
@@ -136,17 +128,17 @@ laboratory data frame ADLB.</p></dd>
 
 <dt>xaxis_var</dt>
 <dd><p>single name of variable in analysis data that is used as x-axis in the plot for the
-respective goshawk function.</p></dd>
+respective <code>goshawk</code> function.</p></dd>
 
 
 <dt>yaxis_var</dt>
 <dd><p>single name of variable in analysis data that is used as summary variable in the
-respective gshawk function.</p></dd>
+respective <code>goshawk</code> function.</p></dd>
 
 
 <dt>xvar_level</dt>
-<dd><p>vector that can be used to define the factor level of xvar. Only use it when
-xvar is character or factor.</p></dd>
+<dd><p>vector that can be used to define the factor level of <code>xvar</code>. Only use it when
+<code>xvar</code> is character or factor.</p></dd>
 
 
 <dt>filter_var</dt>
@@ -159,15 +151,15 @@ xvar is character or factor.</p></dd>
 
 <dt>trt_group</dt>
 <dd><p><code><a href="https://rdrr.io/pkg/teal.transform/man/choices_selected.html" class="external-link">choices_selected</a></code> object with available choices and pre-selected option
-for variable names representing treatment group e.g. ARM.</p></dd>
+for variable names representing treatment group e.g. <code>ARM</code>.</p></dd>
 
 
 <dt>trt_group_level</dt>
-<dd><p>vector that can be used to define factor level of trt_group.</p></dd>
+<dd><p>vector that can be used to define factor level of <code>trt_group</code>.</p></dd>
 
 
 <dt>shape_choices</dt>
-<dd><p>Vector or <code>choices_selected</code> object with names of ADSL variables which
+<dd><p>Vector or <code>choices_selected</code> object with names of <code>ADSL</code> variables which
 can be used to change shape</p></dd>
 
 
@@ -199,12 +191,12 @@ Default value is waive().</p></dd>
 
 
 <dt>xlabel</dt>
-<dd><p>vector with same length of xtick to define the label of x-axis tick values.
+<dd><p>vector with same length of <code>xtick</code> to define the label of x-axis tick values.
 Default value is waive().</p></dd>
 
 
 <dt>rotate_xlab</dt>
-<dd><p>boolean value indicating whether to rotate x-axis labels.</p></dd>
+<dd><p><code>logical(1)</code> value indicating whether to rotate <code>x-axis</code> labels.</p></dd>
 
 
 <dt>plot_height</dt>
@@ -216,7 +208,7 @@ Default value is waive().</p></dd>
 
 
 <dt>plot_font_size</dt>
-<dd><p>control font size for title, x-axis, y-axis and legend font.</p></dd>
+<dd><p>control font size for title, <code>x-axis</code>, <code>y-axis</code> and legend font.</p></dd>
 
 
 <dt>dodge</dt>
@@ -357,7 +349,7 @@ of the relative plot height slider</p></dd>
 <span class="r-in"><span>    <span class="op">)</span></span></span>
 <span class="r-in"><span>  <span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [INFO] 2023-06-29 03:13:24.9313 pid:1173 token:[] teal.goshawk Initializing tm_g_gh_lineplot</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [INFO] 2023-06-30 08:14:16.9959 pid:1174 token:[] teal.goshawk Initializing tm_g_gh_lineplot</span>
 <span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/interactive.html" class="external-link">interactive</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span></span>
 <span class="r-in"><span>  <span class="fu">shinyApp</span><span class="op">(</span><span class="va">app</span><span class="op">$</span><span class="va">ui</span>, <span class="va">app</span><span class="op">$</span><span class="va">server</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">}</span></span></span>

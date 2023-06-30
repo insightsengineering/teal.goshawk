@@ -27,7 +27,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">teal.goshawk</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.14.9010</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.14.9011</small>
 
     <div style="width: 140px; margin-left: 0.5rem;"> <small class="nav-text text-muted me-auto">part of</small> <img src="https://github.com/insightsengineering/hex-stickers/blob/main/PNG/nest.png?raw=true" alt="NEST" style="height: 30px;"><a href="https://pharmaverse.org/" class="external-link"><img src="https://github.com/insightsengineering/hex-stickers/blob/main/PNG/pharmaverse.png?raw=true" alt="pharmaverse" style="height: 28px;"></a> </div>
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -52,14 +52,6 @@
 <li class="nav-item">
   <a class="nav-link" href="../news/index.html">Changelog</a>
 </li>
-<!-- start dropdown for versions --> <li class="nav-item dropdown">
-        <a href="#" class="nav-link dropdown-toggle"
-          data-bs-toggle="dropdown" role="button"
-          aria-expanded="false" aria-haspopup="true"
-          id="dropdown-versions">Versions</a> <div class="dropdown-menu" aria-labelledby="dropdown-versions"> <a class="dropdown-item" data-toggle="tooltip" title="" href="https://insightsengineering.github.io/teal.goshawk/main">main</a>
-<a class="dropdown-item" data-toggle="tooltip" title="" href="https://insightsengineering.github.io/teal.goshawk/latest-tag">latest-tag</a>
-<a class="dropdown-item" data-toggle="tooltip" title="" href="https://insightsengineering.github.io/teal.goshawk/v0.1.14">v0.1.14</a> </div></li>
-<!-- end dropdown for versions -->
 <li class="nav-item dropdown">
   <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-expanded="false" aria-haspopup="true" id="dropdown-reports">Reports</a>
   <div class="dropdown-menu" aria-labelledby="dropdown-reports">
@@ -107,12 +99,13 @@ Team</h4>
 <h2 id="user-guide">User Guide<a class="anchor" aria-label="anchor" href="#user-guide"></a>
 </h2>
 <div class="section level3">
-<h3 id="paramcd">PARAMCD<a class="anchor" aria-label="anchor" href="#paramcd"></a>
+<h3 id="paramcd">
+<code>PARAMCD</code><a class="anchor" aria-label="anchor" href="#paramcd"></a>
 </h3>
-<p>The “Parameter Code” (PARAMCD) variable is used to select
-biomarker/lab of interest. The biomarker/lab selection pull down menu
-items are a concatenation of PARAMCD with PARAM for ease of
-identification.</p>
+<p>The “Parameter Code” (<code>PARAMCD</code>) variable is used to
+select biomarker/lab of interest. The biomarker/lab selection pull down
+menu items are a concatenation of <code>PARAMCD</code> with
+<code>PARAM</code> for ease of identification.</p>
 </div>
 <div class="section level3">
 <h3 id="pull-down-menus">Pull down menus<a class="anchor" aria-label="anchor" href="#pull-down-menus"></a>
@@ -121,11 +114,14 @@ identification.</p>
 finding menu items.</p>
 </div>
 <div class="section level3">
-<h3 id="avisit">AVISIT<a class="anchor" aria-label="anchor" href="#avisit"></a>
+<h3 id="avisit">
+<code>AVISIT</code><a class="anchor" aria-label="anchor" href="#avisit"></a>
 </h3>
-<p>The “Analysis Visit” (AVISIT) variable is used to display visit as an
-abbreviated analysis visit value (AVISITCD). See the <a href="data-expectations.html">Data Expectations</a> article for more
-detail on the AVISITCD variable.</p>
+<p>The “Analysis Visit” (<code>AVISIT</code>) variable is used to
+display visit as an abbreviated analysis visit value
+(<code>AVISITCD</code>). See the <a href="data-expectations.html">Data
+Expectations</a> article for more detail on the <code>AVISITCD</code>
+variable.</p>
 </div>
 <div class="section level3">
 <h3 id="the-data-constraint-filter">The Data Constraint Filter<a class="anchor" aria-label="anchor" href="#the-data-constraint-filter"></a>
@@ -175,9 +171,14 @@ the filtering controls available in the left hand panel.</p></li>
 <p>Use right hand data panel filters to filter on categorical
 variables:</p>
 <ul>
-<li>AVISIT to exclude/include specific visits in visualizations.</li>
-<li>LOQFL to exclude/include LOQ flagged values.</li>
-<li>SEX to exclude/include specific gender.</li>
+<li>
+<code>AVISIT</code> to exclude/include specific visits in
+visualizations.</li>
+<li>
+<code>LOQFL</code> to exclude/include <code>LOQ</code> flagged
+values.</li>
+<li>
+<code>SEX</code> to exclude/include specific gender.</li>
 <li>etc.</li>
 </ul>
 </li>
@@ -187,18 +188,19 @@ variables:</p>
 <h3 id="visualization-specifics">Visualization Specifics<a class="anchor" aria-label="anchor" href="#visualization-specifics"></a>
 </h3>
 <ul>
-<li><p>Box Plot: Selecting STUDYID as X-Axis variable will produce the
-visualization with all subjects combined and identify the study on the
-x-axis.</p></li>
+<li><p>Box Plot: Selecting <code>STUDYID</code> as X-Axis variable will
+produce the visualization with all subjects combined and identify the
+study on the x-axis.</p></li>
 <li>
 <p>Correlation Plot</p>
 <ul>
 <li>The data constraint that can be placed on Screening or Baseline
 records is associated with the analysis variable and biomarker/lab
 selected for the x-axis only.</li>
-<li>The Limit of Quantification (LOQFL) flag is set if either of the
-biomarker/lab values is identified as LOQ. The brushing table column
-header reflects this as LOQFL_COMB.</li>
+<li>The Limit of Quantification (<code>LOQFL</code>) flag is set if
+either of the biomarker/lab values is identified as <code>LOQ</code>.
+The brushing table column header reflects this as
+<code>LOQFL_COMB</code>.</li>
 <li>The “Regression Line” option should only be used in conjunction with
 the “Treatment Faceting” option. Otherwise the per treatment regression
 formula and coefficient annotations will overlay.</li>

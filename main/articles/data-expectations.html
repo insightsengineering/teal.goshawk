@@ -27,7 +27,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">teal.goshawk</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.14.9010</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.14.9011</small>
 
     <div style="width: 140px; margin-left: 0.5rem;"> <small class="nav-text text-muted me-auto">part of</small> <img src="https://github.com/insightsengineering/hex-stickers/blob/main/PNG/nest.png?raw=true" alt="NEST" style="height: 30px;"><a href="https://pharmaverse.org/" class="external-link"><img src="https://github.com/insightsengineering/hex-stickers/blob/main/PNG/pharmaverse.png?raw=true" alt="pharmaverse" style="height: 28px;"></a> </div>
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -52,14 +52,6 @@
 <li class="nav-item">
   <a class="nav-link" href="../news/index.html">Changelog</a>
 </li>
-<!-- start dropdown for versions --> <li class="nav-item dropdown">
-        <a href="#" class="nav-link dropdown-toggle"
-          data-bs-toggle="dropdown" role="button"
-          aria-expanded="false" aria-haspopup="true"
-          id="dropdown-versions">Versions</a> <div class="dropdown-menu" aria-labelledby="dropdown-versions"> <a class="dropdown-item" data-toggle="tooltip" title="" href="https://insightsengineering.github.io/teal.goshawk/main">main</a>
-<a class="dropdown-item" data-toggle="tooltip" title="" href="https://insightsengineering.github.io/teal.goshawk/latest-tag">latest-tag</a>
-<a class="dropdown-item" data-toggle="tooltip" title="" href="https://insightsengineering.github.io/teal.goshawk/v0.1.14">v0.1.14</a> </div></li>
-<!-- end dropdown for versions -->
 <li class="nav-item dropdown">
   <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-expanded="false" aria-haspopup="true" id="dropdown-reports">Reports</a>
   <div class="dropdown-menu" aria-labelledby="dropdown-reports">
@@ -106,9 +98,10 @@ Team</h4>
 <div class="section level2">
 <h2 id="introduction">Introduction<a class="anchor" aria-label="anchor" href="#introduction"></a>
 </h2>
-<p><code>teal.goshawk</code> expects to be provided ADSL and an
-accompanying ADLB clinical trials data set in ADaM format. For more
-information on ADaM please the <a href="https://www.cdisc.org/standards/foundational/adam" class="external-link"><code>ADaM standards</code></a>.</p>
+<p><code>teal.goshawk</code> expects to be provided <code>ADSL</code>
+and an accompanying <code>ADLB</code> clinical trials data set in
+<code>ADaM</code> format. For more information on <code>ADaM</code>
+please the <a href="https://www.cdisc.org/standards/foundational/adam" class="external-link"><code>ADaM standards</code></a>.</p>
 <p>The package provides ready-to-use <code>teal</code> modules you can
 embed in your <code>teal</code> application. The modules generate highly
 customizable plots and outputs often used in exploratory data analysis,
@@ -134,49 +127,56 @@ e.g.:</p>
 <h2 id="data-expectations">Data Expectations<a class="anchor" aria-label="anchor" href="#data-expectations"></a>
 </h2>
 <div class="section level4">
-<h4 id="adsl">ADSL<a class="anchor" aria-label="anchor" href="#adsl"></a>
+<h4 id="adsl">
+<code>ADSL</code><a class="anchor" aria-label="anchor" href="#adsl"></a>
 </h4>
 <p>This is a subject level data set with one record per subject and
 includes any variables that are intended to be used for plot
 splitting</p>
 <ul>
 <li>For example if it is the intention to be able to split the line plot
-by some outcome variable then that outcome variable must be in ADSL.
+by some outcome variable then that outcome variable must be in
+<code>ADSL</code>.
 <ul>
-<li>e.g. ABCWK24 which represents a two level outcome variable with
-values of “Y” and “N” at Week 24. <br><br>
+<li>e.g. <code>ABCWK24</code> which represents a two level outcome
+variable with values of <code>"Y"</code> and <code>"N"</code> at Week
+24. <br><br>
 </li>
 </ul>
 </li>
 </ul>
 </div>
 <div class="section level4">
-<h4 id="adlb">ADLB<a class="anchor" aria-label="anchor" href="#adlb"></a>
+<h4 id="adlb">
+<code>ADLB</code><a class="anchor" aria-label="anchor" href="#adlb"></a>
 </h4>
-<p>This is a Basic Data Structure (BDS) data set meaning multiple
-records per subject per assay (PARAM) across unique time points.
-Additional variables that are intended to be used for plot splitting
-should be joined to ADLB.</p>
+<p>This is a Basic Data Structure (<code>BDS</code>) data set meaning
+multiple records per subject per assay (<code>PARAM</code>) across
+unique time points. Additional variables that are intended to be used
+for plot splitting should be joined to <code>ADLB</code>.</p>
 <ul>
-<li>See ADSL example above where ABCWK24 would need to be joined to ADLB
-<br><br>
+<li>See <code>ADSL</code> example above where <code>ABCWK24</code> would
+need to be joined to <code>ADLB</code> <br><br>
 </li>
 </ul>
 </div>
 <div class="section level3">
 <h3 id="other-basic-data-structures">Other Basic Data Structures<a class="anchor" aria-label="anchor" href="#other-basic-data-structures"></a>
 </h3>
-<p>Other BDS data sets could be provisioned to <code>teal.goshawk</code>
-like ADQS which contains multiple records per subject per question
-(PARAM) across unique time points. However with all cases other than
-ADLB there are likely workarounds needed.</p>
+<p>Other <code>BDS</code> data sets could be provisioned to
+<code>teal.goshawk</code> like <code>ADQS</code> which contains multiple
+records per subject per question (<code>PARAM</code>) across unique time
+points. However with all cases other than <code>ADLB</code> there are
+likely workarounds needed.</p>
 <ul>
-<li>For example the concept of assay units, stored in AVALU, is not
-really relevant to a BDS like ADQS which contains questionnaire data.
-Given <code>teal.goshawk</code> expects an AVALU variable and uses the
-values in the plot title and y-axis label, AVALU would need to be added
-to ADQS with some appropriate value: Perhaps “Q”. If a value is not
-provided the the “()” portion of the title and y-axis label will be
+<li>For example the concept of assay units, stored in
+<code>AVALU</code>, is not really relevant to a <code>BDS</code> like
+<code>ADQS</code> which contains questionnaire data. Given
+<code>teal.goshawk</code> expects an <code>AVALU</code> variable and
+uses the values in the plot title and y-axis label, <code>AVALU</code>
+would need to be added to <code>ADQS</code> with some appropriate value:
+Perhaps <code>"Q"</code>. If a value is not provided the the
+<code>"()"</code> portion of the title and y-axis label will be
 empty.</li>
 </ul>
 </div>
@@ -187,7 +187,8 @@ empty.</li>
 <p>Several variables are required to realize the full functionality of
 <code>teal.goshawk</code>. <br><br></p>
 <div class="section level4">
-<h4 id="trtord">TRTORD<a class="anchor" aria-label="anchor" href="#trtord"></a>
+<h4 id="trtord">
+<code>TRTORD</code><a class="anchor" aria-label="anchor" href="#trtord"></a>
 </h4>
 <p><strong>Definition:</strong> This variable orders treatment values in
 the legend</p>
@@ -196,14 +197,15 @@ to other outputs being generated by a study team</p>
 <p><strong>Alternative:</strong> Variable is required <br><br></p>
 </div>
 <div class="section level4">
-<h4 id="avisitcd">AVISITCD<a class="anchor" aria-label="anchor" href="#avisitcd"></a>
+<h4 id="avisitcd">
+<code>AVISITCD</code><a class="anchor" aria-label="anchor" href="#avisitcd"></a>
 </h4>
 <p><strong>Definition:</strong> This variable contains abbreviated
-values of AVISIT values</p>
-<p><strong>Rationale:</strong> Many AVISIT values are long and contain
-arguably superfluous information in some cases. Using these long values
-as x-axis tick labels can really chew into the real estate area
-available for the plot. Using thoughtful abbreviations conveys
+values of <code>AVISIT</code> values</p>
+<p><strong>Rationale:</strong> Many <code>AVISIT</code> values are long
+and contain arguably superfluous information in some cases. Using these
+long values as x-axis tick labels can really chew into the real estate
+area available for the plot. Using thoughtful abbreviations conveys
 chronology with no substantive loss of information and maximizes the
 area available for the plot.</p>
 <p><strong>Alternative:</strong> If in cases creating abbreviations is
@@ -211,57 +213,65 @@ not helpful then simply set <code>AVISITCD &lt;- AVISIT</code>
 <br><br></p>
 </div>
 <div class="section level4">
-<h4 id="avisitcdn">AVISITCDN<a class="anchor" aria-label="anchor" href="#avisitcdn"></a>
+<h4 id="avisitcdn">
+<code>AVISITCDN</code><a class="anchor" aria-label="anchor" href="#avisitcdn"></a>
 </h4>
 <p><strong>Definition:</strong> This variable contains the numeric
-portion of AVISITCD values</p>
-<p><strong>Rationale:</strong> Often AVISITN contains values that are
-not particularly helpful to reflect the proportional chronology of
-visits. Once AVISITCD is created then it is helpful to create the
-numeric values from AVISITCD values that can be seen as intuitively
-reflecting the visit chronology. For example: 0, 2, 4, 12, 24, 56, 84
-etc. for weeks or 0, 14, 28, 84, 168, 392, 588 etc. for days. Using
-these, the longitudinal visualization x-axis will nicely reflect
-proportional distances between visits.</p>
+portion of <code>AVISITCD</code> values</p>
+<p><strong>Rationale:</strong> Often <code>AVISITN</code> contains
+values that are not particularly helpful to reflect the proportional
+chronology of visits. Once <code>AVISITCD</code> is created then it is
+helpful to create the numeric values from <code>AVISITCD</code> values
+that can be seen as intuitively reflecting the visit chronology. For
+example: 0, 2, 4, 12, 24, 56, 84 etc. for weeks or 0, 14, 28, 84, 168,
+392, 588 etc. for days. Using these, the longitudinal visualization
+x-axis will nicely reflect proportional distances between visits.</p>
 <p><strong>Alternative:</strong> If in cases creating a more intuitive
 numeric chronology is not helpful then simply set
 <code>AVISITCDN &lt;- AVISITN</code> <br><br></p>
 </div>
 <div class="section level4">
-<h4 id="avalu">AVALU<a class="anchor" aria-label="anchor" href="#avalu"></a>
+<h4 id="avalu">
+<code>AVALU</code><a class="anchor" aria-label="anchor" href="#avalu"></a>
 </h4>
 <p><strong>Definition:</strong> Analysis Value Unit</p>
 <p><strong>Rationale:</strong> Used in the plot title and y-axis labels.
-Please see “Other BDS data sets” comments above</p>
+Please see <code>"Other BDS data sets"</code> comments above</p>
 <p><strong>Alternative:</strong> Variable is required. <br><br></p>
 </div>
 <div class="section level4">
-<h4 id="lbstresc">LBSTRESC<a class="anchor" aria-label="anchor" href="#lbstresc"></a>
+<h4 id="lbstresc">
+<code>LBSTRESC</code><a class="anchor" aria-label="anchor" href="#lbstresc"></a>
 </h4>
-<p><strong>Definition:</strong> From SDTM Character Result/Finding in
-Std Format</p>
+<p><strong>Definition:</strong> From <code>SDTM</code> Character
+Result/Finding in Std Format</p>
 <p><strong>Rationale:</strong> As a character type variable, this
 variable contains values that include those below or above limits of
-quantitation (LOQ). These might look like “2.1&lt;” or “&gt;20.7”. When
-this is the case then AVAL is often missing. It is important to be able
-to still capture these values so the following derivation is used to do
-so and when this is needed the LOQFL variable should be set to “Y”. This
-signifies that the AVAL value for this record has been derived. - For
-values below the limit of quantitation, AVAL is set to the numeric
-portion of LBSTRESC divided by 2. - For values above the limit of
-quantitation, AVAL is set to the numeric portion of LBSTRESC.</p>
+quantitation (<code>LOQ</code>). These might look like
+<code>"2.1&lt;"</code> or <code>"&gt;20.7"</code>. When this is the case
+then <code>AVAL</code> is often missing. It is important to be able to
+still capture these values so the following derivation is used to do so
+and when this is needed the <code>LOQFL</code> variable should be set to
+<code>"Y"</code>. This signifies that the <code>AVAL</code> value for
+this record has been derived. - For values below the limit of
+quantitation, <code>AVAL</code> is set to the numeric portion of
+<code>LBSTRESC</code> divided by 2. - For values above the limit of
+quantitation, <code>AVAL</code> is set to the numeric portion of
+<code>LBSTRESC</code>.</p>
 <p><strong>Alternative:</strong> Variable is required <br><br></p>
 </div>
 <div class="section level4">
-<h4 id="loqfl">LOQFL<a class="anchor" aria-label="anchor" href="#loqfl"></a>
+<h4 id="loqfl">
+<code>LOQFL</code><a class="anchor" aria-label="anchor" href="#loqfl"></a>
 </h4>
-<p><strong>Definition:</strong> This is not an ADaM standard variable
-but represents the Limit of Quantitation Flag</p>
-<p><strong>Rationale:</strong> Set to “Y” when LBSTRESC value is used to
-populate AVAL and LBSTRESC value is either below a limit of quantitation
-for the assay or above the limit of quantitation for the assay.
-Derivations for AVAL and LOQFL could look like the following in a
-mutate() statement. -
+<p><strong>Definition:</strong> This is not an <code>ADaM</code>
+standard variable but represents the Limit of Quantitation Flag</p>
+<p><strong>Rationale:</strong> Set to <code>"Y"</code> when
+<code>LBSTRESC</code> value is used to populate <code>AVAL</code> and
+<code>LBSTRESC</code> value is either below a limit of quantitation for
+the assay or above the limit of quantitation for the assay. Derivations
+for <code>AVAL</code> and <code>LOQFL</code> could look like the
+following in a <code><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate()</a></code> statement. -
 <code>AVAL = if_else(grepl("&lt;|&gt;", LBSTRESC), as.numeric(gsub("[^0-9, .]+", "", LBSTRESC)), AVAL)</code>
 -
 <code>LOQFL = if_else(grepl("&lt;|&gt;", LBSTRESC), "Y", "N")</code></p>
@@ -269,10 +279,11 @@ mutate() statement. -
 not relevant then please set <code>LOQFL &lt;- "N"</code> <br><br></p>
 </div>
 <div class="section level4">
-<h4 id="base2">BASE2<a class="anchor" aria-label="anchor" href="#base2"></a>
+<h4 id="base2">
+<code>BASE2</code><a class="anchor" aria-label="anchor" href="#base2"></a>
 </h4>
-<p><strong>Definition:</strong> This is not an ADaM standard variable
-but represents the assay value at Screening</p>
+<p><strong>Definition:</strong> This is not an <code>ADaM</code>
+standard variable but represents the assay value at Screening</p>
 <p><strong>Rationale:</strong> When change from Screening visit analyses
 are needed then this variable contains the assay value at Screening</p>
 <p><strong>Alternative:</strong> If Screening visit analyses are not
@@ -281,8 +292,9 @@ relevant then please set <code>BASE2 &lt;- NA</code> <br><br></p>
 <div class="section level4">
 <h4 id="chg2">CHG2<a class="anchor" aria-label="anchor" href="#chg2"></a>
 </h4>
-<p><strong>Definition:</strong> This is not an ADaM standard variable
-but represents the change from Screening assay value</p>
+<p><strong>Definition:</strong> This is not an <code>ADaM</code>
+standard variable but represents the change from Screening assay
+value</p>
 <p><strong>Rationale:</strong> When change from Screening visit analyses
 are needed then this variable contains the assay value change between
 Screening and subsequent visit</p>
@@ -290,10 +302,12 @@ Screening and subsequent visit</p>
 relevant then please set <code>CHG2 &lt;- NA</code> <br><br></p>
 </div>
 <div class="section level4">
-<h4 id="pchg2">PCHG2<a class="anchor" aria-label="anchor" href="#pchg2"></a>
+<h4 id="pchg2">
+<code>PCHG2</code><a class="anchor" aria-label="anchor" href="#pchg2"></a>
 </h4>
-<p><strong>Definition:</strong> This is not an ADaM standard variable
-but represents the percent change from Screening assay value</p>
+<p><strong>Definition:</strong> This is not an <code>ADaM</code>
+standard variable but represents the percent change from Screening assay
+value</p>
 <p><strong>Rationale:</strong> When percent change from Screening visit
 analyses are needed then this variable contains the assay value percent
 change between Screening and subsequent visit</p>
@@ -308,10 +322,11 @@ relevant then please set <code>PCHG2 &lt;- NA</code> <br><br></p>
 variables that are useful in the context of longitudinal visualizations
 <br><br></p>
 <div class="section level4">
-<h4 id="avall2-basel2-base2l2">AVALL2, BASEL2, BASE2L2<a class="anchor" aria-label="anchor" href="#avall2-basel2-base2l2"></a>
+<h4 id="avall2-basel2-base2l2">
+<code>AVALL2</code>, <code>BASEL2</code>, <code>BASE2L2</code><a class="anchor" aria-label="anchor" href="#avall2-basel2-base2l2"></a>
 </h4>
-<p><strong>Description:</strong> Log 2 of AVAL, BASE and BASE2
-respectively</p>
+<p><strong>Description:</strong> Log 2 of <code>AVAL</code>,
+<code>BASE</code> and <code>BASE2</code> respectively</p>
 <p><strong>Rationale:</strong> This transformation addresses data
 variance to improve the interpretability or appearance of plots.</p>
 </div>
