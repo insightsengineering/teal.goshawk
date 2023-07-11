@@ -128,7 +128,6 @@ Scatter Plot Teal Module For Biomarker Analysis
 \examples{
 
 # Example using ADaM structure analysis dataset.
-library(scda)
 
 # original ARM value = dose value
 arm_mapping <- list(
@@ -140,11 +139,9 @@ color_manual <- c("150mg QD" = "#000000", "Placebo" = "#3498DB", "Combination" =
 # assign LOQ flag symbols: circles for "N" and triangles for "Y", squares for "NA"
 shape_manual <- c("N" = 1, "Y" = 2, "NA" = 0)
 
-cached_data <- synthetic_cdisc_data("latest")
-ADSL <- cached_data$adsl
-
 set.seed(1)
-ADLB <- cached_data$adlb
+ADSL <- goshawk::rADSL
+ADLB <- goshawk::rADLB
 var_labels <- lapply(ADLB, function(x) attributes(x)$label)
 ADLB <- ADLB \%>\%
   dplyr::mutate(AVISITCD = dplyr::case_when(
@@ -209,16 +206,16 @@ attr(ADLB[["ANRLO"]], "label") <- "Analysis Normal Range Lower Limit"
 
 # add LLOQ and ULOQ variables
 ADLB_LOQS <- goshawk:::h_identify_loq_values(ADLB)
-ADLB <- left_join(ADLB, ADLB_LOQS, by = "PARAM")
+ADLB <- dplyr::left_join(ADLB, ADLB_LOQS, by = "PARAM")
 
-app <- init(
-  data = cdisc_data(
-    cdisc_dataset("ADSL", ADSL, code = "ADSL <- synthetic_cdisc_data(\"latest\")$adsl"),
-    cdisc_dataset(
+app <- teal::init(
+  data = teal.data::cdisc_data(
+    teal.data::cdisc_dataset("ADSL", ADSL, code = "ADSL <- goshawk::rADSL"),
+    teal.data::cdisc_dataset(
       "ADLB",
       ADLB,
       code = "set.seed(1)
-              ADLB <- synthetic_cdisc_data('latest')$adlb
+              ADLB <- goshawk::rADLB
               var_labels <- lapply(ADLB, function(x) attributes(x)$label)
               ADLB <- ADLB \%>\%
                 dplyr::mutate(AVISITCD = dplyr::case_when(
@@ -281,8 +278,8 @@ app <- init(
     ),
     check = TRUE
   ),
-  modules = modules(
-    tm_g_gh_correlationplot(
+  modules = teal::modules(
+    teal.goshawk::tm_g_gh_correlationplot(
       label = "Correlation Plot",
       dataname = "ADLB",
       param_var = "PARAMCD",
