@@ -1,7 +1,5 @@
 # teal.goshawk 0.1.14.9013
 
-# Examples now use `scda.2022` data instead of `scda.2021`.
-
 ### Enhancements
 
 * Updated encodings input checks to use `shinyvalidate::InputValidator` instead of `shiny::validate` for better UI experience.
@@ -16,6 +14,7 @@
 ### Miscellaneous
 
 * Deprecated `tm_g_gh_scatterplot`. Use `tm_g_gh_correlationplot` instead.
+* Removed `scda` package dependency from examples.
 
 # teal.goshawk 0.1.14
 
