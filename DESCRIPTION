@@ -1,8 +1,8 @@
 Type: Package
 Package: teal.goshawk
 Title: Longitudinal Visualization `teal` Modules
-Version: 0.1.14.9012
-Date: 2023-06-30
+Version: 0.1.14.9013
+Date: 2023-07-12
 Authors@R: c(
     person("Nick", "Paszty", , "nick.paszty@gene.com", role = c("aut", "cre")),
     person("Junlue", "Zhao", , "zhaoj88@gene.com", role = "aut"),
