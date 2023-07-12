@@ -13,9 +13,8 @@
 #' @export
 #'
 #' @examples
-#' library(scda)
 #'
-#' ADSL <- synthetic_cdisc_data("latest")$adsl
+#' ADSL <- goshawk::rADSL
 #'
 #' # get treatment mapping code
 #' maptrt(df_armvar = ADSL$ARMCD, code = "M")

@@ -50,7 +50,6 @@
 #' # Example using ADaM structure analysis dataset.
 #'
 #' library(dplyr)
-#' library(scda)
 #' library(nestcolor)
 #'
 #' # original ARM value = dose value
@@ -61,9 +60,8 @@
 #' )
 #'
 #' set.seed(1)
-#' cached_data <- synthetic_cdisc_data("latest")
-#' ADSL <- cached_data$adsl
-#' ADLB <- cached_data$adlb
+#' ADSL <- goshawk::rADSL
+#' ADLB <- goshawk::rADLB
 #' var_labels <- lapply(ADLB, function(x) attributes(x)$label)
 #' ADLB <- ADLB %>%
 #'   dplyr::mutate(
@@ -111,17 +109,17 @@
 #'
 #' # add LLOQ and ULOQ variables
 #' ALB_LOQS <- goshawk:::h_identify_loq_values(ADLB)
-#' ADLB <- left_join(ADLB, ALB_LOQS, by = "PARAM")
+#' ADLB <- dplyr::left_join(ADLB, ALB_LOQS, by = "PARAM")
 #'
 #' app <- teal::init(
-#'   data = cdisc_data(
-#'     adsl <- cdisc_dataset("ADSL", ADSL, code = "ADSL <- synthetic_cdisc_data(\"latest\")$adsl"),
-#'     cdisc_dataset(
+#'   data = teal.data::cdisc_data(
+#'     adsl <- teal.data::cdisc_dataset("ADSL", ADSL, code = "ADSL <- goshawk::rADSL"),
+#'     teal.data::cdisc_dataset(
 #'       "ADLB",
 #'       ADLB,
 #'       code = "
 #'         set.seed(1)
-#'         ADLB <- synthetic_cdisc_data('latest')$adlb
+#'         ADLB <- goshawk::rADLB
 #'         var_labels <- lapply(ADLB, function(x) attributes(x)$label)
 #'         ADLB <- ADLB %>%
 #'           dplyr::mutate(AVISITCD = dplyr::case_when(
@@ -165,8 +163,8 @@
 #'     ),
 #'     check = FALSE # to shorten the example check = FALSE, in real scenarios use check = TRUE
 #'   ),
-#'   modules = modules(
-#'     tm_g_gh_boxplot(
+#'   modules = teal::modules(
+#'     teal.goshawk::tm_g_gh_boxplot(
 #'       label = "Box Plot",
 #'       dataname = "ADLB",
 #'       param_var = "PARAMCD",

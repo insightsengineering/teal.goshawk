@@ -48,11 +48,10 @@ There is no need to load `teal` as `teal.goshawk` already depends on it.
 A simple application including the box plot module could look like this:
 
 ```r
-library(scda)
 library(teal.goshawk)
 library(nestcolor)
 
-ADSL <- synthetic_cdisc_data("latest")$adsl %>% 
+ADSL <- goshawk::rADSL %>% 
   mutate(TRTORD = case_when(
     TRT01P == "A: Drug X" ~ 1,
     TRT01P == "C: Combination" ~ 2,
@@ -61,7 +60,7 @@ ADSL <- synthetic_cdisc_data("latest")$adsl %>%
     )
   )
 
-ADLB <- synthetic_cdisc_data("latest")$adlb %>% 
+ADLB <- goshawk::rADLB %>% 
   mutate(AVISITCD = AVISIT,
          TRTORD = case_when(
            TRT01P == "A: Drug X" ~ 1,
@@ -73,8 +72,8 @@ ADLB <- synthetic_cdisc_data("latest")$adlb %>%
 
 app <- teal::init(
   data = teal.data::cdisc_data(
-    teal.data::cdisc_dataset("ADSL", ADSL, code = "ADSL <- synthetic_cdisc_data('latest')$adsl"),
-    teal.data::cdisc_dataset("ADLB", ADLB, code = "ADLB <- synthetic_cdisc_data('latest')$adlb"),
+    teal.data::cdisc_dataset("ADSL", ADSL, code = "ADSL <- goshawk::rADSL"),
+    teal.data::cdisc_dataset("ADLB", ADLB, code = "ADLB <- goshawk::rADLB"),
     check = FALSE
   ),
   modules = list(

@@ -87,7 +87,6 @@ instead.
 }
 \examples{
 # Example using ADaM structure analysis dataset.
-library(scda)
 
 # original ARM value = dose value
 arm_mapping <- list(
@@ -96,9 +95,8 @@ arm_mapping <- list(
   "C: Combination" = "Combination"
 )
 
-cached_data <- synthetic_cdisc_data("latest")
-ADSL <- cached_data$adsl
-ADLB <- cached_data$adlb
+ADSL <- goshawk::rADSL
+ADLB <- goshawk::rADLB
 var_labels <- lapply(ADLB, function(x) attributes(x)$label)
 ADLB <- ADLB \%>\%
   dplyr::mutate(
@@ -128,13 +126,13 @@ ADLB <- ADLB \%>\%
 attr(ADLB[["ARM"]], "label") <- var_labels[["ARM"]]
 attr(ADLB[["ACTARM"]], "label") <- var_labels[["ACTARM"]]
 
-app <- init(
-  data = cdisc_data(
-    adsl <- cdisc_dataset("ADSL", ADSL, code = "ADSL <- synthetic_cdisc_data(\"latest\")$adsl"),
-    cdisc_dataset(
+app <- teal::init(
+  data = teal.data::cdisc_data(
+    adsl <- teal.data::cdisc_dataset("ADSL", ADSL, code = "ADSL <- goshawk::rADSL"),
+    teal.data::cdisc_dataset(
       "ADLB",
       ADLB,
-      code = "ADLB <- synthetic_cdisc_data(\"latest\")$adlb
+      code = "ADLB <- goshawk::rADLB
               var_labels <- lapply(ADLB, function(x) attributes(x)$label)
               ADLB <- ADLB \%>\%
                 dplyr::mutate(AVISITCD = dplyr::case_when(
@@ -163,8 +161,8 @@ app <- init(
     ),
     check = TRUE
   ),
-  modules = modules(
-    tm_g_gh_scatterplot(
+  modules = teal::modules(
+    teal.goshawk::tm_g_gh_scatterplot(
       label = "Scatter Plot",
       dataname = "ADLB",
       param_var = "PARAMCD",

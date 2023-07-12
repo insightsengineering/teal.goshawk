@@ -21,9 +21,8 @@ mapping and ordering syntax. call the function and then copy and paste the resul
 into the app.R file.
 }
 \examples{
-library(scda)
 
-ADSL <- synthetic_cdisc_data("latest")$adsl
+ADSL <- goshawk::rADSL
 
 # get treatment mapping code
 maptrt(df_armvar = ADSL$ARMCD, code = "M")
