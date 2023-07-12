@@ -86,7 +86,6 @@ None
 # Example using ADaM structure analysis dataset.
 
 library(dplyr)
-library(scda)
 
 # original ARM value = dose value
 arm_mapping <- list(
@@ -94,9 +93,8 @@ arm_mapping <- list(
   "B: Placebo" = "Placebo",
   "C: Combination" = "Combination"
 )
-cached_data <- synthetic_cdisc_data("latest")
-ADSL <- cached_data$adsl
-ADLB <- cached_data$adlb
+ADSL <- goshawk::rADSL
+ADLB <- goshawk::rADLB
 var_labels <- lapply(ADLB, function(x) attributes(x)$label)
 ADLB <- ADLB \%>\%
   dplyr::mutate(
@@ -128,12 +126,12 @@ attr(ADLB[["ARM"]], "label") <- var_labels[["ARM"]]
 attr(ADLB[["ACTARM"]], "label") <- var_labels[["ACTARM"]]
 
 app <- teal::init(
-  data = cdisc_data(
-    cdisc_dataset("ADSL", ADSL, code = "ADSL <- synthetic_cdisc_data(\"latest\")$adsl"),
-    cdisc_dataset(
+  data = teal.data::cdisc_data(
+    teal.data::cdisc_dataset("ADSL", ADSL, code = "ADSL <- goshawk::rADSL"),
+    teal.data::cdisc_dataset(
       "ADLB",
       ADLB,
-      code = "ADLB <- synthetic_cdisc_data(\"latest\")$adlb
+      code = "ADLB <- goshawk::rADLB
               var_labels <- lapply(ADLB, function(x) attributes(x)$label)
               ADLB <- ADLB \%>\%
                 dplyr::mutate(AVISITCD = dplyr::case_when(
@@ -162,8 +160,8 @@ app <- teal::init(
     ),
     check = TRUE
   ),
-  modules = modules(
-    tm_g_gh_density_distribution_plot(
+  modules = teal::modules(
+    teal.goshawk::tm_g_gh_density_distribution_plot(
       label = "Density Distribution Plot",
       dataname = "ADLB",
       param_var = "PARAMCD",

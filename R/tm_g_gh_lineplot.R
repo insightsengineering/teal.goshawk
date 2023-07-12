@@ -55,7 +55,6 @@
 #' # Example using ADaM structure analysis dataset.
 #'
 #' library(dplyr)
-#' library(scda)
 #' library(stringr)
 #' library(nestcolor)
 #'
@@ -66,9 +65,8 @@
 #'   "C: Combination" = "Combination"
 #' )
 #'
-#' cached_data <- synthetic_cdisc_data("latest")
-#' ADSL <- cached_data$adsl
-#' ADLB <- cached_data$adlb
+#' ADSL <- goshawk::rADSL
+#' ADLB <- goshawk::rADLB
 #' var_labels <- lapply(ADLB, function(x) attributes(x)$label)
 #' ADLB <- ADLB %>%
 #'   dplyr::mutate(
@@ -99,10 +97,10 @@
 #' attr(ADLB[["ACTARM"]], "label") <- var_labels[["ACTARM"]]
 #'
 #' app <- teal::init(
-#'   data = cdisc_data(
-#'     adsl <- cdisc_dataset("ADSL", ADSL, code = "ADSL <- synthetic_cdisc_data(\"latest\")$adsl"),
-#'     cdisc_dataset("ADLB", ADLB,
-#'       code = "ADLB <- synthetic_cdisc_data(\"latest\")$adlb
+#'   data = teal.data::cdisc_data(
+#'     adsl <- teal.data::cdisc_dataset("ADSL", ADSL, code = "ADSL <- goshawk::rADSL"),
+#'     teal.data::cdisc_dataset("ADLB", ADLB,
+#'       code = "ADLB <- goshawk::rADLB
 #'               var_labels <- lapply(ADLB, function(x) attributes(x)$label)
 #'               ADLB <- ADLB %>%
 #'                 dplyr::mutate(AVISITCD = dplyr::case_when(
@@ -131,8 +129,8 @@
 #'     ),
 #'     check = TRUE
 #'   ),
-#'   modules = modules(
-#'     tm_g_gh_lineplot(
+#'   modules = teal::modules(
+#'     teal.goshawk::tm_g_gh_lineplot(
 #'       label = "Line Plot",
 #'       dataname = "ADLB",
 #'       param_var = "PARAMCD",

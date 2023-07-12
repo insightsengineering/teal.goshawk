@@ -1,6 +1,4 @@
-# teal.goshawk 0.1.14.9012
-
-# Examples now use `scda.2022` data instead of `scda.2021`.
+# teal.goshawk 0.1.14.9014
 
 ### Enhancements
 
@@ -16,6 +14,7 @@
 ### Miscellaneous
 
 * Deprecated `tm_g_gh_scatterplot`. Use `tm_g_gh_correlationplot` instead.
+* Removed `scda` package dependency from examples.
 
 # teal.goshawk 0.1.14
 

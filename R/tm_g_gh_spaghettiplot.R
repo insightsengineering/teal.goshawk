@@ -57,7 +57,6 @@
 #' # Example using ADaM structure analysis dataset.
 #'
 #' library(dplyr)
-#' library(scda)
 #'
 #' # original ARM value = dose value
 #' arm_mapping <- list(
@@ -66,8 +65,8 @@
 #'   "C: Combination" = "Combination"
 #' )
 #' set.seed(1)
-#' ADSL <- synthetic_cdisc_data("latest")$adsl
-#' ADLB <- synthetic_cdisc_data("latest")$adlb
+#' ADSL <- goshawk::rADSL
+#' ADLB <- goshawk::rADLB
 #' var_labels <- lapply(ADLB, function(x) attributes(x)$label)
 #' ADLB <- ADLB %>%
 #'   dplyr::mutate(
@@ -112,16 +111,16 @@
 #'
 #' # add LLOQ and ULOQ variables
 #' ALB_LOQS <- goshawk:::h_identify_loq_values(ADLB)
-#' ADLB <- left_join(ADLB, ALB_LOQS, by = "PARAM")
+#' ADLB <- dplyr::left_join(ADLB, ALB_LOQS, by = "PARAM")
 #'
 #' app <- teal::init(
-#'   data = cdisc_data(
-#'     cdisc_dataset("ADSL", ADSL, code = "ADSL <- synthetic_cdisc_data(\"latest\")$adsl"),
-#'     cdisc_dataset(
+#'   data = teal.data::cdisc_data(
+#'     teal.data::cdisc_dataset("ADSL", ADSL, code = "ADSL <- goshawk::rADSL"),
+#'     teal.data::cdisc_dataset(
 #'       "ADLB",
 #'       ADLB,
 #'       code = "set.seed(1)
-#'               ADLB <- synthetic_cdisc_data(\"latest\")$adlb
+#'               ADLB <- goshawk::rADLB
 #'               var_labels <- lapply(ADLB, function(x) attributes(x)$label)
 #'               ADLB <- ADLB %>%
 #'                 dplyr::mutate(AVISITCD = dplyr::case_when(
@@ -163,8 +162,8 @@
 #'     ),
 #'     check = FALSE
 #'   ),
-#'   modules = modules(
-#'     tm_g_gh_spaghettiplot(
+#'   modules = teal::modules(
+#'     teal.goshawk::tm_g_gh_spaghettiplot(
 #'       label = "Spaghetti Plot",
 #'       dataname = "ADLB",
 #'       param_var = "PARAMCD",
