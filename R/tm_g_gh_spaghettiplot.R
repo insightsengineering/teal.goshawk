@@ -340,7 +340,7 @@ g_ui_spaghettiplot <- function(id, ...) {
             teal.widgets::optionalSelectInput(
               ns("facet_scales"),
               label = "Select Axis Scales",
-              choices = c('fixed', 'free', 'free_x', 'free_y'),
+              choices = c("fixed", "free", "free_x", "free_y"),
               selected = a$facet_scales,
               multiple = FALSE
             ),
