@@ -24,7 +24,7 @@ tm_g_gh_spaghettiplot(
   xlabel = xtick,
   rotate_xlab = FALSE,
   facet_ncol = 2,
-  facet_scales = "fixed",
+  facet_scales = c("fixed", "free", "free_x", "free_y"),
   plot_height = c(600, 200, 2000),
   plot_width = NULL,
   font_size = c(12, 8, 20),
