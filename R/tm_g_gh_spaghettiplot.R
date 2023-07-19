@@ -515,7 +515,7 @@ srv_g_spaghettiplot <- function(id,
     ### REPORTER
     if (with_reporter) {
       card_fun <- function(comment) {
-        card <- teal.reporter::TealReportCard$new()
+        card <- teal::TealReportCard$new()
         card$set_name("Spaghetti Plot")
         card$append_text("Spaghetti Plot", "header2")
         if (with_filter) card$append_fs(filter_panel_api$get_filter_state())
