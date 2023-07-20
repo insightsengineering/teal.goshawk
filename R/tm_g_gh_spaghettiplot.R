@@ -30,8 +30,8 @@
 #' label of `x-axis` tick values. Default value is `waive()`.
 #' @param rotate_xlab `logical(1)` value indicating whether to rotate `x-axis` labels
 #' @param facet_ncol numeric value indicating number of facets per row.
-#' @param facet_scales passed to \code{\link[ggplot2]{facet_wrap}} \code{scales} parameter. Should scales be fixed (`"fixed"`,
-#' the default), free (`"free"`), or free in one dimension (`"free_x"`, `"free_y"`)?
+#' @param facet_scales passed to \code{\link[ggplot2]{facet_wrap}} \code{scales} parameter. Should scales be fixed
+#' (`"fixed"`, the default) or free for `x-axis` (`"free_x"`)?
 #' @param plot_height controls plot height.
 #' @param plot_width optional, controls plot width.
 #' @param font_size control font size for title, `x-axis`, `y-axis` and legend font.
@@ -215,7 +215,7 @@ tm_g_gh_spaghettiplot <- function(label,
                                   xlabel = xtick,
                                   rotate_xlab = FALSE,
                                   facet_ncol = 2,
-                                  facet_scales = c("fixed", "free", "free_x", "free_y"),
+                                  facet_scales = c("fixed", "free_x"),
                                   plot_height = c(600, 200, 2000),
                                   plot_width = NULL,
                                   font_size = c(12, 8, 20),
@@ -341,7 +341,7 @@ g_ui_spaghettiplot <- function(id, ...) {
             teal.widgets::optionalSelectInput(
               ns("facet_scales"),
               label = "Select Axis Scales",
-              choices = c("fixed", "free", "free_x", "free_y"),
+              choices = c("fixed", "free_x"),
               selected = a$facet_scales,
               multiple = FALSE
             ),

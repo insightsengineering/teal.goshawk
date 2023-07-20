@@ -24,7 +24,7 @@ tm_g_gh_spaghettiplot(
   xlabel = xtick,
   rotate_xlab = FALSE,
   facet_ncol = 2,
-  facet_scales = c("fixed", "free", "free_x", "free_y"),
+  facet_scales = c("fixed", "free_x"),
   plot_height = c(600, 200, 2000),
   plot_width = NULL,
   font_size = c(12, 8, 20),
@@ -86,8 +86,8 @@ label of \code{x-axis} tick values. Default value is \code{waive()}.}
 
 \item{facet_ncol}{numeric value indicating number of facets per row.}
 
-\item{facet_scales}{passed to \code{\link[ggplot2]{facet_wrap}} \code{scales} parameter. Should scales be fixed (\code{"fixed"},
-the default), free (\code{"free"}), or free in one dimension (\code{"free_x"}, \code{"free_y"})?}
+\item{facet_scales}{passed to \code{\link[ggplot2]{facet_wrap}} \code{scales} parameter. Should scales be fixed
+(\code{"fixed"}, the default) or free for \code{x-axis} (\code{"free_x"})?}
 
 \item{plot_height}{controls plot height.}
 
