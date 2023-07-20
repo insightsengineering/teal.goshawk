@@ -30,8 +30,8 @@
 #' label of `x-axis` tick values. Default value is `waive()`.
 #' @param rotate_xlab `logical(1)` value indicating whether to rotate `x-axis` labels
 #' @param facet_ncol numeric value indicating number of facets per row.
-#' @param facet_scales passed to \code{\link[ggplot2]{facet_wrap}} \code{scales} parameter. Should scales be fixed
-#' (`"fixed"`, the default) or free for `x-axis` (`"free_x"`)?
+#' @param free_x `logical(1)` should scales be `"fixed"` (`FALSE`) of `"free"` (`TRUE`) for `x-axis` in
+#' \code{\link[ggplot2]{facet_wrap}} \code{scales} parameter.
 #' @param plot_height controls plot height.
 #' @param plot_width optional, controls plot width.
 #' @param font_size control font size for title, `x-axis`, `y-axis` and legend font.
@@ -215,7 +215,7 @@ tm_g_gh_spaghettiplot <- function(label,
                                   xlabel = xtick,
                                   rotate_xlab = FALSE,
                                   facet_ncol = 2,
-                                  facet_scales = c("fixed", "free_x"),
+                                  free_x = FALSE,
                                   plot_height = c(600, 200, 2000),
                                   plot_width = NULL,
                                   font_size = c(12, 8, 20),
@@ -241,7 +241,7 @@ tm_g_gh_spaghettiplot <- function(label,
     lower = plot_width[2], upper = plot_width[3], null.ok = TRUE,
     .var.name = "plot_width"
   )
-  facet_scales <- match.arg(facet_scales)
+  checkmate::assert_flag(free_x)
 
   args <- as.list(environment())
 
@@ -338,13 +338,7 @@ g_ui_spaghettiplot <- function(id, ...) {
                 )
               )
             ),
-            teal.widgets::optionalSelectInput(
-              ns("facet_scales"),
-              label = "Select Axis Scales",
-              choices = c("fixed", "free_x"),
-              selected = a$facet_scales,
-              multiple = FALSE
-            ),
+            checkboxInput(ns("free_x"), "Free X-Axis Scales", a$free_x),
             checkboxInput(ns("rotate_xlab"), "Rotate X-Axis Label", a$rotate_xlab),
             teal.widgets::optionalSliderInputValMinMax(ns("font_size"), "Font Size", a$font_size, ticks = FALSE),
             teal.widgets::optionalSliderInputValMinMax(
@@ -429,7 +423,7 @@ srv_g_spaghettiplot <- function(id,
       # nolint start
       ylim <- yrange_slider$state()$value
       facet_ncol <- input$facet_ncol
-      facet_scales <- input$facet_scales
+      facet_scales <- ifelse(input$free_x, "free_x", "fixed")
 
       rotate_xlab <- input$rotate_xlab
       hline_arb <- horizontal_line()$line_arb
