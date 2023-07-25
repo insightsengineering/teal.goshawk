@@ -28,19 +28,19 @@ License: Apache License 2.0 | file LICENSE
 Depends:
     goshawk (>= 0.1.15),
     R (>= 3.6),
-    shiny,
+    shiny (>= 1.6.0),
     teal (>= 0.14.0)
 Imports:
-    checkmate,
+    checkmate (>= 2.1.0),
     colourpicker,
-    dplyr,
-    DT,
+    dplyr (>= 1.0.5),
+    DT (>= 0.13),
     ggplot2,
     grDevices,
-    lifecycle,
+    lifecycle (>= 0.2.0),
     logger (>= 0.2.0),
     methods,
-    rlang,
+    rlang (>= 1.0.0),
     shinyjs,
     shinyvalidate,
     stats,
@@ -49,18 +49,46 @@ Imports:
     teal.reporter (>= 0.2.0),
     teal.transform (>= 0.4.0),
     teal.widgets (>= 0.4.0),
-    tidyr
+    tidyr (>= 0.8.3)
 Suggests:
-    knitr,
+    knitr (>= 1.34),
     nestcolor (>= 0.1.0),
-    rmarkdown,
-    stringr,
+    rmarkdown (>= 2.19),
+    stringr (>= 1.4.1),
     teal.data (>= 0.3.0),
     tern (>= 0.7.10),
-    testthat (>= 2.0),
+    testthat (>= 3.0.4),
     utils
 VignetteBuilder:
     knitr
+Config/Needs/verdepcheck:
+    insightsengineering/goshawk,
+    rstudio/shiny,
+    insightsengineering/teal,
+    mllg/checkmate,
+    daattali/colourpicker,
+    tidyverse/dplyr,
+    rstudio/DT,
+    tidyverse/ggplot2,
+    r-lib/lifecycle,
+    daroczig/logger,
+    r-lib/rlang,
+    daattali/shinyjs,
+    rstudio/shinyvalidate,
+    insightsengineering/teal.code,
+    insightsengineering/teal.logger,
+    insightsengineering/teal.reporter,
+    insightsengineering/teal.transform,
+    insightsengineering/teal.widgets,
+    tidyverse/tidyr,
+    yihui/knitr,
+    insightsengineering/nestcolor,
+    rstudio/rmarkdown,
+    insightsengineering/scda,
+    insightsengineering/scda.2022,
+    tidyverse/stringr,
+    insightsengineering/tern,
+    r-lib/testthat
 Config/Needs/website: insightsengineering/nesttemplate
 Encoding: UTF-8
 Language: en-US

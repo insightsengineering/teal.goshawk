@@ -17,6 +17,7 @@
 
 * Deprecated `tm_g_gh_scatterplot`. Use `tm_g_gh_correlationplot` instead.
 * Removed `scda` package dependency from examples.
+* Specify minimal version of dependent packages.
 
 # teal.goshawk 0.1.14
 
