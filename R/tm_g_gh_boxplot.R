@@ -242,7 +242,7 @@ tm_g_gh_boxplot <- function(label,
 
   module(
     label = label,
-    filters = dataname,
+    datanames = dataname,
     server = srv_g_boxplot,
     server_args = list(
       dataname = dataname,

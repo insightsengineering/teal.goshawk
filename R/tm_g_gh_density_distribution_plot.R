@@ -183,7 +183,7 @@ tm_g_gh_density_distribution_plot <- function(label, # nolint
 
   module(
     label = label,
-    filters = dataname,
+    datanames = dataname,
     server = srv_g_density_distribution_plot,
     server_args = list(
       dataname = dataname,

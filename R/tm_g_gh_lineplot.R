@@ -226,7 +226,7 @@ tm_g_gh_lineplot <- function(label,
     ),
     ui = ui_lineplot,
     ui_args = args,
-    filters = dataname
+    datanames = dataname
   )
 }
 

@@ -267,7 +267,7 @@ tm_g_gh_spaghettiplot <- function(label,
     ),
     ui = g_ui_spaghettiplot,
     ui_args = args,
-    filters = dataname
+    datanames = dataname
   )
 }
 

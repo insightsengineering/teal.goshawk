@@ -190,7 +190,7 @@ tm_g_gh_scatterplot <- function(label,
 
   module(
     label = label,
-    filters = dataname,
+    datanames = dataname,
     server = srv_g_scatterplot,
     server_args = list(
       dataname = dataname,
