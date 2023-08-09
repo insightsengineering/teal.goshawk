@@ -5,7 +5,10 @@
 \alias{teal_goshawk}
 \title{teal.goshawk core packages}
 \description{
-The teal.goshawk package renders the UI and calls the respective biomarker visualization
-functions.
+The teal.goshawk package renders the UI and calls the respective biomarker visualization functions.
+}
+\details{
+The data used for teal.goshawk have some constraints.
+It must contain the columns \code{AVISITCD}, \code{BASE}, \code{BASE2}, \code{AVALU}, \code{LBSTRESC}, \code{LOQFL}, \code{CHG2}, and \code{PCHG2}.
 }
 \keyword{internal}
