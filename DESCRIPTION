@@ -1,20 +1,20 @@
 Type: Package
 Package: teal.goshawk
-Title: Longitudinal visualization teal modules
-Version: 0.1.12.9006
-Date: 2022-04-07
+Title: Longitudinal Visualization `teal` Modules
+Version: 0.1.14.9020
+Date: 2023-08-01
 Authors@R: c(
     person("Nick", "Paszty", , "nick.paszty@gene.com", role = c("aut", "cre")),
-    person("Junlue", "Zhao", , "zhaoj88@gene.com", role = "aut"),
     person("Dawid", "Kaledkowski", , "dawid.kaledkowski@roche.com", role = "aut"),
-    person("Maciej", "Nasinski", , "maciej.nasinski@contractors.roche.com", role = "aut"),
     person("Mahmoud", "Hallal", , "mahmoud.hallal@roche.com", role = "aut"),
     person("Pawel", "Rucki", , "pawel.rucki@roche.com", role = "aut"),
     person("Wenyi", "Liu", , "liu.wenyi@roche.com", role = "aut"),
     person("Jeffrey", "Tomlinson", , "tomlinson.jeffrey@roche.com", role = "aut"),
     person("Bali", "Toth", , "toth.balazs@gene.com", role = "aut"),
-    person("F. Hoffmann-La Roche AG", role = c("cph", "fnd")),
-    person("Maximilian", "Mordig", role = "ctb")
+    person("Junlue", "Zhao", role = "aut"),
+    person("Maciej", "Nasinski", role = "aut"),
+    person("Maximilian", "Mordig", role = "ctb"),
+    person("F. Hoffmann-La Roche AG", role = c("cph", "fnd"))
   )
 Description: Modules that produce web interfaces through which
     longitudinal visualizations can be dynamically modified and displayed.
@@ -26,10 +26,10 @@ Description: Modules that produce web interfaces through which
     with levels 'Y', 'N' or NA.
 License: Apache License 2.0 | file LICENSE
 Depends:
-    goshawk (>= 0.1.12),
+    goshawk (>= 0.1.14),
     R (>= 3.6),
     shiny,
-    teal (>= 0.11.0)
+    teal (>= 0.12.0)
 Imports:
     checkmate,
     colourpicker,
@@ -37,27 +37,33 @@ Imports:
     DT,
     ggplot2,
     grDevices,
+    lifecycle,
     logger (>= 0.2.0),
     methods,
     rlang,
     shinyjs,
+    shinyvalidate,
     stats,
-    teal.code,
-    teal.logger,
-    teal.transform,
-    teal.widgets,
+    teal.code (>= 0.3.0),
+    teal.logger (>= 0.1.1),
+    teal.reporter (>= 0.1.1),
+    teal.transform (>= 0.2.0),
+    teal.widgets (>= 0.2.0),
     tidyr
 Suggests:
     knitr,
+    nestcolor (>= 0.1.0),
     rmarkdown,
-    scda (>= 0.1.3),
-    scda.2021 (>= 0.1.3),
     stringr,
-    tern (>= 0.7.7),
+    teal.data (>= 0.2.0),
+    tern (>= 0.7.10),
     testthat (>= 2.0),
     utils
+VignetteBuilder:
+    knitr
 Config/Needs/website: insightsengineering/nesttemplate
 Encoding: UTF-8
+Language: en-US
 LazyData: true
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.2.0
+RoxygenNote: 7.2.3

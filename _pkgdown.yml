@@ -2,12 +2,21 @@ url: https://insightsengineering.github.io/teal.goshawk
 
 template:
   package: nesttemplate
-  params:
-    ganalytics: "UA-125641273-1"
 
 navbar:
-  right:
-    - icon: fa-github
+  structure:
+    left: [intro, reference, articles, tutorials, news, reports]
+    right: [search, github]
+  components:
+    reports:
+      text: Reports
+      menu:
+      - text: Coverage report
+        href: coverage-report/
+      - text: Unit test report
+        href: unit-test-report/
+    github:
+      icon: fa-github
       href: https://github.com/insightsengineering/teal.goshawk
 
 #development:
@@ -19,8 +28,14 @@ reference:
     desc: These modules render the UI and call the respective longitudinal visualization function
     contents:
       - starts_with("tm_g_gh")
+      - -ends_with("scatterplot")
 
   - title: Helper
     desc: Utility functions
     contents:
       - maptrt
+
+  - title: Deprecated
+    desc: These functions have been deprecated
+    contents:
+      - tm_g_gh_scatterplot

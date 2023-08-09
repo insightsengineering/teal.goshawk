@@ -1,4 +1,33 @@
-# teal.goshawk 0.1.12.9006
+# teal.goshawk 0.1.14.9020
+
+### Enhancements
+
+* Updated encodings input checks to use `shinyvalidate::InputValidator` instead of `shiny::validate` for better UI experience.
+* Added a tooltip to value input of `ui_arbitrary_lines` to explain how to supply multiple values.
+
+### Breaking changes
+
+* Constraints range is calculated on the filtered data instead of the unfiltered.
+* Replaced `chunks` with simpler `qenv` class.
+* Replaced `datasets` argument containing `FilteredData` with the new arguments `data` (`tdata` object) and `filter_panel_api` (`FilterPanelAPI`).
+
+### Miscellaneous
+
+* Deprecated `tm_g_gh_scatterplot`. Use `tm_g_gh_correlationplot` instead.
+* Removed `scda` package dependency from examples.
+
+# teal.goshawk 0.1.14
+
+### Enhancements
+* Added `teal.reporter` reporting into all the package modules.
+* Added optional argument `plot_relative_height_value` to `tm_g_gh_lineplot` to control initial value of the relative plot height slider.
+* Implemented `nestcolor` with slight refactoring to `tm_g_gh_lineplot` and added `nestcolor` in examples with no custom color manuals.
+
+### Miscellaneous
+* Fixed minor type coercion warning in `srv_arbitrary_lines`.
+* Updated modules to not use datasets with suffix `_FILTERED` so the package works with the breaking changes in `teal.slice`.
+
+# teal.goshawk 0.1.13
 
 ### Miscellaneous
 * Added a template to the `pkgdown` site.
@@ -116,22 +145,22 @@
 
 * bug fix in correlation plot module related to axis ranges
 * reflect changes in data filter panel re-factoring
-* modification to correlation module to pass data for data driven LLOQ and ULOQ footnote
+* modification to correlation module to pass data for data driven `LLOQ` and `ULOQ` footnote
 
 # teal.goshawk 0.1.3
 
-* Added `.data` to PARAMCD in new functions related to sliders and reactivity.
+* Added `.data` to `PARAMCD` in new functions related to sliders and reactivity.
 * Fixing doc and other small fixes.
-* Added toggable slider to all modules.
+* Added toggleable slider to all modules.
 * Added data driven data constraints UI rendering.
 
 # teal.goshawk 0.1.2
 
 * Added checkbox input to control the following:
-  - Box: Toggle LoQ legend on/off.
-  - Correlation: Toggle LoQ legend on/off, toggle visit facetting on/off.
+  - Box: Toggle `LoQ` legend on/off.
+  - Correlation: Toggle `LoQ` legend on/off, toggle visit facetting on/off.
   - Density: Toggle combined treatment line on/off.
-* Modified lineplot vertical axis range to match parameter value and CI range.
+* Modified line-plot vertical axis range to match parameter value and CI range.
 
 # teal.goshawk 0.1.1
 

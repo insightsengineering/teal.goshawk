@@ -2,7 +2,7 @@
 % Please edit documentation in R/toggleable_slider.R
 \name{toggle_slider_ui}
 \alias{toggle_slider_ui}
-\title{UI with a toggable slider to change between slider and numeric input fields}
+\title{UI with a toggleable slider to change between slider and numeric input fields}
 \usage{
 toggle_slider_ui(
   id,

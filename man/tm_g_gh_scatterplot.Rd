@@ -32,23 +32,23 @@ tm_g_gh_scatterplot(
 \arguments{
 \item{label}{menu item label of the module in the teal app.}
 
-\item{dataname}{analysis data passed to the data argument of teal init. E.g. ADaM structured laboratory data frame
-\code{ADLB}.}
+\item{dataname}{analysis data passed to the data argument of \code{\link[teal]{init}}. E.g. \code{ADaM} structured
+laboratory data frame \code{ADLB}.}
 
 \item{param_var}{name of variable containing biomarker codes e.g. \code{PARAMCD}.}
 
 \item{param}{biomarker selected.}
 
-\item{xaxis_var}{name of variable containing biomarker results displayed on x-axis e.g. \code{BASE}.}
+\item{xaxis_var}{name of variable containing biomarker results displayed on \code{x-axis} e.g. \code{BASE}.}
 
-\item{yaxis_var}{name of variable containing biomarker results displayed on y-axis e.g. \code{AVAL}.}
+\item{yaxis_var}{name of variable containing biomarker results displayed on \code{y-axis} e.g. \code{AVAL}.}
 
 \item{trt_group}{\code{\link[teal.transform]{choices_selected}} object with available choices and pre-selected option
-for variable names representing treatment group e.g. ARM.}
+for variable names representing treatment group e.g. \code{ARM}.}
 
 \item{color_manual}{vector of colors applied to treatment values.}
 
-\item{shape_manual}{vector of symbols applied to LOQ values.}
+\item{shape_manual}{vector of symbols applied to \code{LOQ} values.}
 
 \item{facet_ncol}{numeric value indicating number of facets per row.}
 
@@ -57,7 +57,7 @@ for variable names representing treatment group e.g. ARM.}
 \item{reg_line}{include regression line and annotations for slope and coefficient in visualization. Use with facet
 TRUE.}
 
-\item{rotate_xlab}{45 degree rotation of x-axis values.}
+\item{rotate_xlab}{45 degree rotation of \code{x-axis} values.}
 
 \item{hline}{y-axis value to position of horizontal line.}
 
@@ -67,7 +67,7 @@ TRUE.}
 
 \item{plot_width}{optional, controls plot width.}
 
-\item{font_size}{font size control for title, x-axis label, y-axis label and legend.}
+\item{font_size}{font size control for title, \code{x-axis} label, \code{y-axis} label and legend.}
 
 \item{dot_size}{plot dot size.}
 
@@ -80,11 +80,13 @@ with text placed before the output to put the output into context. For example a
 into context. For example the \code{\link[shiny:helpText]{shiny::helpText()}} elements are useful.}
 }
 \description{
-Scatter Plot Teal Module For Biomarker Analysis
+\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#deprecated}{\figure{lifecycle-deprecated.svg}{options: alt='[Deprecated]'}}}{\strong{[Deprecated]}}
+
+\code{tm_g_gh_scatterplot} is deprecated. Please use \link{tm_g_gh_correlationplot}
+instead.
 }
 \examples{
 # Example using ADaM structure analysis dataset.
-library(scda)
 
 # original ARM value = dose value
 arm_mapping <- list(
@@ -93,8 +95,8 @@ arm_mapping <- list(
   "C: Combination" = "Combination"
 )
 
-ADSL <- synthetic_cdisc_data("latest")$adsl
-ADLB <- synthetic_cdisc_data("latest")$adlb
+ADSL <- goshawk::rADSL
+ADLB <- goshawk::rADLB
 var_labels <- lapply(ADLB, function(x) attributes(x)$label)
 ADLB <- ADLB \%>\%
   dplyr::mutate(
@@ -124,13 +126,13 @@ ADLB <- ADLB \%>\%
 attr(ADLB[["ARM"]], "label") <- var_labels[["ARM"]]
 attr(ADLB[["ACTARM"]], "label") <- var_labels[["ACTARM"]]
 
-app <- init(
-  data = cdisc_data(
-    adsl <- cdisc_dataset("ADSL", ADSL, code = "ADSL <- synthetic_cdisc_data(\"latest\")$adsl"),
-    cdisc_dataset(
+app <- teal::init(
+  data = teal.data::cdisc_data(
+    adsl <- teal.data::cdisc_dataset("ADSL", ADSL, code = "ADSL <- goshawk::rADSL"),
+    teal.data::cdisc_dataset(
       "ADLB",
       ADLB,
-      code = "ADLB <- synthetic_cdisc_data(\"latest\")$adlb
+      code = "ADLB <- goshawk::rADLB
               var_labels <- lapply(ADLB, function(x) attributes(x)$label)
               ADLB <- ADLB \%>\%
                 dplyr::mutate(AVISITCD = dplyr::case_when(
@@ -159,8 +161,8 @@ app <- init(
     ),
     check = TRUE
   ),
-  modules = modules(
-    tm_g_gh_scatterplot(
+  modules = teal::modules(
+    teal.goshawk::tm_g_gh_scatterplot(
       label = "Scatter Plot",
       dataname = "ADLB",
       param_var = "PARAMCD",
@@ -184,8 +186,8 @@ app <- init(
     )
   )
 )
-\dontrun{
-shinyApp(app$ui, app$server)
+if (interactive()) {
+  shinyApp(app$ui, app$server)
 }
 
 }

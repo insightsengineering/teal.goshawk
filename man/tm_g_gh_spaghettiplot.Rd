@@ -24,6 +24,7 @@ tm_g_gh_spaghettiplot(
   xlabel = xtick,
   rotate_xlab = FALSE,
   facet_ncol = 2,
+  free_x = FALSE,
   plot_height = c(600, 200, 2000),
   plot_width = NULL,
   font_size = c(12, 8, 20),
@@ -40,10 +41,10 @@ tm_g_gh_spaghettiplot(
 \arguments{
 \item{label}{menu item label of the module in the teal app.}
 
-\item{dataname}{analysis data passed to the data argument of teal init.
-E.g. ADaM structured laboratory data frame ADLB.}
+\item{dataname}{analysis data passed to the data argument of \code{\link[teal]{init}}.
+E.g. \code{ADaM} structured laboratory data frame \code{ADLB}.}
 
-\item{param_var}{name of variable containing biomarker codes e.g. PARAMCD.}
+\item{param_var}{name of variable containing biomarker codes e.g. \code{PARAMCD}.}
 
 \item{param}{biomarker selected.}
 
@@ -56,18 +57,18 @@ that includes parameter labels.}
 that is used as x-axis in the plot for the respective goshawk function.}
 
 \item{yaxis_var}{single name of variable in analysis data that is used as
-summary variable in the respective gshawk function.}
+summary variable in the respective \code{goshawk} function.}
 
-\item{xaxis_var_level}{vector that can be used to define the factor level of xaxis_var.
-Only use it when xaxis_var is character or factor.}
+\item{xaxis_var_level}{vector that can be used to define the factor level of \code{xaxis_var}.
+Only use it when \code{xaxis_var} is character or factor.}
 
 \item{filter_var}{data constraint variable.}
 
 \item{trt_group}{\code{\link[teal.transform]{choices_selected}} object with available choices and pre-selected option
-for variable names representing treatment group e.g. ARM.}
+for variable names representing treatment group e.g. \code{ARM}.}
 
 \item{trt_group_level}{vector that can be used to define factor
-level of trt_group.}
+level of \code{trt_group}.}
 
 \item{group_stats}{control group mean or median overlay.}
 
@@ -75,21 +76,24 @@ level of trt_group.}
 
 \item{color_comb}{name or hex value for combined treatment color.}
 
-\item{xtick}{numeric vector to define the tick values of x-axis
-when x variable is numeric. Default value is waive().}
+\item{xtick}{numeric vector to define the tick values of \code{x-axis}
+when x variable is numeric. Default value is \code{waive()}.}
 
-\item{xlabel}{vector with same length of xtick to define the
-label of x-axis tick values. Default value is waive().}
+\item{xlabel}{vector with same length of \code{xtick} to define the
+label of \code{x-axis} tick values. Default value is \code{waive()}.}
 
-\item{rotate_xlab}{boolean value indicating whether to rotate x-axis labels}
+\item{rotate_xlab}{\code{logical(1)} value indicating whether to rotate \code{x-axis} labels}
 
 \item{facet_ncol}{numeric value indicating number of facets per row.}
+
+\item{free_x}{\code{logical(1)} should scales be \code{"fixed"} (\code{FALSE}) of \code{"free"} (\code{TRUE}) for \code{x-axis} in
+\code{\link[ggplot2]{facet_wrap}} \code{scales} parameter.}
 
 \item{plot_height}{controls plot height.}
 
 \item{plot_width}{optional, controls plot width.}
 
-\item{font_size}{control font size for title, x-axis, y-axis and legend font.}
+\item{font_size}{control font size for title, \code{x-axis}, \code{y-axis} and legend font.}
 
 \item{hline_arb}{numeric vector of at most 2 values identifying intercepts for arbitrary horizontal lines.}
 
@@ -124,7 +128,6 @@ that creates a spaghetti plot.
 # Example using ADaM structure analysis dataset.
 
 library(dplyr)
-library(scda)
 
 # original ARM value = dose value
 arm_mapping <- list(
@@ -133,8 +136,8 @@ arm_mapping <- list(
   "C: Combination" = "Combination"
 )
 set.seed(1)
-ADSL <- synthetic_cdisc_data("latest")$adsl
-ADLB <- synthetic_cdisc_data("latest")$adlb
+ADSL <- goshawk::rADSL
+ADLB <- goshawk::rADLB
 var_labels <- lapply(ADLB, function(x) attributes(x)$label)
 ADLB <- ADLB \%>\%
   dplyr::mutate(
@@ -179,16 +182,16 @@ attr(ADLB[["ANRHI"]], "label") <- "Analysis Normal Range Upper Limit"
 
 # add LLOQ and ULOQ variables
 ALB_LOQS <- goshawk:::h_identify_loq_values(ADLB)
-ADLB <- left_join(ADLB, ALB_LOQS, by = "PARAM")
+ADLB <- dplyr::left_join(ADLB, ALB_LOQS, by = "PARAM")
 
 app <- teal::init(
-  data = cdisc_data(
-    cdisc_dataset("ADSL", ADSL, code = "ADSL <- synthetic_cdisc_data(\"latest\")$adsl"),
-    cdisc_dataset(
+  data = teal.data::cdisc_data(
+    teal.data::cdisc_dataset("ADSL", ADSL, code = "ADSL <- goshawk::rADSL"),
+    teal.data::cdisc_dataset(
       "ADLB",
       ADLB,
       code = "set.seed(1)
-              ADLB <- synthetic_cdisc_data(\"latest\")$adlb
+              ADLB <- goshawk::rADLB
               var_labels <- lapply(ADLB, function(x) attributes(x)$label)
               ADLB <- ADLB \%>\%
                 dplyr::mutate(AVISITCD = dplyr::case_when(
@@ -230,8 +233,8 @@ app <- teal::init(
     ),
     check = FALSE
   ),
-  modules = modules(
-    tm_g_gh_spaghettiplot(
+  modules = teal::modules(
+    teal.goshawk::tm_g_gh_spaghettiplot(
       label = "Spaghetti Plot",
       dataname = "ADLB",
       param_var = "PARAMCD",
@@ -258,8 +261,8 @@ app <- teal::init(
     )
   )
 )
-\dontrun{
-shinyApp(app$ui, app$server)
+if (interactive()) {
+  shinyApp(app$ui, app$server)
 }
 
 }

@@ -22,7 +22,8 @@ tm_g_gh_lineplot(
   hline_arb = numeric(0),
   hline_arb_color = "red",
   hline_arb_label = "Horizontal line",
-  color_manual = NULL,
+  color_manual = c(getOption("ggplot2.discrete.colour"), c("#ff0000", "#008000",
+    "#4ca3dd", "#8a2be2"))[1:4],
   xtick = ggplot2::waiver(),
   xlabel = xtick,
   rotate_xlab = FALSE,
@@ -33,40 +34,41 @@ tm_g_gh_lineplot(
   pre_output = NULL,
   post_output = NULL,
   count_threshold = 0,
-  table_font_size = c(12, 4, 20)
+  table_font_size = c(12, 4, 20),
+  plot_relative_height_value = 1000
 )
 }
 \arguments{
 \item{label}{menu item label of the module in the teal app.}
 
-\item{dataname}{analysis data passed to the data argument of teal init. E.g. ADaM structured
-laboratory data frame ADLB.}
+\item{dataname}{analysis data passed to the data argument of \code{\link[teal]{init}}. E.g. \code{ADaM} structured
+laboratory data frame \code{ADLB}.}
 
-\item{param_var}{name of variable containing biomarker codes e.g. PARAMCD.}
+\item{param_var}{name of variable containing biomarker codes e.g. \code{PARAMCD}.}
 
 \item{param}{biomarker selected.}
 
 \item{param_var_label}{single name of variable in analysis data that includes parameter labels.}
 
 \item{xaxis_var}{single name of variable in analysis data that is used as x-axis in the plot for the
-respective goshawk function.}
+respective \code{goshawk} function.}
 
 \item{yaxis_var}{single name of variable in analysis data that is used as summary variable in the
-respective gshawk function.}
+respective \code{goshawk} function.}
 
-\item{xvar_level}{vector that can be used to define the factor level of xvar. Only use it when
-xvar is character or factor.}
+\item{xvar_level}{vector that can be used to define the factor level of \code{xvar}. Only use it when
+\code{xvar} is character or factor.}
 
 \item{filter_var}{data constraint variable.}
 
 \item{filter_var_choices}{data constraint variable choices.}
 
 \item{trt_group}{\code{\link[teal.transform]{choices_selected}} object with available choices and pre-selected option
-for variable names representing treatment group e.g. ARM.}
+for variable names representing treatment group e.g. \code{ARM}.}
 
-\item{trt_group_level}{vector that can be used to define factor level of trt_group.}
+\item{trt_group_level}{vector that can be used to define factor level of \code{trt_group}.}
 
-\item{shape_choices}{Vector or \code{choices_selected} object with names of ADSL variables which
+\item{shape_choices}{Vector or \code{choices_selected} object with names of \code{ADSL} variables which
 can be used to change shape}
 
 \item{stat}{string of statistics}
@@ -84,16 +86,16 @@ naming the label for the arbitrary horizontal lines.}
 \item{xtick}{numeric vector to define the tick values of x-axis when x variable is numeric.
 Default value is waive().}
 
-\item{xlabel}{vector with same length of xtick to define the label of x-axis tick values.
+\item{xlabel}{vector with same length of \code{xtick} to define the label of x-axis tick values.
 Default value is waive().}
 
-\item{rotate_xlab}{boolean value indicating whether to rotate x-axis labels.}
+\item{rotate_xlab}{\code{logical(1)} value indicating whether to rotate \code{x-axis} labels.}
 
 \item{plot_height}{controls plot height.}
 
 \item{plot_width}{optional, controls plot width.}
 
-\item{plot_font_size}{control font size for title, x-axis, y-axis and legend font.}
+\item{plot_font_size}{control font size for title, \code{x-axis}, \code{y-axis} and legend font.}
 
 \item{dodge}{controls the position dodge of error bar}
 
@@ -107,6 +109,9 @@ into context. For example the \code{\link[shiny:helpText]{shiny::helpText()}} el
 nodes on the graph}
 
 \item{table_font_size}{controls the font size of values in the table}
+
+\item{plot_relative_height_value}{numeric value between 500 and 5000 for controlling the starting value
+of the relative plot height slider}
 }
 \value{
 \code{shiny} object
@@ -119,8 +124,8 @@ This teal module renders the UI and calls the function that creates a line plot.
 # Example using ADaM structure analysis dataset.
 
 library(dplyr)
-library(scda)
 library(stringr)
+library(nestcolor)
 
 # original ARM value = dose value
 arm_mapping <- list(
@@ -129,8 +134,8 @@ arm_mapping <- list(
   "C: Combination" = "Combination"
 )
 
-ADSL <- synthetic_cdisc_data("latest")$adsl
-ADLB <- synthetic_cdisc_data("latest")$adlb
+ADSL <- goshawk::rADSL
+ADLB <- goshawk::rADLB
 var_labels <- lapply(ADLB, function(x) attributes(x)$label)
 ADLB <- ADLB \%>\%
   dplyr::mutate(
@@ -161,10 +166,10 @@ attr(ADLB[["ARM"]], "label") <- var_labels[["ARM"]]
 attr(ADLB[["ACTARM"]], "label") <- var_labels[["ACTARM"]]
 
 app <- teal::init(
-  data = cdisc_data(
-    adsl <- cdisc_dataset("ADSL", ADSL, code = "ADSL <- synthetic_cdisc_data(\"latest\")$adsl"),
-    cdisc_dataset("ADLB", ADLB,
-      code = "ADLB <- synthetic_cdisc_data(\"latest\")$adlb
+  data = teal.data::cdisc_data(
+    adsl <- teal.data::cdisc_dataset("ADSL", ADSL, code = "ADSL <- goshawk::rADSL"),
+    teal.data::cdisc_dataset("ADLB", ADLB,
+      code = "ADLB <- goshawk::rADLB
               var_labels <- lapply(ADLB, function(x) attributes(x)$label)
               ADLB <- ADLB \%>\%
                 dplyr::mutate(AVISITCD = dplyr::case_when(
@@ -193,8 +198,8 @@ app <- teal::init(
     ),
     check = TRUE
   ),
-  modules = modules(
-    tm_g_gh_lineplot(
+  modules = teal::modules(
+    teal.goshawk::tm_g_gh_lineplot(
       label = "Line Plot",
       dataname = "ADLB",
       param_var = "PARAMCD",
@@ -205,12 +210,12 @@ app <- teal::init(
       trt_group = choices_selected(c("ARM", "ACTARM"), "ARM"),
       hline_arb = c(20.5, 19.5),
       hline_arb_color = c("red", "green"),
-      hline_arb_label = c("A", "B"),
+      hline_arb_label = c("A", "B")
     )
   )
 )
-\dontrun{
-shinyApp(app$ui, app$server)
+if (interactive()) {
+  shinyApp(app$ui, app$server)
 }
 }
 \author{

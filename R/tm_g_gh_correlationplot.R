@@ -4,24 +4,24 @@
 #'
 #' @inheritParams teal.widgets::standard_layout
 #' @param label menu item label of the module in the teal app.
-#' @param dataname analysis data passed to the data argument of teal init. E.g. ADaM structured laboratory data frame
-#'   \code{ADLB}.
+#' @param dataname analysis data passed to the data argument of \code{\link[teal]{init}}. E.g. `ADaM` structured
+#' laboratory data frame \code{ADLB}.
 #' @param param_var name of variable containing biomarker codes e.g. \code{PARAMCD}.
-#' @param xaxis_param biomarker selected for x-axis.
-#' @param yaxis_param biomarker selected for y-axis.
+#' @param xaxis_param biomarker selected for `x-axis`.
+#' @param yaxis_param biomarker selected for `y-axis`.
 #' @param xaxis_var name of variable containing biomarker results displayed on x-axis e.g. \code{BASE}.
 #' @param yaxis_var name of variable containing biomarker results displayed on y-axis e.g. \code{AVAL}.
 #' @param trt_group \code{\link[teal.transform]{choices_selected}} object with available choices and pre-selected option
-#' for variable names representing treatment group e.g. ARM.
+#' for variable names representing treatment group e.g. `ARM`.
 #' @param color_manual vector of colors applied to treatment values.
-#' @param shape_manual vector of symbols applied to LOQ values.
+#' @param shape_manual vector of symbols applied to `LOQ` values.
 #' @param facet_ncol numeric value indicating number of facets per row.
 #' @param trt_facet facet by treatment group \code{trt_group}.
 #' @param visit_facet visit facet toggle.
 #' @param reg_line include regression line and annotations for slope and coefficient in visualization. Use with facet
 #'   TRUE.
-#' @param loq_legend loq legend toggle.
-#' @param rotate_xlab 45 degree rotation of x-axis values.
+#' @param loq_legend `loq` legend toggle.
+#' @param rotate_xlab 45 degree rotation of `x-axis` values.
 #' @param hline_arb numeric vector of at most 2 values identifying intercepts for arbitrary horizontal lines.
 #' @param hline_arb_color a character vector of at most length of \code{hline_arb}.
 #' naming the color for the arbitrary horizontal lines.
@@ -40,7 +40,7 @@
 #' @param vline_vars_labels a character vector naming the labels for the additional vertical lines that will appear
 #' @param plot_height controls plot height.
 #' @param plot_width optional, controls plot width.
-#' @param font_size font size control for title, x-axis label, y-axis label and legend.
+#' @param font_size font size control for title, `x-axis` label, `y-axis` label and legend.
 #' @param dot_size plot dot size.
 #' @param reg_text_size font size control for regression line annotations.
 #'
@@ -52,7 +52,6 @@
 #' @examples
 #'
 #' # Example using ADaM structure analysis dataset.
-#' library(scda)
 #'
 #' # original ARM value = dose value
 #' arm_mapping <- list(
@@ -64,10 +63,9 @@
 #' # assign LOQ flag symbols: circles for "N" and triangles for "Y", squares for "NA"
 #' shape_manual <- c("N" = 1, "Y" = 2, "NA" = 0)
 #'
-#' ADSL <- synthetic_cdisc_data("latest")$adsl
-#'
 #' set.seed(1)
-#' ADLB <- synthetic_cdisc_data("latest")$adlb
+#' ADSL <- goshawk::rADSL
+#' ADLB <- goshawk::rADLB
 #' var_labels <- lapply(ADLB, function(x) attributes(x)$label)
 #' ADLB <- ADLB %>%
 #'   dplyr::mutate(AVISITCD = dplyr::case_when(
@@ -132,16 +130,16 @@
 #'
 #' # add LLOQ and ULOQ variables
 #' ADLB_LOQS <- goshawk:::h_identify_loq_values(ADLB)
-#' ADLB <- left_join(ADLB, ADLB_LOQS, by = "PARAM")
+#' ADLB <- dplyr::left_join(ADLB, ADLB_LOQS, by = "PARAM")
 #'
-#' app <- init(
-#'   data = cdisc_data(
-#'     cdisc_dataset("ADSL", ADSL, code = "ADSL <- synthetic_cdisc_data(\"latest\")$adsl"),
-#'     cdisc_dataset(
+#' app <- teal::init(
+#'   data = teal.data::cdisc_data(
+#'     teal.data::cdisc_dataset("ADSL", ADSL, code = "ADSL <- goshawk::rADSL"),
+#'     teal.data::cdisc_dataset(
 #'       "ADLB",
 #'       ADLB,
 #'       code = "set.seed(1)
-#'               ADLB <- synthetic_cdisc_data('latest')$adlb
+#'               ADLB <- goshawk::rADLB
 #'               var_labels <- lapply(ADLB, function(x) attributes(x)$label)
 #'               ADLB <- ADLB %>%
 #'                 dplyr::mutate(AVISITCD = dplyr::case_when(
@@ -204,8 +202,8 @@
 #'     ),
 #'     check = TRUE
 #'   ),
-#'   modules = modules(
-#'     tm_g_gh_correlationplot(
+#'   modules = teal::modules(
+#'     teal.goshawk::tm_g_gh_correlationplot(
 #'       label = "Correlation Plot",
 #'       dataname = "ADLB",
 #'       param_var = "PARAMCD",
@@ -243,8 +241,8 @@
 #'     )
 #'   )
 #' )
-#' \dontrun{
-#' shinyApp(app$ui, app$server)
+#' if (interactive()) {
+#'   shinyApp(app$ui, app$server)
 #' }
 tm_g_gh_correlationplot <- function(label,
                                     dataname,
@@ -307,7 +305,7 @@ tm_g_gh_correlationplot <- function(label,
 
   module(
     label = label,
-    filters = dataname,
+    datanames = dataname,
     server = srv_g_correlationplot,
     server_args = list(
       dataname = dataname,
@@ -335,6 +333,9 @@ ui_g_correlationplot <- function(id, ...) {
   teal.widgets::standard_layout(
     output = templ_ui_output_datatable(ns),
     encoding = div(
+      ### Reporter
+      teal.reporter::simple_reporter_ui(ns("simple_reporter")),
+      ###
       templ_ui_dataname(a$dataname),
       teal.widgets::optionalSelectInput(
         ns("trt_group"),
@@ -350,7 +351,7 @@ ui_g_correlationplot <- function(id, ...) {
         yparam_choices = a$yaxis_param$choices, yparam_selected = a$yaxis_param$selected,
         ychoices = a$yaxis_var$choices, yselected = a$yaxis_var$selected
       ),
-      templ_ui_constraint(ns, "X-Axis Data Constraint"), # required by constr_anl_chunks
+      templ_ui_constraint(ns, "X-Axis Data Constraint"), # required by constr_anl_q
       if (length(a$hline_vars) > 0) {
         teal.widgets::optionalSelectInput(
           ns("hline_vars"),
@@ -391,8 +392,8 @@ ui_g_correlationplot <- function(id, ...) {
             min = -1000000, max = 1000000, value = c(-1000000, 1000000)
           ),
           numericInput(ns("facet_ncol"), "Number of Plots Per Row:", a$facet_ncol, min = 1),
-          checkboxInput(ns("trt_facet"), "Treatment Variable Facetting", a$trt_facet),
-          checkboxInput(ns("visit_facet"), "Visit Facetting", a$visit_facet),
+          checkboxInput(ns("trt_facet"), "Treatment Variable Faceting", a$trt_facet),
+          checkboxInput(ns("visit_facet"), "Visit Faceting", a$visit_facet),
           checkboxInput(ns("reg_line"), "Regression Line", a$reg_line),
           checkboxInput(ns("loq_legend"), "Display LoQ Legend", a$loq_legend),
           checkboxInput(ns("rotate_xlab"), "Rotate X-axis Label", a$rotate_xlab)
@@ -410,14 +411,19 @@ ui_g_correlationplot <- function(id, ...) {
         )
       )
     ),
-    forms = get_rcode_ui(ns("rcode")),
+    forms = tagList(
+      teal.widgets::verbatim_popup_ui(ns("warning"), "Show Warnings"),
+      teal.widgets::verbatim_popup_ui(ns("rcode"), "Show R code")
+    ),
     pre_output = a$pre_output,
     post_output = a$post_output
   )
 }
 
 srv_g_correlationplot <- function(id,
-                                  datasets,
+                                  data,
+                                  reporter,
+                                  filter_panel_api,
                                   dataname,
                                   param_var,
                                   trt_group,
@@ -430,134 +436,143 @@ srv_g_correlationplot <- function(id,
                                   hline_vars_labels,
                                   vline_vars_colors,
                                   vline_vars_labels) {
+  with_reporter <- !missing(reporter) && inherits(reporter, "Reporter")
+  with_filter <- !missing(filter_panel_api) && inherits(filter_panel_api, "FilterPanelAPI")
+  checkmate::assert_class(data, "tdata")
+
   moduleServer(id, function(input, output, session) {
-    teal.code::init_chunks()
+    iv_r <- reactive({
+      iv <- shinyvalidate::InputValidator$new()
+
+      iv$add_rule("xaxis_param", shinyvalidate::sv_required("Please select an X-Axis biomarker"))
+      iv$add_rule("yaxis_param", shinyvalidate::sv_required("Please select a Y-Axis biomarker"))
+      iv$add_rule("trt_group", shinyvalidate::sv_required("Please select a treatment variable"))
+      iv$add_rule("xaxis_var", shinyvalidate::sv_required("Please select an X-Axis variable"))
+      iv$add_rule("yaxis_var", shinyvalidate::sv_required("Please select a Y-Axis variable"))
+      iv$add_rule("facet_ncol", plots_per_row_validate_rules())
+
+      iv$add_validator(anl_constraint_output()$iv_r())
+      iv$add_validator(horizontal_line()$iv_r())
+      iv$add_validator(vertical_line()$iv_r())
+      iv$enable()
+      iv
+    })
+
+
+
     # filter selected biomarkers
     anl_param <- reactive({
-      validate(need(input$trt_group, "Please select a Treatment Variable"))
-      validate(need(input$xaxis_param, "Please select an X-Axis Biomarker"))
-      validate(need(input$xaxis_var, "Please select an X-Axis Variable"))
-      validate(need(input$yaxis_param, "Please select a Y-Axis Biomarker"))
-      validate(need(input$yaxis_var, "Please select a Y-Axis Variable"))
-
-      dataset_var <- paste0(dataname, "_FILTERED")
-      ANL_FILTERED <- datasets$get_data(dataname, filtered = TRUE) # nolint
-      validate_has_data(ANL_FILTERED, 1)
+      dataset_var <- dataname
+      ANL <- data[[dataname]]() # nolint
+      validate_has_data(ANL, 1)
 
       if (length(input$hline_vars) > 0) {
         validate(
           need(
-            all(input$hline_vars %in% names(ANL_FILTERED)),
+            all(input$hline_vars %in% names(ANL)),
             "One or more selected horizontal line variable(s) is/are not names to any column in the data"
           ),
           need(
-            all(input$vline_vars %in% names(ANL_FILTERED)),
+            all(input$vline_vars %in% names(ANL)),
             "One or more selected vertical line variable(s) is/are not names to any column in the data"
           )
         )
       }
 
-      validate_has_variable(ANL_FILTERED, param_var)
+      validate_has_variable(ANL, param_var)
 
       validate_in(
-        input$xaxis_param, unique(ANL_FILTERED[[param_var]]),
+        input$xaxis_param, unique(ANL[[param_var]]),
         sprintf("X-Axis Biomarker %s is not available in data %s", input$xaxis_param, dataname)
       )
 
       validate_in(
-        input$yaxis_param, unique(ANL_FILTERED[[param_var]]),
+        input$yaxis_param, unique(ANL[[param_var]]),
         sprintf("Y-Axis Biomarker %s is not available in data %s", input$yaxis_param, dataname)
       )
 
       validate_has_variable(
-        ANL_FILTERED,
+        ANL,
         "AVISITCD",
         sprintf("Variable AVISITCD is not available in data %s", dataname)
       )
 
       validate_has_variable(
-        ANL_FILTERED,
+        ANL,
         "BASE",
         sprintf("Variable BASE is not available in data %s", dataname)
       )
 
       validate_has_variable(
-        ANL_FILTERED,
+        ANL,
         "BASE2",
         sprintf("Variable BASE2 is not available in data %s", dataname)
       )
 
       validate_has_variable(
-        ANL_FILTERED,
+        ANL,
         "LOQFL",
         sprintf("Variable LOQFL is not available in data %s", dataname)
       )
 
       validate_has_variable(
-        ANL_FILTERED,
+        ANL,
         "PARAM",
         sprintf("Variable PARAM is not available in data %s", dataname)
       )
 
       validate_has_variable(
-        ANL_FILTERED,
+        ANL,
         "LBSTRESC",
         sprintf("Variable LBSTRESC is not available in data %s", dataname)
       )
 
       validate_has_variable(
-        ANL_FILTERED,
+        ANL,
         input$trt_group,
         sprintf("Variable %s is not available in data %s", input$trt_group, dataname)
       )
 
       validate_has_variable(
-        ANL_FILTERED,
+        ANL,
         "USUBJID",
         sprintf("Variable USUBJID is not available in data %s", dataname)
       )
 
       validate_has_variable(
-        ANL_FILTERED,
+        ANL,
         input$xaxis_var,
         sprintf("Variable %s is not available in data %s", input$xaxis_var, dataname)
       )
 
       validate_has_variable(
-        ANL_FILTERED,
+        ANL,
         input$yaxis_var,
         sprintf("Variable %s is not available in data %s", input$yaxis_var, dataname)
       )
 
       # analysis
-      private_chunks <- teal.code::chunks$new()
-      teal.code::chunks_reset(as.environment(stats::setNames(list(ANL_FILTERED), dataset_var)), private_chunks)
-
-      # filter biomarker
-      teal.code::chunks_push(
-        chunks = private_chunks,
-        id = "filter_biomarker",
-        expression = bquote({
-          ANL <- .(as.name(dataset_var)) %>% # nolint
-            dplyr::filter(.data[[.(param_var)]] %in% union(.(input$xaxis_param), .(input$yaxis_param)))
-        })
-      )
-
-      ANL <- teal.code::chunks_safe_eval(private_chunks) # nolint
-      validate_has_data(ANL, 1)
-
-      return(list(ANL = ANL, chunks = private_chunks))
+      private_qenv <- teal.code::new_qenv(tdata2env(data), code = get_code_tdata(data)) %>%
+        teal.code::eval_code(
+          code = bquote({
+            ANL <- .(as.name(dataset_var)) %>% # nolint
+              dplyr::filter(.data[[.(param_var)]] %in% union(.(input$xaxis_param), .(input$yaxis_param)))
+          })
+        )
+      validate_has_data(private_qenv[["ANL"]], 1)
+      return(list(ANL = ANL, qenv = private_qenv))
     })
 
     # constraints
     observe({
-      validate(need(input$xaxis_param, "Please select an X-Axis Biomarker"))
+      req(input$xaxis_param)
 
       constraint_var <- input$constraint_var
-      validate(need(constraint_var, "select a constraint variable"))
+      req(constraint_var)
 
       # note that filtered is false thus we cannot use anl_param()$ANL
-      ANL <- datasets$get_data(dataname, filtered = FALSE) # nolint
+      ANL <- data[[dataname]]() # nolint
+      validate_has_data(ANL, 1)
 
       validate_has_variable(ANL, param_var)
       validate_has_variable(ANL, "AVISITCD")
@@ -618,7 +633,8 @@ srv_g_correlationplot <- function(id,
       }
     })
 
-    anl_constraint <- create_anl_constraint_reactive(anl_param, input, param_id = "xaxis_param", min_rows = 1)
+    anl_constraint_output <- create_anl_constraint_reactive(anl_param, input, param_id = "xaxis_param", min_rows = 1)
+    anl_constraint <- anl_constraint_output()$value
 
     # update sliders for axes taking constraints into account
     xrange_slider <- toggle_slider_server("xrange_scale")
@@ -635,15 +651,15 @@ srv_g_correlationplot <- function(id,
 
     # transpose data to plot
     plot_data_transpose <- reactive({
-      private_chunks <- teal.code::chunks_deep_clone(anl_constraint()$chunks)
+      teal::validate_inputs(iv_r())
+
+      req(anl_constraint())
       ANL <- anl_constraint()$ANL # nolint
       trt_group <- input$trt_group
       line_vars <- unique(c(input$hline_vars, input$vline_vars))
 
-      teal.code::chunks_push(
-        chunks = private_chunks,
-        id = "plot_data_transpose",
-        expression = bquote({
+      private_q <- anl_constraint()$qenv %>% teal.code::eval_code(
+        code = bquote({
           ANL_TRANSPOSED1 <- ANL %>% # nolint
             dplyr::select(
               .data[["USUBJID"]],
@@ -713,25 +729,20 @@ srv_g_correlationplot <- function(id,
         })
       )
 
-      ANL_TRANSPOSED <- teal.code::chunks_safe_eval(private_chunks) # nolint
-      teal.code::chunks_push_new_line(private_chunks)
+      validate(need(nrow(private_q[["ANL_TRANSPOSED"]]) > 0, "Plot Data No Observations Left"))
+      validate_has_variable(data = private_q[["ANL_TRANSPOSED"]], varname = c(xvar(), yvar(), xloqfl(), yloqfl()))
 
-      validate(need(nrow(ANL_TRANSPOSED) > 0, "Plot Data No Observations Left"))
-      validate_has_variable(data = ANL_TRANSPOSED, varname = c(xvar(), yvar(), xloqfl(), yloqfl()))
-
-      teal.code::chunks_push(
-        chunks = private_chunks,
-        id = "ANL_attributes",
-        expression =
+      private_q <- teal.code::eval_code(
+        object = private_q,
+        code =
           bquote(attr(ANL_TRANSPOSED[[.(trt_group)]], "label") <- attr(ANL[[.(trt_group)]], "label")) # nolint
       )
-      teal.code::chunks_push_new_line(private_chunks)
-
-      return(list(ANL_TRANSPOSED = ANL_TRANSPOSED, chunks = private_chunks))
+      return(list(ANL_TRANSPOSED = private_q[["ANL_TRANSPOSED"]], qenv = private_q))
     })
 
     plot_labels <- reactive({
-      ANL <- teal.code::chunks_get_var(var = "ANL", anl_constraint()$chunks) # nolint
+      req(anl_constraint())
+      ANL <- anl_constraint()$qenv[["ANL"]] # nolint
 
       xparam <- ANL$PARAM[ANL[[param_var]] == input$xaxis_param][1]
       yparam <- ANL$PARAM[ANL[[param_var]] == input$yaxis_param][1]
@@ -757,8 +768,8 @@ srv_g_correlationplot <- function(id,
     vertical_line <- srv_arbitrary_lines("vline_arb")
 
     # plot
-    plot_r <- reactive({
-      private_chunks <- teal.code::chunks_deep_clone(plot_data_transpose()$chunks)
+    plot_q <- reactive({
+      req(plot_data_transpose())
       # nolint start
       xaxis_param <- input$xaxis_param
       xaxis_var <- input$xaxis_var
@@ -802,10 +813,9 @@ srv_g_correlationplot <- function(id,
       validate(need(input$trt_group, "Please select a treatment variable"))
       trt_group <- input$trt_group
 
-      teal.code::chunks_push(
-        chunks = private_chunks,
-        id = "scatterplot",
-        expression = bquote({
+      teal.code::eval_code(
+        object = plot_data_transpose()$qenv,
+        code = bquote({
           # re-establish treatment variable label
           p <- goshawk::g_correlationplot(
             data = ANL_TRANSPOSED,
@@ -850,15 +860,9 @@ srv_g_correlationplot <- function(id,
           print(p)
         })
       )
-
-      teal.code::chunks_safe_eval(private_chunks)
-
-      # promote chunks to be visible in the sessionData by other modules
-      teal.code::chunks_reset()
-      teal.code::chunks_push_chunks(private_chunks)
-      teal.code::chunks_get_var("p")
     })
 
+    plot_r <- reactive(plot_q()[["p"]])
 
     plot_data <- teal.widgets::plot_with_settings_srv(
       id = "plot",
@@ -868,14 +872,50 @@ srv_g_correlationplot <- function(id,
       brushing = TRUE
     )
 
+
+    ### REPORTER
+    if (with_reporter) {
+      card_fun <- function(comment) {
+        card <- teal::TealReportCard$new()
+        card$set_name("Correlation Plot")
+        card$append_text("Correlation Plot", "header2")
+        if (with_filter) card$append_fs(filter_panel_api$get_filter_state())
+        card$append_text("Selected Options", "header3")
+        card$append_text(
+          paste(
+            formatted_data_constraint(input$constraint_var, input$constraint_range_min, input$constraint_range_max),
+            "\nTreatment Variable Faceting:",
+            input$trt_facet,
+            "\nRegression Line:",
+            input$reg_line
+          ),
+          style = "verbatim"
+        )
+        card$append_text("Plot", "header3")
+        card$append_plot(plot_r(), dim = plot_data$dim())
+        if (!comment == "") {
+          card$append_text("Comment", "header3")
+          card$append_text(comment)
+        }
+        card$append_src(paste(teal.code::get_code(plot_q()), collapse = "\n"))
+        card
+      }
+      teal.reporter::simple_reporter_srv("simple_reporter", reporter = reporter, card_fun = card_fun)
+    }
+    ###
+
     # highlight plot area
     output$brush_data <- DT::renderDataTable({
+      req(iv_r()$is_valid())
       plot_brush <- plot_data$brush()
 
       ANL_TRANSPOSED <- isolate(plot_data_transpose()$ANL_TRANSPOSED) # nolint
 
       df <- teal.widgets::clean_brushedPoints(
-        dplyr::select(ANL_TRANSPOSED, "USUBJID", input$trt_group, "AVISITCD", xvar(), yvar(), "LOQFL_COMB"),
+        dplyr::select(
+          ANL_TRANSPOSED, "USUBJID", dplyr::all_of(input$trt_group), "AVISITCD",
+          dplyr::all_of(c(xvar(), yvar())), "LOQFL_COMB"
+        ),
         plot_brush
       )
 
@@ -885,10 +925,17 @@ srv_g_correlationplot <- function(id,
         DT::formatRound(numeric_cols, 4)
     })
 
-    get_rcode_srv(
+    teal.widgets::verbatim_popup_srv(
+      id = "warning",
+      verbatim_content = reactive(teal.code::get_warnings(plot_q())),
+      title = "Warning",
+      disabled = reactive(is.null(teal.code::get_warnings(plot_q())))
+    )
+
+    teal.widgets::verbatim_popup_srv(
       id = "rcode",
-      datasets = datasets,
-      modal_title = "Correlation Plot"
+      verbatim_content = reactive(teal.code::get_code(plot_q())),
+      title = "Show R Code for Correlation Plot"
     )
   })
 }

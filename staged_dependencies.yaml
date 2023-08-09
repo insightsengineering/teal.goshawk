@@ -24,10 +24,10 @@ upstream_repos:
   insightsengineering/tern:
     repo: insightsengineering/tern
     host: https://github.com
-  insightsengineering/scda:
-    repo: insightsengineering/scda
+  insightsengineering/teal.reporter:
+    repo: insightsengineering/teal.reporter
     host: https://github.com
-  insightsengineering/scda.2021:
-    repo: insightsengineering/scda.2021
+  insightsengineering/nestcolor:
+    repo: insightsengineering/nestcolor
     host: https://github.com
 downstream_repos:

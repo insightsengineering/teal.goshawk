@@ -36,14 +36,14 @@ tm_g_gh_boxplot(
 \arguments{
 \item{label}{menu item label of the module in the teal app.}
 
-\item{dataname}{analysis data passed to the data argument of teal init. E.g. ADaM structured
-laboratory data frame ALB.}
+\item{dataname}{analysis data passed to the data argument of \code{\link[teal]{init}}. E.g. \code{ADaM} structured
+laboratory data frame \code{ALB}.}
 
-\item{param_var}{name of variable containing biomarker codes e.g. PARAMCD.}
+\item{param_var}{name of variable containing biomarker codes e.g. \code{PARAMCD}.}
 
 \item{param}{list of biomarkers of interest.}
 
-\item{yaxis_var}{name of variable containing biomarker results displayed on y-axis e.g. AVAL. When not provided,
+\item{yaxis_var}{name of variable containing biomarker results displayed on y-axis e.g. \code{AVAL}. When not provided,
 it defaults to \code{choices_selected(c("AVAL", "CHG"), "AVAL")}.}
 
 \item{xaxis_var}{variable to categorize the x-axis. When not provided, it defaults to
@@ -53,17 +53,17 @@ it defaults to \code{choices_selected(c("AVAL", "CHG"), "AVAL")}.}
 \code{choices_selected(c("ARM", "ACTARM"), "ARM")}.}
 
 \item{trt_group}{\code{\link[teal.transform]{choices_selected}} object with available choices and pre-selected
-option for variable names representing treatment group e.g. ARM.}
+option for variable names representing treatment group e.g. \code{ARM}.}
 
 \item{color_manual}{vector of colors applied to treatment values.}
 
-\item{shape_manual}{vector of symbols applied to LOQ values.}
+\item{shape_manual}{vector of symbols applied to \code{LOQ} values.}
 
 \item{facet_ncol}{numeric value indicating number of facets per row.}
 
-\item{loq_legend}{loq legend toggle.}
+\item{loq_legend}{\code{loq} legend toggle.}
 
-\item{rotate_xlab}{45 degree rotation of x-axis values.}
+\item{rotate_xlab}{45 degree rotation of \code{x-axis} values.}
 
 \item{hline_arb}{numeric vector of at most 2 values identifying intercepts for arbitrary horizontal lines.}
 
@@ -84,7 +84,7 @@ in the legend.}
 
 \item{plot_width}{optional, controls plot width.}
 
-\item{font_size}{font size control for title, x-axis label, y-axis label and legend.}
+\item{font_size}{font size control for title, \code{x-axis} label, \code{y-axis} label and legend.}
 
 \item{dot_size}{plot dot size.}
 
@@ -108,7 +108,7 @@ summary table.
 # Example using ADaM structure analysis dataset.
 
 library(dplyr)
-library(scda)
+library(nestcolor)
 
 # original ARM value = dose value
 arm_mapping <- list(
@@ -118,8 +118,8 @@ arm_mapping <- list(
 )
 
 set.seed(1)
-ADSL <- synthetic_cdisc_data("latest")$adsl
-ADLB <- synthetic_cdisc_data("latest")$adlb
+ADSL <- goshawk::rADSL
+ADLB <- goshawk::rADLB
 var_labels <- lapply(ADLB, function(x) attributes(x)$label)
 ADLB <- ADLB \%>\%
   dplyr::mutate(
@@ -167,17 +167,17 @@ attr(ADLB[["ANRHI"]], "label") <- "Analysis Normal Range Upper Limit"
 
 # add LLOQ and ULOQ variables
 ALB_LOQS <- goshawk:::h_identify_loq_values(ADLB)
-ADLB <- left_join(ADLB, ALB_LOQS, by = "PARAM")
+ADLB <- dplyr::left_join(ADLB, ALB_LOQS, by = "PARAM")
 
 app <- teal::init(
-  data = cdisc_data(
-    adsl <- cdisc_dataset("ADSL", ADSL, code = "ADSL <- synthetic_cdisc_data(\"latest\")$adsl"),
-    cdisc_dataset(
+  data = teal.data::cdisc_data(
+    adsl <- teal.data::cdisc_dataset("ADSL", ADSL, code = "ADSL <- goshawk::rADSL"),
+    teal.data::cdisc_dataset(
       "ADLB",
       ADLB,
       code = "
         set.seed(1)
-        ADLB <- synthetic_cdisc_data('latest')$adlb
+        ADLB <- goshawk::rADLB
         var_labels <- lapply(ADLB, function(x) attributes(x)$label)
         ADLB <- ADLB \%>\%
           dplyr::mutate(AVISITCD = dplyr::case_when(
@@ -219,10 +219,10 @@ app <- teal::init(
         ADLB <- left_join(ADLB, ALB_LOQS, by = 'PARAM')",
       vars = list(ADSL = adsl, arm_mapping = arm_mapping)
     ),
-    check = TRUE
+    check = FALSE # to shorten the example check = FALSE, in real scenarios use check = TRUE
   ),
-  modules = modules(
-    tm_g_gh_boxplot(
+  modules = teal::modules(
+    teal.goshawk::tm_g_gh_boxplot(
       label = "Box Plot",
       dataname = "ADLB",
       param_var = "PARAMCD",
@@ -241,8 +241,8 @@ app <- teal::init(
     )
   )
 )
-\dontrun{
-shinyApp(app$ui, app$server)
+if (interactive()) {
+  shinyApp(app$ui, app$server)
 }
 
 }

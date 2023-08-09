@@ -1,28 +1,33 @@
 #' Scatter Plot Teal Module For Biomarker Analysis
 #'
+#' @description
+#' `r lifecycle::badge("deprecated")`
+#'
+#'  `tm_g_gh_scatterplot` is deprecated. Please use [tm_g_gh_correlationplot]
+#'   instead.
 #'
 #' @inheritParams teal.widgets::standard_layout
 #' @param label menu item label of the module in the teal app.
-#' @param dataname analysis data passed to the data argument of teal init. E.g. ADaM structured laboratory data frame
-#'   \code{ADLB}.
+#' @param dataname analysis data passed to the data argument of \code{\link[teal]{init}}. E.g. `ADaM` structured
+#' laboratory data frame \code{ADLB}.
 #' @param param_var name of variable containing biomarker codes e.g. \code{PARAMCD}.
 #' @param param biomarker selected.
-#' @param xaxis_var name of variable containing biomarker results displayed on x-axis e.g. \code{BASE}.
-#' @param yaxis_var name of variable containing biomarker results displayed on y-axis e.g. \code{AVAL}.
+#' @param xaxis_var name of variable containing biomarker results displayed on `x-axis` e.g. \code{BASE}.
+#' @param yaxis_var name of variable containing biomarker results displayed on `y-axis` e.g. \code{AVAL}.
 #' @param trt_group \code{\link[teal.transform]{choices_selected}} object with available choices and pre-selected option
-#' for variable names representing treatment group e.g. ARM.
+#' for variable names representing treatment group e.g. `ARM`.
 #' @param color_manual vector of colors applied to treatment values.
-#' @param shape_manual vector of symbols applied to LOQ values.
+#' @param shape_manual vector of symbols applied to `LOQ` values.
 #' @param facet_ncol numeric value indicating number of facets per row.
 #' @param trt_facet facet by treatment group \code{trt_group}.
 #' @param reg_line include regression line and annotations for slope and coefficient in visualization. Use with facet
 #'   TRUE.
-#' @param rotate_xlab 45 degree rotation of x-axis values.
+#' @param rotate_xlab 45 degree rotation of `x-axis` values.
 #' @param hline y-axis value to position of horizontal line.
 #' @param vline x-axis value to position a vertical line.
 #' @param plot_height controls plot height.
 #' @param plot_width optional, controls plot width.
-#' @param font_size font size control for title, x-axis label, y-axis label and legend.
+#' @param font_size font size control for title, `x-axis` label, `y-axis` label and legend.
 #' @param dot_size plot dot size.
 #' @param reg_text_size font size control for regression line annotations.
 #'
@@ -34,7 +39,6 @@
 #'
 #' @examples
 #' # Example using ADaM structure analysis dataset.
-#' library(scda)
 #'
 #' # original ARM value = dose value
 #' arm_mapping <- list(
@@ -43,8 +47,8 @@
 #'   "C: Combination" = "Combination"
 #' )
 #'
-#' ADSL <- synthetic_cdisc_data("latest")$adsl
-#' ADLB <- synthetic_cdisc_data("latest")$adlb
+#' ADSL <- goshawk::rADSL
+#' ADLB <- goshawk::rADLB
 #' var_labels <- lapply(ADLB, function(x) attributes(x)$label)
 #' ADLB <- ADLB %>%
 #'   dplyr::mutate(
@@ -74,13 +78,13 @@
 #' attr(ADLB[["ARM"]], "label") <- var_labels[["ARM"]]
 #' attr(ADLB[["ACTARM"]], "label") <- var_labels[["ACTARM"]]
 #'
-#' app <- init(
-#'   data = cdisc_data(
-#'     adsl <- cdisc_dataset("ADSL", ADSL, code = "ADSL <- synthetic_cdisc_data(\"latest\")$adsl"),
-#'     cdisc_dataset(
+#' app <- teal::init(
+#'   data = teal.data::cdisc_data(
+#'     adsl <- teal.data::cdisc_dataset("ADSL", ADSL, code = "ADSL <- goshawk::rADSL"),
+#'     teal.data::cdisc_dataset(
 #'       "ADLB",
 #'       ADLB,
-#'       code = "ADLB <- synthetic_cdisc_data(\"latest\")$adlb
+#'       code = "ADLB <- goshawk::rADLB
 #'               var_labels <- lapply(ADLB, function(x) attributes(x)$label)
 #'               ADLB <- ADLB %>%
 #'                 dplyr::mutate(AVISITCD = dplyr::case_when(
@@ -109,8 +113,8 @@
 #'     ),
 #'     check = TRUE
 #'   ),
-#'   modules = modules(
-#'     tm_g_gh_scatterplot(
+#'   modules = teal::modules(
+#'     teal.goshawk::tm_g_gh_scatterplot(
 #'       label = "Scatter Plot",
 #'       dataname = "ADLB",
 #'       param_var = "PARAMCD",
@@ -134,8 +138,8 @@
 #'     )
 #'   )
 #' )
-#' \dontrun{
-#' shinyApp(app$ui, app$server)
+#' if (interactive()) {
+#'   shinyApp(app$ui, app$server)
 #' }
 #'
 tm_g_gh_scatterplot <- function(label,
@@ -160,6 +164,12 @@ tm_g_gh_scatterplot <- function(label,
                                 reg_text_size = c(3, 3, 10),
                                 pre_output = NULL,
                                 post_output = NULL) {
+  lifecycle::deprecate_soft(
+    when = "0.1.15",
+    what = "tm_g_gh_scatterplot()",
+    details = "You should use teal.goshawk::tm_g_gh_correlationplot instead of teal.goshawk::tm_g_gh_scatterplot"
+  )
+
   logger::log_info("Initializing tm_g_gh_scatterplot")
   checkmate::assert_class(param, "choices_selected")
   checkmate::assert_class(xaxis_var, "choices_selected")
@@ -180,7 +190,7 @@ tm_g_gh_scatterplot <- function(label,
 
   module(
     label = label,
-    filters = dataname,
+    datanames = dataname,
     server = srv_g_scatterplot,
     server_args = list(
       dataname = dataname,
@@ -204,6 +214,9 @@ ui_g_scatterplot <- function(id, ...) {
   teal.widgets::standard_layout(
     output = templ_ui_output_datatable(ns),
     encoding = div(
+      ### Reporter
+      teal.reporter::simple_reporter_ui(ns("simple_reporter")),
+      ###
       templ_ui_dataname(a$dataname),
       teal.widgets::optionalSelectInput(
         ns("trt_group"),
@@ -219,7 +232,7 @@ ui_g_scatterplot <- function(id, ...) {
         xchoices = a$xaxis_var$choices, xselected = a$xaxis_var$selected,
         ychoices = a$yaxis_var$choices, yselected = a$yaxis_var$selected
       ),
-      templ_ui_constraint(ns), # required by constr_anl_chunks
+      templ_ui_constraint(ns), # required by constr_anl_q
       teal.widgets::panel_group(
         teal.widgets::panel_item(
           title = "Plot Aesthetic Settings",
@@ -236,7 +249,7 @@ ui_g_scatterplot <- function(id, ...) {
             value = c(-1000000, 1000000)
           ),
           numericInput(ns("facet_ncol"), "Number of Plots Per Row:", a$facet_ncol, min = 1),
-          checkboxInput(ns("trt_facet"), "Treatment Variable Facetting", a$trt_facet),
+          checkboxInput(ns("trt_facet"), "Treatment Variable Faceting", a$trt_facet),
           checkboxInput(ns("reg_line"), "Regression Line", a$reg_line),
           checkboxInput(ns("rotate_xlab"), "Rotate X-axis Label", a$rotate_xlab),
           numericInput(ns("hline"), "Add a horizontal line:", a$hline),
@@ -255,14 +268,19 @@ ui_g_scatterplot <- function(id, ...) {
         )
       )
     ),
-    forms = get_rcode_ui(ns("rcode")),
+    forms = tagList(
+      teal.widgets::verbatim_popup_ui(ns("warning"), "Show Warnings"),
+      teal.widgets::verbatim_popup_ui(ns("rcode"), "Show R code")
+    ),
     pre_output = a$pre_output,
     post_output = a$post_output
   )
 }
 
 srv_g_scatterplot <- function(id,
-                              datasets,
+                              data,
+                              reporter,
+                              filter_panel_api,
                               dataname,
                               param_var,
                               trt_group,
@@ -271,26 +289,29 @@ srv_g_scatterplot <- function(id,
                               shape_manual,
                               plot_height,
                               plot_width) {
-  moduleServer(id, function(input, output, session) {
-    teal.code::init_chunks()
+  with_reporter <- !missing(reporter) && inherits(reporter, "Reporter")
+  with_filter <- !missing(filter_panel_api) && inherits(filter_panel_api, "FilterPanelAPI")
+  checkmate::assert_class(data, "tdata")
 
+  moduleServer(id, function(input, output, session) {
     # reused in all modules
-    anl_chunks <- constr_anl_chunks(
-      session, input, datasets, dataname,
+    anl_q_output <- constr_anl_q(
+      session, input, data, dataname,
       param_id = "xaxis_param", param_var = param_var, trt_group = input$trt_group, min_rows = 1
     )
+
+    anl_q <- anl_q_output()$value
 
     # update sliders for axes taking constraints into account
     xrange_slider <- toggle_slider_server("xrange_scale")
     yrange_slider <- toggle_slider_server("yrange_scale")
-    keep_range_slider_updated(session, input, xrange_slider$update_state, "xaxis_var", "xaxis_param", anl_chunks)
-    keep_range_slider_updated(session, input, yrange_slider$update_state, "yaxis_var", "xaxis_param", anl_chunks)
-    keep_data_const_opts_updated(session, input, anl_chunks, "xaxis_param")
+    keep_range_slider_updated(session, input, xrange_slider$update_state, "xaxis_var", "xaxis_param", anl_q)
+    keep_range_slider_updated(session, input, yrange_slider$update_state, "yaxis_var", "xaxis_param", anl_q)
+    keep_data_const_opts_updated(session, input, anl_q, "xaxis_param")
 
     # plot
-    plot_r <- reactive({
-      ac <- anl_chunks()
-      private_chunks <- teal.code::chunks_deep_clone(ac$chunks)
+    plot_q <- reactive({
+      req(anl_q())
       # nolint start
       xlim <- xrange_slider$state()$value
       ylim <- yrange_slider$state()$value
@@ -310,7 +331,7 @@ srv_g_scatterplot <- function(id,
       facet <- input$trt_facet
       validate(need(trt_group, "Please select a treatment variable"))
 
-      # Below inputs should trigger plot via updates of other reactive objects (i.e. anl_chunk()) and some inputs
+      # Below inputs should trigger plot via updates of other reactive objects (i.e. anl_q()) and some inputs
       validate(need(input$xaxis_var, "Please select an X-Axis Variable"))
       validate(need(input$yaxis_var, "Please select a Y-Axis Variable"))
       param <- input$xaxis_param
@@ -318,10 +339,9 @@ srv_g_scatterplot <- function(id,
       yaxis <- input$yaxis_var
 
       # nolint end
-      teal.code::chunks_push(
-        chunks = private_chunks,
-        id = "scatterplot",
-        expression = bquote({
+      teal.code::eval_code(
+        object = anl_q()$qenv,
+        code = bquote({
           # re-establish treatment variable label
           p <- goshawk::g_scatterplot(
             data = ANL,
@@ -348,15 +368,9 @@ srv_g_scatterplot <- function(id,
           print(p)
         })
       )
-
-      teal.code::chunks_safe_eval(private_chunks)
-
-      # promote chunks to be visible in the sessionData by other modules
-      teal.code::chunks_reset()
-      teal.code::chunks_push_chunks(private_chunks)
-
-      teal.code::chunks_get_var("p")
     })
+
+    plot_r <- reactive(plot_q()[["p"]])
 
     plot_data <- teal.widgets::plot_with_settings_srv(
       id = "plot",
@@ -366,11 +380,42 @@ srv_g_scatterplot <- function(id,
       brushing = TRUE
     )
 
+    ### REPORTER
+    if (with_reporter) {
+      card_fun <- function(comment) {
+        card <- teal::TealReportCard$new()
+        card$set_name("Scatter Plot")
+        card$append_text("Scatter Plot", "header2")
+        if (with_filter) card$append_fs(filter_panel_api$get_filter_state())
+        card$append_text("Selected Options", "header3")
+        card$append_text(
+          paste(
+            formatted_data_constraint(input$constraint_var, input$constraint_range_min, input$constraint_range_max),
+            "\nTreatment Variable Faceting:",
+            input$trt_facet,
+            "\nRegression Line:",
+            input$reg_line
+          ),
+          style = "verbatim"
+        )
+        card$append_text("Scatter Plot", "header3")
+        card$append_plot(plot_r(), dim = plot_data$dim())
+        if (!comment == "") {
+          card$append_text("Comment", "header3")
+          card$append_text(comment)
+        }
+        card$append_src(paste(teal.code::get_code(plot_q()), collapse = "\n"))
+        card
+      }
+      teal.reporter::simple_reporter_srv("simple_reporter", reporter = reporter, card_fun = card_fun)
+    }
+    ###
+
     # highlight plot area
     output$brush_data <- DT::renderDataTable({
       plot_brush <- plot_data$brush()
 
-      ANL <- isolate(anl_chunks()$ANL) # nolint
+      ANL <- isolate(anl_q()$ANL) # nolint
       validate_has_data(ANL, 1)
 
       xvar <- isolate(input$xaxis_var)
@@ -380,7 +425,10 @@ srv_g_scatterplot <- function(id,
       req(all(c(xvar, yvar) %in% names(ANL)))
 
       df <- teal.widgets::clean_brushedPoints(
-        dplyr::select(ANL, "USUBJID", trt_group, "AVISITCD", "PARAMCD", xvar, yvar, "LOQFL"),
+        dplyr::select(
+          ANL, "USUBJID", dplyr::all_of(trt_group), "AVISITCD", "PARAMCD",
+          dplyr::all_of(c(xvar, yvar)), "LOQFL"
+        ),
         plot_brush
       )
 
@@ -390,10 +438,17 @@ srv_g_scatterplot <- function(id,
         DT::formatRound(numeric_cols, 4)
     })
 
-    get_rcode_srv(
+    teal.widgets::verbatim_popup_srv(
+      id = "warning",
+      verbatim_content = reactive(teal.code::get_warnings(plot_q())),
+      title = "Warning",
+      disabled = reactive(is.null(teal.code::get_warnings(plot_q())))
+    )
+
+    teal.widgets::verbatim_popup_srv(
       id = "rcode",
-      datasets = datasets,
-      modal_title = "Scatter Plot"
+      verbatim_content = reactive(teal.code::get_code(plot_q())),
+      title = "Show R Code for Scatterplot"
     )
   })
 }

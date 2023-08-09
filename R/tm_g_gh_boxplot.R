@@ -4,23 +4,23 @@
 #' summary table.
 #'
 #' @param label menu item label of the module in the teal app.
-#' @param dataname analysis data passed to the data argument of teal init. E.g. ADaM structured
-#'  laboratory data frame ALB.
-#' @param param_var name of variable containing biomarker codes e.g. PARAMCD.
+#' @param dataname analysis data passed to the data argument of \code{\link[teal]{init}}. E.g. `ADaM` structured
+#'  laboratory data frame `ALB`.
+#' @param param_var name of variable containing biomarker codes e.g. `PARAMCD`.
 #' @param param list of biomarkers of interest.
-#' @param yaxis_var name of variable containing biomarker results displayed on y-axis e.g. AVAL. When not provided,
+#' @param yaxis_var name of variable containing biomarker results displayed on y-axis e.g. `AVAL`. When not provided,
 #' it defaults to `choices_selected(c("AVAL", "CHG"), "AVAL")`.
 #' @param xaxis_var variable to categorize the x-axis. When not provided, it defaults to
 #' `choices_selected("AVISITCD", "AVISITCD")`.
 #' @param facet_var variable to facet the plots by. When not provided, it defaults to
 #' `choices_selected(c("ARM", "ACTARM"), "ARM")`.
 #' @param trt_group  \code{\link[teal.transform]{choices_selected}} object with available choices and pre-selected
-#'  option for variable names representing treatment group e.g. ARM.
+#'  option for variable names representing treatment group e.g. `ARM`.
 #' @param color_manual vector of colors applied to treatment values.
-#' @param shape_manual vector of symbols applied to LOQ values.
+#' @param shape_manual vector of symbols applied to `LOQ` values.
 #' @param facet_ncol numeric value indicating number of facets per row.
-#' @param loq_legend loq legend toggle.
-#' @param rotate_xlab 45 degree rotation of x-axis values.
+#' @param loq_legend `loq` legend toggle.
+#' @param rotate_xlab 45 degree rotation of `x-axis` values.
 #' @param hline_arb numeric vector of at most 2 values identifying intercepts for arbitrary horizontal lines.
 #' @param hline_arb_color a character vector of at most length of \code{hline_arb}.
 #' naming the color for the arbitrary horizontal lines.
@@ -32,7 +32,7 @@
 #'  in the legend.
 #' @param plot_height controls plot height.
 #' @param plot_width optional, controls plot width.
-#' @param font_size font size control for title, x-axis label, y-axis label and legend.
+#' @param font_size font size control for title, `x-axis` label, `y-axis` label and legend.
 #' @param dot_size plot dot size.
 #' @param alpha numeric vector to define transparency of plotted points.
 #'
@@ -50,7 +50,7 @@
 #' # Example using ADaM structure analysis dataset.
 #'
 #' library(dplyr)
-#' library(scda)
+#' library(nestcolor)
 #'
 #' # original ARM value = dose value
 #' arm_mapping <- list(
@@ -60,8 +60,8 @@
 #' )
 #'
 #' set.seed(1)
-#' ADSL <- synthetic_cdisc_data("latest")$adsl
-#' ADLB <- synthetic_cdisc_data("latest")$adlb
+#' ADSL <- goshawk::rADSL
+#' ADLB <- goshawk::rADLB
 #' var_labels <- lapply(ADLB, function(x) attributes(x)$label)
 #' ADLB <- ADLB %>%
 #'   dplyr::mutate(
@@ -109,17 +109,17 @@
 #'
 #' # add LLOQ and ULOQ variables
 #' ALB_LOQS <- goshawk:::h_identify_loq_values(ADLB)
-#' ADLB <- left_join(ADLB, ALB_LOQS, by = "PARAM")
+#' ADLB <- dplyr::left_join(ADLB, ALB_LOQS, by = "PARAM")
 #'
 #' app <- teal::init(
-#'   data = cdisc_data(
-#'     adsl <- cdisc_dataset("ADSL", ADSL, code = "ADSL <- synthetic_cdisc_data(\"latest\")$adsl"),
-#'     cdisc_dataset(
+#'   data = teal.data::cdisc_data(
+#'     adsl <- teal.data::cdisc_dataset("ADSL", ADSL, code = "ADSL <- goshawk::rADSL"),
+#'     teal.data::cdisc_dataset(
 #'       "ADLB",
 #'       ADLB,
 #'       code = "
 #'         set.seed(1)
-#'         ADLB <- synthetic_cdisc_data('latest')$adlb
+#'         ADLB <- goshawk::rADLB
 #'         var_labels <- lapply(ADLB, function(x) attributes(x)$label)
 #'         ADLB <- ADLB %>%
 #'           dplyr::mutate(AVISITCD = dplyr::case_when(
@@ -161,10 +161,10 @@
 #'         ADLB <- left_join(ADLB, ALB_LOQS, by = 'PARAM')",
 #'       vars = list(ADSL = adsl, arm_mapping = arm_mapping)
 #'     ),
-#'     check = TRUE
+#'     check = FALSE # to shorten the example check = FALSE, in real scenarios use check = TRUE
 #'   ),
-#'   modules = modules(
-#'     tm_g_gh_boxplot(
+#'   modules = teal::modules(
+#'     teal.goshawk::tm_g_gh_boxplot(
 #'       label = "Box Plot",
 #'       dataname = "ADLB",
 #'       param_var = "PARAMCD",
@@ -183,8 +183,8 @@
 #'     )
 #'   )
 #' )
-#' \dontrun{
-#' shinyApp(app$ui, app$server)
+#' if (interactive()) {
+#'   shinyApp(app$ui, app$server)
 #' }
 #'
 tm_g_gh_boxplot <- function(label,
@@ -242,7 +242,7 @@ tm_g_gh_boxplot <- function(label,
 
   module(
     label = label,
-    filters = dataname,
+    datanames = dataname,
     server = srv_g_boxplot,
     server_args = list(
       dataname = dataname,
@@ -284,6 +284,9 @@ ui_g_boxplot <- function(id, ...) {
       ))
     ),
     encoding = div(
+      ### Reporter
+      teal.reporter::simple_reporter_ui(ns("simple_reporter")),
+      ###
       templ_ui_dataname(a$dataname),
       teal.widgets::optionalSelectInput(
         ns("trt_group"),
@@ -309,7 +312,7 @@ ui_g_boxplot <- function(id, ...) {
         selected = a$facet_var$selected,
         multiple = FALSE
       ),
-      templ_ui_constraint(ns, label = "Data Constraint"), # required by constr_anl_chunks
+      templ_ui_constraint(ns, label = "Data Constraint"), # required by constr_anl_q
       if (length(a$hline_vars) > 0) {
         teal.widgets::optionalSelectInput(
           ns("hline_vars"),
@@ -342,7 +345,10 @@ ui_g_boxplot <- function(id, ...) {
         )
       )
     ),
-    forms = get_rcode_ui(ns("rcode")),
+    forms = tagList(
+      teal.widgets::verbatim_popup_ui(ns("warning"), "Show Warnings"),
+      teal.widgets::verbatim_popup_ui(ns("rcode"), "Show R code")
+    ),
     pre_output = a$pre_output,
     post_output = a$post_output
   )
@@ -350,7 +356,9 @@ ui_g_boxplot <- function(id, ...) {
 
 
 srv_g_boxplot <- function(id,
-                          datasets,
+                          data,
+                          reporter,
+                          filter_panel_api,
                           dataname,
                           param_var,
                           trt_group,
@@ -361,14 +369,19 @@ srv_g_boxplot <- function(id,
                           plot_width,
                           hline_vars_colors,
                           hline_vars_labels) {
-  moduleServer(id, function(input, output, session) {
-    teal.code::init_chunks()
+  with_reporter <- !missing(reporter) && inherits(reporter, "Reporter")
+  with_filter <- !missing(filter_panel_api) && inherits(filter_panel_api, "FilterPanelAPI")
+  checkmate::assert_class(data, "tdata")
 
+  moduleServer(id, function(input, output, session) {
     # reused in all modules
-    anl_chunks <- constr_anl_chunks(
-      session, input, datasets, dataname,
+    anl_q_output <- constr_anl_q(
+      session, input, data, dataname,
       param_id = "xaxis_param", param_var = param_var, trt_group = input$trt_group, min_rows = 2
     )
+
+    anl_q <- anl_q_output()$value
+
     # update sliders for axes taking constraints into account
     yrange_slider <- toggle_slider_server("yrange_scale")
     keep_range_slider_updated(
@@ -377,14 +390,47 @@ srv_g_boxplot <- function(id,
       update_slider_fcn = yrange_slider$update_state,
       id_var = "yaxis_var",
       id_param_var = "xaxis_param",
-      reactive_ANL = anl_chunks
+      reactive_ANL = anl_q
     )
-    keep_data_const_opts_updated(session, input, anl_chunks, "xaxis_param")
+    keep_data_const_opts_updated(session, input, anl_q, "xaxis_param")
 
     horizontal_line <- srv_arbitrary_lines("hline_arb")
 
+    trt_group <- reactive({
+      input$trt_group
+    })
+
+    iv_r <- reactive({
+      iv <- shinyvalidate::InputValidator$new()
+
+      iv$add_rule("xaxis_param", shinyvalidate::sv_required("Please select a biomarker"))
+      iv$add_rule("trt_group", shinyvalidate::sv_required("Please select a treatment variable"))
+      iv$add_rule("xaxis_var", shinyvalidate::sv_required("Please select an X-Axis variable"))
+      iv$add_rule("xaxis_var", ~ if ((.) %in% c("ACTARM", "ARM") && isTRUE((.) != trt_group())) {
+        sprintf("You can not choose %s as x-axis variable for treatment variable %s.", (.), trt_group())
+      })
+      iv$add_rule("yaxis_var", shinyvalidate::sv_required("Please select a Y-Axis variable"))
+
+      iv$add_rule("facet_var", shinyvalidate::sv_optional())
+      iv$add_rule("facet_var", ~ if ((.) %in% c("ACTARM", "ARM") && isTRUE((.) != trt_group())) {
+        sprintf("You can not choose %s as faceting variable for treatment variable %s.", (.), trt_group())
+      })
+
+      iv_facet <- shinyvalidate::InputValidator$new()
+      iv_facet$condition(~ !is.null(input$facet_var))
+      iv_facet$add_rule("facet_ncol", plots_per_row_validate_rules(required = FALSE))
+      iv$add_validator(iv_facet)
+
+      iv$add_validator(horizontal_line()$iv_r())
+      iv$add_validator(anl_q_output()$iv_r())
+      iv$enable()
+      iv
+    })
+
     create_plot <- reactive({
-      private_chunks <- teal.code::chunks_deep_clone(anl_chunks()$chunks)
+      teal::validate_inputs(iv_r())
+
+      req(anl_q())
       # nolint start
       param <- input$xaxis_param
       yaxis <- input$yaxis_var
@@ -392,10 +438,7 @@ srv_g_boxplot <- function(id,
       facet_var <- `if`(is.null(input$facet_var), "None", input$facet_var)
       ylim <- yrange_slider$state()$value
       facet_ncol <- input$facet_ncol
-      validate(need(
-        is.na(facet_ncol) || (as.numeric(facet_ncol) > 0 && as.numeric(facet_ncol) %% 1 == 0),
-        "Number of plots per row must be a positive integer"
-      ))
+
       alpha <- input$alpha
       font_size <- input$font_size
       dot_size <- input$dot_size
@@ -409,41 +452,28 @@ srv_g_boxplot <- function(id,
       hline_vars <- input$hline_vars
       trt_group <- input$trt_group
       # nolint end
-      validate(need(input$trt_group, "Please select a treatment variable"))
-      validate(need(!is.null(xaxis), "Please select an X-Axis Variable"))
-      validate(need(!is.null(yaxis), "Please select a Y-Axis Variable"))
+
       validate_has_variable(
-        anl_chunks()$ANL,
+        anl_q()$ANL,
         yaxis,
         sprintf("Variable %s is not available in data %s", yaxis, dataname)
       )
       validate_has_variable(
-        anl_chunks()$ANL,
+        anl_q()$ANL,
         xaxis,
         sprintf("Variable %s is not available in data %s", xaxis, dataname)
       )
 
       if (!facet_var == "None") {
         validate_has_variable(
-          anl_chunks()$ANL,
+          anl_q()$ANL,
           facet_var,
           sprintf("Variable %s is not available in data %s", facet_var, dataname)
         )
       }
 
-      validate(need(
-        !facet_var %in% c("ACTARM", "ARM")[!c("ACTARM", "ARM") %in% trt_group],
-        sprintf("You can not choose %s as facetting variable for treatment variable %s.", facet_var, trt_group)
-      ))
-      validate(need(
-        !xaxis %in% c("ACTARM", "ARM")[!c("ACTARM", "ARM") %in% trt_group],
-        sprintf("You can not choose %s as x-axis variable for treatment variable %s.", xaxis, trt_group)
-      ))
-
-      teal.code::chunks_push(
-        chunks = private_chunks,
-        id = "boxplot",
-        expression = bquote({
+      anl_q()$qenv %>% teal.code::eval_code(
+        code = bquote({
           p <- goshawk::g_boxplot(
             data = ANL,
             biomarker = .(param),
@@ -470,24 +500,18 @@ srv_g_boxplot <- function(id,
           )
         })
       )
-
-      teal.code::chunks_safe_eval(private_chunks)
-
-      private_chunks
     })
 
     create_table <- reactive({
-      private_chunks <- teal.code::chunks_deep_clone(create_plot())
-
+      req(iv_r()$is_valid())
+      req(anl_q())
       param <- input$xaxis_param
       xaxis_var <- input$yaxis_var # nolint
       font_size <- input$font_size
       trt_group <- input$trt_group
 
-      teal.code::chunks_push(
-        chunks = private_chunks,
-        id = "table",
-        expression = bquote({
+      anl_q()$qenv %>% teal.code::eval_code(
+        code = bquote({
           tbl <- goshawk::t_summarytable(
             data = ANL,
             trt_group = .(trt_group),
@@ -498,29 +522,10 @@ srv_g_boxplot <- function(id,
           )
         })
       )
-
-      teal.code::chunks_safe_eval(private_chunks)
-      private_chunks
-    })
-
-    main_code <- reactive({
-      private_chunks <- create_table()
-      teal.code::chunks_push(
-        chunks = private_chunks,
-        id = "output",
-        expression = quote(print(p))
-      )
-
-      teal.code::chunks_safe_eval(private_chunks)
-
-      teal.code::chunks_reset()
-      teal.code::chunks_push_chunks(private_chunks)
-
-      private_chunks
     })
 
     plot_r <- reactive({
-      teal.code::chunks_get_var("p", main_code())
+      create_plot()[["p"]]
     })
 
     boxplot_data <- teal.widgets::plot_with_settings_srv(
@@ -532,7 +537,8 @@ srv_g_boxplot <- function(id,
     )
 
     output$table_ui <- DT::renderDataTable({
-      tbl <- teal.code::chunks_get_var("tbl", main_code())
+      req(create_table())
+      tbl <- create_table()[["tbl"]]
 
       numeric_cols <- setdiff(names(dplyr::select_if(tbl, is.numeric)), "n")
 
@@ -540,11 +546,49 @@ srv_g_boxplot <- function(id,
         DT::formatRound(numeric_cols, 4)
     })
 
+    ### REPORTER
+    if (with_reporter) {
+      card_fun <- function(comment) {
+        card <- teal::TealReportCard$new()
+        card$set_name("Box Plot")
+        card$append_text("Box Plot", "header2")
+        if (with_filter) card$append_fs(filter_panel_api$get_filter_state())
+        card$append_text("Selected Options", "header3")
+        card$append_text(
+          paste(
+            formatted_data_constraint(input$constraint_var, input$constraint_range_min, input$constraint_range_max),
+            "\nFacet By:",
+            if (length(input$facet_var) != 0) input$facet_var else "None",
+            "\nSelect an X-axis Variable:",
+            input$xaxis_var
+          ),
+          style = "verbatim"
+        )
+        card$append_text("Plot", "header3")
+        card$append_plot(plot_r(), dim = boxplot_data$dim())
+        if (!comment == "") {
+          card$append_text("Comment", "header3")
+          card$append_text(comment)
+        }
+        card$append_src(
+          paste(
+            teal.code::get_code(
+              teal.code::join(create_plot(), create_table())
+            ),
+            collapse = "\n"
+          )
+        )
+        card
+      }
+      teal.reporter::simple_reporter_srv("simple_reporter", reporter = reporter, card_fun = card_fun)
+    }
+    ###
+
     # highlight plot area
     output$brush_data <- DT::renderDataTable({
       boxplot_brush <- boxplot_data$brush()
 
-      ANL <- isolate(anl_chunks()$ANL) %>% droplevels() # nolint
+      ANL <- isolate(anl_q()$ANL) %>% droplevels() # nolint
       validate_has_data(ANL, 2)
 
       xvar <- isolate(input$xaxis_var)
@@ -555,7 +599,10 @@ srv_g_boxplot <- function(id,
       req(all(c(xvar, yvar, facetv, trt_group) %in% names(ANL)))
 
       df <- teal.widgets::clean_brushedPoints(
-        dplyr::select(ANL, "USUBJID", trt_group, facetv, "AVISITCD", "PARAMCD", xvar, yvar, "LOQFL"),
+        dplyr::select(
+          ANL, "USUBJID", dplyr::all_of(c(trt_group, facetv)),
+          "AVISITCD", "PARAMCD", dplyr::all_of(c(xvar, yvar)), "LOQFL"
+        ),
         boxplot_brush
       )
 
@@ -565,10 +612,22 @@ srv_g_boxplot <- function(id,
         DT::formatRound(numeric_cols, 4)
     })
 
-    get_rcode_srv(
+    joined_qenvs <- reactive({
+      req(create_plot(), create_table())
+      teal.code::join(create_plot(), create_table())
+    })
+
+    teal.widgets::verbatim_popup_srv(
+      id = "warning",
+      verbatim_content = reactive(teal.code::get_warnings(joined_qenvs())),
+      title = "Warning",
+      disabled = reactive(is.null(teal.code::get_warnings(joined_qenvs())))
+    )
+
+    teal.widgets::verbatim_popup_srv(
       id = "rcode",
-      datasets = datasets,
-      modal_title = "Box Plot"
+      verbatim_content = reactive(teal.code::get_code(joined_qenvs())),
+      title = "Show R Code for Boxplot"
     )
   })
 }
