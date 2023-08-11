@@ -26,7 +26,7 @@ Description: Modules that produce web interfaces through which
     with levels 'Y', 'N' or NA.
 License: Apache License 2.0 | file LICENSE
 Depends:
-    goshawk (>= 0.1.14),
+    goshawk (>= 0.1.15),
     R (>= 3.6),
     shiny,
     teal (>= 0.13.0.9027)
