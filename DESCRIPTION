@@ -29,7 +29,7 @@ Depends:
     goshawk (>= 0.1.15),
     R (>= 3.6),
     shiny,
-    teal (>= 0.13.0.9027)
+    teal (>= 0.14.0)
 Imports:
     checkmate,
     colourpicker,
@@ -44,18 +44,18 @@ Imports:
     shinyjs,
     shinyvalidate,
     stats,
-    teal.code (>= 0.3.0.9009),
+    teal.code (>= 0.4.0),
     teal.logger (>= 0.1.1),
-    teal.reporter (>= 0.1.1.9020),
-    teal.transform (>= 0.3.0.9009),
-    teal.widgets (>= 0.3.0.9010),
+    teal.reporter (>= 0.2.0),
+    teal.transform (>= 0.4.0),
+    teal.widgets (>= 0.4.0),
     tidyr
 Suggests:
     knitr,
     nestcolor (>= 0.1.0),
     rmarkdown,
     stringr,
-    teal.data (>= 0.2.0.9007),
+    teal.data (>= 0.3.0),
     tern (>= 0.7.10),
     testthat (>= 2.0),
     utils
