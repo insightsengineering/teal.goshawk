@@ -875,11 +875,14 @@ srv_g_correlationplot <- function(id,
 
     ### REPORTER
     if (with_reporter) {
-      card_fun <- function(comment) {
-        card <- teal::TealReportCard$new()
-        card$set_name("Correlation Plot")
-        card$append_text("Correlation Plot", "header2")
-        if (with_filter) card$append_fs(filter_panel_api$get_filter_state())
+      card_fun <- function(comment, label) {
+        card <- card_template(
+          title = "Correlation Plot",
+          label = label,
+          description = NULL,
+          with_filter = with_filter,
+          filter_panel_api = filter_panel_api
+        )
         card$append_text("Selected Options", "header3")
         card$append_text(
           paste(
