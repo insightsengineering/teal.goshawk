@@ -31,3 +31,56 @@ plots_per_row_validate_rules <- function(required = TRUE) {
     shinyvalidate::sv_gt(0, message_fmt = msg)
   )
 }
+
+#' Template function to generate reporter card for `teal.goshawk`
+#' @param title (`character(1)`) title of the card (unless overwritten by label)
+#' @param label (`character(1)`) label provided by the user when adding the card
+#' @param with_filter (`logical(1)`) flag indicating to add filter state
+#' @param filter_panel_api (`FilterPanelAPI`) object with API that allows the generation
+#'   of the filter state in the report
+#' @param constraint_list (`list`) a list containing constraint variables, including:
+#'   - constraint_var (`character(1)`) the constraint variable name.
+#'   - constraint_range_min (`numeric(1)`) the minimum constraint range value.
+#'   - constraint_range_max (`numeric(1)`) the maximum constraint range value.
+#' @param constraint_description (`character(1)`)  description of the constraints.
+#' @param style (`character(1)`)  style of the constraint text block.
+#'   options: `default`, `verbatim` (default is `default`).
+#'
+#' @return (`TealReportCard`) populated with a title, description, and filter state
+#'
+#' @keywords internal
+card_template <- function(title,
+                          label,
+                          with_filter,
+                          filter_panel_api,
+                          constraint_list,
+                          constraint_description = NULL,
+                          style = "default") {
+  checkmate::assert_string(title)
+  checkmate::assert_string(label)
+  checkmate::assert_flag(with_filter)
+  checkmate::assert_class(filter_panel_api, classes = "FilterPanelAPI")
+  checkmate::assert_subset(names(constraint_list), c("constraint_var", "constraint_range_min", "constraint_range_max"))
+  checkmate::assert_string(constraint_description, null.ok = TRUE)
+  checkmate::assert_choice(style, c("default", "verbatim"))
+
+  card <- teal::TealReportCard$new()
+  title <- if (label == "") title else label
+  card$set_name(title)
+  card$append_text(title, "header2")
+
+  if (with_filter) {
+    card$append_fs(filter_panel_api$get_filter_state())
+  }
+  card$append_text("Selected Options", "header3")
+  card$append_text(
+    paste(
+      formatted_data_constraint(constraint_list$constraint_var,
+                                constraint_list$constraint_range_min,
+                                constraint_list$constraint_range_max),
+      constraint_description
+    ),
+    style = style
+  )
+  card
+}

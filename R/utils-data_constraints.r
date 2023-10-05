@@ -236,7 +236,7 @@ create_anl_constraint_reactive <- function(anl_param, input, param_id, min_rows)
   )
 }
 
-# for outputting the constaint in the report
+# for outputting the constraint in the report
 formatted_data_constraint <- function(constraint_var, constraint_range_min, constraint_range_max) {
   constraint_var_label <- switch(constraint_var,
     "BASE2" = "Screening",
