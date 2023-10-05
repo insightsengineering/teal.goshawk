@@ -75,9 +75,11 @@ card_template <- function(title,
   card$append_text("Selected Options", "header3")
   card$append_text(
     paste(
-      formatted_data_constraint(constraint_list$constraint_var,
-                                constraint_list$constraint_range_min,
-                                constraint_list$constraint_range_max),
+      formatted_data_constraint(
+        constraint_list$constraint_var,
+        constraint_list$constraint_range_min,
+        constraint_list$constraint_range_max
+      ),
       constraint_description
     ),
     style = style
