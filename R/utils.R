@@ -43,18 +43,25 @@ plots_per_row_validate_rules <- function(required = TRUE) {
 #'   - constraint_range_min (`numeric(1)`) the minimum constraint range value.
 #'   - constraint_range_max (`numeric(1)`) the maximum constraint range value.
 #' @param constraint_description (`character(1)`)  description of the constraints.
-#' @param style (`character(1)`)  style of the constraint text block. options: `default`, `verbatim` (default is `default`).
+#' @param style (`character(1)`)  style of the constraint text block.
+#'   options: `default`, `verbatim` (default is `default`).
 #'
 #' @return (`TealReportCard`) populated with a title, description, and filter state
 #'
 #' @keywords internal
-card_template <- function(title, label, with_filter, filter_panel_api, constraint_list, constraint_description = NULL, style = "default") {
+card_template <- function(title,
+                          label,
+                          with_filter,
+                          filter_panel_api,
+                          constraint_list,
+                          constraint_description = NULL,
+                          style = "default") {
   checkmate::assert_string(title)
   checkmate::assert_string(label)
   checkmate::assert_flag(with_filter)
   checkmate::assert_class(filter_panel_api, classes = "FilterPanelAPI")
-  checkmate::assert_subset(names(constraint_list), c("constraint_var" ,"constraint_range_min", "constraint_range_max"))
-  checkmate::assert_string(constraint_description,null.ok = TRUE)
+  checkmate::assert_subset(names(constraint_list), c("constraint_var", "constraint_range_min", "constraint_range_max"))
+  checkmate::assert_string(constraint_description, null.ok = TRUE)
   checkmate::assert_choice(style, c("default", "verbatim"))
 
   card <- teal::TealReportCard$new()
@@ -68,7 +75,9 @@ card_template <- function(title, label, with_filter, filter_panel_api, constrain
   card$append_text("Selected Options", "header3")
   card$append_text(
     paste(
-      formatted_data_constraint(constraint_list$constraint_var, constraint_list$constraint_range_min, constraint_list$constraint_range_max),
+      formatted_data_constraint(constraint_list$constraint_var,
+                                constraint_list$constraint_range_min,
+                                constraint_list$constraint_range_max),
       constraint_description
     ),
     style = style
