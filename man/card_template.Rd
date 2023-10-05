@@ -4,22 +4,39 @@
 \alias{card_template}
 \title{Template function to generate reporter card for \code{teal.goshawk}}
 \usage{
-card_template(title, label, description = NULL, with_filter, filter_panel_api)
+card_template(
+  title,
+  label,
+  with_filter,
+  filter_panel_api,
+  constraint_list,
+  constraint_description,
+  style = "default"
+)
 }
 \arguments{
 \item{title}{(\code{character(1)}) title of the card (unless overwritten by label)}
 
 \item{label}{(\code{character(1)}) label provided by the user when adding the card}
 
-\item{description}{(\code{character(1)}) optional additional description}
-
-\item{with_filter}{(\code{logical(1)}) flag indicating to add filter state}
+\item{with_filter}{(\code{logical(1)}) flag indicating whether to add filter state}
 
 \item{filter_panel_api}{(\code{FilterPanelAPI}) object with API that allows the generation
 of the filter state in the report}
+
+\item{constraint_list}{(\code{list}) a list containing constraint variables, including:
+\itemize{
+\item constraint_var (\code{character}) the constraint variable name.
+\item constraint_range_min (\code{numeric}) the minimum constraint range value.
+\item constraint_range_max (\code{numeric}) the maximum constraint range value.
+}}
+
+\item{constraint_description}{(\code{character(1)})  description of the constraints.}
+
+\item{style}{(\code{character(1)})  style of the constraint text block. options: \code{default}, \code{verbatim} (default is \code{default}).}
 }
 \value{
-(\code{TealReportCard}) populated with a title, description and filter state
+(\code{TealReportCard}) populated with a title, description, and filter state
 }
 \description{
 Template function to generate reporter card for \code{teal.goshawk}

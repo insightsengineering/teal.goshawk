@@ -453,13 +453,11 @@ srv_g_density_distribution_plot <- function(id, # nolint
         card <- card_template(
           title = "Density Distribution Plot",
           label = label,
-          description = NULL,
           with_filter = with_filter,
-          filter_panel_api = filter_panel_api
-        )
-        card$append_text("Selected Options", "header3")
-        card$append_text(
-          formatted_data_constraint(input$constraint_var, input$constraint_range_min, input$constraint_range_max)
+          filter_panel_api = filter_panel_api,
+          constraint_list= list(constraint_var = input$constraint_var ,
+                                constraint_range_min = input$constraint_range_min,
+                                constraint_range_max = input$constraint_range_max)
         )
         card$append_text("Plot", "header3")
         card$append_plot(plot_r(), dim = plot_data$dim())
