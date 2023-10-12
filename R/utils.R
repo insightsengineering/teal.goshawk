@@ -32,7 +32,12 @@ plots_per_row_validate_rules <- function(required = TRUE) {
   )
 }
 
-#' Template function to generate reporter card for `teal.goshawk`
+#' Template Function for `TealReportCard` Creation and Customization in `teal.goshawk`
+#'
+#' This function generates a report card with a title,
+#' an optional description, and the option to append the filter state list.
+#' Additionally, it display selected constraint options.
+#'
 #' @inheritParams teal.reporter::card_template
 #' @param constraint_list (`list`) a list containing constraint variables, including:
 #'   - constraint_var (`character(1)`) the constraint variable name.
