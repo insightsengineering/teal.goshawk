@@ -2,7 +2,7 @@
 % Please edit documentation in R/utils.R
 \name{report_card_template_goshawk}
 \alias{report_card_template_goshawk}
-\title{Template function to generate reporter card for \code{teal.goshawk}}
+\title{Template Function for \code{TealReportCard} Creation and Customization in \code{teal.goshawk}}
 \usage{
 report_card_template_goshawk(
   title,
@@ -31,6 +31,8 @@ options: \code{default}, \code{verbatim} (default is \code{default}).}
 (\code{TealReportCard}) populated with a title, description, and filter state
 }
 \description{
-Template function to generate reporter card for \code{teal.goshawk}
+This function generates a report card with a title,
+an optional description, and the option to append the filter state list.
+Additionally, it display selected constraint options.
 }
 \keyword{internal}
