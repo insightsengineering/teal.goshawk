@@ -45,7 +45,7 @@ plots_per_row_validate_rules <- function(required = TRUE) {
 #' @return (`TealReportCard`) populated with a title, description, and filter state
 #'
 #' @keywords internal
-card_template <- function(title,
+report_card_template <- function(title,
                           label,
                           with_filter,
                           filter_panel_api,
@@ -56,7 +56,7 @@ card_template <- function(title,
   checkmate::assert_string(constraint_description, null.ok = TRUE)
   checkmate::assert_choice(style, c("default", "verbatim"))
 
-  card <- teal.reporter::card_template(
+  card <- teal::report_card_template(
     title = title,
     label = label,
     with_filter = with_filter,

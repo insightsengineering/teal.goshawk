@@ -555,7 +555,7 @@ srv_g_boxplot <- function(id,
           "\nSelect an X-axis Variable:",
           input$xaxis_var
         )
-        card <- card_template(
+        card <- report_card_template(
           title = "Box Plot",
           label = label,
           with_filter = with_filter,

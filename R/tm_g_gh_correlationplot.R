@@ -882,7 +882,7 @@ srv_g_correlationplot <- function(id,
           "\nRegression Line:",
           input$reg_line
         )
-        card <- card_template(
+        card <- report_card_template(
           title = "Correlation Plot",
           label = label,
           with_filter = with_filter,

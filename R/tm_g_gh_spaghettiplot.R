@@ -522,7 +522,7 @@ srv_g_spaghettiplot <- function(id,
     ### REPORTER
     if (with_reporter) {
       card_fun <- function(comment, label) {
-        card <- card_template(
+        card <- report_card_template(
           title = "Spaghetti Plot",
           label = label,
           with_filter = with_filter,

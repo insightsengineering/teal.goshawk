@@ -450,7 +450,7 @@ srv_g_density_distribution_plot <- function(id, # nolint
     ### REPORTER
     if (with_reporter) {
       card_fun <- function(comment, label) {
-        card <- card_template(
+        card <- report_card_template(
           title = "Density Distribution Plot",
           label = label,
           with_filter = with_filter,
