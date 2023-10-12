@@ -800,7 +800,7 @@ srv_lineplot <- function(id,
           "\nContributing Observations Threshold:",
           input$count_threshold
         )
-        card <- report_card_template(
+        card <- report_card_template_goshawk(
           title = "Line Plot",
           label = label,
           with_filter = with_filter,

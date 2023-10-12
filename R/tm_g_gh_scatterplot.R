@@ -389,7 +389,7 @@ srv_g_scatterplot <- function(id,
           "\nRegression Line:",
           input$reg_line
         )
-        card <- report_card_template(
+        card <- report_card_template_goshawk(
           title = "Scatter Plot",
           label = label,
           with_filter = with_filter,

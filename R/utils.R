@@ -45,13 +45,13 @@ plots_per_row_validate_rules <- function(required = TRUE) {
 #' @return (`TealReportCard`) populated with a title, description, and filter state
 #'
 #' @keywords internal
-report_card_template <- function(title,
-                          label,
-                          with_filter,
-                          filter_panel_api,
-                          constraint_list,
-                          constraint_description = NULL,
-                          style = "default") {
+report_card_template_goshawk <- function(title,
+                                         label,
+                                         with_filter,
+                                         filter_panel_api,
+                                         constraint_list,
+                                         constraint_description = NULL,
+                                         style = "default") {
   checkmate::assert_subset(names(constraint_list), c("constraint_var", "constraint_range_min", "constraint_range_max"))
   checkmate::assert_string(constraint_description, null.ok = TRUE)
   checkmate::assert_choice(style, c("default", "verbatim"))
