@@ -548,20 +548,24 @@ srv_g_boxplot <- function(id,
 
     ### REPORTER
     if (with_reporter) {
-      card_fun <- function(comment) {
-        card <- teal::TealReportCard$new()
-        card$set_name("Box Plot")
-        card$append_text("Box Plot", "header2")
-        if (with_filter) card$append_fs(filter_panel_api$get_filter_state())
-        card$append_text("Selected Options", "header3")
-        card$append_text(
-          paste(
-            formatted_data_constraint(input$constraint_var, input$constraint_range_min, input$constraint_range_max),
-            "\nFacet By:",
-            if (length(input$facet_var) != 0) input$facet_var else "None",
-            "\nSelect an X-axis Variable:",
-            input$xaxis_var
+      card_fun <- function(comment, label) {
+        constraint_description <- paste(
+          "\nFacet By:",
+          if (length(input$facet_var) != 0) input$facet_var else "None",
+          "\nSelect an X-axis Variable:",
+          input$xaxis_var
+        )
+        card <- report_card_template_goshawk(
+          title = "Box Plot",
+          label = label,
+          with_filter = with_filter,
+          filter_panel_api = filter_panel_api,
+          constraint_list = list(
+            constraint_var = input$constraint_var,
+            constraint_range_min = input$constraint_range_min,
+            constraint_range_max = input$constraint_range_max
           ),
+          constraint_description = constraint_description,
           style = "verbatim"
         )
         card$append_text("Plot", "header3")
