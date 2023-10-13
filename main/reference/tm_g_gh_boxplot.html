@@ -12,7 +12,7 @@ summary table."><!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/l
     
     <a class="navbar-brand me-2" href="../index.html">teal.goshawk</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.15</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.15.9001</small>
 
     <div style="width: 140px; margin-left: 0.5rem;"> <small class="nav-text text-muted me-auto">part of</small> <img src="https://github.com/insightsengineering/hex-stickers/blob/main/PNG/nest.png?raw=true" alt="NEST" style="height: 30px;"><a href="https://pharmaverse.org/" class="external-link"><img src="https://github.com/insightsengineering/hex-stickers/blob/main/PNG/pharmaverse.png?raw=true" alt="pharmaverse" style="height: 28px;"></a> </div>
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -36,15 +36,6 @@ summary table."><!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/l
 <li class="nav-item">
   <a class="nav-link" href="../news/index.html">Changelog</a>
 </li>
-<!-- start dropdown for versions --> <li class="nav-item dropdown">
-        <a href="#" class="nav-link dropdown-toggle"
-          data-bs-toggle="dropdown" role="button"
-          aria-expanded="false" aria-haspopup="true"
-          id="dropdown-versions">Versions</a> <div class="dropdown-menu" aria-labelledby="dropdown-versions"> <a class="dropdown-item" data-toggle="tooltip" title="" href="https://insightsengineering.github.io/teal.goshawk/main">main</a>
-<a class="dropdown-item" data-toggle="tooltip" title="" href="https://insightsengineering.github.io/teal.goshawk/latest-tag">latest-tag</a>
-<a class="dropdown-item" data-toggle="tooltip" title="" href="https://insightsengineering.github.io/teal.goshawk/v0.1.15">v0.1.15</a>
-<a class="dropdown-item" data-toggle="tooltip" title="" href="https://insightsengineering.github.io/teal.goshawk/v0.1.14">v0.1.14</a> </div></li>
-<!-- end dropdown for versions -->
 <li class="nav-item dropdown">
   <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-expanded="false" aria-haspopup="true" id="dropdown-reports">Reports</a>
   <div class="dropdown-menu" aria-labelledby="dropdown-reports">
@@ -85,9 +76,9 @@ summary table.</p>
 <span>  <span class="va">dataname</span>,</span>
 <span>  <span class="va">param_var</span>,</span>
 <span>  <span class="va">param</span>,</span>
-<span>  yaxis_var <span class="op">=</span> <span class="fu">teal.transform</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/teal.transform/man/choices_selected.html" class="external-link">choices_selected</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"AVAL"</span>, <span class="st">"CHG"</span><span class="op">)</span>, <span class="st">"AVAL"</span><span class="op">)</span>,</span>
-<span>  xaxis_var <span class="op">=</span> <span class="fu">teal.transform</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/teal.transform/man/choices_selected.html" class="external-link">choices_selected</a></span><span class="op">(</span><span class="st">"AVISITCD"</span>, <span class="st">"AVISITCD"</span><span class="op">)</span>,</span>
-<span>  facet_var <span class="op">=</span> <span class="fu">teal.transform</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/teal.transform/man/choices_selected.html" class="external-link">choices_selected</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"ARM"</span>, <span class="st">"ACTARM"</span><span class="op">)</span>, <span class="st">"ARM"</span><span class="op">)</span>,</span>
+<span>  yaxis_var <span class="op">=</span> <span class="fu">teal.transform</span><span class="fu">::</span><span class="fu"><a href="https://insightsengineering.github.io/teal.transform/reference/choices_selected.html" class="external-link">choices_selected</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"AVAL"</span>, <span class="st">"CHG"</span><span class="op">)</span>, <span class="st">"AVAL"</span><span class="op">)</span>,</span>
+<span>  xaxis_var <span class="op">=</span> <span class="fu">teal.transform</span><span class="fu">::</span><span class="fu"><a href="https://insightsengineering.github.io/teal.transform/reference/choices_selected.html" class="external-link">choices_selected</a></span><span class="op">(</span><span class="st">"AVISITCD"</span>, <span class="st">"AVISITCD"</span><span class="op">)</span>,</span>
+<span>  facet_var <span class="op">=</span> <span class="fu">teal.transform</span><span class="fu">::</span><span class="fu"><a href="https://insightsengineering.github.io/teal.transform/reference/choices_selected.html" class="external-link">choices_selected</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"ARM"</span>, <span class="st">"ACTARM"</span><span class="op">)</span>, <span class="st">"ARM"</span><span class="op">)</span>,</span>
 <span>  <span class="va">trt_group</span>,</span>
 <span>  color_manual <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  shape_manual <span class="op">=</span> <span class="cn">NULL</span>,</span>
@@ -117,7 +108,7 @@ summary table.</p>
 
 
 <dt>dataname</dt>
-<dd><p>analysis data passed to the data argument of <code><a href="https://rdrr.io/pkg/teal/man/init.html" class="external-link">init</a></code>. E.g. <code>ADaM</code> structured
+<dd><p>analysis data passed to the data argument of <code><a href="https://insightsengineering.github.io/teal/reference/init.html" class="external-link">init</a></code>. E.g. <code>ADaM</code> structured
 laboratory data frame <code>ALB</code>.</p></dd>
 
 
@@ -145,7 +136,7 @@ it defaults to <code>choices_selected(c("AVAL", "CHG"), "AVAL")</code>.</p></dd>
 
 
 <dt>trt_group</dt>
-<dd><p><code><a href="https://rdrr.io/pkg/teal.transform/man/choices_selected.html" class="external-link">choices_selected</a></code> object with available choices and pre-selected
+<dd><p><code><a href="https://insightsengineering.github.io/teal.transform/reference/choices_selected.html" class="external-link">choices_selected</a></code> object with available choices and pre-selected
 option for variable names representing treatment group e.g. <code>ARM</code>.</p></dd>
 
 
@@ -230,7 +221,7 @@ into context. For example the <code><a href="https://rdrr.io/pkg/shiny/man/helpT
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
     
 
-<p>an <code><a href="https://rdrr.io/pkg/teal/man/module.html" class="external-link">module</a></code> object</p>
+<p>an <code><a href="https://insightsengineering.github.io/teal/reference/module.html" class="external-link">module</a></code> object</p>
     </div>
     <div class="section level2">
     <h2 id="author">Author<a class="anchor" aria-label="anchor" href="#author"></a></h2>
@@ -305,10 +296,10 @@ into context. For example the <code><a href="https://rdrr.io/pkg/shiny/man/helpT
 <span class="r-in"><span><span class="va">ALB_LOQS</span> <span class="op">&lt;-</span> <span class="fu">goshawk</span><span class="fu">:::</span><span class="fu"><a href="https://rdrr.io/pkg/goshawk/man/h_identify_loq_values.html" class="external-link">h_identify_loq_values</a></span><span class="op">(</span><span class="va">ADLB</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">ADLB</span> <span class="op">&lt;-</span> <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate-joins.html" class="external-link">left_join</a></span><span class="op">(</span><span class="va">ADLB</span>, <span class="va">ALB_LOQS</span>, by <span class="op">=</span> <span class="st">"PARAM"</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="va">app</span> <span class="op">&lt;-</span> <span class="fu">teal</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/teal/man/init.html" class="external-link">init</a></span><span class="op">(</span></span></span>
-<span class="r-in"><span>  data <span class="op">=</span> <span class="fu">teal.data</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/teal.data/man/cdisc_data.html" class="external-link">cdisc_data</a></span><span class="op">(</span></span></span>
-<span class="r-in"><span>    <span class="va">adsl</span> <span class="op">&lt;-</span> <span class="fu">teal.data</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/teal.data/man/cdisc_dataset.html" class="external-link">cdisc_dataset</a></span><span class="op">(</span><span class="st">"ADSL"</span>, <span class="va">ADSL</span>, code <span class="op">=</span> <span class="st">"ADSL &lt;- goshawk::rADSL"</span><span class="op">)</span>,</span></span>
-<span class="r-in"><span>    <span class="fu">teal.data</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/teal.data/man/cdisc_dataset.html" class="external-link">cdisc_dataset</a></span><span class="op">(</span></span></span>
+<span class="r-in"><span><span class="va">app</span> <span class="op">&lt;-</span> <span class="fu">teal</span><span class="fu">::</span><span class="fu"><a href="https://insightsengineering.github.io/teal/reference/init.html" class="external-link">init</a></span><span class="op">(</span></span></span>
+<span class="r-in"><span>  data <span class="op">=</span> <span class="fu">teal.data</span><span class="fu">::</span><span class="fu"><a href="https://insightsengineering.github.io/teal.data/reference/cdisc_data.html" class="external-link">cdisc_data</a></span><span class="op">(</span></span></span>
+<span class="r-in"><span>    <span class="va">adsl</span> <span class="op">&lt;-</span> <span class="fu">teal.data</span><span class="fu">::</span><span class="fu"><a href="https://insightsengineering.github.io/teal.data/reference/cdisc_dataset.html" class="external-link">cdisc_dataset</a></span><span class="op">(</span><span class="st">"ADSL"</span>, <span class="va">ADSL</span>, code <span class="op">=</span> <span class="st">"ADSL &lt;- goshawk::rADSL"</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>    <span class="fu">teal.data</span><span class="fu">::</span><span class="fu"><a href="https://insightsengineering.github.io/teal.data/reference/cdisc_dataset.html" class="external-link">cdisc_dataset</a></span><span class="op">(</span></span></span>
 <span class="r-in"><span>      <span class="st">"ADLB"</span>,</span></span>
 <span class="r-in"><span>      <span class="va">ADLB</span>,</span></span>
 <span class="r-in"><span>      code <span class="op">=</span> <span class="st">"</span></span></span>
@@ -357,7 +348,7 @@ into context. For example the <code><a href="https://rdrr.io/pkg/shiny/man/helpT
 <span class="r-in"><span>    <span class="op">)</span>,</span></span>
 <span class="r-in"><span>    check <span class="op">=</span> <span class="cn">FALSE</span> <span class="co"># to shorten the example check = FALSE, in real scenarios use check = TRUE</span></span></span>
 <span class="r-in"><span>  <span class="op">)</span>,</span></span>
-<span class="r-in"><span>  modules <span class="op">=</span> <span class="fu">teal</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/teal/man/modules.html" class="external-link">modules</a></span><span class="op">(</span></span></span>
+<span class="r-in"><span>  modules <span class="op">=</span> <span class="fu">teal</span><span class="fu">::</span><span class="fu"><a href="https://insightsengineering.github.io/teal/reference/modules.html" class="external-link">modules</a></span><span class="op">(</span></span></span>
 <span class="r-in"><span>    <span class="fu">teal.goshawk</span><span class="fu">::</span><span class="fu">tm_g_gh_boxplot</span><span class="op">(</span></span></span>
 <span class="r-in"><span>      label <span class="op">=</span> <span class="st">"Box Plot"</span>,</span></span>
 <span class="r-in"><span>      dataname <span class="op">=</span> <span class="st">"ADLB"</span>,</span></span>
@@ -377,7 +368,7 @@ into context. For example the <code><a href="https://rdrr.io/pkg/shiny/man/helpT
 <span class="r-in"><span>    <span class="op">)</span></span></span>
 <span class="r-in"><span>  <span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [INFO] 2023-08-14 08:51:30.3215 pid:1127 token:[] teal.goshawk Initializing tm_g_gh_boxplot</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [INFO] 2023-10-13 10:05:01.5012 pid:1333 token:[] teal.goshawk Initializing tm_g_gh_boxplot</span>
 <span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/interactive.html" class="external-link">interactive</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span></span>
 <span class="r-in"><span>  <span class="fu">shinyApp</span><span class="op">(</span><span class="va">app</span><span class="op">$</span><span class="va">ui</span>, <span class="va">app</span><span class="op">$</span><span class="va">server</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">}</span></span></span>
