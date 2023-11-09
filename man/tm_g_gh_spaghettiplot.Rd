@@ -170,10 +170,10 @@ data <- within(data, {
     dplyr::rowwise() \%>\%
     dplyr::group_by(PARAMCD) \%>\%
     dplyr::mutate(LBSTRESC = ifelse(USUBJID \%in\% sample(USUBJID, 1, replace = TRUE),
-                                    paste("<", round(runif(1, min = 25, max = 30))), LBSTRESC
+      paste("<", round(runif(1, min = 25, max = 30))), LBSTRESC
     )) \%>\%
     dplyr::mutate(LBSTRESC = ifelse(USUBJID \%in\% sample(USUBJID, 1, replace = TRUE),
-                                    paste(">", round(runif(1, min = 70, max = 75))), LBSTRESC
+      paste(">", round(runif(1, min = 70, max = 75))), LBSTRESC
     )) \%>\%
     ungroup()
   attr(ADLB[["ARM"]], "label") <- var_labels[["ARM"]]
@@ -187,7 +187,7 @@ data <- within(data, {
 })
 
 datanames <- c("ADSL", "ADLB")
-datanames(data)<- datanames
+datanames(data) <- datanames
 join_keys(data) <- cdisc_join_keys(!!!datanames)
 
 app <- teal::init(

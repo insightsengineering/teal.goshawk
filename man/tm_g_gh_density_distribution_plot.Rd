@@ -86,7 +86,6 @@ None
 # Example using ADaM structure analysis dataset.
 data <- teal_data()
 data <- within(data, {
-
   library(dplyr)
   # original ARM value = dose value
   arm_mapping <- list(
@@ -128,7 +127,7 @@ data <- within(data, {
 })
 
 datanames <- c("ADSL", "ADLB")
-datanames(data)<- datanames
+datanames(data) <- datanames
 join_keys(data) <- cdisc_join_keys(!!!datanames)
 
 app <- teal::init(
