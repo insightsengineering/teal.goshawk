@@ -106,121 +106,77 @@ summary table.
 \examples{
 
 # Example using ADaM structure analysis dataset.
+data <- teal_data()
+data <- within(data, {
+  library(dplyr)
+  library(nestcolor)
 
-library(dplyr)
-library(nestcolor)
+  # original ARM value = dose value
+  arm_mapping <- list(
+    "A: Drug X" = "150mg QD",
+    "B: Placebo" = "Placebo",
+    "C: Combination" = "Combination"
+  )
+  set.seed(1)
+  ADSL <- goshawk::rADSL
+  ADLB <- goshawk::rADLB
+  var_labels <- lapply(ADLB, function(x) attributes(x)$label)
+  ADLB <- ADLB \%>\%
+    dplyr::mutate(
+      AVISITCD = dplyr::case_when(
+        AVISIT == "SCREENING" ~ "SCR",
+        AVISIT == "BASELINE" ~ "BL",
+        grepl("WEEK", AVISIT) ~ paste("W", stringr::str_extract(AVISIT, "(?<=(WEEK ))[0-9]+")),
+        TRUE ~ as.character(NA)
+      ),
+      AVISITCDN = dplyr::case_when(
+        AVISITCD == "SCR" ~ -2,
+        AVISITCD == "BL" ~ 0,
+        grepl("W", AVISITCD) ~ as.numeric(gsub("[^0-9]*", "", AVISITCD)),
+        TRUE ~ as.numeric(NA)
+      ),
+      AVISITCD = factor(AVISITCD) \%>\% reorder(AVISITCDN),
+      TRTORD = dplyr::case_when(
+        ARMCD == "ARM C" ~ 1,
+        ARMCD == "ARM B" ~ 2,
+        ARMCD == "ARM A" ~ 3
+      ),
+      ARM = as.character(arm_mapping[match(ARM, names(arm_mapping))]),
+      ARM = factor(ARM) \%>\% reorder(TRTORD),
+      ACTARM = as.character(arm_mapping[match(ACTARM, names(arm_mapping))]),
+      ACTARM = factor(ACTARM) \%>\% reorder(TRTORD),
+      ANRLO = 50,
+      ANRHI = 75
+    ) \%>\%
+    dplyr::rowwise() \%>\%
+    dplyr::group_by(PARAMCD) \%>\%
+    dplyr::mutate(LBSTRESC = ifelse(
+      USUBJID \%in\% sample(USUBJID, 1, replace = TRUE),
+      paste("<", round(runif(1, min = 25, max = 30))), LBSTRESC
+    )) \%>\%
+    dplyr::mutate(LBSTRESC = ifelse(
+      USUBJID \%in\% sample(USUBJID, 1, replace = TRUE),
+      paste(">", round(runif(1, min = 70, max = 75))), LBSTRESC
+    )) \%>\%
+    ungroup()
 
-# original ARM value = dose value
-arm_mapping <- list(
-  "A: Drug X" = "150mg QD",
-  "B: Placebo" = "Placebo",
-  "C: Combination" = "Combination"
-)
+  attr(ADLB[["ARM"]], "label") <- var_labels[["ARM"]]
+  attr(ADLB[["ACTARM"]], "label") <- var_labels[["ACTARM"]]
+  attr(ADLB[["ANRLO"]], "label") <- "Analysis Normal Range Lower Limit"
+  attr(ADLB[["ANRHI"]], "label") <- "Analysis Normal Range Upper Limit"
 
-set.seed(1)
-ADSL <- goshawk::rADSL
-ADLB <- goshawk::rADLB
-var_labels <- lapply(ADLB, function(x) attributes(x)$label)
-ADLB <- ADLB \%>\%
-  dplyr::mutate(
-    AVISITCD = dplyr::case_when(
-      AVISIT == "SCREENING" ~ "SCR",
-      AVISIT == "BASELINE" ~ "BL",
-      grepl("WEEK", AVISIT) ~ paste("W", stringr::str_extract(AVISIT, "(?<=(WEEK ))[0-9]+")),
-      TRUE ~ as.character(NA)
-    ),
-    AVISITCDN = dplyr::case_when(
-      AVISITCD == "SCR" ~ -2,
-      AVISITCD == "BL" ~ 0,
-      grepl("W", AVISITCD) ~ as.numeric(gsub("[^0-9]*", "", AVISITCD)),
-      TRUE ~ as.numeric(NA)
-    ),
-    AVISITCD = factor(AVISITCD) \%>\% reorder(AVISITCDN),
-    TRTORD = dplyr::case_when(
-      ARMCD == "ARM C" ~ 1,
-      ARMCD == "ARM B" ~ 2,
-      ARMCD == "ARM A" ~ 3
-    ),
-    ARM = as.character(arm_mapping[match(ARM, names(arm_mapping))]),
-    ARM = factor(ARM) \%>\% reorder(TRTORD),
-    ACTARM = as.character(arm_mapping[match(ACTARM, names(arm_mapping))]),
-    ACTARM = factor(ACTARM) \%>\% reorder(TRTORD),
-    ANRLO = 50,
-    ANRHI = 75
-  ) \%>\%
-  dplyr::rowwise() \%>\%
-  dplyr::group_by(PARAMCD) \%>\%
-  dplyr::mutate(LBSTRESC = ifelse(
-    USUBJID \%in\% sample(USUBJID, 1, replace = TRUE),
-    paste("<", round(runif(1, min = 25, max = 30))), LBSTRESC
-  )) \%>\%
-  dplyr::mutate(LBSTRESC = ifelse(
-    USUBJID \%in\% sample(USUBJID, 1, replace = TRUE),
-    paste(">", round(runif(1, min = 70, max = 75))), LBSTRESC
-  )) \%>\%
-  ungroup()
+  # add LLOQ and ULOQ variables
+  ALB_LOQS <- goshawk:::h_identify_loq_values(ADLB)
+  ADLB <- dplyr::left_join(ADLB, ALB_LOQS, by = "PARAM")
+})
 
-attr(ADLB[["ARM"]], "label") <- var_labels[["ARM"]]
-attr(ADLB[["ACTARM"]], "label") <- var_labels[["ACTARM"]]
-attr(ADLB[["ANRLO"]], "label") <- "Analysis Normal Range Lower Limit"
-attr(ADLB[["ANRHI"]], "label") <- "Analysis Normal Range Upper Limit"
+datanames <- c("ADSL", "ADLB")
+datanames(data)<- datanames
 
-# add LLOQ and ULOQ variables
-ALB_LOQS <- goshawk:::h_identify_loq_values(ADLB)
-ADLB <- dplyr::left_join(ADLB, ALB_LOQS, by = "PARAM")
+join_keys(data) <- cdisc_join_keys(!!!datanames)
 
 app <- teal::init(
-  data = teal.data::cdisc_data(
-    adsl <- teal.data::cdisc_dataset("ADSL", ADSL, code = "ADSL <- goshawk::rADSL"),
-    teal.data::cdisc_dataset(
-      "ADLB",
-      ADLB,
-      code = "
-        set.seed(1)
-        ADLB <- goshawk::rADLB
-        var_labels <- lapply(ADLB, function(x) attributes(x)$label)
-        ADLB <- ADLB \%>\%
-          dplyr::mutate(AVISITCD = dplyr::case_when(
-            AVISIT == 'SCREENING' ~ 'SCR',
-            AVISIT == 'BASELINE' ~ 'BL',
-            grepl('WEEK', AVISIT) ~ paste('W', stringr::str_extract(AVISIT, '(?<=(WEEK ))[0-9]+')),
-            TRUE ~ as.character(NA)),
-            AVISITCDN = dplyr::case_when(
-              AVISITCD == 'SCR' ~ -2,
-              AVISITCD == 'BL' ~ 0,
-              grepl('W', AVISITCD) ~ as.numeric(gsub('[^0-9]*', '', AVISITCD)),
-              TRUE ~ as.numeric(NA)),
-            AVISITCD = factor(AVISITCD) \%>\% reorder(AVISITCDN),
-            TRTORD = dplyr::case_when(
-              ARMCD == 'ARM C' ~ 1,
-              ARMCD == 'ARM B' ~ 2,
-              ARMCD == 'ARM A' ~ 3),
-            ARM = as.character(arm_mapping[match(ARM, names(arm_mapping))]),
-            ARM = factor(ARM) \%>\% reorder(TRTORD),
-            ACTARM = as.character(arm_mapping[match(ACTARM, names(arm_mapping))]),
-            ACTARM = factor(ACTARM) \%>\% reorder(TRTORD),
-            ANRLO = 50,
-            ANRHI = 75) \%>\%
-          dplyr::rowwise() \%>\%
-          dplyr::group_by(PARAMCD) \%>\%
-          dplyr::mutate(LBSTRESC = ifelse(
-            USUBJID \%in\% sample(USUBJID, 1, replace = TRUE),
-            paste('<', round(runif(1, min = 25, max = 30))), LBSTRESC)) \%>\%
-          dplyr::mutate(LBSTRESC = ifelse(
-            USUBJID \%in\% sample(USUBJID, 1, replace = TRUE),
-            paste( '>', round(runif(1, min = 70, max = 75))), LBSTRESC)) \%>\%
-          ungroup()
-        attr(ADLB[['ARM']], 'label') <- var_labels[['ARM']]
-        attr(ADLB[['ACTARM']], 'label') <- var_labels[['ACTARM']]
-        attr(ADLB[['ANRLO']], 'label') <- 'Analysis Normal Range Lower Limit'
-        attr(ADLB[['ANRHI']], 'label') <- 'Analysis Normal Range Upper Limit'
-        # add LLOQ and ULOQ variables
-        ALB_LOQS <- goshawk:::h_identify_loq_values(ADLB)
-        ADLB <- left_join(ADLB, ALB_LOQS, by = 'PARAM')",
-      vars = list(ADSL = adsl, arm_mapping = arm_mapping)
-    ),
-    check = FALSE # to shorten the example check = FALSE, in real scenarios use check = TRUE
-  ),
+  data = data,
   modules = teal::modules(
     teal.goshawk::tm_g_gh_boxplot(
       label = "Box Plot",
