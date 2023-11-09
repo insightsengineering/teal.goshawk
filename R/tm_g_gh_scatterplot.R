@@ -82,7 +82,7 @@
 #' })
 #'
 #' datanames <- c("ADSL", "ADLB")
-#' datanames(data)<- datanames
+#' datanames(data) <- datanames
 #' join_keys(data) <- cdisc_join_keys(!!!datanames)
 #'
 #'

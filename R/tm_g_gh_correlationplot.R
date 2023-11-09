@@ -93,13 +93,13 @@
 #'     )) %>%
 #'     # use ARMCD values to order treatment in visualization legend
 #'     dplyr::mutate(TRTORD = ifelse(grepl("C", ARMCD), 1,
-#'                                   ifelse(grepl("B", ARMCD), 2,
-#'                                          ifelse(grepl("A", ARMCD), 3, NA)
-#'                                   )
+#'       ifelse(grepl("B", ARMCD), 2,
+#'         ifelse(grepl("A", ARMCD), 3, NA)
+#'       )
 #'     )) %>%
 #'     dplyr::mutate(ARM = as.character(arm_mapping[match(ARM, names(arm_mapping))])) %>%
 #'     dplyr::mutate(ARM = factor(ARM) %>%
-#'                     reorder(TRTORD)) %>%
+#'       reorder(TRTORD)) %>%
 #'     dplyr::mutate(
 #'       ANRHI = dplyr::case_when(
 #'         PARAMCD == "ALT" ~ 60,
