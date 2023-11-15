@@ -92,11 +92,11 @@
 #'       xaxis_var = choices_selected(c("AVAL", "BASE", "CHG", "PCHG"), "AVAL"),
 #'       trt_group = choices_selected(c("ARM", "ACTARM"), "ARM"),
 #'       color_manual = c(
-#'         "150mg QD" = "#'000000",
-#'         "Placebo" = "#'3498DB",
-#'         "Combination" = "#'E74C3C"
+#'         "150mg QD" = "#000000",
+#'         "Placebo" = "#3498DB",
+#'         "Combination" = "#E74C3C"
 #'       ),
-#'       color_comb = "#'39ff14",
+#'       color_comb = "#39ff14",
 #'       comb_line = TRUE,
 #'       plot_height = c(500, 200, 2000),
 #'       font_size = c(12, 8, 20),

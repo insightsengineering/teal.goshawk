@@ -137,11 +137,11 @@
 #'         "NONE"
 #'       ),
 #'       trt_group = choices_selected(c("ARM", "ACTARM"), "ARM"),
-#'       color_comb = "#'39ff14",
+#'       color_comb = "#39ff14",
 #'       man_color = c(
-#'         "Combination" = "#'000000",
-#'         "Placebo" = "#'fce300",
-#'         "150mg QD" = "#'5a2f5f"
+#'         "Combination" = "#000000",
+#'         "Placebo" = "#fce300",
+#'         "150mg QD" = "#5a2f5f"
 #'       ),
 #'       hline_arb = c(60, 50),
 #'       hline_arb_color = c("grey", "red"),

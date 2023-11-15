@@ -60,7 +60,7 @@
 #'     "B: Placebo" = "Placebo",
 #'     "C: Combination" = "Combination"
 #'   )
-#'   color_manual <- c("150mg QD" = "#'000000", "Placebo" = "#'3498DB", "Combination" = "#'E74C3C")
+#'   color_manual <- c("150mg QD" = "#000000", "Placebo" = "#3498DB", "Combination" = "#E74C3C")
 #'   # assign LOQ flag symbols: circles for "N" and triangles for "Y", squares for "NA"
 #'   shape_manual <- c("N" = 1, "Y" = 2, "NA" = 0)
 #'
@@ -152,9 +152,9 @@
 #'       yaxis_var = choices_selected(c("AVAL", "BASE", "CHG", "PCHG"), "AVAL"),
 #'       trt_group = choices_selected(c("ARM", "ACTARM"), "ARM"),
 #'       color_manual = c(
-#'         "Drug X 100mg" = "#'000000",
-#'         "Placebo" = "#'3498DB",
-#'         "Combination 100mg" = "#'E74C3C"
+#'         "Drug X 100mg" = "#000000",
+#'         "Placebo" = "#3498DB",
+#'         "Combination 100mg" = "#E74C3C"
 #'       ),
 #'       shape_manual = c("N" = 1, "Y" = 2, "NA" = 0),
 #'       plot_height = c(500, 200, 2000),
