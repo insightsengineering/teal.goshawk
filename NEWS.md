@@ -1,5 +1,9 @@
 # teal.goshawk 0.1.15.9002
 
+### Miscellaneous
+
+* Specified minimal version of package dependencies.
+
 # teal.goshawk 0.1.15
 
 ### Enhancements
