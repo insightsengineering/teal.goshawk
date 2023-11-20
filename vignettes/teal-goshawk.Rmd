@@ -51,31 +51,34 @@ A simple application including the box plot module could look like this:
 library(teal.goshawk)
 library(nestcolor)
 
-ADSL <- goshawk::rADSL %>% 
-  mutate(TRTORD = case_when(
-    TRT01P == "A: Drug X" ~ 1,
-    TRT01P == "C: Combination" ~ 2,
-    TRT01P == "B: Placebo" ~ 3,
-    TRUE ~ as.numeric(NA)
+data <- teal_data()
+data <- within(data, {
+  ADSL <- goshawk::rADSL %>% 
+    mutate(TRTORD = case_when(
+      TRT01P == "A: Drug X" ~ 1,
+      TRT01P == "C: Combination" ~ 2,
+      TRT01P == "B: Placebo" ~ 3,
+      TRUE ~ as.numeric(NA)
     )
-  )
+    )
+  
+  ADLB <- goshawk::rADLB %>% 
+    mutate(AVISITCD = AVISIT,
+           TRTORD = case_when(
+             TRT01P == "A: Drug X" ~ 1,
+             TRT01P == "C: Combination" ~ 2,
+             TRT01P == "B: Placebo" ~ 3,
+             TRUE ~ as.numeric(NA)
+           )
+    )
+})
 
-ADLB <- goshawk::rADLB %>% 
-  mutate(AVISITCD = AVISIT,
-         TRTORD = case_when(
-           TRT01P == "A: Drug X" ~ 1,
-           TRT01P == "C: Combination" ~ 2,
-           TRT01P == "B: Placebo" ~ 3,
-           TRUE ~ as.numeric(NA)
-         )
-  )
+datanames <- c("ADSL", "ADLB")
+datanames(data)<- datanames
+join_keys(data) <- default_cdisc_join_keys[datanames]
 
 app <- teal::init(
-  data = teal.data::cdisc_data(
-    teal.data::cdisc_dataset("ADSL", ADSL, code = "ADSL <- goshawk::rADSL"),
-    teal.data::cdisc_dataset("ADLB", ADLB, code = "ADLB <- goshawk::rADLB"),
-    check = FALSE
-  ),
+  data = data,
   modules = list(
     tm_g_gh_boxplot(
       label = "Longitudinal Analysis",

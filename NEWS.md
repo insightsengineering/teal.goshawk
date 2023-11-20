@@ -1,5 +1,9 @@
 # teal.goshawk 0.1.15.9002
 
+### Enhancements
+
+* Updated the documentation and vignettes to demonstrate method to pass `teal_data` object to `teal::init()`.
+
 # teal.goshawk 0.1.15
 
 ### Enhancements

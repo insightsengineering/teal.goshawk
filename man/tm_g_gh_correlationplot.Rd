@@ -128,156 +128,95 @@ Scatter Plot Teal Module For Biomarker Analysis
 \examples{
 
 # Example using ADaM structure analysis dataset.
+data <- teal_data()
+data <- within(data, {
+  # original ARM value = dose value
+  arm_mapping <- list(
+    "A: Drug X" = "150mg QD",
+    "B: Placebo" = "Placebo",
+    "C: Combination" = "Combination"
+  )
+  color_manual <- c("150mg QD" = "#000000", "Placebo" = "#3498DB", "Combination" = "#E74C3C")
+  # assign LOQ flag symbols: circles for "N" and triangles for "Y", squares for "NA"
+  shape_manual <- c("N" = 1, "Y" = 2, "NA" = 0)
 
-# original ARM value = dose value
-arm_mapping <- list(
-  "A: Drug X" = "150mg QD",
-  "B: Placebo" = "Placebo",
-  "C: Combination" = "Combination"
-)
-color_manual <- c("150mg QD" = "#000000", "Placebo" = "#3498DB", "Combination" = "#E74C3C")
-# assign LOQ flag symbols: circles for "N" and triangles for "Y", squares for "NA"
-shape_manual <- c("N" = 1, "Y" = 2, "NA" = 0)
-
-set.seed(1)
-ADSL <- goshawk::rADSL
-ADLB <- goshawk::rADLB
-var_labels <- lapply(ADLB, function(x) attributes(x)$label)
-ADLB <- ADLB \%>\%
-  dplyr::mutate(AVISITCD = dplyr::case_when(
-    AVISIT == "SCREENING" ~ "SCR",
-    AVISIT == "BASELINE" ~ "BL",
-    grepl("WEEK", AVISIT) ~
-      paste(
-        "W",
-        trimws(
-          substr(
-            AVISIT,
-            start = 6,
-            stop = stringr::str_locate(AVISIT, "DAY") - 1
+  set.seed(1)
+  ADSL <- goshawk::rADSL
+  ADLB <- goshawk::rADLB
+  var_labels <- lapply(ADLB, function(x) attributes(x)$label)
+  ADLB <- ADLB \%>\%
+    dplyr::mutate(AVISITCD = dplyr::case_when(
+      AVISIT == "SCREENING" ~ "SCR",
+      AVISIT == "BASELINE" ~ "BL",
+      grepl("WEEK", AVISIT) ~
+        paste(
+          "W",
+          trimws(
+            substr(
+              AVISIT,
+              start = 6,
+              stop = stringr::str_locate(AVISIT, "DAY") - 1
+            )
           )
-        )
+        ),
+      TRUE ~ NA_character_
+    )) \%>\%
+    dplyr::mutate(AVISITCDN = dplyr::case_when(
+      AVISITCD == "SCR" ~ -2,
+      AVISITCD == "BL" ~ 0,
+      grepl("W", AVISITCD) ~ as.numeric(gsub("[^0-9]*", "", AVISITCD)),
+      TRUE ~ NA_real_
+    )) \%>\%
+    # use ARMCD values to order treatment in visualization legend
+    dplyr::mutate(TRTORD = ifelse(grepl("C", ARMCD), 1,
+      ifelse(grepl("B", ARMCD), 2,
+        ifelse(grepl("A", ARMCD), 3, NA)
+      )
+    )) \%>\%
+    dplyr::mutate(ARM = as.character(arm_mapping[match(ARM, names(arm_mapping))])) \%>\%
+    dplyr::mutate(ARM = factor(ARM) \%>\%
+      reorder(TRTORD)) \%>\%
+    dplyr::mutate(
+      ANRHI = dplyr::case_when(
+        PARAMCD == "ALT" ~ 60,
+        PARAMCD == "CRP" ~ 70,
+        PARAMCD == "IGA" ~ 80,
+        TRUE ~ NA_real_
       ),
-    TRUE ~ NA_character_
-  )) \%>\%
-  dplyr::mutate(AVISITCDN = dplyr::case_when(
-    AVISITCD == "SCR" ~ -2,
-    AVISITCD == "BL" ~ 0,
-    grepl("W", AVISITCD) ~ as.numeric(gsub("[^0-9]*", "", AVISITCD)),
-    TRUE ~ NA_real_
-  )) \%>\%
-  # use ARMCD values to order treatment in visualization legend
-  dplyr::mutate(TRTORD = ifelse(grepl("C", ARMCD), 1,
-    ifelse(grepl("B", ARMCD), 2,
-      ifelse(grepl("A", ARMCD), 3, NA)
-    )
-  )) \%>\%
-  dplyr::mutate(ARM = as.character(arm_mapping[match(ARM, names(arm_mapping))])) \%>\%
-  dplyr::mutate(ARM = factor(ARM) \%>\%
-    reorder(TRTORD)) \%>\%
-  dplyr::mutate(
-    ANRHI = dplyr::case_when(
-      PARAMCD == "ALT" ~ 60,
-      PARAMCD == "CRP" ~ 70,
-      PARAMCD == "IGA" ~ 80,
-      TRUE ~ NA_real_
-    ),
-    ANRLO = dplyr::case_when(
-      PARAMCD == "ALT" ~ 20,
-      PARAMCD == "CRP" ~ 30,
-      PARAMCD == "IGA" ~ 40,
-      TRUE ~ NA_real_
-    )
-  ) \%>\%
-  dplyr::rowwise() \%>\%
-  dplyr::group_by(PARAMCD) \%>\%
-  dplyr::mutate(LBSTRESC = ifelse(
-    USUBJID \%in\% sample(USUBJID, 1, replace = TRUE),
-    paste("<", round(runif(1, min = 25, max = 30))), LBSTRESC
-  )) \%>\%
-  dplyr::mutate(LBSTRESC = ifelse(
-    USUBJID \%in\% sample(USUBJID, 1, replace = TRUE),
-    paste(">", round(runif(1, min = 70, max = 75))), LBSTRESC
-  )) \%>\%
-  ungroup()
-attr(ADLB[["ARM"]], "label") <- var_labels[["ARM"]]
-attr(ADLB[["ANRHI"]], "label") <- "Analysis Normal Range Upper Limit"
-attr(ADLB[["ANRLO"]], "label") <- "Analysis Normal Range Lower Limit"
+      ANRLO = dplyr::case_when(
+        PARAMCD == "ALT" ~ 20,
+        PARAMCD == "CRP" ~ 30,
+        PARAMCD == "IGA" ~ 40,
+        TRUE ~ NA_real_
+      )
+    ) \%>\%
+    dplyr::rowwise() \%>\%
+    dplyr::group_by(PARAMCD) \%>\%
+    dplyr::mutate(LBSTRESC = ifelse(
+      USUBJID \%in\% sample(USUBJID, 1, replace = TRUE),
+      paste("<", round(runif(1, min = 25, max = 30))), LBSTRESC
+    )) \%>\%
+    dplyr::mutate(LBSTRESC = ifelse(
+      USUBJID \%in\% sample(USUBJID, 1, replace = TRUE),
+      paste(">", round(runif(1, min = 70, max = 75))), LBSTRESC
+    )) \%>\%
+    ungroup()
+  attr(ADLB[["ARM"]], "label") <- var_labels[["ARM"]]
+  attr(ADLB[["ANRHI"]], "label") <- "Analysis Normal Range Upper Limit"
+  attr(ADLB[["ANRLO"]], "label") <- "Analysis Normal Range Lower Limit"
 
-# add LLOQ and ULOQ variables
-ADLB_LOQS <- goshawk:::h_identify_loq_values(ADLB)
-ADLB <- dplyr::left_join(ADLB, ADLB_LOQS, by = "PARAM")
+  # add LLOQ and ULOQ variables
+  ADLB_LOQS <- goshawk:::h_identify_loq_values(ADLB)
+  ADLB <- dplyr::left_join(ADLB, ADLB_LOQS, by = "PARAM")
+})
+
+datanames <- c("ADSL", "ADLB")
+datanames(data) <- datanames
+
+join_keys(data) <- default_cdisc_join_keys[datanames]
 
 app <- teal::init(
-  data = teal.data::cdisc_data(
-    teal.data::cdisc_dataset("ADSL", ADSL, code = "ADSL <- goshawk::rADSL"),
-    teal.data::cdisc_dataset(
-      "ADLB",
-      ADLB,
-      code = "set.seed(1)
-              ADLB <- goshawk::rADLB
-              var_labels <- lapply(ADLB, function(x) attributes(x)$label)
-              ADLB <- ADLB \%>\%
-                dplyr::mutate(AVISITCD = dplyr::case_when(
-                  AVISIT == 'SCREENING' ~ 'SCR',
-                  AVISIT == 'BASELINE' ~ 'BL',
-                  grepl('WEEK', AVISIT) ~
-                    paste(
-                      'W',
-                      trimws(
-                        substr(
-                          AVISIT,
-                          start = 6,
-                          stop = stringr::str_locate(AVISIT, 'DAY') - 1
-                        )
-                      )
-                    ),
-                  TRUE ~ NA_character_)) \%>\%
-                dplyr::mutate(AVISITCDN = dplyr::case_when(
-                  AVISITCD == 'SCR' ~ -2,
-                  AVISITCD == 'BL' ~ 0,
-                  grepl('W', AVISITCD) ~ as.numeric(gsub('[^0-9]*', '', AVISITCD)),
-                  TRUE ~ NA_real_)) \%>\%
-                # use ARMCD values to order treatment in visualization legend
-                dplyr::mutate(TRTORD = ifelse(grepl('C', ARMCD), 1,
-                                       ifelse(grepl('B', ARMCD), 2,
-                                              ifelse(grepl('A', ARMCD), 3, NA)))) \%>\%
-                dplyr::mutate(ARM = as.character(arm_mapping[match(ARM, names(arm_mapping))])) \%>\%
-                dplyr::mutate(ARM = factor(ARM) \%>\%
-                         reorder(TRTORD)) \%>\%
-                dplyr::mutate(
-                  ANRHI = dplyr::case_when(
-                    PARAMCD == 'ALT' ~ 60,
-                    PARAMCD == 'CRP' ~ 70,
-                    PARAMCD == 'IGA' ~ 80,
-                    TRUE ~ NA_real_
-                  ),
-                  ANRLO = dplyr::case_when(
-                    PARAMCD == 'ALT' ~ 20,
-                    PARAMCD == 'CRP' ~ 30,
-                    PARAMCD == 'IGA' ~ 40,
-                    TRUE ~ NA_real_
-                  )) \%>\%
-                dplyr::rowwise() \%>\%
-                dplyr::group_by(PARAMCD) \%>\%
-                dplyr::mutate(LBSTRESC = ifelse(
-                  USUBJID \%in\% sample(USUBJID, 1, replace = TRUE),
-                  paste('<', round(runif(1, min = 25, max = 30))), LBSTRESC)) \%>\%
-                dplyr::mutate(LBSTRESC = ifelse(
-                  USUBJID \%in\% sample(USUBJID, 1, replace = TRUE),
-                  paste( '>', round(runif(1, min = 70, max = 75))), LBSTRESC)) \%>\%
-                ungroup()
-              attr(ADLB[['ARM']], 'label') <- var_labels[['ARM']]
-              attr(ADLB[['ANRHI']], 'label') <- 'Analysis Normal Range Upper Limit'
-              attr(ADLB[['ANRLO']], 'label') <- 'Analysis Normal Range Lower Limit'
-
-              # add LLOQ and ULOQ variables
-              ADLB_LOQS <- goshawk:::h_identify_loq_values(ADLB)
-              ADLB <- left_join(ADLB, ADLB_LOQS, by = 'PARAM')",
-      vars = list(arm_mapping = arm_mapping)
-    ),
-    check = TRUE
-  ),
+  data = data,
   modules = teal::modules(
     teal.goshawk::tm_g_gh_correlationplot(
       label = "Correlation Plot",
@@ -320,6 +259,7 @@ app <- teal::init(
 if (interactive()) {
   shinyApp(app$ui, app$server)
 }
+
 }
 \author{
 Nick Paszty (npaszty) paszty.nicholas@gene.com
