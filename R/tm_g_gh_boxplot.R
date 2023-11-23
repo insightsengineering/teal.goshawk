@@ -327,12 +327,14 @@ srv_g_boxplot <- function(id,
                           hline_vars_labels) {
   with_reporter <- !missing(reporter) && inherits(reporter, "Reporter")
   with_filter <- !missing(filter_panel_api) && inherits(filter_panel_api, "FilterPanelAPI")
-  checkmate::assert_class(data, "tdata")
+  checkmate::assert_class(data, "reactive")
+  checkmate::assert_class(isolate(data()), "teal_data")
 
   moduleServer(id, function(input, output, session) {
+
     # reused in all modules
     anl_q_output <- constr_anl_q(
-      session, input, data, dataname,
+      session, input, data(), dataname,
       param_id = "xaxis_param", param_var = param_var, trt_group = input$trt_group, min_rows = 2
     )
 
