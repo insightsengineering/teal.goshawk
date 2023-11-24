@@ -15,6 +15,15 @@ report_card_template_goshawk(
 )
 }
 \arguments{
+\item{title}{(\code{character(1)}) title of the card (unless overwritten by label)}
+
+\item{label}{(\code{character(1)}) label provided by the user when adding the card}
+
+\item{with_filter}{(\code{logical(1)}) flag indicating to add filter state}
+
+\item{filter_panel_api}{(\code{FilterPanelAPI}) object with API that allows the generation
+of the filter state in the report}
+
 \item{constraint_list}{(\code{list}) a list containing constraint variables, including:
 \itemize{
 \item constraint_var (\code{character(1)}) the constraint variable name.

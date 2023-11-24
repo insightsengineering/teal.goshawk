@@ -107,7 +107,7 @@ constr_anl_q <- function(session, input, data, dataname, param_id, param_var, tr
 
     # get min max values
     if ((constraint_var == "BASE2" && any(grepl("SCR", visit_freq))) ||
-      (constraint_var == "BASE" && any(grepl("BL", visit_freq)))) {
+      (constraint_var == "BASE" && any(grepl("BL", visit_freq)))) { # nolint
       val <- stats::na.omit(switch(constraint_var,
         "BASE" = ANL$BASE[ANL$AVISITCD == "BL"],
         "BASE2" = ANL$BASE2[ANL$AVISITCD == "SCR"],

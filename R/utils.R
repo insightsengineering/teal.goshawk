@@ -38,7 +38,7 @@ plots_per_row_validate_rules <- function(required = TRUE) {
 #' an optional description, and the option to append the filter state list.
 #' Additionally, it display selected constraint options.
 #'
-#' @inheritParams teal.reporter::card_template
+#' @inheritParams teal::report_card_template
 #' @param constraint_list (`list`) a list containing constraint variables, including:
 #'   - constraint_var (`character(1)`) the constraint variable name.
 #'   - constraint_range_min (`numeric(1)`) the minimum constraint range value.
