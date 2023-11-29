@@ -532,11 +532,8 @@ srv_g_boxplot <- function(id,
           card$append_text(comment)
         }
         card$append_src(
-          paste(
-            teal.code::get_code(
-              teal.code::join(create_plot(), create_table())
-            ),
-            collapse = "\n"
+          teal.code::get_code(
+            teal.code::join(create_plot(), create_table())
           )
         )
         card
