@@ -327,7 +327,8 @@ srv_g_boxplot <- function(id,
                           hline_vars_labels) {
   with_reporter <- !missing(reporter) && inherits(reporter, "Reporter")
   with_filter <- !missing(filter_panel_api) && inherits(filter_panel_api, "FilterPanelAPI")
-  checkmate::assert_class(data, "tdata")
+  checkmate::assert_class(data, "reactive")
+  checkmate::assert_class(shiny::isolate(data()), "teal_data")
 
   moduleServer(id, function(input, output, session) {
     # reused in all modules
@@ -531,11 +532,8 @@ srv_g_boxplot <- function(id,
           card$append_text(comment)
         }
         card$append_src(
-          paste(
-            teal.code::get_code(
-              teal.code::join(create_plot(), create_table())
-            ),
-            collapse = "\n"
+          teal.code::get_code(
+            teal.code::join(create_plot(), create_table())
           )
         )
         card

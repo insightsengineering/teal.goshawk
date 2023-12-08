@@ -378,7 +378,8 @@ srv_g_correlationplot <- function(id,
                                   vline_vars_labels) {
   with_reporter <- !missing(reporter) && inherits(reporter, "Reporter")
   with_filter <- !missing(filter_panel_api) && inherits(filter_panel_api, "FilterPanelAPI")
-  checkmate::assert_class(data, "tdata")
+  checkmate::assert_class(data, "reactive")
+  checkmate::assert_class(shiny::isolate(data()), "teal_data")
 
   moduleServer(id, function(input, output, session) {
     iv_r <- reactive({
@@ -403,7 +404,7 @@ srv_g_correlationplot <- function(id,
     # filter selected biomarkers
     anl_param <- reactive({
       dataset_var <- dataname
-      ANL <- data[[dataname]]() # nolint
+      ANL <- data()[[dataname]] # nolint
       validate_has_data(ANL, 1)
 
       if (length(input$hline_vars) > 0) {
@@ -492,7 +493,7 @@ srv_g_correlationplot <- function(id,
       )
 
       # analysis
-      private_qenv <- teal.code::new_qenv(tdata2env(data), code = get_code_tdata(data)) %>%
+      private_qenv <- data() %>%
         teal.code::eval_code(
           code = bquote({
             ANL <- .(as.name(dataset_var)) %>% # nolint
@@ -511,7 +512,7 @@ srv_g_correlationplot <- function(id,
       req(constraint_var)
 
       # note that filtered is false thus we cannot use anl_param()$ANL
-      ANL <- data[[dataname]]() # nolint
+      ANL <- data()[[dataname]] # nolint
       validate_has_data(ANL, 1)
 
       validate_has_variable(ANL, param_var)
@@ -525,7 +526,7 @@ srv_g_correlationplot <- function(id,
 
       # get min max values
       if ((constraint_var == "BASE2" && any(grepl("SCR", visit_freq))) ||
-        (constraint_var == "BASE" && any(grepl("BL", visit_freq)))) {
+        (constraint_var == "BASE" && any(grepl("BL", visit_freq)))) { # nolint
         val <- stats::na.omit(switch(constraint_var,
           "BASE" = ANL$BASE[ANL$AVISITCD == "BL"],
           "BASE2" = ANL$BASE2[ANL$AVISITCD == "SCR"],
@@ -841,7 +842,7 @@ srv_g_correlationplot <- function(id,
           card$append_text("Comment", "header3")
           card$append_text(comment)
         }
-        card$append_src(paste(teal.code::get_code(plot_q()), collapse = "\n"))
+        card$append_src(teal.code::get_code(plot_q()))
         card
       }
       teal.reporter::simple_reporter_srv("simple_reporter", reporter = reporter, card_fun = card_fun)
