@@ -1,8 +1,8 @@
 Type: Package
 Package: teal.goshawk
 Title: Longitudinal Visualization `teal` Modules
-Version: 0.1.15.9004
-Date: 2023-12-08
+Version: 0.1.15.9005
+Date: 2023-12-13
 Authors@R: c(
     person("Nick", "Paszty", , "nick.paszty@gene.com", role = c("aut", "cre")),
     person("Dawid", "Kaledkowski", , "dawid.kaledkowski@roche.com", role = "aut"),
@@ -29,7 +29,8 @@ Depends:
     goshawk (>= 0.1.15),
     R (>= 3.6),
     shiny,
-    teal (>= 0.14.0.9027)
+    teal (>= 0.14.0.9027),
+    teal.transform (>= 0.4.0.9011)
 Imports:
     checkmate,
     colourpicker,
@@ -47,7 +48,6 @@ Imports:
     teal.code (>= 0.4.1.9009),
     teal.logger (>= 0.1.1),
     teal.reporter (>= 0.2.0),
-    teal.transform (>= 0.4.0.9011),
     teal.widgets (>= 0.4.0),
     tidyr
 Suggests:
