@@ -82,7 +82,6 @@ and an accompanying summary table.
 None
 }
 \examples{
-
 # Example using ADaM structure analysis dataset.
 data <- teal_data()
 data <- within(data, {
@@ -93,8 +92,8 @@ data <- within(data, {
     "B: Placebo" = "Placebo",
     "C: Combination" = "Combination"
   )
-  ADSL <- goshawk::rADSL
-  ADLB <- goshawk::rADLB
+  ADSL <- rADSL
+  ADLB <- rADLB
   var_labels <- lapply(ADLB, function(x) attributes(x)$label)
   ADLB <- ADLB \%>\%
     dplyr::mutate(
@@ -130,10 +129,10 @@ datanames <- c("ADSL", "ADLB")
 datanames(data) <- datanames
 join_keys(data) <- default_cdisc_join_keys[datanames]
 
-app <- teal::init(
+app <- init(
   data = data,
-  modules = teal::modules(
-    teal.goshawk::tm_g_gh_density_distribution_plot(
+  modules = modules(
+    tm_g_gh_density_distribution_plot(
       label = "Density Distribution Plot",
       dataname = "ADLB",
       param_var = "PARAMCD",

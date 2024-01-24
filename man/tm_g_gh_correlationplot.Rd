@@ -126,7 +126,6 @@ into context. For example the \code{\link[shiny:helpText]{shiny::helpText()}} el
 Scatter Plot Teal Module For Biomarker Analysis
 }
 \examples{
-
 # Example using ADaM structure analysis dataset.
 data <- teal_data()
 data <- within(data, {
@@ -141,8 +140,8 @@ data <- within(data, {
   shape_manual <- c("N" = 1, "Y" = 2, "NA" = 0)
 
   set.seed(1)
-  ADSL <- goshawk::rADSL
-  ADLB <- goshawk::rADLB
+  ADSL <- rADSL
+  ADLB <- rADLB
   var_labels <- lapply(ADLB, function(x) attributes(x)$label)
   ADLB <- ADLB \%>\%
     dplyr::mutate(AVISITCD = dplyr::case_when(
@@ -215,10 +214,10 @@ datanames(data) <- datanames
 
 join_keys(data) <- default_cdisc_join_keys[datanames]
 
-app <- teal::init(
+app <- init(
   data = data,
-  modules = teal::modules(
-    teal.goshawk::tm_g_gh_correlationplot(
+  modules = modules(
+    tm_g_gh_correlationplot(
       label = "Correlation Plot",
       dataname = "ADLB",
       param_var = "PARAMCD",

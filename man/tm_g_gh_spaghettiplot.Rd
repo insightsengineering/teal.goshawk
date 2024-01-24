@@ -124,7 +124,6 @@ This teal module renders the UI and calls the function
 that creates a spaghetti plot.
 }
 \examples{
-
 # Example using ADaM structure analysis dataset.
 data <- teal_data()
 data <- within(data, {
@@ -137,8 +136,8 @@ data <- within(data, {
     "C: Combination" = "Combination"
   )
   set.seed(1)
-  ADSL <- goshawk::rADSL
-  ADLB <- goshawk::rADLB
+  ADSL <- rADSL
+  ADLB <- rADLB
   var_labels <- lapply(ADLB, function(x) attributes(x)$label)
   ADLB <- ADLB \%>\%
     dplyr::mutate(
@@ -190,10 +189,10 @@ datanames <- c("ADSL", "ADLB")
 datanames(data) <- datanames
 join_keys(data) <- default_cdisc_join_keys[datanames]
 
-app <- teal::init(
+app <- init(
   data = data,
-  modules = teal::modules(
-    teal.goshawk::tm_g_gh_spaghettiplot(
+  modules = modules(
+    tm_g_gh_spaghettiplot(
       label = "Spaghetti Plot",
       dataname = "ADLB",
       param_var = "PARAMCD",

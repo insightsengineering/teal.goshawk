@@ -120,7 +120,6 @@ of the relative plot height slider}
 This teal module renders the UI and calls the function that creates a line plot.
 }
 \examples{
-
 # Example using ADaM structure analysis dataset.
 data <- teal_data()
 data <- within(data, {
@@ -135,8 +134,8 @@ data <- within(data, {
     "C: Combination" = "Combination"
   )
 
-  ADSL <- goshawk::rADSL
-  ADLB <- goshawk::rADLB
+  ADSL <- rADSL
+  ADLB <- rADLB
   var_labels <- lapply(ADLB, function(x) attributes(x)$label)
   ADLB <- ADLB \%>\%
     dplyr::mutate(
@@ -171,10 +170,10 @@ datanames <- c("ADSL", "ADLB")
 datanames(data) <- datanames
 join_keys(data) <- default_cdisc_join_keys[datanames]
 
-app <- teal::init(
+app <- init(
   data = data,
-  modules = teal::modules(
-    teal.goshawk::tm_g_gh_lineplot(
+  modules = modules(
+    tm_g_gh_lineplot(
       label = "Line Plot",
       dataname = "ADLB",
       param_var = "PARAMCD",
