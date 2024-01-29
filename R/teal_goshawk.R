@@ -12,4 +12,6 @@
 #' @importFrom ggplot2 ggplot
 #' @importFrom rlang .data sym
 #' @importFrom teal.transform choices_selected
+#'
+#' @keywords internal
 "_PACKAGE"
