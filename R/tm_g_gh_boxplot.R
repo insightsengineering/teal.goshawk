@@ -325,18 +325,10 @@ srv_g_boxplot <- function(id,
 
   moduleServer(id, function(input, output, session) {
     output$asdf <- renderUI({
-      resolved_x <- teal.transform::resolve_delayed(
-        module_args$xaxis_var,
-        as.list(data()@env)
-      )
-      resolved_y <- teal.transform::resolve_delayed(
-        module_args$yaxis_var,
-        as.list(data()@env)
-      )
-      resolved_param <- teal.transform::resolve_delayed(
-        module_args$param,
-        as.list(data()@env)
-      )
+      env <- shiny::isolate(as.list(data()@env))
+      resolved_x <- teal.transform::resolve_delayed(module_args$xaxis_var, env)
+      resolved_y <- teal.transform::resolve_delayed(module_args$yaxis_var, env)
+      resolved_param <- teal.transform::resolve_delayed(module_args$param, env)
       templ_ui_params_vars(
         session$ns,
         xparam_choices = resolved_param$choices,
