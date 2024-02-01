@@ -22,7 +22,6 @@ repos:
           - glue
           - grDevices
           - lifecycle
-          - logger
           - magrittr
           - methods
           - bioc::MultiAssayExperiment

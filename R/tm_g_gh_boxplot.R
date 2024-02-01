@@ -169,7 +169,7 @@ tm_g_gh_boxplot <- function(label,
                             alpha = c(0.8, 0.0, 1.0),
                             pre_output = NULL,
                             post_output = NULL) {
-  logger::log_info("Initializing tm_g_gh_boxplot")
+  message("Initializing tm_g_gh_boxplot")
   checkmate::assert_string(label)
   checkmate::assert_string(dataname)
   checkmate::assert_string(param_var)
