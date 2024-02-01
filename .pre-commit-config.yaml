@@ -15,7 +15,7 @@ repos:
       - id: roxygenize
         name: Regenerate package documentation
         additional_dependencies:
-          - insightsengineering/teal.data # missing
+          - teal.data # missing
           - insightsengineering/teal.slice # missing
           - insightsengineering/goshawk
           - shiny
@@ -34,10 +34,10 @@ repos:
           - shinyjs
           - shinyvalidate
           - stats
-          - insightsengineering/teal.code
-          - insightsengineering/teal.logger
-          - insightsengineering/teal.reporter
-          - insightsengineering/teal.widgets
+          - teal.code
+          - teal.logger
+          - teal.reporter
+          - teal.widgets
       - id: spell-check
         name: Check spelling with `spelling`
         exclude: >
