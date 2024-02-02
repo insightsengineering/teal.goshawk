@@ -252,7 +252,7 @@ ui_g_boxplot <- function(id, ...) {
         selected = a$trt_group$selected,
         multiple = FALSE
       ),
-      uiOutput(ns("asdf")),
+      uiOutput(ns("axis_selections")),
       teal.widgets::optionalSelectInput(
         ns("facet_var"),
         label = "Facet by",
@@ -324,7 +324,7 @@ srv_g_boxplot <- function(id,
   checkmate::assert_class(shiny::isolate(data()), "teal_data")
 
   moduleServer(id, function(input, output, session) {
-    output$asdf <- renderUI({
+    output$axis_selections <- renderUI({
       env <- shiny::isolate(as.list(data()@env))
       resolved_x <- teal.transform::resolve_delayed(module_args$xaxis_var, env)
       resolved_y <- teal.transform::resolve_delayed(module_args$yaxis_var, env)
