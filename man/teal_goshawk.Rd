@@ -13,6 +13,15 @@ The teal.goshawk package renders the UI and calls the respective biomarker visua
 The data used for teal.goshawk have some constraints.
 It must contain the columns \code{AVISITCD}, \code{BASE}, \code{BASE2}, \code{AVALU}, \code{LBSTRESC}, \code{LOQFL}, \code{CHG2}, and \code{PCHG2}.
 }
+\seealso{
+Useful links:
+\itemize{
+  \item \url{https://insightsengineering.github.io/teal.goshawk/}
+  \item \url{https://github.com/insightsengineering/teal.goshawk/}
+  \item Report bugs at \url{https://github.com/insightsengineering/teal.goshawk/issues}
+}
+
+}
 \author{
 \strong{Maintainer}: Nick Paszty \email{nick.paszty@gene.com}
 
