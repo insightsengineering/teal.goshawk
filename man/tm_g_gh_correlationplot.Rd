@@ -206,7 +206,7 @@ data <- within(data, {
   attr(ADLB[["ANRLO"]], "label") <- "Analysis Normal Range Lower Limit"
 
   # add LLOQ and ULOQ variables
-  ADLB_LOQS <- goshawk:::h_identify_loq_values(ADLB)
+  ADLB_LOQS <- goshawk:::h_identify_loq_values(ADLB, "LOQFL")
   ADLB <- dplyr::left_join(ADLB, ADLB_LOQS, by = "PARAM")
 })
 
