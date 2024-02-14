@@ -130,7 +130,7 @@
 #'   attr(ADLB[["ANRLO"]], "label") <- "Analysis Normal Range Lower Limit"
 #'
 #'   # add LLOQ and ULOQ variables
-#'   ADLB_LOQS <- goshawk:::h_identify_loq_values(ADLB)
+#'   ADLB_LOQS <- goshawk:::h_identify_loq_values(ADLB, "LOQFL")
 #'   ADLB <- dplyr::left_join(ADLB, ADLB_LOQS, by = "PARAM")
 #' })
 #'
@@ -259,7 +259,8 @@ tm_g_gh_correlationplot <- function(label,
       hline_vars_colors = hline_vars_colors,
       hline_vars_labels = hline_vars_labels,
       vline_vars_colors = vline_vars_colors,
-      vline_vars_labels = vline_vars_labels
+      vline_vars_labels = vline_vars_labels,
+      module_args = args
     ),
     ui = ui_g_correlationplot,
     ui_args = args
@@ -284,13 +285,7 @@ ui_g_correlationplot <- function(id, ...) {
         selected = a$trt_group$selected,
         multiple = FALSE
       ),
-      templ_ui_params_vars(
-        ns,
-        xparam_choices = a$xaxis_param$choices, xparam_selected = a$xaxis_param$selected,
-        xchoices = a$xaxis_var$choices, xselected = a$xaxis_var$selected,
-        yparam_choices = a$yaxis_param$choices, yparam_selected = a$yaxis_param$selected,
-        ychoices = a$yaxis_var$choices, yselected = a$yaxis_var$selected
-      ),
+      uiOutput(ns("axis_selections")),
       templ_ui_constraint(ns, "X-Axis Data Constraint"), # required by constr_anl_q
       if (length(a$hline_vars) > 0) {
         teal.widgets::optionalSelectInput(
@@ -375,13 +370,33 @@ srv_g_correlationplot <- function(id,
                                   hline_vars_colors,
                                   hline_vars_labels,
                                   vline_vars_colors,
-                                  vline_vars_labels) {
+                                  vline_vars_labels,
+                                  module_args) {
   with_reporter <- !missing(reporter) && inherits(reporter, "Reporter")
   with_filter <- !missing(filter_panel_api) && inherits(filter_panel_api, "FilterPanelAPI")
   checkmate::assert_class(data, "reactive")
   checkmate::assert_class(shiny::isolate(data()), "teal_data")
 
   moduleServer(id, function(input, output, session) {
+    output$axis_selections <- renderUI({
+      env <- shiny::isolate(as.list(data()@env))
+      resolved_x_param <- teal.transform::resolve_delayed(module_args$xaxis_param, env)
+      resolved_x_var <- teal.transform::resolve_delayed(module_args$xaxis_var, env)
+      resolved_y_param <- teal.transform::resolve_delayed(module_args$yaxis_param, env)
+      resolved_y_var <- teal.transform::resolve_delayed(module_args$yaxis_var, env)
+      templ_ui_params_vars(
+        session$ns,
+        xparam_choices = resolved_x_param$choices,
+        xparam_selected = resolved_x_param$selected,
+        xchoices = resolved_x_var$choices,
+        xselected = resolved_x_var$selected,
+        yparam_choices = resolved_y_param$choices,
+        yparam_selected = resolved_y_param$selected,
+        ychoices = resolved_y_var$choices,
+        yselected = resolved_y_var$selected
+      )
+    })
+
     iv_r <- reactive({
       iv <- shinyvalidate::InputValidator$new()
 

@@ -108,7 +108,7 @@
 #'   attr(ADLB[["ANRHI"]], "label") <- "Analysis Normal Range Upper Limit"
 #'
 #'   # add LLOQ and ULOQ variables
-#'   ALB_LOQS <- goshawk:::h_identify_loq_values(ADLB)
+#'   ALB_LOQS <- goshawk:::h_identify_loq_values(ADLB, "LOQFL")
 #'   ADLB <- dplyr::left_join(ADLB, ALB_LOQS, by = "PARAM")
 #' })
 #'
@@ -210,7 +210,8 @@ tm_g_gh_boxplot <- function(label,
       plot_height = plot_height,
       plot_width = plot_width,
       hline_vars_colors = hline_vars_colors,
-      hline_vars_labels = hline_vars_labels
+      hline_vars_labels = hline_vars_labels,
+      module_args = args
     ),
     ui = ui_g_boxplot,
     ui_args = args
@@ -251,16 +252,7 @@ ui_g_boxplot <- function(id, ...) {
         selected = a$trt_group$selected,
         multiple = FALSE
       ),
-      templ_ui_params_vars(
-        ns,
-        xparam_choices = a$param$choices,
-        xparam_selected = a$param$selected,
-        xparam_label = "Select a Biomarker",
-        xchoices = a$xaxis_var$choices,
-        xselected = a$xaxis_var$selected,
-        ychoices = a$yaxis_var$choices,
-        yselected = a$yaxis_var$selected
-      ),
+      uiOutput(ns("axis_selections")),
       teal.widgets::optionalSelectInput(
         ns("facet_var"),
         label = "Facet by",
@@ -324,13 +316,30 @@ srv_g_boxplot <- function(id,
                           plot_height,
                           plot_width,
                           hline_vars_colors,
-                          hline_vars_labels) {
+                          hline_vars_labels,
+                          module_args) {
   with_reporter <- !missing(reporter) && inherits(reporter, "Reporter")
   with_filter <- !missing(filter_panel_api) && inherits(filter_panel_api, "FilterPanelAPI")
   checkmate::assert_class(data, "reactive")
   checkmate::assert_class(shiny::isolate(data()), "teal_data")
 
   moduleServer(id, function(input, output, session) {
+    output$axis_selections <- renderUI({
+      env <- shiny::isolate(as.list(data()@env))
+      resolved_x <- teal.transform::resolve_delayed(module_args$xaxis_var, env)
+      resolved_y <- teal.transform::resolve_delayed(module_args$yaxis_var, env)
+      resolved_param <- teal.transform::resolve_delayed(module_args$param, env)
+      templ_ui_params_vars(
+        session$ns,
+        xparam_choices = resolved_param$choices,
+        xparam_selected = resolved_param$selected,
+        xparam_label = module_args$"Select a Biomarker",
+        xchoices = resolved_x$choices,
+        xselected = resolved_x$selected,
+        ychoices = resolved_y$choices,
+        yselected = resolved_y$selected
+      )
+    })
     # reused in all modules
     anl_q_output <- constr_anl_q(
       session, input, data, dataname,
