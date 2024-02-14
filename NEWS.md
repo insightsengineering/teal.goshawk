@@ -1,4 +1,4 @@
-# teal.goshawk 0.1.15.9009
+# teal.goshawk 0.1.15.9010
 
 ### Breaking Changes
 * Adapted all modules to use `teal_data` objects.
