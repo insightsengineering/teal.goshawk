@@ -245,7 +245,7 @@ app <- init(
       hline_arb_color = c("red", "blue"),
       hline_vars = c("ANRHI", "ANRLO", "ULOQN", "LLOQN"),
       hline_vars_colors = c("green", "blue", "purple", "cyan"),
-      hline_vars_label = c("ANRHI Label", "ANRLO Label", "ULOQN Label", "LLOQN Label"),
+      hline_vars_labels = c("ANRHI Label", "ANRLO Label", "ULOQN Label", "LLOQN Label"),
       vline_vars = c("ANRHI", "ANRLO", "ULOQN", "LLOQN"),
       vline_vars_colors = c("yellow", "orange", "brown", "gold"),
       vline_vars_labels = c("ANRHI Label", "ANRLO Label", "ULOQN Label", "LLOQN Label"),
