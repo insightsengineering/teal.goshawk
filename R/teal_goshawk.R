@@ -5,8 +5,6 @@
 #' The data used for teal.goshawk have some constraints.
 #' It must contain the columns `AVISITCD`, `BASE`, `BASE2`, `AVALU`, `LBSTRESC`, `LOQFL`, `CHG2`, and `PCHG2`.
 #'
-#' @docType package
-#'
 #' @name teal_goshawk
 #'
 #' @import goshawk
@@ -17,4 +15,4 @@
 #' @importFrom rlang .data sym
 #' @importFrom teal.transform choices_selected
 #' @keywords internal
-NULL
+"_PACKAGE"
