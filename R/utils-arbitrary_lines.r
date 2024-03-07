@@ -17,16 +17,16 @@
 #' @keywords internal
 ui_arbitrary_lines <- function(id, line_arb, line_arb_label, line_arb_color, title = "Arbitrary Horizontal Lines:") {
   ns <- NS(id)
-  div(
+  tags$div(
     tags$b(title),
     textInput(
       ns("line_arb"),
-      div(
+      tags$div(
         class = "teal-tooltip",
         tagList(
           "Value:",
           icon("circle-info"),
-          span(
+          tags$span(
             class = "tooltiptext",
             "For multiple lines, supply a comma separated list of values."
           )

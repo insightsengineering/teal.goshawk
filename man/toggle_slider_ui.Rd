@@ -57,7 +57,7 @@ Value is not checked to be within minmax range
 value <- c(20.3, 81.5) # dichotomous slider
 # value <- c(50.1) # normal slider
 app <- shinyApp(
-  ui = div(
+  ui = tags$div(
     teal.goshawk:::toggle_slider_ui(
       "toggle_slider", "Select value",
       min = 0.2, max = 100.1, value = value,
