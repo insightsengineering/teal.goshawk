@@ -2,6 +2,8 @@
 % Please edit documentation in R/teal_goshawk.R
 \docType{package}
 \name{teal_goshawk}
+\alias{teal.goshawk}
+\alias{teal.goshawk-package}
 \alias{teal_goshawk}
 \title{teal.goshawk core packages}
 \description{
@@ -10,5 +12,36 @@ The teal.goshawk package renders the UI and calls the respective biomarker visua
 \details{
 The data used for teal.goshawk have some constraints.
 It must contain the columns \code{AVISITCD}, \code{BASE}, \code{BASE2}, \code{AVALU}, \code{LBSTRESC}, \code{LOQFL}, \code{CHG2}, and \code{PCHG2}.
+}
+\seealso{
+Useful links:
+\itemize{
+  \item \url{https://insightsengineering.github.io/teal.goshawk/}
+  \item \url{https://github.com/insightsengineering/teal.goshawk/}
+  \item Report bugs at \url{https://github.com/insightsengineering/teal.goshawk/issues}
+}
+
+}
+\author{
+\strong{Maintainer}: Nick Paszty \email{nick.paszty@gene.com}
+
+Authors:
+\itemize{
+  \item Dawid Kaledkowski \email{dawid.kaledkowski@roche.com}
+  \item Mahmoud Hallal \email{mahmoud.hallal@roche.com}
+  \item Pawel Rucki \email{pawel.rucki@roche.com}
+  \item Wenyi Liu \email{liu.wenyi@roche.com}
+  \item Jeffrey Tomlinson \email{tomlinson.jeffrey@roche.com}
+  \item Bali Toth \email{toth.balazs@gene.com}
+  \item Junlue Zhao
+  \item Maciej Nasinski
+}
+
+Other contributors:
+\itemize{
+  \item Maximilian Mordig [contributor]
+  \item F. Hoffmann-La Roche AG [copyright holder, funder]
+}
+
 }
 \keyword{internal}

@@ -198,7 +198,8 @@ tm_g_gh_lineplot <- function(label,
       xtick = xtick,
       xlabel = xlabel,
       plot_height = plot_height,
-      plot_width = plot_width
+      plot_width = plot_width,
+      module_args = args
     ),
     ui = ui_lineplot,
     ui_args = args,
@@ -226,13 +227,7 @@ ui_lineplot <- function(id, ...) {
           selected = a$trt_group$selected,
           multiple = FALSE
         ),
-        templ_ui_params_vars(
-          ns,
-          # xparam and yparam are identical, so we only show the user one
-          xparam_choices = a$param$choices, xparam_selected = a$param$selected, xparam_label = "Select a Biomarker",
-          xchoices = a$xaxis_var$choices, xselected = a$xaxis_var$selected,
-          ychoices = a$yaxis_var$choices, yselected = a$yaxis_var$selected
-        ),
+        uiOutput(ns("axis_selections")),
         uiOutput(ns("shape_ui")),
         radioButtons(ns("stat"), "Select a Statistic:", c("mean", "median"), a$stat),
         checkboxInput(ns("include_stat"), "Include Statistic Table", value = TRUE),
@@ -328,7 +323,8 @@ srv_lineplot <- function(id,
                          xtick,
                          xlabel,
                          plot_height,
-                         plot_width) {
+                         plot_width,
+                         module_args) {
   with_reporter <- !missing(reporter) && inherits(reporter, "Reporter")
   with_filter <- !missing(filter_panel_api) && inherits(filter_panel_api, "FilterPanelAPI")
   checkmate::assert_class(data, "reactive")
@@ -336,6 +332,25 @@ srv_lineplot <- function(id,
 
   moduleServer(id, function(input, output, session) {
     ns <- session$ns
+
+    output$axis_selections <- renderUI({
+      env <- shiny::isolate(as.list(data()@env))
+      resolved_x <- teal.transform::resolve_delayed(module_args$xaxis_var, env)
+      resolved_y <- teal.transform::resolve_delayed(module_args$yaxis_var, env)
+      resolved_param <- teal.transform::resolve_delayed(module_args$param, env)
+      templ_ui_params_vars(
+        ns,
+        # xparam and yparam are identical, so we only show the user one
+        xparam_choices = resolved_param$choices,
+        xparam_selected = resolved_param$selected,
+        xparam_label = "Select a Biomarker",
+        xchoices = resolved_x$choices,
+        xselected = resolved_x$selected,
+        ychoices = resolved_y$choices,
+        yselected = resolved_y$selected
+      )
+    })
+
     output$shape_ui <- renderUI({
       if (!is.null(shape_choices)) {
         if (methods::is(shape_choices, "choices_selected")) {
