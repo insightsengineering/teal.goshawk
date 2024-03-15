@@ -29,7 +29,7 @@
 #' value <- c(20.3, 81.5) # dichotomous slider
 #' # value <- c(50.1) # normal slider
 #' app <- shinyApp(
-#'   ui = div(
+#'   ui = tags$div(
 #'     teal.goshawk:::toggle_slider_ui(
 #'       "toggle_slider", "Select value",
 #'       min = 0.2, max = 100.1, value = value,
@@ -91,10 +91,10 @@ toggle_slider_ui <- function(id,
 
   show_or_not <- function(show) if (show) identity else shinyjs::hidden
   ns <- NS(id)
-  div(
+  tags$div(
     include_css_files("custom"),
     shinyjs::useShinyjs(),
-    div(
+    tags$div(
       class = "flex justify-between mb-1",
       tags$span(tags$strong(label)),
       actionButton(ns("toggle"), "Toggle", class = "btn-xs")
@@ -124,7 +124,7 @@ toggle_slider_ui <- function(id,
           width = width
         )
       } else {
-        div(
+        tags$div(
           numericInput(
             ns("value_low"),
             "From:",

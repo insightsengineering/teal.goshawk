@@ -239,7 +239,7 @@ g_ui_spaghettiplot <- function(id, ...) {
     include_css_files("custom"),
     teal.widgets::standard_layout(
       output = templ_ui_output_datatable(ns),
-      encoding = div(
+      encoding = tags$div(
         ### Reporter
         teal.reporter::simple_reporter_ui(ns("simple_reporter")),
         ###
@@ -272,7 +272,7 @@ g_ui_spaghettiplot <- function(id, ...) {
         teal.widgets::panel_group(
           teal.widgets::panel_item(
             title = "Plot Aesthetic Settings",
-            div(
+            tags$div(
               toggle_slider_ui(
                 ns("yrange_scale"),
                 label = "Y-Axis Range Zoom",
