@@ -5,7 +5,7 @@
 <style>body{background-color:white;}</style>
 <script src="lib/htmlwidgets-1.6.4/htmlwidgets.js"></script>
 <link href="lib/datatables-css-0.0.0/datatables-crosstalk.css" rel="stylesheet" />
-<script src="lib/datatables-binding-0.31/datatables.js"></script>
+<script src="lib/datatables-binding-0.32/datatables.js"></script>
 <script src="lib/jquery-3.6.0/jquery-3.6.0.min.js"></script>
 <link href="lib/dt-core-1.13.6/css/jquery.dataTables.min.css" rel="stylesheet" />
 <link href="lib/dt-core-1.13.6/css/jquery.dataTables.extra.css" rel="stylesheet" />
@@ -106,8 +106,8 @@ table.table-condensed {
       </ul>
       <div class="tab-content" data-tabsetid="covr">
         <div class="tab-pane active" title="Files" data-value="Files" id="tab-covr-1">
-          <div class="datatables html-widget html-fill-item" id="htmlwidget-f9d509d04f78393d0076" style="width:100%;height:500px;"></div>
-          <script type="application/json" data-for="htmlwidget-f9d509d04f78393d0076">{"x":{"filter":"none","vertical":false,"fillContainer":false,"data":[["<a href=\"#\">R/tm_g_gh_correlationplot.R<\/a>","<a href=\"#\">R/tm_g_gh_lineplot.R<\/a>","<a href=\"#\">R/tm_g_gh_boxplot.R<\/a>","<a href=\"#\">R/tm_g_gh_spaghettiplot.R<\/a>","<a href=\"#\">R/tm_g_gh_density_distribution_plot.R<\/a>","<a href=\"#\">R/tm_g_gh_scatterplot.R<\/a>","<a href=\"#\">R/utils-data_constraints.r<\/a>","<a href=\"#\">R/toggleable_slider.R<\/a>","<a href=\"#\">R/utils-arbitrary_lines.r<\/a>","<a href=\"#\">R/utils-templ_ui.r<\/a>","<a href=\"#\">R/utils.R<\/a>","<a href=\"#\">R/utils-keep_range_slider_updated.r<\/a>","<a href=\"#\">R/utils-maptrt.r<\/a>","<a href=\"#\">R/zzz.R<\/a>"],[901,834,600,562,471,448,258,254,177,74,84,39,39,3],[483,471,303,256,240,217,153,118,93,37,31,20,9,1],[0,0,0,0,0,0,0,0,0,0,0,0,0,0],[483,471,303,256,240,217,153,118,93,37,31,20,9,1],["0","0","0","0","0","0","0","0","0","0","0","0","0","0"],["0.00%","0.00%","0.00%","0.00%","0.00%","0.00%","0.00%","0.00%","0.00%","0.00%","0.00%","0.00%","0.00%","0.00%"]],"container":"<table class=\"row-border\">\n  <thead>\n    <tr>\n      <th>File<\/th>\n      <th>Lines<\/th>\n      <th>Relevant<\/th>\n      <th>Covered<\/th>\n      <th>Missed<\/th>\n      <th>Hits / Line<\/th>\n      <th>Coverage<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"searching":false,"dom":"t","paging":false,"columnDefs":[{"targets":6,"createdCell":"function(td, cellData, rowData, row, col) {\n  var percent = cellData.replace(\"%\", \"\");\n  if (percent > 90) {\n    var grad = \"linear-gradient(90deg, #edfde7 \" + cellData + \", white \" + cellData + \")\";\n  } else if (percent > 75) {\n    var grad = \"linear-gradient(90deg, #f9ffe5 \" + cellData + \", white \" + cellData + \")\";\n  } else {\n    var grad = \"linear-gradient(90deg, #fcece9 \" + cellData + \", white \" + cellData + \")\";\n  }\n  $(td).css(\"background\", grad);\n}\n"},{"className":"dt-right","targets":[1,2,3,4]},{"name":"File","targets":0},{"name":"Lines","targets":1},{"name":"Relevant","targets":2},{"name":"Covered","targets":3},{"name":"Missed","targets":4},{"name":"Hits / Line","targets":5},{"name":"Coverage","targets":6}],"order":[],"autoWidth":false,"orderClasses":false},"callback":"function(table) {\ntable.on('click.dt', 'a', function() {\n  files = $('div#files div');\n  files.not('div.hidden').addClass('hidden');\n  id = $(this).text();\n  files.filter('div[id=\\'' + id + '\\']').removeClass('hidden');\n  $('ul.nav a[data-value=Source]').text(id).tab('show');\n});\n}","selection":{"mode":"multiple","selected":null,"target":"row","selectable":null}},"evals":["options.columnDefs.0.createdCell","callback"],"jsHooks":[]}</script>
+          <div class="datatables html-widget html-fill-item" id="htmlwidget-5c4412d3f7f7962132f0" style="width:100%;height:500px;"></div>
+          <script type="application/json" data-for="htmlwidget-5c4412d3f7f7962132f0">{"x":{"filter":"none","vertical":false,"fillContainer":false,"data":[["<a href=\"#\">R/tm_g_gh_correlationplot.R<\/a>","<a href=\"#\">R/tm_g_gh_lineplot.R<\/a>","<a href=\"#\">R/tm_g_gh_boxplot.R<\/a>","<a href=\"#\">R/tm_g_gh_spaghettiplot.R<\/a>","<a href=\"#\">R/tm_g_gh_density_distribution_plot.R<\/a>","<a href=\"#\">R/tm_g_gh_scatterplot.R<\/a>","<a href=\"#\">R/utils-data_constraints.r<\/a>","<a href=\"#\">R/toggleable_slider.R<\/a>","<a href=\"#\">R/utils-arbitrary_lines.r<\/a>","<a href=\"#\">R/utils-templ_ui.r<\/a>","<a href=\"#\">R/utils.R<\/a>","<a href=\"#\">R/utils-keep_range_slider_updated.r<\/a>","<a href=\"#\">R/utils-maptrt.r<\/a>","<a href=\"#\">R/zzz.R<\/a>"],[901,834,600,562,471,448,258,254,177,74,84,39,39,3],[483,471,303,256,240,217,153,118,93,37,31,20,9,1],[0,0,0,0,0,0,0,0,0,0,0,0,0,0],[483,471,303,256,240,217,153,118,93,37,31,20,9,1],["0","0","0","0","0","0","0","0","0","0","0","0","0","0"],["0.00%","0.00%","0.00%","0.00%","0.00%","0.00%","0.00%","0.00%","0.00%","0.00%","0.00%","0.00%","0.00%","0.00%"]],"container":"<table class=\"row-border\">\n  <thead>\n    <tr>\n      <th>File<\/th>\n      <th>Lines<\/th>\n      <th>Relevant<\/th>\n      <th>Covered<\/th>\n      <th>Missed<\/th>\n      <th>Hits / Line<\/th>\n      <th>Coverage<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"searching":false,"dom":"t","paging":false,"columnDefs":[{"targets":6,"createdCell":"function(td, cellData, rowData, row, col) {\n  var percent = cellData.replace(\"%\", \"\");\n  if (percent > 90) {\n    var grad = \"linear-gradient(90deg, #edfde7 \" + cellData + \", white \" + cellData + \")\";\n  } else if (percent > 75) {\n    var grad = \"linear-gradient(90deg, #f9ffe5 \" + cellData + \", white \" + cellData + \")\";\n  } else {\n    var grad = \"linear-gradient(90deg, #fcece9 \" + cellData + \", white \" + cellData + \")\";\n  }\n  $(td).css(\"background\", grad);\n}\n"},{"className":"dt-right","targets":[1,2,3,4]},{"name":"File","targets":0},{"name":"Lines","targets":1},{"name":"Relevant","targets":2},{"name":"Covered","targets":3},{"name":"Missed","targets":4},{"name":"Hits / Line","targets":5},{"name":"Coverage","targets":6}],"order":[],"autoWidth":false,"orderClasses":false},"callback":"function(table) {\ntable.on('click.dt', 'a', function() {\n  files = $('div#files div');\n  files.not('div.hidden').addClass('hidden');\n  id = $(this).text();\n  files.filter('div[id=\\'' + id + '\\']').removeClass('hidden');\n  $('ul.nav a[data-value=Source]').text(id).tab('show');\n});\n}","selection":{"mode":"multiple","selected":null,"target":"row","selectable":null}},"evals":["options.columnDefs.0.createdCell","callback"],"jsHooks":[]}</script>
         </div>
         <div class="tab-pane" title="Source" data-value="Source" id="tab-covr-2">
           <div id="files">
@@ -1693,7 +1693,7 @@ table.table-condensed {
                     <td class="num">226</td>
                     <td class="coverage">!</td>
                     <td class="col-sm-12">
-                      <pre class="language-r">    output = div(</pre>
+                      <pre class="language-r">    output = tags$div(</pre>
                     </td>
                   </tr>
                   <tr class="missed">
@@ -1735,14 +1735,14 @@ table.table-condensed {
                     <td class="num">232</td>
                     <td class="coverage">!</td>
                     <td class="col-sm-12">
-                      <pre class="language-r">        br(), hr(),</pre>
+                      <pre class="language-r">        tags$br(), tags$hr(),</pre>
                     </td>
                   </tr>
                   <tr class="missed">
                     <td class="num">233</td>
                     <td class="coverage">!</td>
                     <td class="col-sm-12">
-                      <pre class="language-r">        h4("Selected Data Points"),</pre>
+                      <pre class="language-r">        tags$h4("Selected Data Points"),</pre>
                     </td>
                   </tr>
                   <tr class="missed">
@@ -1777,14 +1777,14 @@ table.table-condensed {
                     <td class="num">238</td>
                     <td class="coverage">!</td>
                     <td class="col-sm-12">
-                      <pre class="language-r">        br(), hr(),</pre>
+                      <pre class="language-r">        tags$br(), tags$hr(),</pre>
                     </td>
                   </tr>
                   <tr class="missed">
                     <td class="num">239</td>
                     <td class="coverage">!</td>
                     <td class="col-sm-12">
-                      <pre class="language-r">        h4("Descriptive Statistics"),</pre>
+                      <pre class="language-r">        tags$h4("Descriptive Statistics"),</pre>
                     </td>
                   </tr>
                   <tr class="missed">
@@ -1812,7 +1812,7 @@ table.table-condensed {
                     <td class="num">243</td>
                     <td class="coverage">!</td>
                     <td class="col-sm-12">
-                      <pre class="language-r">    encoding = div(</pre>
+                      <pre class="language-r">    encoding = tags$div(</pre>
                     </td>
                   </tr>
                   <tr class="never">
@@ -5591,7 +5591,7 @@ table.table-condensed {
                     <td class="num">182</td>
                     <td class="coverage">!</td>
                     <td class="col-sm-12">
-                      <pre class="language-r">    output = div(</pre>
+                      <pre class="language-r">    output = tags$div(</pre>
                     </td>
                   </tr>
                   <tr class="missed">
@@ -5633,14 +5633,14 @@ table.table-condensed {
                     <td class="num">188</td>
                     <td class="coverage">!</td>
                     <td class="col-sm-12">
-                      <pre class="language-r">        br(), hr(),</pre>
+                      <pre class="language-r">        tags$br(), tags$hr(),</pre>
                     </td>
                   </tr>
                   <tr class="missed">
                     <td class="num">189</td>
                     <td class="coverage">!</td>
                     <td class="col-sm-12">
-                      <pre class="language-r">        h4("Descriptive Statistics"),</pre>
+                      <pre class="language-r">        tags$h4("Descriptive Statistics"),</pre>
                     </td>
                   </tr>
                   <tr class="missed">
@@ -5668,7 +5668,7 @@ table.table-condensed {
                     <td class="num">193</td>
                     <td class="coverage">!</td>
                     <td class="col-sm-12">
-                      <pre class="language-r">    encoding = div(</pre>
+                      <pre class="language-r">    encoding = tags$div(</pre>
                     </td>
                   </tr>
                   <tr class="never">
@@ -8964,7 +8964,7 @@ table.table-condensed {
                     <td class="num">192</td>
                     <td class="coverage">!</td>
                     <td class="col-sm-12">
-                      <pre class="language-r">    encoding = div(</pre>
+                      <pre class="language-r">    encoding = tags$div(</pre>
                     </td>
                   </tr>
                   <tr class="never">
@@ -12694,7 +12694,7 @@ table.table-condensed {
                     <td class="num">276</td>
                     <td class="coverage">!</td>
                     <td class="col-sm-12">
-                      <pre class="language-r">    encoding = div(</pre>
+                      <pre class="language-r">    encoding = tags$div(</pre>
                     </td>
                   </tr>
                   <tr class="never">
@@ -18601,7 +18601,7 @@ table.table-condensed {
                     <td class="num">218</td>
                     <td class="coverage">!</td>
                     <td class="col-sm-12">
-                      <pre class="language-r">      encoding = div(</pre>
+                      <pre class="language-r">      encoding = tags$div(</pre>
                     </td>
                   </tr>
                   <tr class="never">
@@ -18713,7 +18713,7 @@ table.table-condensed {
                     <td class="num">234</td>
                     <td class="coverage">!</td>
                     <td class="col-sm-12">
-                      <pre class="language-r">        div(</pre>
+                      <pre class="language-r">        tags$div(</pre>
                     </td>
                   </tr>
                   <tr class="missed">
@@ -18734,7 +18734,7 @@ table.table-condensed {
                     <td class="num">237</td>
                     <td class="coverage">!</td>
                     <td class="col-sm-12">
-                      <pre class="language-r">            div(</pre>
+                      <pre class="language-r">            tags$div(</pre>
                     </td>
                   </tr>
                   <tr class="missed">
@@ -21058,7 +21058,7 @@ table.table-condensed {
                     <td class="num">569</td>
                     <td class="coverage">!</td>
                     <td class="col-sm-12">
-                      <pre class="language-r">            div(</pre>
+                      <pre class="language-r">            tags$div(</pre>
                     </td>
                   </tr>
                   <tr class="missed">
@@ -21072,7 +21072,7 @@ table.table-condensed {
                     <td class="num">571</td>
                     <td class="coverage">!</td>
                     <td class="col-sm-12">
-                      <pre class="language-r">              div(</pre>
+                      <pre class="language-r">              tags$div(</pre>
                     </td>
                   </tr>
                   <tr class="missed">
@@ -21086,7 +21086,7 @@ table.table-condensed {
                     <td class="num">573</td>
                     <td class="coverage">!</td>
                     <td class="col-sm-12">
-                      <pre class="language-r">                div(</pre>
+                      <pre class="language-r">                tags$div(</pre>
                     </td>
                   </tr>
                   <tr class="missed">
@@ -21114,7 +21114,7 @@ table.table-condensed {
                     <td class="num">577</td>
                     <td class="coverage">!</td>
                     <td class="col-sm-12">
-                      <pre class="language-r">                div(</pre>
+                      <pre class="language-r">                tags$div(</pre>
                     </td>
                   </tr>
                   <tr class="missed">
@@ -24613,7 +24613,7 @@ table.table-condensed {
                     <td class="num">242</td>
                     <td class="coverage">!</td>
                     <td class="col-sm-12">
-                      <pre class="language-r">      encoding = div(</pre>
+                      <pre class="language-r">      encoding = tags$div(</pre>
                     </td>
                   </tr>
                   <tr class="never">
@@ -24844,7 +24844,7 @@ table.table-condensed {
                     <td class="num">275</td>
                     <td class="coverage">!</td>
                     <td class="col-sm-12">
-                      <pre class="language-r">            div(</pre>
+                      <pre class="language-r">            tags$div(</pre>
                     </td>
                   </tr>
                   <tr class="missed">
@@ -26873,7 +26873,7 @@ table.table-condensed {
                     <td class="num">2</td>
                     <td class="coverage">!</td>
                     <td class="col-sm-12">
-                      <pre class="language-r">  div(</pre>
+                      <pre class="language-r">  tags$div(</pre>
                     </td>
                   </tr>
                   <tr class="missed">
@@ -26894,7 +26894,7 @@ table.table-condensed {
                     <td class="num">5</td>
                     <td class="coverage">!</td>
                     <td class="col-sm-12">
-                      <pre class="language-r">    shinyjs::hidden(div(</pre>
+                      <pre class="language-r">    shinyjs::hidden(tags$div(</pre>
                     </td>
                   </tr>
                   <tr class="missed">
@@ -26908,7 +26908,7 @@ table.table-condensed {
                     <td class="num">7</td>
                     <td class="coverage">!</td>
                     <td class="col-sm-12">
-                      <pre class="language-r">      div(</pre>
+                      <pre class="language-r">      tags$div(</pre>
                     </td>
                   </tr>
                   <tr class="missed">
@@ -26936,7 +26936,7 @@ table.table-condensed {
                     <td class="num">11</td>
                     <td class="coverage">!</td>
                     <td class="col-sm-12">
-                      <pre class="language-r">      div(</pre>
+                      <pre class="language-r">      tags$div(</pre>
                     </td>
                   </tr>
                   <tr class="missed">
@@ -26971,7 +26971,7 @@ table.table-condensed {
                     <td class="num">16</td>
                     <td class="coverage">!</td>
                     <td class="col-sm-12">
-                      <pre class="language-r">    shinyjs::hidden(div(</pre>
+                      <pre class="language-r">    shinyjs::hidden(tags$div(</pre>
                     </td>
                   </tr>
                   <tr class="missed">
@@ -28895,7 +28895,7 @@ table.table-condensed {
                     <td class="num">32</td>
                     <td class="coverage"></td>
                     <td class="col-sm-12">
-                      <pre class="language-r">#'   ui = div(</pre>
+                      <pre class="language-r">#'   ui = tags$div(</pre>
                     </td>
                   </tr>
                   <tr class="never">
@@ -29329,7 +29329,7 @@ table.table-condensed {
                     <td class="num">94</td>
                     <td class="coverage">!</td>
                     <td class="col-sm-12">
-                      <pre class="language-r">  div(</pre>
+                      <pre class="language-r">  tags$div(</pre>
                     </td>
                   </tr>
                   <tr class="missed">
@@ -29350,7 +29350,7 @@ table.table-condensed {
                     <td class="num">97</td>
                     <td class="coverage">!</td>
                     <td class="col-sm-12">
-                      <pre class="language-r">    div(</pre>
+                      <pre class="language-r">    tags$div(</pre>
                     </td>
                   </tr>
                   <tr class="missed">
@@ -29560,7 +29560,7 @@ table.table-condensed {
                     <td class="num">127</td>
                     <td class="coverage">!</td>
                     <td class="col-sm-12">
-                      <pre class="language-r">        div(</pre>
+                      <pre class="language-r">        tags$div(</pre>
                     </td>
                   </tr>
                   <tr class="missed">
@@ -30595,7 +30595,7 @@ table.table-condensed {
                     <td class="num">20</td>
                     <td class="coverage">!</td>
                     <td class="col-sm-12">
-                      <pre class="language-r">  div(</pre>
+                      <pre class="language-r">  tags$div(</pre>
                     </td>
                   </tr>
                   <tr class="missed">
@@ -30623,7 +30623,7 @@ table.table-condensed {
                     <td class="num">24</td>
                     <td class="coverage">!</td>
                     <td class="col-sm-12">
-                      <pre class="language-r">      div(</pre>
+                      <pre class="language-r">      tags$div(</pre>
                     </td>
                   </tr>
                   <tr class="missed">
@@ -30658,7 +30658,7 @@ table.table-condensed {
                     <td class="num">29</td>
                     <td class="coverage">!</td>
                     <td class="col-sm-12">
-                      <pre class="language-r">          span(</pre>
+                      <pre class="language-r">          tags$span(</pre>
                     </td>
                   </tr>
                   <tr class="missed">
@@ -31714,7 +31714,7 @@ table.table-condensed {
                     <td class="num">2</td>
                     <td class="coverage">!</td>
                     <td class="col-sm-12">
-                      <pre class="language-r">  div(</pre>
+                      <pre class="language-r">  tags$div(</pre>
                     </td>
                   </tr>
                   <tr class="missed">
@@ -31728,14 +31728,14 @@ table.table-condensed {
                     <td class="num">4</td>
                     <td class="coverage">!</td>
                     <td class="col-sm-12">
-                      <pre class="language-r">    br(), hr(),</pre>
+                      <pre class="language-r">    tags$br(), tags$hr(),</pre>
                     </td>
                   </tr>
                   <tr class="missed">
                     <td class="num">5</td>
                     <td class="coverage">!</td>
                     <td class="col-sm-12">
-                      <pre class="language-r">    h4("Selected Data Points"),</pre>
+                      <pre class="language-r">    tags$h4("Selected Data Points"),</pre>
                     </td>
                   </tr>
                   <tr class="missed">
