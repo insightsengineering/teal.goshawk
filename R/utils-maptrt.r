@@ -13,8 +13,7 @@
 #' @export
 #'
 #' @examples
-#'
-#' ADSL <- goshawk::rADSL
+#' ADSL <- rADSL
 #'
 #' # get treatment mapping code
 #' maptrt(df_armvar = ADSL$ARMCD, code = "M")

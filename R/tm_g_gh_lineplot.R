@@ -51,7 +51,6 @@
 #' @export
 #'
 #' @examples
-#'
 #' # Example using ADaM structure analysis dataset.
 #' data <- teal_data()
 #' data <- within(data, {
@@ -66,25 +65,25 @@
 #'     "C: Combination" = "Combination"
 #'   )
 #'
-#'   ADSL <- goshawk::rADSL
-#'   ADLB <- goshawk::rADLB
+#'   ADSL <- rADSL
+#'   ADLB <- rADLB
 #'   var_labels <- lapply(ADLB, function(x) attributes(x)$label)
 #'   ADLB <- ADLB %>%
-#'     dplyr::mutate(
-#'       AVISITCD = dplyr::case_when(
+#'     mutate(
+#'       AVISITCD = case_when(
 #'         AVISIT == "SCREENING" ~ "SCR",
 #'         AVISIT == "BASELINE" ~ "BL",
-#'         grepl("WEEK", AVISIT) ~ paste("W", stringr::str_extract(AVISIT, "(?<=(WEEK ))[0-9]+")),
+#'         grepl("WEEK", AVISIT) ~ paste("W", str_extract(AVISIT, "(?<=(WEEK ))[0-9]+")),
 #'         TRUE ~ as.character(NA)
 #'       ),
-#'       AVISITCDN = dplyr::case_when(
+#'       AVISITCDN = case_when(
 #'         AVISITCD == "SCR" ~ -2,
 #'         AVISITCD == "BL" ~ 0,
 #'         grepl("W", AVISITCD) ~ as.numeric(gsub("[^0-9]*", "", AVISITCD)),
 #'         TRUE ~ as.numeric(NA)
 #'       ),
 #'       AVISITCD = factor(AVISITCD) %>% reorder(AVISITCDN),
-#'       TRTORD = dplyr::case_when(
+#'       TRTORD = case_when(
 #'         ARMCD == "ARM C" ~ 1,
 #'         ARMCD == "ARM B" ~ 2,
 #'         ARMCD == "ARM A" ~ 3
@@ -102,10 +101,10 @@
 #' datanames(data) <- datanames
 #' join_keys(data) <- default_cdisc_join_keys[datanames]
 #'
-#' app <- teal::init(
+#' app <- init(
 #'   data = data,
-#'   modules = teal::modules(
-#'     teal.goshawk::tm_g_gh_lineplot(
+#'   modules = modules(
+#'     tm_g_gh_lineplot(
 #'       label = "Line Plot",
 #'       dataname = "ADLB",
 #'       param_var = "PARAMCD",
