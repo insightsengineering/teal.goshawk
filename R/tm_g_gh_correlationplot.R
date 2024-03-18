@@ -53,6 +53,12 @@
 #' # Example using ADaM structure analysis dataset.
 #' data <- teal_data()
 #' data <- within(data, {
+#'   library(dplyr)
+#'   library(stringr)
+#'
+#'   # use non-exported function from goshawk
+#'   h_identify_loq_values <- getFromNamespace("h_identify_loq_values", "goshawk")
+#'
 #'   # original ARM value = dose value
 #'   arm_mapping <- list(
 #'     "A: Drug X" = "150mg QD",
@@ -68,7 +74,7 @@
 #'   ADLB <- rADLB
 #'   var_labels <- lapply(ADLB, function(x) attributes(x)$label)
 #'   ADLB <- ADLB %>%
-#'     dplyr::mutate(AVISITCD = dplyr::case_when(
+#'     mutate(AVISITCD = case_when(
 #'       AVISIT == "SCREENING" ~ "SCR",
 #'       AVISIT == "BASELINE" ~ "BL",
 #'       grepl("WEEK", AVISIT) ~
@@ -78,48 +84,48 @@
 #'             substr(
 #'               AVISIT,
 #'               start = 6,
-#'               stop = stringr::str_locate(AVISIT, "DAY") - 1
+#'               stop = str_locate(AVISIT, "DAY") - 1
 #'             )
 #'           )
 #'         ),
 #'       TRUE ~ NA_character_
 #'     )) %>%
-#'     dplyr::mutate(AVISITCDN = dplyr::case_when(
+#'     mutate(AVISITCDN = case_when(
 #'       AVISITCD == "SCR" ~ -2,
 #'       AVISITCD == "BL" ~ 0,
 #'       grepl("W", AVISITCD) ~ as.numeric(gsub("[^0-9]*", "", AVISITCD)),
 #'       TRUE ~ NA_real_
 #'     )) %>%
 #'     # use ARMCD values to order treatment in visualization legend
-#'     dplyr::mutate(TRTORD = ifelse(grepl("C", ARMCD), 1,
+#'     mutate(TRTORD = ifelse(grepl("C", ARMCD), 1,
 #'       ifelse(grepl("B", ARMCD), 2,
 #'         ifelse(grepl("A", ARMCD), 3, NA)
 #'       )
 #'     )) %>%
-#'     dplyr::mutate(ARM = as.character(arm_mapping[match(ARM, names(arm_mapping))])) %>%
-#'     dplyr::mutate(ARM = factor(ARM) %>%
+#'     mutate(ARM = as.character(arm_mapping[match(ARM, names(arm_mapping))])) %>%
+#'     mutate(ARM = factor(ARM) %>%
 #'       reorder(TRTORD)) %>%
-#'     dplyr::mutate(
-#'       ANRHI = dplyr::case_when(
+#'     mutate(
+#'       ANRHI = case_when(
 #'         PARAMCD == "ALT" ~ 60,
 #'         PARAMCD == "CRP" ~ 70,
 #'         PARAMCD == "IGA" ~ 80,
 #'         TRUE ~ NA_real_
 #'       ),
-#'       ANRLO = dplyr::case_when(
+#'       ANRLO = case_when(
 #'         PARAMCD == "ALT" ~ 20,
 #'         PARAMCD == "CRP" ~ 30,
 #'         PARAMCD == "IGA" ~ 40,
 #'         TRUE ~ NA_real_
 #'       )
 #'     ) %>%
-#'     dplyr::rowwise() %>%
-#'     dplyr::group_by(PARAMCD) %>%
-#'     dplyr::mutate(LBSTRESC = ifelse(
+#'     rowwise() %>%
+#'     group_by(PARAMCD) %>%
+#'     mutate(LBSTRESC = ifelse(
 #'       USUBJID %in% sample(USUBJID, 1, replace = TRUE),
 #'       paste("<", round(runif(1, min = 25, max = 30))), LBSTRESC
 #'     )) %>%
-#'     dplyr::mutate(LBSTRESC = ifelse(
+#'     mutate(LBSTRESC = ifelse(
 #'       USUBJID %in% sample(USUBJID, 1, replace = TRUE),
 #'       paste(">", round(runif(1, min = 70, max = 75))), LBSTRESC
 #'     )) %>%
@@ -129,8 +135,8 @@
 #'   attr(ADLB[["ANRLO"]], "label") <- "Analysis Normal Range Lower Limit"
 #'
 #'   # add LLOQ and ULOQ variables
-#'   ADLB_LOQS <- goshawk:::h_identify_loq_values(ADLB, "LOQFL")
-#'   ADLB <- dplyr::left_join(ADLB, ADLB_LOQS, by = "PARAM")
+#'   ADLB_LOQS <- h_identify_loq_values(ADLB, "LOQFL")
+#'   ADLB <- left_join(ADLB, ADLB_LOQS, by = "PARAM")
 #' })
 #'
 #' datanames <- c("ADSL", "ADLB")

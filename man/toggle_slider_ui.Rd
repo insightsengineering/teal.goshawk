@@ -57,8 +57,11 @@ Value is not checked to be within minmax range
 value <- c(20.3, 81.5) # dichotomous slider
 # value <- c(50.1) # normal slider
 
+# use non-exported function from teal.goshawk
+  toggle_slider_ui <- getFromNamespace("toggle_slider_ui", "teal.goshawk")
+
 ui <- div(
-  teal.goshawk:::toggle_slider_ui(
+  toggle_slider_ui(
     "toggle_slider", "Select value",
     min = 0.2, max = 100.1, value = value,
     slider_initially = FALSE, step_slider = 0.1, step_numeric = 0.001

@@ -128,6 +128,10 @@ that creates a spaghetti plot.
 data <- teal_data()
 data <- within(data, {
   library(dplyr)
+  library(stringr)
+
+  # use non-exported function from goshawk
+  h_identify_loq_values <- getFromNamespace("h_identify_loq_values", "goshawk")
 
   # original ARM value = dose value
   arm_mapping <- list(
@@ -140,21 +144,21 @@ data <- within(data, {
   ADLB <- rADLB
   var_labels <- lapply(ADLB, function(x) attributes(x)$label)
   ADLB <- ADLB \%>\%
-    dplyr::mutate(
-      AVISITCD = dplyr::case_when(
+    mutate(
+      AVISITCD = case_when(
         AVISIT == "SCREENING" ~ "SCR",
         AVISIT == "BASELINE" ~ "BL",
-        grepl("WEEK", AVISIT) ~ paste("W", stringr::str_extract(AVISIT, "(?<=(WEEK ))[0-9]+")),
+        grepl("WEEK", AVISIT) ~ paste("W", str_extract(AVISIT, "(?<=(WEEK ))[0-9]+")),
         TRUE ~ as.character(NA)
       ),
-      AVISITCDN = dplyr::case_when(
+      AVISITCDN = case_when(
         AVISITCD == "SCR" ~ -2,
         AVISITCD == "BL" ~ 0,
         grepl("W", AVISITCD) ~ as.numeric(gsub("[^0-9]*", "", AVISITCD)),
         TRUE ~ as.numeric(NA)
       ),
       AVISITCD = factor(AVISITCD) \%>\% reorder(AVISITCDN),
-      TRTORD = dplyr::case_when(
+      TRTORD = case_when(
         ARMCD == "ARM C" ~ 1,
         ARMCD == "ARM B" ~ 2,
         ARMCD == "ARM A" ~ 3
@@ -166,12 +170,12 @@ data <- within(data, {
       ANRLO = 30,
       ANRHI = 75
     ) \%>\%
-    dplyr::rowwise() \%>\%
-    dplyr::group_by(PARAMCD) \%>\%
-    dplyr::mutate(LBSTRESC = ifelse(USUBJID \%in\% sample(USUBJID, 1, replace = TRUE),
+    rowwise() \%>\%
+    group_by(PARAMCD) \%>\%
+    mutate(LBSTRESC = ifelse(USUBJID \%in\% sample(USUBJID, 1, replace = TRUE),
       paste("<", round(runif(1, min = 25, max = 30))), LBSTRESC
     )) \%>\%
-    dplyr::mutate(LBSTRESC = ifelse(USUBJID \%in\% sample(USUBJID, 1, replace = TRUE),
+    mutate(LBSTRESC = ifelse(USUBJID \%in\% sample(USUBJID, 1, replace = TRUE),
       paste(">", round(runif(1, min = 70, max = 75))), LBSTRESC
     )) \%>\%
     ungroup()
@@ -181,8 +185,8 @@ data <- within(data, {
   attr(ADLB[["ANRHI"]], "label") <- "Analysis Normal Range Upper Limit"
 
   # add LLOQ and ULOQ variables
-  ALB_LOQS <- goshawk:::h_identify_loq_values(ADLB, "LOQFL")
-  ADLB <- dplyr::left_join(ADLB, ALB_LOQS, by = "PARAM")
+  ALB_LOQS <- h_identify_loq_values(ADLB, "LOQFL")
+  ADLB <- left_join(ADLB, ALB_LOQS, by = "PARAM")
 })
 
 datanames <- c("ADSL", "ADLB")
