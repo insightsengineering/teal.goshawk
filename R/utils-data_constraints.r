@@ -1,19 +1,19 @@
 templ_ui_constraint <- function(ns, label = "Data Constraint") {
-  div(
+  tags$div(
     id = ns("constraint_var_whole"), # give an id to hide it
     radioButtons(ns("constraint_var"), label, choices = "NONE"),
-    shinyjs::hidden(div(
+    shinyjs::hidden(tags$div(
       id = ns("constraint_range"),
-      div(
+      tags$div(
         class = "inline-block;",
         numericInput(ns("constraint_range_min"), label = "Min", value = 0, min = 0, max = 0)
       ),
-      div(
+      tags$div(
         class = "inline-block;",
         numericInput(ns("constraint_range_max"), label = "Min", value = 0, min = 0, max = 0)
       )
     )),
-    shinyjs::hidden(div(
+    shinyjs::hidden(tags$div(
       id = ns("all_na"),
       helpText("All values are missing (NA)")
     ))

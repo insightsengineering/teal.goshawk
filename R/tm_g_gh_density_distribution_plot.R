@@ -178,18 +178,18 @@ ui_g_density_distribution_plot <- function(id, ...) {
   a <- list(...)
 
   teal.widgets::standard_layout(
-    output = div(
+    output = tags$div(
       fluidRow(
         teal.widgets::plot_with_settings_ui(id = ns("plot"))
       ),
       fluidRow(column(
         width = 12,
-        br(), hr(),
-        h4("Descriptive Statistics"),
+        tags$br(), tags$hr(),
+        tags$h4("Descriptive Statistics"),
         DT::dataTableOutput(ns("table_ui"))
       ))
     ),
-    encoding = div(
+    encoding = tags$div(
       ### Reporter
       teal.reporter::simple_reporter_ui(ns("simple_reporter")),
       ###

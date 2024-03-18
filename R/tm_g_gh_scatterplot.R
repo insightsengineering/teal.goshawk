@@ -188,7 +188,7 @@ ui_g_scatterplot <- function(id, ...) {
 
   teal.widgets::standard_layout(
     output = templ_ui_output_datatable(ns),
-    encoding = div(
+    encoding = tags$div(
       ### Reporter
       teal.reporter::simple_reporter_ui(ns("simple_reporter")),
       ###

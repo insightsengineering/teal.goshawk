@@ -214,7 +214,7 @@ ui_lineplot <- function(id, ...) {
     include_css_files("custom"),
     teal.widgets::standard_layout(
       output = teal.widgets::plot_with_settings_ui(id = ns("plot")),
-      encoding = div(
+      encoding = tags$div(
         ### Reporter
         teal.reporter::simple_reporter_ui(ns("simple_reporter")),
         ###
@@ -230,10 +230,10 @@ ui_lineplot <- function(id, ...) {
         uiOutput(ns("shape_ui")),
         radioButtons(ns("stat"), "Select a Statistic:", c("mean", "median"), a$stat),
         checkboxInput(ns("include_stat"), "Include Statistic Table", value = TRUE),
-        div(
+        tags$div(
           sliderInput(
             ns("relative_height"),
-            div(
+            tags$div(
               "Relative height of plot to table(s)",
               title =
                 paste(
@@ -565,15 +565,15 @@ srv_lineplot <- function(id,
               ),
               selected = x_type
             )
-            div(
+            tags$div(
               tags$label("Line configuration for:", tags$code(x)),
-              div(
+              tags$div(
                 class = "flex",
-                div(
+                tags$div(
                   class = "flex-grow-1",
                   color_input
                 ),
-                div(
+                tags$div(
                   class = "flex-grow-1",
                   type_input
                 )

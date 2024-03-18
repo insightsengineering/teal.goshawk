@@ -78,10 +78,10 @@ toggle_slider_ui <- function(id,
 
   show_or_not <- function(show) if (show) identity else shinyjs::hidden
   ns <- NS(id)
-  div(
+  tags$div(
     include_css_files("custom"),
     shinyjs::useShinyjs(),
-    div(
+    tags$div(
       class = "flex justify-between mb-1",
       tags$span(tags$strong(label)),
       actionButton(ns("toggle"), "Toggle", class = "btn-xs")
@@ -111,7 +111,7 @@ toggle_slider_ui <- function(id,
           width = width
         )
       } else {
-        div(
+        tags$div(
           numericInput(
             ns("value_low"),
             "From:",
