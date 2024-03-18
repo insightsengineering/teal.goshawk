@@ -58,7 +58,7 @@ value <- c(20.3, 81.5) # dichotomous slider
 # value <- c(50.1) # normal slider
 
 # use non-exported function from teal.goshawk
-  toggle_slider_ui <- getFromNamespace("toggle_slider_ui", "teal.goshawk")
+toggle_slider_ui <- getFromNamespace("toggle_slider_ui", "teal.goshawk")
 
 ui <- div(
   toggle_slider_ui(
