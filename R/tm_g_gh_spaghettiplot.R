@@ -189,7 +189,7 @@ tm_g_gh_spaghettiplot <- function(label,
                                   hline_vars_labels = hline_vars,
                                   pre_output = NULL,
                                   post_output = NULL) {
-  logger::log_info("Initializing tm_g_gh_spaghettiplot")
+  message("Initializing tm_g_gh_spaghettiplot")
   checkmate::assert_class(param, "choices_selected")
   checkmate::assert_class(xaxis_var, "choices_selected")
   checkmate::assert_class(yaxis_var, "choices_selected")

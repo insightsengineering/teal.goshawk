@@ -147,7 +147,7 @@ tm_g_gh_scatterplot <- function(label,
     details = "You should use teal.goshawk::tm_g_gh_correlationplot instead of teal.goshawk::tm_g_gh_scatterplot"
   )
 
-  logger::log_info("Initializing tm_g_gh_scatterplot")
+  message("Initializing tm_g_gh_scatterplot")
   checkmate::assert_class(param, "choices_selected")
   checkmate::assert_class(xaxis_var, "choices_selected")
   checkmate::assert_class(yaxis_var, "choices_selected")

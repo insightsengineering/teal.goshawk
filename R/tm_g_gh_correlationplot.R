@@ -224,7 +224,7 @@ tm_g_gh_correlationplot <- function(label,
                                     reg_text_size = c(3, 3, 10),
                                     pre_output = NULL,
                                     post_output = NULL) {
-  logger::log_info("Initializing tm_g_gh_correlationplot")
+  message("Initializing tm_g_gh_correlationplot")
   checkmate::assert_class(xaxis_param, "choices_selected")
   checkmate::assert_class(yaxis_param, "choices_selected")
   checkmate::assert_class(xaxis_var, "choices_selected")

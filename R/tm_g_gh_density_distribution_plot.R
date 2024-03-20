@@ -132,7 +132,7 @@ tm_g_gh_density_distribution_plot <- function(label, # nolint
                                               rotate_xlab = FALSE,
                                               pre_output = NULL,
                                               post_output = NULL) {
-  logger::log_info("Initializing tm_g_gh_density_distribution_plot")
+  message("Initializing tm_g_gh_density_distribution_plot")
   checkmate::assert_string(label)
   checkmate::assert_string(dataname)
   checkmate::assert_string(param_var)
