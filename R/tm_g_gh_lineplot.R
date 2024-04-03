@@ -484,7 +484,7 @@ srv_lineplot <- function(id,
               x
             } else if (anl_arm_level %in% names(line_color_defaults)) {
               line_color_defaults[[anl_arm_level]]
-            } else if (idx <= length(line_color_defaults)){
+            } else if (idx <= length(line_color_defaults)) {
               line_color_defaults[[idx]]
             } else {
               "#000000"
@@ -517,7 +517,7 @@ srv_lineplot <- function(id,
     })
 
     output$lines <- renderUI({
-      #req(anl_q())
+      # req(anl_q())
       req(input$trt_group)
       anl_arm <- as.factor(anl_q()$ANL[[input$trt_group]])
       anl_arm_nlevels <- nlevels(anl_arm)
