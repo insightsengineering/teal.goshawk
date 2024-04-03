@@ -28,7 +28,6 @@ repos:
           - ggplot2
           - grDevices
           - lifecycle
-          - logger
           - methods
           - rlang
           - shinyjs

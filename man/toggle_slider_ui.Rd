@@ -56,46 +56,36 @@ Value is not checked to be within minmax range
 \examples{
 value <- c(20.3, 81.5) # dichotomous slider
 # value <- c(50.1) # normal slider
-app <- shinyApp(
-  ui = div(
-    teal.goshawk:::toggle_slider_ui(
-      "toggle_slider", "Select value",
-      min = 0.2, max = 100.1, value = value,
-      slider_initially = FALSE, step_slider = 0.1, step_numeric = 0.001
-    ),
-    verbatimTextOutput("value")
-  ),
-  server = function(input, output, session) {
-    is_dichotomous_slider <- (length(value) == 2)
-    range_value <- toggle_slider_server("toggle_slider",
-      is_dichotomous_slider = is_dichotomous_slider
-    )
-    messages <- reactiveVal() # to keep history
-    observeEvent(range_value$state(), {
-      list_with_names_str <- function(x) paste(names(x), x, sep = ": ", collapse = ", ")
-      messages(c(messages(), list_with_names_str(range_value$state())))
-    })
-    output$value <- renderText({
-      paste(messages(), collapse = "\n")
-    })
 
-    # for stress-testing example, update slider settings
-    # bug with invalidateLater not working inside `observeEvent`
-    # observe({
-    #   invalidateLater(1000, session)
-    #   a <- sample(0:100, 1) # for range
-    #   b <- sample(0:100, 1)
-    #   isolate(do.call(
-    #     range_value$update_state,
-    #     list(
-    #       value = sort(sample(0:100, if (is_dichotomous_slider) 2 else 1)),
-    #       min = min(a, b), max = max(a, b),
-    #       step = sample(1:20, 1) / 10
-    #     )[sample(1:4, sample(4, 1))] # select up to four fields from the list
-    #   ))
-    # })
-  }
+# use non-exported function from teal.goshawk
+toggle_slider_ui <- getFromNamespace("toggle_slider_ui", "teal.goshawk")
+
+ui <- div(
+  toggle_slider_ui(
+    "toggle_slider", "Select value",
+    min = 0.2, max = 100.1, value = value,
+    slider_initially = FALSE, step_slider = 0.1, step_numeric = 0.001
+  ),
+  verbatimTextOutput("value")
 )
-shinyApp(app$ui, app$server) \%>\% invisible()
+
+server <- function(input, output, session) {
+  is_dichotomous_slider <- (length(value) == 2)
+  range_value <- toggle_slider_server("toggle_slider",
+    is_dichotomous_slider = is_dichotomous_slider
+  )
+  messages <- reactiveVal() # to keep history
+  observeEvent(range_value$state(), {
+    list_with_names_str <- function(x) paste(names(x), x, sep = ": ", collapse = ", ")
+    messages(c(messages(), list_with_names_str(range_value$state())))
+  })
+  output$value <- renderText({
+    paste(messages(), collapse = "\n")
+  })
+}
+
+if (interactive()) {
+  shinyApp(ui, server)
+}
 }
 \keyword{internal}

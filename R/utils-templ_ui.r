@@ -1,8 +1,8 @@
 templ_ui_output_datatable <- function(ns) {
-  div(
+  tags$div(
     teal.widgets::plot_with_settings_ui(id = ns("plot")),
-    br(), hr(),
-    h4("Selected Data Points"),
+    tags$br(), tags$hr(),
+    tags$h4("Selected Data Points"),
     DT::dataTableOutput(ns("brush_data"))
   )
 }

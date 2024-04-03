@@ -21,8 +21,7 @@ mapping and ordering syntax. call the function and then copy and paste the resul
 into the app.R file.
 }
 \examples{
-
-ADSL <- goshawk::rADSL
+ADSL <- rADSL
 
 # get treatment mapping code
 maptrt(df_armvar = ADSL$ARMCD, code = "M")

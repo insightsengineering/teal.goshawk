@@ -51,7 +51,6 @@
 #' @export
 #'
 #' @examples
-#'
 #' # Example using ADaM structure analysis dataset.
 #' data <- teal_data()
 #' data <- within(data, {
@@ -66,25 +65,25 @@
 #'     "C: Combination" = "Combination"
 #'   )
 #'
-#'   ADSL <- goshawk::rADSL
-#'   ADLB <- goshawk::rADLB
+#'   ADSL <- rADSL
+#'   ADLB <- rADLB
 #'   var_labels <- lapply(ADLB, function(x) attributes(x)$label)
 #'   ADLB <- ADLB %>%
-#'     dplyr::mutate(
-#'       AVISITCD = dplyr::case_when(
+#'     mutate(
+#'       AVISITCD = case_when(
 #'         AVISIT == "SCREENING" ~ "SCR",
 #'         AVISIT == "BASELINE" ~ "BL",
-#'         grepl("WEEK", AVISIT) ~ paste("W", stringr::str_extract(AVISIT, "(?<=(WEEK ))[0-9]+")),
+#'         grepl("WEEK", AVISIT) ~ paste("W", str_extract(AVISIT, "(?<=(WEEK ))[0-9]+")),
 #'         TRUE ~ as.character(NA)
 #'       ),
-#'       AVISITCDN = dplyr::case_when(
+#'       AVISITCDN = case_when(
 #'         AVISITCD == "SCR" ~ -2,
 #'         AVISITCD == "BL" ~ 0,
 #'         grepl("W", AVISITCD) ~ as.numeric(gsub("[^0-9]*", "", AVISITCD)),
 #'         TRUE ~ as.numeric(NA)
 #'       ),
 #'       AVISITCD = factor(AVISITCD) %>% reorder(AVISITCDN),
-#'       TRTORD = dplyr::case_when(
+#'       TRTORD = case_when(
 #'         ARMCD == "ARM C" ~ 1,
 #'         ARMCD == "ARM B" ~ 2,
 #'         ARMCD == "ARM A" ~ 3
@@ -102,10 +101,10 @@
 #' datanames(data) <- datanames
 #' join_keys(data) <- default_cdisc_join_keys[datanames]
 #'
-#' app <- teal::init(
+#' app <- init(
 #'   data = data,
-#'   modules = teal::modules(
-#'     teal.goshawk::tm_g_gh_lineplot(
+#'   modules = modules(
+#'     tm_g_gh_lineplot(
 #'       label = "Line Plot",
 #'       dataname = "ADLB",
 #'       param_var = "PARAMCD",
@@ -157,7 +156,7 @@ tm_g_gh_lineplot <- function(label,
                              count_threshold = 0,
                              table_font_size = c(12, 4, 20),
                              plot_relative_height_value = 1000) {
-  logger::log_info("Initializing tm_g_gh_lineplot")
+  message("Initializing tm_g_gh_lineplot")
   checkmate::assert_class(param, "choices_selected")
   checkmate::assert_class(xaxis_var, "choices_selected")
   checkmate::assert_class(yaxis_var, "choices_selected")
@@ -215,7 +214,7 @@ ui_lineplot <- function(id, ...) {
     include_css_files("custom"),
     teal.widgets::standard_layout(
       output = teal.widgets::plot_with_settings_ui(id = ns("plot")),
-      encoding = div(
+      encoding = tags$div(
         ### Reporter
         teal.reporter::simple_reporter_ui(ns("simple_reporter")),
         ###
@@ -231,10 +230,10 @@ ui_lineplot <- function(id, ...) {
         uiOutput(ns("shape_ui")),
         radioButtons(ns("stat"), "Select a Statistic:", c("mean", "median"), a$stat),
         checkboxInput(ns("include_stat"), "Include Statistic Table", value = TRUE),
-        div(
+        tags$div(
           sliderInput(
             ns("relative_height"),
-            div(
+            tags$div(
               "Relative height of plot to table(s)",
               title =
                 paste(
@@ -566,15 +565,15 @@ srv_lineplot <- function(id,
               ),
               selected = x_type
             )
-            div(
+            tags$div(
               tags$label("Line configuration for:", tags$code(x)),
-              div(
+              tags$div(
                 class = "flex",
-                div(
+                tags$div(
                   class = "flex-grow-1",
                   color_input
                 ),
-                div(
+                tags$div(
                   class = "flex-grow-1",
                   type_input
                 )
