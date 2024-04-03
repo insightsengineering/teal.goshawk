@@ -650,8 +650,6 @@ srv_lineplot <- function(id,
       teal::validate_inputs(iv_r())
       req(anl_q(), line_color_selected(), line_type_selected())
       # nolint start
-      print("plot_q")
-
       ylim <- yrange_slider$state()$value
       plot_font_size <- input$plot_font_size
       dodge <- input$dodge
