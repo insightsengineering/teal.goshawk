@@ -517,7 +517,6 @@ srv_lineplot <- function(id,
     })
 
     output$lines <- renderUI({
-      # req(anl_q())
       req(input$trt_group)
       anl_arm <- as.factor(anl_q()$ANL[[input$trt_group]])
       anl_arm_nlevels <- nlevels(anl_arm)
