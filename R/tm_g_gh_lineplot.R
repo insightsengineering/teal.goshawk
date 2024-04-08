@@ -467,9 +467,7 @@ srv_lineplot <- function(id,
     )
 
     line_color_selected <- reactive({
-      if (is.null(input$trt_group)) {
-        return(NULL)
-      }
+      req(input$trt_group)
       anl_arm <- as.factor(isolate(anl_q())$ANL[[input$trt_group]])
       anl_arm_nlevels <- nlevels(anl_arm)
       anl_arm_levels <- levels(anl_arm)
@@ -496,9 +494,7 @@ srv_lineplot <- function(id,
       )
     })
     line_type_selected <- reactive({
-      if (is.null(input$trt_group)) {
-        return(NULL)
-      }
+      req(input$trt_group)
       anl_arm <- as.factor(isolate(anl_q())$ANL[[input$trt_group]])
       anl_arm_nlevels <- nlevels(anl_arm)
       anl_arm_levels <- levels(anl_arm)
