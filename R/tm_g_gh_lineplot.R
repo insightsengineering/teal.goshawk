@@ -451,44 +451,24 @@ srv_lineplot <- function(id,
       ))
     })
 
-    line_color_defaults <- reactiveVal(color_manual)
-
-    line_type_defaults <- reactiveVal("solid")
-
-    observeEvent(input$trt_group, {
-      req(anl_q())
-      req(input$trt_group)
-      anl_arm <- anl_q()$ANL[[input$trt_group]]
-      anl_arm_nlevels <- nlevels(anl_arm)
-
-      if (is.null(names(line_color_defaults()))) {
-        # if color_manual did not specify arms (i.e. didn't have names) then order
-        # of the vector does not need to match order of level(anl_arm)
-        line_color_to_set <- line_color_defaults()[seq_len(anl_arm_nlevels)]
-      } else {
-        # if color_manual did specify arms then we need to make sure the order of
-        # line_color_to_set matches the order of level(anl_arm) and if any arms are invalid
-        # or missing then we fill with a random colour
-        line_color_to_set <- stats::setNames(line_color_defaults()[levels(anl_arm)], nm = levels(anl_arm))
-      }
-      line_color_to_set[is.na(line_color_to_set)] <- grDevices::rainbow(anl_arm_nlevels)[is.na(line_color_to_set)]
-      line_color_defaults(line_color_to_set)
-
-      line_type_to_set <- if (length(line_type_defaults()) <= anl_arm_nlevels) {
-        c(line_type_defaults(), rep(line_type_defaults(), anl_arm_nlevels - length(line_type_defaults())))
-      } else {
-        line_type_defaults()[seq_len(anl_arm_nlevels)]
-      }
-
-      line_type_defaults(line_type_to_set)
-    })
+    line_color_defaults <- color_manual
+    line_type_defaults <- c(
+      "blank",
+      "solid",
+      "dashed",
+      "dotted",
+      "dotdash",
+      "longdash",
+      "twodash",
+      "1F",
+      "F1",
+      "4C88C488",
+      "12345678"
+    )
 
     line_color_selected <- reactive({
-      req(anl_q())
-      if (is.null(input$trt_group)) {
-        return(NULL)
-      }
-      anl_arm <- isolate(anl_q()$ANL[[input$trt_group]])
+      req(input$trt_group)
+      anl_arm <- as.factor(isolate(anl_q())$ANL[[input$trt_group]])
       anl_arm_nlevels <- nlevels(anl_arm)
       anl_arm_levels <- levels(anl_arm)
 
@@ -497,20 +477,25 @@ srv_lineplot <- function(id,
           seq_len(anl_arm_nlevels),
           function(idx) {
             x <- input[[paste0("line_color_", idx)]]
-            if (is.null(x)) isolate(line_color_defaults())[[idx]] else x
+            anl_arm_level <- anl_arm_levels[[idx]]
+            if (length(x)) {
+              x
+            } else if (anl_arm_level %in% names(line_color_defaults)) {
+              line_color_defaults[[anl_arm_level]]
+            } else if (idx <= length(line_color_defaults)) {
+              line_color_defaults[[idx]]
+            } else {
+              "#000000"
+            }
           },
           character(1)
         ),
         anl_arm_levels
       )
     })
-
     line_type_selected <- reactive({
-      req(anl_q())
-      if (is.null(input$trt_group)) {
-        return(NULL)
-      }
-      anl_arm <- isolate(anl_q()$ANL[[input$trt_group]])
+      req(input$trt_group)
+      anl_arm <- as.factor(isolate(anl_q())$ANL[[input$trt_group]])
       anl_arm_nlevels <- nlevels(anl_arm)
       anl_arm_levels <- levels(anl_arm)
 
@@ -519,7 +504,7 @@ srv_lineplot <- function(id,
           seq_len(anl_arm_nlevels),
           function(idx) {
             x <- input[[paste0("line_type_", idx)]]
-            if (is.null(x)) isolate(line_type_defaults())[[idx]] else x
+            if (is.null(x)) "solid" else x
           },
           character(1)
         ),
@@ -528,42 +513,26 @@ srv_lineplot <- function(id,
     })
 
     output$lines <- renderUI({
-      req(anl_q())
       req(input$trt_group)
-      anl_arm <- isolate(anl_q()$ANL[[input$trt_group]])
+      anl_arm <- as.factor(anl_q()$ANL[[input$trt_group]])
       anl_arm_nlevels <- nlevels(anl_arm)
       anl_arm_levels <- levels(anl_arm)
-      color_def <- line_color_defaults()
-      type_def <- line_type_defaults()
+
       tagList(
         lapply(
           seq_len(anl_arm_nlevels),
           function(idx) {
             x <- anl_arm_levels[[idx]]
-            x_color <- color_def[[idx]]
             color_input <- colourpicker::colourInput(
               ns(paste0("line_color_", idx)),
               "Color:",
-              x_color
+              isolate(line_color_selected()[[idx]])
             )
-            x_type <- type_def[[idx]]
             type_input <- selectInput(
               ns(paste0("line_type_", idx)),
               "Type:",
-              choices = c(
-                "blank",
-                "solid",
-                "dashed",
-                "dotted",
-                "dotdash",
-                "longdash",
-                "twodash",
-                "1F",
-                "F1",
-                "4C88C488",
-                "12345678"
-              ),
-              selected = x_type
+              choices = line_type_defaults,
+              selected = isolate(line_type_selected()[[idx]])
             )
             tags$div(
               tags$label("Line configuration for:", tags$code(x)),
@@ -583,7 +552,6 @@ srv_lineplot <- function(id,
         )
       )
     })
-
 
     symbol_type_start <- c(
       "circle",
@@ -677,7 +645,6 @@ srv_lineplot <- function(id,
       teal::validate_inputs(iv_r())
       req(anl_q(), line_color_selected(), line_type_selected())
       # nolint start
-
       ylim <- yrange_slider$state()$value
       plot_font_size <- input$plot_font_size
       dodge <- input$dodge
