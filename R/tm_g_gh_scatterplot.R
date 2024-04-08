@@ -39,82 +39,59 @@
 #'
 #' @examples
 #' # Example using ADaM structure analysis dataset.
+#' data <- teal_data()
+#' data <- within(data, {
+#'   library(dplyr)
+#'   library(stringr)
 #'
-#' # original ARM value = dose value
-#' arm_mapping <- list(
-#'   "A: Drug X" = "150mg QD",
-#'   "B: Placebo" = "Placebo",
-#'   "C: Combination" = "Combination"
-#' )
-#'
-#' ADSL <- goshawk::rADSL
-#' ADLB <- goshawk::rADLB
-#' var_labels <- lapply(ADLB, function(x) attributes(x)$label)
-#' ADLB <- ADLB %>%
-#'   dplyr::mutate(
-#'     AVISITCD = dplyr::case_when(
-#'       AVISIT == "SCREENING" ~ "SCR",
-#'       AVISIT == "BASELINE" ~ "BL",
-#'       grepl("WEEK", AVISIT) ~ paste("W", stringr::str_extract(AVISIT, "(?<=(WEEK ))[0-9]+")),
-#'       TRUE ~ as.character(NA)
-#'     ),
-#'     AVISITCDN = dplyr::case_when(
-#'       AVISITCD == "SCR" ~ -2,
-#'       AVISITCD == "BL" ~ 0,
-#'       grepl("W", AVISITCD) ~ as.numeric(gsub("[^0-9]*", "", AVISITCD)),
-#'       TRUE ~ as.numeric(NA)
-#'     ),
-#'     AVISITCD = factor(AVISITCD) %>% stats::reorder(AVISITCDN),
-#'     TRTORD = dplyr::case_when(
-#'       ARMCD == "ARM C" ~ 1,
-#'       ARMCD == "ARM B" ~ 2,
-#'       ARMCD == "ARM A" ~ 3
-#'     ),
-#'     ARM = as.character(arm_mapping[match(ARM, names(arm_mapping))]),
-#'     ARM = factor(ARM) %>% stats::reorder(TRTORD),
-#'     ACTARM = as.character(arm_mapping[match(ACTARM, names(arm_mapping))]),
-#'     ACTARM = factor(ACTARM) %>% stats::reorder(TRTORD)
+#'   # original ARM value = dose value
+#'   arm_mapping <- list(
+#'     "A: Drug X" = "150mg QD",
+#'     "B: Placebo" = "Placebo",
+#'     "C: Combination" = "Combination"
 #'   )
-#' attr(ADLB[["ARM"]], "label") <- var_labels[["ARM"]]
-#' attr(ADLB[["ACTARM"]], "label") <- var_labels[["ACTARM"]]
 #'
-#' app <- teal::init(
-#'   data = teal.data::cdisc_data(
-#'     adsl <- teal.data::cdisc_dataset("ADSL", ADSL, code = "ADSL <- goshawk::rADSL"),
-#'     teal.data::cdisc_dataset(
-#'       "ADLB",
-#'       ADLB,
-#'       code = "ADLB <- goshawk::rADLB
-#'               var_labels <- lapply(ADLB, function(x) attributes(x)$label)
-#'               ADLB <- ADLB %>%
-#'                 dplyr::mutate(AVISITCD = dplyr::case_when(
-#'                     AVISIT == 'SCREENING' ~ 'SCR',
-#'                     AVISIT == 'BASELINE' ~ 'BL',
-#'                     grepl('WEEK', AVISIT) ~
-#'                       paste('W', stringr::str_extract(AVISIT, '(?<=(WEEK ))[0-9]+')),
-#'                     TRUE ~ as.character(NA)),
-#'                   AVISITCDN = dplyr::case_when(
-#'                     AVISITCD == 'SCR' ~ -2,
-#'                     AVISITCD == 'BL' ~ 0,
-#'                     grepl('W', AVISITCD) ~ as.numeric(gsub('[^0-9]*', '', AVISITCD)),
-#'                     TRUE ~ as.numeric(NA)),
-#'                   AVISITCD = factor(AVISITCD) %>% reorder(AVISITCDN),
-#'                   TRTORD = dplyr::case_when(
-#'                     ARMCD == 'ARM C' ~ 1,
-#'                     ARMCD == 'ARM B' ~ 2,
-#'                     ARMCD == 'ARM A' ~ 3),
-#'                   ARM = as.character(arm_mapping[match(ARM, names(arm_mapping))]),
-#'                   ARM = factor(ARM) %>% reorder(TRTORD),
-#'                   ACTARM = as.character(arm_mapping[match(ACTARM, names(arm_mapping))]),
-#'                   ACTARM = factor(ACTARM) %>% reorder(TRTORD))
-#'                attr(ADLB[['ARM']], 'label') <- var_labels[['ARM']]
-#'                attr(ADLB[['ACTARM']], 'label') <- var_labels[['ACTARM']]",
-#'       vars = list(ADSL = adsl, arm_mapping = arm_mapping)
-#'     ),
-#'     check = TRUE
-#'   ),
-#'   modules = teal::modules(
-#'     teal.goshawk::tm_g_gh_scatterplot(
+#'   ADSL <- rADSL
+#'   ADLB <- rADLB
+#'   var_labels <- lapply(ADLB, function(x) attributes(x)$label)
+#'   ADLB <- ADLB %>%
+#'     mutate(
+#'       AVISITCD = case_when(
+#'         AVISIT == "SCREENING" ~ "SCR",
+#'         AVISIT == "BASELINE" ~ "BL",
+#'         grepl("WEEK", AVISIT) ~ paste("W", str_extract(AVISIT, "(?<=(WEEK ))[0-9]+")),
+#'         TRUE ~ as.character(NA)
+#'       ),
+#'       AVISITCDN = case_when(
+#'         AVISITCD == "SCR" ~ -2,
+#'         AVISITCD == "BL" ~ 0,
+#'         grepl("W", AVISITCD) ~ as.numeric(gsub("[^0-9]*", "", AVISITCD)),
+#'         TRUE ~ as.numeric(NA)
+#'       ),
+#'       AVISITCD = factor(AVISITCD) %>% reorder(AVISITCDN),
+#'       TRTORD = case_when(
+#'         ARMCD == "ARM C" ~ 1,
+#'         ARMCD == "ARM B" ~ 2,
+#'         ARMCD == "ARM A" ~ 3
+#'       ),
+#'       ARM = as.character(arm_mapping[match(ARM, names(arm_mapping))]),
+#'       ARM = factor(ARM) %>% reorder(TRTORD),
+#'       ACTARM = as.character(arm_mapping[match(ACTARM, names(arm_mapping))]),
+#'       ACTARM = factor(ACTARM) %>% reorder(TRTORD)
+#'     )
+#'   attr(ADLB[["ARM"]], "label") <- var_labels[["ARM"]]
+#'   attr(ADLB[["ACTARM"]], "label") <- var_labels[["ACTARM"]]
+#' })
+#'
+#' datanames <- c("ADSL", "ADLB")
+#' datanames(data) <- datanames
+#' join_keys(data) <- default_cdisc_join_keys[datanames]
+#'
+#'
+#' app <- init(
+#'   data = data,
+#'   modules = modules(
+#'     tm_g_gh_scatterplot(
 #'       label = "Scatter Plot",
 #'       dataname = "ADLB",
 #'       param_var = "PARAMCD",
@@ -170,7 +147,7 @@ tm_g_gh_scatterplot <- function(label,
     details = "You should use teal.goshawk::tm_g_gh_correlationplot instead of teal.goshawk::tm_g_gh_scatterplot"
   )
 
-  logger::log_info("Initializing tm_g_gh_scatterplot")
+  message("Initializing tm_g_gh_scatterplot")
   checkmate::assert_class(param, "choices_selected")
   checkmate::assert_class(xaxis_var, "choices_selected")
   checkmate::assert_class(yaxis_var, "choices_selected")
@@ -200,7 +177,8 @@ tm_g_gh_scatterplot <- function(label,
       color_manual = color_manual,
       shape_manual = shape_manual,
       plot_height = plot_height,
-      plot_width = plot_width
+      plot_width = plot_width,
+      module_args = args
     ),
     ui = ui_g_scatterplot,
     ui_args = args
@@ -213,7 +191,7 @@ ui_g_scatterplot <- function(id, ...) {
 
   teal.widgets::standard_layout(
     output = templ_ui_output_datatable(ns),
-    encoding = div(
+    encoding = tags$div(
       ### Reporter
       teal.reporter::simple_reporter_ui(ns("simple_reporter")),
       ###
@@ -225,13 +203,7 @@ ui_g_scatterplot <- function(id, ...) {
         selected = a$trt_group$selected,
         multiple = FALSE
       ),
-      templ_ui_params_vars(
-        ns,
-        # xparam and yparam are identical, so we only show the user one
-        xparam_choices = a$param$choices, xparam_selected = a$param$selected, xparam_label = "Select a Biomarker",
-        xchoices = a$xaxis_var$choices, xselected = a$xaxis_var$selected,
-        ychoices = a$yaxis_var$choices, yselected = a$yaxis_var$selected
-      ),
+      uiOutput(ns("axis_selections")),
       templ_ui_constraint(ns), # required by constr_anl_q
       teal.widgets::panel_group(
         teal.widgets::panel_item(
@@ -288,12 +260,32 @@ srv_g_scatterplot <- function(id,
                               color_manual,
                               shape_manual,
                               plot_height,
-                              plot_width) {
+                              plot_width,
+                              module_args) {
   with_reporter <- !missing(reporter) && inherits(reporter, "Reporter")
   with_filter <- !missing(filter_panel_api) && inherits(filter_panel_api, "FilterPanelAPI")
-  checkmate::assert_class(data, "tdata")
+  checkmate::assert_class(data, "reactive")
+  checkmate::assert_class(shiny::isolate(data()), "teal_data")
 
   moduleServer(id, function(input, output, session) {
+    output$axis_selections <- renderUI({
+      env <- shiny::isolate(as.list(data()@env))
+      resolved_x <- teal.transform::resolve_delayed(module_args$xaxis_var, env)
+      resolved_y <- teal.transform::resolve_delayed(module_args$yaxis_var, env)
+      resolved_param <- teal.transform::resolve_delayed(module_args$param, env)
+      templ_ui_params_vars(
+        session$ns,
+        # xparam and yparam are identical, so we only show the user one
+        xparam_choices = resolved_param$choices,
+        xparam_selected = resolved_param$selected,
+        xparam_label = "Select a Biomarker",
+        xchoices = resolved_x$choices,
+        xselected = resolved_x$selected,
+        ychoices = resolved_y$choices,
+        yselected = resolved_y$selected
+      )
+    })
+
     # reused in all modules
     anl_q_output <- constr_anl_q(
       session, input, data, dataname,
@@ -382,20 +374,24 @@ srv_g_scatterplot <- function(id,
 
     ### REPORTER
     if (with_reporter) {
-      card_fun <- function(comment) {
-        card <- teal::TealReportCard$new()
-        card$set_name("Scatter Plot")
-        card$append_text("Scatter Plot", "header2")
-        if (with_filter) card$append_fs(filter_panel_api$get_filter_state())
-        card$append_text("Selected Options", "header3")
-        card$append_text(
-          paste(
-            formatted_data_constraint(input$constraint_var, input$constraint_range_min, input$constraint_range_max),
-            "\nTreatment Variable Faceting:",
-            input$trt_facet,
-            "\nRegression Line:",
-            input$reg_line
+      card_fun <- function(comment, label) {
+        constraint_description <- paste(
+          "\nTreatment Variable Faceting:",
+          input$trt_facet,
+          "\nRegression Line:",
+          input$reg_line
+        )
+        card <- report_card_template_goshawk(
+          title = "Scatter Plot",
+          label = label,
+          with_filter = with_filter,
+          filter_panel_api = filter_panel_api,
+          constraint_list = list(
+            constraint_var = input$constraint_var,
+            constraint_range_min = input$constraint_range_min,
+            constraint_range_max = input$constraint_range_max
           ),
+          constraint_description = constraint_description,
           style = "verbatim"
         )
         card$append_text("Scatter Plot", "header3")
@@ -404,7 +400,7 @@ srv_g_scatterplot <- function(id,
           card$append_text("Comment", "header3")
           card$append_text(comment)
         }
-        card$append_src(paste(teal.code::get_code(plot_q()), collapse = "\n"))
+        card$append_src(teal.code::get_code(plot_q()))
         card
       }
       teal.reporter::simple_reporter_srv("simple_reporter", reporter = reporter, card_fun = card_fun)

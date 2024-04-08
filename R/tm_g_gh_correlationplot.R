@@ -50,160 +50,104 @@
 #' @author Balazs Toth (tothb2)  toth.balazs@gene.com
 #'
 #' @examples
-#'
 #' # Example using ADaM structure analysis dataset.
+#' data <- teal_data()
+#' data <- within(data, {
+#'   library(dplyr)
+#'   library(stringr)
 #'
-#' # original ARM value = dose value
-#' arm_mapping <- list(
-#'   "A: Drug X" = "150mg QD",
-#'   "B: Placebo" = "Placebo",
-#'   "C: Combination" = "Combination"
-#' )
-#' color_manual <- c("150mg QD" = "#000000", "Placebo" = "#3498DB", "Combination" = "#E74C3C")
-#' # assign LOQ flag symbols: circles for "N" and triangles for "Y", squares for "NA"
-#' shape_manual <- c("N" = 1, "Y" = 2, "NA" = 0)
+#'   # use non-exported function from goshawk
+#'   h_identify_loq_values <- getFromNamespace("h_identify_loq_values", "goshawk")
 #'
-#' set.seed(1)
-#' ADSL <- goshawk::rADSL
-#' ADLB <- goshawk::rADLB
-#' var_labels <- lapply(ADLB, function(x) attributes(x)$label)
-#' ADLB <- ADLB %>%
-#'   dplyr::mutate(AVISITCD = dplyr::case_when(
-#'     AVISIT == "SCREENING" ~ "SCR",
-#'     AVISIT == "BASELINE" ~ "BL",
-#'     grepl("WEEK", AVISIT) ~
-#'       paste(
-#'         "W",
-#'         trimws(
-#'           substr(
-#'             AVISIT,
-#'             start = 6,
-#'             stop = stringr::str_locate(AVISIT, "DAY") - 1
+#'   # original ARM value = dose value
+#'   arm_mapping <- list(
+#'     "A: Drug X" = "150mg QD",
+#'     "B: Placebo" = "Placebo",
+#'     "C: Combination" = "Combination"
+#'   )
+#'   color_manual <- c("150mg QD" = "#000000", "Placebo" = "#3498DB", "Combination" = "#E74C3C")
+#'   # assign LOQ flag symbols: circles for "N" and triangles for "Y", squares for "NA"
+#'   shape_manual <- c("N" = 1, "Y" = 2, "NA" = 0)
+#'
+#'   set.seed(1)
+#'   ADSL <- rADSL
+#'   ADLB <- rADLB
+#'   var_labels <- lapply(ADLB, function(x) attributes(x)$label)
+#'   ADLB <- ADLB %>%
+#'     mutate(AVISITCD = case_when(
+#'       AVISIT == "SCREENING" ~ "SCR",
+#'       AVISIT == "BASELINE" ~ "BL",
+#'       grepl("WEEK", AVISIT) ~
+#'         paste(
+#'           "W",
+#'           trimws(
+#'             substr(
+#'               AVISIT,
+#'               start = 6,
+#'               stop = str_locate(AVISIT, "DAY") - 1
+#'             )
 #'           )
-#'         )
+#'         ),
+#'       TRUE ~ NA_character_
+#'     )) %>%
+#'     mutate(AVISITCDN = case_when(
+#'       AVISITCD == "SCR" ~ -2,
+#'       AVISITCD == "BL" ~ 0,
+#'       grepl("W", AVISITCD) ~ as.numeric(gsub("[^0-9]*", "", AVISITCD)),
+#'       TRUE ~ NA_real_
+#'     )) %>%
+#'     # use ARMCD values to order treatment in visualization legend
+#'     mutate(TRTORD = ifelse(grepl("C", ARMCD), 1,
+#'       ifelse(grepl("B", ARMCD), 2,
+#'         ifelse(grepl("A", ARMCD), 3, NA)
+#'       )
+#'     )) %>%
+#'     mutate(ARM = as.character(arm_mapping[match(ARM, names(arm_mapping))])) %>%
+#'     mutate(ARM = factor(ARM) %>%
+#'       reorder(TRTORD)) %>%
+#'     mutate(
+#'       ANRHI = case_when(
+#'         PARAMCD == "ALT" ~ 60,
+#'         PARAMCD == "CRP" ~ 70,
+#'         PARAMCD == "IGA" ~ 80,
+#'         TRUE ~ NA_real_
 #'       ),
-#'     TRUE ~ NA_character_
-#'   )) %>%
-#'   dplyr::mutate(AVISITCDN = dplyr::case_when(
-#'     AVISITCD == "SCR" ~ -2,
-#'     AVISITCD == "BL" ~ 0,
-#'     grepl("W", AVISITCD) ~ as.numeric(gsub("[^0-9]*", "", AVISITCD)),
-#'     TRUE ~ NA_real_
-#'   )) %>%
-#'   # use ARMCD values to order treatment in visualization legend
-#'   dplyr::mutate(TRTORD = ifelse(grepl("C", ARMCD), 1,
-#'     ifelse(grepl("B", ARMCD), 2,
-#'       ifelse(grepl("A", ARMCD), 3, NA)
-#'     )
-#'   )) %>%
-#'   dplyr::mutate(ARM = as.character(arm_mapping[match(ARM, names(arm_mapping))])) %>%
-#'   dplyr::mutate(ARM = factor(ARM) %>%
-#'     reorder(TRTORD)) %>%
-#'   dplyr::mutate(
-#'     ANRHI = dplyr::case_when(
-#'       PARAMCD == "ALT" ~ 60,
-#'       PARAMCD == "CRP" ~ 70,
-#'       PARAMCD == "IGA" ~ 80,
-#'       TRUE ~ NA_real_
-#'     ),
-#'     ANRLO = dplyr::case_when(
-#'       PARAMCD == "ALT" ~ 20,
-#'       PARAMCD == "CRP" ~ 30,
-#'       PARAMCD == "IGA" ~ 40,
-#'       TRUE ~ NA_real_
-#'     )
-#'   ) %>%
-#'   dplyr::rowwise() %>%
-#'   dplyr::group_by(PARAMCD) %>%
-#'   dplyr::mutate(LBSTRESC = ifelse(
-#'     USUBJID %in% sample(USUBJID, 1, replace = TRUE),
-#'     paste("<", round(runif(1, min = 25, max = 30))), LBSTRESC
-#'   )) %>%
-#'   dplyr::mutate(LBSTRESC = ifelse(
-#'     USUBJID %in% sample(USUBJID, 1, replace = TRUE),
-#'     paste(">", round(runif(1, min = 70, max = 75))), LBSTRESC
-#'   )) %>%
-#'   ungroup()
-#' attr(ADLB[["ARM"]], "label") <- var_labels[["ARM"]]
-#' attr(ADLB[["ANRHI"]], "label") <- "Analysis Normal Range Upper Limit"
-#' attr(ADLB[["ANRLO"]], "label") <- "Analysis Normal Range Lower Limit"
+#'       ANRLO = case_when(
+#'         PARAMCD == "ALT" ~ 20,
+#'         PARAMCD == "CRP" ~ 30,
+#'         PARAMCD == "IGA" ~ 40,
+#'         TRUE ~ NA_real_
+#'       )
+#'     ) %>%
+#'     rowwise() %>%
+#'     group_by(PARAMCD) %>%
+#'     mutate(LBSTRESC = ifelse(
+#'       USUBJID %in% sample(USUBJID, 1, replace = TRUE),
+#'       paste("<", round(runif(1, min = 25, max = 30))), LBSTRESC
+#'     )) %>%
+#'     mutate(LBSTRESC = ifelse(
+#'       USUBJID %in% sample(USUBJID, 1, replace = TRUE),
+#'       paste(">", round(runif(1, min = 70, max = 75))), LBSTRESC
+#'     )) %>%
+#'     ungroup()
+#'   attr(ADLB[["ARM"]], "label") <- var_labels[["ARM"]]
+#'   attr(ADLB[["ANRHI"]], "label") <- "Analysis Normal Range Upper Limit"
+#'   attr(ADLB[["ANRLO"]], "label") <- "Analysis Normal Range Lower Limit"
 #'
-#' # add LLOQ and ULOQ variables
-#' ADLB_LOQS <- goshawk:::h_identify_loq_values(ADLB)
-#' ADLB <- dplyr::left_join(ADLB, ADLB_LOQS, by = "PARAM")
+#'   # add LLOQ and ULOQ variables
+#'   ADLB_LOQS <- h_identify_loq_values(ADLB, "LOQFL")
+#'   ADLB <- left_join(ADLB, ADLB_LOQS, by = "PARAM")
+#' })
 #'
-#' app <- teal::init(
-#'   data = teal.data::cdisc_data(
-#'     teal.data::cdisc_dataset("ADSL", ADSL, code = "ADSL <- goshawk::rADSL"),
-#'     teal.data::cdisc_dataset(
-#'       "ADLB",
-#'       ADLB,
-#'       code = "set.seed(1)
-#'               ADLB <- goshawk::rADLB
-#'               var_labels <- lapply(ADLB, function(x) attributes(x)$label)
-#'               ADLB <- ADLB %>%
-#'                 dplyr::mutate(AVISITCD = dplyr::case_when(
-#'                   AVISIT == 'SCREENING' ~ 'SCR',
-#'                   AVISIT == 'BASELINE' ~ 'BL',
-#'                   grepl('WEEK', AVISIT) ~
-#'                     paste(
-#'                       'W',
-#'                       trimws(
-#'                         substr(
-#'                           AVISIT,
-#'                           start = 6,
-#'                           stop = stringr::str_locate(AVISIT, 'DAY') - 1
-#'                         )
-#'                       )
-#'                     ),
-#'                   TRUE ~ NA_character_)) %>%
-#'                 dplyr::mutate(AVISITCDN = dplyr::case_when(
-#'                   AVISITCD == 'SCR' ~ -2,
-#'                   AVISITCD == 'BL' ~ 0,
-#'                   grepl('W', AVISITCD) ~ as.numeric(gsub('[^0-9]*', '', AVISITCD)),
-#'                   TRUE ~ NA_real_)) %>%
-#'                 # use ARMCD values to order treatment in visualization legend
-#'                 dplyr::mutate(TRTORD = ifelse(grepl('C', ARMCD), 1,
-#'                                        ifelse(grepl('B', ARMCD), 2,
-#'                                               ifelse(grepl('A', ARMCD), 3, NA)))) %>%
-#'                 dplyr::mutate(ARM = as.character(arm_mapping[match(ARM, names(arm_mapping))])) %>%
-#'                 dplyr::mutate(ARM = factor(ARM) %>%
-#'                          reorder(TRTORD)) %>%
-#'                 dplyr::mutate(
-#'                   ANRHI = dplyr::case_when(
-#'                     PARAMCD == 'ALT' ~ 60,
-#'                     PARAMCD == 'CRP' ~ 70,
-#'                     PARAMCD == 'IGA' ~ 80,
-#'                     TRUE ~ NA_real_
-#'                   ),
-#'                   ANRLO = dplyr::case_when(
-#'                     PARAMCD == 'ALT' ~ 20,
-#'                     PARAMCD == 'CRP' ~ 30,
-#'                     PARAMCD == 'IGA' ~ 40,
-#'                     TRUE ~ NA_real_
-#'                   )) %>%
-#'                 dplyr::rowwise() %>%
-#'                 dplyr::group_by(PARAMCD) %>%
-#'                 dplyr::mutate(LBSTRESC = ifelse(
-#'                   USUBJID %in% sample(USUBJID, 1, replace = TRUE),
-#'                   paste('<', round(runif(1, min = 25, max = 30))), LBSTRESC)) %>%
-#'                 dplyr::mutate(LBSTRESC = ifelse(
-#'                   USUBJID %in% sample(USUBJID, 1, replace = TRUE),
-#'                   paste( '>', round(runif(1, min = 70, max = 75))), LBSTRESC)) %>%
-#'                 ungroup()
-#'               attr(ADLB[['ARM']], 'label') <- var_labels[['ARM']]
-#'               attr(ADLB[['ANRHI']], 'label') <- 'Analysis Normal Range Upper Limit'
-#'               attr(ADLB[['ANRLO']], 'label') <- 'Analysis Normal Range Lower Limit'
+#' datanames <- c("ADSL", "ADLB")
+#' datanames(data) <- datanames
 #'
-#'               # add LLOQ and ULOQ variables
-#'               ADLB_LOQS <- goshawk:::h_identify_loq_values(ADLB)
-#'               ADLB <- left_join(ADLB, ADLB_LOQS, by = 'PARAM')",
-#'       vars = list(arm_mapping = arm_mapping)
-#'     ),
-#'     check = TRUE
-#'   ),
-#'   modules = teal::modules(
-#'     teal.goshawk::tm_g_gh_correlationplot(
+#' join_keys(data) <- default_cdisc_join_keys[datanames]
+#'
+#' app <- init(
+#'   data = data,
+#'   modules = modules(
+#'     tm_g_gh_correlationplot(
 #'       label = "Correlation Plot",
 #'       dataname = "ADLB",
 #'       param_var = "PARAMCD",
@@ -231,7 +175,7 @@
 #'       hline_arb_color = c("red", "blue"),
 #'       hline_vars = c("ANRHI", "ANRLO", "ULOQN", "LLOQN"),
 #'       hline_vars_colors = c("green", "blue", "purple", "cyan"),
-#'       hline_vars_label = c("ANRHI Label", "ANRLO Label", "ULOQN Label", "LLOQN Label"),
+#'       hline_vars_labels = c("ANRHI Label", "ANRLO Label", "ULOQN Label", "LLOQN Label"),
 #'       vline_vars = c("ANRHI", "ANRLO", "ULOQN", "LLOQN"),
 #'       vline_vars_colors = c("yellow", "orange", "brown", "gold"),
 #'       vline_vars_labels = c("ANRHI Label", "ANRLO Label", "ULOQN Label", "LLOQN Label"),
@@ -244,6 +188,7 @@
 #' if (interactive()) {
 #'   shinyApp(app$ui, app$server)
 #' }
+#'
 tm_g_gh_correlationplot <- function(label,
                                     dataname,
                                     param_var = "PARAMCD",
@@ -279,7 +224,7 @@ tm_g_gh_correlationplot <- function(label,
                                     reg_text_size = c(3, 3, 10),
                                     pre_output = NULL,
                                     post_output = NULL) {
-  logger::log_info("Initializing tm_g_gh_correlationplot")
+  message("Initializing tm_g_gh_correlationplot")
   checkmate::assert_class(xaxis_param, "choices_selected")
   checkmate::assert_class(yaxis_param, "choices_selected")
   checkmate::assert_class(xaxis_var, "choices_selected")
@@ -319,7 +264,8 @@ tm_g_gh_correlationplot <- function(label,
       hline_vars_colors = hline_vars_colors,
       hline_vars_labels = hline_vars_labels,
       vline_vars_colors = vline_vars_colors,
-      vline_vars_labels = vline_vars_labels
+      vline_vars_labels = vline_vars_labels,
+      module_args = args
     ),
     ui = ui_g_correlationplot,
     ui_args = args
@@ -332,7 +278,7 @@ ui_g_correlationplot <- function(id, ...) {
 
   teal.widgets::standard_layout(
     output = templ_ui_output_datatable(ns),
-    encoding = div(
+    encoding = tags$div(
       ### Reporter
       teal.reporter::simple_reporter_ui(ns("simple_reporter")),
       ###
@@ -344,13 +290,7 @@ ui_g_correlationplot <- function(id, ...) {
         selected = a$trt_group$selected,
         multiple = FALSE
       ),
-      templ_ui_params_vars(
-        ns,
-        xparam_choices = a$xaxis_param$choices, xparam_selected = a$xaxis_param$selected,
-        xchoices = a$xaxis_var$choices, xselected = a$xaxis_var$selected,
-        yparam_choices = a$yaxis_param$choices, yparam_selected = a$yaxis_param$selected,
-        ychoices = a$yaxis_var$choices, yselected = a$yaxis_var$selected
-      ),
+      uiOutput(ns("axis_selections")),
       templ_ui_constraint(ns, "X-Axis Data Constraint"), # required by constr_anl_q
       if (length(a$hline_vars) > 0) {
         teal.widgets::optionalSelectInput(
@@ -435,12 +375,33 @@ srv_g_correlationplot <- function(id,
                                   hline_vars_colors,
                                   hline_vars_labels,
                                   vline_vars_colors,
-                                  vline_vars_labels) {
+                                  vline_vars_labels,
+                                  module_args) {
   with_reporter <- !missing(reporter) && inherits(reporter, "Reporter")
   with_filter <- !missing(filter_panel_api) && inherits(filter_panel_api, "FilterPanelAPI")
-  checkmate::assert_class(data, "tdata")
+  checkmate::assert_class(data, "reactive")
+  checkmate::assert_class(shiny::isolate(data()), "teal_data")
 
   moduleServer(id, function(input, output, session) {
+    output$axis_selections <- renderUI({
+      env <- shiny::isolate(as.list(data()@env))
+      resolved_x_param <- teal.transform::resolve_delayed(module_args$xaxis_param, env)
+      resolved_x_var <- teal.transform::resolve_delayed(module_args$xaxis_var, env)
+      resolved_y_param <- teal.transform::resolve_delayed(module_args$yaxis_param, env)
+      resolved_y_var <- teal.transform::resolve_delayed(module_args$yaxis_var, env)
+      templ_ui_params_vars(
+        session$ns,
+        xparam_choices = resolved_x_param$choices,
+        xparam_selected = resolved_x_param$selected,
+        xchoices = resolved_x_var$choices,
+        xselected = resolved_x_var$selected,
+        yparam_choices = resolved_y_param$choices,
+        yparam_selected = resolved_y_param$selected,
+        ychoices = resolved_y_var$choices,
+        yselected = resolved_y_var$selected
+      )
+    })
+
     iv_r <- reactive({
       iv <- shinyvalidate::InputValidator$new()
 
@@ -463,7 +424,7 @@ srv_g_correlationplot <- function(id,
     # filter selected biomarkers
     anl_param <- reactive({
       dataset_var <- dataname
-      ANL <- data[[dataname]]() # nolint
+      ANL <- data()[[dataname]] # nolint
       validate_has_data(ANL, 1)
 
       if (length(input$hline_vars) > 0) {
@@ -552,7 +513,7 @@ srv_g_correlationplot <- function(id,
       )
 
       # analysis
-      private_qenv <- teal.code::new_qenv(tdata2env(data), code = get_code_tdata(data)) %>%
+      private_qenv <- data() %>%
         teal.code::eval_code(
           code = bquote({
             ANL <- .(as.name(dataset_var)) %>% # nolint
@@ -571,7 +532,7 @@ srv_g_correlationplot <- function(id,
       req(constraint_var)
 
       # note that filtered is false thus we cannot use anl_param()$ANL
-      ANL <- data[[dataname]]() # nolint
+      ANL <- data()[[dataname]] # nolint
       validate_has_data(ANL, 1)
 
       validate_has_variable(ANL, param_var)
@@ -585,7 +546,7 @@ srv_g_correlationplot <- function(id,
 
       # get min max values
       if ((constraint_var == "BASE2" && any(grepl("SCR", visit_freq))) ||
-        (constraint_var == "BASE" && any(grepl("BL", visit_freq)))) {
+        (constraint_var == "BASE" && any(grepl("BL", visit_freq)))) { # nolint
         val <- stats::na.omit(switch(constraint_var,
           "BASE" = ANL$BASE[ANL$AVISITCD == "BL"],
           "BASE2" = ANL$BASE2[ANL$AVISITCD == "SCR"],
@@ -875,20 +836,24 @@ srv_g_correlationplot <- function(id,
 
     ### REPORTER
     if (with_reporter) {
-      card_fun <- function(comment) {
-        card <- teal::TealReportCard$new()
-        card$set_name("Correlation Plot")
-        card$append_text("Correlation Plot", "header2")
-        if (with_filter) card$append_fs(filter_panel_api$get_filter_state())
-        card$append_text("Selected Options", "header3")
-        card$append_text(
-          paste(
-            formatted_data_constraint(input$constraint_var, input$constraint_range_min, input$constraint_range_max),
-            "\nTreatment Variable Faceting:",
-            input$trt_facet,
-            "\nRegression Line:",
-            input$reg_line
+      card_fun <- function(comment, label) {
+        constraint_description <- paste(
+          "\nTreatment Variable Faceting:",
+          input$trt_facet,
+          "\nRegression Line:",
+          input$reg_line
+        )
+        card <- report_card_template_goshawk(
+          title = "Correlation Plot",
+          label = label,
+          with_filter = with_filter,
+          filter_panel_api = filter_panel_api,
+          constraint_list = list(
+            constraint_var = input$constraint_var,
+            constraint_range_min = input$constraint_range_min,
+            constraint_range_max = input$constraint_range_max
           ),
+          constraint_description = constraint_description,
           style = "verbatim"
         )
         card$append_text("Plot", "header3")
@@ -897,7 +862,7 @@ srv_g_correlationplot <- function(id,
           card$append_text("Comment", "header3")
           card$append_text(comment)
         }
-        card$append_src(paste(teal.code::get_code(plot_q()), collapse = "\n"))
+        card$append_src(teal.code::get_code(plot_q()))
         card
       }
       teal.reporter::simple_reporter_srv("simple_reporter", reporter = reporter, card_fun = card_fun)

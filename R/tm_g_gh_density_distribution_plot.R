@@ -33,86 +33,59 @@
 #' @export
 #'
 #' @examples
-#'
 #' # Example using ADaM structure analysis dataset.
+#' data <- teal_data()
+#' data <- within(data, {
+#'   library(dplyr)
+#'   library(stringr)
 #'
-#' library(dplyr)
-#'
-#' # original ARM value = dose value
-#' arm_mapping <- list(
-#'   "A: Drug X" = "150mg QD",
-#'   "B: Placebo" = "Placebo",
-#'   "C: Combination" = "Combination"
-#' )
-#' ADSL <- goshawk::rADSL
-#' ADLB <- goshawk::rADLB
-#' var_labels <- lapply(ADLB, function(x) attributes(x)$label)
-#' ADLB <- ADLB %>%
-#'   dplyr::mutate(
-#'     AVISITCD = dplyr::case_when(
-#'       AVISIT == "SCREENING" ~ "SCR",
-#'       AVISIT == "BASELINE" ~ "BL",
-#'       grepl("WEEK", AVISIT) ~ paste("W", stringr::str_extract(AVISIT, "(?<=(WEEK ))[0-9]+")),
-#'       TRUE ~ as.character(NA)
-#'     ),
-#'     AVISITCDN = dplyr::case_when(
-#'       AVISITCD == "SCR" ~ -2,
-#'       AVISITCD == "BL" ~ 0,
-#'       grepl("W", AVISITCD) ~ as.numeric(gsub("[^0-9]*", "", AVISITCD)),
-#'       TRUE ~ as.numeric(NA)
-#'     ),
-#'     AVISITCD = factor(AVISITCD) %>% reorder(AVISITCDN),
-#'     TRTORD = dplyr::case_when(
-#'       ARMCD == "ARM C" ~ 1,
-#'       ARMCD == "ARM B" ~ 2,
-#'       ARMCD == "ARM A" ~ 3
-#'     ),
-#'     ARM = as.character(arm_mapping[match(ARM, names(arm_mapping))]),
-#'     ARM = factor(ARM) %>% reorder(TRTORD),
-#'     ACTARM = as.character(arm_mapping[match(ACTARM, names(arm_mapping))]),
-#'     ACTARM = factor(ACTARM) %>% reorder(TRTORD)
+#'   # original ARM value = dose value
+#'   arm_mapping <- list(
+#'     "A: Drug X" = "150mg QD",
+#'     "B: Placebo" = "Placebo",
+#'     "C: Combination" = "Combination"
 #'   )
+#'   ADSL <- rADSL
+#'   ADLB <- rADLB
+#'   var_labels <- lapply(ADLB, function(x) attributes(x)$label)
+#'   ADLB <- ADLB %>%
+#'     mutate(
+#'       AVISITCD = case_when(
+#'         AVISIT == "SCREENING" ~ "SCR",
+#'         AVISIT == "BASELINE" ~ "BL",
+#'         grepl("WEEK", AVISIT) ~ paste("W", str_extract(AVISIT, "(?<=(WEEK ))[0-9]+")),
+#'         TRUE ~ as.character(NA)
+#'       ),
+#'       AVISITCDN = case_when(
+#'         AVISITCD == "SCR" ~ -2,
+#'         AVISITCD == "BL" ~ 0,
+#'         grepl("W", AVISITCD) ~ as.numeric(gsub("[^0-9]*", "", AVISITCD)),
+#'         TRUE ~ as.numeric(NA)
+#'       ),
+#'       AVISITCD = factor(AVISITCD) %>% reorder(AVISITCDN),
+#'       TRTORD = case_when(
+#'         ARMCD == "ARM C" ~ 1,
+#'         ARMCD == "ARM B" ~ 2,
+#'         ARMCD == "ARM A" ~ 3
+#'       ),
+#'       ARM = as.character(arm_mapping[match(ARM, names(arm_mapping))]),
+#'       ARM = factor(ARM) %>% reorder(TRTORD),
+#'       ACTARM = as.character(arm_mapping[match(ACTARM, names(arm_mapping))]),
+#'       ACTARM = factor(ACTARM) %>% reorder(TRTORD)
+#'     )
 #'
-#' attr(ADLB[["ARM"]], "label") <- var_labels[["ARM"]]
-#' attr(ADLB[["ACTARM"]], "label") <- var_labels[["ACTARM"]]
+#'   attr(ADLB[["ARM"]], "label") <- var_labels[["ARM"]]
+#'   attr(ADLB[["ACTARM"]], "label") <- var_labels[["ACTARM"]]
+#' })
 #'
-#' app <- teal::init(
-#'   data = teal.data::cdisc_data(
-#'     teal.data::cdisc_dataset("ADSL", ADSL, code = "ADSL <- goshawk::rADSL"),
-#'     teal.data::cdisc_dataset(
-#'       "ADLB",
-#'       ADLB,
-#'       code = "ADLB <- goshawk::rADLB
-#'               var_labels <- lapply(ADLB, function(x) attributes(x)$label)
-#'               ADLB <- ADLB %>%
-#'                 dplyr::mutate(AVISITCD = dplyr::case_when(
-#'                     AVISIT == 'SCREENING' ~ 'SCR',
-#'                     AVISIT == 'BASELINE' ~ 'BL',
-#'                     grepl('WEEK', AVISIT) ~
-#'                       paste('W', stringr::str_extract(AVISIT, '(?<=(WEEK ))[0-9]+')),
-#'                     TRUE ~ as.character(NA)),
-#'                   AVISITCDN = dplyr::case_when(
-#'                     AVISITCD == 'SCR' ~ -2,
-#'                     AVISITCD == 'BL' ~ 0,
-#'                     grepl('W', AVISITCD) ~ as.numeric(gsub('[^0-9]*', '', AVISITCD)),
-#'                     TRUE ~ as.numeric(NA)),
-#'                   AVISITCD = factor(AVISITCD) %>% reorder(AVISITCDN),
-#'                   TRTORD = dplyr::case_when(
-#'                     ARMCD == 'ARM C' ~ 1,
-#'                     ARMCD == 'ARM B' ~ 2,
-#'                    ARMCD == 'ARM A' ~ 3),
-#'                  ARM = as.character(arm_mapping[match(ARM, names(arm_mapping))]),
-#'                  ARM = factor(ARM) %>% reorder(TRTORD),
-#'                  ACTARM = as.character(arm_mapping[match(ACTARM, names(arm_mapping))]),
-#'                  ACTARM = factor(ACTARM) %>% reorder(TRTORD))
-#'                attr(ADLB[['ARM']], 'label') <- var_labels[['ARM']]
-#'                attr(ADLB[['ACTARM']], 'label') <- var_labels[['ACTARM']]",
-#'       vars = list(arm_mapping = arm_mapping)
-#'     ),
-#'     check = TRUE
-#'   ),
-#'   modules = teal::modules(
-#'     teal.goshawk::tm_g_gh_density_distribution_plot(
+#' datanames <- c("ADSL", "ADLB")
+#' datanames(data) <- datanames
+#' join_keys(data) <- default_cdisc_join_keys[datanames]
+#'
+#' app <- init(
+#'   data = data,
+#'   modules = modules(
+#'     tm_g_gh_density_distribution_plot(
 #'       label = "Density Distribution Plot",
 #'       dataname = "ADLB",
 #'       param_var = "PARAMCD",
@@ -138,6 +111,7 @@
 #' if (interactive()) {
 #'   shinyApp(app$ui, app$server)
 #' }
+#'
 tm_g_gh_density_distribution_plot <- function(label, # nolint
                                               dataname,
                                               param_var,
@@ -158,7 +132,7 @@ tm_g_gh_density_distribution_plot <- function(label, # nolint
                                               rotate_xlab = FALSE,
                                               pre_output = NULL,
                                               post_output = NULL) {
-  logger::log_info("Initializing tm_g_gh_density_distribution_plot")
+  message("Initializing tm_g_gh_density_distribution_plot")
   checkmate::assert_string(label)
   checkmate::assert_string(dataname)
   checkmate::assert_string(param_var)
@@ -193,7 +167,8 @@ tm_g_gh_density_distribution_plot <- function(label, # nolint
       color_manual = color_manual,
       color_comb = color_comb,
       plot_height = plot_height,
-      plot_width = plot_width
+      plot_width = plot_width,
+      module_args = args
     ),
     ui = ui_g_density_distribution_plot,
     ui_args = args
@@ -205,18 +180,18 @@ ui_g_density_distribution_plot <- function(id, ...) {
   a <- list(...)
 
   teal.widgets::standard_layout(
-    output = div(
+    output = tags$div(
       fluidRow(
         teal.widgets::plot_with_settings_ui(id = ns("plot"))
       ),
       fluidRow(column(
         width = 12,
-        br(), hr(),
-        h4("Descriptive Statistics"),
+        tags$br(), tags$hr(),
+        tags$h4("Descriptive Statistics"),
         DT::dataTableOutput(ns("table_ui"))
       ))
     ),
-    encoding = div(
+    encoding = tags$div(
       ### Reporter
       teal.reporter::simple_reporter_ui(ns("simple_reporter")),
       ###
@@ -228,11 +203,7 @@ ui_g_density_distribution_plot <- function(id, ...) {
         selected = a$trt_group$selected,
         multiple = FALSE
       ),
-      templ_ui_params_vars(
-        ns,
-        xparam_choices = a$param$choices, xparam_selected = a$param$selected, xparam_label = "Select a Biomarker",
-        xchoices = a$xaxis_var$choices, xselected = a$xaxis_var$selected
-      ),
+      uiOutput(ns("axis_selections")),
       templ_ui_constraint(ns, label = "Data Constraint"),
       ui_arbitrary_lines(id = ns("hline_arb"), a$hline_arb, a$hline_arb_label, a$hline_arb_color),
       teal.widgets::panel_group(
@@ -290,12 +261,28 @@ srv_g_density_distribution_plot <- function(id, # nolint
                                             color_manual,
                                             color_comb,
                                             plot_height,
-                                            plot_width) {
+                                            plot_width,
+                                            module_args) {
   with_reporter <- !missing(reporter) && inherits(reporter, "Reporter")
   with_filter <- !missing(filter_panel_api) && inherits(filter_panel_api, "FilterPanelAPI")
-  checkmate::assert_class(data, "tdata")
+  checkmate::assert_class(data, "reactive")
+  checkmate::assert_class(shiny::isolate(data()), "teal_data")
 
   moduleServer(id, function(input, output, session) {
+    output$axis_selections <- renderUI({
+      env <- shiny::isolate(as.list(data()@env))
+      resolved_x <- teal.transform::resolve_delayed(module_args$xaxis_var, env)
+      resolved_param <- teal.transform::resolve_delayed(module_args$param, env)
+      templ_ui_params_vars(
+        session$ns,
+        xparam_choices = resolved_param$choices,
+        xparam_selected = resolved_param$selected,
+        xparam_label = "Select a Biomarker",
+        xchoices = resolved_x$choices,
+        xselected = resolved_x$selected
+      )
+    })
+
     anl_q_output <- constr_anl_q(
       session, input, data, dataname,
       param_id = "xaxis_param", param_var = param_var, trt_group = input$trt_group, min_rows = 2
@@ -449,14 +436,17 @@ srv_g_density_distribution_plot <- function(id, # nolint
 
     ### REPORTER
     if (with_reporter) {
-      card_fun <- function(comment) {
-        card <- teal::TealReportCard$new()
-        card$set_name("Density Distribution Plot")
-        card$append_text("Density Distribution Plot", "header2")
-        if (with_filter) card$append_fs(filter_panel_api$get_filter_state())
-        card$append_text("Selected Options", "header3")
-        card$append_text(
-          formatted_data_constraint(input$constraint_var, input$constraint_range_min, input$constraint_range_max)
+      card_fun <- function(comment, label) {
+        card <- report_card_template_goshawk(
+          title = "Density Distribution Plot",
+          label = label,
+          with_filter = with_filter,
+          filter_panel_api = filter_panel_api,
+          constraint_list = list(
+            constraint_var = input$constraint_var,
+            constraint_range_min = input$constraint_range_min,
+            constraint_range_max = input$constraint_range_max
+          )
         )
         card$append_text("Plot", "header3")
         card$append_plot(plot_r(), dim = plot_data$dim())
@@ -469,11 +459,8 @@ srv_g_density_distribution_plot <- function(id, # nolint
           card$append_text(comment)
         }
         card$append_src(
-          paste(
-            teal.code::get_code(
-              teal.code::join(create_plot(), create_table())
-            ),
-            collapse = "\n"
+          teal.code::get_code(
+            teal.code::join(create_plot(), create_table())
           )
         )
         card

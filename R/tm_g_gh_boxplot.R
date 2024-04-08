@@ -46,125 +46,84 @@
 #' @export
 #'
 #' @examples
-#'
 #' # Example using ADaM structure analysis dataset.
+#' data <- teal_data()
+#' data <- within(data, {
+#'   library(dplyr)
+#'   library(nestcolor)
+#'   library(stringr)
 #'
-#' library(dplyr)
-#' library(nestcolor)
+#'   # use non-exported function from goshawk
+#'   h_identify_loq_values <- getFromNamespace("h_identify_loq_values", "goshawk")
 #'
-#' # original ARM value = dose value
-#' arm_mapping <- list(
-#'   "A: Drug X" = "150mg QD",
-#'   "B: Placebo" = "Placebo",
-#'   "C: Combination" = "Combination"
-#' )
+#'   # original ARM value = dose value
+#'   arm_mapping <- list(
+#'     "A: Drug X" = "150mg QD",
+#'     "B: Placebo" = "Placebo",
+#'     "C: Combination" = "Combination"
+#'   )
+#'   set.seed(1)
+#'   ADSL <- rADSL
+#'   ADLB <- rADLB
+#'   var_labels <- lapply(ADLB, function(x) attributes(x)$label)
+#'   ADLB <- ADLB %>%
+#'     mutate(
+#'       AVISITCD = case_when(
+#'         AVISIT == "SCREENING" ~ "SCR",
+#'         AVISIT == "BASELINE" ~ "BL",
+#'         grepl("WEEK", AVISIT) ~ paste("W", str_extract(AVISIT, "(?<=(WEEK ))[0-9]+")),
+#'         TRUE ~ as.character(NA)
+#'       ),
+#'       AVISITCDN = case_when(
+#'         AVISITCD == "SCR" ~ -2,
+#'         AVISITCD == "BL" ~ 0,
+#'         grepl("W", AVISITCD) ~ as.numeric(gsub("[^0-9]*", "", AVISITCD)),
+#'         TRUE ~ as.numeric(NA)
+#'       ),
+#'       AVISITCD = factor(AVISITCD) %>% reorder(AVISITCDN),
+#'       TRTORD = case_when(
+#'         ARMCD == "ARM C" ~ 1,
+#'         ARMCD == "ARM B" ~ 2,
+#'         ARMCD == "ARM A" ~ 3
+#'       ),
+#'       ARM = as.character(arm_mapping[match(ARM, names(arm_mapping))]),
+#'       ARM = factor(ARM) %>% reorder(TRTORD),
+#'       ACTARM = as.character(arm_mapping[match(ACTARM, names(arm_mapping))]),
+#'       ACTARM = factor(ACTARM) %>% reorder(TRTORD),
+#'       ANRLO = 50,
+#'       ANRHI = 75
+#'     ) %>%
+#'     rowwise() %>%
+#'     group_by(PARAMCD) %>%
+#'     mutate(LBSTRESC = ifelse(
+#'       USUBJID %in% sample(USUBJID, 1, replace = TRUE),
+#'       paste("<", round(runif(1, min = 25, max = 30))), LBSTRESC
+#'     )) %>%
+#'     mutate(LBSTRESC = ifelse(
+#'       USUBJID %in% sample(USUBJID, 1, replace = TRUE),
+#'       paste(">", round(runif(1, min = 70, max = 75))), LBSTRESC
+#'     )) %>%
+#'     ungroup()
 #'
-#' set.seed(1)
-#' ADSL <- goshawk::rADSL
-#' ADLB <- goshawk::rADLB
-#' var_labels <- lapply(ADLB, function(x) attributes(x)$label)
-#' ADLB <- ADLB %>%
-#'   dplyr::mutate(
-#'     AVISITCD = dplyr::case_when(
-#'       AVISIT == "SCREENING" ~ "SCR",
-#'       AVISIT == "BASELINE" ~ "BL",
-#'       grepl("WEEK", AVISIT) ~ paste("W", stringr::str_extract(AVISIT, "(?<=(WEEK ))[0-9]+")),
-#'       TRUE ~ as.character(NA)
-#'     ),
-#'     AVISITCDN = dplyr::case_when(
-#'       AVISITCD == "SCR" ~ -2,
-#'       AVISITCD == "BL" ~ 0,
-#'       grepl("W", AVISITCD) ~ as.numeric(gsub("[^0-9]*", "", AVISITCD)),
-#'       TRUE ~ as.numeric(NA)
-#'     ),
-#'     AVISITCD = factor(AVISITCD) %>% reorder(AVISITCDN),
-#'     TRTORD = dplyr::case_when(
-#'       ARMCD == "ARM C" ~ 1,
-#'       ARMCD == "ARM B" ~ 2,
-#'       ARMCD == "ARM A" ~ 3
-#'     ),
-#'     ARM = as.character(arm_mapping[match(ARM, names(arm_mapping))]),
-#'     ARM = factor(ARM) %>% reorder(TRTORD),
-#'     ACTARM = as.character(arm_mapping[match(ACTARM, names(arm_mapping))]),
-#'     ACTARM = factor(ACTARM) %>% reorder(TRTORD),
-#'     ANRLO = 50,
-#'     ANRHI = 75
-#'   ) %>%
-#'   dplyr::rowwise() %>%
-#'   dplyr::group_by(PARAMCD) %>%
-#'   dplyr::mutate(LBSTRESC = ifelse(
-#'     USUBJID %in% sample(USUBJID, 1, replace = TRUE),
-#'     paste("<", round(runif(1, min = 25, max = 30))), LBSTRESC
-#'   )) %>%
-#'   dplyr::mutate(LBSTRESC = ifelse(
-#'     USUBJID %in% sample(USUBJID, 1, replace = TRUE),
-#'     paste(">", round(runif(1, min = 70, max = 75))), LBSTRESC
-#'   )) %>%
-#'   ungroup()
+#'   attr(ADLB[["ARM"]], "label") <- var_labels[["ARM"]]
+#'   attr(ADLB[["ACTARM"]], "label") <- var_labels[["ACTARM"]]
+#'   attr(ADLB[["ANRLO"]], "label") <- "Analysis Normal Range Lower Limit"
+#'   attr(ADLB[["ANRHI"]], "label") <- "Analysis Normal Range Upper Limit"
 #'
-#' attr(ADLB[["ARM"]], "label") <- var_labels[["ARM"]]
-#' attr(ADLB[["ACTARM"]], "label") <- var_labels[["ACTARM"]]
-#' attr(ADLB[["ANRLO"]], "label") <- "Analysis Normal Range Lower Limit"
-#' attr(ADLB[["ANRHI"]], "label") <- "Analysis Normal Range Upper Limit"
+#'   # add LLOQ and ULOQ variables
+#'   ALB_LOQS <- h_identify_loq_values(ADLB, "LOQFL")
+#'   ADLB <- left_join(ADLB, ALB_LOQS, by = "PARAM")
+#' })
 #'
-#' # add LLOQ and ULOQ variables
-#' ALB_LOQS <- goshawk:::h_identify_loq_values(ADLB)
-#' ADLB <- dplyr::left_join(ADLB, ALB_LOQS, by = "PARAM")
+#' datanames <- c("ADSL", "ADLB")
+#' datanames(data) <- datanames
 #'
-#' app <- teal::init(
-#'   data = teal.data::cdisc_data(
-#'     adsl <- teal.data::cdisc_dataset("ADSL", ADSL, code = "ADSL <- goshawk::rADSL"),
-#'     teal.data::cdisc_dataset(
-#'       "ADLB",
-#'       ADLB,
-#'       code = "
-#'         set.seed(1)
-#'         ADLB <- goshawk::rADLB
-#'         var_labels <- lapply(ADLB, function(x) attributes(x)$label)
-#'         ADLB <- ADLB %>%
-#'           dplyr::mutate(AVISITCD = dplyr::case_when(
-#'             AVISIT == 'SCREENING' ~ 'SCR',
-#'             AVISIT == 'BASELINE' ~ 'BL',
-#'             grepl('WEEK', AVISIT) ~ paste('W', stringr::str_extract(AVISIT, '(?<=(WEEK ))[0-9]+')),
-#'             TRUE ~ as.character(NA)),
-#'             AVISITCDN = dplyr::case_when(
-#'               AVISITCD == 'SCR' ~ -2,
-#'               AVISITCD == 'BL' ~ 0,
-#'               grepl('W', AVISITCD) ~ as.numeric(gsub('[^0-9]*', '', AVISITCD)),
-#'               TRUE ~ as.numeric(NA)),
-#'             AVISITCD = factor(AVISITCD) %>% reorder(AVISITCDN),
-#'             TRTORD = dplyr::case_when(
-#'               ARMCD == 'ARM C' ~ 1,
-#'               ARMCD == 'ARM B' ~ 2,
-#'               ARMCD == 'ARM A' ~ 3),
-#'             ARM = as.character(arm_mapping[match(ARM, names(arm_mapping))]),
-#'             ARM = factor(ARM) %>% reorder(TRTORD),
-#'             ACTARM = as.character(arm_mapping[match(ACTARM, names(arm_mapping))]),
-#'             ACTARM = factor(ACTARM) %>% reorder(TRTORD),
-#'             ANRLO = 50,
-#'             ANRHI = 75) %>%
-#'           dplyr::rowwise() %>%
-#'           dplyr::group_by(PARAMCD) %>%
-#'           dplyr::mutate(LBSTRESC = ifelse(
-#'             USUBJID %in% sample(USUBJID, 1, replace = TRUE),
-#'             paste('<', round(runif(1, min = 25, max = 30))), LBSTRESC)) %>%
-#'           dplyr::mutate(LBSTRESC = ifelse(
-#'             USUBJID %in% sample(USUBJID, 1, replace = TRUE),
-#'             paste( '>', round(runif(1, min = 70, max = 75))), LBSTRESC)) %>%
-#'           ungroup()
-#'         attr(ADLB[['ARM']], 'label') <- var_labels[['ARM']]
-#'         attr(ADLB[['ACTARM']], 'label') <- var_labels[['ACTARM']]
-#'         attr(ADLB[['ANRLO']], 'label') <- 'Analysis Normal Range Lower Limit'
-#'         attr(ADLB[['ANRHI']], 'label') <- 'Analysis Normal Range Upper Limit'
-#'         # add LLOQ and ULOQ variables
-#'         ALB_LOQS <- goshawk:::h_identify_loq_values(ADLB)
-#'         ADLB <- left_join(ADLB, ALB_LOQS, by = 'PARAM')",
-#'       vars = list(ADSL = adsl, arm_mapping = arm_mapping)
-#'     ),
-#'     check = FALSE # to shorten the example check = FALSE, in real scenarios use check = TRUE
-#'   ),
-#'   modules = teal::modules(
-#'     teal.goshawk::tm_g_gh_boxplot(
+#' join_keys(data) <- default_cdisc_join_keys[datanames]
+#'
+#' app <- init(
+#'   data = data,
+#'   modules = modules(
+#'     tm_g_gh_boxplot(
 #'       label = "Box Plot",
 #'       dataname = "ADLB",
 #'       param_var = "PARAMCD",
@@ -213,7 +172,7 @@ tm_g_gh_boxplot <- function(label,
                             alpha = c(0.8, 0.0, 1.0),
                             pre_output = NULL,
                             post_output = NULL) {
-  logger::log_info("Initializing tm_g_gh_boxplot")
+  message("Initializing tm_g_gh_boxplot")
   checkmate::assert_string(label)
   checkmate::assert_string(dataname)
   checkmate::assert_string(param_var)
@@ -254,7 +213,8 @@ tm_g_gh_boxplot <- function(label,
       plot_height = plot_height,
       plot_width = plot_width,
       hline_vars_colors = hline_vars_colors,
-      hline_vars_labels = hline_vars_labels
+      hline_vars_labels = hline_vars_labels,
+      module_args = args
     ),
     ui = ui_g_boxplot,
     ui_args = args
@@ -266,24 +226,24 @@ ui_g_boxplot <- function(id, ...) {
   a <- list(...)
 
   teal.widgets::standard_layout(
-    output = div(
+    output = tags$div(
       fluidRow(
         teal.widgets::plot_with_settings_ui(id = ns("boxplot"))
       ),
       fluidRow(column(
         width = 12,
-        br(), hr(),
-        h4("Selected Data Points"),
+        tags$br(), tags$hr(),
+        tags$h4("Selected Data Points"),
         DT::dataTableOutput(ns("brush_data"))
       )),
       fluidRow(column(
         width = 12,
-        br(), hr(),
-        h4("Descriptive Statistics"),
+        tags$br(), tags$hr(),
+        tags$h4("Descriptive Statistics"),
         DT::dataTableOutput(ns("table_ui"))
       ))
     ),
-    encoding = div(
+    encoding = tags$div(
       ### Reporter
       teal.reporter::simple_reporter_ui(ns("simple_reporter")),
       ###
@@ -295,16 +255,7 @@ ui_g_boxplot <- function(id, ...) {
         selected = a$trt_group$selected,
         multiple = FALSE
       ),
-      templ_ui_params_vars(
-        ns,
-        xparam_choices = a$param$choices,
-        xparam_selected = a$param$selected,
-        xparam_label = "Select a Biomarker",
-        xchoices = a$xaxis_var$choices,
-        xselected = a$xaxis_var$selected,
-        ychoices = a$yaxis_var$choices,
-        yselected = a$yaxis_var$selected
-      ),
+      uiOutput(ns("axis_selections")),
       teal.widgets::optionalSelectInput(
         ns("facet_var"),
         label = "Facet by",
@@ -368,12 +319,30 @@ srv_g_boxplot <- function(id,
                           plot_height,
                           plot_width,
                           hline_vars_colors,
-                          hline_vars_labels) {
+                          hline_vars_labels,
+                          module_args) {
   with_reporter <- !missing(reporter) && inherits(reporter, "Reporter")
   with_filter <- !missing(filter_panel_api) && inherits(filter_panel_api, "FilterPanelAPI")
-  checkmate::assert_class(data, "tdata")
+  checkmate::assert_class(data, "reactive")
+  checkmate::assert_class(shiny::isolate(data()), "teal_data")
 
   moduleServer(id, function(input, output, session) {
+    output$axis_selections <- renderUI({
+      env <- shiny::isolate(as.list(data()@env))
+      resolved_x <- teal.transform::resolve_delayed(module_args$xaxis_var, env)
+      resolved_y <- teal.transform::resolve_delayed(module_args$yaxis_var, env)
+      resolved_param <- teal.transform::resolve_delayed(module_args$param, env)
+      templ_ui_params_vars(
+        session$ns,
+        xparam_choices = resolved_param$choices,
+        xparam_selected = resolved_param$selected,
+        xparam_label = module_args$"Select a Biomarker",
+        xchoices = resolved_x$choices,
+        xselected = resolved_x$selected,
+        ychoices = resolved_y$choices,
+        yselected = resolved_y$selected
+      )
+    })
     # reused in all modules
     anl_q_output <- constr_anl_q(
       session, input, data, dataname,
@@ -548,20 +517,24 @@ srv_g_boxplot <- function(id,
 
     ### REPORTER
     if (with_reporter) {
-      card_fun <- function(comment) {
-        card <- teal::TealReportCard$new()
-        card$set_name("Box Plot")
-        card$append_text("Box Plot", "header2")
-        if (with_filter) card$append_fs(filter_panel_api$get_filter_state())
-        card$append_text("Selected Options", "header3")
-        card$append_text(
-          paste(
-            formatted_data_constraint(input$constraint_var, input$constraint_range_min, input$constraint_range_max),
-            "\nFacet By:",
-            if (length(input$facet_var) != 0) input$facet_var else "None",
-            "\nSelect an X-axis Variable:",
-            input$xaxis_var
+      card_fun <- function(comment, label) {
+        constraint_description <- paste(
+          "\nFacet By:",
+          if (length(input$facet_var) != 0) input$facet_var else "None",
+          "\nSelect an X-axis Variable:",
+          input$xaxis_var
+        )
+        card <- report_card_template_goshawk(
+          title = "Box Plot",
+          label = label,
+          with_filter = with_filter,
+          filter_panel_api = filter_panel_api,
+          constraint_list = list(
+            constraint_var = input$constraint_var,
+            constraint_range_min = input$constraint_range_min,
+            constraint_range_max = input$constraint_range_max
           ),
+          constraint_description = constraint_description,
           style = "verbatim"
         )
         card$append_text("Plot", "header3")
@@ -571,11 +544,8 @@ srv_g_boxplot <- function(id,
           card$append_text(comment)
         }
         card$append_src(
-          paste(
-            teal.code::get_code(
-              teal.code::join(create_plot(), create_table())
-            ),
-            collapse = "\n"
+          teal.code::get_code(
+            teal.code::join(create_plot(), create_table())
           )
         )
         card

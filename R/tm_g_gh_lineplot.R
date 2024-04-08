@@ -51,86 +51,60 @@
 #' @export
 #'
 #' @examples
-#'
 #' # Example using ADaM structure analysis dataset.
+#' data <- teal_data()
+#' data <- within(data, {
+#'   library(dplyr)
+#'   library(stringr)
+#'   library(nestcolor)
 #'
-#' library(dplyr)
-#' library(stringr)
-#' library(nestcolor)
-#'
-#' # original ARM value = dose value
-#' arm_mapping <- list(
-#'   "A: Drug X" = "150mg QD",
-#'   "B: Placebo" = "Placebo",
-#'   "C: Combination" = "Combination"
-#' )
-#'
-#' ADSL <- goshawk::rADSL
-#' ADLB <- goshawk::rADLB
-#' var_labels <- lapply(ADLB, function(x) attributes(x)$label)
-#' ADLB <- ADLB %>%
-#'   dplyr::mutate(
-#'     AVISITCD = dplyr::case_when(
-#'       AVISIT == "SCREENING" ~ "SCR",
-#'       AVISIT == "BASELINE" ~ "BL",
-#'       grepl("WEEK", AVISIT) ~ paste("W", stringr::str_extract(AVISIT, "(?<=(WEEK ))[0-9]+")),
-#'       TRUE ~ as.character(NA)
-#'     ),
-#'     AVISITCDN = dplyr::case_when(
-#'       AVISITCD == "SCR" ~ -2,
-#'       AVISITCD == "BL" ~ 0,
-#'       grepl("W", AVISITCD) ~ as.numeric(gsub("[^0-9]*", "", AVISITCD)),
-#'       TRUE ~ as.numeric(NA)
-#'     ),
-#'     AVISITCD = factor(AVISITCD) %>% reorder(AVISITCDN),
-#'     TRTORD = dplyr::case_when(
-#'       ARMCD == "ARM C" ~ 1,
-#'       ARMCD == "ARM B" ~ 2,
-#'       ARMCD == "ARM A" ~ 3
-#'     ),
-#'     ARM = as.character(arm_mapping[match(ARM, names(arm_mapping))]),
-#'     ARM = factor(ARM) %>% reorder(TRTORD),
-#'     ACTARM = as.character(arm_mapping[match(ACTARM, names(arm_mapping))]),
-#'     ACTARM = factor(ACTARM) %>% reorder(TRTORD)
+#'   # original ARM value = dose value
+#'   arm_mapping <- list(
+#'     "A: Drug X" = "150mg QD",
+#'     "B: Placebo" = "Placebo",
+#'     "C: Combination" = "Combination"
 #'   )
-#' attr(ADLB[["ARM"]], "label") <- var_labels[["ARM"]]
-#' attr(ADLB[["ACTARM"]], "label") <- var_labels[["ACTARM"]]
 #'
-#' app <- teal::init(
-#'   data = teal.data::cdisc_data(
-#'     adsl <- teal.data::cdisc_dataset("ADSL", ADSL, code = "ADSL <- goshawk::rADSL"),
-#'     teal.data::cdisc_dataset("ADLB", ADLB,
-#'       code = "ADLB <- goshawk::rADLB
-#'               var_labels <- lapply(ADLB, function(x) attributes(x)$label)
-#'               ADLB <- ADLB %>%
-#'                 dplyr::mutate(AVISITCD = dplyr::case_when(
-#'                     AVISIT == 'SCREENING' ~ 'SCR',
-#'                     AVISIT == 'BASELINE' ~ 'BL',
-#'                     grepl('WEEK', AVISIT) ~
-#'                       paste('W', stringr::str_extract(AVISIT, '(?<=(WEEK ))[0-9]+')),
-#'                     TRUE ~ as.character(NA)),
-#'                   AVISITCDN = dplyr::case_when(
-#'                     AVISITCD == 'SCR' ~ -2,
-#'                     AVISITCD == 'BL' ~ 0,
-#'                     grepl('W', AVISITCD) ~ as.numeric(gsub('[^0-9]*', '', AVISITCD)),
-#'                     TRUE ~ as.numeric(NA)),
-#'                   AVISITCD = factor(AVISITCD) %>% reorder(AVISITCDN),
-#'                   TRTORD = dplyr::case_when(
-#'                     ARMCD == 'ARM C' ~ 1,
-#'                     ARMCD == 'ARM B' ~ 2,
-#'                     ARMCD == 'ARM A' ~ 3),
-#'                   ARM = as.character(arm_mapping[match(ARM, names(arm_mapping))]),
-#'                   ARM = factor(ARM) %>% reorder(TRTORD),
-#'                   ACTARM = as.character(arm_mapping[match(ACTARM, names(arm_mapping))]),
-#'                   ACTARM = factor(ACTARM) %>% reorder(TRTORD))
-#'                attr(ADLB[['ARM']], 'label') <- var_labels[['ARM']]
-#'                attr(ADLB[['ACTARM']], 'label') <- var_labels[['ACTARM']]",
-#'       vars = list(ADSL = adsl, arm_mapping = arm_mapping)
-#'     ),
-#'     check = TRUE
-#'   ),
-#'   modules = teal::modules(
-#'     teal.goshawk::tm_g_gh_lineplot(
+#'   ADSL <- rADSL
+#'   ADLB <- rADLB
+#'   var_labels <- lapply(ADLB, function(x) attributes(x)$label)
+#'   ADLB <- ADLB %>%
+#'     mutate(
+#'       AVISITCD = case_when(
+#'         AVISIT == "SCREENING" ~ "SCR",
+#'         AVISIT == "BASELINE" ~ "BL",
+#'         grepl("WEEK", AVISIT) ~ paste("W", str_extract(AVISIT, "(?<=(WEEK ))[0-9]+")),
+#'         TRUE ~ as.character(NA)
+#'       ),
+#'       AVISITCDN = case_when(
+#'         AVISITCD == "SCR" ~ -2,
+#'         AVISITCD == "BL" ~ 0,
+#'         grepl("W", AVISITCD) ~ as.numeric(gsub("[^0-9]*", "", AVISITCD)),
+#'         TRUE ~ as.numeric(NA)
+#'       ),
+#'       AVISITCD = factor(AVISITCD) %>% reorder(AVISITCDN),
+#'       TRTORD = case_when(
+#'         ARMCD == "ARM C" ~ 1,
+#'         ARMCD == "ARM B" ~ 2,
+#'         ARMCD == "ARM A" ~ 3
+#'       ),
+#'       ARM = as.character(arm_mapping[match(ARM, names(arm_mapping))]),
+#'       ARM = factor(ARM) %>% reorder(TRTORD),
+#'       ACTARM = as.character(arm_mapping[match(ACTARM, names(arm_mapping))]),
+#'       ACTARM = factor(ACTARM) %>% reorder(TRTORD)
+#'     )
+#'   attr(ADLB[["ARM"]], "label") <- var_labels[["ARM"]]
+#'   attr(ADLB[["ACTARM"]], "label") <- var_labels[["ACTARM"]]
+#' })
+#'
+#' datanames <- c("ADSL", "ADLB")
+#' datanames(data) <- datanames
+#' join_keys(data) <- default_cdisc_join_keys[datanames]
+#'
+#' app <- init(
+#'   data = data,
+#'   modules = modules(
+#'     tm_g_gh_lineplot(
 #'       label = "Line Plot",
 #'       dataname = "ADLB",
 #'       param_var = "PARAMCD",
@@ -148,6 +122,7 @@
 #' if (interactive()) {
 #'   shinyApp(app$ui, app$server)
 #' }
+#'
 tm_g_gh_lineplot <- function(label,
                              dataname,
                              param_var,
@@ -181,7 +156,7 @@ tm_g_gh_lineplot <- function(label,
                              count_threshold = 0,
                              table_font_size = c(12, 4, 20),
                              plot_relative_height_value = 1000) {
-  logger::log_info("Initializing tm_g_gh_lineplot")
+  message("Initializing tm_g_gh_lineplot")
   checkmate::assert_class(param, "choices_selected")
   checkmate::assert_class(xaxis_var, "choices_selected")
   checkmate::assert_class(yaxis_var, "choices_selected")
@@ -222,7 +197,8 @@ tm_g_gh_lineplot <- function(label,
       xtick = xtick,
       xlabel = xlabel,
       plot_height = plot_height,
-      plot_width = plot_width
+      plot_width = plot_width,
+      module_args = args
     ),
     ui = ui_lineplot,
     ui_args = args,
@@ -238,7 +214,7 @@ ui_lineplot <- function(id, ...) {
     include_css_files("custom"),
     teal.widgets::standard_layout(
       output = teal.widgets::plot_with_settings_ui(id = ns("plot")),
-      encoding = div(
+      encoding = tags$div(
         ### Reporter
         teal.reporter::simple_reporter_ui(ns("simple_reporter")),
         ###
@@ -250,20 +226,14 @@ ui_lineplot <- function(id, ...) {
           selected = a$trt_group$selected,
           multiple = FALSE
         ),
-        templ_ui_params_vars(
-          ns,
-          # xparam and yparam are identical, so we only show the user one
-          xparam_choices = a$param$choices, xparam_selected = a$param$selected, xparam_label = "Select a Biomarker",
-          xchoices = a$xaxis_var$choices, xselected = a$xaxis_var$selected,
-          ychoices = a$yaxis_var$choices, yselected = a$yaxis_var$selected
-        ),
+        uiOutput(ns("axis_selections")),
         uiOutput(ns("shape_ui")),
         radioButtons(ns("stat"), "Select a Statistic:", c("mean", "median"), a$stat),
         checkboxInput(ns("include_stat"), "Include Statistic Table", value = TRUE),
-        div(
+        tags$div(
           sliderInput(
             ns("relative_height"),
-            div(
+            tags$div(
               "Relative height of plot to table(s)",
               title =
                 paste(
@@ -352,13 +322,34 @@ srv_lineplot <- function(id,
                          xtick,
                          xlabel,
                          plot_height,
-                         plot_width) {
+                         plot_width,
+                         module_args) {
   with_reporter <- !missing(reporter) && inherits(reporter, "Reporter")
   with_filter <- !missing(filter_panel_api) && inherits(filter_panel_api, "FilterPanelAPI")
-  checkmate::assert_class(data, "tdata")
+  checkmate::assert_class(data, "reactive")
+  checkmate::assert_class(shiny::isolate(data()), "teal_data")
 
   moduleServer(id, function(input, output, session) {
     ns <- session$ns
+
+    output$axis_selections <- renderUI({
+      env <- shiny::isolate(as.list(data()@env))
+      resolved_x <- teal.transform::resolve_delayed(module_args$xaxis_var, env)
+      resolved_y <- teal.transform::resolve_delayed(module_args$yaxis_var, env)
+      resolved_param <- teal.transform::resolve_delayed(module_args$param, env)
+      templ_ui_params_vars(
+        ns,
+        # xparam and yparam are identical, so we only show the user one
+        xparam_choices = resolved_param$choices,
+        xparam_selected = resolved_param$selected,
+        xparam_label = "Select a Biomarker",
+        xchoices = resolved_x$choices,
+        xselected = resolved_x$selected,
+        ychoices = resolved_y$choices,
+        yselected = resolved_y$selected
+      )
+    })
+
     output$shape_ui <- renderUI({
       if (!is.null(shape_choices)) {
         if (methods::is(shape_choices, "choices_selected")) {
@@ -460,44 +451,24 @@ srv_lineplot <- function(id,
       ))
     })
 
-    line_color_defaults <- reactiveVal(color_manual)
-
-    line_type_defaults <- reactiveVal("solid")
-
-    observeEvent(input$trt_group, {
-      req(anl_q())
-      req(input$trt_group)
-      anl_arm <- anl_q()$ANL[[input$trt_group]]
-      anl_arm_nlevels <- nlevels(anl_arm)
-
-      if (is.null(names(line_color_defaults()))) {
-        # if color_manual did not specify arms (i.e. didn't have names) then order
-        # of the vector does not need to match order of level(anl_arm)
-        line_color_to_set <- line_color_defaults()[seq_len(anl_arm_nlevels)]
-      } else {
-        # if color_manual did specify arms then we need to make sure the order of
-        # line_color_to_set matches the order of level(anl_arm) and if any arms are invalid
-        # or missing then we fill with a random colour
-        line_color_to_set <- stats::setNames(line_color_defaults()[levels(anl_arm)], nm = levels(anl_arm))
-      }
-      line_color_to_set[is.na(line_color_to_set)] <- grDevices::rainbow(anl_arm_nlevels)[is.na(line_color_to_set)]
-      line_color_defaults(line_color_to_set)
-
-      line_type_to_set <- if (length(line_type_defaults()) <= anl_arm_nlevels) {
-        c(line_type_defaults(), rep(line_type_defaults(), anl_arm_nlevels - length(line_type_defaults())))
-      } else {
-        line_type_defaults()[seq_len(anl_arm_nlevels)]
-      }
-
-      line_type_defaults(line_type_to_set)
-    })
+    line_color_defaults <- color_manual
+    line_type_defaults <- c(
+      "blank",
+      "solid",
+      "dashed",
+      "dotted",
+      "dotdash",
+      "longdash",
+      "twodash",
+      "1F",
+      "F1",
+      "4C88C488",
+      "12345678"
+    )
 
     line_color_selected <- reactive({
-      req(anl_q())
-      if (is.null(input$trt_group)) {
-        return(NULL)
-      }
-      anl_arm <- isolate(anl_q()$ANL[[input$trt_group]])
+      req(input$trt_group)
+      anl_arm <- as.factor(isolate(anl_q())$ANL[[input$trt_group]])
       anl_arm_nlevels <- nlevels(anl_arm)
       anl_arm_levels <- levels(anl_arm)
 
@@ -506,20 +477,25 @@ srv_lineplot <- function(id,
           seq_len(anl_arm_nlevels),
           function(idx) {
             x <- input[[paste0("line_color_", idx)]]
-            if (is.null(x)) isolate(line_color_defaults())[[idx]] else x
+            anl_arm_level <- anl_arm_levels[[idx]]
+            if (length(x)) {
+              x
+            } else if (anl_arm_level %in% names(line_color_defaults)) {
+              line_color_defaults[[anl_arm_level]]
+            } else if (idx <= length(line_color_defaults)) {
+              line_color_defaults[[idx]]
+            } else {
+              "#000000"
+            }
           },
           character(1)
         ),
         anl_arm_levels
       )
     })
-
     line_type_selected <- reactive({
-      req(anl_q())
-      if (is.null(input$trt_group)) {
-        return(NULL)
-      }
-      anl_arm <- isolate(anl_q()$ANL[[input$trt_group]])
+      req(input$trt_group)
+      anl_arm <- as.factor(isolate(anl_q())$ANL[[input$trt_group]])
       anl_arm_nlevels <- nlevels(anl_arm)
       anl_arm_levels <- levels(anl_arm)
 
@@ -528,7 +504,7 @@ srv_lineplot <- function(id,
           seq_len(anl_arm_nlevels),
           function(idx) {
             x <- input[[paste0("line_type_", idx)]]
-            if (is.null(x)) isolate(line_type_defaults())[[idx]] else x
+            if (is.null(x)) "solid" else x
           },
           character(1)
         ),
@@ -537,52 +513,36 @@ srv_lineplot <- function(id,
     })
 
     output$lines <- renderUI({
-      req(anl_q())
       req(input$trt_group)
-      anl_arm <- isolate(anl_q()$ANL[[input$trt_group]])
+      anl_arm <- as.factor(anl_q()$ANL[[input$trt_group]])
       anl_arm_nlevels <- nlevels(anl_arm)
       anl_arm_levels <- levels(anl_arm)
-      color_def <- line_color_defaults()
-      type_def <- line_type_defaults()
+
       tagList(
         lapply(
           seq_len(anl_arm_nlevels),
           function(idx) {
             x <- anl_arm_levels[[idx]]
-            x_color <- color_def[[idx]]
             color_input <- colourpicker::colourInput(
               ns(paste0("line_color_", idx)),
               "Color:",
-              x_color
+              isolate(line_color_selected()[[idx]])
             )
-            x_type <- type_def[[idx]]
             type_input <- selectInput(
               ns(paste0("line_type_", idx)),
               "Type:",
-              choices = c(
-                "blank",
-                "solid",
-                "dashed",
-                "dotted",
-                "dotdash",
-                "longdash",
-                "twodash",
-                "1F",
-                "F1",
-                "4C88C488",
-                "12345678"
-              ),
-              selected = x_type
+              choices = line_type_defaults,
+              selected = isolate(line_type_selected()[[idx]])
             )
-            div(
+            tags$div(
               tags$label("Line configuration for:", tags$code(x)),
-              div(
+              tags$div(
                 class = "flex",
-                div(
+                tags$div(
                   class = "flex-grow-1",
                   color_input
                 ),
-                div(
+                tags$div(
                   class = "flex-grow-1",
                   type_input
                 )
@@ -592,7 +552,6 @@ srv_lineplot <- function(id,
         )
       )
     })
-
 
     symbol_type_start <- c(
       "circle",
@@ -686,7 +645,6 @@ srv_lineplot <- function(id,
       teal::validate_inputs(iv_r())
       req(anl_q(), line_color_selected(), line_type_selected())
       # nolint start
-
       ylim <- yrange_slider$state()$value
       plot_font_size <- input$plot_font_size
       dodge <- input$dodge
@@ -793,20 +751,24 @@ srv_lineplot <- function(id,
 
     ### REPORTER
     if (with_reporter) {
-      card_fun <- function(comment) {
-        card <- teal::TealReportCard$new()
-        card$set_name("Line Plot")
-        card$append_text("Line Plot", "header2")
-        if (with_filter) card$append_fs(filter_panel_api$get_filter_state())
-        card$append_text("Selected Options", "header3")
-        card$append_text(
-          paste(
-            formatted_data_constraint(input$constraint_var, input$constraint_range_min, input$constraint_range_max),
-            "\nSelect Line Splitting Variable:",
-            if (!is.null(input$shape)) input$shape else "None",
-            "\nContributing Observations Threshold:",
-            input$count_threshold
+      card_fun <- function(comment, label) {
+        constraint_description <- paste(
+          "\nSelect Line Splitting Variable:",
+          if (!is.null(input$shape)) input$shape else "None",
+          "\nContributing Observations Threshold:",
+          input$count_threshold
+        )
+        card <- report_card_template_goshawk(
+          title = "Line Plot",
+          label = label,
+          with_filter = with_filter,
+          filter_panel_api = filter_panel_api,
+          constraint_list = list(
+            constraint_var = input$constraint_var,
+            constraint_range_min = input$constraint_range_min,
+            constraint_range_max = input$constraint_range_max
           ),
+          constraint_description = constraint_description,
           style = "verbatim"
         )
         card$append_text("Plot", "header3")
@@ -815,7 +777,7 @@ srv_lineplot <- function(id,
           card$append_text("Comment", "header3")
           card$append_text(comment)
         }
-        card$append_src(paste(teal.code::get_code(plot_q()), collapse = "\n"))
+        card$append_src(teal.code::get_code(plot_q()))
         card
       }
       teal.reporter::simple_reporter_srv("simple_reporter", reporter = reporter, card_fun = card_fun)

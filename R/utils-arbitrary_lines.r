@@ -17,16 +17,16 @@
 #' @keywords internal
 ui_arbitrary_lines <- function(id, line_arb, line_arb_label, line_arb_color, title = "Arbitrary Horizontal Lines:") {
   ns <- NS(id)
-  div(
+  tags$div(
     tags$b(title),
     textInput(
       ns("line_arb"),
-      div(
+      tags$div(
         class = "teal-tooltip",
         tagList(
           "Value:",
           icon("circle-info"),
-          span(
+          tags$span(
             class = "tooltiptext",
             "For multiple lines, supply a comma separated list of values."
           )
@@ -48,7 +48,6 @@ ui_arbitrary_lines <- function(id, line_arb, line_arb_label, line_arb_color, tit
 #' @keywords internal
 srv_arbitrary_lines <- function(id) {
   moduleServer(id, function(input, output, session) {
-
     comma_sep_to_values <- function(values, wrapper_fun = trimws) {
       vals <- strsplit(values, "\\s{0,},\\s{0,}")[[1]]
       suppressWarnings(wrapper_fun(vals))
@@ -59,8 +58,9 @@ srv_arbitrary_lines <- function(id) {
       iv$add_rule("line_arb", shinyvalidate::sv_optional())
       iv$add_rule(
         "line_arb",
-        ~ if (any(is.na(comma_sep_to_values(., as.numeric))))
+        ~ if (any(is.na(comma_sep_to_values(., as.numeric)))) {
           "Arbitrary lines values should be a comma separated list of numbers"
+        }
       )
 
       iv_color <- shinyvalidate::InputValidator$new()
@@ -69,14 +69,16 @@ srv_arbitrary_lines <- function(id) {
       iv_color$add_rule("line_arb_color", shinyvalidate::sv_optional())
       iv_color$add_rule(
         "line_arb_color",
-        ~ if (!length(comma_sep_to_values(.)) %in% c(1, length(line_arb())))
+        ~ if (!length(comma_sep_to_values(.)) %in% c(1, length(line_arb()))) {
           sprintf(
             "Line input error: number of colors should be equal to 1, the number of lines (%d) or left blank for 'red'",
             length(line_arb())
           )
+        }
       )
-      iv_color$add_rule("line_arb_color", ~ if (!check_color(comma_sep_to_values(.)))
-        "The line colors entered cannot be converted to colors in R, please check your spelling")
+      iv_color$add_rule("line_arb_color", ~ if (!check_color(comma_sep_to_values(.))) {
+        "The line colors entered cannot be converted to colors in R, please check your spelling"
+      })
       iv$add_validator(iv_color)
 
 
@@ -86,11 +88,12 @@ srv_arbitrary_lines <- function(id) {
       iv_label$add_rule("line_arb_label", shinyvalidate::sv_optional())
       iv_label$add_rule(
         "line_arb_label",
-        ~ if (!length(comma_sep_to_values(.)) %in% c(1, length(line_arb())))
+        ~ if (!length(comma_sep_to_values(.)) %in% c(1, length(line_arb()))) {
           sprintf(
             "Line input error: number of labels should be equal to 1, the number of lines (%d) or left blank",
             length(line_arb())
           )
+        }
       )
       iv$add_validator(iv_label)
       iv

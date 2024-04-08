@@ -1,19 +1,19 @@
 templ_ui_constraint <- function(ns, label = "Data Constraint") {
-  div(
+  tags$div(
     id = ns("constraint_var_whole"), # give an id to hide it
     radioButtons(ns("constraint_var"), label, choices = "NONE"),
-    shinyjs::hidden(div(
+    shinyjs::hidden(tags$div(
       id = ns("constraint_range"),
-      div(
+      tags$div(
         class = "inline-block;",
         numericInput(ns("constraint_range_min"), label = "Min", value = 0, min = 0, max = 0)
       ),
-      div(
+      tags$div(
         class = "inline-block;",
         numericInput(ns("constraint_range_max"), label = "Min", value = 0, min = 0, max = 0)
       )
     )),
-    shinyjs::hidden(div(
+    shinyjs::hidden(tags$div(
       id = ns("all_na"),
       helpText("All values are missing (NA)")
     ))
@@ -49,6 +49,8 @@ keep_data_const_opts_updated <- function(session, input, data, id_param_var) {
 # param_id: input id that contains values of PARAMCD to filter for
 # param_var: currently only "PARAMCD" is supported
 constr_anl_q <- function(session, input, data, dataname, param_id, param_var, trt_group, min_rows) {
+  checkmate::assert_class(data, "reactive")
+  checkmate::assert_class(shiny::isolate(data()), "teal_data")
   dataset_var <- dataname
   if (!identical(param_var, "PARAMCD")) {
     # why is there a variable param_id which is provided to this function and always equal to "param"?
@@ -60,7 +62,7 @@ constr_anl_q <- function(session, input, data, dataname, param_id, param_var, tr
     validate(need(param_var_value, "Please select a biomarker"))
     checkmate::assert_string(param_var_value)
 
-    ANL <- data[[dataname]]() # nolint
+    ANL <- data()[[dataname]] # nolint
     validate_has_data(ANL, min_rows)
 
     validate_has_variable(ANL, param_var)
@@ -70,7 +72,7 @@ constr_anl_q <- function(session, input, data, dataname, param_id, param_var, tr
     validate_has_variable(ANL, trt_group)
 
     # analysis
-    private_qenv <- teal.code::new_qenv(tdata2env(data), code = teal::get_code_tdata(data)) %>%
+    private_qenv <- data() %>%
       teal.code::eval_code(
         substitute(ANL <- dataname, list(dataname = as.name(dataname))) # nolint
       ) %>%
@@ -91,8 +93,7 @@ constr_anl_q <- function(session, input, data, dataname, param_id, param_var, tr
     constraint_var <- input[["constraint_var"]]
     validate(need(constraint_var, "select a constraint variable"))
 
-
-    ANL <- data[[dataname]]() # nolint
+    ANL <- data()[[dataname]] # nolint
     validate_has_data(ANL, min_rows)
 
     validate_has_variable(ANL, param_var)
@@ -106,7 +107,7 @@ constr_anl_q <- function(session, input, data, dataname, param_id, param_var, tr
 
     # get min max values
     if ((constraint_var == "BASE2" && any(grepl("SCR", visit_freq))) ||
-      (constraint_var == "BASE" && any(grepl("BL", visit_freq)))) {
+      (constraint_var == "BASE" && any(grepl("BL", visit_freq)))) { # nolint
       val <- stats::na.omit(switch(constraint_var,
         "BASE" = ANL$BASE[ANL$AVISITCD == "BL"],
         "BASE2" = ANL$BASE2[ANL$AVISITCD == "SCR"],
@@ -165,7 +166,6 @@ constr_anl_q <- function(session, input, data, dataname, param_id, param_var, tr
 # constraint var means that `param_id.constraint_var` is constrained to the filtered range (or NA),
 # e.g. `ALT.BASE2` (i.e. `PARAMCD = ALT & range_filter_on(BASE2)`)
 create_anl_constraint_reactive <- function(anl_param, input, param_id, min_rows) {
-
   iv_r <- reactive({
     iv <- shinyvalidate::InputValidator$new()
     iv$condition(~ isTRUE(input$constraint_var != "NONE"))
@@ -173,13 +173,15 @@ create_anl_constraint_reactive <- function(anl_param, input, param_id, min_rows)
     iv$add_rule("constraint_range_max", shinyvalidate::sv_required("A contraint maximum value is required"))
     iv$add_rule(
       "constraint_range_min",
-      ~ if (!is.na(input$constraint_range_max) && (.) > input$constraint_range_max)
+      ~ if (!is.na(input$constraint_range_max) && (.) > input$constraint_range_max) {
         "constraint min needs to be less than max"
+      }
     )
     iv$add_rule(
       "constraint_range_max",
-      ~ if (!is.na(input$constraint_range_min) && (.) < input$constraint_range_min)
+      ~ if (!is.na(input$constraint_range_min) && (.) < input$constraint_range_min) {
         "constraint min needs to be less than max"
+      }
     )
     iv
   })
@@ -223,7 +225,7 @@ create_anl_constraint_reactive <- function(anl_param, input, param_id, min_rows)
           ANL <- ANL %>% dplyr::filter(USUBJID %in% filtered_usubjids) # nolint
         })
       )
-     validate_has_data(private_qenv[["ANL"]], min_rows)
+      validate_has_data(private_qenv[["ANL"]], min_rows)
     }
     list(ANL = private_qenv[["ANL"]], qenv = private_qenv)
   })
@@ -236,7 +238,7 @@ create_anl_constraint_reactive <- function(anl_param, input, param_id, min_rows)
   )
 }
 
-# for outputting the constaint in the report
+# for outputting the constraint in the report
 formatted_data_constraint <- function(constraint_var, constraint_range_min, constraint_range_max) {
   constraint_var_label <- switch(constraint_var,
     "BASE2" = "Screening",

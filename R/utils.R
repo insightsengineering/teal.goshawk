@@ -31,3 +31,54 @@ plots_per_row_validate_rules <- function(required = TRUE) {
     shinyvalidate::sv_gt(0, message_fmt = msg)
   )
 }
+
+#' Template Function for `TealReportCard` Creation and Customization in `teal.goshawk`
+#'
+#' This function generates a report card with a title,
+#' an optional description, and the option to append the filter state list.
+#' Additionally, it display selected constraint options.
+#'
+#' @inheritParams teal::report_card_template
+#' @param constraint_list (`list`) a list containing constraint variables, including:
+#'   - constraint_var (`character(1)`) the constraint variable name.
+#'   - constraint_range_min (`numeric(1)`) the minimum constraint range value.
+#'   - constraint_range_max (`numeric(1)`) the maximum constraint range value.
+#' @param constraint_description (`character(1)`)  description of the constraints.
+#' @param style (`character(1)`)  style of the constraint text block.
+#'   options: `default`, `verbatim` (default is `default`).
+#'
+#' @return (`TealReportCard`) populated with a title, description, and filter state
+#'
+#' @keywords internal
+report_card_template_goshawk <- function(title,
+                                         label,
+                                         with_filter,
+                                         filter_panel_api,
+                                         constraint_list,
+                                         constraint_description = NULL,
+                                         style = "default") {
+  checkmate::assert_subset(names(constraint_list), c("constraint_var", "constraint_range_min", "constraint_range_max"))
+  checkmate::assert_string(constraint_description, null.ok = TRUE)
+  checkmate::assert_choice(style, c("default", "verbatim"))
+
+  card <- teal::report_card_template(
+    title = title,
+    label = label,
+    with_filter = with_filter,
+    filter_panel_api = filter_panel_api
+  )
+
+  card$append_text("Selected Options", "header3")
+  card$append_text(
+    paste(
+      formatted_data_constraint(
+        constraint_list$constraint_var,
+        constraint_list$constraint_range_min,
+        constraint_list$constraint_range_max
+      ),
+      constraint_description
+    ),
+    style = style
+  )
+  card
+}
