@@ -1,8 +1,8 @@
 Type: Package
 Package: teal.goshawk
 Title: Longitudinal Visualization `teal` Modules
-Version: 0.1.15.9016
-Date: 2024-04-08
+Version: 0.1.15.9017
+Date: 2024-04-09
 Authors@R: c(
     person("Nick", "Paszty", , "nick.paszty@gene.com", role = c("aut", "cre")),
     person("Dawid", "Kaledkowski", , "dawid.kaledkowski@roche.com", role = "aut"),
@@ -63,31 +63,15 @@ Suggests:
     utils
 VignetteBuilder:
     knitr
-Config/Needs/verdepcheck:
-    insightsengineering/goshawk,
-    rstudio/shiny,
-    insightsengineering/teal,
-    insightsengineering/teal.transform,
-    mllg/checkmate,
-    daattali/colourpicker,
-    tidyverse/dplyr,
-    rstudio/DT,
-    tidyverse/ggplot2,
-    r-lib/lifecycle,
-    r-lib/rlang,
-    daattali/shinyjs,
-    rstudio/shinyvalidate,
-    insightsengineering/teal.code,
-    insightsengineering/teal.logger,
-    insightsengineering/teal.reporter,
-    insightsengineering/teal.widgets,
-    tidyverse/tidyr,
-    yihui/knitr,
-    insightsengineering/nestcolor,
-    rstudio/rmarkdown,
-    tidyverse/stringr,
-    insightsengineering/teal.data,
-    insightsengineering/tern,
+Config/Needs/verdepcheck: insightsengineering/goshawk, rstudio/shiny,
+    insightsengineering/teal, insightsengineering/teal.transform,
+    mllg/checkmate, daattali/colourpicker, tidyverse/dplyr, rstudio/DT,
+    tidyverse/ggplot2, r-lib/lifecycle, r-lib/rlang, daattali/shinyjs,
+    rstudio/shinyvalidate, insightsengineering/teal.code,
+    insightsengineering/teal.logger, insightsengineering/teal.reporter,
+    insightsengineering/teal.widgets, tidyverse/tidyr, yihui/knitr,
+    insightsengineering/nestcolor, rstudio/rmarkdown, tidyverse/stringr,
+    insightsengineering/teal.data, insightsengineering/tern,
     r-lib/testthat
 Config/Needs/website: insightsengineering/nesttemplate
 Encoding: UTF-8
