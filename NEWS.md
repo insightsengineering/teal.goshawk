@@ -7,6 +7,10 @@
 
 * Updated the documentation and vignettes to demonstrate method to pass `teal_data` object to `teal::init()`.
 
+### Miscellaneous
+
+* Specified minimal version of package dependencies.
+
 # teal.goshawk 0.1.15
 
 ### Enhancements
