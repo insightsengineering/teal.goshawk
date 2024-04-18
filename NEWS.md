@@ -1,4 +1,4 @@
-# teal.goshawk 0.1.15.9015
+# teal.goshawk 0.1.15.9017
 
 ### Breaking Changes
 * Adapted all modules to use `teal_data` objects.
@@ -6,6 +6,10 @@
 ### Enhancements
 
 * Updated the documentation and vignettes to demonstrate method to pass `teal_data` object to `teal::init()`.
+
+### Miscellaneous
+
+* Specified minimal version of package dependencies.
 
 # teal.goshawk 0.1.15
 

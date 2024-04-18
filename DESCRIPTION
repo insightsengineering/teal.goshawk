@@ -1,8 +1,8 @@
 Type: Package
 Package: teal.goshawk
 Title: Longitudinal Visualization `teal` Modules
-Version: 0.1.15.9015
-Date: 2024-03-20
+Version: 0.1.15.9017
+Date: 2024-04-09
 Authors@R: c(
     person("Nick", "Paszty", , "nick.paszty@gene.com", role = c("aut", "cre")),
     person("Dawid", "Kaledkowski", , "dawid.kaledkowski@roche.com", role = "aut"),
@@ -29,21 +29,21 @@ URL: https://insightsengineering.github.io/teal.goshawk/,
     https://github.com/insightsengineering/teal.goshawk/
 BugReports: https://github.com/insightsengineering/teal.goshawk/issues
 Depends:
-    goshawk (>= 0.1.15),
+    goshawk (>= 0.1.15.9007),
     R (>= 3.6),
-    shiny,
+    shiny (>= 1.6.0),
     teal (>= 0.14.0.9027),
     teal.transform (>= 0.4.0.9011)
 Imports:
-    checkmate,
+    checkmate (>= 2.1.0),
     colourpicker,
-    dplyr,
-    DT,
-    ggplot2,
+    dplyr (>= 1.0.5),
+    DT (>= 0.13),
+    ggplot2 (>= 3.4.0),
     grDevices,
-    lifecycle,
+    lifecycle (>= 0.2.0),
     methods,
-    rlang,
+    rlang (>= 1.0.0),
     shinyjs,
     shinyvalidate,
     stats,
@@ -51,18 +51,28 @@ Imports:
     teal.logger (>= 0.1.3.9013),
     teal.reporter (>= 0.2.0),
     teal.widgets (>= 0.4.0),
-    tidyr
+    tidyr (>= 0.8.3)
 Suggests:
-    knitr,
+    knitr (>= 1.42),
     nestcolor (>= 0.1.0),
-    rmarkdown,
-    stringr,
+    rmarkdown (>= 2.19),
+    stringr (>= 1.4.1),
     teal.data (>= 0.3.0.9018),
     tern (>= 0.7.10),
-    testthat (>= 2.0),
+    testthat (>= 3.0.4),
     utils
 VignetteBuilder:
     knitr
+Config/Needs/verdepcheck: insightsengineering/goshawk, rstudio/shiny,
+    insightsengineering/teal, insightsengineering/teal.transform,
+    mllg/checkmate, daattali/colourpicker, tidyverse/dplyr, rstudio/DT,
+    tidyverse/ggplot2, r-lib/lifecycle, r-lib/rlang, daattali/shinyjs,
+    rstudio/shinyvalidate, insightsengineering/teal.code,
+    insightsengineering/teal.logger, insightsengineering/teal.reporter,
+    insightsengineering/teal.widgets, tidyverse/tidyr, yihui/knitr,
+    insightsengineering/nestcolor, rstudio/rmarkdown, tidyverse/stringr,
+    insightsengineering/teal.data, insightsengineering/tern,
+    r-lib/testthat
 Config/Needs/website: insightsengineering/nesttemplate
 Encoding: UTF-8
 Language: en-US
