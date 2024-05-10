@@ -242,7 +242,6 @@ ui_g_density_distribution_plot <- function(id, ...) {
       )
     ),
     forms = tagList(
-      teal.widgets::verbatim_popup_ui(ns("warning"), "Show Warnings"),
       teal.widgets::verbatim_popup_ui(ns("rcode"), "Show R code")
     ),
     pre_output = a$pre_output,
@@ -418,13 +417,6 @@ srv_g_density_distribution_plot <- function(id, # nolint
       req(create_plot(), create_table())
       teal.code::join(create_plot(), create_table())
     })
-
-    teal.widgets::verbatim_popup_srv(
-      id = "warning",
-      verbatim_content = reactive(teal.code::get_warnings(joined_qenvs())),
-      title = "Warning",
-      disabled = reactive(is.null(teal.code::get_warnings(joined_qenvs())))
-    )
 
     teal.widgets::verbatim_popup_srv(
       id = "rcode",
