@@ -298,7 +298,6 @@ ui_lineplot <- function(id, ...) {
         )
       ),
       forms = tagList(
-        teal.widgets::verbatim_popup_ui(ns("warning"), "Show Warnings"),
         teal.widgets::verbatim_popup_ui(ns("rcode"), "Show R code")
       ),
       pre_output = a$pre_output,
@@ -784,13 +783,6 @@ srv_lineplot <- function(id,
       teal.reporter::simple_reporter_srv("simple_reporter", reporter = reporter, card_fun = card_fun)
     }
     ###
-
-    teal.widgets::verbatim_popup_srv(
-      id = "warning",
-      verbatim_content = reactive(teal.code::get_warnings(plot_q())),
-      title = "Warning",
-      disabled = reactive(is.null(teal.code::get_warnings(plot_q())))
-    )
 
     teal.widgets::verbatim_popup_srv(
       id = "rcode",
