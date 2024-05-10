@@ -1,5 +1,7 @@
 # teal.goshawk 0.1.15.9018
 
+* Removed `Show Warnings` modals from modules.
+
 ### Breaking Changes
 * Adapted all modules to use `teal_data` objects.
 
