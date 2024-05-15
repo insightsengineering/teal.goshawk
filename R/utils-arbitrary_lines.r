@@ -48,7 +48,7 @@ ui_arbitrary_lines <- function(id, line_arb, line_arb_label, line_arb_color, tit
 #' @keywords internal
 srv_arbitrary_lines <- function(id) {
   moduleServer(id, function(input, output, session) {
-    logger::log_shiny_input_changes(input, namespace = "teal.goshawk")
+    if (shiny::isRunning()) logger::log_shiny_input_changes(input, namespace = "teal.goshawk")
     comma_sep_to_values <- function(values, wrapper_fun = trimws) {
       vals <- strsplit(values, "\\s{0,},\\s{0,}")[[1]]
       suppressWarnings(wrapper_fun(vals))

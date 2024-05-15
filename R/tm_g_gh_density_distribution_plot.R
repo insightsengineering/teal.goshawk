@@ -268,7 +268,7 @@ srv_g_density_distribution_plot <- function(id, # nolint
   checkmate::assert_class(shiny::isolate(data()), "teal_data")
 
   moduleServer(id, function(input, output, session) {
-    logger::log_shiny_input_changes(input, namespace = "teal.goshawk")
+    if (shiny::isRunning()) logger::log_shiny_input_changes(input, namespace = "teal.goshawk")
     output$axis_selections <- renderUI({
       env <- shiny::isolate(as.list(data()@env))
       resolved_x <- teal.transform::resolve_delayed(module_args$xaxis_var, env)
