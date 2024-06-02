@@ -200,8 +200,6 @@ tm_g_gh_spaghettiplot <- function(label,
   checkmate::assert_string(param_var_label)
   checkmate::assert_string(idvar)
   checkmate::assert_string(group_stats)
-  checkmate::assert_string(hline_arb_color)
-  checkmate::assert_string(hline_arb_label)
 
   # Validate choices_selected class inputs
   checkmate::assert_class(param, "choices_selected")
@@ -225,16 +223,18 @@ tm_g_gh_spaghettiplot <- function(label,
   checkmate::assert_numeric(font_size, len = 3, any.missing = FALSE, finite = TRUE)
   checkmate::assert_numeric(dot_size, len = 3, any.missing = FALSE, finite = TRUE)
 
-  # Validate line arguments
-  validate_line_arb_arg(hline_arb, hline_arb_color, hline_arb_label)
-  validate_line_vars_arg(hline_vars, hline_vars_colors, hline_vars_labels)
-
   # Validate color manual if provided
   checkmate::assert_character(man_color, null.ok = TRUE)
   checkmate::assert_character(color_comb, null.ok = TRUE)
+  checkmate::assert_character(hline_arb_color)
+  checkmate::assert_character(hline_arb_label)
 
   # Validate facet columns
   checkmate::assert_int(facet_ncol, lower = 1)
+
+  # Validate line arguments
+  validate_line_arb_arg(hline_arb, hline_arb_color, hline_arb_label)
+  validate_line_vars_arg(hline_vars, hline_vars_colors, hline_vars_labels)
 
   args <- as.list(environment())
 

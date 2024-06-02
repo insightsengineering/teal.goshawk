@@ -165,8 +165,6 @@ tm_g_gh_lineplot <- function(label,
   checkmate::assert_string(param_var)
   checkmate::assert_string(param_var_label)
   checkmate::assert_string(stat)
-  checkmate::assert_string(hline_arb_color)
-  checkmate::assert_string(hline_arb_label)
 
   # Validate choices_selected class inputs
   checkmate::assert_class(param, "choices_selected")
@@ -195,11 +193,13 @@ tm_g_gh_lineplot <- function(label,
   checkmate::assert_number(plot_relative_height_value, lower = 500, upper = 5000)
   checkmate::assert_number(count_threshold)
 
-  # Validate line arguments
-  validate_line_arb_arg(hline_arb, hline_arb_color, hline_arb_label)
-
   # Validate color manual if provided
   checkmate::assert_character(color_manual, null.ok = TRUE)
+  checkmate::assert_character(hline_arb_color)
+  checkmate::assert_character(hline_arb_label)
+
+  # Validate line arguments
+  validate_line_arb_arg(hline_arb, hline_arb_color, hline_arb_label)
 
   args <- as.list(environment())
 
