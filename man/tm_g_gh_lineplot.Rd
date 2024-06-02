@@ -35,6 +35,7 @@ tm_g_gh_lineplot(
   post_output = NULL,
   count_threshold = 0,
   table_font_size = c(12, 4, 20),
+  dot_size = c(2, 1, 12),
   plot_relative_height_value = 1000
 )
 }
@@ -109,6 +110,8 @@ into context. For example the \code{\link[shiny:helpText]{shiny::helpText()}} el
 nodes on the graph}
 
 \item{table_font_size}{controls the font size of values in the table}
+
+\item{dot_size}{plot dot size.}
 
 \item{plot_relative_height_value}{numeric value between 500 and 5000 for controlling the starting value
 of the relative plot height slider}
