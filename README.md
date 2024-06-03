@@ -1,7 +1,6 @@
 # teal.goshawk
 
 <!-- start badges -->
-[![Check 🛠](https://github.com/insightsengineering/teal.goshawk/actions/workflows/check.yaml/badge.svg)](https://insightsengineering.github.io/teal.goshawk/main/unit-test-report/)
 [![Docs 📚](https://github.com/insightsengineering/teal.goshawk/actions/workflows/docs.yaml/badge.svg)](https://insightsengineering.github.io/teal.goshawk/)
 [![Code Coverage 📔](https://raw.githubusercontent.com/insightsengineering/teal.goshawk/_xml_coverage_reports/data/main/badge.svg)](https://insightsengineering.github.io/teal.goshawk/main/coverage-report/)
 
