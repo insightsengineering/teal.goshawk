@@ -28,6 +28,7 @@ tm_g_gh_spaghettiplot(
   plot_height = c(600, 200, 2000),
   plot_width = NULL,
   font_size = c(12, 8, 20),
+  dot_size = c(2, 1, 12),
   hline_arb = numeric(0),
   hline_arb_color = "red",
   hline_arb_label = "Horizontal line",
@@ -94,6 +95,8 @@ label of \code{x-axis} tick values. Default value is \code{waive()}.}
 \item{plot_width}{optional, controls plot width.}
 
 \item{font_size}{control font size for title, \code{x-axis}, \code{y-axis} and legend font.}
+
+\item{dot_size}{plot dot size.}
 
 \item{hline_arb}{numeric vector of at most 2 values identifying intercepts for arbitrary horizontal lines.}
 

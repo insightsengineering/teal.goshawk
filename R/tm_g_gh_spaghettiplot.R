@@ -35,6 +35,7 @@
 #' @param plot_height controls plot height.
 #' @param plot_width optional, controls plot width.
 #' @param font_size control font size for title, `x-axis`, `y-axis` and legend font.
+#' @param dot_size plot dot size.
 #' @param group_stats control group mean or median overlay.
 #' @param hline_arb numeric vector of at most 2 values identifying intercepts for arbitrary horizontal lines.
 #' @param hline_arb_color a character vector of at most length of \code{hline_arb}.
@@ -181,6 +182,7 @@ tm_g_gh_spaghettiplot <- function(label,
                                   plot_height = c(600, 200, 2000),
                                   plot_width = NULL,
                                   font_size = c(12, 8, 20),
+                                  dot_size = c(2, 1, 12),
                                   hline_arb = numeric(0),
                                   hline_arb_color = "red",
                                   hline_arb_label = "Horizontal line",
@@ -190,20 +192,49 @@ tm_g_gh_spaghettiplot <- function(label,
                                   pre_output = NULL,
                                   post_output = NULL) {
   message("Initializing tm_g_gh_spaghettiplot")
+
+  # Validate string inputs
+  checkmate::assert_string(label)
+  checkmate::assert_string(dataname)
+  checkmate::assert_string(param_var)
+  checkmate::assert_string(param_var_label)
+  checkmate::assert_string(idvar)
+  checkmate::assert_string(group_stats)
+
+  # Validate choices_selected class inputs
   checkmate::assert_class(param, "choices_selected")
   checkmate::assert_class(xaxis_var, "choices_selected")
   checkmate::assert_class(yaxis_var, "choices_selected")
   checkmate::assert_class(trt_group, "choices_selected")
-  validate_line_arb_arg(hline_arb, hline_arb_color, hline_arb_label)
-  validate_line_vars_arg(hline_vars, hline_vars_colors, hline_vars_labels)
+
+  # Validate flag inputs
+  checkmate::assert_flag(rotate_xlab)
+  checkmate::assert_flag(free_x)
+
+  # Validate numeric vector inputs
   checkmate::assert_numeric(plot_height, len = 3, any.missing = FALSE, finite = TRUE)
   checkmate::assert_numeric(plot_height[1], lower = plot_height[2], upper = plot_height[3], .var.name = "plot_height")
   checkmate::assert_numeric(plot_width, len = 3, any.missing = FALSE, null.ok = TRUE, finite = TRUE)
-  checkmate::assert_numeric(plot_width[1],
-    lower = plot_width[2], upper = plot_width[3], null.ok = TRUE,
-    .var.name = "plot_width"
+  checkmate::assert_numeric(
+    plot_width[1],
+    lower = plot_width[2], upper = plot_width[3],
+    null.ok = TRUE, .var.name = "plot_width"
   )
-  checkmate::assert_flag(free_x)
+  checkmate::assert_numeric(font_size, len = 3, any.missing = FALSE, finite = TRUE)
+  checkmate::assert_numeric(dot_size, len = 3, any.missing = FALSE, finite = TRUE)
+
+  # Validate color manual if provided
+  checkmate::assert_character(man_color, null.ok = TRUE)
+  checkmate::assert_character(color_comb, null.ok = TRUE)
+  checkmate::assert_character(hline_arb_color)
+  checkmate::assert_character(hline_arb_label)
+
+  # Validate facet columns
+  checkmate::assert_int(facet_ncol, lower = 1)
+
+  # Validate line arguments
+  validate_line_arb_arg(hline_arb, hline_arb_color, hline_arb_label)
+  validate_line_vars_arg(hline_vars, hline_vars_colors, hline_vars_labels)
 
   args <- as.list(environment())
 
@@ -298,6 +329,7 @@ g_ui_spaghettiplot <- function(id, ...) {
             checkboxInput(ns("free_x"), "Free X-Axis Scales", a$free_x),
             checkboxInput(ns("rotate_xlab"), "Rotate X-Axis Label", a$rotate_xlab),
             teal.widgets::optionalSliderInputValMinMax(ns("font_size"), "Font Size", a$font_size, ticks = FALSE),
+            teal.widgets::optionalSliderInputValMinMax(ns("dot_size"), "Dot Size", a$dot_size, ticks = FALSE),
             teal.widgets::optionalSliderInputValMinMax(
               ns("alpha"),
               "Line Alpha",
@@ -408,6 +440,7 @@ srv_g_spaghettiplot <- function(id,
       hline_arb_color <- horizontal_line()$line_arb_color
       group_stats <- input$group_stats
       font_size <- input$font_size
+      dot_size <- input$dot_size
       alpha <- input$alpha
       validate(need(input$trt_group, "Please select a treatment variable"))
       trt_group <- input$trt_group
@@ -473,6 +506,7 @@ srv_g_spaghettiplot <- function(id,
             xlabel = xlabel,
             rotate_xlab = .(rotate_xlab),
             font_size = .(font_size),
+            dot_size = .(dot_size),
             alpha = .(alpha),
             group_stats = .(group_stats),
             hline_vars = .(hline_vars),

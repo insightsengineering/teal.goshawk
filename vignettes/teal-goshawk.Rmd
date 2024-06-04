@@ -22,7 +22,7 @@ standards. `teal.goshawk` modules can be used with data other than `ADaM` standa
 features of the package will likely not be applicable.
 
 The concepts presented here require knowledge about the core features of `teal`, specifically on how to launch a `teal`
-application and how to pass data into it. Therefore, it is highly recommended to refer to the [`README`](https://insightsengineering.github.io/teal/) file and the introductory [`vignette`](https://insightsengineering.github.io/teal/latest-tag/articles/teal.html) of the `teal` package.
+application and how to pass data into it. Therefore, it is highly recommended to refer to the [`README`](https://insightsengineering.github.io/teal/latest-tag/) file and the introductory [`vignette`](https://insightsengineering.github.io/teal/latest-tag/articles/index.html) of the `teal` package.
 
 ### Main features
 
@@ -108,4 +108,4 @@ Refer to the [Get Started](https://insightsengineering.github.io/teal.modules.cl
 section of the teal.modules.clinical package that provides additional detail on `teal` concepts as applied in another simple app
 example.
 
-Please see additional information under [Articles](https://insightsengineering.github.io/teal.goshawk/latest-tag/articles) for data expectations, requirements and pre/post-processing rationale
+Please see additional information under [Articles](https://insightsengineering.github.io/teal.goshawk/latest-tag/articles/index.html) for data expectations, requirements and pre/post-processing rationale

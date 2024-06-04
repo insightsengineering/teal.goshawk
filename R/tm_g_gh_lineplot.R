@@ -41,6 +41,7 @@
 #' @param count_threshold minimum count of observations (as listed in the output table) to plot
 #' nodes on the graph
 #' @param table_font_size controls the font size of values in the table
+#' @param dot_size plot dot size.
 #' @param plot_relative_height_value numeric value between 500 and 5000 for controlling the starting value
 #' of the relative plot height slider
 #' @author Wenyi Liu (luiw2) wenyi.liu@roche.com
@@ -155,13 +156,26 @@ tm_g_gh_lineplot <- function(label,
                              post_output = NULL,
                              count_threshold = 0,
                              table_font_size = c(12, 4, 20),
+                             dot_size = c(2, 1, 12),
                              plot_relative_height_value = 1000) {
   message("Initializing tm_g_gh_lineplot")
+  # Validate string inputs
+  checkmate::assert_string(label)
+  checkmate::assert_string(dataname)
+  checkmate::assert_string(param_var)
+  checkmate::assert_string(param_var_label)
+  checkmate::assert_string(stat)
+
+  # Validate choices_selected class inputs
   checkmate::assert_class(param, "choices_selected")
   checkmate::assert_class(xaxis_var, "choices_selected")
   checkmate::assert_class(yaxis_var, "choices_selected")
   checkmate::assert_class(trt_group, "choices_selected")
+
+  # Validate flag inputs
   checkmate::assert_flag(rotate_xlab)
+
+  # Validate numeric vector inputs
   checkmate::assert_numeric(plot_height, len = 3, any.missing = FALSE, finite = TRUE)
   checkmate::assert_numeric(plot_height[1], lower = plot_height[2], upper = plot_height[3], .var.name = "plot_height")
   checkmate::assert_numeric(plot_width, len = 3, any.missing = FALSE, null.ok = TRUE, finite = TRUE)
@@ -170,16 +184,23 @@ tm_g_gh_lineplot <- function(label,
     lower = plot_width[2], upper = plot_width[3], null.ok = TRUE, .var.name = "plot_width"
   )
   checkmate::assert_numeric(table_font_size, len = 3, any.missing = FALSE, null.ok = TRUE, finite = TRUE)
+  checkmate::assert_numeric(dot_size, len = 3)
   checkmate::assert_numeric(
     table_font_size[1],
     lower = table_font_size[2], upper = table_font_size[3],
     null.ok = TRUE, .var.name = "table_font_size"
   )
-
   checkmate::assert_number(plot_relative_height_value, lower = 500, upper = 5000)
-
   checkmate::assert_number(count_threshold)
+
+  # Validate color manual if provided
+  checkmate::assert_character(color_manual, null.ok = TRUE)
+  checkmate::assert_character(hline_arb_color)
+  checkmate::assert_character(hline_arb_label)
+
+  # Validate line arguments
   validate_line_arb_arg(hline_arb, hline_arb_color, hline_arb_label)
+
   args <- as.list(environment())
 
   module(
@@ -283,6 +304,12 @@ ui_lineplot <- function(id, ...) {
               ns("plot_font_size"),
               "Font Size",
               a$plot_font_size,
+              ticks = FALSE
+            ),
+            teal.widgets::optionalSliderInputValMinMax(
+              ns("dot_size"),
+              "Dot Size",
+              a$dot_size,
               ticks = FALSE
             )
           ),
@@ -647,6 +674,7 @@ srv_lineplot <- function(id,
       # nolint start
       ylim <- yrange_slider$state()$value
       plot_font_size <- input$plot_font_size
+      dot_size <- input$dot_size
       dodge <- input$dodge
       rotate_xlab <- input$rotate_xlab
       count_threshold <- `if`(is.na(as.numeric(input$count_threshold)), 0, as.numeric(input$count_threshold))
@@ -730,6 +758,7 @@ srv_lineplot <- function(id,
             rotate_xlab = .(rotate_xlab),
             plot_height = .(relative_height), # in g_lineplot this is relative height of plot to table
             plot_font_size = .(plot_font_size),
+            dot_size = .(dot_size),
             dodge = .(dodge),
             count_threshold = .(count_threshold),
             table_font_size = .(table_font_size),
