@@ -256,7 +256,6 @@ ui_g_boxplot <- function(id, ...) {
         multiple = FALSE
       ),
       uiOutput(ns("axis_selections")),
-
       teal.widgets::optionalSelectInput(
         ns("facet_var"),
         label = "Facet by",
