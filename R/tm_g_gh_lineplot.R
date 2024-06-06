@@ -243,7 +243,7 @@ ui_lineplot <- function(id, ...) {
         teal.widgets::optionalSelectInput(
           ns("trt_group"),
           label = "Select Treatment Variable",
-          choices = a$trt_group$choices,
+          choices = get_choices(a$trt_group$choices),
           selected = a$trt_group$selected,
           multiple = FALSE
         ),
@@ -380,7 +380,7 @@ srv_lineplot <- function(id,
     output$shape_ui <- renderUI({
       if (!is.null(shape_choices)) {
         if (methods::is(shape_choices, "choices_selected")) {
-          choices <- shape_choices$choices
+          choices <- get_choices(shape_choices$choices)
           selected <- shape_choices$selected
         } else {
           choices <- shape_choices
