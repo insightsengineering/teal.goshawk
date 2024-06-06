@@ -199,7 +199,7 @@ ui_g_density_distribution_plot <- function(id, ...) {
       teal.widgets::optionalSelectInput(
         ns("trt_group"),
         label = "Select Treatment Variable",
-        choices = a$trt_group$choices,
+        choices = get_choices(a$trt_group$choices),
         selected = a$trt_group$selected,
         multiple = FALSE
       ),
