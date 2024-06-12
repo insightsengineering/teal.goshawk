@@ -611,6 +611,7 @@ srv_g_correlationplot <- function(id,
     yloqfl <- reactive(paste0("LOQFL_", input$yaxis_param))
     xlabs <- reactive(paste0("LBSTRESC_", input$xaxis_param))
     ylabs <- reactive(paste0("LBSTRESC_", input$yaxis_param))
+
     # transpose data to plot
     plot_data_transpose <- reactive({
       teal::validate_inputs(iv_r())

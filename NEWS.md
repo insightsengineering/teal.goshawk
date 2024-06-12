@@ -1,6 +1,7 @@
 # teal.goshawk 0.1.15.9023
 
 * Removed `Show Warnings` modals from modules.
+* Fixed `LOQFL_COMB` calculation.
 
 ### Breaking Changes
 * Adapted all modules to use `teal_data` objects.
