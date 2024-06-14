@@ -382,7 +382,7 @@ srv_g_correlationplot <- function(id,
   checkmate::assert_class(shiny::isolate(data()), "teal_data")
 
   moduleServer(id, function(input, output, session) {
-    tg_track_shiny_input_changes(input)
+    track_shiny_input_changes(input)
     output$axis_selections <- renderUI({
       env <- shiny::isolate(as.list(data()@env))
       resolved_x_param <- teal.transform::resolve_delayed(module_args$xaxis_param, env)

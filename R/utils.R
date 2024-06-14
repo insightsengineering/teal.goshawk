@@ -100,7 +100,7 @@ get_choices <- function(choices) {
   }
 }
 
-tg_track_shiny_input_changes <- function(input) {
+track_shiny_input_changes <- function(input) {
   if (shiny::isRunning()) {
     plot_nss <- c("boxplot", "plot")
 

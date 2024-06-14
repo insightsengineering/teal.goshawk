@@ -356,7 +356,7 @@ srv_lineplot <- function(id,
   checkmate::assert_class(shiny::isolate(data()), "teal_data")
 
   moduleServer(id, function(input, output, session) {
-    tg_track_shiny_input_changes(input)
+    track_shiny_input_changes(input)
     ns <- session$ns
 
     output$axis_selections <- renderUI({
