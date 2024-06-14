@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE coverage SYSTEM "https://raw.githubusercontent.com/cobertura/cobertura/master/cobertura/src/site/htdocs/xml/coverage-04.dtd">
-<coverage line-rate="0" branch-rate="0" lines-covered="0" lines-valid="2929" branches-covered="0" branches-valid="0" complexity="0" version="3.6.4" timestamp="2024-06-13 11:56:29.624205">
+<coverage line-rate="0" branch-rate="0" lines-covered="0" lines-valid="2929" branches-covered="0" branches-valid="0" complexity="0" version="3.6.4" timestamp="2024-06-14 10:04:22.842192">
   <sources>
     <source>/__w/teal.goshawk/teal.goshawk/teal.goshawk</source>
   </sources>
@@ -6033,7 +6033,7 @@
                 <line number="99" hits="0" branch="false"/>
               </lines>
             </method>
-            <method name="tg_track_shiny_input_changes" signature="" line-rate="0" branch-rate="0" complexity="0">
+            <method name="track_shiny_input_changes" signature="" line-rate="0" branch-rate="0" complexity="0">
               <lines>
                 <line number="104" hits="0" branch="false"/>
                 <line number="105" hits="0" branch="false"/>
