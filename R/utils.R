@@ -99,19 +99,3 @@ get_choices <- function(choices) {
     choices
   }
 }
-
-track_shiny_input_changes <- function(input) {
-  if (shiny::isRunning()) {
-    plot_nss <- c("boxplot", "plot")
-
-    elements <- c("plot_modal_width", "flex_width", "plot_modal_height", "flex_height")
-
-    excluded_inputs <- unlist(lapply(plot_nss, paste, elements, sep = "-"))
-    logger::log_shiny_input_changes(
-      input,
-      level = logger::TRACE,
-      namespace = "teal.goshawk",
-      excluded_inputs = excluded_inputs
-    )
-  }
-}
