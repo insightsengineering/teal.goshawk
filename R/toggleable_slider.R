@@ -142,7 +142,7 @@ toggle_slider_ui <- function(id,
 # is_dichotomous_slider `logical` whether it is a dichotomous slider or normal slider
 toggle_slider_server <- function(id, is_dichotomous_slider = TRUE) {
   moduleServer(id, function(input, output, session) {
-    if (shiny::isRunning()) logger::log_shiny_input_changes(input, namespace = "teal.goshawk")
+    teal.logger::log_shiny_input_changes(input, namespace = "teal.goshawk")
     checkmate::assert_flag(is_dichotomous_slider)
     # model view controller: cur_state is the model, the sliderInput and numericInputs are two views/controllers
     # additionally, the module returns the cur_state, so it can be controlled from that end as well
