@@ -609,6 +609,8 @@ srv_g_correlationplot <- function(id,
     yvar <- reactive(paste0(input$yaxis_var, ".", input$yaxis_param))
     xloqfl <- reactive(paste0("LOQFL_", input$xaxis_param))
     yloqfl <- reactive(paste0("LOQFL_", input$yaxis_param))
+    xlabs <- reactive(paste0("LBSTRESC_", input$xaxis_param))
+    ylabs <- reactive(paste0("LBSTRESC_", input$yaxis_param))
 
     # transpose data to plot
     plot_data_transpose <- reactive({
@@ -676,17 +678,37 @@ srv_g_correlationplot <- function(id,
               sep = "_",
               remove = TRUE
             ) %>%
-            tidyr::pivot_wider(names_from = "ANL.PARAM", values_from = "ANLVALS") %>%
-            dplyr::mutate(LOQFL_COMB = dplyr::case_when(
-              .data[[.(xloqfl())]] == "Y" | .data[[.(yloqfl())]] == "Y" ~ "Y",
-              .data[[.(xloqfl())]] == "N" & .data[[.(yloqfl())]] == "N" ~ "N",
-              .data[[.(xloqfl())]] == "N" & .data[[.(yloqfl())]] == "NA" ~ "N",
-              .data[[.(xloqfl())]] == "NA" & .data[[.(yloqfl())]] == "N" ~ "N",
-              .data[[.(xloqfl())]] == "NA" & .data[[.(yloqfl())]] == "NA" ~ "NA",
-              TRUE ~ as.character(NA)
-            ))
+            tidyr::pivot_wider(names_from = "ANL.PARAM", values_from = "ANLVALS")
 
           ANL_TRANSPOSED <- merge(ANL_TRANSPOSED1, ANL_TRANSPOSED2) # nolint
+          ANL_TRANSPOSED <- ANL_TRANSPOSED %>%
+            dplyr::mutate(
+              xloqfl_temp = dplyr::case_when(
+                .data[[.(xloqfl())]] == "Y" & (
+                  (grepl("<", .data[[.(xlabs())]]) & .data[[.(xvar())]] < as.numeric(gsub("[^0-9.-]", "", .data[[.(xlabs())]]))) |
+                    (grepl(">", .data[[.(xlabs())]]) & .data[[.(xvar())]] > as.numeric(gsub("[^0-9.-]", "", .data[[.(xlabs())]])))
+                ) ~ "Y",
+                .data[[.(xloqfl())]] == "Y" ~ "N",
+                TRUE ~ as.character(.data[[.(xloqfl())]])
+              ),
+              yloqfl_temp = dplyr::case_when(
+                .data[[.(yloqfl())]] == "Y" & (
+                  (grepl("<", .data[[.(ylabs())]]) & .data[[.(yvar())]] < as.numeric(gsub("[^0-9.-]", "", .data[[.(ylabs())]]))) |
+                    (grepl(">", .data[[.(ylabs())]]) & .data[[.(yvar())]] > as.numeric(gsub("[^0-9.-]", "", .data[[.(ylabs())]])))
+                ) ~ "Y",
+                .data[[.(yloqfl())]] == "Y" ~ "N",
+                TRUE ~ as.character(.data[[.(yloqfl())]])
+              )
+            ) %>%
+            dplyr::mutate(LOQFL_COMB = dplyr::case_when(
+              xloqfl_temp == "Y" | yloqfl_temp == "Y" ~ "Y",
+              xloqfl_temp == "N" & yloqfl_temp == "N" ~ "N",
+              xloqfl_temp == "N" & yloqfl_temp == "NA" ~ "N",
+              xloqfl_temp == "NA" & yloqfl_temp == "N" ~ "N",
+              xloqfl_temp == "NA" & yloqfl_temp == "NA" ~ "NA",
+              TRUE ~ as.character(NA)
+            )) %>%
+            dplyr::select(-xloqfl_temp, -yloqfl_temp)
         })
       )
 
