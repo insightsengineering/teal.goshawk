@@ -683,28 +683,32 @@ srv_g_correlationplot <- function(id,
           ANL_TRANSPOSED <- merge(ANL_TRANSPOSED1, ANL_TRANSPOSED2) # nolint
           ANL_TRANSPOSED <- ANL_TRANSPOSED %>%
             dplyr::mutate(
-              x_temp = ifelse(
+              xloqfl_temp = dplyr::case_when(
                 .data[[.(xloqfl())]] == "Y" & (
                   (grepl("<", .data[[.(xlabs())]]) & .data[[.(xvar())]] < as.numeric(gsub("[^0-9.-]", "", .data[[.(xlabs())]]))) |
                     (grepl(">", .data[[.(xlabs())]]) & .data[[.(xvar())]] > as.numeric(gsub("[^0-9.-]", "", .data[[.(xlabs())]])))
-                ), "Y", ifelse(.data[[.(xloqfl())]] == "Y", "N", as.character(.data[[.(xloqfl())]]))
+                ) ~ "Y",
+                .data[[.(xloqfl())]] == "Y" ~ "N",
+                TRUE ~ as.character(.data[[.(xloqfl())]])
               ),
-              y_temp = ifelse(
+              yloqfl_temp = dplyr::case_when(
                 .data[[.(yloqfl())]] == "Y" & (
                   (grepl("<", .data[[.(ylabs())]]) & .data[[.(yvar())]] < as.numeric(gsub("[^0-9.-]", "", .data[[.(ylabs())]]))) |
                     (grepl(">", .data[[.(ylabs())]]) & .data[[.(yvar())]] > as.numeric(gsub("[^0-9.-]", "", .data[[.(ylabs())]])))
-                ), "Y", ifelse(.data[[.(yloqfl())]] == "Y", "N", as.character(.data[[.(yloqfl())]]))
+                ) ~ "Y",
+                .data[[.(yloqfl())]] == "Y" ~ "N",
+                TRUE ~ as.character(.data[[.(yloqfl())]])
               )
             ) %>%
             dplyr::mutate(LOQFL_COMB = dplyr::case_when(
-              x_temp == "Y" | y_temp == "Y" ~ "Y",
-              x_temp == "N" & y_temp == "N" ~ "N",
-              x_temp == "N" & y_temp == "NA" ~ "N",
-              x_temp == "NA" & y_temp == "N" ~ "N",
-              x_temp == "NA" & y_temp == "NA" ~ "NA",
+              xloqfl_temp == "Y" | yloqfl_temp == "Y" ~ "Y",
+              xloqfl_temp == "N" & yloqfl_temp == "N" ~ "N",
+              xloqfl_temp == "N" & yloqfl_temp == "NA" ~ "N",
+              xloqfl_temp == "NA" & yloqfl_temp == "N" ~ "N",
+              xloqfl_temp == "NA" & yloqfl_temp == "NA" ~ "NA",
               TRUE ~ as.character(NA)
             )) %>%
-            dplyr::select(-x_temp, -y_temp)
+            dplyr::select(-xloqfl_temp, -yloqfl_temp)
         })
       )
 
