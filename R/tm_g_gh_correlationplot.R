@@ -605,8 +605,8 @@ srv_g_correlationplot <- function(id,
     keep_data_const_opts_updated(session, input, anl_constraint, "xaxis_param")
 
     # selector names after transposition
-    xvar <- reactive(paste0(input$xaxis_var, ".", input$xaxis_param))
-    yvar <- reactive(paste0(input$yaxis_var, ".", input$yaxis_param))
+    xvar <- reactive(paste0(input$xaxis_var, "_", input$xaxis_param))
+    yvar <- reactive(paste0(input$yaxis_var, "_", input$yaxis_param))
     xloqfl <- reactive(paste0("LOQFL_", input$xaxis_param))
     yloqfl <- reactive(paste0("LOQFL_", input$yaxis_param))
 
@@ -619,86 +619,94 @@ srv_g_correlationplot <- function(id,
       trt_group <- input$trt_group
       line_vars <- unique(c(input$hline_vars, input$vline_vars))
 
-      private_q <- anl_constraint()$qenv %>% teal.code::eval_code(
+      qenv <- anl_constraint()$qenv %>% teal.code::eval_code(
         code = bquote({
-          ANL_TRANSPOSED1 <- ANL %>% # nolint
-            dplyr::select(
-              .data[["USUBJID"]],
-              .data[[.(trt_group)]],
-              .data[["AVISITCD"]],
-              .data[[.(param_var)]],
-              .data[[.(input$xaxis_var)]],
-              .data[[.(input$yaxis_var)]],
-              .(`if`(length(line_vars) == 0, NULL, line_vars))
-            ) %>%
-            tidyr::pivot_longer(
-              c(
-                .data[[.(input$xaxis_var)]],
-                .data[[.(input$yaxis_var)]],
-                .(`if`(length(line_vars) == 0, NULL, line_vars))
-              ),
-              names_to = "ANLVARS",
-              values_to = "ANLVALS"
-            ) %>%
-            tidyr::unite(
-              "ANL.PARAM",
-              "ANLVARS",
-              .(param_var),
-              sep = ".",
-              remove = TRUE
-            ) %>%
-            tidyr::pivot_wider(names_from = "ANL.PARAM", values_from = "ANLVALS") %>%
-            dplyr::filter(!is.na(.data[[.(xvar())]]) & !is.na(.data[[.(yvar())]]))
-
-          ANL_TRANSPOSED2 <- ANL %>% # nolint
-            dplyr::select(
-              .data[["USUBJID"]],
-              .data[[.(trt_group)]],
-              .data[["AVISITCD"]],
-              .data[[.(param_var)]],
-              .data[["LOQFL"]],
-              .data[["PARAM"]],
-              .data[["LBSTRESC"]]
-            ) %>%
-            tidyr::pivot_longer(
-              c(
-                .data[["LOQFL"]],
-                .data[["PARAM"]],
-                .data[["LBSTRESC"]]
-              ),
-              names_to = "ANLVARS",
-              values_to = "ANLVALS"
-            ) %>%
-            tidyr::unite(
-              "ANL.PARAM",
-              "ANLVARS",
-              .(param_var),
-              sep = "_",
-              remove = TRUE
-            ) %>%
-            tidyr::pivot_wider(names_from = "ANL.PARAM", values_from = "ANLVALS") %>%
-            dplyr::mutate(LOQFL_COMB = dplyr::case_when(
-              .data[[.(xloqfl())]] == "Y" | .data[[.(yloqfl())]] == "Y" ~ "Y",
-              .data[[.(xloqfl())]] == "N" & .data[[.(yloqfl())]] == "N" ~ "N",
-              .data[[.(xloqfl())]] == "N" & .data[[.(yloqfl())]] == "NA" ~ "N",
-              .data[[.(xloqfl())]] == "NA" & .data[[.(yloqfl())]] == "N" ~ "N",
-              .data[[.(xloqfl())]] == "NA" & .data[[.(yloqfl())]] == "NA" ~ "NA",
-              TRUE ~ as.character(NA)
-            ))
-
-          ANL_TRANSPOSED <- merge(ANL_TRANSPOSED1, ANL_TRANSPOSED2) # nolint
+          var_x <-
+            ANL_x <- ANL %>%
+            dplyr::filter(.data[[.(param_var)]] == .(input$xaxis_param) & !is.na(.data[[.(input$xaxis_var)]]))
         })
       )
 
-      validate(need(nrow(private_q[["ANL_TRANSPOSED"]]) > 0, "Plot Data No Observations Left"))
-      validate_has_variable(data = private_q[["ANL_TRANSPOSED"]], varname = c(xvar(), yvar(), xloqfl(), yloqfl()))
+      if (input$xaxis_var == "BASE") {
+        qenv <- qenv %>% within({
+          ANL_x <- ANL_x |>
+            dplyr::group_by(USUBJID) %>%
+            mutate(LOQFL = LOQFL[AVISITCD == "BL"]) %>%
+            dplyr::ungroup()
+        })
+      } else if (input$xaxis_var != "AVAL") {
+        qenv <- qenv %>% within({
+          ANL_x <- ANL_x |>
+            dplyr::mutate(LOQFL = "N")
+        })
+      }
 
-      private_q <- teal.code::eval_code(
-        object = private_q,
+      qenv <- qenv %>% teal.code::eval_code(
+        code = bquote({
+          ANL_x <- ANL_x %>%
+            dplyr::select(
+              .(c("USUBJID", trt_group, "AVISITCD", param_var, "PARAM", input$xaxis_var, input$yaxis_var, "LOQFL", "LBSTRESC", line_vars))
+            )
+        })
+      )
+
+      qenv <- qenv %>% teal.code::eval_code(
+        code = bquote({
+          ANL_y <- ANL %>%
+            dplyr::filter(.data[[.(param_var)]] == .(input$yaxis_param) & !is.na(.data[[.(input$yaxis_var)]]))
+        })
+      )
+
+      if (input$yaxis_var == "BASE") {
+        qenv <- qenv %>% within({
+          ANL_y <- ANL_y |>
+            dplyr::group_by(USUBJID) %>%
+            mutate(LOQFL = LOQFL[AVISITCD == "BL"]) %>%
+            dplyr::ungroup()
+        })
+      } else if (input$yaxis_var != "AVAL") {
+        qenv <- qenv %>% within({
+          ANL_y <- ANL_y |>
+            dplyr::mutate(LOQFL = "N")
+        })
+      }
+
+      qenv <- qenv %>% teal.code::eval_code(
+        code = bquote({
+          ANL_y <- ANL_y %>%
+            dplyr::select(
+              .(c("USUBJID", trt_group, "AVISITCD", param_var, "PARAM", input$xaxis_var, input$yaxis_var, "LOQFL", "LBSTRESC", line_vars))
+            )
+        })
+      )
+
+      qenv <- qenv %>% teal.code::eval_code(
+        code = bquote({
+          ANL_TRANSPOSED <- merge(
+            ANL_x, ANL_y,
+            by = c("USUBJID", "AVISITCD", .(trt_group)),
+            suffix = .(sprintf("_%s", c(input$xaxis_param, input$yaxis_param)))
+          )
+          ANL_TRANSPOSED <- ANL_TRANSPOSED %>%
+            dplyr::mutate(
+              LOQFL_COMB = case_when(
+                .data[[.(xloqfl())]] == "Y" | .data[[.(yloqfl())]] == "Y" ~ "Y",
+                .data[[.(xloqfl())]] == "N" | .data[[.(yloqfl())]] == "N" ~ "N",
+                TRUE ~ "NA"
+              )
+            )
+        })
+      )
+
+      validate(need(nrow(qenv[["ANL_TRANSPOSED"]]) > 0, "Plot Data No Observations Left"))
+      validate_has_variable(data = qenv[["ANL_TRANSPOSED"]], varname = c(xvar(), yvar(), xloqfl(), yloqfl()))
+
+      qenv <- teal.code::eval_code(
+        object = qenv,
         code =
           bquote(attr(ANL_TRANSPOSED[[.(trt_group)]], "label") <- attr(ANL[[.(trt_group)]], "label")) # nolint
       )
-      return(list(ANL_TRANSPOSED = private_q[["ANL_TRANSPOSED"]], qenv = private_q))
+      return(list(ANL_TRANSPOSED = qenv[["ANL_TRANSPOSED"]], qenv = qenv))
     })
 
     plot_labels <- reactive({
@@ -747,7 +755,7 @@ srv_g_correlationplot <- function(id,
       hline_vars <- if (length(input$hline_vars) == 0) {
         NULL
       } else {
-        paste0(input$hline_vars, ".", yaxis_param)
+        paste0(input$hline_vars, "_", yaxis_param)
       }
       vline_arb <- vertical_line()$line_arb
       vline_arb_label <- vertical_line()$line_arb_label
@@ -755,7 +763,7 @@ srv_g_correlationplot <- function(id,
       vline_vars <- if (length(input$vline_vars) == 0) {
         NULL
       } else {
-        paste0(input$vline_vars, ".", xaxis_param)
+        paste0(input$vline_vars, "_", xaxis_param)
       }
       facet_ncol <- input$facet_ncol
       validate(need(
