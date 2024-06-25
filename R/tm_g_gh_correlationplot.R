@@ -681,7 +681,7 @@ srv_g_correlationplot <- function(id,
 
       qenv <- qenv %>% teal.code::eval_code(
         code = bquote({
-          ANL_TRANSPOSED <- merge(
+          ANL_TRANSPOSED <- dplyr::full_join(
             ANL_x, ANL_y,
             by = c("USUBJID", "AVISITCD", .(trt_group)),
             suffix = .(sprintf("_%s", c(input$xaxis_param, input$yaxis_param)))
