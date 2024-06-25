@@ -621,8 +621,7 @@ srv_g_correlationplot <- function(id,
 
       qenv <- anl_constraint()$qenv %>% teal.code::eval_code(
         code = bquote({
-          var_x <-
-            ANL_x <- ANL %>%
+          ANL_x <- ANL %>%
             dplyr::filter(.data[[.(param_var)]] == .(input$xaxis_param) & !is.na(.data[[.(input$xaxis_var)]]))
         })
       )
