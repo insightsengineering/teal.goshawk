@@ -517,7 +517,13 @@ srv_g_correlationplot <- function(id,
         teal.code::eval_code(
           code = bquote({
             ANL <- .(as.name(dataset_var)) %>% # nolint
-              dplyr::filter(.data[[.(param_var)]] %in% union(.(input$xaxis_param), .(input$yaxis_param)))
+              dplyr::filter(.data[[.(param_var)]] %in% union(.(input$xaxis_param), .(input$yaxis_param))) %>%
+              dplyr::select(
+                .(c(
+                  "USUBJID", input$trt_group, "AVISITCD", param_var, "PARAM", input$xaxis_var, input$yaxis_var,
+                  "LOQFL", "LBSTRESC", unique(c(input$hline_vars, input$vline_vars))
+                ))
+              )
           })
         )
       validate_has_data(private_qenv[["ANL"]], 1)
@@ -617,7 +623,6 @@ srv_g_correlationplot <- function(id,
       req(anl_constraint())
       ANL <- anl_constraint()$ANL # nolint
       trt_group <- input$trt_group
-      line_vars <- unique(c(input$hline_vars, input$vline_vars))
 
       qenv <- anl_constraint()$qenv %>% teal.code::eval_code(
         code = bquote({
@@ -642,15 +647,6 @@ srv_g_correlationplot <- function(id,
 
       qenv <- qenv %>% teal.code::eval_code(
         code = bquote({
-          ANL_x <- ANL_x %>%
-            dplyr::select(
-              .(c("USUBJID", trt_group, "AVISITCD", param_var, "PARAM", input$xaxis_var, input$yaxis_var, "LOQFL", "LBSTRESC", line_vars))
-            )
-        })
-      )
-
-      qenv <- qenv %>% teal.code::eval_code(
-        code = bquote({
           ANL_y <- ANL %>%
             dplyr::filter(.data[[.(param_var)]] == .(input$yaxis_param) & !is.na(.data[[.(input$yaxis_var)]]))
         })
@@ -669,15 +665,6 @@ srv_g_correlationplot <- function(id,
             dplyr::mutate(LOQFL = "N")
         })
       }
-
-      qenv <- qenv %>% teal.code::eval_code(
-        code = bquote({
-          ANL_y <- ANL_y %>%
-            dplyr::select(
-              .(c("USUBJID", trt_group, "AVISITCD", param_var, "PARAM", input$xaxis_var, input$yaxis_var, "LOQFL", "LBSTRESC", line_vars))
-            )
-        })
-      )
 
       qenv <- qenv %>% teal.code::eval_code(
         code = bquote({
