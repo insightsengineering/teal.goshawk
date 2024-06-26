@@ -626,54 +626,54 @@ srv_g_correlationplot <- function(id,
 
       qenv <- anl_constraint()$qenv %>% teal.code::eval_code(
         code = bquote({
-          ANL_x <- ANL %>%
+          ANL_x <- ANL %>% # nolint
             dplyr::filter(.data[[.(param_var)]] == .(input$xaxis_param) & !is.na(.data[[.(input$xaxis_var)]]))
         })
       )
 
       if (input$xaxis_var == "BASE") {
         qenv <- qenv %>% within({
-          ANL_x <- ANL_x |>
+          ANL_x <- ANL_x |> # nolint
             dplyr::group_by(.data[["USUBJID"]]) %>%
             dplyr::mutate(LOQFL = .data[["LOQFL"]][.data[["AVISITCD"]] == "BL"]) %>%
             dplyr::ungroup()
         })
       } else if (input$xaxis_var != "AVAL") {
         qenv <- qenv %>% within({
-          ANL_x <- ANL_x |>
+          ANL_x <- ANL_x |> # nolint
             dplyr::mutate(LOQFL = "N")
         })
       }
 
       qenv <- qenv %>% teal.code::eval_code(
         code = bquote({
-          ANL_y <- ANL %>%
+          ANL_y <- ANL %>% # nolint
             dplyr::filter(.data[[.(param_var)]] == .(input$yaxis_param) & !is.na(.data[[.(input$yaxis_var)]]))
         })
       )
 
       if (input$yaxis_var == "BASE") {
         qenv <- qenv %>% within({
-          ANL_y <- ANL_y |>
+          ANL_y <- ANL_y |> # nolint
             dplyr::group_by(.data[["USUBJID"]]) %>%
             dplyr::mutate(LOQFL = .data[["LOQFL"]][.data[["AVISITCD"]] == "BL"]) %>%
             dplyr::ungroup()
         })
       } else if (input$yaxis_var != "AVAL") {
         qenv <- qenv %>% within({
-          ANL_y <- ANL_y |>
+          ANL_y <- ANL_y |> # nolint
             dplyr::mutate(LOQFL = "N")
         })
       }
 
       qenv <- qenv %>% teal.code::eval_code(
         code = bquote({
-          ANL_TRANSPOSED <- dplyr::full_join(
+          ANL_TRANSPOSED <- dplyr::full_join( # nolint
             ANL_x, ANL_y,
             by = c("USUBJID", "AVISITCD", .(trt_group)),
             suffix = .(sprintf("_%s", c(input$xaxis_param, input$yaxis_param)))
           )
-          ANL_TRANSPOSED <- ANL_TRANSPOSED %>%
+          ANL_TRANSPOSED <- ANL_TRANSPOSED %>% # nolint
             dplyr::mutate(
               LOQFL_COMB = case_when(
                 .data[[.(xloqfl())]] == "Y" | .data[[.(yloqfl())]] == "Y" ~ "Y",
