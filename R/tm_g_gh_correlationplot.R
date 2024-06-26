@@ -634,8 +634,8 @@ srv_g_correlationplot <- function(id,
       if (input$xaxis_var == "BASE") {
         qenv <- qenv %>% within({
           ANL_x <- ANL_x |>
-            dplyr::group_by(USUBJID) %>%
-            mutate(LOQFL = LOQFL[AVISITCD == "BL"]) %>%
+            dplyr::group_by(.data[["USUBJID"]]) %>%
+            dplyr::mutate(LOQFL = .data[["LOQFL"]][.data[["AVISITCD"]] == "BL"]) %>%
             dplyr::ungroup()
         })
       } else if (input$xaxis_var != "AVAL") {
@@ -655,8 +655,8 @@ srv_g_correlationplot <- function(id,
       if (input$yaxis_var == "BASE") {
         qenv <- qenv %>% within({
           ANL_y <- ANL_y |>
-            dplyr::group_by(USUBJID) %>%
-            mutate(LOQFL = LOQFL[AVISITCD == "BL"]) %>%
+            dplyr::group_by(.data[["USUBJID"]]) %>%
+            dplyr::mutate(LOQFL = .data[["LOQFL"]][.data[["AVISITCD"]] == "BL"]) %>%
             dplyr::ungroup()
         })
       } else if (input$yaxis_var != "AVAL") {
