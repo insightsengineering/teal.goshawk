@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE coverage SYSTEM "https://raw.githubusercontent.com/cobertura/cobertura/master/cobertura/src/site/htdocs/xml/coverage-04.dtd">
-<coverage line-rate="0" branch-rate="0" lines-covered="0" lines-valid="2911" branches-covered="0" branches-valid="0" complexity="0" version="3.6.4" timestamp="2024-06-27 13:57:12.94837">
+<coverage line-rate="0" branch-rate="0" lines-covered="0" lines-valid="2918" branches-covered="0" branches-valid="0" complexity="0" version="3.6.4" timestamp="2024-07-03 10:22:45.357692">
   <sources>
     <source>/__w/teal.goshawk/teal.goshawk/teal.goshawk</source>
   </sources>
@@ -6012,9 +6012,16 @@
             </method>
             <method name="get_choices" signature="" line-rate="0" branch-rate="0" complexity="0">
               <lines>
-                <line number="96" hits="0" branch="false"/>
-                <line number="97" hits="0" branch="false"/>
+                <line number="98" hits="0" branch="false"/>
                 <line number="99" hits="0" branch="false"/>
+                <line number="100" hits="0" branch="false"/>
+                <line number="101" hits="0" branch="false"/>
+                <line number="102" hits="0" branch="false"/>
+                <line number="103" hits="0" branch="false"/>
+                <line number="104" hits="0" branch="false"/>
+                <line number="106" hits="0" branch="false"/>
+                <line number="109" hits="0" branch="false"/>
+                <line number="112" hits="0" branch="false"/>
               </lines>
             </method>
           </methods>
@@ -6058,9 +6065,16 @@
             <line number="81" hits="0" branch="false"/>
             <line number="82" hits="0" branch="false"/>
             <line number="83" hits="0" branch="false"/>
-            <line number="96" hits="0" branch="false"/>
-            <line number="97" hits="0" branch="false"/>
+            <line number="98" hits="0" branch="false"/>
             <line number="99" hits="0" branch="false"/>
+            <line number="100" hits="0" branch="false"/>
+            <line number="101" hits="0" branch="false"/>
+            <line number="102" hits="0" branch="false"/>
+            <line number="103" hits="0" branch="false"/>
+            <line number="104" hits="0" branch="false"/>
+            <line number="106" hits="0" branch="false"/>
+            <line number="109" hits="0" branch="false"/>
+            <line number="112" hits="0" branch="false"/>
           </lines>
         </class>
         <class name="zzz.R" filename="R/zzz.R" line-rate="0" branch-rate="0" complexity="0">
