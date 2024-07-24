@@ -668,13 +668,11 @@ srv_g_correlationplot <- function(id,
 
       qenv <- qenv %>% teal.code::eval_code(
         code = bquote({
-          ANL_TRANSPOSED <- merge( # nolint
+          ANL_TRANSPOSED <- dplyr::inner_join( # nolint
             ANL_x, ANL_y,
             by = c("USUBJID", "AVISITCD", .(trt_group)),
-            suffixes = .(sprintf("_%s", c(input$xaxis_param, input$yaxis_param)))
+            suffix = .(sprintf("_%s", c(input$xaxis_param, input$yaxis_param)))
           )
-          # If xaxis_param == yaxis_param then we get duplicated columns.
-          ANL_TRANSPOSED <- ANL_TRANSPOSED[, !duplicated(names(ANL_TRANSPOSED))] # nolint
           ANL_TRANSPOSED <- ANL_TRANSPOSED %>% # nolint
             dplyr::mutate(
               LOQFL_COMB = case_when(
