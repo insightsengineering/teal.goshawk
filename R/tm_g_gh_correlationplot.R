@@ -674,7 +674,7 @@ srv_g_correlationplot <- function(id,
             suffixes = .(sprintf("_%s", c(input$xaxis_param, input$yaxis_param)))
           )
           # If xaxis_param == yaxis_param then we get duplicated columns.
-          ANL_TRANSPOSED <- ANL_TRANSPOSED[, unique(names(ANL_TRANSPOSED))]
+          ANL_TRANSPOSED <- ANL_TRANSPOSED[, unique(names(ANL_TRANSPOSED))] # nolint
           ANL_TRANSPOSED <- ANL_TRANSPOSED %>% # nolint
             dplyr::mutate(
               LOQFL_COMB = case_when(
