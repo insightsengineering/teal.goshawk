@@ -673,6 +673,8 @@ srv_g_correlationplot <- function(id,
             by = c("USUBJID", "AVISITCD", .(trt_group)),
             suffixes = .(sprintf("_%s", c(input$xaxis_param, input$yaxis_param)))
           )
+          # If xaxis_param == yaxis_param then we get duplicated columns.
+          ANL_TRANSPOSED <- ANL_TRANSPOSED[, unique(names(ANL_TRANSPOSED))]
           ANL_TRANSPOSED <- ANL_TRANSPOSED %>% # nolint
             dplyr::mutate(
               LOQFL_COMB = case_when(
