@@ -367,6 +367,7 @@ srv_g_density_distribution_plot <- function(id, # nolint
             hline_arb_color = .(hline_arb_color),
             rug_plot = .(rug_plot)
           )
+          print(p)
         })
       )
     })
@@ -419,11 +420,13 @@ srv_g_density_distribution_plot <- function(id, # nolint
       teal.code::join(create_plot(), create_table())
     })
 
+    code <- reactive(
+      paste0(teal.code::get_code(joined_qenvs()), "\nprint(tbl)")
+    )
+
     teal.widgets::verbatim_popup_srv(
       id = "rcode",
-      verbatim_content = reactive(
-        teal.code::get_code(joined_qenvs())
-      ),
+      verbatim_content = reactive(code()),
       title = "Show R Code for Density Distribution Plot"
     )
 
@@ -451,11 +454,7 @@ srv_g_density_distribution_plot <- function(id, # nolint
           card$append_text("Comment", "header3")
           card$append_text(comment)
         }
-        card$append_src(
-          teal.code::get_code(
-            teal.code::join(create_plot(), create_table())
-          )
-        )
+        card$append_src(code())
         card
       }
       teal.reporter::simple_reporter_srv("simple_reporter", reporter = reporter, card_fun = card_fun)
