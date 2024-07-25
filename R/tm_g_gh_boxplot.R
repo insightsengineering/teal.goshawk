@@ -522,7 +522,7 @@ srv_g_boxplot <- function(id,
     })
 
     code <- reactive(
-      paste0(teal.code::get_code(joined_qenvs()), '\nprint(tbl)')
+      paste0(teal.code::get_code(joined_qenvs()), "\nprint(tbl)")
     )
 
     ### REPORTER
