@@ -6,7 +6,6 @@
 * Adapted all modules to use `teal_data` objects.
 
 ### Enhancements
-* Added `teal.logger` functionality for logging changes in shiny inputs in all modules.
 * Updated the documentation and vignettes to demonstrate method to pass `teal_data` object to `teal::init()`.
 
 ### Miscellaneous
