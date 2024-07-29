@@ -1,32 +1,29 @@
-# teal.goshawk 0.1.15.9028
-
-* Removed `Show Warnings` modals from modules.
+# teal.goshawk 0.2.0
 
 ### Breaking Changes
 * Adapted all modules to use `teal_data` objects.
 
 ### Enhancements
 * Updated the documentation and vignettes to demonstrate method to pass `teal_data` object to `teal::init()`.
+* Removed `Show Warnings` modals from modules.
 
 ### Miscellaneous
-
 * Specified minimal version of package dependencies.
+* Fix the `tm_g_gh_lineplot` bug causing an out-of-bounds error that stops the plot from working.
+* Enhance the `tm_g_gh_correlationplot` module and fix related bugs.
 
 # teal.goshawk 0.1.15
 
 ### Enhancements
-
 * Updated encodings input checks to use `shinyvalidate::InputValidator` instead of `shiny::validate` for better UI experience.
 * Added a tooltip to value input of `ui_arbitrary_lines` to explain how to supply multiple values.
 
 ### Breaking changes
-
 * Constraints range is calculated on the filtered data instead of the unfiltered.
 * Replaced `chunks` with simpler `qenv` class.
 * Replaced `datasets` argument containing `FilteredData` with the new arguments `data` (`tdata` object) and `filter_panel_api` (`FilterPanelAPI`).
 
 ### Miscellaneous
-
 * Deprecated `tm_g_gh_scatterplot`. Use `tm_g_gh_correlationplot` instead.
 * Removed `scda` package dependency from examples.
 
