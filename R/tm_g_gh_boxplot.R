@@ -490,6 +490,7 @@ srv_g_boxplot <- function(id,
             xaxis_var = .(xaxis_var),
             facet_var = .(input$facet_var)
           )
+          tbl
         })
       )
     })
@@ -521,9 +522,7 @@ srv_g_boxplot <- function(id,
       teal.code::join(create_plot(), create_table())
     })
 
-    code <- reactive(
-      paste0(teal.code::get_code(joined_qenvs()), "\nprint(tbl)")
-    )
+    code <- reactive(teal.code::get_code(joined_qenvs()))
 
     ### REPORTER
     if (with_reporter) {

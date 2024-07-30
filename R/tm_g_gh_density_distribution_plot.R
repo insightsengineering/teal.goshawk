@@ -382,7 +382,7 @@ srv_g_density_distribution_plot <- function(id, # nolint
 
       teal.code::eval_code(
         object = anl_q()$qenv,
-        code = bquote(
+        code = bquote({
           tbl <- goshawk::t_summarytable(
             data = ANL,
             trt_group = .(trt_group),
@@ -391,7 +391,8 @@ srv_g_density_distribution_plot <- function(id, # nolint
             xaxis_var = .(xaxis_var),
             font_size = .(font_size)
           )
-        )
+          tbl
+        })
       )
     })
 
@@ -420,9 +421,7 @@ srv_g_density_distribution_plot <- function(id, # nolint
       teal.code::join(create_plot(), create_table())
     })
 
-    code <- reactive(
-      paste0(teal.code::get_code(joined_qenvs()), "\nprint(tbl)")
-    )
+    code <- reactive(teal.code::get_code(joined_qenvs()))
 
     teal.widgets::verbatim_popup_srv(
       id = "rcode",
