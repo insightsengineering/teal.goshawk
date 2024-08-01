@@ -1,8 +1,8 @@
 Type: Package
 Package: teal.goshawk
 Title: Longitudinal Visualization `teal` Modules
-Version: 0.1.15.9028
-Date: 2024-07-29
+Version: 0.2.0.9000
+Date: 2024-07-30
 Authors@R: c(
     person("Nick", "Paszty", , "nick.paszty@gene.com", role = c("aut", "cre")),
     person("Dawid", "Kaledkowski", , "dawid.kaledkowski@roche.com", role = "aut"),
@@ -29,11 +29,11 @@ URL: https://insightsengineering.github.io/teal.goshawk/,
     https://github.com/insightsengineering/teal.goshawk/
 BugReports: https://github.com/insightsengineering/teal.goshawk/issues
 Depends:
-    goshawk (>= 0.1.17),
+    goshawk (>= 0.1.18),
     R (>= 3.6),
     shiny (>= 1.6.0),
-    teal (>= 0.14.0.9027),
-    teal.transform (>= 0.4.0.9011)
+    teal (>= 0.15.2),
+    teal.transform (>= 0.5.0)
 Imports:
     checkmate (>= 2.1.0),
     colourpicker,
@@ -47,7 +47,7 @@ Imports:
     shinyjs,
     shinyvalidate,
     stats,
-    teal.code (>= 0.4.1.9009),
+    teal.code (>= 0.5.0),
     teal.logger (>= 0.2.0),
     teal.reporter (>= 0.2.0),
     teal.widgets (>= 0.4.0)
@@ -56,7 +56,7 @@ Suggests:
     nestcolor (>= 0.1.0),
     rmarkdown (>= 2.23),
     stringr (>= 1.4.1),
-    teal.data (>= 0.3.0.9018),
+    teal.data (>= 0.5.0),
     tern (>= 0.7.10),
     testthat (>= 3.0.4),
     utils
