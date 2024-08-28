@@ -24,23 +24,23 @@ This enables `teal` app developers to easily create applications to explore long
 ## Modules
 
 <!-- markdownlint-disable MD007 MD030 -->
--   `tm_g_gh_boxplot`
--   `tm_g_gh_correlationplot`
--   `tm_g_gh_density_distribution_plot`
--   `tm_g_gh_lineplot`
--   `tm_g_gh_spaghettiplot`
+-   [`tm_g_gh_boxplot`](https://insightsengineering.github.io/teal.goshawk/latest-tag/reference/tm_g_gh_boxplot.html)
+-   [`tm_g_gh_correlationplot`](https://insightsengineering.github.io/teal.goshawk/latest-tag/reference/tm_g_gh_correlationplot.html)
+-   [`tm_g_gh_density_distribution_plot`](https://insightsengineering.github.io/teal.goshawk/latest-tag/reference/tm_g_gh_density_distribution_plot.html)
+-   [`tm_g_gh_lineplot`](https://insightsengineering.github.io/teal.goshawk/latest-tag/reference/tm_g_gh_lineplot.html)
+-   [`tm_g_gh_spaghettiplot`](https://insightsengineering.github.io/teal.goshawk/latest-tag/reference/tm_g_gh_spaghettiplot.html)
 <!-- markdownlint-enable MD007 MD030 -->
 
 ## Installation
 
-From July 2023 `insightsengineering` packages are available on [r-universe](https://r-universe.dev/).
-
 ```r
 # stable versions
-install.packages('teal.goshawk', repos = c('https://insightsengineering.r-universe.dev', 'https://cloud.r-project.org'))
+# install.packages("pak")
+pak::pkg_install("insightsengineering/teal.goshawk@*release")
 
 # beta versions
-install.packages('teal.goshawk', repos = c('https://pharmaverse.r-universe.dev', 'https://cloud.r-project.org'))
+# install.packages("pak")
+pak::pkg_install("insightsengineering/teal.goshawk")
 ```
 
 ## Stargazers and Forkers
