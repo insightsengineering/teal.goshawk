@@ -68,7 +68,7 @@ Config/Needs/verdepcheck: insightsengineering/goshawk, rstudio/shiny,
     tidyverse/ggplot2, r-lib/lifecycle, r-lib/rlang, daattali/shinyjs,
     rstudio/shinyvalidate, insightsengineering/teal.code,
     insightsengineering/teal.logger, insightsengineering/teal.reporter,
-    insightsengineering/teal.widgets, tidyverse/tidyr, yihui/knitr,
+    insightsengineering/teal.widgets, yihui/knitr,
     insightsengineering/nestcolor, rstudio/rmarkdown, tidyverse/stringr,
     insightsengineering/teal.data, insightsengineering/tern,
     r-lib/testthat
