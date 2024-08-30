@@ -90,10 +90,10 @@ in the legend.}
 
 \item{alpha}{numeric vector to define transparency of plotted points.}
 
-\item{pre_output}{(\code{shiny.tag}) optional,\cr
+\item{pre_output}{(\code{shiny.tag}, optional)\cr
 with text placed before the output to put the output into context. For example a title.}
 
-\item{post_output}{(\code{shiny.tag}) optional, with text placed after the output to put the output
+\item{post_output}{(\code{shiny.tag}, optional) with text placed after the output to put the output
 into context. For example the \code{\link[shiny:helpText]{shiny::helpText()}} elements are useful.}
 }
 \value{
@@ -104,6 +104,7 @@ This teal module renders the UI and calls the functions that create a box plot a
 summary table.
 }
 \examples{
+\dontshow{if (require("nestcolor")) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
 # Example using ADaM structure analysis dataset.
 data <- teal_data()
 data <- within(data, {
@@ -203,7 +204,7 @@ app <- init(
 if (interactive()) {
   shinyApp(app$ui, app$server)
 }
-
+\dontshow{\}) # examplesIf}
 }
 \author{
 Jeff Tomlinson (tomlinsj) jeffrey.tomlinson@roche.com
