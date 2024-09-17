@@ -300,7 +300,8 @@ srv_g_density_distribution_plot <- function(id, # nolint
       "xaxis_var",
       "xaxis_param",
       anl_q,
-      is_density = TRUE
+      is_density = TRUE,
+      "trt_group"
     )
     keep_data_const_opts_updated(session, input, anl_q, "xaxis_param")
 

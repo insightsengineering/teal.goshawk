@@ -4,7 +4,8 @@ keep_range_slider_updated <- function(session,
                                       id_var,
                                       id_param_var,
                                       reactive_ANL, # nolint
-                                      is_density = FALSE) {
+                                      is_density = FALSE,
+                                      id_trt_group) {
   stopifnot(is.function(update_slider_fcn))
 
   observe({
@@ -25,8 +26,14 @@ keep_range_slider_updated <- function(session,
     step <- NULL
 
     if (isTRUE(is_density)) {
-      minmax <- c(0, round(max(stats::density(stats::na.omit(ANL[[varname]]))$y) * 1.5, 5))
-      step <- round(max(stats::density(stats::na.omit(ANL[[varname]]))$y) / 100, 5)
+      treatname <- input[[id_trt_group]]
+      ANL_split <- ANL %>% split(f = factor(paste0(ANL[['AVISITCD']], ANL[[treatname]])))
+      density_maxes <- lapply(ANL_split, function(x){
+        max(stats::density(stats::na.omit(x[[varname]]))$y)
+      })
+      dmax <- max(unlist(density_maxes))
+      minmax <- c(0, round(dmax * 1.2, 5))
+      step <- round(dmax / 100, 5)
     }
 
     isolate(update_slider_fcn(
