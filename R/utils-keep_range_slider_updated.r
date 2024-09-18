@@ -27,8 +27,8 @@ keep_range_slider_updated <- function(session,
 
     if (isTRUE(is_density)) {
       treatname <- input[[id_trt_group]]
-      ANL_split <- ANL %>% split(f = factor(paste0(ANL[['AVISITCD']], ANL[[treatname]])))
-      density_maxes <- lapply(ANL_split, function(x){
+      ANL_split <- ANL %>% split(f = factor(paste0(ANL[["AVISITCD"]], ANL[[treatname]]))) # nolint
+      density_maxes <- lapply(ANL_split, function(x) {
         max(stats::density(stats::na.omit(x[[varname]]))$y)
       })
       dmax <- max(unlist(density_maxes))
