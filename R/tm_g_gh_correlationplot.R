@@ -519,7 +519,7 @@ srv_g_correlationplot <- function(id,
               dplyr::filter(.data[[.(param_var)]] %in% union(.(input$xaxis_param), .(input$yaxis_param))) %>%
               dplyr::select(
                 .(c(
-                  "USUBJID", input$trt_group, "AVISITCD", param_var, "PARAM", input$xaxis_var, input$yaxis_var,
+                  "USUBJID", input$trt_group, "AVISITCD", param_var, "PARAM", input$xaxis_var, input$yaxis_var, "AVALU",
                   "LOQFL", "LBSTRESC", unique(c(input$hline_vars, input$vline_vars))
                 ))
               )
