@@ -429,8 +429,10 @@ srv_g_scatterplot <- function(id,
 
       numeric_cols <- names(dplyr::select_if(df, is.numeric))
 
-      DT::datatable(df, rownames = FALSE, options = list(scrollX = TRUE),
-                    callback = DT::JS("$.fn.dataTable.ext.errMode = 'none';")) %>%
+      DT::datatable(df,
+        rownames = FALSE, options = list(scrollX = TRUE),
+        callback = DT::JS("$.fn.dataTable.ext.errMode = 'none';")
+      ) %>%
         DT::formatRound(numeric_cols, 4)
     })
 

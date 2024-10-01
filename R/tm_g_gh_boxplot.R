@@ -510,8 +510,10 @@ srv_g_boxplot <- function(id,
 
       numeric_cols <- setdiff(names(dplyr::select_if(tbl, is.numeric)), "n")
 
-      DT::datatable(tbl, rownames = FALSE, options = list(scrollX = TRUE),
-                    callback = DT::JS("$.fn.dataTable.ext.errMode = 'none';")) %>%
+      DT::datatable(tbl,
+        rownames = FALSE, options = list(scrollX = TRUE),
+        callback = DT::JS("$.fn.dataTable.ext.errMode = 'none';")
+      ) %>%
         DT::formatRound(numeric_cols, 4)
     })
 
@@ -578,8 +580,10 @@ srv_g_boxplot <- function(id,
 
       numeric_cols <- names(dplyr::select_if(df, is.numeric))
 
-      DT::datatable(df, rownames = FALSE, options = list(scrollX = TRUE),
-                    callback = DT::JS("$.fn.dataTable.ext.errMode = 'none';")) %>%
+      DT::datatable(df,
+        rownames = FALSE, options = list(scrollX = TRUE),
+        callback = DT::JS("$.fn.dataTable.ext.errMode = 'none';")
+      ) %>%
         DT::formatRound(numeric_cols, 4)
     })
 
