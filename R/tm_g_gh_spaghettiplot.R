@@ -578,7 +578,8 @@ srv_g_spaghettiplot <- function(id,
       df <- df[order(df$PARAMCD, df[[trt_group]], df$USUBJID, df[[xvar]]), ]
       numeric_cols <- names(dplyr::select_if(df, is.numeric))
 
-      DT::datatable(df, rownames = FALSE, options = list(scrollX = TRUE)) %>%
+      DT::datatable(df, rownames = FALSE, options = list(scrollX = TRUE),
+                    callback = DT::JS("$.fn.dataTable.ext.errMode = 'none';")) %>%
         DT::formatRound(numeric_cols, 4)
     })
 
