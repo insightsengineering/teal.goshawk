@@ -410,7 +410,10 @@ srv_g_density_distribution_plot <- function(id, # nolint
       tbl <- create_table()[["tbl"]]
       numeric_cols <- names(dplyr::select_if(tbl, is.numeric))
 
-      DT::datatable(tbl, rownames = FALSE, options = list(scrollX = TRUE)) %>%
+      DT::datatable(tbl,
+        rownames = FALSE, options = list(scrollX = TRUE),
+        callback = DT::JS("$.fn.dataTable.ext.errMode = 'none';")
+      ) %>%
         DT::formatRound(numeric_cols, 2)
     })
 
