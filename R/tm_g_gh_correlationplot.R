@@ -814,7 +814,8 @@ srv_g_correlationplot <- function(id,
           print(p)
         })
       )
-    })
+    }) |>
+      debounce(800)
 
     plot_r <- reactive(plot_q()[["p"]])
 
@@ -862,8 +863,7 @@ srv_g_correlationplot <- function(id,
     }
     ###
 
-    # highlight plot area
-    output$brush_data <- DT::renderDataTable({
+    reactive_df <- reactive({
       req(iv_r()$is_valid())
       plot_brush <- plot_data$brush()
 
@@ -876,10 +876,14 @@ srv_g_correlationplot <- function(id,
         ),
         plot_brush
       )
+    }) |>
+      debounce(800)
 
-      numeric_cols <- names(dplyr::select_if(df, is.numeric))
+    # highlight plot area
+    output$brush_data <- DT::renderDataTable({
+      numeric_cols <- names(dplyr::select_if(reactive_df(), is.numeric))
 
-      DT::datatable(df,
+      DT::datatable(reactive_df(),
         rownames = FALSE, options = list(scrollX = TRUE),
         callback = DT::JS("$.fn.dataTable.ext.errMode = 'none';")
       ) %>%
