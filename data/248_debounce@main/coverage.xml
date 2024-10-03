@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE coverage SYSTEM "https://raw.githubusercontent.com/cobertura/cobertura/master/cobertura/src/site/htdocs/xml/coverage-04.dtd">
-<coverage line-rate="0" branch-rate="0" lines-covered="0" lines-valid="2939" branches-covered="0" branches-valid="0" complexity="0" version="3.6.4" timestamp="2024-10-02 13:03:58.786019">
+<coverage line-rate="0" branch-rate="0" lines-covered="0" lines-valid="2938" branches-covered="0" branches-valid="0" complexity="0" version="3.6.4" timestamp="2024-10-03 09:26:52.557058">
   <sources>
     <source>/__w/teal.goshawk/teal.goshawk/teal.goshawk</source>
   </sources>
@@ -1308,13 +1308,12 @@
                 <line number="888" hits="0" branch="false"/>
                 <line number="889" hits="0" branch="false"/>
                 <line number="890" hits="0" branch="false"/>
-                <line number="891" hits="0" branch="false"/>
+                <line number="892" hits="0" branch="false"/>
                 <line number="893" hits="0" branch="false"/>
                 <line number="894" hits="0" branch="false"/>
                 <line number="895" hits="0" branch="false"/>
                 <line number="896" hits="0" branch="false"/>
                 <line number="897" hits="0" branch="false"/>
-                <line number="898" hits="0" branch="false"/>
               </lines>
             </method>
           </methods>
@@ -1874,13 +1873,12 @@
             <line number="888" hits="0" branch="false"/>
             <line number="889" hits="0" branch="false"/>
             <line number="890" hits="0" branch="false"/>
-            <line number="891" hits="0" branch="false"/>
+            <line number="892" hits="0" branch="false"/>
             <line number="893" hits="0" branch="false"/>
             <line number="894" hits="0" branch="false"/>
             <line number="895" hits="0" branch="false"/>
             <line number="896" hits="0" branch="false"/>
             <line number="897" hits="0" branch="false"/>
-            <line number="898" hits="0" branch="false"/>
           </lines>
         </class>
         <class name="tm_g_gh_density_distribution_plot.R" filename="R/tm_g_gh_density_distribution_plot.R" line-rate="0" branch-rate="0" complexity="0">
