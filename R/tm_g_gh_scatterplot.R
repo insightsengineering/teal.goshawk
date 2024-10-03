@@ -301,7 +301,7 @@ srv_g_scatterplot <- function(id,
     keep_data_const_opts_updated(session, input, anl_q, "xaxis_param")
 
     # plot
-    plot_q <- reactive({
+    plot_q <- debounce(reactive({
       req(anl_q())
       # nolint start
       xlim <- xrange_slider$state()$value
@@ -359,7 +359,7 @@ srv_g_scatterplot <- function(id,
           print(p)
         })
       )
-    })
+    }), 800)
 
     plot_r <- reactive(plot_q()[["p"]])
 

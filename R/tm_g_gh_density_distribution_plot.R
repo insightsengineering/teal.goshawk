@@ -322,7 +322,7 @@ srv_g_density_distribution_plot <- function(id, # nolint
     })
 
 
-    create_plot <- reactive({
+    create_plot <- debounce(reactive({
       teal::validate_inputs(iv_r())
       req(anl_q())
 
@@ -369,7 +369,7 @@ srv_g_density_distribution_plot <- function(id, # nolint
           )
         })
       )
-    })
+    }), 800)
 
     create_table <- reactive({
       req(iv_r()$is_valid())

@@ -722,7 +722,7 @@ srv_g_correlationplot <- function(id,
     vertical_line <- srv_arbitrary_lines("vline_arb")
 
     # plot
-    plot_q <- reactive({
+    plot_q <- debounce(reactive({
       req(plot_data_transpose())
       # nolint start
       xaxis_param <- input$xaxis_param
@@ -814,8 +814,7 @@ srv_g_correlationplot <- function(id,
           print(p)
         })
       )
-    }) |>
-      debounce(800)
+    }), 800)
 
     plot_r <- reactive(plot_q()[["p"]])
 

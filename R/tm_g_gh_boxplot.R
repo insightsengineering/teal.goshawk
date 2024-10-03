@@ -395,7 +395,7 @@ srv_g_boxplot <- function(id,
       iv
     })
 
-    create_plot <- reactive({
+    create_plot <- debounce(reactive({
       teal::validate_inputs(iv_r())
 
       req(anl_q())
@@ -468,7 +468,7 @@ srv_g_boxplot <- function(id,
           )
         })
       )
-    })
+    }), 800)
 
     create_table <- reactive({
       req(iv_r()$is_valid())

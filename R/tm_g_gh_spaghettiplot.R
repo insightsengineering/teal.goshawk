@@ -425,7 +425,7 @@ srv_g_spaghettiplot <- function(id,
     })
 
 
-    plot_q <- reactive({
+    plot_q <- debounce(reactive({
       teal::validate_inputs(iv_r())
       req(anl_q())
       # nolint start
@@ -515,7 +515,7 @@ srv_g_spaghettiplot <- function(id,
           print(p)
         })
       )
-    })
+    }), 800)
 
     plot_r <- reactive({
       plot_q()[["p"]]
