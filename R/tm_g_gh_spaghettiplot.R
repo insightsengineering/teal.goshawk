@@ -556,7 +556,7 @@ srv_g_spaghettiplot <- function(id,
     }
     ###
 
-    output$brush_data <- DT::renderDataTable({
+    reactive_df <- debounce(reactive({
       plot_brush <- plot_data$brush()
 
       ANL <- isolate(anl_q()$ANL) # nolint
@@ -575,12 +575,14 @@ srv_g_spaghettiplot <- function(id,
         ),
         plot_brush
       )
-      df <- df[order(df$PARAMCD, df[[trt_group]], df$USUBJID, df[[xvar]]), ]
-      numeric_cols <- names(dplyr::select_if(df, is.numeric))
+      df[order(df$PARAMCD, df[[trt_group]], df$USUBJID, df[[xvar]]), ]
+    }), 800)
 
-      DT::datatable(df,
-        rownames = FALSE, options = list(scrollX = TRUE),
-        callback = DT::JS("$.fn.dataTable.ext.errMode = 'none';")
+    output$brush_data <- DT::renderDataTable({
+      numeric_cols <- names(dplyr::select_if(reactive_df(), is.numeric))
+
+      DT::datatable(reactive_df(),
+        rownames = FALSE, options = list(scrollX = TRUE)
       ) %>%
         DT::formatRound(numeric_cols, 4)
     })

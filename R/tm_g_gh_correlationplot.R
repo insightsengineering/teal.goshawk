@@ -862,7 +862,7 @@ srv_g_correlationplot <- function(id,
     }
     ###
 
-    reactive_df <- reactive({
+    reactive_df <- debounce(reactive({
       req(iv_r()$is_valid())
       plot_brush <- plot_data$brush()
 
@@ -875,8 +875,7 @@ srv_g_correlationplot <- function(id,
         ),
         plot_brush
       )
-    }) |>
-      debounce(800)
+    }), 800)
 
     # highlight plot area
     output$brush_data <- DT::renderDataTable({
