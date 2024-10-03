@@ -470,7 +470,7 @@ srv_g_boxplot <- function(id,
       )
     }), 800)
 
-    create_table <- reactive({
+    create_table <- debounce(reactive({
       req(iv_r()$is_valid())
       req(anl_q())
       param <- input$xaxis_param
@@ -490,7 +490,7 @@ srv_g_boxplot <- function(id,
           )
         })
       )
-    })
+    }), 800)
 
     plot_r <- reactive({
       create_plot()[["p"]]
@@ -511,8 +511,7 @@ srv_g_boxplot <- function(id,
       numeric_cols <- setdiff(names(dplyr::select_if(tbl, is.numeric)), "n")
 
       DT::datatable(tbl,
-        rownames = FALSE, options = list(scrollX = TRUE),
-        callback = DT::JS("$.fn.dataTable.ext.errMode = 'none';")
+        rownames = FALSE, options = list(scrollX = TRUE)
       ) %>%
         DT::formatRound(numeric_cols, 4)
     })
@@ -557,7 +556,7 @@ srv_g_boxplot <- function(id,
     ###
 
     # highlight plot area
-    output$brush_data <- DT::renderDataTable({
+    reactive_df <- debounce(reactive({
       boxplot_brush <- boxplot_data$brush()
 
       ANL <- isolate(anl_q()$ANL) %>% droplevels() # nolint
@@ -570,19 +569,20 @@ srv_g_boxplot <- function(id,
 
       req(all(c(xvar, yvar, facetv, trt_group) %in% names(ANL)))
 
-      df <- teal.widgets::clean_brushedPoints(
+      teal.widgets::clean_brushedPoints(
         dplyr::select(
           ANL, "USUBJID", dplyr::all_of(c(trt_group, facetv)),
           "AVISITCD", "PARAMCD", dplyr::all_of(c(xvar, yvar)), "LOQFL"
         ),
         boxplot_brush
       )
+    }), 800)
 
-      numeric_cols <- names(dplyr::select_if(df, is.numeric))
+    output$brush_data <- DT::renderDataTable({
+      numeric_cols <- names(dplyr::select_if(reactive_df(), is.numeric))
 
-      DT::datatable(df,
-        rownames = FALSE, options = list(scrollX = TRUE),
-        callback = DT::JS("$.fn.dataTable.ext.errMode = 'none';")
+      DT::datatable(reactive_df(),
+        rownames = FALSE, options = list(scrollX = TRUE)
       ) %>%
         DT::formatRound(numeric_cols, 4)
     })
