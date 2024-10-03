@@ -884,8 +884,7 @@ srv_g_correlationplot <- function(id,
       numeric_cols <- names(dplyr::select_if(reactive_df(), is.numeric))
 
       DT::datatable(reactive_df(),
-        rownames = FALSE, options = list(scrollX = TRUE),
-        callback = DT::JS("$.fn.dataTable.ext.errMode = 'none';")
+        rownames = FALSE, options = list(scrollX = TRUE)
       ) %>%
         DT::formatRound(numeric_cols, 4)
     })
