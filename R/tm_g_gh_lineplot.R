@@ -667,7 +667,7 @@ srv_lineplot <- function(id,
       )
     })
 
-    plot_q <- reactive({
+    plot_q <- debounce(reactive({
       teal::validate_inputs(iv_r())
       req(anl_q(), line_color_selected(), line_type_selected())
       # nolint start
@@ -766,7 +766,7 @@ srv_lineplot <- function(id,
           print(p)
         })
       )
-    })
+    }), 800)
 
     plot_r <- reactive(plot_q()[["p"]])
 
