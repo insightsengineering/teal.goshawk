@@ -207,7 +207,6 @@ tm_g_gh_boxplot <- function(label,
       dataname = dataname,
       param_var = param_var,
       trt_group = trt_group,
-      facet_var = facet_var,
       color_manual = color_manual,
       shape_manual = shape_manual,
       plot_height = plot_height,
@@ -256,13 +255,6 @@ ui_g_boxplot <- function(id, ...) {
         multiple = FALSE
       ),
       uiOutput(ns("axis_selections")),
-      teal.widgets::optionalSelectInput(
-        ns("facet_var"),
-        label = "Facet by",
-        choices = get_choices(a$facet_var$choices),
-        selected = a$facet_var$selected,
-        multiple = FALSE
-      ),
       templ_ui_constraint(ns, label = "Data Constraint"), # required by constr_anl_q
       if (length(a$hline_vars) > 0) {
         teal.widgets::optionalSelectInput(
@@ -312,7 +304,6 @@ srv_g_boxplot <- function(id,
                           dataname,
                           param_var,
                           trt_group,
-                          facet_var,
                           color_manual,
                           shape_manual,
                           plot_height,
@@ -331,6 +322,8 @@ srv_g_boxplot <- function(id,
       resolved_x <- teal.transform::resolve_delayed(module_args$xaxis_var, env)
       resolved_y <- teal.transform::resolve_delayed(module_args$yaxis_var, env)
       resolved_param <- teal.transform::resolve_delayed(module_args$param, env)
+      resolved_facet_var <- teal.transform::resolve_delayed(module_args$facet_var, env)
+
       templ_ui_params_vars(
         session$ns,
         xparam_choices = resolved_param$choices,
@@ -338,8 +331,12 @@ srv_g_boxplot <- function(id,
         xparam_label = module_args$"Select a Biomarker",
         xchoices = resolved_x$choices,
         xselected = resolved_x$selected,
+
         ychoices = resolved_y$choices,
-        yselected = resolved_y$selected
+        yselected = resolved_y$selected,
+
+        facet_choices = resolved_facet_var$choices,
+        facet_selected = resolved_facet_var$selected
       )
     })
     # reused in all modules
@@ -477,6 +474,7 @@ srv_g_boxplot <- function(id,
       xaxis_var <- input$yaxis_var # nolint
       font_size <- input$font_size
       trt_group <- input$trt_group
+      facet_var <- input$facet_var
 
       anl_q()$qenv %>% teal.code::eval_code(
         code = bquote({
@@ -486,7 +484,7 @@ srv_g_boxplot <- function(id,
             param_var = .(param_var),
             param = .(param),
             xaxis_var = .(xaxis_var),
-            facet_var = .(input$facet_var)
+            facet_var = .(facet_var)
           )
         })
       )
@@ -511,8 +509,8 @@ srv_g_boxplot <- function(id,
       numeric_cols <- setdiff(names(dplyr::select_if(tbl, is.numeric)), "n")
 
       DT::datatable(tbl,
-        rownames = FALSE, options = list(scrollX = TRUE),
-        callback = DT::JS("$.fn.dataTable.ext.errMode = 'none';")
+          rownames = FALSE, options = list(scrollX = TRUE),
+          callback = DT::JS("$.fn.dataTable.ext.errMode = 'none';")
       ) %>%
         DT::formatRound(numeric_cols, 4)
     })
@@ -581,8 +579,8 @@ srv_g_boxplot <- function(id,
       numeric_cols <- names(dplyr::select_if(df, is.numeric))
 
       DT::datatable(df,
-        rownames = FALSE, options = list(scrollX = TRUE),
-        callback = DT::JS("$.fn.dataTable.ext.errMode = 'none';")
+          rownames = FALSE, options = list(scrollX = TRUE),
+          callback = DT::JS("$.fn.dataTable.ext.errMode = 'none';")
       ) %>%
         DT::formatRound(numeric_cols, 4)
     })
