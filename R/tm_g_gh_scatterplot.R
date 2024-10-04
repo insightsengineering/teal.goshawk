@@ -301,7 +301,7 @@ srv_g_scatterplot <- function(id,
     keep_data_const_opts_updated(session, input, anl_q, "xaxis_param")
 
     # plot
-    plot_q <- reactive({
+    plot_q <- debounce(reactive({
       req(anl_q())
       # nolint start
       xlim <- xrange_slider$state()$value
@@ -359,7 +359,7 @@ srv_g_scatterplot <- function(id,
           print(p)
         })
       )
-    })
+    }), 800)
 
     plot_r <- reactive(plot_q()[["p"]])
 
@@ -406,8 +406,7 @@ srv_g_scatterplot <- function(id,
     }
     ###
 
-    # highlight plot area
-    output$brush_data <- DT::renderDataTable({
+    reactive_df <- debounce(reactive({
       plot_brush <- plot_data$brush()
 
       ANL <- isolate(anl_q()$ANL) # nolint
@@ -419,19 +418,21 @@ srv_g_scatterplot <- function(id,
 
       req(all(c(xvar, yvar) %in% names(ANL)))
 
-      df <- teal.widgets::clean_brushedPoints(
+      teal.widgets::clean_brushedPoints(
         dplyr::select(
           ANL, "USUBJID", dplyr::all_of(trt_group), "AVISITCD", "PARAMCD",
           dplyr::all_of(c(xvar, yvar)), "LOQFL"
         ),
         plot_brush
       )
+    }), 800)
 
-      numeric_cols <- names(dplyr::select_if(df, is.numeric))
+    # highlight plot area
+    output$brush_data <- DT::renderDataTable({
+      numeric_cols <- names(dplyr::select_if(reactive_df(), is.numeric))
 
-      DT::datatable(df,
-        rownames = FALSE, options = list(scrollX = TRUE),
-        callback = DT::JS("$.fn.dataTable.ext.errMode = 'none';")
+      DT::datatable(reactive_df(),
+        rownames = FALSE, options = list(scrollX = TRUE)
       ) %>%
         DT::formatRound(numeric_cols, 4)
     })

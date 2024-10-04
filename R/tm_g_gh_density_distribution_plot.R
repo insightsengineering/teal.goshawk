@@ -322,7 +322,7 @@ srv_g_density_distribution_plot <- function(id, # nolint
     })
 
 
-    create_plot <- reactive({
+    create_plot <- debounce(reactive({
       teal::validate_inputs(iv_r())
       req(anl_q())
 
@@ -369,9 +369,9 @@ srv_g_density_distribution_plot <- function(id, # nolint
           )
         })
       )
-    })
+    }), 800)
 
-    create_table <- reactive({
+    create_table <- debounce(reactive({
       req(iv_r()$is_valid())
       req(anl_q())
       param <- input$xaxis_param
@@ -392,7 +392,7 @@ srv_g_density_distribution_plot <- function(id, # nolint
           )
         )
       )
-    })
+    }), 800)
 
     plot_r <- reactive({
       create_plot()[["p"]]
@@ -411,8 +411,7 @@ srv_g_density_distribution_plot <- function(id, # nolint
       numeric_cols <- names(dplyr::select_if(tbl, is.numeric))
 
       DT::datatable(tbl,
-        rownames = FALSE, options = list(scrollX = TRUE),
-        callback = DT::JS("$.fn.dataTable.ext.errMode = 'none';")
+        rownames = FALSE, options = list(scrollX = TRUE)
       ) %>%
         DT::formatRound(numeric_cols, 2)
     })
