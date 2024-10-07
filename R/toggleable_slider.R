@@ -219,7 +219,6 @@ toggle_slider_server <- function(id, is_dichotomous_slider = TRUE) {
           state_slider$min <- min(state_slider$min, state_slider$value[1])
         }
         do.call(updateSliderInput, c(list(session, "slider"), state_slider))
-
       } else {
         if (length(state_slider$value) > 1) {
           do.call(updateNumericInput, c(list(session, "value_low"), state_low))
