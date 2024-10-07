@@ -172,7 +172,6 @@ tm_g_gh_scatterplot <- function(label,
     server_args = list(
       dataname = dataname,
       param_var = param_var,
-      trt_group = trt_group,
       trt_facet = trt_facet,
       color_manual = color_manual,
       shape_manual = shape_manual,
@@ -196,13 +195,6 @@ ui_g_scatterplot <- function(id, ...) {
       teal.reporter::simple_reporter_ui(ns("simple_reporter")),
       ###
       templ_ui_dataname(a$dataname),
-      teal.widgets::optionalSelectInput(
-        ns("trt_group"),
-        label = "Select Treatment Variable",
-        choices = get_choices(a$trt_group$choices),
-        selected = a$trt_group$selected,
-        multiple = FALSE
-      ),
       uiOutput(ns("axis_selections")),
       templ_ui_constraint(ns), # required by constr_anl_q
       teal.widgets::panel_group(
@@ -272,6 +264,7 @@ srv_g_scatterplot <- function(id,
       resolved_x <- teal.transform::resolve_delayed(module_args$xaxis_var, env)
       resolved_y <- teal.transform::resolve_delayed(module_args$yaxis_var, env)
       resolved_param <- teal.transform::resolve_delayed(module_args$param, env)
+      resolved_trt <- teal.transform::resolve_delayed(module_args$trt_group, env)
       templ_ui_params_vars(
         session$ns,
         # xparam and yparam are identical, so we only show the user one
@@ -281,7 +274,9 @@ srv_g_scatterplot <- function(id,
         xchoices = resolved_x$choices,
         xselected = resolved_x$selected,
         ychoices = resolved_y$choices,
-        yselected = resolved_y$selected
+        yselected = resolved_y$selected,
+        trt_choices = resolved_trt$choices,
+        trt_selected = resolved_trt$selected
       )
     })
 

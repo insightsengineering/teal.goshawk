@@ -255,7 +255,6 @@ tm_g_gh_correlationplot <- function(label,
     server_args = list(
       dataname = dataname,
       param_var = param_var,
-      trt_group = trt_group,
       trt_facet = trt_facet,
       color_manual = color_manual,
       shape_manual = shape_manual,
@@ -283,13 +282,6 @@ ui_g_correlationplot <- function(id, ...) {
       teal.reporter::simple_reporter_ui(ns("simple_reporter")),
       ###
       templ_ui_dataname(a$dataname),
-      teal.widgets::optionalSelectInput(
-        ns("trt_group"),
-        label = "Select Treatment Variable",
-        choices = get_choices(a$trt_group$choices),
-        selected = a$trt_group$selected,
-        multiple = FALSE
-      ),
       uiOutput(ns("axis_selections")),
       templ_ui_constraint(ns, "X-Axis Data Constraint"), # required by constr_anl_q
       if (length(a$hline_vars) > 0) {
@@ -388,6 +380,7 @@ srv_g_correlationplot <- function(id,
       resolved_x_var <- teal.transform::resolve_delayed(module_args$xaxis_var, env)
       resolved_y_param <- teal.transform::resolve_delayed(module_args$yaxis_param, env)
       resolved_y_var <- teal.transform::resolve_delayed(module_args$yaxis_var, env)
+      resolved_trt <- teal.transform::resolve_delayed(module_args$trt_group, env)
       templ_ui_params_vars(
         session$ns,
         xparam_choices = resolved_x_param$choices,
@@ -397,7 +390,9 @@ srv_g_correlationplot <- function(id,
         yparam_choices = resolved_y_param$choices,
         yparam_selected = resolved_y_param$selected,
         ychoices = resolved_y_var$choices,
-        yselected = resolved_y_var$selected
+        yselected = resolved_y_var$selected,
+        trt_choices = resolved_trt$choices,
+        trt_selected = resolved_trt$selected
       )
     })
 

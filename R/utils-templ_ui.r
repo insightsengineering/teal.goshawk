@@ -30,6 +30,9 @@ templ_ui_params_vars <- function(ns,
                                  # facet_var
                                  facet_choices = NULL,
                                  facet_selected = NULL,
+                                 # trt_group
+                                 trt_choices = NULL,
+                                 trt_selected = NULL,
 
                                  multiple = FALSE) {
   if (is.null(xparam_choices) && !is.null(xchoices) && !is.null(yparam_choices)) {
@@ -40,6 +43,15 @@ templ_ui_params_vars <- function(ns,
     )
   }
   tagList(
+    if (!is.null(trt_choices)) {
+      teal.widgets::optionalSelectInput(
+        ns("trt_group"),
+        label = "Select Treatment Variable",
+        choices = trt_choices,
+        selected = trt_selected,
+        multiple = FALSE
+      )
+    },
     if (!is.null(xparam_choices)) {
       teal.widgets::optionalSelectInput(
         ns("xaxis_param"),

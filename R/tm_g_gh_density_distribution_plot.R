@@ -163,7 +163,6 @@ tm_g_gh_density_distribution_plot <- function(label, # nolint
       dataname = dataname,
       param_var = param_var,
       param = param,
-      trt_group = trt_group,
       color_manual = color_manual,
       color_comb = color_comb,
       plot_height = plot_height,
@@ -196,13 +195,6 @@ ui_g_density_distribution_plot <- function(id, ...) {
       teal.reporter::simple_reporter_ui(ns("simple_reporter")),
       ###
       templ_ui_dataname(a$dataname),
-      teal.widgets::optionalSelectInput(
-        ns("trt_group"),
-        label = "Select Treatment Variable",
-        choices = get_choices(a$trt_group$choices),
-        selected = a$trt_group$selected,
-        multiple = FALSE
-      ),
       uiOutput(ns("axis_selections")),
       templ_ui_constraint(ns, label = "Data Constraint"),
       ui_arbitrary_lines(id = ns("hline_arb"), a$hline_arb, a$hline_arb_label, a$hline_arb_color),
@@ -272,13 +264,17 @@ srv_g_density_distribution_plot <- function(id, # nolint
       env <- shiny::isolate(as.list(data()@env))
       resolved_x <- teal.transform::resolve_delayed(module_args$xaxis_var, env)
       resolved_param <- teal.transform::resolve_delayed(module_args$param, env)
+      resolved_trt <- teal.transform::resolve_delayed(module_args$trt_group, env)
+
       templ_ui_params_vars(
         session$ns,
         xparam_choices = resolved_param$choices,
         xparam_selected = resolved_param$selected,
         xparam_label = "Select a Biomarker",
         xchoices = resolved_x$choices,
-        xselected = resolved_x$selected
+        xselected = resolved_x$selected,
+        trt_choices = resolved_trt$choices,
+        trt_selected = resolved_trt$selected
       )
     })
 
