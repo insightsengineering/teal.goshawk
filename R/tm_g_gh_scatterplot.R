@@ -172,7 +172,6 @@ tm_g_gh_scatterplot <- function(label,
     server_args = list(
       dataname = dataname,
       param_var = param_var,
-      trt_group = trt_group,
       trt_facet = trt_facet,
       color_manual = color_manual,
       shape_manual = shape_manual,
@@ -196,13 +195,6 @@ ui_g_scatterplot <- function(id, ...) {
       teal.reporter::simple_reporter_ui(ns("simple_reporter")),
       ###
       templ_ui_dataname(a$dataname),
-      teal.widgets::optionalSelectInput(
-        ns("trt_group"),
-        label = "Select Treatment Variable",
-        choices = get_choices(a$trt_group$choices),
-        selected = a$trt_group$selected,
-        multiple = FALSE
-      ),
       uiOutput(ns("axis_selections")),
       templ_ui_constraint(ns), # required by constr_anl_q
       teal.widgets::panel_group(
@@ -272,6 +264,7 @@ srv_g_scatterplot <- function(id,
       resolved_x <- teal.transform::resolve_delayed(module_args$xaxis_var, env)
       resolved_y <- teal.transform::resolve_delayed(module_args$yaxis_var, env)
       resolved_param <- teal.transform::resolve_delayed(module_args$param, env)
+      resolved_trt <- teal.transform::resolve_delayed(module_args$trt_group, env)
       templ_ui_params_vars(
         session$ns,
         # xparam and yparam are identical, so we only show the user one
@@ -281,7 +274,9 @@ srv_g_scatterplot <- function(id,
         xchoices = resolved_x$choices,
         xselected = resolved_x$selected,
         ychoices = resolved_y$choices,
-        yselected = resolved_y$selected
+        yselected = resolved_y$selected,
+        trt_choices = resolved_trt$choices,
+        trt_selected = resolved_trt$selected
       )
     })
 
@@ -301,7 +296,7 @@ srv_g_scatterplot <- function(id,
     keep_data_const_opts_updated(session, input, anl_q, "xaxis_param")
 
     # plot
-    plot_q <- reactive({
+    plot_q <- debounce(reactive({
       req(anl_q())
       # nolint start
       xlim <- xrange_slider$state()$value
@@ -359,7 +354,7 @@ srv_g_scatterplot <- function(id,
           print(p)
         })
       )
-    })
+    }), 800)
 
     plot_r <- reactive(plot_q()[["p"]])
 
@@ -406,8 +401,7 @@ srv_g_scatterplot <- function(id,
     }
     ###
 
-    # highlight plot area
-    output$brush_data <- DT::renderDataTable({
+    reactive_df <- debounce(reactive({
       plot_brush <- plot_data$brush()
 
       ANL <- isolate(anl_q()$ANL) # nolint
@@ -419,19 +413,21 @@ srv_g_scatterplot <- function(id,
 
       req(all(c(xvar, yvar) %in% names(ANL)))
 
-      df <- teal.widgets::clean_brushedPoints(
+      teal.widgets::clean_brushedPoints(
         dplyr::select(
           ANL, "USUBJID", dplyr::all_of(trt_group), "AVISITCD", "PARAMCD",
           dplyr::all_of(c(xvar, yvar)), "LOQFL"
         ),
         plot_brush
       )
+    }), 800)
 
-      numeric_cols <- names(dplyr::select_if(df, is.numeric))
+    # highlight plot area
+    output$brush_data <- DT::renderDataTable({
+      numeric_cols <- names(dplyr::select_if(reactive_df(), is.numeric))
 
-      DT::datatable(df,
-        rownames = FALSE, options = list(scrollX = TRUE),
-        callback = DT::JS("$.fn.dataTable.ext.errMode = 'none';")
+      DT::datatable(reactive_df(),
+        rownames = FALSE, options = list(scrollX = TRUE)
       ) %>%
         DT::formatRound(numeric_cols, 4)
     })
