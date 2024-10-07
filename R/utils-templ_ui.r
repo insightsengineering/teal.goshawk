@@ -27,6 +27,10 @@ templ_ui_params_vars <- function(ns,
                                  ychoices = NULL,
                                  yselected = NULL,
                                  yvar_label = NULL, # variable, e.g. AVAL
+                                 # facet_var
+                                 facet_choices = NULL,
+                                 facet_selected = NULL,
+
                                  multiple = FALSE) {
   if (is.null(xparam_choices) && !is.null(xchoices) && !is.null(yparam_choices)) {
     # otherwise, xchoices will appear first without any biomarker to select and this looks odd in the UI
@@ -68,6 +72,15 @@ templ_ui_params_vars <- function(ns,
         `if`(is.null(yvar_label), "Select a Y-Axis Variable", yvar_label),
         ychoices, yselected,
         multiple = multiple
+      )
+    },
+    if (!is.null(facet_choices)) {
+      teal.widgets::optionalSelectInput(
+        ns("facet_var"),
+        label = "Facet by",
+        choices = facet_choices,
+        selected = facet_selected,
+        multiple = FALSE
       )
     }
   )
