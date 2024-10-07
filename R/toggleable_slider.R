@@ -31,6 +31,7 @@
 #'
 #' # use non-exported function from teal.goshawk
 #' toggle_slider_ui <- getFromNamespace("toggle_slider_ui", "teal.goshawk")
+#' toggle_slider_server <- getFromNamespace("toggle_slider_server", "teal.goshawk")
 #'
 #' ui <- div(
 #'   toggle_slider_ui(
@@ -213,7 +214,12 @@ toggle_slider_server <- function(id, is_dichotomous_slider = TRUE) {
         state_high$value <- state_high$value[[2]]
       }
       if (input$toggle %% 2 == 0) {
+        if (input$toggle > 0) {
+          state_slider$max <- max(state_slider$max, state_slider$value[2])
+          state_slider$min <- min(state_slider$min, state_slider$value[1])
+        }
         do.call(updateSliderInput, c(list(session, "slider"), state_slider))
+
       } else {
         if (length(state_slider$value) > 1) {
           do.call(updateNumericInput, c(list(session, "value_low"), state_low))
