@@ -104,6 +104,7 @@ This teal module renders the UI and calls the functions that create a box plot a
 summary table.
 }
 \examples{
+\dontshow{if (require("nestcolor")) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
 # Example using ADaM structure analysis dataset.
 data <- teal_data()
 data <- within(data, {
@@ -203,7 +204,7 @@ app <- init(
 if (interactive()) {
   shinyApp(app$ui, app$server)
 }
-
+\dontshow{\}) # examplesIf}
 }
 \author{
 Jeff Tomlinson (tomlinsj) jeffrey.tomlinson@roche.com
