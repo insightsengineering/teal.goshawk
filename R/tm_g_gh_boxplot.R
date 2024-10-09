@@ -45,7 +45,7 @@
 #'
 #' @export
 #'
-#' @examples
+#' @examplesIf require("nestcolor")
 #' # Example using ADaM structure analysis dataset.
 #' data <- teal_data()
 #' data <- within(data, {
@@ -206,7 +206,6 @@ tm_g_gh_boxplot <- function(label,
     server_args = list(
       dataname = dataname,
       param_var = param_var,
-      trt_group = trt_group,
       color_manual = color_manual,
       shape_manual = shape_manual,
       plot_height = plot_height,
@@ -247,13 +246,6 @@ ui_g_boxplot <- function(id, ...) {
       teal.reporter::simple_reporter_ui(ns("simple_reporter")),
       ###
       templ_ui_dataname(a$dataname),
-      teal.widgets::optionalSelectInput(
-        ns("trt_group"),
-        label = "Select Treatment Variable",
-        choices = get_choices(a$trt_group$choices),
-        selected = a$trt_group$selected,
-        multiple = FALSE
-      ),
       uiOutput(ns("axis_selections")),
       templ_ui_constraint(ns, label = "Data Constraint"), # required by constr_anl_q
       if (length(a$hline_vars) > 0) {
@@ -323,6 +315,7 @@ srv_g_boxplot <- function(id,
       resolved_y <- teal.transform::resolve_delayed(module_args$yaxis_var, env)
       resolved_param <- teal.transform::resolve_delayed(module_args$param, env)
       resolved_facet_var <- teal.transform::resolve_delayed(module_args$facet_var, env)
+      resolved_trt <- teal.transform::resolve_delayed(module_args$trt_group, env)
 
       templ_ui_params_vars(
         session$ns,
@@ -336,7 +329,9 @@ srv_g_boxplot <- function(id,
         yselected = resolved_y$selected,
 
         facet_choices = resolved_facet_var$choices,
-        facet_selected = resolved_facet_var$selected
+        facet_selected = resolved_facet_var$selected,
+        trt_choices = resolved_trt$choices,
+        trt_selected = resolved_trt$selected
       )
     })
     # reused in all modules
