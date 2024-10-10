@@ -46,6 +46,7 @@
 #' @param hline_vars_colors a character vector naming the colors for the additional horizontal lines.
 #' @param hline_vars_labels a character vector naming the labels for the additional horizontal lines that will appear
 #'  in the legend.
+#' @param xlab an `x-axis` label, if \code{NULL} then no label is displayed
 #' @inheritParams teal.widgets::standard_layout
 #'
 #' @author Wenyi Liu (luiw2) wenyi.liu@roche.com
@@ -176,6 +177,7 @@ tm_g_gh_spaghettiplot <- function(label,
                                   color_comb = NULL,
                                   xtick = ggplot2::waiver(),
                                   xlabel = xtick,
+                                  xlab = "Analysis Visit",
                                   rotate_xlab = FALSE,
                                   facet_ncol = 2,
                                   free_x = FALSE,
@@ -235,6 +237,9 @@ tm_g_gh_spaghettiplot <- function(label,
   # Validate line arguments
   validate_line_arb_arg(hline_arb, hline_arb_color, hline_arb_label)
   validate_line_vars_arg(hline_vars, hline_vars_colors, hline_vars_labels)
+
+  # Validate character labels
+  checkmate::assert_string(xlab, null.ok = TRUE)
 
   args <- as.list(environment())
 
@@ -320,6 +325,7 @@ g_ui_spaghettiplot <- function(id, ...) {
             ),
             checkboxInput(ns("free_x"), "Free X-Axis Scales", a$free_x),
             checkboxInput(ns("rotate_xlab"), "Rotate X-Axis Label", a$rotate_xlab),
+            textInput(ns("xlab"), "X-axis Label", a$xlab),
             teal.widgets::optionalSliderInputValMinMax(ns("font_size"), "Font Size", a$font_size, ticks = FALSE),
             teal.widgets::optionalSliderInputValMinMax(ns("dot_size"), "Dot Size", a$dot_size, ticks = FALSE),
             teal.widgets::optionalSliderInputValMinMax(
@@ -474,6 +480,8 @@ srv_g_spaghettiplot <- function(id,
         )
       }
 
+      xlab <- input$xlab
+
       teal.code::eval_code(
         object = private_qenv,
         code = bquote({
@@ -498,6 +506,7 @@ srv_g_spaghettiplot <- function(id,
             hline_arb_color = .(hline_arb_color),
             xtick = xtick,
             xlabel = xlabel,
+            xlab = .(xlab),
             rotate_xlab = .(rotate_xlab),
             font_size = .(font_size),
             dot_size = .(dot_size),
