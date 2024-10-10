@@ -32,13 +32,9 @@ length 2 for dichotomous slider.}
 \item{slider_initially}{\code{logical} whether to show slider or numeric fields
 initially}
 
-\item{step_slider}{\verb{numeric or integer} step for slider}
-
 \item{step_numeric}{\verb{numeric or integer} step for numeric input fields}
 
 \item{width}{\code{numeric} width of slider or of each numeric field}
-
-\item{...}{additional parameters to pass to \code{sliderInput}}
 }
 \value{
 Shiny HTML UI
@@ -65,7 +61,7 @@ ui <- div(
   toggle_slider_ui(
     "toggle_slider", "Select value",
     min = 0.2, max = 100.1, value = value,
-    slider_initially = FALSE, step_slider = 0.1, step_numeric = 0.001
+    slider_initially = FALSE, step_numeric = 0.001
   ),
   verbatimTextOutput("value")
 )
@@ -73,7 +69,8 @@ ui <- div(
 server <- function(input, output, session) {
   is_dichotomous_slider <- (length(value) == 2)
   range_value <- toggle_slider_server("toggle_slider",
-    is_dichotomous_slider = is_dichotomous_slider
+    is_dichotomous_slider = is_dichotomous_slider,
+    step_slider = 0.1
   )
   messages <- reactiveVal() # to keep history
   observeEvent(range_value$state(), {
