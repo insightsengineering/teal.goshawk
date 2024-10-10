@@ -26,6 +26,7 @@ tm_g_gh_lineplot(
     "#4ca3dd", "#8a2be2"))[1:4],
   xtick = ggplot2::waiver(),
   xlabel = xtick,
+  xlab = "Analysis Visit",
   rotate_xlab = FALSE,
   plot_height = c(600, 200, 4000),
   plot_width = NULL,
@@ -89,6 +90,8 @@ Default value is waive().}
 
 \item{xlabel}{vector with same length of \code{xtick} to define the label of x-axis tick values.
 Default value is waive().}
+
+\item{xlab}{an x-axis label, if \code{NULL} then the behavior as in \code{xlab} from \link[goshawk]{g_lineplot}}
 
 \item{rotate_xlab}{\code{logical(1)} value indicating whether to rotate \code{x-axis} labels.}
 

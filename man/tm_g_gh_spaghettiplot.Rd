@@ -22,6 +22,7 @@ tm_g_gh_spaghettiplot(
   color_comb = NULL,
   xtick = ggplot2::waiver(),
   xlabel = xtick,
+  xlab = "Analysis Visit",
   rotate_xlab = FALSE,
   facet_ncol = 2,
   free_x = FALSE,
@@ -82,6 +83,8 @@ when x variable is numeric. Default value is \code{waive()}.}
 
 \item{xlabel}{vector with same length of \code{xtick} to define the
 label of \code{x-axis} tick values. Default value is \code{waive()}.}
+
+\item{xlab}{an \code{x-axis} label, if \code{NULL} then no label is displayed}
 
 \item{rotate_xlab}{\code{logical(1)} value indicating whether to rotate \code{x-axis} labels}
 
