@@ -203,33 +203,9 @@ toggle_slider_server <- function(id, is_dichotomous_slider = TRUE, step_slider =
       }
     )
 
-    update_widgets <- function() {
+    slider_states <- reactive({
       state_slider <- cur_state()
       req(length(state_slider) > 0) # update will otherwise not work
-      state_low <- state_slider
-      state_high <- state_slider
-      if (!is.null(state_slider$value) && (length(state_slider$value) > 1)) {
-        state_low$value <- state_low$value[[1]]
-        state_high$value <- state_high$value[[2]]
-      }
-      if (input$toggle %% 2 != 0) {
-        if (length(state_slider$value) > 1) {
-          do.call(updateNumericInput, c(list(session, "value_low"), state_low))
-          do.call(updateNumericInput, c(list(session, "value_high"), state_high))
-        } else {
-          do.call(updateNumericInput, c(list(session, "value"), state_low))
-        }
-      }
-    }
-    observeEvent(input$toggle, {
-      update_widgets()
-      shinyjs::toggle("numeric_view")
-      shinyjs::toggle("slider_ui")
-    })
-
-    output$slider_ui <- renderUI({
-      state_slider <- cur_state()
-      req(length(state_slider) > 0)
       state_low <- state_slider
       state_high <- state_slider
       if (!is.null(state_slider$value) && (length(state_slider$value) > 1)) {
@@ -240,17 +216,48 @@ toggle_slider_server <- function(id, is_dichotomous_slider = TRUE, step_slider =
         state_slider$max <- max(state_slider$max, state_slider$value[2])
         state_slider$min <- min(state_slider$min, state_slider$value[1])
       }
-      if (length(seq(state_slider$min, state_slider$max)) < 10) {
-        ticks <- seq(state_slider$min, state_slider$max)
+      list(
+        low = state_low,
+        high = state_high,
+        low_value = state_low$value,
+        high_value = state_high$value,
+        slider_value = state_slider$value,
+        slider_max = state_slider$max,
+        slider_min = state_slider$min
+      )
+    })
+
+    update_widgets <- function() {
+      state <- slider_states()
+      if (input$toggle %% 2 != 0) {
+        if (length(state$slider_value) > 1) {
+          do.call(updateNumericInput, c(list(session, "value_low"), state$low))
+          do.call(updateNumericInput, c(list(session, "value_high"), state$high))
+        } else {
+          do.call(updateNumericInput, c(list(session, "value"), state$low))
+        }
+      }
+    }
+    observeEvent(input$toggle, {
+      update_widgets()
+      shinyjs::toggle("numeric_view")
+      shinyjs::toggle("slider_ui")
+    })
+
+    output$slider_ui <- renderUI({
+      state <- slider_states()
+      if (length(seq(state$slider_min, state$slider_max)) < 10) {
+        # The values should be index reference instead of actual values because of how we are calling the `sliderInput`
+        ticks <- seq(state$slider_min, state$slider_max)
         values <- c(
-          which(ticks == state_low$value) - 1,
-          which(ticks == state_high$value) - 1
+          which(ticks == state$low_value) - 1,
+          which(ticks == state$high_value) - 1
         )
         args <- list(
           inputId = "slider",
           label = NULL,
-          min = state_slider$min,
-          max = state_slider$max,
+          min = state$slider_min,
+          max = state$slider_max,
           value = values,
           ticks = ticks,
           step = step_slider,
@@ -258,15 +265,15 @@ toggle_slider_server <- function(id, is_dichotomous_slider = TRUE, step_slider =
         )
         ticks <- paste0(args$ticks, collapse = ",")
         args$ticks <- TRUE
-        html <- do.call("sliderInput", args)
+        html <- suppressWarnings(do.call("sliderInput", args))
         html$children[[2]]$attribs[["data-values"]] <- ticks
       } else {
         args <- list(
           inputId = "slider",
           label = NULL,
-          min = state_slider$min,
-          max = state_slider$max,
-          value = c(state_slider$min, state_slider$max),
+          min = state$slider_min,
+          max = state$slider_max,
+          value = c(state$slider_min, state$slider_max),
           step = step_slider,
           ...
         )
