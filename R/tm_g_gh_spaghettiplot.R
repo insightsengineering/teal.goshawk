@@ -525,6 +525,8 @@ srv_g_spaghettiplot <- function(id,
       brushing = TRUE
     )
 
+    code <- reactive(teal.code::get_code(plot_q()))
+
     ### REPORTER
     if (with_reporter) {
       card_fun <- function(comment, label) {
@@ -545,7 +547,7 @@ srv_g_spaghettiplot <- function(id,
           card$append_text("Comment", "header3")
           card$append_text(comment)
         }
-        card$append_src(teal.code::get_code(plot_q()))
+        card$append_src(code())
         card
       }
       teal.reporter::simple_reporter_srv("simple_reporter", reporter = reporter, card_fun = card_fun)
@@ -585,7 +587,7 @@ srv_g_spaghettiplot <- function(id,
 
     teal.widgets::verbatim_popup_srv(
       id = "rcode",
-      verbatim_content = reactive(teal.code::get_code(plot_q())),
+      verbatim_content = reactive(code()),
       title = "Show R Code for Spaghetti Plot"
     )
   })

@@ -364,6 +364,7 @@ srv_g_density_distribution_plot <- function(id, # nolint
             hline_arb_color = .(hline_arb_color),
             rug_plot = .(rug_plot)
           )
+          print(p)
         })
       )
     }), 800)
@@ -378,7 +379,7 @@ srv_g_density_distribution_plot <- function(id, # nolint
 
       teal.code::eval_code(
         object = anl_q()$qenv,
-        code = bquote(
+        code = bquote({
           tbl <- goshawk::t_summarytable(
             data = ANL,
             trt_group = .(trt_group),
@@ -387,7 +388,8 @@ srv_g_density_distribution_plot <- function(id, # nolint
             xaxis_var = .(xaxis_var),
             font_size = .(font_size)
           )
-        )
+          tbl
+        })
       )
     }), 800)
 
@@ -418,11 +420,11 @@ srv_g_density_distribution_plot <- function(id, # nolint
       teal.code::join(create_plot(), create_table())
     })
 
+    code <- reactive(teal.code::get_code(joined_qenvs()))
+
     teal.widgets::verbatim_popup_srv(
       id = "rcode",
-      verbatim_content = reactive(
-        teal.code::get_code(joined_qenvs())
-      ),
+      verbatim_content = reactive(code()),
       title = "Show R Code for Density Distribution Plot"
     )
 
@@ -450,11 +452,7 @@ srv_g_density_distribution_plot <- function(id, # nolint
           card$append_text("Comment", "header3")
           card$append_text(comment)
         }
-        card$append_src(
-          teal.code::get_code(
-            teal.code::join(create_plot(), create_table())
-          )
-        )
+        card$append_src(code())
         card
       }
       teal.reporter::simple_reporter_srv("simple_reporter", reporter = reporter, card_fun = card_fun)
