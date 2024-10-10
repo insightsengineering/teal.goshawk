@@ -245,7 +245,8 @@ toggle_slider_server <- function(id, is_dichotomous_slider = TRUE, step_slider =
     })
 
     output$slider_ui <- renderUI({
-      state <- slider_states()
+      req(input$toggle >= 0)
+      state <- isolate(slider_states())
       if (length(seq(state$slider_min, state$slider_max)) < 10) {
         # The values should be index reference instead of actual values because of how we are calling the `sliderInput`
         ticks <- seq(state$slider_min, state$slider_max)
@@ -254,11 +255,11 @@ toggle_slider_server <- function(id, is_dichotomous_slider = TRUE, step_slider =
           which(ticks == state$high_value) - 1
         )
         args <- list(
-          inputId = "slider",
+          inputId = session$ns("slider"),
           label = NULL,
           min = state$slider_min,
           max = state$slider_max,
-          value = values,
+          value = c(state$low_value, state$high_value),
           ticks = ticks,
           step = step_slider,
           ...
@@ -266,10 +267,9 @@ toggle_slider_server <- function(id, is_dichotomous_slider = TRUE, step_slider =
         ticks <- paste0(args$ticks, collapse = ",")
         args$ticks <- TRUE
         html <- suppressWarnings(do.call("sliderInput", args))
-        html$children[[2]]$attribs[["data-values"]] <- ticks
       } else {
         args <- list(
-          inputId = "slider",
+          inputId = session$ns("slider"),
           label = NULL,
           min = state$slider_min,
           max = state$slider_max,
