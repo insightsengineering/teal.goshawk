@@ -324,10 +324,8 @@ srv_g_boxplot <- function(id,
         xparam_label = module_args$"Select a Biomarker",
         xchoices = resolved_x$choices,
         xselected = resolved_x$selected,
-
         ychoices = resolved_y$choices,
         yselected = resolved_y$selected,
-
         facet_choices = resolved_facet_var$choices,
         facet_selected = resolved_facet_var$selected,
         trt_choices = resolved_trt$choices,

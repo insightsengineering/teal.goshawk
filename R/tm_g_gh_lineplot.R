@@ -726,7 +726,7 @@ srv_lineplot <- function(id,
           "
         )
       }
-      xlab <- if (is.null(input$xlab))  xaxis else input$xlab
+      xlab <- if (is.null(input$xlab)) xaxis else input$xlab
 
       hline_arb <- horizontal_line()$line_arb
       hline_arb_label <- horizontal_line()$line_arb_label
