@@ -44,6 +44,7 @@
 #' @param dot_size plot dot size.
 #' @param plot_relative_height_value numeric value between 500 and 5000 for controlling the starting value
 #' of the relative plot height slider
+#' @param xlab an x-axis label, if \code{NULL} then the behavior as in `xlab` from \link[goshawk]{g_lineplot}
 #' @author Wenyi Liu (luiw2) wenyi.liu@roche.com
 #' @author Balazs Toth (tothb2) toth.balazs@gene.com
 #'
@@ -147,6 +148,7 @@ tm_g_gh_lineplot <- function(label,
                              )[1:4],
                              xtick = ggplot2::waiver(),
                              xlabel = xtick,
+                             xlab = "Analysis Visit",
                              rotate_xlab = FALSE,
                              plot_height = c(600, 200, 4000),
                              plot_width = NULL,
@@ -200,6 +202,9 @@ tm_g_gh_lineplot <- function(label,
 
   # Validate line arguments
   validate_line_arb_arg(hline_arb, hline_arb_color, hline_arb_label)
+
+  # Validate character labels
+  checkmate::assert_string(xlab, null.ok = TRUE)
 
   args <- as.list(environment())
 
@@ -277,7 +282,8 @@ ui_lineplot <- function(id, ...) {
               value = c(-1000000, 1000000)
             ),
             checkboxInput(ns("rotate_xlab"), "Rotate X-axis Label", a$rotate_xlab),
-            numericInput(ns("count_threshold"), "Contributing Observations Threshold:", a$count_threshold)
+            numericInput(ns("count_threshold"), "Contributing Observations Threshold:", a$count_threshold),
+            textInput(ns("xlab"), "X-axis Label", a$xlab)
           ),
           teal.widgets::panel_item(
             title = "Plot settings",
@@ -720,6 +726,7 @@ srv_lineplot <- function(id,
           "
         )
       }
+      xlab <- if (is.null(input$xlab))  xaxis else input$xlab
 
       hline_arb <- horizontal_line()$line_arb
       hline_arb_label <- horizontal_line()$line_arb_label
@@ -749,6 +756,7 @@ srv_lineplot <- function(id,
             hline_arb_color = .(hline_arb_color),
             xtick = .(if (!is.null(xtick)) quote(xtick) else xtick),
             xlabel = .(if (!is.null(xtick)) quote(xlabel) else xlabel),
+            xlab = .(xlab),
             rotate_xlab = .(rotate_xlab),
             plot_height = .(relative_height), # in g_lineplot this is relative height of plot to table
             plot_font_size = .(plot_font_size),
