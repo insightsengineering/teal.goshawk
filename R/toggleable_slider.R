@@ -17,13 +17,8 @@
 #'   length 2 for dichotomous slider.
 #' @param slider_initially `logical` whether to show slider or numeric fields
 #'   initially
-#' @param step_slider `numeric or integer` step for slider
 #' @param step_numeric `numeric or integer` step for numeric input fields
 #' @param width `numeric` width of slider or of each numeric field
-#' @param ... additional parameters to pass to `sliderInput`
-#'
-#' @return Shiny HTML UI
-#' @keywords internal
 #'
 #' @examples
 #' value <- c(20.3, 81.5) # dichotomous slider
@@ -37,7 +32,7 @@
 #'   toggle_slider_ui(
 #'     "toggle_slider", "Select value",
 #'     min = 0.2, max = 100.1, value = value,
-#'     slider_initially = FALSE, step_slider = 0.1, step_numeric = 0.001
+#'     slider_initially = FALSE, step_numeric = 0.001
 #'   ),
 #'   verbatimTextOutput("value")
 #' )
@@ -45,7 +40,8 @@
 #' server <- function(input, output, session) {
 #'   is_dichotomous_slider <- (length(value) == 2)
 #'   range_value <- toggle_slider_server("toggle_slider",
-#'     is_dichotomous_slider = is_dichotomous_slider
+#'     is_dichotomous_slider = is_dichotomous_slider,
+#'     step_slider = 0.1
 #'   )
 #'   messages <- reactiveVal() # to keep history
 #'   observeEvent(range_value$state(), {
@@ -60,6 +56,14 @@
 #' if (interactive()) {
 #'   shinyApp(ui, server)
 #' }
+#' @name toggle_sidebar
+#' @rdname toggle_sidebar
+#' @keywords internal
+#' @return `NULL`.
+NULL
+
+
+#' @rdname toggle_sidebar
 toggle_slider_ui <- function(id,
                              label,
                              min,
@@ -91,16 +95,7 @@ toggle_slider_ui <- function(id,
       actionButton(ns("toggle"), "Toggle", class = "btn-xs")
     ),
     show_or_not(slider_initially)(
-      sliderInput(
-        ns("slider"),
-        label = NULL,
-        min = min,
-        max = max,
-        value = value,
-        step = step_slider,
-        width = width,
-        ...
-      )
+      uiOutput(ns("slider_ui"))
     ),
     show_or_not(!slider_initially)(tags$span(
       id = ns("numeric_view"),
@@ -140,8 +135,12 @@ toggle_slider_ui <- function(id,
   )
 }
 
-# is_dichotomous_slider `logical` whether it is a dichotomous slider or normal slider
-toggle_slider_server <- function(id, is_dichotomous_slider = TRUE) {
+#' @param is_dichotomous_slider `logical` whether it is a dichotomous slider or normal slider
+#' @param step_slider `numeric or integer` step for slider
+#' @param ... additional parameters to pass to `sliderInput`
+#' @keywords internal
+#' @rdname toggle_slider
+toggle_slider_server <- function(id, is_dichotomous_slider = TRUE, step_slider = NULL, ...) {
   moduleServer(id, function(input, output, session) {
     checkmate::assert_flag(is_dichotomous_slider)
     # model view controller: cur_state is the model, the sliderInput and numericInputs are two views/controllers
@@ -204,7 +203,7 @@ toggle_slider_server <- function(id, is_dichotomous_slider = TRUE) {
       }
     )
 
-    update_widgets <- function() {
+    slider_states <- reactive({
       state_slider <- cur_state()
       req(length(state_slider) > 0) # update will otherwise not work
       state_low <- state_slider
@@ -214,24 +213,73 @@ toggle_slider_server <- function(id, is_dichotomous_slider = TRUE) {
         state_high$value <- state_high$value[[2]]
       }
       if (input$toggle %% 2 == 0) {
-        if (input$toggle > 0) {
-          state_slider$max <- max(state_slider$max, state_slider$value[2])
-          state_slider$min <- min(state_slider$min, state_slider$value[1])
-        }
-        do.call(updateSliderInput, c(list(session, "slider"), state_slider))
-      } else {
-        if (length(state_slider$value) > 1) {
-          do.call(updateNumericInput, c(list(session, "value_low"), state_low))
-          do.call(updateNumericInput, c(list(session, "value_high"), state_high))
+        state_slider$max <- max(state_slider$max, state_slider$value[2])
+        state_slider$min <- min(state_slider$min, state_slider$value[1])
+      }
+      list(
+        low = state_low,
+        high = state_high,
+        low_value = state_low$value,
+        high_value = state_high$value,
+        slider_value = state_slider$value,
+        slider_max = state_slider$max,
+        slider_min = state_slider$min
+      )
+    })
+
+    update_widgets <- function() {
+      state <- slider_states()
+      if (input$toggle %% 2 != 0) {
+        if (length(state$slider_value) > 1) {
+          do.call(updateNumericInput, c(list(session, "value_low"), state$low))
+          do.call(updateNumericInput, c(list(session, "value_high"), state$high))
         } else {
-          do.call(updateNumericInput, c(list(session, "value"), state_low))
+          do.call(updateNumericInput, c(list(session, "value"), state$low))
         }
       }
     }
     observeEvent(input$toggle, {
       update_widgets()
       shinyjs::toggle("numeric_view")
-      shinyjs::toggle("slider")
+      shinyjs::toggle("slider_ui")
+    })
+
+    output$slider_ui <- renderUI({
+      req(input$toggle >= 0)
+      state <- isolate(slider_states())
+      if (length(seq(state$slider_min, state$slider_max)) < 10) {
+        # The values should be index reference instead of actual values because of how we are calling the `sliderInput`
+        ticks <- seq(state$slider_min, state$slider_max)
+        values <- c(
+          which(ticks == state$low_value) - 1,
+          which(ticks == state$high_value) - 1
+        )
+        args <- list(
+          inputId = session$ns("slider"),
+          label = NULL,
+          min = state$slider_min,
+          max = state$slider_max,
+          value = c(state$low_value, state$high_value),
+          ticks = ticks,
+          step = step_slider,
+          ...
+        )
+        ticks <- paste0(args$ticks, collapse = ",")
+        args$ticks <- TRUE
+        html <- suppressWarnings(do.call("sliderInput", args))
+      } else {
+        args <- list(
+          inputId = session$ns("slider"),
+          label = NULL,
+          min = state$slider_min,
+          max = state$slider_max,
+          value = c(state$slider_min, state$slider_max),
+          step = step_slider,
+          ...
+        )
+        html <- do.call("sliderInput", args)
+      }
+      html
     })
 
     update_toggle_slider <- function(value = NULL, min = NULL, max = NULL, step = NULL) {
