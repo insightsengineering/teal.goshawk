@@ -20,9 +20,6 @@
 #' @param step_numeric `numeric or integer` step for numeric input fields
 #' @param width `numeric` width of slider or of each numeric field
 #'
-#' @return Shiny HTML UI
-#' @keywords internal
-#'
 #' @examples
 #' value <- c(20.3, 81.5) # dichotomous slider
 #' # value <- c(50.1) # normal slider
@@ -59,6 +56,14 @@
 #' if (interactive()) {
 #'   shinyApp(ui, server)
 #' }
+#' @name toggle_sidebar
+#' @rdname toggle_sidebar
+#' @keywords internal
+#' @return `NULL`.
+NULL
+
+
+#' @rdname toggle_sidebar
 toggle_slider_ui <- function(id,
                              label,
                              min,
@@ -130,10 +135,11 @@ toggle_slider_ui <- function(id,
   )
 }
 
+#' @param is_dichotomous_slider `logical` whether it is a dichotomous slider or normal slider
 #' @param step_slider `numeric or integer` step for slider
 #' @param ... additional parameters to pass to `sliderInput`
 #' @keywords internal
-# is_dichotomous_slider `logical` whether it is a dichotomous slider or normal slider
+#' @rdname toggle_slider
 toggle_slider_server <- function(id, is_dichotomous_slider = TRUE, step_slider = NULL, ...) {
   moduleServer(id, function(input, output, session) {
     checkmate::assert_flag(is_dichotomous_slider)
