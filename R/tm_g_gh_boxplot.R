@@ -456,6 +456,7 @@ srv_g_boxplot <- function(id,
             font_size = .(font_size),
             unit = .("AVALU")
           )
+          print(p)
         })
       )
     }), 800)
@@ -479,6 +480,7 @@ srv_g_boxplot <- function(id,
             xaxis_var = .(xaxis_var),
             facet_var = .(facet_var)
           )
+          tbl
         })
       )
     }), 800)
@@ -506,6 +508,13 @@ srv_g_boxplot <- function(id,
       ) %>%
         DT::formatRound(numeric_cols, 4)
     })
+
+    joined_qenvs <- reactive({
+      req(create_plot(), create_table())
+      teal.code::join(create_plot(), create_table())
+    })
+
+    code <- reactive(teal.code::get_code(joined_qenvs()))
 
     ### REPORTER
     if (with_reporter) {
@@ -535,11 +544,7 @@ srv_g_boxplot <- function(id,
           card$append_text("Comment", "header3")
           card$append_text(comment)
         }
-        card$append_src(
-          teal.code::get_code(
-            teal.code::join(create_plot(), create_table())
-          )
-        )
+        card$append_src(code())
         card
       }
       teal.reporter::simple_reporter_srv("simple_reporter", reporter = reporter, card_fun = card_fun)
@@ -578,14 +583,9 @@ srv_g_boxplot <- function(id,
         DT::formatRound(numeric_cols, 4)
     })
 
-    joined_qenvs <- reactive({
-      req(create_plot(), create_table())
-      teal.code::join(create_plot(), create_table())
-    })
-
     teal.widgets::verbatim_popup_srv(
       id = "rcode",
-      verbatim_content = reactive(teal.code::get_code(joined_qenvs())),
+      verbatim_content = reactive(code()),
       title = "Show R Code for Boxplot"
     )
   })
