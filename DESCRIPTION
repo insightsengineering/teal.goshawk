@@ -1,8 +1,8 @@
 Type: Package
 Package: teal.goshawk
 Title: Longitudinal Visualization `teal` Modules
-Version: 0.2.0.9000
-Date: 2024-07-30
+Version: 0.2.0.9013
+Date: 2024-10-09
 Authors@R: c(
     person("Nick", "Paszty", , "nick.paszty@gene.com", role = c("aut", "cre")),
     person("Dawid", "Kaledkowski", , "dawid.kaledkowski@roche.com", role = "aut"),
@@ -68,7 +68,7 @@ Config/Needs/verdepcheck: insightsengineering/goshawk, rstudio/shiny,
     tidyverse/ggplot2, r-lib/lifecycle, r-lib/rlang, daattali/shinyjs,
     rstudio/shinyvalidate, insightsengineering/teal.code,
     insightsengineering/teal.logger, insightsengineering/teal.reporter,
-    insightsengineering/teal.widgets, tidyverse/tidyr, yihui/knitr,
+    insightsengineering/teal.widgets, yihui/knitr,
     insightsengineering/nestcolor, rstudio/rmarkdown, tidyverse/stringr,
     insightsengineering/teal.data, insightsengineering/tern,
     r-lib/testthat
