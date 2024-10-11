@@ -146,6 +146,7 @@ toggle_slider_server <- function(id, is_dichotomous_slider = TRUE, step_slider =
     # model view controller: cur_state is the model, the sliderInput and numericInputs are two views/controllers
     # additionally, the module returns the cur_state, so it can be controlled from that end as well
     cur_state <- reactiveVal(NULL) # model, can contain min, max, value etc.
+    slider_range <- reactiveVal(NULL)
 
 
     iv_r <- reactive({
@@ -244,12 +245,6 @@ toggle_slider_server <- function(id, is_dichotomous_slider = TRUE, step_slider =
       shinyjs::toggle("slider_ui")
     })
 
-    slider_range <- reactive({
-      list(
-        low = slider_states()$low,
-        high = slider_states()$high
-      )
-    })
 
     output$slider_ui <- renderUI({
       req(input$toggle >= 0)
@@ -295,6 +290,7 @@ toggle_slider_server <- function(id, is_dichotomous_slider = TRUE, step_slider =
         stopifnot(length(value) == 2)
       }
       set_state(Filter(Negate(is.null), list(value = value, min = min, max = max, step = step)))
+      slider_range(list(value = value, min = min, max = max, step = step))
       update_widgets()
     }
     return(list(
