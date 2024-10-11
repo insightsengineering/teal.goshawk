@@ -244,8 +244,16 @@ toggle_slider_server <- function(id, is_dichotomous_slider = TRUE, step_slider =
       shinyjs::toggle("slider_ui")
     })
 
+    slider_range <- reactive({
+      list(
+        low = slider_states()$low,
+        high = slider_states()$high
+      )
+    })
+
     output$slider_ui <- renderUI({
       req(input$toggle >= 0)
+      req(slider_range())
       state <- isolate(slider_states())
       if (length(seq(state$slider_min, state$slider_max)) < 10) {
         # The values should be index reference instead of actual values because of how we are calling the `sliderInput`
