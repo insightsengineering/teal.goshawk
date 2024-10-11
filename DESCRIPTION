@@ -1,8 +1,8 @@
 Type: Package
 Package: teal.goshawk
 Title: Longitudinal Visualization `teal` Modules
-Version: 0.2.0.9014
-Date: 2024-10-10
+Version: 0.2.0.9015
+Date: 2024-10-11
 Authors@R: c(
     person("Nick", "Paszty", , "nick.paszty@gene.com", role = c("aut", "cre")),
     person("Dawid", "Kaledkowski", , "dawid.kaledkowski@roche.com", role = "aut"),
@@ -48,7 +48,7 @@ Imports:
     shinyvalidate,
     stats,
     teal.code (>= 0.5.0),
-    teal.logger (>= 0.2.0),
+    teal.logger (>= 0.2.0.9011),
     teal.reporter (>= 0.2.0),
     teal.widgets (>= 0.4.0)
 Suggests:
