@@ -213,10 +213,8 @@ toggle_slider_server <- function(id, is_dichotomous_slider = TRUE, step_slider =
         state_low$value <- state_low$value[[1]]
         state_high$value <- state_high$value[[2]]
       }
-      if (input$toggle %% 2 == 0) {
-        state_slider$max <- max(state_slider$max, state_slider$value[2])
-        state_slider$min <- min(state_slider$min, state_slider$value[1])
-      }
+      state_slider$max <- max(state_slider$max, state_slider$value[2])
+      state_slider$min <- min(state_slider$min, state_slider$value[1])
       list(
         low = state_low,
         high = state_high,
