@@ -212,7 +212,7 @@ toggle_slider_server <- function(id, is_dichotomous_slider = TRUE, step_slider =
       req(length(state_slider) > 0) # update will otherwise not work
       state_low <- state_slider
       state_high <- state_slider
-      if (!is.null(state_slider$value) && (length(state_slider$value) > 1)) {
+      if (length(state_slider$value) > 1) {
         state_low$value <- state_low$value[[1]]
         state_high$value <- state_high$value[[2]]
       }
