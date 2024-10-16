@@ -260,7 +260,7 @@ toggle_slider_server <- function(id, is_dichotomous_slider = TRUE, step_slider =
           label = NULL,
           min = state$slider_min,
           max = state$slider_max,
-          value = c(state$low_value, state$high_value),
+          value = state$slider_value,
           ticks = ticks,
           step = step_slider,
           ...
@@ -274,13 +274,37 @@ toggle_slider_server <- function(id, is_dichotomous_slider = TRUE, step_slider =
           label = NULL,
           min = state$slider_min,
           max = state$slider_max,
-          value = c(state$slider_min, state$slider_max),
+          value = state$slider_value,
           step = step_slider,
           ...
         )
         html <- do.call("sliderInput", args)
       }
-      html
+      tags$div(
+        class = "teal-goshawk toggle-slider-container",
+        html,
+        tags$script(HTML(sprintf(
+          '
+          $(".teal-goshawk.toggle-slider-container #%s").ready(function () {
+            var tickLabel = document.querySelector(
+              ".teal-goshawk.toggle-slider-container .irs-grid-text.js-grid-text-9"
+            );
+            var tick = document.querySelector(
+              ".teal-goshawk.toggle-slider-container .irs-grid-pol:nth-last-child(6)"
+            );
+            if (tickLabel) {
+              if (parseFloat(tickLabel.style.left) > 95) {
+                tickLabel.style.opacity = "0";
+                tick.style.opacity = "0";
+              }
+            } else {
+              console.log("Toggle slider element not found.");
+            }
+          });
+        ',
+          session$ns("slider")
+        )))
+      )
     })
 
     update_toggle_slider <- function(value = NULL, min = NULL, max = NULL, step = NULL) {
