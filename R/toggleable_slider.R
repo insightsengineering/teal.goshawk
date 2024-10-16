@@ -177,8 +177,11 @@ toggle_slider_server <- function(id, is_dichotomous_slider = TRUE, step_slider =
 
       # only update provided components, do not discasrd others
       old_state <- cur_state()
-      new_state <- c(new_state, old_state[!names(old_state) %in% names(new_state)])
-      new_state <- new_state[sort(names(new_state))]
+      if (is.null(old_state)) {
+        old_state <- new_state
+      }
+      new_state <- modifyList(old_state, new_state)
+
       if (!setequal(new_state, cur_state())) {
         cur_state(new_state)
       }
@@ -248,36 +251,19 @@ toggle_slider_server <- function(id, is_dichotomous_slider = TRUE, step_slider =
       req(input$toggle >= 0)
       req(slider_range())
       state <- isolate(slider_states())
+      args <- list(
+        inputId = session$ns("slider"),
+        label = NULL,
+        min = state$slider_min,
+        max = state$slider_max,
+        value = state$slider_value,
+        step = step_slider,
+        ...
+      )
       if (length(seq(state$slider_min, state$slider_max)) < 10) {
-        # The values should be index reference instead of actual values because of how we are calling the `sliderInput`
-        ticks <- seq(state$slider_min, state$slider_max)
-        values <- c(
-          which(ticks == state$low_value) - 1,
-          which(ticks == state$high_value) - 1
-        )
-        args <- list(
-          inputId = session$ns("slider"),
-          label = NULL,
-          min = state$slider_min,
-          max = state$slider_max,
-          value = state$slider_value,
-          ticks = ticks,
-          step = step_slider,
-          ...
-        )
-        ticks <- paste0(args$ticks, collapse = ",")
         args$ticks <- TRUE
-        html <- suppressWarnings(do.call("sliderInput", args))
+        html <- do.call("sliderInput", args)
       } else {
-        args <- list(
-          inputId = session$ns("slider"),
-          label = NULL,
-          min = state$slider_min,
-          max = state$slider_max,
-          value = state$slider_value,
-          step = step_slider,
-          ...
-        )
         html <- do.call("sliderInput", args)
       }
       tags$div(
