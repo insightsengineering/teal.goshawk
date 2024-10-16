@@ -180,7 +180,7 @@ toggle_slider_server <- function(id, is_dichotomous_slider = TRUE, step_slider =
       if (is.null(old_state)) {
         old_state <- new_state
       }
-      new_state <- modifyList(old_state, new_state)
+      new_state <- utils::modifyList(old_state, new_state)
 
       if (!setequal(new_state, cur_state())) {
         cur_state(new_state)
