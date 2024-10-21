@@ -315,13 +315,11 @@ ui_g_correlationplot <- function(id, ...) {
           title = "Plot Aesthetic Settings",
           toggle_slider_ui(
             ns("xrange_scale"),
-            label = "X-Axis Range Zoom",
-            min = -1000000, max = 1000000, value = c(-1000000, 1000000)
+            label = "X-Axis Range Zoom"
           ),
           toggle_slider_ui(
             ns("yrange_scale"),
-            label = "Y-Axis Range Zoom",
-            min = -1000000, max = 1000000, value = c(-1000000, 1000000)
+            label = "Y-Axis Range Zoom"
           ),
           numericInput(ns("facet_ncol"), "Number of Plots Per Row:", a$facet_ncol, min = 1),
           checkboxInput(ns("trt_facet"), "Treatment Variable Faceting", a$trt_facet),
@@ -599,10 +597,26 @@ srv_g_correlationplot <- function(id,
     anl_constraint <- anl_constraint_output()$value
 
     # update sliders for axes taking constraints into account
-    xrange_slider <- toggle_slider_server("xrange_scale")
-    yrange_slider <- toggle_slider_server("yrange_scale")
-    keep_range_slider_updated(session, input, xrange_slider$update_state, "xaxis_var", "xaxis_param", anl_constraint)
-    keep_range_slider_updated(session, input, yrange_slider$update_state, "yaxis_var", "yaxis_param", anl_constraint)
+    x_slider_state <- reactiveValues(min = NULL, max = NULL, value = NULL, change_counter = 0)
+    xrange_slider <- toggle_slider_server("xrange_scale", x_slider_state)
+    y_slider_state <- reactiveValues(min = NULL, max = NULL, value = NULL, change_counter = 0)
+    yrange_slider <- toggle_slider_server("yrange_scale", y_slider_state, print = TRUE)
+
+    observe({
+      x_slider_state <- keep_slider_state_updated(
+        intial_state = x_slider_state,
+        varname = input$xaxis_var,
+        paramname = input$xaxis_param,
+        ANL = anl_constraint()$ANL
+      )
+      y_slider_state <- keep_slider_state_updated(
+        intial_state = y_slider_state,
+        varname = input$yaxis_var,
+        paramname = input$yaxis_param,
+        ANL = anl_constraint()$ANL
+      )
+    })
+
     keep_data_const_opts_updated(session, input, anl_constraint, "xaxis_param")
 
     # selector names after transposition
@@ -725,8 +739,8 @@ srv_g_correlationplot <- function(id,
       xaxis_var <- input$xaxis_var
       yaxis_param <- input$yaxis_param
       yaxis_var <- input$yaxis_var
-      xlim <- xrange_slider$state()$value
-      ylim <- yrange_slider$state()$value
+      xlim <- xrange_slider()$value
+      ylim <- yrange_slider()$value
       font_size <- input$font_size
       dot_size <- input$dot_size
       reg_text_size <- input$reg_text_size

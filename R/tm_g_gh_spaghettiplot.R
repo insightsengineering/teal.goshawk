@@ -301,10 +301,7 @@ g_ui_spaghettiplot <- function(id, ...) {
             tags$div(
               toggle_slider_ui(
                 ns("yrange_scale"),
-                label = "Y-Axis Range Zoom",
-                min = -1000000,
-                max = 1000000,
-                value = c(-1000000, 1000000)
+                label = "Y-Axis Range Zoom"
               ),
               tags$div(
                 class = "flex flex-wrap items-center",
@@ -399,8 +396,16 @@ srv_g_spaghettiplot <- function(id,
     anl_q <- anl_q_output()$value
 
     # update sliders for axes taking constraints into account
-    yrange_slider <- toggle_slider_server("yrange_scale")
-    keep_range_slider_updated(session, input, yrange_slider$update_state, "yaxis_var", "xaxis_param", anl_q)
+    y_slider_state <- reactiveValues(min = NULL, max = NULL, value = NULL, change_counter = 0)
+    yrange_slider <- toggle_slider_server("yrange_scale", y_slider_state)
+    observe({
+      y_slider_state <- keep_slider_state_updated(
+        intial_state = y_slider_state,
+        varname = input$yaxis_var,
+        paramname = input$xaxis_param,
+        ANL = anl_q()$ANL
+      )
+    })
     keep_data_const_opts_updated(session, input, anl_q, "xaxis_param")
 
     horizontal_line <- srv_arbitrary_lines("hline_arb")
@@ -425,7 +430,7 @@ srv_g_spaghettiplot <- function(id,
       teal::validate_inputs(iv_r())
       req(anl_q())
       # nolint start
-      ylim <- yrange_slider$state()$value
+      ylim <- yrange_slider()$value
       facet_ncol <- input$facet_ncol
       facet_scales <- ifelse(input$free_x, "free_x", "fixed")
 

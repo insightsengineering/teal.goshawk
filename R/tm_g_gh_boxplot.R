@@ -261,7 +261,7 @@ ui_g_boxplot <- function(id, ...) {
       teal.widgets::panel_group(
         teal.widgets::panel_item(
           title = "Plot Aesthetic Settings",
-          toggle_slider_ui_new(
+          toggle_slider_ui(
             ns("yrange_scale"),
             label = "Y-Axis Range Zoom"
           ),
@@ -339,12 +339,8 @@ srv_g_boxplot <- function(id,
     anl_q <- anl_q_output()$value
 
     # update sliders for axes taking constraints into account
-    slider_state <- reactiveValues(
-      min = NULL,
-      max = NULL,
-      value = NULL
-    )
-    yrange_slider_state <- toggle_slider_server_new("yrange_scale", slider_state)
+    slider_state <- reactiveValues(min = NULL, max = NULL, value = NULL)
+    yrange_slider_state <- toggle_slider_server("yrange_scale", slider_state)
     observe({
       slider_state <- keep_slider_state_updated(
         intial_state = slider_state,
