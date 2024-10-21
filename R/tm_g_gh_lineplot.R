@@ -401,7 +401,7 @@ srv_lineplot <- function(id,
 
     keep_data_const_opts_updated(session, input, anl_q, "xaxis_param")
 
-    y_slider_state <- reactiveValues(min = NULL, max = NULL, value = NULL, change_counter = 0)
+    y_slider_state <- reactiveValues(min = NULL, max = NULL, value = NULL, step = NULL, change_counter = 0)
     yrange_slider <- toggle_slider_server("yrange_scale", y_slider_state)
 
     horizontal_line <- srv_arbitrary_lines("hline_arb")
@@ -434,7 +434,7 @@ srv_lineplot <- function(id,
         NULL
       }
 
-      # we don't need to additionally filter for paramvar here as in keep_range_slider_updated because
+      # we don't need to additionally filter for paramvar here as in keep_slider_state_updated because
       # xaxis_var and yaxis_var are always distinct
       sum_data <- ANL %>%
         dplyr::group_by_at(c(input$xaxis_var, input$trt_group, shape)) %>%
@@ -461,7 +461,7 @@ srv_lineplot <- function(id,
         f = 0.05
       )
 
-      # we don't use keep_range_slider_updated because this module computes the min, max
+      # we don't use keep_slider_state_updated because this module computes the min, max
       # not from the constrained ANL, but rather by first grouping and computing confidence
       # intervals
       y_slider_state$min <- minmax[[1]]

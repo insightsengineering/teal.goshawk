@@ -1,26 +1,31 @@
-#' UI with a toggleable slider to change between slider and numeric input fields
+#' UI with a toggleable dichotomous slider to change between slider and numeric input fields
 #'
 #' This is useful when a slider should be shown, but it is sometimes hard to configure sliders,
 #' so one can toggle to one or two numeric input fields to set slider instead.
-#' Both normal sliders (for a single number in a range) and dichotomous sliders (for a range
-#' within the slider range) are supported. In the former case, the toggle button
-#' will show one numeric input field, in the latter case two.
-#'
-#' Value is not checked to be within minmax range
+#' The toggle button will show two numeric input field for selecting the from and to range.
 #'
 #' @md
 #' @param id `character` module id
 #' @param label `label` label for input field, e.g. slider or numeric inputs
+#' @param ... additional parameters to pass to `sliderInput`
+#' @param initial_state `reactiveValues` list with min, max, step, value and change_counter.
+#' `initial_state` provides the initial state for the slider and the numeric inputs,
+#' it can also help to reset the states from outside the shiny module.
+#' Check the `keep_slider_state_updated` for a common way to reset the slider state.
+#' min - The min range of the slider.
+#' max - The max range of the slider.
+#' step - The step size of the slider and numericInput.
+#' value - The selected values of the slider.
+#' change_counter - A counter to make sure that we also reset the slider even if the previous and current state is same.
 #'
 #' @examples
-#' value <- c(20.3, 81.5) # dichotomous slider
-#' # value <- c(50.1) # normal slider
 #'
 #' # use non-exported function from teal.goshawk
 #' toggle_slider_ui <- getFromNamespace("toggle_slider_ui", "teal.goshawk")
 #' toggle_slider_server <- getFromNamespace("toggle_slider_server", "teal.goshawk")
 #'
-#' ui <- div(
+#' ui <- fluidPage(
+#'   shinyjs::useShinyjs(),
 #'   toggle_slider_ui(
 #'     "toggle_slider", "Select value"
 #'   ),
@@ -28,12 +33,12 @@
 #' )
 #'
 #' server <- function(input, output, session) {
-#'   is_dichotomous_slider <- (length(value) == 2)
-#'   range_value <- toggle_slider_server("toggle_slider")
-#'   messages <- reactiveVal() # to keep history
-#'   observeEvent(range_value$state(), {
+#'   init_state <- reactiveValues(min = 0, max = 10, value = c(3, 6), step = 0.5, change_counter = 0)
+#'   range_value <- toggle_slider_server("toggle_slider", init_state)
+#'   messages <- reactiveVal() #' to keep history
+#'   observeEvent(range_value(), {
 #'     list_with_names_str <- function(x) paste(names(x), x, sep = ": ", collapse = ", ")
-#'     messages(c(messages(), list_with_names_str(range_value$state())))
+#'     messages(c(messages(), list_with_names_str(range_value())))
 #'   })
 #'   output$value <- renderText({
 #'     paste(messages(), collapse = "\n")
@@ -43,20 +48,20 @@
 #' if (interactive()) {
 #'   shinyApp(ui, server)
 #' }
-#' @name toggle_sidebar
+#' @name toggle_slider
 #' @keywords internal
 #' @return `NULL`.
 NULL
 
 
-#' @rdname toggle_sidebar
+#' @rdname toggle_slider
 toggle_slider_ui <- function(id, label) {
   ns <- NS(id)
   tags$div(
     tags$div(
-      class = "flex justify-between mb-1",
+      style = "display: flex; justify-content: space-between;",
       tags$span(tags$strong(label)),
-      actionButton(ns("toggle"), "Toggle", class = "btn-xs")
+      tags$div(actionButton(ns("toggle"), "Toggle", class = "btn-xs"))
     ),
     uiOutput(ns("slider_view")),
     shinyjs::hidden(
@@ -77,8 +82,6 @@ toggle_slider_ui <- function(id, label) {
   )
 }
 
-#' @param ... additional parameters to pass to `sliderInput`
-#' @param initial_state `reactiveValues` list with min, max and value.
 #' @keywords internal
 #' @rdname toggle_slider
 toggle_slider_server <- function(id, initial_state, print = FALSE, ...) {
@@ -87,11 +90,13 @@ toggle_slider_server <- function(id, initial_state, print = FALSE, ...) {
     slider_update_state <- reactiveVal(NULL)
     numeric_update_state <- reactiveVal(NULL)
     slider_shown <- reactive(input$toggle %% 2 == 0)
+
     observeEvent(initial_state$change_counter, {
       selected_state(
         list(
           min = initial_state$min,
           max = initial_state$max,
+          step = initial_state$step,
           value = initial_state$value
         )
       )
@@ -99,6 +104,7 @@ toggle_slider_server <- function(id, initial_state, print = FALSE, ...) {
         list(
           min = initial_state$min,
           max = initial_state$max,
+          step = initial_state$step,
           value = initial_state$value,
           change_counter = initial_state$change_counter
         )
@@ -107,10 +113,12 @@ toggle_slider_server <- function(id, initial_state, print = FALSE, ...) {
         list(
           min = initial_state$value[1],
           max = initial_state$value[2],
+          step = initial_state$step,
           change_counter = initial_state$change_counter
         )
       )
     })
+
     output$slider_view <- renderUI({
       req(slider_update_state())
       args <- list(
@@ -119,7 +127,7 @@ toggle_slider_server <- function(id, initial_state, print = FALSE, ...) {
         min = slider_update_state()$min,
         max = slider_update_state()$max,
         value = slider_update_state()$value,
-        step = NULL,
+        step = slider_update_state()$step,
         ...
       )
       if (length(seq(slider_update_state()$min, slider_update_state()$max)) < 10) {
@@ -159,6 +167,7 @@ toggle_slider_server <- function(id, initial_state, print = FALSE, ...) {
       shinyjs::toggle("slider_view", condition = slider_shown())
       shinyjs::toggle("numeric_view", condition = !slider_shown())
     })
+
     observeEvent(input$slider, {
       if (slider_shown()) {
         selected_state(
@@ -171,6 +180,7 @@ toggle_slider_server <- function(id, initial_state, print = FALSE, ...) {
         numeric_update_state(list(min = input$slider[1], max = input$slider[2]))
       }
     })
+
     observeEvent(c(input$value_low, input$value_high), ignoreInit = TRUE, {
       if (!slider_shown()) {
         selected_state(
@@ -189,9 +199,10 @@ toggle_slider_server <- function(id, initial_state, print = FALSE, ...) {
         )
       }
     })
+
     observeEvent(numeric_update_state(), {
-      updateNumericInput(session, "value_low", value = numeric_update_state()$min)
-      updateNumericInput(session, "value_high", value = numeric_update_state()$max)
+      updateNumericInput(session, "value_low", value = numeric_update_state()$min, step = numeric_update_state()$step)
+      updateNumericInput(session, "value_high", value = numeric_update_state()$max, step = numeric_update_state()$step)
     })
 
     return(selected_state)
@@ -200,7 +211,7 @@ toggle_slider_server <- function(id, initial_state, print = FALSE, ...) {
 
 #' @keywords internal
 #' @rdname toggle_slider
-keep_slider_state_updated <- function(intial_state, varname, paramname, ANL, trt_group = NULL) { # nolint object_name_linter
+keep_slider_state_updated <- function(intial_state, varname, paramname, ANL, trt_group = NULL, step = NULL) { # nolint object_name_linter
   validate(need(varname, "Please select variable"))
   validate(need(paramname, "Please select variable"))
   req(length(paramname) == 1)
@@ -217,10 +228,11 @@ keep_slider_state_updated <- function(intial_state, varname, paramname, ANL, trt
     })
     dmax <- max(unlist(density_maxes))
     minmax <- c(0, round(dmax * 1.2, 5))
-    # step <- round(dmax / 100, 5) #TODO add step argument to the reactive list.
+    step <- round(dmax / 100, 5)
   }
   intial_state$min <- minmax[[1]]
   intial_state$max <- minmax[[2]]
+  intial_state$step <- step
   intial_state$value <- minmax
   intial_state$change_counter <- isolate(intial_state$change_counter) + 1
   intial_state

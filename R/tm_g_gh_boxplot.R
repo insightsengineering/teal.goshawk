@@ -339,7 +339,7 @@ srv_g_boxplot <- function(id,
     anl_q <- anl_q_output()$value
 
     # update sliders for axes taking constraints into account
-    slider_state <- reactiveValues(min = NULL, max = NULL, value = NULL)
+    slider_state <- reactiveValues(min = NULL, max = NULL, value = NULL, step = NULL, change_counter = 0)
     yrange_slider_state <- toggle_slider_server("yrange_scale", slider_state)
     observe({
       slider_state <- keep_slider_state_updated(

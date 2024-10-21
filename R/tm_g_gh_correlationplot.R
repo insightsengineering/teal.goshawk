@@ -597,9 +597,9 @@ srv_g_correlationplot <- function(id,
     anl_constraint <- anl_constraint_output()$value
 
     # update sliders for axes taking constraints into account
-    x_slider_state <- reactiveValues(min = NULL, max = NULL, value = NULL, change_counter = 0)
+    x_slider_state <- reactiveValues(min = NULL, max = NULL, value = NULL, step = NULL, change_counter = 0)
     xrange_slider <- toggle_slider_server("xrange_scale", x_slider_state)
-    y_slider_state <- reactiveValues(min = NULL, max = NULL, value = NULL, change_counter = 0)
+    y_slider_state <- reactiveValues(min = NULL, max = NULL, value = NULL, step = NULL, change_counter = 0)
     yrange_slider <- toggle_slider_server("yrange_scale", y_slider_state, print = TRUE)
 
     observe({

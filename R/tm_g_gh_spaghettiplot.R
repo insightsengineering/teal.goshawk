@@ -396,7 +396,7 @@ srv_g_spaghettiplot <- function(id,
     anl_q <- anl_q_output()$value
 
     # update sliders for axes taking constraints into account
-    y_slider_state <- reactiveValues(min = NULL, max = NULL, value = NULL, change_counter = 0)
+    y_slider_state <- reactiveValues(min = NULL, max = NULL, value = NULL, step = NULL, change_counter = 0)
     yrange_slider <- toggle_slider_server("yrange_scale", y_slider_state)
     observe({
       y_slider_state <- keep_slider_state_updated(
