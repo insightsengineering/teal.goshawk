@@ -88,7 +88,6 @@ toggle_slider_server <- function(id, initial_state, print = FALSE, ...) {
   moduleServer(id, function(input, output, session) {
     selected_state <- reactiveVal(NULL)
     slider_update_state <- reactiveVal(NULL)
-    numeric_update_state <- reactiveVal(NULL)
     slider_shown <- reactive(input$toggle %% 2 == 0)
 
     observeEvent(initial_state$change_counter, {
@@ -106,14 +105,6 @@ toggle_slider_server <- function(id, initial_state, print = FALSE, ...) {
           max = initial_state$max,
           step = initial_state$step,
           value = initial_state$value,
-          change_counter = initial_state$change_counter
-        )
-      )
-      numeric_update_state(
-        list(
-          min = initial_state$value[1],
-          max = initial_state$value[2],
-          step = initial_state$step,
           change_counter = initial_state$change_counter
         )
       )
@@ -177,7 +168,6 @@ toggle_slider_server <- function(id, initial_state, print = FALSE, ...) {
             value = input$slider
           )
         )
-        numeric_update_state(list(min = input$slider[1], max = input$slider[2]))
       }
     })
 
@@ -200,9 +190,9 @@ toggle_slider_server <- function(id, initial_state, print = FALSE, ...) {
       }
     })
 
-    observeEvent(numeric_update_state(), {
-      updateNumericInput(session, "value_low", value = numeric_update_state()$min, step = numeric_update_state()$step)
-      updateNumericInput(session, "value_high", value = numeric_update_state()$max, step = numeric_update_state()$step)
+    observeEvent(selected_state(), {
+      updateNumericInput(session, "value_low", value = selected_state()$value[1], step = selected_state()$step)
+      updateNumericInput(session, "value_high", value = selected_state()$value[2], step = selected_state()$step)
     })
 
     return(selected_state)
