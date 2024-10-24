@@ -61,7 +61,8 @@ Suggests:
     testthat (>= 3.0.4),
     utils
 VignetteBuilder:
-    knitr
+    knitr,
+    rmarkdown
 Config/Needs/verdepcheck: insightsengineering/goshawk, rstudio/shiny,
     insightsengineering/teal, insightsengineering/teal.transform,
     mllg/checkmate, daattali/colourpicker, tidyverse/dplyr, rstudio/DT,
