@@ -168,6 +168,8 @@ toggle_slider_server <- function(id, initial_state, print = FALSE, ...) {
             value = input$slider
           )
         )
+        updateNumericInput(session, "value_low", value = selected_state()$value[1], step = selected_state()$step)
+        updateNumericInput(session, "value_high", value = selected_state()$value[2], step = selected_state()$step)
       }
     })
 
@@ -188,11 +190,6 @@ toggle_slider_server <- function(id, initial_state, print = FALSE, ...) {
           )
         )
       }
-    })
-
-    observeEvent(selected_state(), {
-      updateNumericInput(session, "value_low", value = selected_state()$value[1], step = selected_state()$step)
-      updateNumericInput(session, "value_high", value = selected_state()$value[2], step = selected_state()$step)
     })
 
     return(selected_state)
