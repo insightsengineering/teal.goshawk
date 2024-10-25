@@ -55,7 +55,6 @@ toggle_slider_server <- function(id, ...) {
       slider = NULL,
       data_range = NULL
     )
-    slider_shown <- reactive(input$toggle %% 2 == 0)
 
     observeEvent(state$data_range, {
       state$min <- state$slider$min
@@ -106,25 +105,22 @@ toggle_slider_server <- function(id, ...) {
     })
 
     observeEvent(input$toggle, {
-      shinyjs::toggle("slider_view", condition = slider_shown())
-      shinyjs::toggle("numeric_view", condition = !slider_shown())
+      slider_shown <- input$toggle %% 2 == 0
+      shinyjs::toggle("slider_view", condition = slider_shown)
+      shinyjs::toggle("numeric_view", condition = !slider_shown)
     })
 
     observeEvent(input$slider, {
-      if (slider_shown()) {
-        state$value <- input$slider
-        updateNumericInput(session, "value_low", value = input$slider[1])
-        updateNumericInput(session, "value_high", value = input$slider[2])
-      }
+      state$value <- input$slider
+      updateNumericInput(session, "value_low", value = input$slider[1])
+      updateNumericInput(session, "value_high", value = input$slider[2])
     })
 
     observeEvent(c(input$value_low, input$value_high), ignoreInit = TRUE, {
-      if (!slider_shown()) {
-        state$min <- min(state$data_range$min, input$value_low)
-        state$max <- max(state$data_range$max, input$value_high)
-        state$value <- c(input$value_low, input$value_high)
-        state$slider <- list(min = state$min, max = state$max, value = state$value)
-      }
+      state$min <- min(state$data_range$min, input$value_low)
+      state$max <- max(state$data_range$max, input$value_high)
+      state$value <- c(input$value_low, input$value_high)
+      state$slider <- list(min = state$min, max = state$max, value = state$value)
     })
 
     return(state)
