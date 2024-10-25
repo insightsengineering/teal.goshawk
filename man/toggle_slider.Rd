@@ -9,10 +9,10 @@
 \usage{
 toggle_slider_ui(id, label)
 
-toggle_slider_server(id, initial_state, print = FALSE, ...)
+toggle_slider_server(id, ...)
 
 keep_slider_state_updated(
-  intial_state,
+  state,
   varname,
   paramname,
   ANL,
@@ -25,16 +25,6 @@ keep_slider_state_updated(
 
 \item{label}{\code{label} label for input field, e.g. slider or numeric inputs}
 
-\item{initial_state}{\code{reactiveValues} list with min, max, step, value and change_counter.
-\code{initial_state} provides the initial state for the slider and the numeric inputs,
-it can also help to reset the states from outside the shiny module.
-Check the \code{keep_slider_state_updated} for a common way to reset the slider state.
-min - The min range of the slider.
-max - The max range of the slider.
-step - The step size of the slider and numericInput.
-value - The selected values of the slider.
-change_counter - A counter to make sure that we also reset the slider even if the previous and current state is same.}
-
 \item{...}{additional parameters to pass to \code{sliderInput}}
 }
 \value{
@@ -44,36 +34,5 @@ change_counter - A counter to make sure that we also reset the slider even if th
 This is useful when a slider should be shown, but it is sometimes hard to configure sliders,
 so one can toggle to one or two numeric input fields to set slider instead.
 The toggle button will show two numeric input field for selecting the from and to range.
-}
-\examples{
-
-# use non-exported function from teal.goshawk
-toggle_slider_ui <- getFromNamespace("toggle_slider_ui", "teal.goshawk")
-toggle_slider_server <- getFromNamespace("toggle_slider_server", "teal.goshawk")
-
-ui <- fluidPage(
-  shinyjs::useShinyjs(),
-  toggle_slider_ui(
-    "toggle_slider", "Select value"
-  ),
-  verbatimTextOutput("value")
-)
-
-server <- function(input, output, session) {
-  init_state <- reactiveValues(min = 0, max = 10, value = c(3, 6), step = 0.5, change_counter = 0)
-  range_value <- toggle_slider_server("toggle_slider", init_state)
-  messages <- reactiveVal() #' to keep history
-  observeEvent(range_value(), {
-    list_with_names_str <- function(x) paste(names(x), x, sep = ": ", collapse = ", ")
-    messages(c(messages(), list_with_names_str(range_value())))
-  })
-  output$value <- renderText({
-    paste(messages(), collapse = "\n")
-  })
-}
-
-if (interactive()) {
-  shinyApp(ui, server)
-}
 }
 \keyword{internal}
