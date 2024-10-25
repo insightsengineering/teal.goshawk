@@ -112,24 +112,18 @@ toggle_slider_server <- function(id, initial_state, print = FALSE, ...) {
 
     output$slider_view <- renderUI({
       req(slider_update_state())
-      args <- list(
-        inputId = session$ns("slider"),
-        label = NULL,
-        min = slider_update_state()$min,
-        max = slider_update_state()$max,
-        value = slider_update_state()$value,
-        step = slider_update_state()$step,
-        ...
-      )
-      if (length(seq(slider_update_state()$min, slider_update_state()$max)) < 10) {
-        args$ticks <- TRUE
-        html <- do.call("sliderInput", args)
-      } else {
-        html <- do.call("sliderInput", args)
-      }
       tags$div(
         class = "teal-goshawk toggle-slider-container",
-        html,
+        sliderInput(
+          inputId = session$ns("slider"),
+          label = NULL,
+          min = slider_update_state()$min,
+          max = slider_update_state()$max,
+          value = slider_update_state()$value,
+          step = slider_update_state()$step,
+          ticks = TRUE,
+          ...
+        ),
         tags$script(HTML(sprintf(
           '
           $(".teal-goshawk.toggle-slider-container #%s").ready(function () {
