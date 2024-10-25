@@ -597,20 +597,20 @@ srv_g_correlationplot <- function(id,
     anl_constraint <- anl_constraint_output()$value
 
     # update sliders for axes taking constraints into account
-    x_slider_state <- reactiveValues(min = NULL, max = NULL, value = NULL, step = NULL, change_counter = 0)
-    xrange_slider <- toggle_slider_server("xrange_scale", x_slider_state)
-    y_slider_state <- reactiveValues(min = NULL, max = NULL, value = NULL, step = NULL, change_counter = 0)
-    yrange_slider <- toggle_slider_server("yrange_scale", y_slider_state, print = TRUE)
+    xrange_slider <- toggle_slider_server("xrange_scale")
+    yrange_slider <- toggle_slider_server("yrange_scale")
 
     observe({
-      x_slider_state <- keep_slider_state_updated(
-        intial_state = x_slider_state,
+      xrange_slider <- keep_slider_state_updated(
+        state = xrange_slider,
         varname = input$xaxis_var,
         paramname = input$xaxis_param,
         ANL = anl_constraint()$ANL
       )
-      y_slider_state <- keep_slider_state_updated(
-        intial_state = y_slider_state,
+    })
+    observe({
+      yrange_slider <- keep_slider_state_updated(
+        state = yrange_slider,
         varname = input$yaxis_var,
         paramname = input$yaxis_param,
         ANL = anl_constraint()$ANL
@@ -739,8 +739,8 @@ srv_g_correlationplot <- function(id,
       xaxis_var <- input$xaxis_var
       yaxis_param <- input$yaxis_param
       yaxis_var <- input$yaxis_var
-      xlim <- xrange_slider()$value
-      ylim <- yrange_slider()$value
+      xlim <- xrange_slider$value
+      ylim <- yrange_slider$value
       font_size <- input$font_size
       dot_size <- input$dot_size
       reg_text_size <- input$reg_text_size

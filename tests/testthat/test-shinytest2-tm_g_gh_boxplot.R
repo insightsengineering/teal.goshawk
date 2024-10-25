@@ -100,5 +100,6 @@ sets proper sliderInput and numericInput values",
         value = c(new_range[1], new_range[2])
       )
     )
+    app_driver$stop()
   }
 )

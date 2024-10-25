@@ -401,8 +401,7 @@ srv_lineplot <- function(id,
 
     keep_data_const_opts_updated(session, input, anl_q, "xaxis_param")
 
-    y_slider_state <- reactiveValues(min = NULL, max = NULL, value = NULL, step = NULL, change_counter = 0)
-    yrange_slider <- toggle_slider_server("yrange_scale", y_slider_state)
+    yrange_slider <- toggle_slider_server("yrange_scale")
 
     horizontal_line <- srv_arbitrary_lines("hline_arb")
 
@@ -464,10 +463,12 @@ srv_lineplot <- function(id,
       # we don't use keep_slider_state_updated because this module computes the min, max
       # not from the constrained ANL, but rather by first grouping and computing confidence
       # intervals
-      y_slider_state$min <- minmax[[1]]
-      y_slider_state$max <- minmax[[2]]
-      y_slider_state$value <- minmax
-      y_slider_state$change_counter <- isolate(y_slider_state$change_counter) + 1
+      yrange_slider$slider <- list(
+        min = minmax[[1]],
+        max = minmax[[2]],
+        value = minmax
+      )
+      yrange_slider$data_range <- list(min = minmax[[1]], max = minmax[[2]])
     })
 
     line_color_defaults <- color_manual
@@ -664,7 +665,7 @@ srv_lineplot <- function(id,
       teal::validate_inputs(iv_r())
       req(anl_q(), line_color_selected(), line_type_selected())
       # nolint start
-      ylim <- yrange_slider()$value
+      ylim <- yrange_slider$value
       plot_font_size <- input$plot_font_size
       dot_size <- input$dot_size
       dodge <- input$dodge

@@ -281,20 +281,20 @@ srv_g_density_distribution_plot <- function(id, # nolint
     anl_q <- anl_q_output()$value
 
     # update sliders for axes taking constraints into account
-    x_slider_state <- reactiveValues(min = NULL, max = NULL, value = NULL, step = NULL, change_counter = 0)
-    xrange_slider <- toggle_slider_server("xrange_scale", x_slider_state)
-    y_slider_state <- reactiveValues(min = NULL, max = NULL, value = NULL, step = NULL, change_counter = 0)
-    yrange_slider <- toggle_slider_server("yrange_scale", y_slider_state)
+    xrange_slider <- toggle_slider_server("xrange_scale")
+    yrange_slider <- toggle_slider_server("yrange_scale")
 
     observe({
-      x_slider_state <- keep_slider_state_updated(
-        intial_state = x_slider_state,
+      xrange_slider <- keep_slider_state_updated(
+        state = xrange_slider,
         varname = input$xaxis_var,
         paramname = input$xaxis_param,
         ANL = anl_q()$ANL
       )
-      y_slider_state <- keep_slider_state_updated(
-        intial_state = y_slider_state,
+    })
+    observe({
+      yrange_slider <- keep_slider_state_updated(
+        state = yrange_slider,
         varname = input$xaxis_var,
         paramname = input$xaxis_param,
         ANL = anl_q()$ANL,
@@ -328,8 +328,8 @@ srv_g_density_distribution_plot <- function(id, # nolint
       # nolint start
       param <- input$xaxis_param
       xaxis_var <- input$xaxis_var
-      xlim <- xrange_slider()$value
-      ylim <- yrange_slider()$value
+      xlim <- xrange_slider$value
+      ylim <- yrange_slider$value
       font_size <- input$font_size
       line_size <- input$line_size
       hline_arb <- horizontal_line()$line_arb

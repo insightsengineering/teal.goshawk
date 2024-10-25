@@ -396,11 +396,10 @@ srv_g_spaghettiplot <- function(id,
     anl_q <- anl_q_output()$value
 
     # update sliders for axes taking constraints into account
-    y_slider_state <- reactiveValues(min = NULL, max = NULL, value = NULL, step = NULL, change_counter = 0)
-    yrange_slider <- toggle_slider_server("yrange_scale", y_slider_state)
+    yrange_slider <- toggle_slider_server("yrange_scale")
     observe({
-      y_slider_state <- keep_slider_state_updated(
-        intial_state = y_slider_state,
+      yrange_slider <- keep_slider_state_updated(
+        state = yrange_slider,
         varname = input$yaxis_var,
         paramname = input$xaxis_param,
         ANL = anl_q()$ANL
@@ -430,7 +429,7 @@ srv_g_spaghettiplot <- function(id,
       teal::validate_inputs(iv_r())
       req(anl_q())
       # nolint start
-      ylim <- yrange_slider()$value
+      ylim <- yrange_slider$value
       facet_ncol <- input$facet_ncol
       facet_scales <- ifelse(input$free_x, "free_x", "fixed")
 

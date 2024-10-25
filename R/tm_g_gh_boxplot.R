@@ -339,11 +339,10 @@ srv_g_boxplot <- function(id,
     anl_q <- anl_q_output()$value
 
     # update sliders for axes taking constraints into account
-    slider_state <- reactiveValues(min = NULL, max = NULL, value = NULL, step = NULL, change_counter = 0)
-    yrange_slider_state <- toggle_slider_server("yrange_scale", slider_state)
+    yrange_slider_state <- toggle_slider_server("yrange_scale")
     observe({
-      slider_state <- keep_slider_state_updated(
-        intial_state = slider_state,
+      yrange_slider_state <- keep_slider_state_updated(
+        state = yrange_slider_state,
         varname = input$yaxis_var,
         paramname = input$xaxis_param,
         ANL = anl_q()$ANL
@@ -393,7 +392,7 @@ srv_g_boxplot <- function(id,
       yaxis <- input$yaxis_var
       xaxis <- input$xaxis_var
       facet_var <- `if`(is.null(input$facet_var), "None", input$facet_var)
-      ylim <- yrange_slider_state()$value
+      ylim <- yrange_slider_state$value
       facet_ncol <- input$facet_ncol
 
       alpha <- input$alpha

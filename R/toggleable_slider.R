@@ -8,46 +8,7 @@
 #' @param id `character` module id
 #' @param label `label` label for input field, e.g. slider or numeric inputs
 #' @param ... additional parameters to pass to `sliderInput`
-#' @param initial_state `reactiveValues` list with min, max, step, value and change_counter.
-#' `initial_state` provides the initial state for the slider and the numeric inputs,
-#' it can also help to reset the states from outside the shiny module.
-#' Check the `keep_slider_state_updated` for a common way to reset the slider state.
-#' min - The min range of the slider.
-#' max - The max range of the slider.
-#' step - The step size of the slider and numericInput.
-#' value - The selected values of the slider.
-#' change_counter - A counter to make sure that we also reset the slider even if the previous and current state is same.
 #'
-#' @examples
-#'
-#' # use non-exported function from teal.goshawk
-#' toggle_slider_ui <- getFromNamespace("toggle_slider_ui", "teal.goshawk")
-#' toggle_slider_server <- getFromNamespace("toggle_slider_server", "teal.goshawk")
-#'
-#' ui <- fluidPage(
-#'   shinyjs::useShinyjs(),
-#'   toggle_slider_ui(
-#'     "toggle_slider", "Select value"
-#'   ),
-#'   verbatimTextOutput("value")
-#' )
-#'
-#' server <- function(input, output, session) {
-#'   init_state <- reactiveValues(min = 0, max = 10, value = c(3, 6), step = 0.5, change_counter = 0)
-#'   range_value <- toggle_slider_server("toggle_slider", init_state)
-#'   messages <- reactiveVal() #' to keep history
-#'   observeEvent(range_value(), {
-#'     list_with_names_str <- function(x) paste(names(x), x, sep = ": ", collapse = ", ")
-#'     messages(c(messages(), list_with_names_str(range_value())))
-#'   })
-#'   output$value <- renderText({
-#'     paste(messages(), collapse = "\n")
-#'   })
-#' }
-#'
-#' if (interactive()) {
-#'   shinyApp(ui, server)
-#' }
 #' @name toggle_slider
 #' @keywords internal
 #' @return `NULL`.
@@ -84,43 +45,39 @@ toggle_slider_ui <- function(id, label) {
 
 #' @keywords internal
 #' @rdname toggle_slider
-toggle_slider_server <- function(id, initial_state, print = FALSE, ...) {
+toggle_slider_server <- function(id, ...) {
   moduleServer(id, function(input, output, session) {
-    selected_state <- reactiveVal(NULL)
-    slider_update_state <- reactiveVal(NULL)
+    state <- reactiveValues(
+      min = NULL,
+      max = NULL,
+      value = NULL,
+      step = NULL,
+      slider = NULL,
+      data_range = NULL
+    )
     slider_shown <- reactive(input$toggle %% 2 == 0)
 
-    observeEvent(initial_state$change_counter, {
-      selected_state(
-        list(
-          min = initial_state$min,
-          max = initial_state$max,
-          step = initial_state$step,
-          value = initial_state$value
-        )
-      )
-      slider_update_state(
-        list(
-          min = initial_state$min,
-          max = initial_state$max,
-          step = initial_state$step,
-          value = initial_state$value,
-          change_counter = initial_state$change_counter
-        )
-      )
+    observeEvent(state$data_range, {
+      state$min <- state$slider$min
+      state$max <- state$slider$max
+      state$step <- state$slider$step
+      state$value <- state$slider$value
+      updateNumericInput(session, "value_low", value = state$slider$value[1])
+      updateNumericInput(session, "value_high", value = state$slider$value[2])
     })
 
     output$slider_view <- renderUI({
-      req(slider_update_state())
+      req(state$slider)
+
       tags$div(
         class = "teal-goshawk toggle-slider-container",
         sliderInput(
           inputId = session$ns("slider"),
           label = NULL,
-          min = slider_update_state()$min,
-          max = slider_update_state()$max,
-          value = slider_update_state()$value,
-          step = slider_update_state()$step,
+          min = state$slider$min,
+          max = state$slider$max,
+          value = state$slider$value,
+          step = state$slider$step,
           ticks = TRUE,
           ...
         ),
@@ -155,44 +112,28 @@ toggle_slider_server <- function(id, initial_state, print = FALSE, ...) {
 
     observeEvent(input$slider, {
       if (slider_shown()) {
-        selected_state(
-          list(
-            min = selected_state()$min,
-            max = selected_state()$max,
-            value = input$slider
-          )
-        )
-        updateNumericInput(session, "value_low", value = selected_state()$value[1], step = selected_state()$step)
-        updateNumericInput(session, "value_high", value = selected_state()$value[2], step = selected_state()$step)
+        state$value <- input$slider
+        updateNumericInput(session, "value_low", value = input$slider[1])
+        updateNumericInput(session, "value_high", value = input$slider[2])
       }
     })
 
     observeEvent(c(input$value_low, input$value_high), ignoreInit = TRUE, {
       if (!slider_shown()) {
-        selected_state(
-          list(
-            min = min(initial_state$min, input$value_low),
-            max = max(initial_state$max, input$value_high),
-            value = c(input$value_low, input$value_high)
-          )
-        )
-        slider_update_state(
-          list(
-            min = selected_state()$min,
-            max = selected_state()$max,
-            value = selected_state()$value
-          )
-        )
+        state$min <- min(state$data_range$min, input$value_low)
+        state$max <- max(state$data_range$max, input$value_high)
+        state$value <- c(input$value_low, input$value_high)
+        state$slider <- list(min = state$min, max = state$max, value = state$value)
       }
     })
 
-    return(selected_state)
+    return(state)
   })
 }
 
 #' @keywords internal
 #' @rdname toggle_slider
-keep_slider_state_updated <- function(intial_state, varname, paramname, ANL, trt_group = NULL, step = NULL) { # nolint object_name_linter
+keep_slider_state_updated <- function(state, varname, paramname, ANL, trt_group = NULL, step = NULL) { # nolint object_name_linter
   validate(need(varname, "Please select variable"))
   validate(need(paramname, "Please select variable"))
   req(length(paramname) == 1)
@@ -211,10 +152,12 @@ keep_slider_state_updated <- function(intial_state, varname, paramname, ANL, trt
     minmax <- c(0, round(dmax * 1.2, 5))
     step <- round(dmax / 100, 5)
   }
-  intial_state$min <- minmax[[1]]
-  intial_state$max <- minmax[[2]]
-  intial_state$step <- step
-  intial_state$value <- minmax
-  intial_state$change_counter <- isolate(intial_state$change_counter) + 1
-  intial_state
+  state$slider <- list(
+    min = minmax[[1]],
+    max = minmax[[2]],
+    step = step,
+    value = minmax
+  )
+  state$data_range <- list(min = minmax[[1]], max = minmax[[2]])
+  state
 }

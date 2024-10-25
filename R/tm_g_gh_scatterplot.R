@@ -286,20 +286,20 @@ srv_g_scatterplot <- function(id,
     anl_q <- anl_q_output()$value
 
     # update sliders for axes taking constraints into account
-    x_slider_state <- reactiveValues(min = NULL, max = NULL, value = NULL, step = NULL, change_counter = 0)
-    xrange_slider <- toggle_slider_server("xrange_scale", x_slider_state)
-    y_slider_state <- reactiveValues(min = NULL, max = NULL, value = NULL, step = NULL, change_counter = 0)
-    yrange_slider <- toggle_slider_server("yrange_scale", y_slider_state)
+    xrange_slider <- toggle_slider_server("xrange_scale")
+    yrange_slider <- toggle_slider_server("yrange_scale")
 
     observe({
-      x_slider_state <- keep_slider_state_updated(
-        intial_state = x_slider_state,
+      xrange_slider <- keep_slider_state_updated(
+        state = xrange_slider,
         varname = input$xaxis_var,
         paramname = input$xaxis_param,
         ANL = anl_q()$ANL
       )
-      y_slider_state <- keep_slider_state_updated(
-        intial_state = y_slider_state,
+    })
+    observe({
+      yrange_slider <- keep_slider_state_updated(
+        state = yrange_slider,
         varname = input$yaxis_var,
         paramname = input$xaxis_param,
         ANL = anl_q()$ANL
@@ -312,8 +312,8 @@ srv_g_scatterplot <- function(id,
     plot_q <- debounce(reactive({
       req(anl_q())
       # nolint start
-      xlim <- xrange_slider()$value
-      ylim <- yrange_slider()$value
+      xlim <- xrange_slider$value
+      ylim <- yrange_slider$value
       facet_ncol <- input$facet_ncol
       validate(need(
         is.na(facet_ncol) || (as.numeric(facet_ncol) > 0 && as.numeric(facet_ncol) %% 1 == 0),
