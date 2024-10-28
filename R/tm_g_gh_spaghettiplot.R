@@ -398,7 +398,7 @@ srv_g_spaghettiplot <- function(id,
     # update sliders for axes taking constraints into account
     yrange_slider <- toggle_slider_server("yrange_scale")
     observe({
-      yrange_slider <- keep_slider_state_updated(
+      keep_slider_state_updated(
         state = yrange_slider,
         varname = input$yaxis_var,
         paramname = input$xaxis_param,

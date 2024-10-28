@@ -341,7 +341,7 @@ srv_g_boxplot <- function(id,
     # update sliders for axes taking constraints into account
     yrange_slider_state <- toggle_slider_server("yrange_scale")
     observe({
-      yrange_slider_state <- keep_slider_state_updated(
+      keep_slider_state_updated(
         state = yrange_slider_state,
         varname = input$yaxis_var,
         paramname = input$xaxis_param,

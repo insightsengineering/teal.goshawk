@@ -285,7 +285,7 @@ srv_g_density_distribution_plot <- function(id, # nolint
     yrange_slider <- toggle_slider_server("yrange_scale")
 
     observe({
-      xrange_slider <- keep_slider_state_updated(
+      keep_slider_state_updated(
         state = xrange_slider,
         varname = input$xaxis_var,
         paramname = input$xaxis_param,
@@ -293,7 +293,7 @@ srv_g_density_distribution_plot <- function(id, # nolint
       )
     })
     observe({
-      yrange_slider <- keep_slider_state_updated(
+      keep_slider_state_updated(
         state = yrange_slider,
         varname = input$xaxis_var,
         paramname = input$xaxis_param,

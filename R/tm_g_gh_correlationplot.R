@@ -601,7 +601,7 @@ srv_g_correlationplot <- function(id,
     yrange_slider <- toggle_slider_server("yrange_scale")
 
     observe({
-      xrange_slider <- keep_slider_state_updated(
+      keep_slider_state_updated(
         state = xrange_slider,
         varname = input$xaxis_var,
         paramname = input$xaxis_param,
@@ -609,7 +609,7 @@ srv_g_correlationplot <- function(id,
       )
     })
     observe({
-      yrange_slider <- keep_slider_state_updated(
+      keep_slider_state_updated(
         state = yrange_slider,
         varname = input$yaxis_var,
         paramname = input$yaxis_param,
