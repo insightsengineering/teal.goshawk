@@ -271,10 +271,7 @@ ui_lineplot <- function(id, ...) {
             title = "Plot Aesthetic Settings",
             toggle_slider_ui(
               ns("yrange_scale"),
-              label = "Y-Axis Range Zoom",
-              min = -1000000,
-              max = 1000000,
-              value = c(-1000000, 1000000)
+              label = "Y-Axis Range Zoom"
             ),
             checkboxInput(ns("rotate_xlab"), "Rotate X-axis Label", a$rotate_xlab),
             numericInput(ns("count_threshold"), "Contributing Observations Threshold:", a$count_threshold)
@@ -404,8 +401,6 @@ srv_lineplot <- function(id,
 
     keep_data_const_opts_updated(session, input, anl_q, "xaxis_param")
 
-    yrange_slider <- toggle_slider_server("yrange_scale")
-
     horizontal_line <- srv_arbitrary_lines("hline_arb")
 
     iv_r <- reactive({
@@ -423,7 +418,7 @@ srv_lineplot <- function(id,
 
 
     # update sliders for axes
-    observe({
+    data_state <- reactive({
       varname <- input[["yaxis_var"]]
       validate(need(varname, "Please select variable"))
 
@@ -436,7 +431,7 @@ srv_lineplot <- function(id,
         NULL
       }
 
-      # we don't need to additionally filter for paramvar here as in keep_range_slider_updated because
+      # we don't need to additionally filter for paramvar here as in get_data_range_states because
       # xaxis_var and yaxis_var are always distinct
       sum_data <- ANL %>%
         dplyr::group_by_at(c(input$xaxis_var, input$trt_group, shape)) %>%
@@ -463,15 +458,14 @@ srv_lineplot <- function(id,
         f = 0.05
       )
 
-      # we don't use keep_range_slider_updated because this module computes the min, max
+      # we don't use get_data_range_states because this module computes the data ranges
       # not from the constrained ANL, but rather by first grouping and computing confidence
       # intervals
-      isolate(yrange_slider$update_state(
-        min = minmax[[1]],
-        max = minmax[[2]],
-        value = minmax
-      ))
+      list(
+        range = c(min = minmax[[1]], max = minmax[[2]])
+      )
     })
+    yrange_slider <- toggle_slider_server("yrange_scale", data_state)
 
     line_color_defaults <- color_manual
     line_type_defaults <- c(
@@ -667,7 +661,7 @@ srv_lineplot <- function(id,
       teal::validate_inputs(iv_r())
       req(anl_q(), line_color_selected(), line_type_selected())
       # nolint start
-      ylim <- yrange_slider$state()$value
+      ylim <- yrange_slider$value
       plot_font_size <- input$plot_font_size
       dot_size <- input$dot_size
       dodge <- input$dodge

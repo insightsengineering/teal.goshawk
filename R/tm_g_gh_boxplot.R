@@ -263,10 +263,7 @@ ui_g_boxplot <- function(id, ...) {
           title = "Plot Aesthetic Settings",
           toggle_slider_ui(
             ns("yrange_scale"),
-            label = "Y-Axis Range Zoom",
-            min = -1000000,
-            max = 1000000,
-            value = c(-1000000, 1000000)
+            label = "Y-Axis Range Zoom"
           ),
           numericInput(ns("facet_ncol"), "Number of Plots Per Row:", a$facet_ncol, min = 1),
           checkboxInput(ns("loq_legend"), "Display LoQ Legend", a$loq_legend),
@@ -342,15 +339,14 @@ srv_g_boxplot <- function(id,
     anl_q <- anl_q_output()$value
 
     # update sliders for axes taking constraints into account
-    yrange_slider <- toggle_slider_server("yrange_scale")
-    keep_range_slider_updated(
-      session,
-      input,
-      update_slider_fcn = yrange_slider$update_state,
-      id_var = "yaxis_var",
-      id_param_var = "xaxis_param",
-      reactive_ANL = anl_q
-    )
+    data_state <- reactive({
+      get_data_range_states(
+        varname = input$yaxis_var,
+        paramname = input$xaxis_param,
+        ANL = anl_q()$ANL
+      )
+    })
+    yrange_slider_state <- toggle_slider_server("yrange_scale", data_state)
     keep_data_const_opts_updated(session, input, anl_q, "xaxis_param")
 
     horizontal_line <- srv_arbitrary_lines("hline_arb")
@@ -395,7 +391,7 @@ srv_g_boxplot <- function(id,
       yaxis <- input$yaxis_var
       xaxis <- input$xaxis_var
       facet_var <- `if`(is.null(input$facet_var), "None", input$facet_var)
-      ylim <- yrange_slider$state()$value
+      ylim <- yrange_slider_state$value
       facet_ncol <- input$facet_ncol
 
       alpha <- input$alpha
