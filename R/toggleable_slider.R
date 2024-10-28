@@ -59,7 +59,6 @@ toggle_slider_server <- function(id, ...) {
 
     observeEvent(state$data_range, {
       cat("state$date_range changed\n")
-      # cat(yaml::as.yaml(reactiveValuesToList(state)))
       state$min <- state$data_range[1]
       state$max <- state$data_range[2]
       state$value <- state$data_range
@@ -108,6 +107,10 @@ toggle_slider_server <- function(id, ...) {
     observeEvent(input$toggle, {
       shinyjs::toggle("slider_view", condition = slider_shown())
       shinyjs::toggle("numeric_view", condition = !slider_shown())
+    })
+
+    observeEvent(input$slider, {
+      state$value <- input$slider
     })
 
     observeEvent(state$value, { # todo: change to state$value
