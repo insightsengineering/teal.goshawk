@@ -39,7 +39,8 @@ testthat::test_that(
   {
     initial_range <- list(min = 0, max = 55)
     new_value <- c(10, 40)
-    set_numeric_input_values(app_driver, new_value)
+    set_numeric_input_low(app_driver, new_value[1])
+    set_numeric_input_high(app_driver, new_value[2])
     check_widgets_with_value(
       app_driver,
       list(
@@ -56,7 +57,8 @@ testthat::test_that(
   outside the sliderInput range, sets proper sliderInput values and range",
   {
     new_range <- c(-5, 60)
-    set_numeric_input_values(app_driver, new_range)
+    set_numeric_input_low(app_driver, new_range[1])
+    set_numeric_input_high(app_driver, new_range[2])
     check_widgets_with_value(
       app_driver,
       list(
@@ -74,7 +76,8 @@ testthat::test_that(
   {
     initial_range <- list(min = 0, max = 55)
     new_value <- c(11, 30)
-    set_numeric_input_values(app_driver, new_value)
+    set_numeric_input_low(app_driver, new_value[1])
+    set_numeric_input_high(app_driver, new_value[2])
     check_widgets_with_value(
       app_driver,
       list(

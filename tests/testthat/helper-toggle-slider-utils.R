@@ -67,10 +67,10 @@ set_slider_values <- function(app, values) {
   )
 }
 
-#' values should be a numeric vector of length 2
+#' value should be a numeric vector of length 1
 #' Note that it will automatically toggle slider to be visible before setting it
-set_numeric_input_values <- function(app, values) {
-  checkmate::assert_numeric(values, len = 2)
+set_numeric_input_low <- function(app, values) {
+  checkmate::assert_numeric(values, len = 1)
 
   if (is_slider_visible(app)) {
     click_toggle_button(app)
@@ -80,9 +80,19 @@ set_numeric_input_values <- function(app, values) {
     values[1],
     wait_ = FALSE
   )
+}
+
+#' value should be a numeric vector of length 1
+#' Note that it will automatically toggle slider to be visible before setting it
+set_numeric_input_high <- function(app, values) {
+  checkmate::assert_numeric(values, len = 1)
+
+  if (is_slider_visible(app)) {
+    click_toggle_button(app)
+  }
   app$set_active_module_input(
     "yrange_scale-value_high",
-    values[2],
+    values[1],
     wait_ = FALSE
   )
 }
