@@ -24,22 +24,7 @@ toggle_slider_ui <- function(id, label) {
       tags$span(tags$strong(label)),
       tags$div(actionButton(ns("toggle"), "Toggle", class = "btn-xs"))
     ),
-    uiOutput(ns("slider_view")),
-    shinyjs::hidden(
-      tags$div(
-        id = ns("numeric_view"),
-        numericInput(
-          ns("value_low"),
-          "From:",
-          value = 0
-        ),
-        numericInput(
-          ns("value_high"),
-          "- to:",
-          value = 0
-        )
-      )
-    )
+    uiOutput(ns("inputs"))
   )
 }
 
@@ -52,36 +37,33 @@ toggle_slider_server <- function(id, ...) {
       max = NULL,
       value = NULL,
       step = NULL,
-      slider = NULL,
       data_range = NULL
     )
     slider_shown <- reactive(input$toggle %% 2 == 0)
 
     observeEvent(state$data_range, {
-      cat("state$date_range changed\n")
       state$min <- state$data_range[1]
       state$max <- state$data_range[2]
       state$value <- state$data_range
-      state$step <- NULL # TODO
     })
 
-    output$slider_view <- renderUI({
-      cat("renderUI triggered\n")
+    output$inputs <- renderUI({
       req(state$value)
-      tags$div(
-        class = "teal-goshawk toggle-slider-container",
-        sliderInput(
-          inputId = session$ns("slider"),
-          label = NULL,
-          min = min(state$data_range[1], state$min),
-          max = max(state$data_range[2], state$max),
-          value = state$value,
-          step = state$step,
-          ticks = TRUE,
-          ...
-        ),
-        tags$script(HTML(sprintf(
-          '
+      if (slider_shown()) {
+        tags$div(
+          class = "teal-goshawk toggle-slider-container",
+          sliderInput(
+            inputId = session$ns("slider"),
+            label = NULL,
+            min = min(state$data_range[1], state$min),
+            max = max(state$data_range[2], state$max),
+            value = state$value,
+            step = state$step,
+            ticks = TRUE,
+            ...
+          ),
+          tags$script(HTML(sprintf(
+            '
           $(".teal-goshawk.toggle-slider-container #%s").ready(function () {
             var tickLabel = document.querySelector(
               ".teal-goshawk.toggle-slider-container .irs-grid-text.js-grid-text-9"
@@ -99,34 +81,43 @@ toggle_slider_server <- function(id, ...) {
             }
           });
         ',
-          session$ns("slider")
-        )))
-      )
-    })
-
-    observeEvent(input$toggle, {
-      shinyjs::toggle("slider_view", condition = slider_shown())
-      shinyjs::toggle("numeric_view", condition = !slider_shown())
-    })
-
-    observeEvent(input$slider, {
-      state$value <- input$slider
-    })
-
-    observeEvent(state$value, { # todo: change to state$value
-      cat("state$value changed\n")
-      if (!setequal(state$value, c(input$value_low, input$value_high))) {
-        cat("state differs from input updating numeric input\n")
-        updateNumericInput(session, "value_low", value = state$value[1])
-        updateNumericInput(session, "value_high", value = state$value[2])
+            session$ns("slider")
+          )))
+        )
+      } else {
+        tags$div(
+          class = "teal-goshawk toggle-slider-container",
+          numericInput(
+            inputId = session$ns("value_low"),
+            label = "From:",
+            value = state$value[1]
+          ),
+          numericInput(
+            inputId = session$ns("value_high"),
+            label = "to:",
+            value = state$value[2]
+          )
+        )
       }
     })
 
-    observeEvent(c(input$value_low, input$value_high), ignoreInit = TRUE, {
-      cat("input$numeric changed - updating state value\n")
+    d_slider <- debounce(reactive(input$slider), 500)
+
+    observeEvent(d_slider(), {
+      if (!setequal(state$value, d_slider())) {
+        state$value <- d_slider()
+      }
+    })
+
+    d_value_low <- debounce(reactive(input$value_low), 500)
+    d_value_high <- debounce(reactive(input$value_high), 500)
+
+    observeEvent(c(d_value_low(), d_value_high()), ignoreInit = TRUE, {
       values <- c(input$value_low, input$value_high)
-      if (all(!is.na(values))) {
+      if (!setequal(state$value, values)) {
         state$value <- values
+        state$min <- values[1]
+        state$max <- values[2]
       }
     })
 
@@ -156,5 +147,6 @@ keep_slider_state_updated <- function(state, varname, paramname, ANL, trt_group 
     step <- round(dmax / 100, 5)
   }
   state$data_range <- c(min = minmax[[1]], max = minmax[[2]])
-  state
+  state$step <- step
+  invisible(NULL)
 }

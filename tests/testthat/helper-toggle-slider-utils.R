@@ -4,7 +4,7 @@ click_toggle_button <- function(app) {
 
 #' Extract the values and the ranges from the UI for the slider
 get_ui_slider_values <- function(app) {
-  id <- NS(app$active_ns()$module, "yrange_scale-slider_view")
+  id <- NS(app$active_ns()$module, "yrange_scale-inputs")
   # Note that the values can only be observed once they are visible
   if (!is_slider_visible(app)) {
     click_toggle_button(app)
@@ -19,14 +19,16 @@ get_ui_slider_values <- function(app) {
   )
 }
 
-#' Checking if the sliderInput and the numericInputs match
-check_if_widgets_match <- function(app) {
-  testthat::expect_identical(
-    app$get_active_module_input("yrange_scale-slider"),
-    c(
-      app$get_active_module_input("yrange_scale-value_low"),
-      app$get_active_module_input("yrange_scale-value_high")
-    )
+#' Extract the values and the ranges from the numeric widgets
+get_numeric_values <- function(app) {
+  id <- NS(app$active_ns()$module, "yrange_scale-inputs")
+  # Note that the values can only be observed once they are visible
+  if (is_slider_visible(app)) {
+    click_toggle_button(app)
+  }
+  c(
+    app$get_active_module_input("yrange_scale-value_low"),
+    app$get_active_module_input("yrange_scale-value_high")
   )
 }
 
@@ -38,14 +40,11 @@ check_widgets_with_value <- function(app, values) {
   checkmate::assert_names(names(values), must.include = c("min", "max", "value"))
   checkmate::assert_numeric(values$value, len = 2)
   slider_values <- get_ui_slider_values(app)
+  numeric_values <- get_numeric_values(app)
   testthat::expect_identical(slider_values, values)
-  testthat::expect_identical(
-    app$get_active_module_input("yrange_scale-value_low"),
-    as.integer(values$value[1])
-  )
-  testthat::expect_identical(
-    app$get_active_module_input("yrange_scale-value_high"),
-    as.integer(values$value[2])
+  testthat::expect_setequal(
+    numeric_values,
+    values$value
   )
 }
 
@@ -61,8 +60,8 @@ set_slider_values <- function(app, values) {
   if (!is_slider_visible(app)) {
     click_toggle_button(app)
   }
-  app$set_input(
-    NS(app$active_ns()$module, "yrange_scale-slider"),
+  app$set_active_module_input(
+    "yrange_scale-slider",
     values,
     wait_ = FALSE
   )
@@ -76,13 +75,13 @@ set_numeric_input_values <- function(app, values) {
   if (is_slider_visible(app)) {
     click_toggle_button(app)
   }
-  app$set_input(
-    NS(app$active_ns()$module, "yrange_scale-value_low"),
+  app$set_active_module_input(
+    "yrange_scale-value_low",
     values[1],
     wait_ = FALSE
   )
-  app$set_input(
-    NS(app$active_ns()$module, "yrange_scale-value_high"),
+  app$set_active_module_input(
+    "yrange_scale-value_high",
     values[2],
     wait_ = FALSE
   )

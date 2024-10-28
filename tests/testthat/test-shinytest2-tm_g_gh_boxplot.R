@@ -19,18 +19,20 @@ app_driver <- init_teal_app_driver(
   )
 )
 
+app_driver$view()
 testthat::test_that("toggle_slider_module: widgets are initialized with proper values", {
   app_driver$click(selector = ".well .panel-group > div:first-of-type > .panel > .panel-heading")
   init_values <- list(min = 0, max = 55, value = c(0, 55))
-  check_if_widgets_match(app_driver)
   check_widgets_with_value(app_driver, init_values)
 })
 
 
 testthat::test_that("toggle_slider_module: changing the sliderInput sets proper numericInput values", {
-  new_value <- c(12, 50)
-  set_slider_values(app_driver, new_value)
-  check_if_widgets_match(app_driver)
+  set_slider_values(app_driver, c(1, 50))
+  check_widgets_with_value(
+    app_driver,
+    list(min = 0, max = 55, value = c(1, 50))
+  )
 })
 
 testthat::test_that(
