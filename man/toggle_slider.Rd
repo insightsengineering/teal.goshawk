@@ -4,21 +4,14 @@
 \alias{toggle_slider}
 \alias{toggle_slider_ui}
 \alias{toggle_slider_server}
-\alias{keep_slider_state_updated}
+\alias{get_data_range_states}
 \title{UI with a toggleable dichotomous slider to change between slider and numeric input fields}
 \usage{
 toggle_slider_ui(id, label)
 
-toggle_slider_server(id, ...)
+toggle_slider_server(id, data_state, ...)
 
-keep_slider_state_updated(
-  state,
-  varname,
-  paramname,
-  ANL,
-  trt_group = NULL,
-  step = NULL
-)
+get_data_range_states(varname, paramname, ANL, trt_group = NULL, step = NULL)
 }
 \arguments{
 \item{id}{\code{character} module id}
