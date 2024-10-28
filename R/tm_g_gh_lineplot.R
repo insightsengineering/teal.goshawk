@@ -401,8 +401,6 @@ srv_lineplot <- function(id,
 
     keep_data_const_opts_updated(session, input, anl_q, "xaxis_param")
 
-    yrange_slider <- toggle_slider_server("yrange_scale")
-
     horizontal_line <- srv_arbitrary_lines("hline_arb")
 
     iv_r <- reactive({
@@ -420,7 +418,7 @@ srv_lineplot <- function(id,
 
 
     # update sliders for axes
-    observe({
+    data_state <- reactive({
       varname <- input[["yaxis_var"]]
       validate(need(varname, "Please select variable"))
 
@@ -433,7 +431,7 @@ srv_lineplot <- function(id,
         NULL
       }
 
-      # we don't need to additionally filter for paramvar here as in keep_slider_state_updated because
+      # we don't need to additionally filter for paramvar here as in get_data_range_states because
       # xaxis_var and yaxis_var are always distinct
       sum_data <- ANL %>%
         dplyr::group_by_at(c(input$xaxis_var, input$trt_group, shape)) %>%
@@ -460,16 +458,14 @@ srv_lineplot <- function(id,
         f = 0.05
       )
 
-      # we don't use keep_slider_state_updated because this module computes the min, max
+      # we don't use get_data_range_states because this module computes the data ranges
       # not from the constrained ANL, but rather by first grouping and computing confidence
       # intervals
-      yrange_slider$slider <- list(
-        min = minmax[[1]],
-        max = minmax[[2]],
-        value = minmax
+      list(
+        range = c(min = minmax[[1]], max = minmax[[2]])
       )
-      yrange_slider$data_range <- list(min = minmax[[1]], max = minmax[[2]])
     })
+    yrange_slider <- toggle_slider_server("yrange_scale", data_state)
 
     line_color_defaults <- color_manual
     line_type_defaults <- c(

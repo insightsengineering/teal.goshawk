@@ -30,21 +30,19 @@ toggle_slider_ui <- function(id, label) {
 
 #' @keywords internal
 #' @rdname toggle_slider
-toggle_slider_server <- function(id, ...) {
+toggle_slider_server <- function(id, data_state, ...) {
   moduleServer(id, function(input, output, session) {
     state <- reactiveValues(
       min = NULL,
       max = NULL,
-      value = NULL,
-      step = NULL,
-      data_range = NULL
+      value = NULL
     )
     slider_shown <- reactive(input$toggle %% 2 == 0)
 
-    observeEvent(state$data_range, {
-      state$min <- state$data_range[1]
-      state$max <- state$data_range[2]
-      state$value <- state$data_range
+    observeEvent(data_state()$range, {
+      state$min <- data_state()$range[1]
+      state$max <- data_state()$range[2]
+      state$value <- data_state()$range
     })
 
     output$inputs <- renderUI({
@@ -55,32 +53,32 @@ toggle_slider_server <- function(id, ...) {
           sliderInput(
             inputId = session$ns("slider"),
             label = NULL,
-            min = min(state$data_range[1], state$min),
-            max = max(state$data_range[2], state$max),
+            min = min(data_state()$range[1], state$min),
+            max = max(data_state()$range[2], state$max),
             value = state$value,
-            step = state$step,
+            step = data_state()$step,
             ticks = TRUE,
             ...
           ),
           tags$script(HTML(sprintf(
             '
-          $(".teal-goshawk.toggle-slider-container #%s").ready(function () {
-            var tickLabel = document.querySelector(
-              ".teal-goshawk.toggle-slider-container .irs-grid-text.js-grid-text-9"
-            );
-            var tick = document.querySelector(
-              ".teal-goshawk.toggle-slider-container .irs-grid-pol:nth-last-child(6)"
-            );
-            if (tickLabel) {
-              if (parseFloat(tickLabel.style.left) > 95) {
-                tickLabel.style.opacity = "0";
-                tick.style.opacity = "0";
-              }
-            } else {
-              console.log("Toggle slider element not found.");
-            }
-          });
-        ',
+              $(".teal-goshawk.toggle-slider-container #%s").ready(function () {
+                var tickLabel = document.querySelector(
+                  ".teal-goshawk.toggle-slider-container .irs-grid-text.js-grid-text-9"
+                );
+                var tick = document.querySelector(
+                  ".teal-goshawk.toggle-slider-container .irs-grid-pol:nth-last-child(6)"
+                );
+                if (tickLabel) {
+                  if (parseFloat(tickLabel.style.left) > 95) {
+                    tickLabel.style.opacity = "0";
+                    tick.style.opacity = "0";
+                  }
+                } else {
+                  console.log("Toggle slider element not found.");
+                }
+              });
+            ',
             session$ns("slider")
           )))
         )
@@ -127,10 +125,11 @@ toggle_slider_server <- function(id, ...) {
 
 #' @keywords internal
 #' @rdname toggle_slider
-keep_slider_state_updated <- function(state, varname, paramname, ANL, trt_group = NULL, step = NULL) { # nolint object_name_linter
+get_data_range_states <- function(varname, paramname, ANL, trt_group = NULL, step = NULL) { # nolint object_name_linter
   validate(need(varname, "Please select variable"))
   validate(need(paramname, "Please select variable"))
   req(length(paramname) == 1)
+  step <- NULL
 
   ANL <- ANL %>% dplyr::filter(.data$PARAMCD == paramname) # nolint object_name_linter
   validate_has_variable(ANL, varname, paste("variable", varname, "does not exist"))
@@ -146,7 +145,8 @@ keep_slider_state_updated <- function(state, varname, paramname, ANL, trt_group 
     minmax <- c(0, round(dmax * 1.2, 5))
     step <- round(dmax / 100, 5)
   }
-  state$data_range <- c(min = minmax[[1]], max = minmax[[2]])
-  state$step <- step
-  invisible(NULL)
+  list(
+    range = c(min = minmax[[1]], max = minmax[[2]]),
+    step = step
+  )
 }

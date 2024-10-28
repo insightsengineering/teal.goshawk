@@ -339,15 +339,14 @@ srv_g_boxplot <- function(id,
     anl_q <- anl_q_output()$value
 
     # update sliders for axes taking constraints into account
-    yrange_slider_state <- toggle_slider_server("yrange_scale")
-    observe({
-      keep_slider_state_updated(
-        state = yrange_slider_state,
+    data_state <- reactive({
+      get_data_range_states(
         varname = input$yaxis_var,
         paramname = input$xaxis_param,
         ANL = anl_q()$ANL
       )
     })
+    yrange_slider_state <- toggle_slider_server("yrange_scale", data_state)
     keep_data_const_opts_updated(session, input, anl_q, "xaxis_param")
 
     horizontal_line <- srv_arbitrary_lines("hline_arb")

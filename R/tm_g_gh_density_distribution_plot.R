@@ -281,26 +281,23 @@ srv_g_density_distribution_plot <- function(id, # nolint
     anl_q <- anl_q_output()$value
 
     # update sliders for axes taking constraints into account
-    xrange_slider <- toggle_slider_server("xrange_scale")
-    yrange_slider <- toggle_slider_server("yrange_scale")
-
-    observe({
-      keep_slider_state_updated(
-        state = xrange_slider,
+    data_state_x <- reactive({
+      get_data_range_states(
         varname = input$xaxis_var,
         paramname = input$xaxis_param,
         ANL = anl_q()$ANL
       )
     })
-    observe({
-      keep_slider_state_updated(
-        state = yrange_slider,
+    xrange_slider <- toggle_slider_server("xrange_scale", data_state_x)
+    data_state_y <- reactive({
+      get_data_range_states(
         varname = input$xaxis_var,
         paramname = input$xaxis_param,
         ANL = anl_q()$ANL,
         trt_group = "trt_group"
       )
     })
+    yrange_slider <- toggle_slider_server("yrange_scale", data_state_y)
 
     keep_data_const_opts_updated(session, input, anl_q, "xaxis_param")
 
