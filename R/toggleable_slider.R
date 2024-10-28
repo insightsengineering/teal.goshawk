@@ -58,26 +58,26 @@ toggle_slider_server <- function(id, ...) {
     slider_shown <- reactive(input$toggle %% 2 == 0)
 
     observeEvent(state$data_range, {
-      state$min <- state$slider$min
-      state$max <- state$slider$max
-      state$step <- state$slider$step
-      state$value <- state$slider$value
-      updateNumericInput(session, "value_low", value = state$slider$value[1])
-      updateNumericInput(session, "value_high", value = state$slider$value[2])
+      cat("state$date_range changed\n")
+      # cat(yaml::as.yaml(reactiveValuesToList(state)))
+      state$min <- state$data_range[1]
+      state$max <- state$data_range[2]
+      state$value <- state$data_range
+      state$step <- NULL # TODO
     })
 
     output$slider_view <- renderUI({
-      req(state$slider)
-
+      cat("renderUI triggered\n")
+      req(state$value)
       tags$div(
         class = "teal-goshawk toggle-slider-container",
         sliderInput(
           inputId = session$ns("slider"),
           label = NULL,
-          min = state$slider$min,
-          max = state$slider$max,
-          value = state$slider$value,
-          step = state$slider$step,
+          min = min(state$data_range[1], state$min),
+          max = max(state$data_range[2], state$max),
+          value = state$value,
+          step = state$step,
           ticks = TRUE,
           ...
         ),
@@ -110,18 +110,20 @@ toggle_slider_server <- function(id, ...) {
       shinyjs::toggle("numeric_view", condition = !slider_shown())
     })
 
-    observeEvent(input$slider, {
-      state$value <- input$slider
-      updateNumericInput(session, "value_low", value = input$slider[1])
-      updateNumericInput(session, "value_high", value = input$slider[2])
+    observeEvent(state$value, { # todo: change to state$value
+      cat("state$value changed\n")
+      if (!setequal(state$value, c(input$value_low, input$value_high))) {
+        cat("state differs from input updating numeric input\n")
+        updateNumericInput(session, "value_low", value = state$value[1])
+        updateNumericInput(session, "value_high", value = state$value[2])
+      }
     })
 
     observeEvent(c(input$value_low, input$value_high), ignoreInit = TRUE, {
-      if (!slider_shown()) {
-        state$min <- min(state$data_range$min, input$value_low)
-        state$max <- max(state$data_range$max, input$value_high)
-        state$value <- c(input$value_low, input$value_high)
-        state$slider <- list(min = state$min, max = state$max, value = state$value)
+      cat("input$numeric changed - updating state value\n")
+      values <- c(input$value_low, input$value_high)
+      if (all(!is.na(values))) {
+        state$value <- values
       }
     })
 
@@ -150,12 +152,6 @@ keep_slider_state_updated <- function(state, varname, paramname, ANL, trt_group 
     minmax <- c(0, round(dmax * 1.2, 5))
     step <- round(dmax / 100, 5)
   }
-  state$slider <- list(
-    min = minmax[[1]],
-    max = minmax[[2]],
-    step = step,
-    value = minmax
-  )
-  state$data_range <- list(min = minmax[[1]], max = minmax[[2]])
+  state$data_range <- c(min = minmax[[1]], max = minmax[[2]])
   state
 }
