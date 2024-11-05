@@ -64,7 +64,7 @@ get_test_data <- function() {
     attr(ADLB[["ANRHI"]], "label") <- "Analysis Normal Range Upper Limit"
 
     # add LLOQ and ULOQ variables
-    ALB_LOQS <- h_identify_loq_values(ADLB, "LOQFL")
+    ALB_LOQS <- .h_identify_loq_values(ADLB, "LOQFL")
     ADLB <- left_join(ADLB, ALB_LOQS, by = "PARAM")
   })
   join_keys(data) <- default_cdisc_join_keys[names(data)]
