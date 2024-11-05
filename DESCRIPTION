@@ -47,7 +47,7 @@ Imports:
     shinyjs,
     shinyvalidate,
     stats,
-    teal.code (>= 0.5.0),
+    teal.code (>= 0.5.0.9012),
     teal.logger (>= 0.2.0.9011),
     teal.reporter (>= 0.2.0),
     teal.widgets (>= 0.4.0)
@@ -58,7 +58,7 @@ Suggests:
     rvest (>= 1.0.0),
     shinytest2,
     stringr (>= 1.4.1),
-    teal.data (>= 0.5.0),
+    teal.data (>= 0.6.0.9015),
     tern (>= 0.7.10),
     testthat (>= 3.0.4),
     utils
