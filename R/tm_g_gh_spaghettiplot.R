@@ -271,7 +271,10 @@ g_ui_spaghettiplot <- function(id, ...) {
   shiny::tagList(
     include_css_files("custom"),
     teal.widgets::standard_layout(
-      output = templ_ui_output_datatable(ns),
+      output = div(
+        teal.widgets::plot_with_settings_ui(id = ns("plot")),
+        ui_brush_filter(ns("brush_filter"))
+      ),
       encoding = tags$div(
         ### Reporter
         teal.reporter::simple_reporter_ui(ns("simple_reporter")),
@@ -558,8 +561,6 @@ srv_g_spaghettiplot <- function(id,
     ###
 
     reactive_df <- debounce(reactive({
-      plot_brush <- plot_data$brush()
-
       ANL <- isolate(anl_q()$ANL) # nolint
       validate_has_data(ANL, 1)
 
@@ -569,24 +570,21 @@ srv_g_spaghettiplot <- function(id,
 
       req(all(c(xvar, yvar) %in% names(ANL)))
 
-      df <- teal.widgets::clean_brushedPoints(
-        dplyr::select(
-          ANL, "USUBJID", dplyr::all_of(trt_group), "PARAMCD",
-          dplyr::all_of(c(xvar, yvar)), "LOQFL"
-        ),
-        plot_brush
+      df <- dplyr::select(
+        ANL, "USUBJID", dplyr::all_of(trt_group), "PARAMCD",
+        dplyr::all_of(c(xvar, yvar)), "LOQFL"
       )
       df[order(df$PARAMCD, df[[trt_group]], df$USUBJID, df[[xvar]]), ]
     }), 800)
 
-    output$brush_data <- DT::renderDataTable({
-      numeric_cols <- names(dplyr::select_if(reactive_df(), is.numeric))
 
-      DT::datatable(reactive_df(),
-        rownames = FALSE, options = list(scrollX = TRUE)
-      ) %>%
-        DT::formatRound(numeric_cols, 4)
-    })
+    teal::srv_brush_filter(
+      "brush_filter",
+      brush = plot_data$brush,
+      dataset = reactive_df,
+      filter_panel_api = filter_panel_api,
+      table_dec = 4
+    )
 
     teal.widgets::verbatim_popup_srv(
       id = "rcode",
