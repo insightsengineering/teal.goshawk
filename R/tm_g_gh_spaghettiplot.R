@@ -560,13 +560,13 @@ srv_g_spaghettiplot <- function(id,
     }
     ###
 
-    reactive_df <- debounce(reactive({
-      ANL <- isolate(anl_q()$ANL) # nolint
+    reactive_df <- debounce(eventReactive(anl_q(), {
+      ANL <- anl_q()$ANL # nolint
       validate_has_data(ANL, 1)
 
-      xvar <- isolate(input$xaxis_var)
-      yvar <- isolate(input$yaxis_var)
-      trt_group <- isolate(input$trt_group)
+      xvar <- input$xaxis_var
+      yvar <- input$yaxis_var
+      trt_group <- input$trt_group
 
       req(all(c(xvar, yvar) %in% names(ANL)))
 
