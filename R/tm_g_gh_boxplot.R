@@ -491,7 +491,8 @@ srv_g_boxplot <- function(id,
       plot_r = plot_r,
       height = plot_height,
       width = plot_width,
-      brushing = TRUE
+      brushing = TRUE,
+      gg2plotly = FALSE
     )
 
     output$table_ui <- DT::renderDataTable({

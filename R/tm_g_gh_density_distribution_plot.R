@@ -401,6 +401,7 @@ srv_g_density_distribution_plot <- function(id, # nolint
       plot_r = plot_r,
       height = plot_height,
       width = plot_width,
+      gg2plotly = FALSE
     )
 
     output$table_ui <- DT::renderDataTable({

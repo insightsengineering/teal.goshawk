@@ -373,7 +373,8 @@ srv_g_scatterplot <- function(id,
       plot_r = plot_r,
       height = plot_height,
       width = plot_width,
-      brushing = TRUE
+      brushing = TRUE,
+      gg2plotly = FALSE
     )
 
     code <- reactive(teal.code::get_code(plot_q()))
