@@ -33,7 +33,6 @@ templ_ui_params_vars <- function(ns,
                                  # trt_group
                                  trt_choices = NULL,
                                  trt_selected = NULL,
-
                                  multiple = FALSE) {
   if (is.null(xparam_choices) && !is.null(xchoices) && !is.null(yparam_choices)) {
     # otherwise, xchoices will appear first without any biomarker to select and this looks odd in the UI
