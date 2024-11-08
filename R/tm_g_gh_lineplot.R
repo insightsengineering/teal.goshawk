@@ -60,7 +60,7 @@
 #'   library(nestcolor)
 #'
 #'   # original ARM value = dose value
-#'   arm_mapping <- list(
+#'   .arm_mapping <- list(
 #'     "A: Drug X" = "150mg QD",
 #'     "B: Placebo" = "Placebo",
 #'     "C: Combination" = "Combination"
@@ -68,7 +68,7 @@
 #'
 #'   ADSL <- rADSL
 #'   ADLB <- rADLB
-#'   var_labels <- lapply(ADLB, function(x) attributes(x)$label)
+#'   .var_labels <- lapply(ADLB, function(x) attributes(x)$label)
 #'   ADLB <- ADLB %>%
 #'     mutate(
 #'       AVISITCD = case_when(
@@ -89,18 +89,16 @@
 #'         ARMCD == "ARM B" ~ 2,
 #'         ARMCD == "ARM A" ~ 3
 #'       ),
-#'       ARM = as.character(arm_mapping[match(ARM, names(arm_mapping))]),
+#'       ARM = as.character(.arm_mapping[match(ARM, names(.arm_mapping))]),
 #'       ARM = factor(ARM) %>% reorder(TRTORD),
-#'       ACTARM = as.character(arm_mapping[match(ACTARM, names(arm_mapping))]),
+#'       ACTARM = as.character(.arm_mapping[match(ACTARM, names(.arm_mapping))]),
 #'       ACTARM = factor(ACTARM) %>% reorder(TRTORD)
 #'     )
-#'   attr(ADLB[["ARM"]], "label") <- var_labels[["ARM"]]
-#'   attr(ADLB[["ACTARM"]], "label") <- var_labels[["ACTARM"]]
+#'   attr(ADLB[["ARM"]], "label") <- .var_labels[["ARM"]]
+#'   attr(ADLB[["ACTARM"]], "label") <- .var_labels[["ACTARM"]]
 #' })
 #'
-#' datanames <- c("ADSL", "ADLB")
-#' datanames(data) <- datanames
-#' join_keys(data) <- default_cdisc_join_keys[datanames]
+#' join_keys(data) <- default_cdisc_join_keys[names(data)]
 #'
 #' app <- init(
 #'   data = data,
@@ -349,7 +347,7 @@ srv_lineplot <- function(id,
     ns <- session$ns
 
     output$axis_selections <- renderUI({
-      env <- shiny::isolate(as.list(data()@env))
+      env <- shiny::isolate(as.list(data()))
       resolved_x <- teal.transform::resolve_delayed(module_args$xaxis_var, env)
       resolved_y <- teal.transform::resolve_delayed(module_args$yaxis_var, env)
       resolved_param <- teal.transform::resolve_delayed(module_args$param, env)

@@ -133,22 +133,22 @@ data <- within(data, {
   library(stringr)
 
   # use non-exported function from goshawk
-  h_identify_loq_values <- getFromNamespace("h_identify_loq_values", "goshawk")
+  .h_identify_loq_values <- getFromNamespace("h_identify_loq_values", "goshawk")
 
   # original ARM value = dose value
-  arm_mapping <- list(
+  .arm_mapping <- list(
     "A: Drug X" = "150mg QD",
     "B: Placebo" = "Placebo",
     "C: Combination" = "Combination"
   )
-  color_manual <- c("150mg QD" = "#000000", "Placebo" = "#3498DB", "Combination" = "#E74C3C")
+  .color_manual <- c("150mg QD" = "#000000", "Placebo" = "#3498DB", "Combination" = "#E74C3C")
   # assign LOQ flag symbols: circles for "N" and triangles for "Y", squares for "NA"
-  shape_manual <- c("N" = 1, "Y" = 2, "NA" = 0)
+  .shape_manual <- c("N" = 1, "Y" = 2, "NA" = 0)
 
   set.seed(1)
   ADSL <- rADSL
   ADLB <- rADLB
-  var_labels <- lapply(ADLB, function(x) attributes(x)$label)
+  .var_labels <- lapply(ADLB, function(x) attributes(x)$label)
   ADLB <- ADLB \%>\%
     mutate(AVISITCD = case_when(
       AVISIT == "SCREENING" ~ "SCR",
@@ -178,7 +178,7 @@ data <- within(data, {
         ifelse(grepl("A", ARMCD), 3, NA)
       )
     )) \%>\%
-    mutate(ARM = as.character(arm_mapping[match(ARM, names(arm_mapping))])) \%>\%
+    mutate(ARM = as.character(.arm_mapping[match(ARM, names(.arm_mapping))])) \%>\%
     mutate(ARM = factor(ARM) \%>\%
       reorder(TRTORD)) \%>\%
     mutate(
@@ -206,19 +206,16 @@ data <- within(data, {
       paste(">", round(runif(1, min = 70, max = 75))), LBSTRESC
     )) \%>\%
     ungroup()
-  attr(ADLB[["ARM"]], "label") <- var_labels[["ARM"]]
+  attr(ADLB[["ARM"]], "label") <- .var_labels[["ARM"]]
   attr(ADLB[["ANRHI"]], "label") <- "Analysis Normal Range Upper Limit"
   attr(ADLB[["ANRLO"]], "label") <- "Analysis Normal Range Lower Limit"
 
   # add LLOQ and ULOQ variables
-  ADLB_LOQS <- h_identify_loq_values(ADLB, "LOQFL")
+  ADLB_LOQS <- .h_identify_loq_values(ADLB, "LOQFL")
   ADLB <- left_join(ADLB, ADLB_LOQS, by = "PARAM")
 })
 
-datanames <- c("ADSL", "ADLB")
-datanames(data) <- datanames
-
-join_keys(data) <- default_cdisc_join_keys[datanames]
+join_keys(data) <- default_cdisc_join_keys[names(data)]
 
 app <- init(
   data = data,
