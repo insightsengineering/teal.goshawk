@@ -116,10 +116,10 @@ naming the label for the arbitrary horizontal lines.}
 
 \item{reg_text_size}{font size control for regression line annotations.}
 
-\item{pre_output}{(\code{shiny.tag}) optional,\cr
+\item{pre_output}{(\code{shiny.tag}, optional)\cr
 with text placed before the output to put the output into context. For example a title.}
 
-\item{post_output}{(\code{shiny.tag}) optional, with text placed after the output to put the output
+\item{post_output}{(\code{shiny.tag}, optional) with text placed after the output to put the output
 into context. For example the \code{\link[shiny:helpText]{shiny::helpText()}} elements are useful.}
 }
 \description{
