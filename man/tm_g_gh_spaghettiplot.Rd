@@ -36,7 +36,8 @@ tm_g_gh_spaghettiplot(
   hline_vars_colors = "green",
   hline_vars_labels = hline_vars,
   pre_output = NULL,
-  post_output = NULL
+  post_output = NULL,
+  transformators = list()
 )
 }
 \arguments{
@@ -113,11 +114,14 @@ naming the label for the arbitrary horizontal lines.}
 \item{hline_vars_labels}{a character vector naming the labels for the additional horizontal lines that will appear
 in the legend.}
 
-\item{pre_output}{(\code{shiny.tag}, optional)\cr
+\item{pre_output}{(\code{shiny.tag}) optional,\cr
 with text placed before the output to put the output into context. For example a title.}
 
-\item{post_output}{(\code{shiny.tag}, optional) with text placed after the output to put the output
+\item{post_output}{(\code{shiny.tag}) optional, with text placed after the output to put the output
 into context. For example the \code{\link[shiny:helpText]{shiny::helpText()}} elements are useful.}
+
+\item{transformators}{(\code{list} of \code{teal_transform_module}) that will be applied to transform module's data input.
+To learn more check \code{vignette("data-transform-as-shiny-module", package = "teal")}.}
 }
 \value{
 \code{shiny} object

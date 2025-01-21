@@ -46,6 +46,7 @@
 #' @param hline_vars_colors a character vector naming the colors for the additional horizontal lines.
 #' @param hline_vars_labels a character vector naming the labels for the additional horizontal lines that will appear
 #'  in the legend.
+#' @inheritParams teal::module
 #' @inheritParams teal.widgets::standard_layout
 #'
 #' @author Wenyi Liu (luiw2) wenyi.liu@roche.com
@@ -188,7 +189,8 @@ tm_g_gh_spaghettiplot <- function(label,
                                   hline_vars_colors = "green",
                                   hline_vars_labels = hline_vars,
                                   pre_output = NULL,
-                                  post_output = NULL) {
+                                  post_output = NULL,
+                                  transformators = list()) {
   message("Initializing tm_g_gh_spaghettiplot")
 
   # Validate string inputs
@@ -258,6 +260,7 @@ tm_g_gh_spaghettiplot <- function(label,
     ),
     ui = g_ui_spaghettiplot,
     ui_args = args,
+    transformators = transformators,
     datanames = dataname
   )
 }

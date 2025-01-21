@@ -7,6 +7,7 @@
 #'   instead.
 #'
 #' @inheritParams teal.widgets::standard_layout
+#' @inheritParams teal::module
 #' @param label menu item label of the module in the teal app.
 #' @param dataname analysis data passed to the data argument of \code{\link[teal]{init}}. E.g. `ADaM` structured
 #' laboratory data frame \code{ADLB}.
@@ -138,7 +139,8 @@ tm_g_gh_scatterplot <- function(label,
                                 dot_size = c(1, 1, 12),
                                 reg_text_size = c(3, 3, 10),
                                 pre_output = NULL,
-                                post_output = NULL) {
+                                post_output = NULL,
+                                transformators = list()) {
   lifecycle::deprecate_soft(
     when = "0.1.15",
     what = "tm_g_gh_scatterplot()",
@@ -178,7 +180,8 @@ tm_g_gh_scatterplot <- function(label,
       module_args = args
     ),
     ui = ui_g_scatterplot,
-    ui_args = args
+    ui_args = args,
+    transformators = transformators
   )
 }
 
