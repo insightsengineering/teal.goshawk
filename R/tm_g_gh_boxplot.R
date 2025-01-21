@@ -54,10 +54,10 @@
 #'   library(stringr)
 #'
 #'   # use non-exported function from goshawk
-#'   h_identify_loq_values <- getFromNamespace("h_identify_loq_values", "goshawk")
+#'   .h_identify_loq_values <- getFromNamespace("h_identify_loq_values", "goshawk")
 #'
 #'   # original ARM value = dose value
-#'   arm_mapping <- list(
+#'   .arm_mapping <- list(
 #'     "A: Drug X" = "150mg QD",
 #'     "B: Placebo" = "Placebo",
 #'     "C: Combination" = "Combination"
@@ -65,7 +65,7 @@
 #'   set.seed(1)
 #'   ADSL <- rADSL
 #'   ADLB <- rADLB
-#'   var_labels <- lapply(ADLB, function(x) attributes(x)$label)
+#'   .var_labels <- lapply(ADLB, function(x) attributes(x)$label)
 #'   ADLB <- ADLB %>%
 #'     mutate(
 #'       AVISITCD = case_when(
@@ -86,9 +86,9 @@
 #'         ARMCD == "ARM B" ~ 2,
 #'         ARMCD == "ARM A" ~ 3
 #'       ),
-#'       ARM = as.character(arm_mapping[match(ARM, names(arm_mapping))]),
+#'       ARM = as.character(.arm_mapping[match(ARM, names(.arm_mapping))]),
 #'       ARM = factor(ARM) %>% reorder(TRTORD),
-#'       ACTARM = as.character(arm_mapping[match(ACTARM, names(arm_mapping))]),
+#'       ACTARM = as.character(.arm_mapping[match(ACTARM, names(.arm_mapping))]),
 #'       ACTARM = factor(ACTARM) %>% reorder(TRTORD),
 #'       ANRLO = 50,
 #'       ANRHI = 75
@@ -105,20 +105,17 @@
 #'     )) %>%
 #'     ungroup()
 #'
-#'   attr(ADLB[["ARM"]], "label") <- var_labels[["ARM"]]
-#'   attr(ADLB[["ACTARM"]], "label") <- var_labels[["ACTARM"]]
+#'   attr(ADLB[["ARM"]], "label") <- .var_labels[["ARM"]]
+#'   attr(ADLB[["ACTARM"]], "label") <- .var_labels[["ACTARM"]]
 #'   attr(ADLB[["ANRLO"]], "label") <- "Analysis Normal Range Lower Limit"
 #'   attr(ADLB[["ANRHI"]], "label") <- "Analysis Normal Range Upper Limit"
 #'
 #'   # add LLOQ and ULOQ variables
-#'   ALB_LOQS <- h_identify_loq_values(ADLB, "LOQFL")
+#'   ALB_LOQS <- .h_identify_loq_values(ADLB, "LOQFL")
 #'   ADLB <- left_join(ADLB, ALB_LOQS, by = "PARAM")
 #' })
 #'
-#' datanames <- c("ADSL", "ADLB")
-#' datanames(data) <- datanames
-#'
-#' join_keys(data) <- default_cdisc_join_keys[datanames]
+#' join_keys(data) <- default_cdisc_join_keys[names(data)]
 #'
 #' app <- init(
 #'   data = data,
@@ -263,10 +260,7 @@ ui_g_boxplot <- function(id, ...) {
           title = "Plot Aesthetic Settings",
           toggle_slider_ui(
             ns("yrange_scale"),
-            label = "Y-Axis Range Zoom",
-            min = -1000000,
-            max = 1000000,
-            value = c(-1000000, 1000000)
+            label = "Y-Axis Range Zoom"
           ),
           numericInput(ns("facet_ncol"), "Number of Plots Per Row:", a$facet_ncol, min = 1),
           checkboxInput(ns("loq_legend"), "Display LoQ Legend", a$loq_legend),
@@ -309,8 +303,9 @@ srv_g_boxplot <- function(id,
   checkmate::assert_class(shiny::isolate(data()), "teal_data")
 
   moduleServer(id, function(input, output, session) {
+    teal.logger::log_shiny_input_changes(input, namespace = "teal.goshawk")
     output$axis_selections <- renderUI({
-      env <- shiny::isolate(as.list(data()@env))
+      env <- shiny::isolate(as.list(data()))
       resolved_x <- teal.transform::resolve_delayed(module_args$xaxis_var, env)
       resolved_y <- teal.transform::resolve_delayed(module_args$yaxis_var, env)
       resolved_param <- teal.transform::resolve_delayed(module_args$param, env)
@@ -343,15 +338,14 @@ srv_g_boxplot <- function(id,
     anl_q <- anl_q_output()$value
 
     # update sliders for axes taking constraints into account
-    yrange_slider <- toggle_slider_server("yrange_scale")
-    keep_range_slider_updated(
-      session,
-      input,
-      update_slider_fcn = yrange_slider$update_state,
-      id_var = "yaxis_var",
-      id_param_var = "xaxis_param",
-      reactive_ANL = anl_q
-    )
+    data_state <- reactive({
+      get_data_range_states(
+        varname = input$yaxis_var,
+        paramname = input$xaxis_param,
+        ANL = anl_q()$ANL
+      )
+    })
+    yrange_slider_state <- toggle_slider_server("yrange_scale", data_state)
     keep_data_const_opts_updated(session, input, anl_q, "xaxis_param")
 
     horizontal_line <- srv_arbitrary_lines("hline_arb")
@@ -396,7 +390,7 @@ srv_g_boxplot <- function(id,
       yaxis <- input$yaxis_var
       xaxis <- input$xaxis_var
       facet_var <- `if`(is.null(input$facet_var), "None", input$facet_var)
-      ylim <- yrange_slider$state()$value
+      ylim <- yrange_slider_state$value
       facet_ncol <- input$facet_ncol
 
       alpha <- input$alpha
@@ -458,6 +452,7 @@ srv_g_boxplot <- function(id,
             font_size = .(font_size),
             unit = .("AVALU")
           )
+          print(p)
         })
       )
     }), 800)
@@ -481,6 +476,7 @@ srv_g_boxplot <- function(id,
             xaxis_var = .(xaxis_var),
             facet_var = .(facet_var)
           )
+          tbl
         })
       )
     }), 800)
@@ -508,6 +504,13 @@ srv_g_boxplot <- function(id,
       ) %>%
         DT::formatRound(numeric_cols, 4)
     })
+
+    joined_qenvs <- reactive({
+      req(create_plot(), create_table())
+      c(create_plot(), create_table())
+    })
+
+    code <- reactive(teal.code::get_code(joined_qenvs()))
 
     ### REPORTER
     if (with_reporter) {
@@ -537,11 +540,7 @@ srv_g_boxplot <- function(id,
           card$append_text("Comment", "header3")
           card$append_text(comment)
         }
-        card$append_src(
-          teal.code::get_code(
-            teal.code::join(create_plot(), create_table())
-          )
-        )
+        card$append_src(code())
         card
       }
       teal.reporter::simple_reporter_srv("simple_reporter", reporter = reporter, card_fun = card_fun)
@@ -580,14 +579,9 @@ srv_g_boxplot <- function(id,
         DT::formatRound(numeric_cols, 4)
     })
 
-    joined_qenvs <- reactive({
-      req(create_plot(), create_table())
-      teal.code::join(create_plot(), create_table())
-    })
-
     teal.widgets::verbatim_popup_srv(
       id = "rcode",
-      verbatim_content = reactive(teal.code::get_code(joined_qenvs())),
+      verbatim_content = reactive(code()),
       title = "Show R Code for Boxplot"
     )
   })

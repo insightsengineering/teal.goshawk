@@ -57,22 +57,22 @@
 #'   library(stringr)
 #'
 #'   # use non-exported function from goshawk
-#'   h_identify_loq_values <- getFromNamespace("h_identify_loq_values", "goshawk")
+#'   .h_identify_loq_values <- getFromNamespace("h_identify_loq_values", "goshawk")
 #'
 #'   # original ARM value = dose value
-#'   arm_mapping <- list(
+#'   .arm_mapping <- list(
 #'     "A: Drug X" = "150mg QD",
 #'     "B: Placebo" = "Placebo",
 #'     "C: Combination" = "Combination"
 #'   )
-#'   color_manual <- c("150mg QD" = "#000000", "Placebo" = "#3498DB", "Combination" = "#E74C3C")
+#'   .color_manual <- c("150mg QD" = "#000000", "Placebo" = "#3498DB", "Combination" = "#E74C3C")
 #'   # assign LOQ flag symbols: circles for "N" and triangles for "Y", squares for "NA"
-#'   shape_manual <- c("N" = 1, "Y" = 2, "NA" = 0)
+#'   .shape_manual <- c("N" = 1, "Y" = 2, "NA" = 0)
 #'
 #'   set.seed(1)
 #'   ADSL <- rADSL
 #'   ADLB <- rADLB
-#'   var_labels <- lapply(ADLB, function(x) attributes(x)$label)
+#'   .var_labels <- lapply(ADLB, function(x) attributes(x)$label)
 #'   ADLB <- ADLB %>%
 #'     mutate(AVISITCD = case_when(
 #'       AVISIT == "SCREENING" ~ "SCR",
@@ -102,7 +102,7 @@
 #'         ifelse(grepl("A", ARMCD), 3, NA)
 #'       )
 #'     )) %>%
-#'     mutate(ARM = as.character(arm_mapping[match(ARM, names(arm_mapping))])) %>%
+#'     mutate(ARM = as.character(.arm_mapping[match(ARM, names(.arm_mapping))])) %>%
 #'     mutate(ARM = factor(ARM) %>%
 #'       reorder(TRTORD)) %>%
 #'     mutate(
@@ -130,19 +130,16 @@
 #'       paste(">", round(runif(1, min = 70, max = 75))), LBSTRESC
 #'     )) %>%
 #'     ungroup()
-#'   attr(ADLB[["ARM"]], "label") <- var_labels[["ARM"]]
+#'   attr(ADLB[["ARM"]], "label") <- .var_labels[["ARM"]]
 #'   attr(ADLB[["ANRHI"]], "label") <- "Analysis Normal Range Upper Limit"
 #'   attr(ADLB[["ANRLO"]], "label") <- "Analysis Normal Range Lower Limit"
 #'
 #'   # add LLOQ and ULOQ variables
-#'   ADLB_LOQS <- h_identify_loq_values(ADLB, "LOQFL")
+#'   ADLB_LOQS <- .h_identify_loq_values(ADLB, "LOQFL")
 #'   ADLB <- left_join(ADLB, ADLB_LOQS, by = "PARAM")
 #' })
 #'
-#' datanames <- c("ADSL", "ADLB")
-#' datanames(data) <- datanames
-#'
-#' join_keys(data) <- default_cdisc_join_keys[datanames]
+#' join_keys(data) <- default_cdisc_join_keys[names(data)]
 #'
 #' app <- init(
 #'   data = data,
@@ -315,13 +312,11 @@ ui_g_correlationplot <- function(id, ...) {
           title = "Plot Aesthetic Settings",
           toggle_slider_ui(
             ns("xrange_scale"),
-            label = "X-Axis Range Zoom",
-            min = -1000000, max = 1000000, value = c(-1000000, 1000000)
+            label = "X-Axis Range Zoom"
           ),
           toggle_slider_ui(
             ns("yrange_scale"),
-            label = "Y-Axis Range Zoom",
-            min = -1000000, max = 1000000, value = c(-1000000, 1000000)
+            label = "Y-Axis Range Zoom"
           ),
           numericInput(ns("facet_ncol"), "Number of Plots Per Row:", a$facet_ncol, min = 1),
           checkboxInput(ns("trt_facet"), "Treatment Variable Faceting", a$trt_facet),
@@ -374,8 +369,9 @@ srv_g_correlationplot <- function(id,
   checkmate::assert_class(shiny::isolate(data()), "teal_data")
 
   moduleServer(id, function(input, output, session) {
+    teal.logger::log_shiny_input_changes(input, namespace = "teal.goshawk")
     output$axis_selections <- renderUI({
-      env <- shiny::isolate(as.list(data()@env))
+      env <- shiny::isolate(as.list(data()))
       resolved_x_param <- teal.transform::resolve_delayed(module_args$xaxis_param, env)
       resolved_x_var <- teal.transform::resolve_delayed(module_args$xaxis_var, env)
       resolved_y_param <- teal.transform::resolve_delayed(module_args$yaxis_param, env)
@@ -598,10 +594,23 @@ srv_g_correlationplot <- function(id,
     anl_constraint <- anl_constraint_output()$value
 
     # update sliders for axes taking constraints into account
-    xrange_slider <- toggle_slider_server("xrange_scale")
-    yrange_slider <- toggle_slider_server("yrange_scale")
-    keep_range_slider_updated(session, input, xrange_slider$update_state, "xaxis_var", "xaxis_param", anl_constraint)
-    keep_range_slider_updated(session, input, yrange_slider$update_state, "yaxis_var", "yaxis_param", anl_constraint)
+    data_state_x <- reactive({
+      get_data_range_states(
+        varname = input$xaxis_var,
+        paramname = input$xaxis_param,
+        ANL = anl_constraint()$ANL
+      )
+    })
+    xrange_slider <- toggle_slider_server("xrange_scale", data_state_x)
+    data_state_y <- reactive({
+      get_data_range_states(
+        varname = input$yaxis_var,
+        paramname = input$yaxis_param,
+        ANL = anl_constraint()$ANL
+      )
+    })
+    yrange_slider <- toggle_slider_server("yrange_scale", data_state_y)
+
     keep_data_const_opts_updated(session, input, anl_constraint, "xaxis_param")
 
     # selector names after transposition
@@ -724,8 +733,8 @@ srv_g_correlationplot <- function(id,
       xaxis_var <- input$xaxis_var
       yaxis_param <- input$yaxis_param
       yaxis_var <- input$yaxis_var
-      xlim <- xrange_slider$state()$value
-      ylim <- yrange_slider$state()$value
+      xlim <- xrange_slider$value
+      ylim <- yrange_slider$value
       font_size <- input$font_size
       dot_size <- input$dot_size
       reg_text_size <- input$reg_text_size
@@ -821,6 +830,7 @@ srv_g_correlationplot <- function(id,
       brushing = TRUE
     )
 
+    code <- reactive(teal.code::get_code(plot_q()))
 
     ### REPORTER
     if (with_reporter) {
@@ -850,7 +860,7 @@ srv_g_correlationplot <- function(id,
           card$append_text("Comment", "header3")
           card$append_text(comment)
         }
-        card$append_src(teal.code::get_code(plot_q()))
+        card$append_src(code())
         card
       }
       teal.reporter::simple_reporter_srv("simple_reporter", reporter = reporter, card_fun = card_fun)
@@ -884,7 +894,7 @@ srv_g_correlationplot <- function(id,
 
     teal.widgets::verbatim_popup_srv(
       id = "rcode",
-      verbatim_content = reactive(teal.code::get_code(plot_q())),
+      verbatim_content = reactive(code()),
       title = "Show R Code for Correlation Plot"
     )
   })

@@ -60,7 +60,7 @@
 #'   library(nestcolor)
 #'
 #'   # original ARM value = dose value
-#'   arm_mapping <- list(
+#'   .arm_mapping <- list(
 #'     "A: Drug X" = "150mg QD",
 #'     "B: Placebo" = "Placebo",
 #'     "C: Combination" = "Combination"
@@ -68,7 +68,7 @@
 #'
 #'   ADSL <- rADSL
 #'   ADLB <- rADLB
-#'   var_labels <- lapply(ADLB, function(x) attributes(x)$label)
+#'   .var_labels <- lapply(ADLB, function(x) attributes(x)$label)
 #'   ADLB <- ADLB %>%
 #'     mutate(
 #'       AVISITCD = case_when(
@@ -89,18 +89,16 @@
 #'         ARMCD == "ARM B" ~ 2,
 #'         ARMCD == "ARM A" ~ 3
 #'       ),
-#'       ARM = as.character(arm_mapping[match(ARM, names(arm_mapping))]),
+#'       ARM = as.character(.arm_mapping[match(ARM, names(.arm_mapping))]),
 #'       ARM = factor(ARM) %>% reorder(TRTORD),
-#'       ACTARM = as.character(arm_mapping[match(ACTARM, names(arm_mapping))]),
+#'       ACTARM = as.character(.arm_mapping[match(ACTARM, names(.arm_mapping))]),
 #'       ACTARM = factor(ACTARM) %>% reorder(TRTORD)
 #'     )
-#'   attr(ADLB[["ARM"]], "label") <- var_labels[["ARM"]]
-#'   attr(ADLB[["ACTARM"]], "label") <- var_labels[["ACTARM"]]
+#'   attr(ADLB[["ARM"]], "label") <- .var_labels[["ARM"]]
+#'   attr(ADLB[["ACTARM"]], "label") <- .var_labels[["ACTARM"]]
 #' })
 #'
-#' datanames <- c("ADSL", "ADLB")
-#' datanames(data) <- datanames
-#' join_keys(data) <- default_cdisc_join_keys[datanames]
+#' join_keys(data) <- default_cdisc_join_keys[names(data)]
 #'
 #' app <- init(
 #'   data = data,
@@ -271,10 +269,7 @@ ui_lineplot <- function(id, ...) {
             title = "Plot Aesthetic Settings",
             toggle_slider_ui(
               ns("yrange_scale"),
-              label = "Y-Axis Range Zoom",
-              min = -1000000,
-              max = 1000000,
-              value = c(-1000000, 1000000)
+              label = "Y-Axis Range Zoom"
             ),
             checkboxInput(ns("rotate_xlab"), "Rotate X-axis Label", a$rotate_xlab),
             numericInput(ns("count_threshold"), "Contributing Observations Threshold:", a$count_threshold)
@@ -348,10 +343,11 @@ srv_lineplot <- function(id,
   checkmate::assert_class(shiny::isolate(data()), "teal_data")
 
   moduleServer(id, function(input, output, session) {
+    teal.logger::log_shiny_input_changes(input, namespace = "teal.goshawk")
     ns <- session$ns
 
     output$axis_selections <- renderUI({
-      env <- shiny::isolate(as.list(data()@env))
+      env <- shiny::isolate(as.list(data()))
       resolved_x <- teal.transform::resolve_delayed(module_args$xaxis_var, env)
       resolved_y <- teal.transform::resolve_delayed(module_args$yaxis_var, env)
       resolved_param <- teal.transform::resolve_delayed(module_args$param, env)
@@ -403,8 +399,6 @@ srv_lineplot <- function(id,
 
     keep_data_const_opts_updated(session, input, anl_q, "xaxis_param")
 
-    yrange_slider <- toggle_slider_server("yrange_scale")
-
     horizontal_line <- srv_arbitrary_lines("hline_arb")
 
     iv_r <- reactive({
@@ -422,7 +416,7 @@ srv_lineplot <- function(id,
 
 
     # update sliders for axes
-    observe({
+    data_state <- reactive({
       varname <- input[["yaxis_var"]]
       validate(need(varname, "Please select variable"))
 
@@ -435,7 +429,7 @@ srv_lineplot <- function(id,
         NULL
       }
 
-      # we don't need to additionally filter for paramvar here as in keep_range_slider_updated because
+      # we don't need to additionally filter for paramvar here as in get_data_range_states because
       # xaxis_var and yaxis_var are always distinct
       sum_data <- ANL %>%
         dplyr::group_by_at(c(input$xaxis_var, input$trt_group, shape)) %>%
@@ -462,15 +456,14 @@ srv_lineplot <- function(id,
         f = 0.05
       )
 
-      # we don't use keep_range_slider_updated because this module computes the min, max
+      # we don't use get_data_range_states because this module computes the data ranges
       # not from the constrained ANL, but rather by first grouping and computing confidence
       # intervals
-      isolate(yrange_slider$update_state(
-        min = minmax[[1]],
-        max = minmax[[2]],
-        value = minmax
-      ))
+      list(
+        range = c(min = minmax[[1]], max = minmax[[2]])
+      )
     })
+    yrange_slider <- toggle_slider_server("yrange_scale", data_state)
 
     line_color_defaults <- color_manual
     line_type_defaults <- c(
@@ -666,7 +659,7 @@ srv_lineplot <- function(id,
       teal::validate_inputs(iv_r())
       req(anl_q(), line_color_selected(), line_type_selected())
       # nolint start
-      ylim <- yrange_slider$state()$value
+      ylim <- yrange_slider$value
       plot_font_size <- input$plot_font_size
       dot_size <- input$dot_size
       dodge <- input$dodge
@@ -772,6 +765,8 @@ srv_lineplot <- function(id,
       width = plot_width,
     )
 
+    code <- reactive(teal.code::get_code(plot_q()))
+
     ### REPORTER
     if (with_reporter) {
       card_fun <- function(comment, label) {
@@ -800,7 +795,7 @@ srv_lineplot <- function(id,
           card$append_text("Comment", "header3")
           card$append_text(comment)
         }
-        card$append_src(teal.code::get_code(plot_q()))
+        card$append_src(code())
         card
       }
       teal.reporter::simple_reporter_srv("simple_reporter", reporter = reporter, card_fun = card_fun)
@@ -809,7 +804,7 @@ srv_lineplot <- function(id,
 
     teal.widgets::verbatim_popup_srv(
       id = "rcode",
-      verbatim_content = reactive(teal.code::get_code(plot_q())),
+      verbatim_content = reactive(code()),
       title = "Show R Code for Line Plot"
     )
   })

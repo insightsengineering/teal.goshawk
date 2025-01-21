@@ -45,7 +45,7 @@
 #'   library(stringr)
 #'
 #'   # original ARM value = dose value
-#'   arm_mapping <- list(
+#'   .arm_mapping <- list(
 #'     "A: Drug X" = "150mg QD",
 #'     "B: Placebo" = "Placebo",
 #'     "C: Combination" = "Combination"
@@ -53,7 +53,7 @@
 #'
 #'   ADSL <- rADSL
 #'   ADLB <- rADLB
-#'   var_labels <- lapply(ADLB, function(x) attributes(x)$label)
+#'   .var_labels <- lapply(ADLB, function(x) attributes(x)$label)
 #'   ADLB <- ADLB %>%
 #'     mutate(
 #'       AVISITCD = case_when(
@@ -74,18 +74,16 @@
 #'         ARMCD == "ARM B" ~ 2,
 #'         ARMCD == "ARM A" ~ 3
 #'       ),
-#'       ARM = as.character(arm_mapping[match(ARM, names(arm_mapping))]),
+#'       ARM = as.character(.arm_mapping[match(ARM, names(.arm_mapping))]),
 #'       ARM = factor(ARM) %>% reorder(TRTORD),
-#'       ACTARM = as.character(arm_mapping[match(ACTARM, names(arm_mapping))]),
+#'       ACTARM = as.character(.arm_mapping[match(ACTARM, names(.arm_mapping))]),
 #'       ACTARM = factor(ACTARM) %>% reorder(TRTORD)
 #'     )
-#'   attr(ADLB[["ARM"]], "label") <- var_labels[["ARM"]]
-#'   attr(ADLB[["ACTARM"]], "label") <- var_labels[["ACTARM"]]
+#'   attr(ADLB[["ARM"]], "label") <- .var_labels[["ARM"]]
+#'   attr(ADLB[["ACTARM"]], "label") <- .var_labels[["ACTARM"]]
 #' })
 #'
-#' datanames <- c("ADSL", "ADLB")
-#' datanames(data) <- datanames
-#' join_keys(data) <- default_cdisc_join_keys[datanames]
+#' join_keys(data) <- default_cdisc_join_keys[names(data)]
 #'
 #'
 #' app <- init(
@@ -200,17 +198,13 @@ ui_g_scatterplot <- function(id, ...) {
       teal.widgets::panel_group(
         teal.widgets::panel_item(
           title = "Plot Aesthetic Settings",
-          toggle_slider_ui(ns("xrange_scale"),
-            label = "X-Axis Range Zoom",
-            min = -1000000,
-            max = 1000000,
-            value = c(-1000000, 1000000)
+          toggle_slider_ui(
+            ns("xrange_scale"),
+            label = "X-Axis Range Zoom"
           ),
-          toggle_slider_ui(ns("yrange_scale"),
-            label = "Y-Axis Range Zoom",
-            min = -1000000,
-            max = 1000000,
-            value = c(-1000000, 1000000)
+          toggle_slider_ui(
+            ns("yrange_scale"),
+            label = "Y-Axis Range Zoom"
           ),
           numericInput(ns("facet_ncol"), "Number of Plots Per Row:", a$facet_ncol, min = 1),
           checkboxInput(ns("trt_facet"), "Treatment Variable Faceting", a$trt_facet),
@@ -259,8 +253,9 @@ srv_g_scatterplot <- function(id,
   checkmate::assert_class(shiny::isolate(data()), "teal_data")
 
   moduleServer(id, function(input, output, session) {
+    teal.logger::log_shiny_input_changes(input, namespace = "teal.goshawk")
     output$axis_selections <- renderUI({
-      env <- shiny::isolate(as.list(data()@env))
+      env <- shiny::isolate(as.list(data()))
       resolved_x <- teal.transform::resolve_delayed(module_args$xaxis_var, env)
       resolved_y <- teal.transform::resolve_delayed(module_args$yaxis_var, env)
       resolved_param <- teal.transform::resolve_delayed(module_args$param, env)
@@ -289,18 +284,31 @@ srv_g_scatterplot <- function(id,
     anl_q <- anl_q_output()$value
 
     # update sliders for axes taking constraints into account
-    xrange_slider <- toggle_slider_server("xrange_scale")
-    yrange_slider <- toggle_slider_server("yrange_scale")
-    keep_range_slider_updated(session, input, xrange_slider$update_state, "xaxis_var", "xaxis_param", anl_q)
-    keep_range_slider_updated(session, input, yrange_slider$update_state, "yaxis_var", "xaxis_param", anl_q)
+    data_state_x <- reactive({
+      get_data_range_states(
+        varname = input$xaxis_var,
+        paramname = input$xaxis_param,
+        ANL = anl_q()$ANL
+      )
+    })
+    xrange_slider <- toggle_slider_server("xrange_scale", data_state_x)
+    data_state_y <- reactive({
+      get_data_range_states(
+        varname = input$yaxis_var,
+        paramname = input$xaxis_param,
+        ANL = anl_q()$ANL
+      )
+    })
+    yrange_slider <- toggle_slider_server("yrange_scale", data_state_y)
+
     keep_data_const_opts_updated(session, input, anl_q, "xaxis_param")
 
     # plot
     plot_q <- debounce(reactive({
       req(anl_q())
       # nolint start
-      xlim <- xrange_slider$state()$value
-      ylim <- yrange_slider$state()$value
+      xlim <- xrange_slider$value
+      ylim <- yrange_slider$value
       facet_ncol <- input$facet_ncol
       validate(need(
         is.na(facet_ncol) || (as.numeric(facet_ncol) > 0 && as.numeric(facet_ncol) %% 1 == 0),
@@ -366,6 +374,8 @@ srv_g_scatterplot <- function(id,
       brushing = TRUE
     )
 
+    code <- reactive(teal.code::get_code(plot_q()))
+
     ### REPORTER
     if (with_reporter) {
       card_fun <- function(comment, label) {
@@ -394,7 +404,7 @@ srv_g_scatterplot <- function(id,
           card$append_text("Comment", "header3")
           card$append_text(comment)
         }
-        card$append_src(teal.code::get_code(plot_q()))
+        card$append_src(code())
         card
       }
       teal.reporter::simple_reporter_srv("simple_reporter", reporter = reporter, card_fun = card_fun)
@@ -434,7 +444,7 @@ srv_g_scatterplot <- function(id,
 
     teal.widgets::verbatim_popup_srv(
       id = "rcode",
-      verbatim_content = reactive(teal.code::get_code(plot_q())),
+      verbatim_content = reactive(code()),
       title = "Show R Code for Scatterplot"
     )
   })

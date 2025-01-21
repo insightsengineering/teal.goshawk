@@ -100,10 +100,10 @@ Default value is waive().}
 
 \item{dodge}{controls the position dodge of error bar}
 
-\item{pre_output}{(\code{shiny.tag}) optional,\cr
+\item{pre_output}{(\code{shiny.tag}, optional)\cr
 with text placed before the output to put the output into context. For example a title.}
 
-\item{post_output}{(\code{shiny.tag}) optional, with text placed after the output to put the output
+\item{post_output}{(\code{shiny.tag}, optional) with text placed after the output to put the output
 into context. For example the \code{\link[shiny:helpText]{shiny::helpText()}} elements are useful.}
 
 \item{count_threshold}{minimum count of observations (as listed in the output table) to plot
@@ -132,7 +132,7 @@ data <- within(data, {
   library(nestcolor)
 
   # original ARM value = dose value
-  arm_mapping <- list(
+  .arm_mapping <- list(
     "A: Drug X" = "150mg QD",
     "B: Placebo" = "Placebo",
     "C: Combination" = "Combination"
@@ -140,7 +140,7 @@ data <- within(data, {
 
   ADSL <- rADSL
   ADLB <- rADLB
-  var_labels <- lapply(ADLB, function(x) attributes(x)$label)
+  .var_labels <- lapply(ADLB, function(x) attributes(x)$label)
   ADLB <- ADLB \%>\%
     mutate(
       AVISITCD = case_when(
@@ -161,18 +161,16 @@ data <- within(data, {
         ARMCD == "ARM B" ~ 2,
         ARMCD == "ARM A" ~ 3
       ),
-      ARM = as.character(arm_mapping[match(ARM, names(arm_mapping))]),
+      ARM = as.character(.arm_mapping[match(ARM, names(.arm_mapping))]),
       ARM = factor(ARM) \%>\% reorder(TRTORD),
-      ACTARM = as.character(arm_mapping[match(ACTARM, names(arm_mapping))]),
+      ACTARM = as.character(.arm_mapping[match(ACTARM, names(.arm_mapping))]),
       ACTARM = factor(ACTARM) \%>\% reorder(TRTORD)
     )
-  attr(ADLB[["ARM"]], "label") <- var_labels[["ARM"]]
-  attr(ADLB[["ACTARM"]], "label") <- var_labels[["ACTARM"]]
+  attr(ADLB[["ARM"]], "label") <- .var_labels[["ARM"]]
+  attr(ADLB[["ACTARM"]], "label") <- .var_labels[["ACTARM"]]
 })
 
-datanames <- c("ADSL", "ADLB")
-datanames(data) <- datanames
-join_keys(data) <- default_cdisc_join_keys[datanames]
+join_keys(data) <- default_cdisc_join_keys[names(data)]
 
 app <- init(
   data = data,

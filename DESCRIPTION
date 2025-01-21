@@ -1,8 +1,8 @@
 Type: Package
 Package: teal.goshawk
 Title: Longitudinal Visualization `teal` Modules
-Version: 0.2.0.9013
-Date: 2024-10-09
+Version: 0.2.0.9021
+Date: 2025-01-15
 Authors@R: c(
     person("Nick", "Paszty", , "nick.paszty@gene.com", role = c("aut", "cre")),
     person("Dawid", "Kaledkowski", , "dawid.kaledkowski@roche.com", role = "aut"),
@@ -32,8 +32,8 @@ Depends:
     goshawk (>= 0.1.18),
     R (>= 3.6),
     shiny (>= 1.6.0),
-    teal (>= 0.15.2),
-    teal.transform (>= 0.5.0)
+    teal (>= 0.15.2.9079),
+    teal.transform (>= 0.5.0.9015)
 Imports:
     checkmate (>= 2.1.0),
     colourpicker,
@@ -47,21 +47,26 @@ Imports:
     shinyjs,
     shinyvalidate,
     stats,
-    teal.code (>= 0.5.0),
-    teal.logger (>= 0.2.0),
+    teal.code (>= 0.5.0.9012),
+    teal.logger (>= 0.3.0.9003),
     teal.reporter (>= 0.2.0),
     teal.widgets (>= 0.4.0)
 Suggests:
     knitr (>= 1.42),
     nestcolor (>= 0.1.0),
     rmarkdown (>= 2.23),
+    rvest (>= 1.0.0),
+    shinytest2,
     stringr (>= 1.4.1),
-    teal.data (>= 0.5.0),
+    teal.data (>= 0.6.0.9015),
     tern (>= 0.7.10),
     testthat (>= 3.0.4),
     utils
 VignetteBuilder:
-    knitr
+    knitr,
+    rmarkdown
+Remotes: 
+    insightsengineering/goshawk
 Config/Needs/verdepcheck: insightsengineering/goshawk, rstudio/shiny,
     insightsengineering/teal, insightsengineering/teal.transform,
     mllg/checkmate, daattali/colourpicker, tidyverse/dplyr, rstudio/DT,
@@ -71,8 +76,9 @@ Config/Needs/verdepcheck: insightsengineering/goshawk, rstudio/shiny,
     insightsengineering/teal.widgets, yihui/knitr,
     insightsengineering/nestcolor, rstudio/rmarkdown, tidyverse/stringr,
     insightsengineering/teal.data, insightsengineering/tern,
-    r-lib/testthat
+    r-lib/testthat, rstudio/shinytest2, tidyverse/rvest
 Config/Needs/website: insightsengineering/nesttemplate
+Config/testthat/edition: 3
 Encoding: UTF-8
 Language: en-US
 LazyData: true

@@ -1,4 +1,4 @@
-# teal.goshawk 0.2.0.9013
+# teal.goshawk 0.2.0.9021
 
 # teal.goshawk 0.2.0
 
@@ -8,6 +8,7 @@
 ### Enhancements
 * Updated the documentation and vignettes to demonstrate method to pass `teal_data` object to `teal::init()`.
 * Removed `Show Warnings` modals from modules.
+* Added `teal.logger` functionality for logging changes in shiny inputs in all modules.
 
 ### Miscellaneous
 * Specified minimal version of package dependencies.
