@@ -30,7 +30,8 @@ tm_g_gh_boxplot(
   dot_size = c(2, 1, 12),
   alpha = c(0.8, 0, 1),
   pre_output = NULL,
-  post_output = NULL
+  post_output = NULL,
+  transformators = list()
 )
 }
 \arguments{
@@ -95,6 +96,9 @@ with text placed before the output to put the output into context. For example a
 
 \item{post_output}{(\code{shiny.tag}, optional) with text placed after the output to put the output
 into context. For example the \code{\link[shiny:helpText]{shiny::helpText()}} elements are useful.}
+
+\item{transformators}{(\code{list} of \code{teal_transform_module}) that will be applied to transform module's data input.
+To learn more check \code{vignette("data-transform-as-shiny-module", package = "teal")}.}
 }
 \value{
 an \code{\link[teal]{module}} object
