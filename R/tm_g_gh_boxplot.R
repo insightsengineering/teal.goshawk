@@ -37,6 +37,7 @@
 #' @param alpha numeric vector to define transparency of plotted points.
 #'
 #' @inheritParams teal.widgets::standard_layout
+#' @inheritParams teal::module
 #'
 #' @author Jeff Tomlinson (tomlinsj) jeffrey.tomlinson@roche.com
 #' @author Balazs Toth (tothb2) toth.balazs@gene.com
@@ -168,7 +169,8 @@ tm_g_gh_boxplot <- function(label,
                             dot_size = c(2, 1, 12),
                             alpha = c(0.8, 0.0, 1.0),
                             pre_output = NULL,
-                            post_output = NULL) {
+                            post_output = NULL,
+                            transformators = list()) {
   message("Initializing tm_g_gh_boxplot")
   checkmate::assert_string(label)
   checkmate::assert_string(dataname)
@@ -212,7 +214,8 @@ tm_g_gh_boxplot <- function(label,
       module_args = args
     ),
     ui = ui_g_boxplot,
-    ui_args = args
+    ui_args = args,
+    transformators = transformators
   )
 }
 

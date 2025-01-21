@@ -23,6 +23,7 @@
 #'
 #' @inheritParams teal.widgets::standard_layout
 #' @inheritParams tm_g_gh_scatterplot
+#' @inheritParams teal::module
 #'
 #'
 #' @author Nick Paszty (npaszty) paszty.nicholas@gene.com
@@ -129,7 +130,8 @@ tm_g_gh_density_distribution_plot <- function(label, # nolint
                                               comb_line = TRUE,
                                               rotate_xlab = FALSE,
                                               pre_output = NULL,
-                                              post_output = NULL) {
+                                              post_output = NULL,
+                                              transformators = list()) {
   message("Initializing tm_g_gh_density_distribution_plot")
   checkmate::assert_string(label)
   checkmate::assert_string(dataname)
@@ -168,7 +170,8 @@ tm_g_gh_density_distribution_plot <- function(label, # nolint
       module_args = args
     ),
     ui = ui_g_density_distribution_plot,
-    ui_args = args
+    ui_args = args,
+    transformators = transformators
   )
 }
 
