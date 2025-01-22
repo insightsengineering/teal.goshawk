@@ -3,6 +3,7 @@
 #' @description Scatter Plot Teal Module For Biomarker Analysis
 #'
 #' @inheritParams teal.widgets::standard_layout
+#' @inheritParams teal::module
 #' @param label menu item label of the module in the teal app.
 #' @param dataname analysis data passed to the data argument of \code{\link[teal]{init}}. E.g. `ADaM` structured
 #' laboratory data frame \code{ADLB}.
@@ -220,7 +221,8 @@ tm_g_gh_correlationplot <- function(label,
                                     dot_size = c(1, 1, 12),
                                     reg_text_size = c(3, 3, 10),
                                     pre_output = NULL,
-                                    post_output = NULL) {
+                                    post_output = NULL,
+                                    transformators = list()) {
   message("Initializing tm_g_gh_correlationplot")
   checkmate::assert_class(xaxis_param, "choices_selected")
   checkmate::assert_class(yaxis_param, "choices_selected")
@@ -264,7 +266,8 @@ tm_g_gh_correlationplot <- function(label,
       module_args = args
     ),
     ui = ui_g_correlationplot,
-    ui_args = args
+    ui_args = args,
+    transformators = transformators
   )
 }
 

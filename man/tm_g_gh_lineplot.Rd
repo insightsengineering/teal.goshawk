@@ -36,7 +36,8 @@ tm_g_gh_lineplot(
   count_threshold = 0,
   table_font_size = c(12, 4, 20),
   dot_size = c(2, 1, 12),
-  plot_relative_height_value = 1000
+  plot_relative_height_value = 1000,
+  transformators = list()
 )
 }
 \arguments{
@@ -115,6 +116,9 @@ nodes on the graph}
 
 \item{plot_relative_height_value}{numeric value between 500 and 5000 for controlling the starting value
 of the relative plot height slider}
+
+\item{transformators}{(\code{list} of \code{teal_transform_module}) that will be applied to transform module's data input.
+To learn more check \code{vignette("data-transform-as-shiny-module", package = "teal")}.}
 }
 \value{
 \code{shiny} object
