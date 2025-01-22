@@ -56,7 +56,7 @@ Suggests:
     nestcolor (>= 0.1.0),
     rmarkdown (>= 2.23),
     rvest (>= 1.0.0),
-    shinytest2,
+    shinytest2 (>= 0.3.2),
     stringr (>= 1.4.1),
     teal.data (>= 0.6.0.9025),
     tern (>= 0.9.7),
