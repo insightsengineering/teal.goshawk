@@ -66,6 +66,7 @@ VignetteBuilder:
     knitr,
     rmarkdown
 Remotes: 
+    insightsengineering/goshawk,
     insightsengineering/teal,
     insightsengineering/teal.transform,
     insightsengineering/teal.widgets
