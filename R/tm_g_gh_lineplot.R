@@ -3,6 +3,7 @@
 #' This teal module renders the UI and calls the function that creates a line plot.
 #'
 #' @inheritParams teal.widgets::standard_layout
+#' @inheritParams teal::module
 #' @param label menu item label of the module in the teal app.
 #' @param dataname analysis data passed to the data argument of \code{\link[teal]{init}}. E.g. `ADaM` structured
 #' laboratory data frame `ADLB`.
@@ -155,7 +156,8 @@ tm_g_gh_lineplot <- function(label,
                              count_threshold = 0,
                              table_font_size = c(12, 4, 20),
                              dot_size = c(2, 1, 12),
-                             plot_relative_height_value = 1000) {
+                             plot_relative_height_value = 1000,
+                             transformators = list()) {
   message("Initializing tm_g_gh_lineplot")
   # Validate string inputs
   checkmate::assert_string(label)
@@ -220,6 +222,7 @@ tm_g_gh_lineplot <- function(label,
     ),
     ui = ui_lineplot,
     ui_args = args,
+    transformators = transformators,
     datanames = dataname
   )
 }
