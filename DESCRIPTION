@@ -50,7 +50,7 @@ Imports:
     teal.code (>= 0.6.0),
     teal.logger (>= 0.3.1),
     teal.reporter (>= 0.4.0),
-    teal.widgets (>= 0.4.2.9025)
+    teal.widgets (>= 0.4.3)
 Suggests:
     knitr (>= 1.42),
     nestcolor (>= 0.1.0),
@@ -68,8 +68,7 @@ VignetteBuilder:
 Remotes: 
     insightsengineering/goshawk,
     insightsengineering/teal,
-    insightsengineering/teal.transform,
-    insightsengineering/teal.widgets
+    insightsengineering/teal.transform
 Config/Needs/verdepcheck: insightsengineering/goshawk, rstudio/shiny,
     insightsengineering/teal, insightsengineering/teal.slice,
     insightsengineering/teal.transform, mllg/checkmate,
