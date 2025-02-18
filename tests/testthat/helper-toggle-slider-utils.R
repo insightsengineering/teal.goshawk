@@ -10,12 +10,12 @@ get_ui_slider_values <- function(app) {
     click_toggle_button(app)
   }
   list(
-    min = app$get_text(sprintf("#%s .irs-min", id)) |> as.numeric(),
-    max = app$get_text(sprintf("#%s .irs-max", id)) |> as.numeric(),
+    min = app$get_text(sprintf("#%s .irs-min", id)) %>% as.numeric(),
+    max = app$get_text(sprintf("#%s .irs-max", id)) %>% as.numeric(),
     value = c(
       app$get_text(sprintf("#%s .irs-from", id)),
       app$get_text(sprintf("#%s .irs-to", id))
-    ) |> as.numeric()
+    ) %>% as.numeric()
   )
 }
 
