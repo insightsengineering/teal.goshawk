@@ -1,4 +1,12 @@
-# teal.goshawk 0.2.0.9025
+# teal.goshawk 0.3.0
+
+### Enhancements
+* Added `transformator` parameter in module (#331)
+* Fixed and Enhanced ticks rendering (#133)
+* Added `teal.logger` functionality for logging changes in shiny inputs in all modules.
+* Enhanced the Show R Code result to include plot and table for boxplot and density plot (#291).
+* Enhanced `tm_g_gh_boxplot` to resolve delayed object (#301).
+* Enhanced the density calculation ranges logic for `tm_g_gh_density_distribution_plot` (#308).
 
 # teal.goshawk 0.2.0
 
@@ -8,7 +16,6 @@
 ### Enhancements
 * Updated the documentation and vignettes to demonstrate method to pass `teal_data` object to `teal::init()`.
 * Removed `Show Warnings` modals from modules.
-* Added `teal.logger` functionality for logging changes in shiny inputs in all modules.
 
 ### Miscellaneous
 * Specified minimal version of package dependencies.
