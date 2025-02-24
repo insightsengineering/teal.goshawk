@@ -29,7 +29,7 @@ URL: https://insightsengineering.github.io/teal.goshawk/,
     https://github.com/insightsengineering/teal.goshawk/
 BugReports: https://github.com/insightsengineering/teal.goshawk/issues
 Depends:
-    goshawk (>= 0.1.18),
+    goshawk (>= 0.1.19),
     R (>= 3.6),
     shiny (>= 1.6.0),
     teal (>= 0.16.0),
@@ -47,7 +47,7 @@ Imports:
     shinyjs,
     shinyvalidate,
     stats,
-    teal.code (>= 0.6.0),
+    teal.code (>= 0.6.1),
     teal.logger (>= 0.3.2),
     teal.reporter (>= 0.4.0),
     teal.widgets (>= 0.4.3)
@@ -58,7 +58,7 @@ Suggests:
     rvest (>= 1.0.0),
     shinytest2 (>= 0.3.2),
     stringr (>= 1.4.1),
-    teal.data (>= 0.6.0.9025),
+    teal.data (>= 0.7.0),
     tern (>= 0.9.7),
     testthat (>= 3.2.0),
     utils
