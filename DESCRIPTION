@@ -66,6 +66,7 @@ Remotes:
     insightsengineering/goshawk,
     insightsengineering/teal.widgets,
     insightsengineering/teal.transform,
+    insightsengineering/teal.reporter,
     insightsengineering/teal
 VignetteBuilder:
     knitr,
