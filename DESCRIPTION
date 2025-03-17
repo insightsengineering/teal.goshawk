@@ -64,7 +64,8 @@ Suggests:
     utils
 Remotes:
     insightsengineering/goshawk,
-    insightsengineering/teal.widgets
+    insightsengineering/teal.widgets,
+    insightsengineering/teal
 VignetteBuilder:
     knitr,
     rmarkdown
