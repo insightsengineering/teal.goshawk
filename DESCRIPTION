@@ -62,6 +62,8 @@ Suggests:
     tern (>= 0.9.7),
     testthat (>= 3.2.0),
     utils
+Remotes:
+    insightsengineering/teal.widgets
 VignetteBuilder:
     knitr,
     rmarkdown
