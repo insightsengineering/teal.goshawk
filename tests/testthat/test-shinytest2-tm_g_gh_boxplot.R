@@ -22,11 +22,13 @@ app_driver <- init_teal_app_driver(
 app_driver$wait_for_idle()
 
 testthat::test_that("toggle_slider_module: widgets are initialized with proper values", {
+  app_driver$wait_for_idle()
   init_values <- list(min = 0, max = 55, value = c(0, 55))
   check_widgets_with_value(app_driver, init_values)
 })
 
 testthat::test_that("toggle_slider_module: changing the sliderInput sets proper numericInput values", {
+  app_driver$wait_for_idle()
   set_slider_values(app_driver, c(1, 50))
   check_widgets_with_value(
     app_driver,
@@ -38,6 +40,7 @@ testthat::test_that(
   "toggle_slider_module: changing the numericInputs
   within the sliderInput range, sets proper sliderInput values",
   {
+    app_driver$wait_for_idle()
     initial_range <- list(min = 0, max = 55)
     new_value <- c(10, 40)
     set_numeric_input_low(app_driver, new_value[1])
@@ -57,6 +60,7 @@ testthat::test_that(
   "toggle_slider_module: changing the numericInputs
   outside the sliderInput range, sets proper sliderInput values and range",
   {
+    app_driver$wait_for_idle()
     new_range <- c(-5, 60)
     set_numeric_input_low(app_driver, new_range[1])
     set_numeric_input_high(app_driver, new_range[2])
@@ -75,6 +79,7 @@ testthat::test_that(
   "toggle_slider_module: changing the numericInputs
   within the rage, sets back the sliderInput range to initial range",
   {
+    app_driver$wait_for_idle()
     initial_range <- list(min = 0, max = 55)
     new_value <- c(11, 30)
     set_numeric_input_low(app_driver, new_value[1])
@@ -94,6 +99,7 @@ testthat::test_that(
   "toggle_slider_module: changing dependant widgets outside
 sets proper sliderInput and numericInput values",
   {
+    app_driver$wait_for_idle()
     app_driver$set_active_module_input("xaxis_param", "CRP")
     new_range <- c(5, 13)
     check_widgets_with_value(
