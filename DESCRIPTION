@@ -63,8 +63,8 @@ Suggests:
     testthat (>= 3.2.0),
     utils
 Remotes:
-    insightsengineering/teal.widgets
     insightsengineering/goshawk
+    insightsengineering/teal.widgets
 VignetteBuilder:
     knitr,
     rmarkdown
