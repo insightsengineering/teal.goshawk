@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <testsuites>
-  <testsuite name="shinytest2-tm_g_gh_boxplot" timestamp="2025-03-17T20:41:06Z" hostname="2a5d87032c94" tests="6" skipped="5" failures="0" errors="1" time="4.961">
-    <testcase time="2.789" classname="shinytest2_tm_g_gh_boxplot" name="toggle_slider_module_widgets_are_initialized_with_proper_values">
+  <testsuite name="shinytest2-tm_g_gh_boxplot" timestamp="2025-03-17T20:41:23Z" hostname="352bd661a612" tests="6" skipped="5" failures="0" errors="1" time="5.467">
+    <testcase time="3.107" classname="shinytest2_tm_g_gh_boxplot" name="toggle_slider_module_widgets_are_initialized_with_proper_values">
       <error type="error" message="Error in `app_initialize(self, private, app_dir = app_dir, ..., load_timeout = load_timeout,  ('test-shinytest2-tm_g_gh_boxplot.R:48:3')">Error in `app_initialize(self, private, app_dir = app_dir, ..., load_timeout = load_timeout, 
     timeout = timeout, wait = wait, expect_values_screenshot_args = expect_values_screenshot_args, 
     screenshot_args = screenshot_args, check_names = check_names, 
@@ -13,10 +13,10 @@
 
 i You can inspect the failed AppDriver object via `rlang::last_error()$app`
 i AppDriver logs:
-{shinytest2} R info   20:41:07.67 Start AppDriver initialization
-{shinytest2} R info   20:41:07.80 Starting Shiny app
-{shinytest2} R info   20:41:08.84 Creating new ChromoteSession
-{shinytest2} R info   20:41:08.86 Error while initializing AppDriver:
+{shinytest2} R info   20:41:24.78 Start AppDriver initialization
+{shinytest2} R info   20:41:24.92 Starting Shiny app
+{shinytest2} R info   20:41:26.16 Creating new ChromoteSession
+{shinytest2} R info   20:41:26.18 Error while initializing AppDriver:
                                   code: -32602
                                     message: Target position can only be set for new windows
 {shiny}      R stderr ----------- Loading required package: shiny
@@ -50,7 +50,7 @@ i AppDriver logs:
 {shiny}      R stderr ----------- Loading required package: teal.transform
 {shiny}      R stderr ----------- Running application in test mode.
 {shiny}      R stderr ----------- 
-{shiny}      R stderr ----------- Listening on http://127.0.0.1:3844
+{shiny}      R stderr ----------- Listening on http://127.0.0.1:6467
 
 
 Caused by error in `callback()`:
@@ -88,19 +88,19 @@ Backtrace:
  28.   \-shinytest2:::app_abort(...)
  29.     \-rlang::abort(..., app = self, call = call)</error>
     </testcase>
-    <testcase time="0.561" classname="shinytest2_tm_g_gh_boxplot" name="toggle_slider_module_changing_the_sliderInput_sets_proper_numericInput_values">
+    <testcase time="0.628" classname="shinytest2_tm_g_gh_boxplot" name="toggle_slider_module_changing_the_sliderInput_sets_proper_numericInput_values">
       <skipped message="Reason: `shinytest2::AppDriver` can not be initialized as {chromote} can not be started ('test-shinytest2-tm_g_gh_boxplot.R:56:3')"/>
     </testcase>
-    <testcase time="0.415999999999999" classname="shinytest2_tm_g_gh_boxplot" name="toggle_slider_module_changing_the_numericInputs_within_the_sliderInput_range_sets_proper_sliderInput_values">
+    <testcase time="0.444" classname="shinytest2_tm_g_gh_boxplot" name="toggle_slider_module_changing_the_numericInputs_within_the_sliderInput_range_sets_proper_sliderInput_values">
       <skipped message="Reason: `shinytest2::AppDriver` can not be initialized as {chromote} can not be started ('test-shinytest2-tm_g_gh_boxplot.R:70:5')"/>
     </testcase>
-    <testcase time="0.397" classname="shinytest2_tm_g_gh_boxplot" name="toggle_slider_module_changing_the_numericInputs_outside_the_sliderInput_range_sets_proper_sliderInput_values_and_range">
+    <testcase time="0.424" classname="shinytest2_tm_g_gh_boxplot" name="toggle_slider_module_changing_the_numericInputs_outside_the_sliderInput_range_sets_proper_sliderInput_values_and_range">
       <skipped message="Reason: `shinytest2::AppDriver` can not be initialized as {chromote} can not be started ('test-shinytest2-tm_g_gh_boxplot.R:92:5')"/>
     </testcase>
-    <testcase time="0.402" classname="shinytest2_tm_g_gh_boxplot" name="toggle_slider_module_changing_the_numericInputs_within_the_rage_sets_back_the_sliderInput_range_to_initial_range">
+    <testcase time="0.434" classname="shinytest2_tm_g_gh_boxplot" name="toggle_slider_module_changing_the_numericInputs_within_the_rage_sets_back_the_sliderInput_range_to_initial_range">
       <skipped message="Reason: `shinytest2::AppDriver` can not be initialized as {chromote} can not be started ('test-shinytest2-tm_g_gh_boxplot.R:113:5')"/>
     </testcase>
-    <testcase time="0.396" classname="shinytest2_tm_g_gh_boxplot" name="toggle_slider_module_changing_dependant_widgets_outside_sets_proper_sliderInput_and_numericInput_values">
+    <testcase time="0.43" classname="shinytest2_tm_g_gh_boxplot" name="toggle_slider_module_changing_dependant_widgets_outside_sets_proper_sliderInput_and_numericInput_values">
       <skipped message="Reason: `shinytest2::AppDriver` can not be initialized as {chromote} can not be started ('test-shinytest2-tm_g_gh_boxplot.R:135:5')"/>
     </testcase>
   </testsuite>
