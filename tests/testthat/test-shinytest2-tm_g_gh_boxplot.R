@@ -19,6 +19,8 @@ app_driver <- init_teal_app_driver(
   )
 )
 
+app_driver$wait_for_idle()
+
 testthat::test_that("toggle_slider_module: widgets are initialized with proper values", {
   init_values <- list(min = 0, max = 55, value = c(0, 55))
   check_widgets_with_value(app_driver, init_values)
