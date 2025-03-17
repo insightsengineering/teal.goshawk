@@ -48,6 +48,7 @@ testthat::test_that("toggle_slider_module: widgets are initialized with proper v
   app_driver$wait_for_idle()
   init_values <- list(min = 0, max = 55, value = c(0, 55))
   check_widgets_with_value(app_driver, init_values)
+  app_driver$stop()
 })
 
 testthat::test_that("toggle_slider_module: changing the sliderInput sets proper numericInput values", {
@@ -58,6 +59,7 @@ testthat::test_that("toggle_slider_module: changing the sliderInput sets proper 
     app_driver,
     list(min = 0, max = 55, value = c(1, 50))
   )
+  app_driver$stop()
 })
 
 testthat::test_that(
@@ -78,6 +80,7 @@ testthat::test_that(
         value = new_value
       )
     )
+    app_driver$stop()
   }
 )
 
@@ -98,6 +101,7 @@ testthat::test_that(
         value = c(new_range[1], new_range[2])
       )
     )
+    app_driver$stop()
   }
 )
 
@@ -119,6 +123,7 @@ testthat::test_that(
         value = c(new_value[1], new_value[2])
       )
     )
+    app_driver$stop()
   }
 )
 
