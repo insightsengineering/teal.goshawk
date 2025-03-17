@@ -39,7 +39,7 @@ app_driver <- function() {
       hline_vars = c("ANRHI", "ANRLO", "ULOQN", "LLOQN"),
       hline_vars_colors = c("pink", "brown", "purple", "black"),
     ),
-    timeout = 20000
+    load_timeout = 20000
   )
   driver
 }
