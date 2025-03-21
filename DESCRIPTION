@@ -1,8 +1,8 @@
 Type: Package
 Package: teal.goshawk
 Title: Longitudinal Visualization `teal` Modules
-Version: 0.3.0.9000
-Date: 2025-02-25
+Version: 0.3.0.9001
+Date: 2025-03-21
 Authors@R: c(
     person("Nick", "Paszty", , "nick.paszty@gene.com", role = c("aut", "cre")),
     person("Dawid", "Kaledkowski", , "dawid.kaledkowski@roche.com", role = "aut"),
@@ -67,9 +67,9 @@ VignetteBuilder:
     rmarkdown
 Remotes:
     insightsengineering/goshawk,
-    insightsengineering/teal.widgets,
+    insightsengineering/teal,
     insightsengineering/teal.reporter,
-    insightsengineering/teal
+    insightsengineering/teal.widgets
 Config/Needs/verdepcheck: insightsengineering/goshawk, rstudio/shiny,
     insightsengineering/teal, insightsengineering/teal.slice,
     insightsengineering/teal.transform, mllg/checkmate,
