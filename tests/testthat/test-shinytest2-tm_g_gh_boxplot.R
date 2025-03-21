@@ -20,6 +20,7 @@ app_driver <- init_teal_app_driver(
 )
 
 testthat::test_that("toggle_slider_module: widgets are initialized with proper values", {
+  testthat::skip("chromium")
   app_driver$click(selector = ".well .panel-group > div:first-of-type > .panel > .panel-heading")
   init_values <- list(min = 0, max = 55, value = c(0, 55))
   check_widgets_with_value(app_driver, init_values)
