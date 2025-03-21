@@ -1,128 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <testsuites>
-  <testsuite name="shinytest2-tm_g_gh_boxplot" timestamp="2025-03-21T17:32:37Z" hostname="33b3afde339c" tests="11" skipped="1" failures="5" errors="5" time="36.809">
-    <testcase time="9.127" classname="shinytest2_tm_g_gh_boxplot" name="toggle_slider_module_widgets_are_initialized_with_proper_values">
+  <testsuite name="shinytest2-tm_g_gh_boxplot" timestamp="2025-03-21T18:09:37Z" hostname="03b0a26f4357" tests="11" skipped="1" failures="0" errors="0" time="51.436">
+    <testcase time="9.802" classname="shinytest2_tm_g_gh_boxplot" name="toggle_slider_module_widgets_are_initialized_with_proper_values">
       <skipped message="Reason: chromium ('test-shinytest2-tm_g_gh_boxplot.R:23:3')"/>
     </testcase>
-    <testcase time="3.102" classname="shinytest2_tm_g_gh_boxplot" name="toggle_slider_module_changing_the_sliderInput_sets_proper_numericInput_values">
-      <failure type="failure" message="`slider_values` (`actual`) not identical to `values` (`expected`). ('test-shinytest2-tm_g_gh_boxplot.R:31:3')">`slider_values` (`actual`) not identical to `values` (`expected`).
-
-  `actual$min`:  
-`expected$min`: 0
-
-  `actual$max`:   
-`expected$max`: 55
-
-  `actual$value`:     
-`expected$value`: 1 50
-Backtrace:
-    x
- 1. \-teal.goshawk:::check_widgets_with_value(...) at test-shinytest2-tm_g_gh_boxplot.R:31:3
- 2.   \-testthat::expect_identical(slider_values, values) at tests/testthat/helper-toggle-slider-utils.R:44:3</failure>
-    </testcase>
-    <testcase time="0.0340000000000007" classname="shinytest2_tm_g_gh_boxplot" name="toggle_slider_module_changing_the_sliderInput_sets_proper_numericInput_values">
-      <error type="error" message="Error in `testthat::expect_setequal(numeric_values, values$value)`: `object` and `expected` must both be vectors ('test-shinytest2-tm_g_gh_boxplot.R:31:3')">Error in `testthat::expect_setequal(numeric_values, values$value)`: `object` and `expected` must both be vectors
-Backtrace:
-    x
- 1. \-teal.goshawk:::check_widgets_with_value(...) at test-shinytest2-tm_g_gh_boxplot.R:31:3
- 2.   \-testthat::expect_setequal(numeric_values, values$value) at tests/testthat/helper-toggle-slider-utils.R:45:3
- 3.     \-rlang::abort("`object` and `expected` must both be vectors")</error>
-    </testcase>
-    <testcase time="5.511" classname="shinytest2_tm_g_gh_boxplot" name="toggle_slider_module_changing_the_numericInputs_within_the_sliderInput_range_sets_proper_sliderInput_values">
-      <failure type="failure" message="`slider_values` (`actual`) not identical to `values` (`expected`). ('test-shinytest2-tm_g_gh_boxplot.R:45:5')">`slider_values` (`actual`) not identical to `values` (`expected`).
-
-  `actual$min`:  
-`expected$min`: 0
-
-  `actual$max`:   
-`expected$max`: 55
-
-  `actual$value`:      
-`expected$value`: 10 40
-Backtrace:
-    x
- 1. \-teal.goshawk:::check_widgets_with_value(...) at test-shinytest2-tm_g_gh_boxplot.R:45:5
- 2.   \-testthat::expect_identical(slider_values, values) at tests/testthat/helper-toggle-slider-utils.R:44:3</failure>
-    </testcase>
-    <testcase time="0.0190000000000019" classname="shinytest2_tm_g_gh_boxplot" name="toggle_slider_module_changing_the_numericInputs_within_the_sliderInput_range_sets_proper_sliderInput_values">
-      <error type="error" message="Error in `testthat::expect_setequal(numeric_values, values$value)`: `object` and `expected` must both be vectors ('test-shinytest2-tm_g_gh_boxplot.R:45:5')">Error in `testthat::expect_setequal(numeric_values, values$value)`: `object` and `expected` must both be vectors
-Backtrace:
-    x
- 1. \-teal.goshawk:::check_widgets_with_value(...) at test-shinytest2-tm_g_gh_boxplot.R:45:5
- 2.   \-testthat::expect_setequal(numeric_values, values$value) at tests/testthat/helper-toggle-slider-utils.R:45:3
- 3.     \-rlang::abort("`object` and `expected` must both be vectors")</error>
-    </testcase>
-    <testcase time="5.476" classname="shinytest2_tm_g_gh_boxplot" name="toggle_slider_module_changing_the_numericInputs_outside_the_sliderInput_range_sets_proper_sliderInput_values_and_range">
-      <failure type="failure" message="`slider_values` (`actual`) not identical to `values` (`expected`). ('test-shinytest2-tm_g_gh_boxplot.R:63:5')">`slider_values` (`actual`) not identical to `values` (`expected`).
-
-  `actual$min`:   
-`expected$min`: -5
-
-  `actual$max`:   
-`expected$max`: 60
-
-  `actual$value`:      
-`expected$value`: -5 60
-Backtrace:
-    x
- 1. \-teal.goshawk:::check_widgets_with_value(...) at test-shinytest2-tm_g_gh_boxplot.R:63:5
- 2.   \-testthat::expect_identical(slider_values, values) at tests/testthat/helper-toggle-slider-utils.R:44:3</failure>
-    </testcase>
-    <testcase time="0.0240000000000009" classname="shinytest2_tm_g_gh_boxplot" name="toggle_slider_module_changing_the_numericInputs_outside_the_sliderInput_range_sets_proper_sliderInput_values_and_range">
-      <error type="error" message="Error in `testthat::expect_setequal(numeric_values, values$value)`: `object` and `expected` must both be vectors ('test-shinytest2-tm_g_gh_boxplot.R:63:5')">Error in `testthat::expect_setequal(numeric_values, values$value)`: `object` and `expected` must both be vectors
-Backtrace:
-    x
- 1. \-teal.goshawk:::check_widgets_with_value(...) at test-shinytest2-tm_g_gh_boxplot.R:63:5
- 2.   \-testthat::expect_setequal(numeric_values, values$value) at tests/testthat/helper-toggle-slider-utils.R:45:3
- 3.     \-rlang::abort("`object` and `expected` must both be vectors")</error>
-    </testcase>
-    <testcase time="5.472" classname="shinytest2_tm_g_gh_boxplot" name="toggle_slider_module_changing_the_numericInputs_within_the_rage_sets_back_the_sliderInput_range_to_initial_range">
-      <failure type="failure" message="`slider_values` (`actual`) not identical to `values` (`expected`). ('test-shinytest2-tm_g_gh_boxplot.R:82:5')">`slider_values` (`actual`) not identical to `values` (`expected`).
-
-  `actual$min`:  
-`expected$min`: 0
-
-  `actual$max`:   
-`expected$max`: 55
-
-  `actual$value`:      
-`expected$value`: 11 30
-Backtrace:
-    x
- 1. \-teal.goshawk:::check_widgets_with_value(...) at test-shinytest2-tm_g_gh_boxplot.R:82:5
- 2.   \-testthat::expect_identical(slider_values, values) at tests/testthat/helper-toggle-slider-utils.R:44:3</failure>
-    </testcase>
-    <testcase time="0.0190000000000019" classname="shinytest2_tm_g_gh_boxplot" name="toggle_slider_module_changing_the_numericInputs_within_the_rage_sets_back_the_sliderInput_range_to_initial_range">
-      <error type="error" message="Error in `testthat::expect_setequal(numeric_values, values$value)`: `object` and `expected` must both be vectors ('test-shinytest2-tm_g_gh_boxplot.R:82:5')">Error in `testthat::expect_setequal(numeric_values, values$value)`: `object` and `expected` must both be vectors
-Backtrace:
-    x
- 1. \-teal.goshawk:::check_widgets_with_value(...) at test-shinytest2-tm_g_gh_boxplot.R:82:5
- 2.   \-testthat::expect_setequal(numeric_values, values$value) at tests/testthat/helper-toggle-slider-utils.R:45:3
- 3.     \-rlang::abort("`object` and `expected` must both be vectors")</error>
-    </testcase>
-    <testcase time="8.006" classname="shinytest2_tm_g_gh_boxplot" name="toggle_slider_module_changing_dependant_widgets_outside_sets_proper_sliderInput_and_numericInput_values">
-      <failure type="failure" message="`slider_values` (`actual`) not identical to `values` (`expected`). ('test-shinytest2-tm_g_gh_boxplot.R:99:5')">`slider_values` (`actual`) not identical to `values` (`expected`).
-
-  `actual$min`:  
-`expected$min`: 5
-
-  `actual$max`:   
-`expected$max`: 13
-
-  `actual$value`:     
-`expected$value`: 5 13
-Backtrace:
-    x
- 1. \-teal.goshawk:::check_widgets_with_value(...) at test-shinytest2-tm_g_gh_boxplot.R:99:5
- 2.   \-testthat::expect_identical(slider_values, values) at tests/testthat/helper-toggle-slider-utils.R:44:3</failure>
-    </testcase>
-    <testcase time="0.0189999999999984" classname="shinytest2_tm_g_gh_boxplot" name="toggle_slider_module_changing_dependant_widgets_outside_sets_proper_sliderInput_and_numericInput_values">
-      <error type="error" message="Error in `testthat::expect_setequal(numeric_values, values$value)`: `object` and `expected` must both be vectors ('test-shinytest2-tm_g_gh_boxplot.R:99:5')">Error in `testthat::expect_setequal(numeric_values, values$value)`: `object` and `expected` must both be vectors
-Backtrace:
-    x
- 1. \-teal.goshawk:::check_widgets_with_value(...) at test-shinytest2-tm_g_gh_boxplot.R:99:5
- 2.   \-testthat::expect_setequal(numeric_values, values$value) at tests/testthat/helper-toggle-slider-utils.R:45:3
- 3.     \-rlang::abort("`object` and `expected` must both be vectors")</error>
-    </testcase>
+    <testcase time="5.054" classname="shinytest2_tm_g_gh_boxplot" name="toggle_slider_module_changing_the_sliderInput_sets_proper_numericInput_values"/>
+    <testcase time="0.000999999999999446" classname="shinytest2_tm_g_gh_boxplot" name="toggle_slider_module_changing_the_sliderInput_sets_proper_numericInput_values"/>
+    <testcase time="9.4" classname="shinytest2_tm_g_gh_boxplot" name="toggle_slider_module_changing_the_numericInputs_within_the_sliderInput_range_sets_proper_sliderInput_values"/>
+    <testcase time="0.00199999999999889" classname="shinytest2_tm_g_gh_boxplot" name="toggle_slider_module_changing_the_numericInputs_within_the_sliderInput_range_sets_proper_sliderInput_values"/>
+    <testcase time="9.576" classname="shinytest2_tm_g_gh_boxplot" name="toggle_slider_module_changing_the_numericInputs_outside_the_sliderInput_range_sets_proper_sliderInput_values_and_range"/>
+    <testcase time="0.00200000000000244" classname="shinytest2_tm_g_gh_boxplot" name="toggle_slider_module_changing_the_numericInputs_outside_the_sliderInput_range_sets_proper_sliderInput_values_and_range"/>
+    <testcase time="9.275" classname="shinytest2_tm_g_gh_boxplot" name="toggle_slider_module_changing_the_numericInputs_within_the_rage_sets_back_the_sliderInput_range_to_initial_range"/>
+    <testcase time="0.00200000000000244" classname="shinytest2_tm_g_gh_boxplot" name="toggle_slider_module_changing_the_numericInputs_within_the_rage_sets_back_the_sliderInput_range_to_initial_range"/>
+    <testcase time="8.321" classname="shinytest2_tm_g_gh_boxplot" name="toggle_slider_module_changing_dependant_widgets_outside_sets_proper_sliderInput_and_numericInput_values"/>
+    <testcase time="0.000999999999997669" classname="shinytest2_tm_g_gh_boxplot" name="toggle_slider_module_changing_dependant_widgets_outside_sets_proper_sliderInput_and_numericInput_values"/>
   </testsuite>
 </testsuites>
