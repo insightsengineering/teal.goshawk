@@ -224,22 +224,20 @@ ui_g_boxplot <- function(id, ...) {
   a <- list(...)
 
   teal.widgets::standard_layout(
-    output = tags$div(
-      fluidRow(
+    output = bslib::page_fluid(
+      tags$div(
         teal.widgets::plot_with_settings_ui(id = ns("boxplot"))
       ),
-      fluidRow(column(
-        width = 12,
+      tags$div(
         tags$br(), tags$hr(),
         tags$h4("Selected Data Points"),
         DT::dataTableOutput(ns("brush_data"))
-      )),
-      fluidRow(column(
-        width = 12,
+      ),
+      tags$div(
         tags$br(), tags$hr(),
         tags$h4("Descriptive Statistics"),
         DT::dataTableOutput(ns("table_ui"))
-      ))
+      )
     ),
     encoding = tags$div(
       ### Reporter
