@@ -249,14 +249,17 @@ ui_lineplot <- function(id, ...) {
             ns("relative_height"),
             tags$div(
               "Relative height of plot to table(s)",
-              title =
-                paste(
-                  "The larger the value selected the greater the size of the plot relative\nto",
-                  "the size of the tables. Note the units of this slider are arbitrary.\nTo",
-                  "change the total size of the plot and table(s)\nuse",
-                  "the plot resizing controls available at the top right of the plot."
-                ),
-              icon("circle-info")
+              bslib::tooltip(
+                trigger = icon("circle-info"),
+                tags$span(
+                  paste(
+                    "The larger the value selected the greater the size of the plot relative\nto",
+                    "the size of the tables. Note the units of this slider are arbitrary.\nTo",
+                    "change the total size of the plot and table(s)\nuse",
+                    "the plot resizing controls available at the top right of the plot."
+                  )
+                )
+              )
             ),
             min = 500,
             max = 5000,
@@ -554,15 +557,8 @@ srv_lineplot <- function(id,
             tags$div(
               tags$label("Line configuration for:", tags$code(x)),
               tags$div(
-                class = "flex",
-                tags$div(
-                  class = "flex-grow-1",
-                  color_input
-                ),
-                tags$div(
-                  class = "flex-grow-1",
-                  type_input
-                )
+                color_input,
+                type_input
               )
             )
           }
