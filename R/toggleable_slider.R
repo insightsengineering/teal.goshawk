@@ -119,7 +119,7 @@ toggle_slider_server <- function(id, data_state, ...) {
       }
     })
 
-    return(state)
+    state
   })
 }
 

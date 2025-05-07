@@ -124,14 +124,12 @@ srv_arbitrary_lines <- function(id) {
       val
     })
 
-    return(
-      reactive(
-        list(
-          iv_r = iv_r,
-          line_arb = line_arb(),
-          line_arb_color = line_arb_color(),
-          line_arb_label = line_arb_label()
-        )
+    reactive(
+      list(
+        iv_r = iv_r,
+        line_arb = line_arb(),
+        line_arb_color = line_arb_color(),
+        line_arb_label = line_arb_label()
       )
     )
   })

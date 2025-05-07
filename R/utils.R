@@ -16,7 +16,7 @@ include_css_files <- function(pattern = "*") {
   if (length(css_files) == 0) {
     return(NULL)
   }
-  return(shiny::singleton(shiny::tags$head(lapply(css_files, shiny::includeCSS))))
+  shiny::singleton(shiny::tags$head(lapply(css_files, shiny::includeCSS)))
 }
 
 plots_per_row_validate_rules <- function(required = TRUE) {
