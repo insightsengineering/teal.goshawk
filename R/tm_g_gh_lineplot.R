@@ -232,7 +232,6 @@ ui_lineplot <- function(id, ...) {
   a <- list(...)
 
   shiny::tagList(
-    include_css_files("custom"),
     teal.widgets::standard_layout(
       output = teal.widgets::plot_with_settings_ui(id = ns("plot")),
       encoding = tags$div(
@@ -270,8 +269,8 @@ ui_lineplot <- function(id, ...) {
         ),
         templ_ui_constraint(ns), # required by constr_anl_q
         ui_arbitrary_lines(id = ns("hline_arb"), a$hline_arb, a$hline_arb_label, a$hline_arb_color),
-        teal.widgets::panel_group(
-          teal.widgets::panel_item(
+        bslib::accordion(
+          bslib::accordion_panel(
             title = "Plot Aesthetic Settings",
             toggle_slider_ui(
               ns("yrange_scale"),
@@ -280,15 +279,15 @@ ui_lineplot <- function(id, ...) {
             checkboxInput(ns("rotate_xlab"), "Rotate X-axis Label", a$rotate_xlab),
             numericInput(ns("count_threshold"), "Contributing Observations Threshold:", a$count_threshold)
           ),
-          teal.widgets::panel_item(
+          bslib::accordion_panel(
             title = "Plot settings",
             teal.widgets::optionalSliderInputValMinMax(ns("dodge"), "Error Bar Position Dodge", a$dodge, ticks = FALSE),
-            teal.widgets::panel_group(
-              teal.widgets::panel_item(
+            bslib::accordion(
+              bslib::accordion_panel(
                 title = "Line Settings",
                 uiOutput(ns("lines"))
               ),
-              teal.widgets::panel_item(
+              bslib::accordion_panel(
                 title = "Symbol settings",
                 uiOutput(ns("symbols"))
               )
@@ -306,7 +305,7 @@ ui_lineplot <- function(id, ...) {
               ticks = FALSE
             )
           ),
-          teal.widgets::panel_item(
+          bslib::accordion_panel(
             title = "Table settings",
             teal.widgets::optionalSliderInputValMinMax(
               ns("table_font_size"),

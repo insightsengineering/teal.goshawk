@@ -198,8 +198,8 @@ ui_g_density_distribution_plot <- function(id, ...) {
       uiOutput(ns("axis_selections")),
       templ_ui_constraint(ns, label = "Data Constraint"),
       ui_arbitrary_lines(id = ns("hline_arb"), a$hline_arb, a$hline_arb_label, a$hline_arb_color),
-      teal.widgets::panel_group(
-        teal.widgets::panel_item(
+      bslib::accordion(
+        bslib::accordion_panel(
           title = "Plot Aesthetic Settings",
           toggle_slider_ui(
             ns("xrange_scale"),
@@ -214,7 +214,7 @@ ui_g_density_distribution_plot <- function(id, ...) {
           checkboxInput(ns("rug_plot"), "Include rug plot", value = FALSE),
           checkboxInput(ns("rotate_xlab"), "Rotate X-axis Label", a$rotate_xlab)
         ),
-        teal.widgets::panel_item(
+        bslib::accordion_panel(
           title = "Plot settings",
           teal.widgets::optionalSliderInputValMinMax(ns("font_size"), "Font Size", a$font_size, ticks = FALSE),
           teal.widgets::optionalSliderInputValMinMax(

@@ -269,8 +269,7 @@ g_ui_spaghettiplot <- function(id, ...) {
   ns <- NS(id)
   a <- list(...)
 
-  shiny::tagList(
-    include_css_files("custom"),
+  tags$div(
     teal.widgets::standard_layout(
       output = templ_ui_output_datatable(ns),
       encoding = tags$div(
@@ -296,8 +295,8 @@ g_ui_spaghettiplot <- function(id, ...) {
           )
         },
         ui_arbitrary_lines(id = ns("hline_arb"), a$hline_arb, a$hline_arb_label, a$hline_arb_color),
-        teal.widgets::panel_group(
-          teal.widgets::panel_item(
+        bslib::accordion(
+          bslib::accordion_panel(
             title = "Plot Aesthetic Settings",
             tags$div(
               toggle_slider_ui(
