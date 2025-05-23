@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <testsuites>
-  <testsuite name="simple-shinytest2" timestamp="2025-05-23T23:32:25Z" hostname="71013a054760" tests="1" skipped="0" failures="0" errors="0" time="2.762">
-    <testcase time="2.762" classname="simple_shinytest2" name="app_says_testing"/>
+  <testsuite name="simple-shinytest2" timestamp="2025-05-23T23:47:35Z" hostname="b19a8aea1230" tests="1" skipped="0" failures="0" errors="0" time="2.734">
+    <testcase time="2.734" classname="simple_shinytest2" name="app_says_testing"/>
   </testsuite>
 </testsuites>
