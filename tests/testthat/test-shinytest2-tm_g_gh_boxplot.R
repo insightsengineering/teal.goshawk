@@ -1,4 +1,3 @@
-devtools::load_all()
 app_driver <- init_teal_app_driver(
   data = get_test_data(),
   modules = tm_g_gh_boxplot(
@@ -26,18 +25,21 @@ testthat::test_that("toggle_slider_module: widgets are initialized with proper v
     c(0L, 55L)
   )
   app_driver$click(sprintf("%s-yrange_scale-toggle", app_driver$active_module_ns()))
+  app_driver$wait_for_idle()
   expect_equal(app_driver$get_active_module_input("yrange_scale-value_low"), 0L)
   expect_equal(app_driver$get_active_module_input("yrange_scale-value_high"), 55L)
 })
 
 testthat::test_that("toggle_slider_module: changing the sliderInput sets proper numericInput values", {
   app_driver$click(sprintf("%s-yrange_scale-toggle", app_driver$active_module_ns()))
+  app_driver$wait_for_idle()
   app_driver$set_active_module_input(
     "yrange_scale-slider",
     c(1L, 50L)
   )
   app_driver$click(sprintf("%s-yrange_scale-toggle", app_driver$active_module_ns()))
-  expect_equal(app_driver$get_active_module_input("yrange_scale-value_low"), 10L)
+  app_driver$wait_for_idle()
+  expect_equal(app_driver$get_active_module_input("yrange_scale-value_low"), 1L)
   expect_equal(app_driver$get_active_module_input("yrange_scale-value_high"), 50L)
 })
 
@@ -47,9 +49,10 @@ testthat::test_that(
   {
     initial_range <- list(min = 0L, max = 55L)
     new_value <- c(10L, 40L)
-    app_driver$set_active_module_input("yrange_scale-value_low", new_value[1], wait_ = FALSE)
-    app_driver$set_active_module_input("yrange_scale-value_high", new_value[2], wait_ = FALSE)
+    app_driver$set_active_module_input("yrange_scale-value_low", new_value[1])
+    app_driver$set_active_module_input("yrange_scale-value_high", new_value[2])
     app_driver$click(sprintf("%s-yrange_scale-toggle", app_driver$active_module_ns()))
+    app_driver$wait_for_idle()
     expect_identical(
       list(
         min = app_driver$get_js(
@@ -74,10 +77,13 @@ testthat::test_that(
   outside the sliderInput range, sets proper sliderInput values and range",
   {
     app_driver$click(sprintf("%s-yrange_scale-toggle", app_driver$active_module_ns()))
+    app_driver$wait_for_idle()
     new_range <- c(-5L, 60L)
-    app_driver$set_active_module_input("yrange_scale-value_low", new_range[1], wait_ = FALSE)
-    app_driver$set_active_module_input("yrange_scale-value_high", new_range[2], wait_ = FALSE)
+    app_driver$set_active_module_input("yrange_scale-value_low", new_range[1])
+    app_driver$set_active_module_input("yrange_scale-value_high", new_range[2])
+    # error
     app_driver$click(sprintf("%s-yrange_scale-toggle", app_driver$active_module_ns()))
+    app_driver$wait_for_idle()
     expect_identical(
       list(
         min = app_driver$get_js(
@@ -102,11 +108,14 @@ testthat::test_that(
   within the rage, sets back the sliderInput range to initial range",
   {
     app_driver$click(sprintf("%s-yrange_scale-toggle", app_driver$active_module_ns()))
+    app_driver$wait_for_idle()
     initial_range <- list(min = 0L, max = 55L)
     new_value <- c(11L, 30L)
-    app_driver$set_active_module_input("yrange_scale-value_low", new_value[1], wait_ = FALSE)
-    app_driver$set_active_module_input("yrange_scale-value_high", new_value[2], wait_ = FALSE)
+    app_driver$set_active_module_input("yrange_scale-value_low", new_value[1])
+    app_driver$set_active_module_input("yrange_scale-value_high", new_value[2])
     app_driver$click(sprintf("%s-yrange_scale-toggle", app_driver$active_module_ns()))
+    app_driver$wait_for_idle()
+    # error
     expect_identical(
       list(
         min = app_driver$get_js(
