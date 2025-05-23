@@ -511,7 +511,7 @@ srv_g_spaghettiplot <- function(id,
             hline_vars_colors = .(hline_vars_colors[seq_along(hline_vars)]),
             hline_vars_labels = .(hline_vars_labels[seq_along(hline_vars)])
           )
-          print(p)
+          p
         })
       )
     }), 800)

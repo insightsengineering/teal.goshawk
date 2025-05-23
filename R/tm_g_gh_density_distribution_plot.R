@@ -363,7 +363,7 @@ srv_g_density_distribution_plot <- function(id, # nolint
             hline_arb_color = .(hline_arb_color),
             rug_plot = .(rug_plot)
           )
-          print(p)
+          p
         })
       )
     }), 800)

@@ -451,7 +451,7 @@ srv_g_boxplot <- function(id,
             font_size = .(font_size),
             unit = .("AVALU")
           )
-          print(p)
+          p
         })
       )
     }), 800)

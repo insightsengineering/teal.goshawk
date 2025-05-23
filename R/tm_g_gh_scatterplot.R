@@ -362,7 +362,7 @@ srv_g_scatterplot <- function(id,
             hline = .(`if`(is.na(hline), NULL, as.numeric(hline))),
             vline = .(`if`(is.na(vline), NULL, as.numeric(vline)))
           )
-          print(p)
+          p
         })
       )
     }), 800)

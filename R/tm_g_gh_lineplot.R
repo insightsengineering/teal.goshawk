@@ -749,7 +749,7 @@ srv_lineplot <- function(id,
             table_font_size = .(table_font_size),
             display_center_tbl = .(include_stat)
           )
-          print(p)
+          p
         })
       )
     }), 800)
