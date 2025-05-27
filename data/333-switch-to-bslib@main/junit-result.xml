@@ -1,37 +1,23 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <testsuites>
-  <testsuite name="shinytest2-tm_g_gh_boxplot" timestamp="2025-05-27T03:55:25Z" hostname="f04d5a0e949c" tests="15" skipped="0" failures="0" errors="6" time="93.618">
-    <testcase time="9.189" classname="shinytest2_tm_g_gh_boxplot" name="toggle_slider_module_widgets_are_initialized_with_proper_values"/>
-    <testcase time="3.389" classname="shinytest2_tm_g_gh_boxplot" name="toggle_slider_module_widgets_are_initialized_with_proper_values"/>
-    <testcase time="0.0570000000000004" classname="shinytest2_tm_g_gh_boxplot" name="toggle_slider_module_widgets_are_initialized_with_proper_values"/>
-    <testcase time="13.11" classname="shinytest2_tm_g_gh_boxplot" name="toggle_slider_module_changing_the_sliderInput_sets_proper_numericInput_values"/>
-    <testcase time="0.0500000000000007" classname="shinytest2_tm_g_gh_boxplot" name="toggle_slider_module_changing_the_sliderInput_sets_proper_numericInput_values"/>
-    <testcase time="18.796" classname="shinytest2_tm_g_gh_boxplot" name="toggle_slider_module_changing_the_numericInputs_within_the_sliderInput_range_sets_proper_sliderInput_values"/>
-    <testcase time="18.97" classname="shinytest2_tm_g_gh_boxplot" name="toggle_slider_module_changing_the_numericInputs_outside_the_sliderInput_range_sets_proper_sliderInput_values_and_range"/>
-    <testcase time="19.301" classname="shinytest2_tm_g_gh_boxplot" name="toggle_slider_module_changing_the_numericInputs_within_the_rage_sets_back_the_sliderInput_range_to_initial_range"/>
-    <testcase time="10.545" classname="shinytest2_tm_g_gh_boxplot" name="toggle_slider_module_changing_dependant_widgets_outside_sets_proper_sliderInput_and_numericInput_values"/>
-    <testcase time="0.090999999999994" classname="shinytest2_tm_g_gh_boxplot" name="toggle_slider_module_widgets_are_initialized_with_proper_values">
-      <error type="error" message="Error in `eval(code, test_env)`: object 'app_driver' not found ('test-shinytest2-tm_g_gh_boxplot.R:179:3')">Error in `eval(code, test_env)`: object 'app_driver' not found
-Backtrace:
-    x
- 1. \-testthat::expect_setequal(...) at test-shinytest2-tm_g_gh_boxplot.R:179:3
- 2.   \-testthat::quasi_label(enquo(object), arg = "object")
- 3.     \-rlang::eval_bare(expr, quo_get_env(quo))</error>
+  <testsuite name="shinytest2-tm_g_gh_boxplot" timestamp="2025-05-27T04:06:12Z" hostname="d8aeb98ffc54" tests="6" skipped="6" failures="0" errors="0" time="2.784">
+    <testcase time="0.579" classname="shinytest2_tm_g_gh_boxplot" name="toggle_slider_module_widgets_are_initialized_with_proper_values">
+      <skipped message="Reason: On CRAN ('test-shinytest2-tm_g_gh_boxplot.R:25:3')"/>
     </testcase>
-    <testcase time="0.034000000000006" classname="shinytest2_tm_g_gh_boxplot" name="toggle_slider_module_changing_the_sliderInput_sets_proper_numericInput_values">
-      <error type="error" message="Error in `eval(code, test_env)`: object 'app_driver' not found ('test-shinytest2-tm_g_gh_boxplot.R:190:3')">Error in `eval(code, test_env)`: object 'app_driver' not found</error>
+    <testcase time="0.52" classname="shinytest2_tm_g_gh_boxplot" name="toggle_slider_module_changing_the_sliderInput_sets_proper_numericInput_values">
+      <skipped message="Reason: On CRAN ('test-shinytest2-tm_g_gh_boxplot.R:38:3')"/>
     </testcase>
-    <testcase time="0.0349999999999966" classname="shinytest2_tm_g_gh_boxplot" name="toggle_slider_module_changing_the_numericInputs_within_the_sliderInput_range_sets_proper_sliderInput_values">
-      <error type="error" message="Error in `eval(code, test_env)`: object 'app_driver' not found ('test-shinytest2-tm_g_gh_boxplot.R:208:5')">Error in `eval(code, test_env)`: object 'app_driver' not found</error>
+    <testcase time="0.426" classname="shinytest2_tm_g_gh_boxplot" name="toggle_slider_module_changing_the_numericInputs_within_the_sliderInput_range_sets_proper_sliderInput_values">
+      <skipped message="Reason: On CRAN ('test-shinytest2-tm_g_gh_boxplot.R:54:5')"/>
     </testcase>
-    <testcase time="0.0189999999999912" classname="shinytest2_tm_g_gh_boxplot" name="toggle_slider_module_changing_the_numericInputs_outside_the_sliderInput_range_sets_proper_sliderInput_values_and_range">
-      <error type="error" message="Error in `eval(code, test_env)`: object 'app_driver' not found ('test-shinytest2-tm_g_gh_boxplot.R:235:5')">Error in `eval(code, test_env)`: object 'app_driver' not found</error>
+    <testcase time="0.415" classname="shinytest2_tm_g_gh_boxplot" name="toggle_slider_module_changing_the_numericInputs_outside_the_sliderInput_range_sets_proper_sliderInput_values_and_range">
+      <skipped message="Reason: On CRAN ('test-shinytest2-tm_g_gh_boxplot.R:88:5')"/>
     </testcase>
-    <testcase time="0.0160000000000053" classname="shinytest2_tm_g_gh_boxplot" name="toggle_slider_module_changing_the_numericInputs_within_the_rage_sets_back_the_sliderInput_range_to_initial_range">
-      <error type="error" message="Error in `eval(code, test_env)`: object 'app_driver' not found ('test-shinytest2-tm_g_gh_boxplot.R:266:5')">Error in `eval(code, test_env)`: object 'app_driver' not found</error>
+    <testcase time="0.432" classname="shinytest2_tm_g_gh_boxplot" name="toggle_slider_module_changing_the_numericInputs_within_the_rage_sets_back_the_sliderInput_range_to_initial_range">
+      <skipped message="Reason: On CRAN ('test-shinytest2-tm_g_gh_boxplot.R:121:5')"/>
     </testcase>
-    <testcase time="0.0160000000000053" classname="shinytest2_tm_g_gh_boxplot" name="toggle_slider_module_changing_dependant_widgets_outside_sets_proper_sliderInput_and_numericInput_values">
-      <error type="error" message="Error in `eval(code, test_env)`: object 'app_driver' not found ('test-shinytest2-tm_g_gh_boxplot.R:298:5')">Error in `eval(code, test_env)`: object 'app_driver' not found</error>
+    <testcase time="0.412" classname="shinytest2_tm_g_gh_boxplot" name="toggle_slider_module_changing_dependant_widgets_outside_sets_proper_sliderInput_and_numericInput_values">
+      <skipped message="Reason: On CRAN ('test-shinytest2-tm_g_gh_boxplot.R:155:5')"/>
     </testcase>
   </testsuite>
 </testsuites>
