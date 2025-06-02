@@ -224,22 +224,20 @@ ui_g_boxplot <- function(id, ...) {
   a <- list(...)
 
   teal.widgets::standard_layout(
-    output = tags$div(
-      fluidRow(
+    output = bslib::page_fluid(
+      tags$div(
         teal.widgets::plot_with_settings_ui(id = ns("boxplot"))
       ),
-      fluidRow(column(
-        width = 12,
+      tags$div(
         tags$br(), tags$hr(),
         tags$h4("Selected Data Points"),
         DT::dataTableOutput(ns("brush_data"))
-      )),
-      fluidRow(column(
-        width = 12,
+      ),
+      tags$div(
         tags$br(), tags$hr(),
         tags$h4("Descriptive Statistics"),
         DT::dataTableOutput(ns("table_ui"))
-      ))
+      )
     ),
     encoding = tags$div(
       ### Reporter
@@ -258,8 +256,8 @@ ui_g_boxplot <- function(id, ...) {
         )
       },
       ui_arbitrary_lines(id = ns("hline_arb"), a$hline_arb, a$hline_arb_label, a$hline_arb_color),
-      teal.widgets::panel_group(
-        teal.widgets::panel_item(
+      bslib::accordion(
+        bslib::accordion_panel(
           title = "Plot Aesthetic Settings",
           toggle_slider_ui(
             ns("yrange_scale"),
@@ -269,7 +267,7 @@ ui_g_boxplot <- function(id, ...) {
           checkboxInput(ns("loq_legend"), "Display LoQ Legend", a$loq_legend),
           checkboxInput(ns("rotate_xlab"), "Rotate X-axis Label", a$rotate_xlab)
         ),
-        teal.widgets::panel_item(
+        bslib::accordion_panel(
           title = "Plot settings",
           teal.widgets::optionalSliderInputValMinMax(ns("font_size"), "Font Size", a$font_size, ticks = FALSE),
           teal.widgets::optionalSliderInputValMinMax(ns("dot_size"), "Dot Size", a$dot_size, ticks = FALSE),
@@ -453,7 +451,7 @@ srv_g_boxplot <- function(id,
             font_size = .(font_size),
             unit = .("AVALU")
           )
-          print(p)
+          p
         })
       )
     }), 800)

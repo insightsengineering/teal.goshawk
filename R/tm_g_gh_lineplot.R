@@ -232,7 +232,6 @@ ui_lineplot <- function(id, ...) {
   a <- list(...)
 
   shiny::tagList(
-    include_css_files("custom"),
     teal.widgets::standard_layout(
       output = teal.widgets::plot_with_settings_ui(id = ns("plot")),
       encoding = tags$div(
@@ -249,14 +248,17 @@ ui_lineplot <- function(id, ...) {
             ns("relative_height"),
             tags$div(
               "Relative height of plot to table(s)",
-              title =
-                paste(
-                  "The larger the value selected the greater the size of the plot relative\nto",
-                  "the size of the tables. Note the units of this slider are arbitrary.\nTo",
-                  "change the total size of the plot and table(s)\nuse",
-                  "the plot resizing controls available at the top right of the plot."
-                ),
-              icon("circle-info")
+              bslib::tooltip(
+                trigger = icon("circle-info"),
+                tags$span(
+                  paste(
+                    "The larger the value selected the greater the size of the plot relative\nto",
+                    "the size of the tables. Note the units of this slider are arbitrary.\nTo",
+                    "change the total size of the plot and table(s)\nuse",
+                    "the plot resizing controls available at the top right of the plot."
+                  )
+                )
+              )
             ),
             min = 500,
             max = 5000,
@@ -267,8 +269,8 @@ ui_lineplot <- function(id, ...) {
         ),
         templ_ui_constraint(ns), # required by constr_anl_q
         ui_arbitrary_lines(id = ns("hline_arb"), a$hline_arb, a$hline_arb_label, a$hline_arb_color),
-        teal.widgets::panel_group(
-          teal.widgets::panel_item(
+        bslib::accordion(
+          bslib::accordion_panel(
             title = "Plot Aesthetic Settings",
             toggle_slider_ui(
               ns("yrange_scale"),
@@ -277,15 +279,15 @@ ui_lineplot <- function(id, ...) {
             checkboxInput(ns("rotate_xlab"), "Rotate X-axis Label", a$rotate_xlab),
             numericInput(ns("count_threshold"), "Contributing Observations Threshold:", a$count_threshold)
           ),
-          teal.widgets::panel_item(
+          bslib::accordion_panel(
             title = "Plot settings",
             teal.widgets::optionalSliderInputValMinMax(ns("dodge"), "Error Bar Position Dodge", a$dodge, ticks = FALSE),
-            teal.widgets::panel_group(
-              teal.widgets::panel_item(
+            bslib::accordion(
+              bslib::accordion_panel(
                 title = "Line Settings",
                 uiOutput(ns("lines"))
               ),
-              teal.widgets::panel_item(
+              bslib::accordion_panel(
                 title = "Symbol settings",
                 uiOutput(ns("symbols"))
               )
@@ -303,7 +305,7 @@ ui_lineplot <- function(id, ...) {
               ticks = FALSE
             )
           ),
-          teal.widgets::panel_item(
+          bslib::accordion_panel(
             title = "Table settings",
             teal.widgets::optionalSliderInputValMinMax(
               ns("table_font_size"),
@@ -554,15 +556,8 @@ srv_lineplot <- function(id,
             tags$div(
               tags$label("Line configuration for:", tags$code(x)),
               tags$div(
-                class = "flex",
-                tags$div(
-                  class = "flex-grow-1",
-                  color_input
-                ),
-                tags$div(
-                  class = "flex-grow-1",
-                  type_input
-                )
+                color_input,
+                type_input
               )
             )
           }
@@ -754,7 +749,7 @@ srv_lineplot <- function(id,
             table_font_size = .(table_font_size),
             display_center_tbl = .(include_stat)
           )
-          print(p)
+          p
         })
       )
     }), 800)

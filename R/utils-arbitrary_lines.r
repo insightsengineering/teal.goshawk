@@ -15,23 +15,21 @@
 #' @return (`shiny.tag`) an input to define values, colors and labels for arbitrary
 #' straight lines.
 #' @keywords internal
-ui_arbitrary_lines <- function(id, line_arb, line_arb_label, line_arb_color, title = "Arbitrary Horizontal Lines:") {
+ui_arbitrary_lines <- function(id, line_arb, line_arb_label, line_arb_color, title = "Arbitrary horizontal lines:") {
   ns <- NS(id)
   tags$div(
-    tags$b(title),
+    tags$b(
+      title,
+      bslib::tooltip(
+        trigger = icon("circle-info"),
+        tags$span(
+          "For multiple lines, supply a comma separated list of values."
+        )
+      )
+    ),
     textInput(
       ns("line_arb"),
-      tags$div(
-        class = "teal-tooltip",
-        tagList(
-          "Value:",
-          icon("circle-info"),
-          tags$span(
-            class = "tooltiptext",
-            "For multiple lines, supply a comma separated list of values."
-          )
-        )
-      ),
+      "Value:",
       value = paste(line_arb, collapse = ", ")
     ),
     textInput(ns("line_arb_label"), label = "Label:", value = paste(line_arb_label, collapse = ", ")),
@@ -126,14 +124,12 @@ srv_arbitrary_lines <- function(id) {
       val
     })
 
-    return(
-      reactive(
-        list(
-          iv_r = iv_r,
-          line_arb = line_arb(),
-          line_arb_color = line_arb_color(),
-          line_arb_label = line_arb_label()
-        )
+    reactive(
+      list(
+        iv_r = iv_r,
+        line_arb = line_arb(),
+        line_arb_color = line_arb_color(),
+        line_arb_label = line_arb_label()
       )
     )
   })

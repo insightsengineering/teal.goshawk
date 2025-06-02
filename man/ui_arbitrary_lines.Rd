@@ -9,7 +9,7 @@ ui_arbitrary_lines(
   line_arb,
   line_arb_label,
   line_arb_color,
-  title = "Arbitrary Horizontal Lines:"
+  title = "Arbitrary horizontal lines:"
 )
 }
 \arguments{
