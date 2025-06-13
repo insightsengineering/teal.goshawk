@@ -155,9 +155,7 @@ constr_anl_q <- function(session, input, data, dataname, param_id, param_var, tr
     }
   })
 
-  anl_constraint <- create_anl_constraint_reactive(anl_param, input, param_id = param_id, min_rows = min_rows)
-
-  return(anl_constraint)
+  create_anl_constraint_reactive(anl_param, input, param_id = param_id, min_rows = min_rows)
 }
 
 # returns a reactive that applies the `x-axis data constraint`

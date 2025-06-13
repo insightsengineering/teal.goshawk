@@ -81,7 +81,7 @@ with text placed before the output to put the output into context. For example a
 into context. For example the \code{\link[shiny:helpText]{shiny::helpText()}} elements are useful.}
 
 \item{transformators}{(\code{list} of \code{teal_transform_module}) that will be applied to transform module's data input.
-To learn more check \code{vignette("data-transform-as-shiny-module", package = "teal")}.}
+To learn more check \code{vignette("transform-input-data", package = "teal")}.}
 }
 \description{
 \ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#deprecated}{\figure{lifecycle-deprecated.svg}{options: alt='[Deprecated]'}}}{\strong{[Deprecated]}}

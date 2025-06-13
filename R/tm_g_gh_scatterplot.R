@@ -198,8 +198,8 @@ ui_g_scatterplot <- function(id, ...) {
       templ_ui_dataname(a$dataname),
       uiOutput(ns("axis_selections")),
       templ_ui_constraint(ns), # required by constr_anl_q
-      teal.widgets::panel_group(
-        teal.widgets::panel_item(
+      bslib::accordion(
+        bslib::accordion_panel(
           title = "Plot Aesthetic Settings",
           toggle_slider_ui(
             ns("xrange_scale"),
@@ -216,7 +216,7 @@ ui_g_scatterplot <- function(id, ...) {
           numericInput(ns("hline"), "Add a horizontal line:", a$hline),
           numericInput(ns("vline"), "Add a vertical line:", a$vline)
         ),
-        teal.widgets::panel_item(
+        bslib::accordion_panel(
           title = "Plot settings",
           teal.widgets::optionalSliderInputValMinMax(ns("font_size"), "Font Size", a$font_size, ticks = FALSE),
           teal.widgets::optionalSliderInputValMinMax(ns("dot_size"), "Dot Size", a$dot_size, ticks = FALSE),
@@ -362,7 +362,7 @@ srv_g_scatterplot <- function(id,
             hline = .(`if`(is.na(hline), NULL, as.numeric(hline))),
             vline = .(`if`(is.na(vline), NULL, as.numeric(vline)))
           )
-          print(p)
+          p
         })
       )
     }), 800)

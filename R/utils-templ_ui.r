@@ -1,9 +1,11 @@
 templ_ui_output_datatable <- function(ns) {
-  tags$div(
+  bslib::page_fluid(
     teal.widgets::plot_with_settings_ui(id = ns("plot")),
     tags$br(), tags$hr(),
     tags$h4("Selected Data Points"),
-    DT::dataTableOutput(ns("brush_data"))
+    tags$div(
+      DT::dataTableOutput(ns("brush_data"))
+    )
   )
 }
 
