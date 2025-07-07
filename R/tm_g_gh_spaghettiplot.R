@@ -52,6 +52,8 @@
 #' @author Wenyi Liu (luiw2) wenyi.liu@roche.com
 #' @author Balazs Toth (tothb2) toth.balazs@gene.com
 #'
+#' @inheritSection teal::example_module Reporting
+#'
 #' @return \code{shiny} object
 #'
 #' @export

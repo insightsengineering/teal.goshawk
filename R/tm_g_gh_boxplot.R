@@ -42,6 +42,8 @@
 #' @author Jeff Tomlinson (tomlinsj) jeffrey.tomlinson@roche.com
 #' @author Balazs Toth (tothb2) toth.balazs@gene.com
 #'
+#' @inheritSection teal::example_module Reporting
+#'
 #' @return an \code{\link[teal]{module}} object
 #'
 #' @export

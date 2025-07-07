@@ -45,6 +45,8 @@
 #' @param dot_size plot dot size.
 #' @param plot_relative_height_value numeric value between 500 and 5000 for controlling the starting value
 #' of the relative plot height slider
+#' @inheritSection teal::example_module Reporting
+#'
 #' @author Wenyi Liu (luiw2) wenyi.liu@roche.com
 #' @author Balazs Toth (tothb2) toth.balazs@gene.com
 #'

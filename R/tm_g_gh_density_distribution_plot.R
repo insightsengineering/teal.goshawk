@@ -28,6 +28,7 @@
 #'
 #' @author Nick Paszty (npaszty) paszty.nicholas@gene.com
 #' @author Balazs Toth (tothb2)  toth.balazs@gene.com
+#' @inheritSection teal::example_module Reporting
 #'
 #' @details None
 #'

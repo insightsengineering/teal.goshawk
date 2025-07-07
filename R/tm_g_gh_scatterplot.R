@@ -31,7 +31,7 @@
 #' @param font_size font size control for title, `x-axis` label, `y-axis` label and legend.
 #' @param dot_size plot dot size.
 #' @param reg_text_size font size control for regression line annotations.
-#'
+#' @inheritSection teal::example_module Reporting
 #'
 #' @export
 #'

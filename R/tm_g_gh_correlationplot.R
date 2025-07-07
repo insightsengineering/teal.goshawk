@@ -50,6 +50,9 @@
 #' @author Nick Paszty (npaszty) paszty.nicholas@gene.com
 #' @author Balazs Toth (tothb2)  toth.balazs@gene.com
 #'
+#' @inheritSection teal::example_module Reporting
+#'
+#'
 #' @examples
 #' # Example using ADaM structure analysis dataset.
 #' data <- teal_data()
