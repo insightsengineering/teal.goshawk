@@ -758,7 +758,7 @@ srv_lineplot <- function(id,
 
     code <- reactive(teal.code::get_code(plot_q()))
 
-# TODO: recreate as teal_card
+    # TODO: recreate as teal_card
     #   card_fun <- function(comment, label) {
     #     constraint_description <- paste(
     #       "\nSelect Line Splitting Variable:",

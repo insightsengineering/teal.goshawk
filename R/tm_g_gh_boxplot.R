@@ -504,36 +504,36 @@ srv_g_boxplot <- function(id,
 
     code <- reactive(teal.code::get_code(joined_qenvs()))
 
-# TODO: recreate as teal_card
-#      card_fun <- function(comment, label) {
-#        constraint_description <- paste(
-#          "\nFacet By:",
-#          if (length(input$facet_var) != 0) input$facet_var else "None",
-#          "\nSelect an X-axis Variable:",
-#          input$xaxis_var
-#        )
-#        card <- report_card_template_goshawk(
-#          title = "Box Plot",
-#          label = label,
-#          with_filter = with_filter,
-#          filter_panel_api = filter_panel_api,
-#          constraint_list = list(
-#            constraint_var = input$constraint_var,
-#            constraint_range_min = input$constraint_range_min,
-#            constraint_range_max = input$constraint_range_max
-#          ),
-#          constraint_description = constraint_description,
-#          style = "verbatim"
-#        )
-#        card$append_text("Plot", "header3")
-#        card$append_plot(plot_r(), dim = boxplot_data$dim())
-#        if (!comment == "") {
-#          card$append_text("Comment", "header3")
-#          card$append_text(comment)
-#        }
-#        card$append_src(code())
-#        card
-#      }
+    # TODO: recreate as teal_card
+    #      card_fun <- function(comment, label) {
+    #        constraint_description <- paste(
+    #          "\nFacet By:",
+    #          if (length(input$facet_var) != 0) input$facet_var else "None",
+    #          "\nSelect an X-axis Variable:",
+    #          input$xaxis_var
+    #        )
+    #        card <- report_card_template_goshawk(
+    #          title = "Box Plot",
+    #          label = label,
+    #          with_filter = with_filter,
+    #          filter_panel_api = filter_panel_api,
+    #          constraint_list = list(
+    #            constraint_var = input$constraint_var,
+    #            constraint_range_min = input$constraint_range_min,
+    #            constraint_range_max = input$constraint_range_max
+    #          ),
+    #          constraint_description = constraint_description,
+    #          style = "verbatim"
+    #        )
+    #        card$append_text("Plot", "header3")
+    #        card$append_plot(plot_r(), dim = boxplot_data$dim())
+    #        if (!comment == "") {
+    #          card$append_text("Comment", "header3")
+    #          card$append_text(comment)
+    #        }
+    #        card$append_src(code())
+    #        card
+    #      }
 
     # highlight plot area
     reactive_df <- debounce(reactive({
@@ -572,6 +572,6 @@ srv_g_boxplot <- function(id,
       verbatim_content = reactive(code()),
       title = "Show R Code for Boxplot"
     )
-    #TODO: return(reactive_df or plot_q or somethow join it)
+    # TODO: return(reactive_df or plot_q or somethow join it)
   })
 }

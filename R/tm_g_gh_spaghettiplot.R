@@ -525,28 +525,28 @@ srv_g_spaghettiplot <- function(id,
     code <- reactive(teal.code::get_code(plot_q()))
 
     # TODO: recreate as teal_card
-#
-#      card_fun <- function(comment, label) {
-#        card <- report_card_template_goshawk(
-#          title = "Spaghetti Plot",
-#          label = label,
-#          with_filter = with_filter,
-#          filter_panel_api = filter_panel_api,
-#          constraint_list = list(
-#            constraint_var = input$constraint_var,
-#            constraint_range_min = input$constraint_range_min,
-#            constraint_range_max = input$constraint_range_max
-#          )
-#        )
-#        card$append_text("Spaghetti Plot", "header3")
-#        card$append_plot(plot_r(), dim = plot_data$dim())
-#        if (!comment == "") {
-#          card$append_text("Comment", "header3")
-#          card$append_text(comment)
-#        }
-#        card$append_src(code())
-#        card
-#      }
+    #
+    #      card_fun <- function(comment, label) {
+    #        card <- report_card_template_goshawk(
+    #          title = "Spaghetti Plot",
+    #          label = label,
+    #          with_filter = with_filter,
+    #          filter_panel_api = filter_panel_api,
+    #          constraint_list = list(
+    #            constraint_var = input$constraint_var,
+    #            constraint_range_min = input$constraint_range_min,
+    #            constraint_range_max = input$constraint_range_max
+    #          )
+    #        )
+    #        card$append_text("Spaghetti Plot", "header3")
+    #        card$append_plot(plot_r(), dim = plot_data$dim())
+    #        if (!comment == "") {
+    #          card$append_text("Comment", "header3")
+    #          card$append_text(comment)
+    #        }
+    #        card$append_src(code())
+    #        card
+    #      }
 
     reactive_df <- debounce(reactive({
       plot_brush <- plot_data$brush()
@@ -584,7 +584,6 @@ srv_g_spaghettiplot <- function(id,
       verbatim_content = reactive(code()),
       title = "Show R Code for Spaghetti Plot"
     )
-    #TODO: return(reactive_df or plot_q or somethow join it)
+    # TODO: return(reactive_df or plot_q or somethow join it)
   })
-  
 }

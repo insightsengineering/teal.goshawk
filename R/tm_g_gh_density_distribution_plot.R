@@ -420,32 +420,32 @@ srv_g_density_distribution_plot <- function(id, # nolint
       title = "Show R Code for Density Distribution Plot"
     )
 
-# TODO: recreate as teal_card
-#      card_fun <- function(comment, label) {
-#        card <- report_card_template_goshawk(
-#          title = "Density Distribution Plot",
-#          label = label,
-#          with_filter = with_filter,
-#          filter_panel_api = filter_panel_api,
-#          constraint_list = list(
-#            constraint_var = input$constraint_var,
-#            constraint_range_min = input$constraint_range_min,
-#            constraint_range_max = input$constraint_range_max
-#          )
-#        )
-#        card$append_text("Plot", "header3")
-#        card$append_plot(plot_r(), dim = plot_data$dim())
-#        card$append_text("Descriptive Statistics", "header3")
-#        card$append_table(
-#          create_table()[["tbl"]] %>% dplyr::mutate_if(is.numeric, round, 2)
-#        )
-#        if (!comment == "") {
-#          card$append_text("Comment", "header3")
-#          card$append_text(comment)
-#        }
-#        card$append_src(code())
-#        card
-#      }
+    # TODO: recreate as teal_card
+    #      card_fun <- function(comment, label) {
+    #        card <- report_card_template_goshawk(
+    #          title = "Density Distribution Plot",
+    #          label = label,
+    #          with_filter = with_filter,
+    #          filter_panel_api = filter_panel_api,
+    #          constraint_list = list(
+    #            constraint_var = input$constraint_var,
+    #            constraint_range_min = input$constraint_range_min,
+    #            constraint_range_max = input$constraint_range_max
+    #          )
+    #        )
+    #        card$append_text("Plot", "header3")
+    #        card$append_plot(plot_r(), dim = plot_data$dim())
+    #        card$append_text("Descriptive Statistics", "header3")
+    #        card$append_table(
+    #          create_table()[["tbl"]] %>% dplyr::mutate_if(is.numeric, round, 2)
+    #        )
+    #        if (!comment == "") {
+    #          card$append_text("Comment", "header3")
+    #          card$append_text(comment)
+    #        }
+    #        card$append_src(code())
+    #        card
+    #      }
 
     joined_qenvs
   })
