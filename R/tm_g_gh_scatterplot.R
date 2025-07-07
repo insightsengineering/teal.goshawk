@@ -329,8 +329,12 @@ srv_g_scatterplot <- function(id,
       yaxis <- input$yaxis_var
 
       # nolint end
-      teal.code::eval_code(
-        object = anl_q()$qenv,
+      obj <- anl_q()$qenv
+      teal.reporter::teal_card(obj) <- append(teal.reporter::teal_card(obj), "# Scatter Plot", after = 0)
+      teal.reporter::teal_card(obj) <- c(teal.reporter::teal_card(obj), "## Module's code") #TODO: move this line somewhere higher
+      teal.reporter::teal_card(obj) <- c(teal.reporter::teal_card(obj), "## Plot")
+      obj %>% teal.code::eval_code(
+        object = obj$qenv,
         code = bquote({
           # re-establish treatment variable label
           p <- goshawk::g_scatterplot(
@@ -372,36 +376,7 @@ srv_g_scatterplot <- function(id,
 
     code <- reactive(teal.code::get_code(plot_q()))
 
-    # TODO: recreate as teal_card
-    #   card_fun <- function(comment, label) {
-    #     constraint_description <- paste(
-    #       "\nTreatment Variable Faceting:",
-    #       input$trt_facet,
-    #       "\nRegression Line:",
-    #       input$reg_line
-    #     )
-    #     card <- report_card_template_goshawk(
-    #       title = "Scatter Plot",
-    #       label = label,
-    #       with_filter = with_filter,
-    #       filter_panel_api = filter_panel_api,
-    #       constraint_list = list(
-    #         constraint_var = input$constraint_var,
-    #         constraint_range_min = input$constraint_range_min,
-    #         constraint_range_max = input$constraint_range_max
-    #       ),
-    #       constraint_description = constraint_description,
-    #       style = "verbatim"
-    #     )
-    #     card$append_text("Scatter Plot", "header3")
-    #     card$append_plot(plot_r(), dim = plot_data$dim())
-    #     if (!comment == "") {
-    #       card$append_text("Comment", "header3")
-    #       card$append_text(comment)
-    #     }
-    #     card$append_src(code())
-    #     card
-    #   }
+
 
 
     reactive_df <- debounce(reactive({
@@ -441,6 +416,6 @@ srv_g_scatterplot <- function(id,
       title = "Show R Code for Scatterplot"
     )
 
-    reactive_df
+    plot_q
   })
 }

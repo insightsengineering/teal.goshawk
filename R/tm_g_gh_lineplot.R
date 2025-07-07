@@ -711,8 +711,13 @@ srv_lineplot <- function(id,
       hline_arb_label <- horizontal_line()$line_arb_label
       hline_arb_color <- horizontal_line()$line_arb_color
 
-      teal.code::eval_code(
-        object = private_qenv,
+      obj <- private_qenv
+      teal.reporter::teal_card(obj) <- append(teal.reporter::teal_card(obj), "# Line Plot", after = 0)
+      teal.reporter::teal_card(obj) <- c(teal.reporter::teal_card(obj), "## Module's code") #TODO: move this line somewhere higher
+      teal.reporter::teal_card(obj) <- c(teal.reporter::teal_card(obj), "## Plot")
+
+      obj %>% teal.code::eval_code(
+        object = obj,
         code = bquote({
           p <- goshawk::g_lineplot(
             data = ANL[stats::complete.cases(ANL[, c(.(yaxis), .(xaxis))]), ],
@@ -760,36 +765,7 @@ srv_lineplot <- function(id,
 
     code <- reactive(teal.code::get_code(plot_q()))
 
-    # TODO: recreate as teal_card
-    #   card_fun <- function(comment, label) {
-    #     constraint_description <- paste(
-    #       "\nSelect Line Splitting Variable:",
-    #       if (!is.null(input$shape)) input$shape else "None",
-    #       "\nContributing Observations Threshold:",
-    #       input$count_threshold
-    #     )
-    #     card <- report_card_template_goshawk(
-    #       title = "Line Plot",
-    #       label = label,
-    #       with_filter = with_filter,
-    #       filter_panel_api = filter_panel_api,
-    #       constraint_list = list(
-    #         constraint_var = input$constraint_var,
-    #         constraint_range_min = input$constraint_range_min,
-    #         constraint_range_max = input$constraint_range_max
-    #       ),
-    #       constraint_description = constraint_description,
-    #       style = "verbatim"
-    #     )
-    #     card$append_text("Plot", "header3")
-    #     card$append_plot(plot_r(), dim = plot_data$dim())
-    #     if (!comment == "") {
-    #       card$append_text("Comment", "header3")
-    #       card$append_text(comment)
-    #     }
-    #     card$append_src(code())
-    #     card
-    #   }
+
 
     teal.widgets::verbatim_popup_srv(
       id = "rcode",
