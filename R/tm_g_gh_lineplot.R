@@ -235,9 +235,6 @@ ui_lineplot <- function(id, ...) {
     teal.widgets::standard_layout(
       output = teal.widgets::plot_with_settings_ui(id = ns("plot")),
       encoding = tags$div(
-        ### Reporter
-        teal.reporter::simple_reporter_ui(ns("simple_reporter")),
-        ###
         templ_ui_dataname(a$dataname),
         uiOutput(ns("axis_selections")),
         uiOutput(ns("shape_ui")),
@@ -327,8 +324,6 @@ ui_lineplot <- function(id, ...) {
 
 srv_lineplot <- function(id,
                          data,
-                         reporter,
-                         filter_panel_api,
                          dataname,
                          param_var,
                          trt_group,
@@ -342,8 +337,6 @@ srv_lineplot <- function(id,
                          plot_height,
                          plot_width,
                          module_args) {
-  with_reporter <- !missing(reporter) && inherits(reporter, "Reporter")
-  with_filter <- !missing(filter_panel_api) && inherits(filter_panel_api, "FilterPanelAPI")
   checkmate::assert_class(data, "reactive")
   checkmate::assert_class(shiny::isolate(data()), "teal_data")
 
@@ -765,45 +758,43 @@ srv_lineplot <- function(id,
 
     code <- reactive(teal.code::get_code(plot_q()))
 
-    ### REPORTER
-    if (with_reporter) {
-      card_fun <- function(comment, label) {
-        constraint_description <- paste(
-          "\nSelect Line Splitting Variable:",
-          if (!is.null(input$shape)) input$shape else "None",
-          "\nContributing Observations Threshold:",
-          input$count_threshold
-        )
-        card <- report_card_template_goshawk(
-          title = "Line Plot",
-          label = label,
-          with_filter = with_filter,
-          filter_panel_api = filter_panel_api,
-          constraint_list = list(
-            constraint_var = input$constraint_var,
-            constraint_range_min = input$constraint_range_min,
-            constraint_range_max = input$constraint_range_max
-          ),
-          constraint_description = constraint_description,
-          style = "verbatim"
-        )
-        card$append_text("Plot", "header3")
-        card$append_plot(plot_r(), dim = plot_data$dim())
-        if (!comment == "") {
-          card$append_text("Comment", "header3")
-          card$append_text(comment)
-        }
-        card$append_src(code())
-        card
-      }
-      teal.reporter::simple_reporter_srv("simple_reporter", reporter = reporter, card_fun = card_fun)
-    }
-    ###
+# TODO: recreate as teal_card
+    #   card_fun <- function(comment, label) {
+    #     constraint_description <- paste(
+    #       "\nSelect Line Splitting Variable:",
+    #       if (!is.null(input$shape)) input$shape else "None",
+    #       "\nContributing Observations Threshold:",
+    #       input$count_threshold
+    #     )
+    #     card <- report_card_template_goshawk(
+    #       title = "Line Plot",
+    #       label = label,
+    #       with_filter = with_filter,
+    #       filter_panel_api = filter_panel_api,
+    #       constraint_list = list(
+    #         constraint_var = input$constraint_var,
+    #         constraint_range_min = input$constraint_range_min,
+    #         constraint_range_max = input$constraint_range_max
+    #       ),
+    #       constraint_description = constraint_description,
+    #       style = "verbatim"
+    #     )
+    #     card$append_text("Plot", "header3")
+    #     card$append_plot(plot_r(), dim = plot_data$dim())
+    #     if (!comment == "") {
+    #       card$append_text("Comment", "header3")
+    #       card$append_text(comment)
+    #     }
+    #     card$append_src(code())
+    #     card
+    #   }
 
     teal.widgets::verbatim_popup_srv(
       id = "rcode",
       verbatim_content = reactive(code()),
       title = "Show R Code for Line Plot"
     )
+
+    plot_q
   })
 }

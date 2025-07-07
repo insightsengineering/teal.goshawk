@@ -192,9 +192,6 @@ ui_g_scatterplot <- function(id, ...) {
   teal.widgets::standard_layout(
     output = templ_ui_output_datatable(ns),
     encoding = tags$div(
-      ### Reporter
-      teal.reporter::simple_reporter_ui(ns("simple_reporter")),
-      ###
       templ_ui_dataname(a$dataname),
       uiOutput(ns("axis_selections")),
       templ_ui_constraint(ns), # required by constr_anl_q
@@ -239,8 +236,6 @@ ui_g_scatterplot <- function(id, ...) {
 
 srv_g_scatterplot <- function(id,
                               data,
-                              reporter,
-                              filter_panel_api,
                               dataname,
                               param_var,
                               trt_group,
@@ -250,8 +245,6 @@ srv_g_scatterplot <- function(id,
                               plot_height,
                               plot_width,
                               module_args) {
-  with_reporter <- !missing(reporter) && inherits(reporter, "Reporter")
-  with_filter <- !missing(filter_panel_api) && inherits(filter_panel_api, "FilterPanelAPI")
   checkmate::assert_class(data, "reactive")
   checkmate::assert_class(shiny::isolate(data()), "teal_data")
 
@@ -379,40 +372,37 @@ srv_g_scatterplot <- function(id,
 
     code <- reactive(teal.code::get_code(plot_q()))
 
-    ### REPORTER
-    if (with_reporter) {
-      card_fun <- function(comment, label) {
-        constraint_description <- paste(
-          "\nTreatment Variable Faceting:",
-          input$trt_facet,
-          "\nRegression Line:",
-          input$reg_line
-        )
-        card <- report_card_template_goshawk(
-          title = "Scatter Plot",
-          label = label,
-          with_filter = with_filter,
-          filter_panel_api = filter_panel_api,
-          constraint_list = list(
-            constraint_var = input$constraint_var,
-            constraint_range_min = input$constraint_range_min,
-            constraint_range_max = input$constraint_range_max
-          ),
-          constraint_description = constraint_description,
-          style = "verbatim"
-        )
-        card$append_text("Scatter Plot", "header3")
-        card$append_plot(plot_r(), dim = plot_data$dim())
-        if (!comment == "") {
-          card$append_text("Comment", "header3")
-          card$append_text(comment)
-        }
-        card$append_src(code())
-        card
-      }
-      teal.reporter::simple_reporter_srv("simple_reporter", reporter = reporter, card_fun = card_fun)
-    }
-    ###
+    # TODO: recreate as teal_card
+    #   card_fun <- function(comment, label) {
+    #     constraint_description <- paste(
+    #       "\nTreatment Variable Faceting:",
+    #       input$trt_facet,
+    #       "\nRegression Line:",
+    #       input$reg_line
+    #     )
+    #     card <- report_card_template_goshawk(
+    #       title = "Scatter Plot",
+    #       label = label,
+    #       with_filter = with_filter,
+    #       filter_panel_api = filter_panel_api,
+    #       constraint_list = list(
+    #         constraint_var = input$constraint_var,
+    #         constraint_range_min = input$constraint_range_min,
+    #         constraint_range_max = input$constraint_range_max
+    #       ),
+    #       constraint_description = constraint_description,
+    #       style = "verbatim"
+    #     )
+    #     card$append_text("Scatter Plot", "header3")
+    #     card$append_plot(plot_r(), dim = plot_data$dim())
+    #     if (!comment == "") {
+    #       card$append_text("Comment", "header3")
+    #       card$append_text(comment)
+    #     }
+    #     card$append_src(code())
+    #     card
+    #   }
+
 
     reactive_df <- debounce(reactive({
       plot_brush <- plot_data$brush()
@@ -450,5 +440,7 @@ srv_g_scatterplot <- function(id,
       verbatim_content = reactive(code()),
       title = "Show R Code for Scatterplot"
     )
+
+    reactive_df
   })
 }

@@ -273,9 +273,6 @@ g_ui_spaghettiplot <- function(id, ...) {
     teal.widgets::standard_layout(
       output = templ_ui_output_datatable(ns),
       encoding = tags$div(
-        ### Reporter
-        teal.reporter::simple_reporter_ui(ns("simple_reporter")),
-        ###
         templ_ui_dataname(a$dataname),
         uiOutput(ns("axis_selections")),
         radioButtons(
@@ -341,8 +338,6 @@ g_ui_spaghettiplot <- function(id, ...) {
 
 srv_g_spaghettiplot <- function(id,
                                 data,
-                                reporter,
-                                filter_panel_api,
                                 dataname,
                                 idvar,
                                 param_var,
@@ -359,8 +354,6 @@ srv_g_spaghettiplot <- function(id,
                                 hline_vars_colors,
                                 hline_vars_labels,
                                 module_args) {
-  with_reporter <- !missing(reporter) && inherits(reporter, "Reporter")
-  with_filter <- !missing(filter_panel_api) && inherits(filter_panel_api, "FilterPanelAPI")
   checkmate::assert_class(data, "reactive")
   checkmate::assert_class(shiny::isolate(data()), "teal_data")
 
@@ -528,34 +521,32 @@ srv_g_spaghettiplot <- function(id,
       brushing = TRUE
     )
 
+
     code <- reactive(teal.code::get_code(plot_q()))
 
-    ### REPORTER
-    if (with_reporter) {
-      card_fun <- function(comment, label) {
-        card <- report_card_template_goshawk(
-          title = "Spaghetti Plot",
-          label = label,
-          with_filter = with_filter,
-          filter_panel_api = filter_panel_api,
-          constraint_list = list(
-            constraint_var = input$constraint_var,
-            constraint_range_min = input$constraint_range_min,
-            constraint_range_max = input$constraint_range_max
-          )
-        )
-        card$append_text("Spaghetti Plot", "header3")
-        card$append_plot(plot_r(), dim = plot_data$dim())
-        if (!comment == "") {
-          card$append_text("Comment", "header3")
-          card$append_text(comment)
-        }
-        card$append_src(code())
-        card
-      }
-      teal.reporter::simple_reporter_srv("simple_reporter", reporter = reporter, card_fun = card_fun)
-    }
-    ###
+    # TODO: recreate as teal_card
+#
+#      card_fun <- function(comment, label) {
+#        card <- report_card_template_goshawk(
+#          title = "Spaghetti Plot",
+#          label = label,
+#          with_filter = with_filter,
+#          filter_panel_api = filter_panel_api,
+#          constraint_list = list(
+#            constraint_var = input$constraint_var,
+#            constraint_range_min = input$constraint_range_min,
+#            constraint_range_max = input$constraint_range_max
+#          )
+#        )
+#        card$append_text("Spaghetti Plot", "header3")
+#        card$append_plot(plot_r(), dim = plot_data$dim())
+#        if (!comment == "") {
+#          card$append_text("Comment", "header3")
+#          card$append_text(comment)
+#        }
+#        card$append_src(code())
+#        card
+#      }
 
     reactive_df <- debounce(reactive({
       plot_brush <- plot_data$brush()
@@ -593,5 +584,7 @@ srv_g_spaghettiplot <- function(id,
       verbatim_content = reactive(code()),
       title = "Show R Code for Spaghetti Plot"
     )
+    #TODO: return(reactive_df or plot_q or somethow join it)
   })
+  
 }

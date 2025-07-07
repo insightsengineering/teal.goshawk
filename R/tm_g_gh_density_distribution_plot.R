@@ -191,9 +191,6 @@ ui_g_density_distribution_plot <- function(id, ...) {
       )
     ),
     encoding = tags$div(
-      ### Reporter
-      teal.reporter::simple_reporter_ui(ns("simple_reporter")),
-      ###
       templ_ui_dataname(a$dataname),
       uiOutput(ns("axis_selections")),
       templ_ui_constraint(ns, label = "Data Constraint"),
@@ -237,8 +234,6 @@ ui_g_density_distribution_plot <- function(id, ...) {
 
 srv_g_density_distribution_plot <- function(id, # nolint
                                             data,
-                                            reporter,
-                                            filter_panel_api,
                                             dataname,
                                             param_var,
                                             param,
@@ -248,8 +243,6 @@ srv_g_density_distribution_plot <- function(id, # nolint
                                             plot_height,
                                             plot_width,
                                             module_args) {
-  with_reporter <- !missing(reporter) && inherits(reporter, "Reporter")
-  with_filter <- !missing(filter_panel_api) && inherits(filter_panel_api, "FilterPanelAPI")
   checkmate::assert_class(data, "reactive")
   checkmate::assert_class(shiny::isolate(data()), "teal_data")
 
@@ -427,35 +420,33 @@ srv_g_density_distribution_plot <- function(id, # nolint
       title = "Show R Code for Density Distribution Plot"
     )
 
-    ### REPORTER
-    if (with_reporter) {
-      card_fun <- function(comment, label) {
-        card <- report_card_template_goshawk(
-          title = "Density Distribution Plot",
-          label = label,
-          with_filter = with_filter,
-          filter_panel_api = filter_panel_api,
-          constraint_list = list(
-            constraint_var = input$constraint_var,
-            constraint_range_min = input$constraint_range_min,
-            constraint_range_max = input$constraint_range_max
-          )
-        )
-        card$append_text("Plot", "header3")
-        card$append_plot(plot_r(), dim = plot_data$dim())
-        card$append_text("Descriptive Statistics", "header3")
-        card$append_table(
-          create_table()[["tbl"]] %>% dplyr::mutate_if(is.numeric, round, 2)
-        )
-        if (!comment == "") {
-          card$append_text("Comment", "header3")
-          card$append_text(comment)
-        }
-        card$append_src(code())
-        card
-      }
-      teal.reporter::simple_reporter_srv("simple_reporter", reporter = reporter, card_fun = card_fun)
-    }
-    ###
+# TODO: recreate as teal_card
+#      card_fun <- function(comment, label) {
+#        card <- report_card_template_goshawk(
+#          title = "Density Distribution Plot",
+#          label = label,
+#          with_filter = with_filter,
+#          filter_panel_api = filter_panel_api,
+#          constraint_list = list(
+#            constraint_var = input$constraint_var,
+#            constraint_range_min = input$constraint_range_min,
+#            constraint_range_max = input$constraint_range_max
+#          )
+#        )
+#        card$append_text("Plot", "header3")
+#        card$append_plot(plot_r(), dim = plot_data$dim())
+#        card$append_text("Descriptive Statistics", "header3")
+#        card$append_table(
+#          create_table()[["tbl"]] %>% dplyr::mutate_if(is.numeric, round, 2)
+#        )
+#        if (!comment == "") {
+#          card$append_text("Comment", "header3")
+#          card$append_text(comment)
+#        }
+#        card$append_src(code())
+#        card
+#      }
+
+    joined_qenvs
   })
 }

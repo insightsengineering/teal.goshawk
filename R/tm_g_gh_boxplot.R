@@ -240,9 +240,6 @@ ui_g_boxplot <- function(id, ...) {
       )
     ),
     encoding = tags$div(
-      ### Reporter
-      teal.reporter::simple_reporter_ui(ns("simple_reporter")),
-      ###
       templ_ui_dataname(a$dataname),
       uiOutput(ns("axis_selections")),
       templ_ui_constraint(ns, label = "Data Constraint"), # required by constr_anl_q
@@ -286,8 +283,6 @@ ui_g_boxplot <- function(id, ...) {
 
 srv_g_boxplot <- function(id,
                           data,
-                          reporter,
-                          filter_panel_api,
                           dataname,
                           param_var,
                           trt_group,
@@ -298,8 +293,6 @@ srv_g_boxplot <- function(id,
                           hline_vars_colors,
                           hline_vars_labels,
                           module_args) {
-  with_reporter <- !missing(reporter) && inherits(reporter, "Reporter")
-  with_filter <- !missing(filter_panel_api) && inherits(filter_panel_api, "FilterPanelAPI")
   checkmate::assert_class(data, "reactive")
   checkmate::assert_class(shiny::isolate(data()), "teal_data")
 
@@ -511,40 +504,36 @@ srv_g_boxplot <- function(id,
 
     code <- reactive(teal.code::get_code(joined_qenvs()))
 
-    ### REPORTER
-    if (with_reporter) {
-      card_fun <- function(comment, label) {
-        constraint_description <- paste(
-          "\nFacet By:",
-          if (length(input$facet_var) != 0) input$facet_var else "None",
-          "\nSelect an X-axis Variable:",
-          input$xaxis_var
-        )
-        card <- report_card_template_goshawk(
-          title = "Box Plot",
-          label = label,
-          with_filter = with_filter,
-          filter_panel_api = filter_panel_api,
-          constraint_list = list(
-            constraint_var = input$constraint_var,
-            constraint_range_min = input$constraint_range_min,
-            constraint_range_max = input$constraint_range_max
-          ),
-          constraint_description = constraint_description,
-          style = "verbatim"
-        )
-        card$append_text("Plot", "header3")
-        card$append_plot(plot_r(), dim = boxplot_data$dim())
-        if (!comment == "") {
-          card$append_text("Comment", "header3")
-          card$append_text(comment)
-        }
-        card$append_src(code())
-        card
-      }
-      teal.reporter::simple_reporter_srv("simple_reporter", reporter = reporter, card_fun = card_fun)
-    }
-    ###
+# TODO: recreate as teal_card
+#      card_fun <- function(comment, label) {
+#        constraint_description <- paste(
+#          "\nFacet By:",
+#          if (length(input$facet_var) != 0) input$facet_var else "None",
+#          "\nSelect an X-axis Variable:",
+#          input$xaxis_var
+#        )
+#        card <- report_card_template_goshawk(
+#          title = "Box Plot",
+#          label = label,
+#          with_filter = with_filter,
+#          filter_panel_api = filter_panel_api,
+#          constraint_list = list(
+#            constraint_var = input$constraint_var,
+#            constraint_range_min = input$constraint_range_min,
+#            constraint_range_max = input$constraint_range_max
+#          ),
+#          constraint_description = constraint_description,
+#          style = "verbatim"
+#        )
+#        card$append_text("Plot", "header3")
+#        card$append_plot(plot_r(), dim = boxplot_data$dim())
+#        if (!comment == "") {
+#          card$append_text("Comment", "header3")
+#          card$append_text(comment)
+#        }
+#        card$append_src(code())
+#        card
+#      }
 
     # highlight plot area
     reactive_df <- debounce(reactive({
@@ -583,5 +572,6 @@ srv_g_boxplot <- function(id,
       verbatim_content = reactive(code()),
       title = "Show R Code for Boxplot"
     )
+    #TODO: return(reactive_df or plot_q or somethow join it)
   })
 }
