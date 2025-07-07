@@ -322,7 +322,6 @@ srv_g_boxplot <- function(id,
         xselected = resolved_x$selected,
         ychoices = resolved_y$choices,
         yselected = resolved_y$selected,
-
         facet_choices = resolved_facet_var$choices,
         facet_selected = resolved_facet_var$selected,
         trt_choices = resolved_trt$choices,
