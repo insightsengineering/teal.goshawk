@@ -772,7 +772,7 @@ srv_g_correlationplot <- function(id,
 
       obj <- plot_data_transpose()$qenv
       teal.reporter::teal_card(obj) <- append(teal.reporter::teal_card(obj), "# Correlation Plot", after = 0)
-      teal.reporter::teal_card(obj) <- c(teal.reporter::teal_card(obj), "## Module's code") #TODO: move this line somewhere higher
+      teal.reporter::teal_card(obj) <- c(teal.reporter::teal_card(obj), "## Module's code") # TODO: move this line somewhere higher
       teal.reporter::teal_card(obj) <- c(teal.reporter::teal_card(obj), "## Plot")
 
       obj %>% teal.code::eval_code(
