@@ -352,7 +352,17 @@ srv_lineplot <- function(id,
     ns <- session$ns
 
     output$axis_selections <- renderUI({
-      env <- shiny::isolate(as.list(data()))
+      # Get the teal_data object
+      teal_data_obj <- shiny::isolate(data())
+      
+      # Extract the dataset directly from the teal_data object
+      # This should give us the original data before additional filtering
+      raw_data <- teal_data_obj[[dataname]]
+      
+      # Create a minimal environment for resolve_delayed
+      env <- list()
+      env[[dataname]] <- raw_data
+      
       resolved_x <- teal.transform::resolve_delayed(module_args$xaxis_var, env)
       resolved_y <- teal.transform::resolve_delayed(module_args$yaxis_var, env)
       resolved_param <- teal.transform::resolve_delayed(module_args$param, env)
