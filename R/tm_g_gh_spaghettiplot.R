@@ -367,7 +367,7 @@ srv_g_spaghettiplot <- function(id,
   moduleServer(id, function(input, output, session) {
     teal.logger::log_shiny_input_changes(input, namespace = "teal.goshawk")
     output$axis_selections <- renderUI({
-      env <- shiny::isolate(as.list(data()))
+      env <- shiny::isolate(as.list(data()[[".raw_data"]]))
       resolved_x <- teal.transform::resolve_delayed(module_args$xaxis_var, env)
       resolved_y <- teal.transform::resolve_delayed(module_args$yaxis_var, env)
       resolved_param <- teal.transform::resolve_delayed(module_args$param, env)

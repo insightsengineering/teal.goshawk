@@ -352,7 +352,7 @@ srv_lineplot <- function(id,
     ns <- session$ns
 
     output$axis_selections <- renderUI({
-      env <- shiny::isolate(as.list(data()))
+      env <- shiny::isolate(as.list(data()[[".raw_data"]]))
       resolved_x <- teal.transform::resolve_delayed(module_args$xaxis_var, env)
       resolved_y <- teal.transform::resolve_delayed(module_args$yaxis_var, env)
       resolved_param <- teal.transform::resolve_delayed(module_args$param, env)
