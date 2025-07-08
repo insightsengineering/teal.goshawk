@@ -1,5 +1,8 @@
 # teal.goshawk 0.3.0.9003
 
+### Miscellaneous
+* Fix UI elements issue, that did not refresh when filter panel filters were removed (#352, #288)
+
 # teal.goshawk 0.3.0
 
 ### Enhancements
