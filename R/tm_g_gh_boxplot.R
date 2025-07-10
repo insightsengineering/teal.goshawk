@@ -420,8 +420,12 @@ srv_g_boxplot <- function(id,
       }
 
       obj <- anl_q()$qenv
-      teal.reporter::teal_card(obj) <- c(teal.reporter::teal_card(obj), "## Module's code")
-      teal.reporter::teal_card(obj) <- c(teal.reporter::teal_card(obj), "## Plot")
+      teal.reporter::teal_card(obj) <- 
+        c(
+          teal.reporter::teal_card("# Box Plot"),
+          teal.reporter::teal_card(obj),
+          teal.reporter::teal_card("## Plot")
+        )
 
       obj %>% teal.code::eval_code(
         code = bquote({

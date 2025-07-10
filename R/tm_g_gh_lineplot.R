@@ -712,8 +712,12 @@ srv_lineplot <- function(id,
       hline_arb_color <- horizontal_line()$line_arb_color
 
       obj <- private_qenv
-      teal.reporter::teal_card(obj) <- append(teal.reporter::teal_card(obj), "# Line Plot", after = 0)
-      teal.reporter::teal_card(obj) <- c(teal.reporter::teal_card(obj), "## Plot")
+      teal.reporter::teal_card(obj) <- 
+        c(
+          teal.reporter::teal_card("# Line Plot"),
+          teal.reporter::teal_card(obj),
+          teal.reporter::teal_card("## Plot")
+        )
 
       teal.code::eval_code(
         object = obj,
