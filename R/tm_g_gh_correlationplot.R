@@ -771,7 +771,7 @@ srv_g_correlationplot <- function(id,
       trt_group <- input$trt_group
 
       obj <- plot_data_transpose()$qenv
-      teal.reporter::teal_card(obj) <- 
+      teal.reporter::teal_card(obj) <-
         c(
           teal.reporter::teal_card("# Correlation Plot"),
           teal.reporter::teal_card(obj),

@@ -420,7 +420,7 @@ srv_g_boxplot <- function(id,
       }
 
       obj <- anl_q()$qenv
-      teal.reporter::teal_card(obj) <- 
+      teal.reporter::teal_card(obj) <-
         c(
           teal.reporter::teal_card("# Box Plot"),
           teal.reporter::teal_card(obj),

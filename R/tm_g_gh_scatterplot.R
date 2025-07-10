@@ -330,7 +330,7 @@ srv_g_scatterplot <- function(id,
 
       # nolint end
       obj <- anl_q()$qenv
-      teal.reporter::teal_card(obj) <- 
+      teal.reporter::teal_card(obj) <-
         c(
           teal.reporter::teal_card("# Scatter Plot"),
           teal.reporter::teal_card(obj),
