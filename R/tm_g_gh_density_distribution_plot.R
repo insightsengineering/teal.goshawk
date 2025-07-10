@@ -368,13 +368,13 @@ srv_g_density_distribution_plot <- function(id, # nolint
 
     create_table <- debounce(reactive({
       req(iv_r()$is_valid())
-      req(anl_q())
+      req(create_plot())
       param <- input$xaxis_param
       xaxis_var <- input$xaxis_var
       font_size <- input$font_size
       trt_group <- input$trt_group
 
-      obj <- anl_q()$qenv
+      obj <- create_plot()
       teal.reporter::teal_card(obj) <- c(teal.reporter::teal_card(obj), "## Descriptive Statistics")
       teal.code::eval_code(
         object = obj,
@@ -414,12 +414,7 @@ srv_g_density_distribution_plot <- function(id, # nolint
         DT::formatRound(numeric_cols, 2)
     })
 
-    joined_qenvs <- reactive({
-      req(create_plot(), create_table())
-      c(create_plot(), create_table())
-    })
-
-    code <- reactive(teal.code::get_code(joined_qenvs()))
+    code <- reactive(teal.code::get_code(create_table()))
 
     teal.widgets::verbatim_popup_srv(
       id = "rcode",
@@ -427,7 +422,6 @@ srv_g_density_distribution_plot <- function(id, # nolint
       title = "Show R Code for Density Distribution Plot"
     )
 
-    # TODO: joined qenv have 2 duplicated sections for Code preparation and data filtering
-    joined_qenvs
+    create_table
   })
 }
