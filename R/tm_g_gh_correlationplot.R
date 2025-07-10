@@ -772,11 +772,10 @@ srv_g_correlationplot <- function(id,
 
       obj <- plot_data_transpose()$qenv
       teal.reporter::teal_card(obj) <- append(teal.reporter::teal_card(obj), "# Correlation Plot", after = 0)
-      teal.reporter::teal_card(obj) <- c(teal.reporter::teal_card(obj), "## Module's code") # TODO: move this line somewhere higher
       teal.reporter::teal_card(obj) <- c(teal.reporter::teal_card(obj), "## Plot")
 
       obj %>% teal.code::eval_code(
-        object = obj$qenv,
+        object = obj,
         code = bquote({
           # re-establish treatment variable label
           p <- goshawk::g_correlationplot(
@@ -868,6 +867,6 @@ srv_g_correlationplot <- function(id,
       verbatim_content = reactive(code()),
       title = "Show R Code for Correlation Plot"
     )
-    # TODO: return(reactive_df or plot_q or somethow join it)
+    plot_q
   })
 }
