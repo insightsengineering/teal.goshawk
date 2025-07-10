@@ -715,7 +715,7 @@ srv_lineplot <- function(id,
       teal.reporter::teal_card(obj) <- append(teal.reporter::teal_card(obj), "# Line Plot", after = 0)
       teal.reporter::teal_card(obj) <- c(teal.reporter::teal_card(obj), "## Plot")
 
-      obj %>% teal.code::eval_code(
+      teal.code::eval_code(
         object = obj,
         code = bquote({
           p <- goshawk::g_lineplot(
