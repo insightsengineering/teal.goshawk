@@ -250,7 +250,7 @@ srv_g_density_distribution_plot <- function(id, # nolint
   moduleServer(id, function(input, output, session) {
     teal.logger::log_shiny_input_changes(input, namespace = "teal.goshawk")
     output$axis_selections <- renderUI({
-      env <- shiny::isolate(as.list(data()))
+      env <- shiny::isolate(as.list(data()[[".raw_data"]]))
       resolved_x <- teal.transform::resolve_delayed(module_args$xaxis_var, env)
       resolved_param <- teal.transform::resolve_delayed(module_args$param, env)
       resolved_trt <- teal.transform::resolve_delayed(module_args$trt_group, env)
