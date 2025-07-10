@@ -339,7 +339,7 @@ srv_g_density_distribution_plot <- function(id, # nolint
       teal.reporter::teal_card(obj) <- append(teal.reporter::teal_card(obj), "# Density Distribution Plot", after = 0)
       teal.reporter::teal_card(obj) <- c(teal.reporter::teal_card(obj), "## Plot")
 
-      obj %>% teal.code::eval_code(
+      teal.code::eval_code(
         object = obj,
         code = bquote({
           p <- goshawk::g_density_distribution_plot(
@@ -374,8 +374,10 @@ srv_g_density_distribution_plot <- function(id, # nolint
       font_size <- input$font_size
       trt_group <- input$trt_group
 
+      obj <- anl_q()$qenv
+      teal.reporter::teal_card(obj) <- c(teal.reporter::teal_card(obj), "## Descriptive Statistics")
       teal.code::eval_code(
-        object = anl_q()$qenv,
+        object = obj,
         code = bquote({
           tbl <- goshawk::t_summarytable(
             data = ANL,
@@ -425,8 +427,6 @@ srv_g_density_distribution_plot <- function(id, # nolint
       title = "Show R Code for Density Distribution Plot"
     )
 
-
-    # TODO: add section for Descriptive Statistics
     # TODO: joined qenv have 2 duplicated sections for Code preparation and data filtering
     joined_qenvs
   })
