@@ -455,7 +455,7 @@ srv_g_density_distribution_plot <- function(id, # nolint
         card$append_src(code())
         card
       }
-      teal.reporter::simple_reporter_srv("simple_reporter", reporter = reporter, card_fun = card_fun)
+      teal.reporter::add_card_button_srv("add_reporter", reporter = reporter, card_fun = card_fun)
     }
     ###
   })
