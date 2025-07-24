@@ -279,7 +279,8 @@ ui_g_correlationplot <- function(id, ...) {
     output = templ_ui_output_datatable(ns),
     encoding = tags$div(
       ### Reporter
-      teal.reporter::simple_reporter_ui(ns("simple_reporter")),
+      teal.reporter::add_card_button_ui(ns("add_reporter"), label = "Add Report Card"),
+      tags$br(), tags$br(),
       ###
       templ_ui_dataname(a$dataname),
       uiOutput(ns("axis_selections")),
@@ -866,7 +867,7 @@ srv_g_correlationplot <- function(id,
         card$append_src(code())
         card
       }
-      teal.reporter::simple_reporter_srv("simple_reporter", reporter = reporter, card_fun = card_fun)
+      teal.reporter::add_card_button_srv("add_reporter", reporter = reporter, card_fun = card_fun)
     }
     ###
 
