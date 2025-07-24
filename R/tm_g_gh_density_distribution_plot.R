@@ -192,7 +192,8 @@ ui_g_density_distribution_plot <- function(id, ...) {
     ),
     encoding = tags$div(
       ### Reporter
-      teal.reporter::simple_reporter_ui(ns("simple_reporter")),
+      teal.reporter::add_card_button_ui(ns("add_reporter"), label = "Add Report Card"),
+      tags$br(), tags$br(),
       ###
       templ_ui_dataname(a$dataname),
       uiOutput(ns("axis_selections")),
