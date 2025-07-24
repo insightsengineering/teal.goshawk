@@ -1,111 +1,23 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <testsuites>
-  <testsuite name="shinytest2-tm_g_gh_boxplot" timestamp="2025-07-24T11:50:19Z" hostname="7ebf31e92462" tests="6" skipped="0" failures="0" errors="6" time="56.824">
-    <testcase time="9.825" classname="shinytest2_tm_g_gh_boxplot" name="toggle_slider_module_widgets_are_initialized_with_proper_values">
-      <error type="error" message="Error in `rlang::abort(..., app = self, call = call)`: `message` must be a character vector, not a &lt;curl_error_url_malformat&gt; object. ('test-shinytest2-tm_g_gh_boxplot.R:26:3')">Error in `rlang::abort(..., app = self, call = call)`: `message` must be a character vector, not a &lt;curl_error_url_malformat&gt; object.
-Backtrace:
-     x
-  1. +-testthat::expect_setequal(...) at test-shinytest2-tm_g_gh_boxplot.R:26:3
-  2. | \-testthat::quasi_label(enquo(object), arg = "object")
-  3. |   \-rlang::eval_bare(expr, quo_get_env(quo))
-  4. +-app_driver$get_active_module_input("yrange_scale-slider")
-  5. | \-self$get_value(...)
-  6. |   \-shinytest2:::app_get_value(...)
-  7. |     \-self$get_values(...)
-  8. |       \-shinytest2:::app_get_values(...)
-  9. |         \-shinytest2:::app_httr_get(...)
- 10. |           +-base::withCallingHandlers(...)
- 11. |           \-httr::GET(url)
- 12. |             \-httr:::request_perform(req, hu$handle$handle)
- 13. |               +-httr:::request_fetch(req$output, req$url, handle)
- 14. |               \-httr:::request_fetch.write_memory(req$output, req$url, handle)
- 15. |                 \-curl::curl_fetch_memory(url, handle = handle)
- 16. +-curl:::raise_libcurl_error(...)
- 17. | \-base::stop(e)
- 18. \-shinytest2 (local) `&lt;fn&gt;`(`&lt;crl_rr__&gt;`)
- 19.   \-shinytest2:::app_abort(self, private, e)
- 20.     \-rlang::abort(message = NULL)
- 21.       \-rlang:::validate_signal_args(...)
- 22.         \-rlang:::check_character(message, call = env)
- 23.           \-rlang:::stop_input_type(...)
- 24.             \-rlang::abort(message, ..., call = call, arg = arg)</error>
+  <testsuite name="shinytest2-tm_g_gh_boxplot" timestamp="2025-07-24T13:11:56Z" hostname="80c2a4494d08" tests="6" skipped="6" failures="0" errors="0" time="2.699">
+    <testcase time="0.56" classname="shinytest2_tm_g_gh_boxplot" name="toggle_slider_module_widgets_are_initialized_with_proper_values">
+      <skipped message="Reason: On CRAN ('test-shinytest2-tm_g_gh_boxplot.R:25:3')"/>
     </testcase>
-    <testcase time="9.739" classname="shinytest2_tm_g_gh_boxplot" name="toggle_slider_module_changing_the_sliderInput_sets_proper_numericInput_values">
-      <error type="error" message="Error in `app_find_node_id(self, private, input = input, output = output,  ('test-shinytest2-tm_g_gh_boxplot.R:43:3')">Error in `app_find_node_id(self, private, input = input, output = output, 
-    selector = selector)`: Cannot find HTML element with selector #teal-teal_modules-Box Plot-module-yrange_scale-toggle.shiny-bound-input
-Backtrace:
-    x
- 1. \-app_driver$click(sprintf("%s-yrange_scale-toggle", app_driver$active_module_ns())) at test-shinytest2-tm_g_gh_boxplot.R:43:3
- 2.   \-super$click(...)
- 3.     \-shinytest2:::app_click(...)
- 4.       \-shinytest2:::app_find_node_id(self, private, input = input, output = output, selector = selector)
- 5.         \-shinytest2:::app_abort(...)
- 6.           \-rlang::abort(..., app = self, call = call)</error>
+    <testcase time="0.5" classname="shinytest2_tm_g_gh_boxplot" name="toggle_slider_module_changing_the_sliderInput_sets_proper_numericInput_values">
+      <skipped message="Reason: On CRAN ('test-shinytest2-tm_g_gh_boxplot.R:38:3')"/>
     </testcase>
-    <testcase time="9.178" classname="shinytest2_tm_g_gh_boxplot" name="toggle_slider_module_changing_the_numericInputs_within_the_sliderInput_range_sets_proper_sliderInput_values">
-      <error type="error" message="Error in `app_find_node_id(self, private, input = input, output = output,  ('test-shinytest2-tm_g_gh_boxplot.R:55:5')">Error in `app_find_node_id(self, private, input = input, output = output, 
-    selector = selector)`: Cannot find HTML element with selector #teal-teal_modules-Box Plot-module-yrange_scale-toggle.shiny-bound-input
-Backtrace:
-    x
- 1. \-app_driver$click(sprintf("%s-yrange_scale-toggle", app_driver$active_module_ns())) at test-shinytest2-tm_g_gh_boxplot.R:55:5
- 2.   \-super$click(...)
- 3.     \-shinytest2:::app_click(...)
- 4.       \-shinytest2:::app_find_node_id(self, private, input = input, output = output, selector = selector)
- 5.         \-shinytest2:::app_abort(...)
- 6.           \-rlang::abort(..., app = self, call = call)</error>
+    <testcase time="0.412" classname="shinytest2_tm_g_gh_boxplot" name="toggle_slider_module_changing_the_numericInputs_within_the_sliderInput_range_sets_proper_sliderInput_values">
+      <skipped message="Reason: On CRAN ('test-shinytest2-tm_g_gh_boxplot.R:54:5')"/>
     </testcase>
-    <testcase time="8.944" classname="shinytest2_tm_g_gh_boxplot" name="toggle_slider_module_changing_the_numericInputs_outside_the_sliderInput_range_sets_proper_sliderInput_values_and_range">
-      <error type="error" message="Error in `app_find_node_id(self, private, input = input, output = output,  ('test-shinytest2-tm_g_gh_boxplot.R:89:5')">Error in `app_find_node_id(self, private, input = input, output = output, 
-    selector = selector)`: Cannot find HTML element with selector #teal-teal_modules-Box Plot-module-yrange_scale-toggle.shiny-bound-input
-Backtrace:
-    x
- 1. \-app_driver$click(sprintf("%s-yrange_scale-toggle", app_driver$active_module_ns())) at test-shinytest2-tm_g_gh_boxplot.R:89:5
- 2.   \-super$click(...)
- 3.     \-shinytest2:::app_click(...)
- 4.       \-shinytest2:::app_find_node_id(self, private, input = input, output = output, selector = selector)
- 5.         \-shinytest2:::app_abort(...)
- 6.           \-rlang::abort(..., app = self, call = call)</error>
+    <testcase time="0.404" classname="shinytest2_tm_g_gh_boxplot" name="toggle_slider_module_changing_the_numericInputs_outside_the_sliderInput_range_sets_proper_sliderInput_values_and_range">
+      <skipped message="Reason: On CRAN ('test-shinytest2-tm_g_gh_boxplot.R:88:5')"/>
     </testcase>
-    <testcase time="9.158" classname="shinytest2_tm_g_gh_boxplot" name="toggle_slider_module_changing_the_numericInputs_within_the_rage_sets_back_the_sliderInput_range_to_initial_range">
-      <error type="error" message="Error in `app_find_node_id(self, private, input = input, output = output,  ('test-shinytest2-tm_g_gh_boxplot.R:122:5')">Error in `app_find_node_id(self, private, input = input, output = output, 
-    selector = selector)`: Cannot find HTML element with selector #teal-teal_modules-Box Plot-module-yrange_scale-toggle.shiny-bound-input
-Backtrace:
-    x
- 1. \-app_driver$click(sprintf("%s-yrange_scale-toggle", app_driver$active_module_ns())) at test-shinytest2-tm_g_gh_boxplot.R:122:5
- 2.   \-super$click(...)
- 3.     \-shinytest2:::app_click(...)
- 4.       \-shinytest2:::app_find_node_id(self, private, input = input, output = output, selector = selector)
- 5.         \-shinytest2:::app_abort(...)
- 6.           \-rlang::abort(..., app = self, call = call)</error>
+    <testcase time="0.413" classname="shinytest2_tm_g_gh_boxplot" name="toggle_slider_module_changing_the_numericInputs_within_the_rage_sets_back_the_sliderInput_range_to_initial_range">
+      <skipped message="Reason: On CRAN ('test-shinytest2-tm_g_gh_boxplot.R:121:5')"/>
     </testcase>
-    <testcase time="9.98" classname="shinytest2_tm_g_gh_boxplot" name="toggle_slider_module_changing_dependant_widgets_outside_sets_proper_sliderInput_and_numericInput_values">
-      <error type="error" message="Error in `rlang::abort(..., app = self, call = call)`: `message` must be a character vector, not a &lt;curl_error_url_malformat&gt; object. ('test-shinytest2-tm_g_gh_boxplot.R:158:5')">Error in `rlang::abort(..., app = self, call = call)`: `message` must be a character vector, not a &lt;curl_error_url_malformat&gt; object.
-Backtrace:
-     x
-  1. +-testthat::expect_identical(...) at test-shinytest2-tm_g_gh_boxplot.R:158:5
-  2. | \-testthat::quasi_label(enquo(object), label, arg = "object")
-  3. |   \-rlang::eval_bare(expr, quo_get_env(quo))
-  4. +-app_driver$get_active_module_input("yrange_scale-slider")
-  5. | \-self$get_value(...)
-  6. |   \-shinytest2:::app_get_value(...)
-  7. |     \-self$get_values(...)
-  8. |       \-shinytest2:::app_get_values(...)
-  9. |         \-shinytest2:::app_httr_get(...)
- 10. |           +-base::withCallingHandlers(...)
- 11. |           \-httr::GET(url)
- 12. |             \-httr:::request_perform(req, hu$handle$handle)
- 13. |               +-httr:::request_fetch(req$output, req$url, handle)
- 14. |               \-httr:::request_fetch.write_memory(req$output, req$url, handle)
- 15. |                 \-curl::curl_fetch_memory(url, handle = handle)
- 16. +-curl:::raise_libcurl_error(...)
- 17. | \-base::stop(e)
- 18. \-shinytest2 (local) `&lt;fn&gt;`(`&lt;crl_rr__&gt;`)
- 19.   \-shinytest2:::app_abort(self, private, e)
- 20.     \-rlang::abort(message = NULL)
- 21.       \-rlang:::validate_signal_args(...)
- 22.         \-rlang:::check_character(message, call = env)
- 23.           \-rlang:::stop_input_type(...)
- 24.             \-rlang::abort(message, ..., call = call, arg = arg)</error>
+    <testcase time="0.41" classname="shinytest2_tm_g_gh_boxplot" name="toggle_slider_module_changing_dependant_widgets_outside_sets_proper_sliderInput_and_numericInput_values">
+      <skipped message="Reason: On CRAN ('test-shinytest2-tm_g_gh_boxplot.R:155:5')"/>
     </testcase>
   </testsuite>
 </testsuites>
