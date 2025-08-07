@@ -46,6 +46,7 @@
 #'     "B: Placebo" = "Placebo",
 #'     "C: Combination" = "Combination"
 #'   )
+#'   set.seed(1) # @linksto ADSL ADLB
 #'   ADSL <- rADSL
 #'   ADLB <- rADLB
 #'   .var_labels <- lapply(ADLB, function(x) attributes(x)$label)
