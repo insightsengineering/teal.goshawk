@@ -31,8 +31,7 @@ tm_g_gh_density_distribution_plot(
 \arguments{
 \item{label}{menu item label of the module in the teal app.}
 
-\item{dataname}{analysis data passed to the data argument of \code{\link[teal]{init}}. E.g. \code{ADaM} structured
-laboratory data frame \code{ADLB}.}
+\item{dataname}{analysis data passed to the data argument of \code{\link[teal]{init}}. E.g. \code{ADaM} structured}
 
 \item{param_var}{name of variable containing biomarker codes e.g. \code{PARAMCD}.}
 
