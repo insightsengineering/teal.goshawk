@@ -4,93 +4,14 @@
 \alias{tm_g_gh_scatterplot}
 \title{Scatter Plot Teal Module For Biomarker Analysis}
 \usage{
-tm_g_gh_scatterplot(
-  label,
-  dataname,
-  param_var,
-  param,
-  xaxis_var,
-  yaxis_var,
-  trt_group,
-  color_manual = NULL,
-  shape_manual = NULL,
-  facet_ncol = 2,
-  trt_facet = FALSE,
-  reg_line = FALSE,
-  rotate_xlab = FALSE,
-  hline = NULL,
-  vline = NULL,
-  plot_height = c(500, 200, 2000),
-  plot_width = NULL,
-  font_size = c(12, 8, 20),
-  dot_size = c(1, 1, 12),
-  reg_text_size = c(3, 3, 10),
-  pre_output = NULL,
-  post_output = NULL,
-  transformators = list()
-)
+tm_g_gh_scatterplot(...)
 }
 \arguments{
-\item{label}{menu item label of the module in the teal app.}
-
-\item{dataname}{analysis data passed to the data argument of \code{\link[teal]{init}}. E.g. \code{ADaM} structured
-laboratory data frame \code{ADLB}.}
-
-\item{param_var}{name of variable containing biomarker codes e.g. \code{PARAMCD}.}
-
-\item{param}{biomarker selected.}
-
-\item{xaxis_var}{name of variable containing biomarker results displayed on \code{x-axis} e.g. \code{BASE}.}
-
-\item{yaxis_var}{name of variable containing biomarker results displayed on \code{y-axis} e.g. \code{AVAL}.}
-
-\item{trt_group}{\code{\link[teal.transform]{choices_selected}} object with available choices and pre-selected option
-for variable names representing treatment group e.g. \code{ARM}.}
-
-\item{color_manual}{vector of colors applied to treatment values.}
-
-\item{shape_manual}{vector of symbols applied to \code{LOQ} values.}
-
-\item{facet_ncol}{numeric value indicating number of facets per row.}
-
-\item{trt_facet}{facet by treatment group \code{trt_group}.}
-
-\item{reg_line}{include regression line and annotations for slope and coefficient in visualization. Use with facet
-TRUE.}
-
-\item{rotate_xlab}{45 degree rotation of \code{x-axis} values.}
-
-\item{hline}{y-axis value to position of horizontal line.}
-
-\item{vline}{x-axis value to position a vertical line.}
-
-\item{plot_height}{controls plot height.}
-
-\item{plot_width}{optional, controls plot width.}
-
-\item{font_size}{font size control for title, \code{x-axis} label, \code{y-axis} label and legend.}
-
-\item{dot_size}{plot dot size.}
-
-\item{reg_text_size}{font size control for regression line annotations.}
-
-\item{pre_output}{(\code{shiny.tag}) optional,\cr
-with text placed before the output to put the output into context. For example a title.}
-
-\item{post_output}{(\code{shiny.tag}) optional, with text placed after the output to put the output
-into context. For example the \code{\link[shiny:helpText]{shiny::helpText()}} elements are useful.}
-
-\item{transformators}{(\code{list} of \code{teal_transform_module}) that will be applied to transform module's data input.
-To learn more check \code{vignette("transform-input-data", package = "teal")}.}
+\item{...}{function is deprecated.}
 }
 \description{
 \ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#deprecated}{\figure{lifecycle-deprecated.svg}{options: alt='[Deprecated]'}}}{\strong{[Deprecated]}}
 
-\code{tm_g_gh_scatterplot} is deprecated. Please use \link{tm_g_gh_correlationplot}
-instead.
-}
-\author{
-Nick Paszty (npaszty) paszty.nicholas@gene.com
-
-Balazs Toth (tothb2)  toth.balazs@gene.com
+\code{tm_g_gh_scatterplot} is deprecated.
+Please use \link{tm_g_gh_correlationplot} instead.
 }
