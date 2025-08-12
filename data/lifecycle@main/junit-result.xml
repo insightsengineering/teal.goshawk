@@ -1,23 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <testsuites>
-  <testsuite name="shinytest2-tm_g_gh_boxplot" timestamp="2025-08-12T07:32:42Z" hostname="672e3615839a" tests="6" skipped="6" failures="0" errors="0" time="2.738">
-    <testcase time="0.56" classname="shinytest2_tm_g_gh_boxplot" name="toggle_slider_module_widgets_are_initialized_with_proper_values">
-      <skipped message="Reason: On CRAN ('test-shinytest2-tm_g_gh_boxplot.R:25:3')"/>
-    </testcase>
-    <testcase time="0.509" classname="shinytest2_tm_g_gh_boxplot" name="toggle_slider_module_changing_the_sliderInput_sets_proper_numericInput_values">
-      <skipped message="Reason: On CRAN ('test-shinytest2-tm_g_gh_boxplot.R:38:3')"/>
-    </testcase>
-    <testcase time="0.422" classname="shinytest2_tm_g_gh_boxplot" name="toggle_slider_module_changing_the_numericInputs_within_the_sliderInput_range_sets_proper_sliderInput_values">
-      <skipped message="Reason: On CRAN ('test-shinytest2-tm_g_gh_boxplot.R:54:5')"/>
-    </testcase>
-    <testcase time="0.409" classname="shinytest2_tm_g_gh_boxplot" name="toggle_slider_module_changing_the_numericInputs_outside_the_sliderInput_range_sets_proper_sliderInput_values_and_range">
-      <skipped message="Reason: On CRAN ('test-shinytest2-tm_g_gh_boxplot.R:88:5')"/>
-    </testcase>
-    <testcase time="0.419" classname="shinytest2_tm_g_gh_boxplot" name="toggle_slider_module_changing_the_numericInputs_within_the_rage_sets_back_the_sliderInput_range_to_initial_range">
-      <skipped message="Reason: On CRAN ('test-shinytest2-tm_g_gh_boxplot.R:121:5')"/>
-    </testcase>
-    <testcase time="0.419" classname="shinytest2_tm_g_gh_boxplot" name="toggle_slider_module_changing_dependant_widgets_outside_sets_proper_sliderInput_and_numericInput_values">
-      <skipped message="Reason: On CRAN ('test-shinytest2-tm_g_gh_boxplot.R:155:5')"/>
-    </testcase>
+  <testsuite name="shinytest2-tm_g_gh_boxplot" timestamp="2025-08-12T07:32:28Z" hostname="6f62b72688f7" tests="9" skipped="0" failures="0" errors="0" time="100.03">
+    <testcase time="10.077" classname="shinytest2_tm_g_gh_boxplot" name="toggle_slider_module_widgets_are_initialized_with_proper_values"/>
+    <testcase time="2.981" classname="shinytest2_tm_g_gh_boxplot" name="toggle_slider_module_widgets_are_initialized_with_proper_values"/>
+    <testcase time="0.0609999999999999" classname="shinytest2_tm_g_gh_boxplot" name="toggle_slider_module_widgets_are_initialized_with_proper_values"/>
+    <testcase time="14.711" classname="shinytest2_tm_g_gh_boxplot" name="toggle_slider_module_changing_the_sliderInput_sets_proper_numericInput_values"/>
+    <testcase time="0.0509999999999984" classname="shinytest2_tm_g_gh_boxplot" name="toggle_slider_module_changing_the_sliderInput_sets_proper_numericInput_values"/>
+    <testcase time="20.15" classname="shinytest2_tm_g_gh_boxplot" name="toggle_slider_module_changing_the_numericInputs_within_the_sliderInput_range_sets_proper_sliderInput_values"/>
+    <testcase time="20.229" classname="shinytest2_tm_g_gh_boxplot" name="toggle_slider_module_changing_the_numericInputs_outside_the_sliderInput_range_sets_proper_sliderInput_values_and_range"/>
+    <testcase time="20.064" classname="shinytest2_tm_g_gh_boxplot" name="toggle_slider_module_changing_the_numericInputs_within_the_rage_sets_back_the_sliderInput_range_to_initial_range"/>
+    <testcase time="11.706" classname="shinytest2_tm_g_gh_boxplot" name="toggle_slider_module_changing_dependant_widgets_outside_sets_proper_sliderInput_and_numericInput_values"/>
   </testsuite>
 </testsuites>
