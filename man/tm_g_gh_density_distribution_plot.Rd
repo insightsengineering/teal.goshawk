@@ -31,15 +31,6 @@ tm_g_gh_density_distribution_plot(
 \arguments{
 \item{label}{menu item label of the module in the teal app.}
 
-\item{dataname}{analysis data passed to the data argument of \code{\link[teal]{init}}. E.g. \code{ADaM} structured
-laboratory data frame \code{ADLB}.}
-
-\item{param_var}{name of variable containing biomarker codes e.g. \code{PARAMCD}.}
-
-\item{param}{biomarker selected.}
-
-\item{xaxis_var}{name of variable containing biomarker results displayed on \code{x-axis} e.g. \code{BASE}.}
-
 \item{trt_group}{\code{\link[teal.transform]{choices_selected}} object with available choices and pre-selected option
 for variable names representing treatment group e.g. \code{ARM}.}
 
