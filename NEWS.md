@@ -1,4 +1,7 @@
-# teal.goshawk 0.3.0.9011
+# teal.goshawk 0.4.0
+
+### Enhancements
+- Improved the layout and appearance of the app using `bslib` components.
 
 ### Miscellaneous
 * Fix UI elements issue, that did not refresh when filter panel filters were removed (#352, #288).
