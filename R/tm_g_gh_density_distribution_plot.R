@@ -20,9 +20,12 @@
 #' @param facet_ncol numeric value indicating number of facets per row.
 #' @param comb_line display combined treatment line toggle.
 #' @param rotate_xlab 45 degree rotation of `x-axis` values.
+#' @param dataname analysis data passed to the data argument of \code{\link[teal]{init}}. E.g. `ADaM` structured
+#' @param param_var name of variable containing biomarker codes e.g. \code{PARAMCD}.
+#' @param param biomarker selected.
+#' @param xaxis_var name of variable containing biomarker results displayed on `x-axis` e.g. \code{BASE}.
 #'
 #' @inheritParams teal.widgets::standard_layout
-#' @inheritParams tm_g_gh_scatterplot
 #' @inheritParams teal::module
 #'
 #'
@@ -47,6 +50,7 @@
 #'     "B: Placebo" = "Placebo",
 #'     "C: Combination" = "Combination"
 #'   )
+#'   set.seed(1) # @linksto ADSL ADLB
 #'   ADSL <- rADSL
 #'   ADLB <- rADLB
 #'   .var_labels <- lapply(ADLB, function(x) attributes(x)$label)
@@ -425,7 +429,6 @@ srv_g_density_distribution_plot <- function(id, # nolint
       verbatim_content = reactive(code()),
       title = "Show R Code for Density Distribution Plot"
     )
-
     create_table
   })
 }

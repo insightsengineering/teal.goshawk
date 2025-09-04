@@ -65,7 +65,7 @@
 #'     "B: Placebo" = "Placebo",
 #'     "C: Combination" = "Combination"
 #'   )
-#'   set.seed(1)
+#'   set.seed(1) # @linksto ADSL ADLB
 #'   ADSL <- rADSL
 #'   ADLB <- rADLB
 #'   .var_labels <- lapply(ADLB, function(x) attributes(x)$label)
@@ -512,8 +512,6 @@ srv_g_boxplot <- function(id,
     })
 
     code <- reactive(teal.code::get_code(joined_qenvs()))
-
-
 
     # highlight plot area
     reactive_df <- debounce(reactive({

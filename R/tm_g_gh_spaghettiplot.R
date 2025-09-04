@@ -74,7 +74,7 @@
 #'     "B: Placebo" = "Placebo",
 #'     "C: Combination" = "Combination"
 #'   )
-#'   set.seed(1)
+#'   set.seed(1) # @linksto ADSL ADLB
 #'   ADSL <- rADSL
 #'   ADLB <- rADLB
 #'   .var_labels <- lapply(ADLB, function(x) attributes(x)$label)
@@ -532,8 +532,6 @@ srv_g_spaghettiplot <- function(id,
 
 
     code <- reactive(teal.code::get_code(plot_q()))
-
-
 
     reactive_df <- debounce(reactive({
       plot_brush <- plot_data$brush()

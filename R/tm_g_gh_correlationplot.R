@@ -73,7 +73,7 @@
 #'   # assign LOQ flag symbols: circles for "N" and triangles for "Y", squares for "NA"
 #'   .shape_manual <- c("N" = 1, "Y" = 2, "NA" = 0)
 #'
-#'   set.seed(1)
+#'   set.seed(1) # @linksto ADSL ADLB
 #'   ADSL <- rADSL
 #'   ADLB <- rADLB
 #'   .var_labels <- lapply(ADLB, function(x) attributes(x)$label)
@@ -838,8 +838,6 @@ srv_g_correlationplot <- function(id,
     )
 
     code <- reactive(teal.code::get_code(plot_q()))
-
-
 
     reactive_df <- debounce(reactive({
       req(iv_r()$is_valid())

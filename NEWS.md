@@ -1,7 +1,13 @@
-# teal.goshawk 0.3.0.9005
+# teal.goshawk 0.4.0.9000
+
+# teal.goshawk 0.4.0
+
+### Enhancements
+- Improved the layout and appearance of the app using `bslib` components.
 
 ### Miscellaneous
-* Fix UI elements issue, that did not refresh when filter panel filters were removed (#352, #288)
+* Fix UI elements issue, that did not refresh when filter panel filters were removed (#352, #288).
+* `tm_g_gh_scatterplot` was hard deprecated (#361).
 
 # teal.goshawk 0.3.0
 
