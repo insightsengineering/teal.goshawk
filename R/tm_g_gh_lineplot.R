@@ -700,10 +700,7 @@ srv_lineplot <- function(id,
       } else if (methods::is(xtick, "waiver")) {
         private_qenv <- teal.code::eval_code(
           object = private_qenv,
-          code = "
-            xtick <- ggplot2::waiver()
-            xlabel <- ggplot2::waiver()
-          "
+          code = "xtick <- ggplot2::waiver();xlabel <- ggplot2::waiver()"
         )
       }
 
