@@ -67,8 +67,8 @@ VignetteBuilder:
     knitr,
     rmarkdown
 Remotes:
-    insightsengineering/teal@teal_reportable,
-    insightsengineering/teal.reporter@teal_reportable,
+    insightsengineering/teal@main,
+    insightsengineering/teal.reporter@main,
     insightsengineering/goshawk
 Config/Needs/verdepcheck: insightsengineering/goshawk, rstudio/shiny,
     insightsengineering/teal, insightsengineering/teal.slice,
