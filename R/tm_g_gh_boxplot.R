@@ -420,10 +420,25 @@ srv_g_boxplot <- function(id,
       }
 
       obj <- anl_q()$qenv
+
+      constraint_description <- c(
+        paste("\nFacet By:", if (length(input$facet_var) != 0) input$facet_var else "None"),
+        paste("\nSelect an X-axis Variable:", input$xaxis_var)
+      )
+
       teal.reporter::teal_card(obj) <-
         c(
           teal.reporter::teal_card("# Box Plot"),
           teal.reporter::teal_card(obj),
+          teal.reporter::teal_card(
+            "## Selected Options",
+            formatted_data_constraint(
+              constraint_var = input$xaxis_param,
+              constraint_range_min = input$constraint_range_min,
+              constraint_range_max = input$constraint_range_max
+            ),
+            constraint_description
+          ),
           teal.reporter::teal_card("## Plot")
         )
 
