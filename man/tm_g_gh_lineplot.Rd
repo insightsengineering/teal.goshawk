@@ -127,7 +127,7 @@ To learn more check \code{vignette("transform-input-data", package = "teal")}.}
 This teal module renders the UI and calls the function that creates a line plot.
 }
 \examples{
-\dontshow{if (require("nestcolor")) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
+\dontshow{if (require("nestcolor")) withAutoprint(\{ # examplesIf}
 # Example using ADaM structure analysis dataset.
 data <- teal_data()
 data <- within(data, {
