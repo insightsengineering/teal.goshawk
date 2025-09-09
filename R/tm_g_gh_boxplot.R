@@ -550,6 +550,6 @@ srv_g_boxplot <- function(id,
       verbatim_content = reactive(code()),
       title = "Show R Code for Boxplot"
     )
-    create_plot
+    set_chunk_dims(boxplot_data, create_plot)
   })
 }

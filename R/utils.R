@@ -91,3 +91,93 @@ get_choices <- function(choices) {
     choices
   }
 }
+
+#' Set the attributes of the last chunk outputs
+#'
+#' @param teal_card (\code{teal_card}) object to modify.
+#' @param attributes (\code{list}) of attributes to set on the last chunk outputs.
+#' @param n (\code{integer(1)}) number of the last element of \code{teal_card} to modify.
+#' it will only change \code{chunk_output} objects.
+#' @param inner_classes (\code{character}) classes within \code{chunk_output} that should be modified.
+#' This can be used to only change \code{recordedplot}, \code{ggplot2} or other type of objects.
+#' @param quiet (\code{logical(1)}) whether to suppress warnings.
+#'
+#' @return The modified \code{teal_card} object
+#'
+#' @keywords internal
+set_chunk_attrs <- function(teal_card,
+                            attributes,
+                            n = 1,
+                            inner_classes = NULL,
+                            quiet = FALSE) {
+  checkmate::assert_class(teal_card, "teal_card")
+  checkmate::assert_list(attributes, names = "unique")
+  checkmate::assert_int(n, lower = 1)
+  checkmate::assert_character(inner_classes, null.ok = TRUE)
+  checkmate::assert_flag(quiet)
+
+  if (!inherits(teal_card[[length(teal_card)]], "chunk_output")) {
+    if (!quiet) {
+      warning("The last element of the `teal_card` is not a `chunk_output` object. No attributes were modified.")
+    }
+    return(teal_card)
+  }
+
+  for (ix in seq_len(length(teal_card))) {
+    if (ix > n) {
+      break
+    }
+    current_ix <- length(teal_card) + 1 - ix
+    if (!inherits(teal_card[[current_ix]], "chunk_output")) {
+      if (!quiet) {
+        warning(
+          "The ", ix,
+          " to last element of the `teal_card` is not a `chunk_output` object. Skipping any further modifications."
+        )
+      }
+      return(teal_card)
+    }
+
+    if (length(inner_classes) > 0 && !checkmate::test_multi_class(teal_card[[current_ix]][[1]], inner_classes)) {
+      next
+    }
+
+    attributes(teal_card[[current_ix]]) <- utils::modifyList(
+      attributes(teal_card[[current_ix]]),
+      attributes
+    )
+  }
+
+  teal_card
+}
+
+#' Create a reactive that sets plot dimensions on a \code{teal_card}
+#'
+#' This is a convenience function that creates a reactive expression that
+#' automatically sets the \code{dev.width} and \code{dev.height} attributes on the last
+#' chunk outputs of a \code{teal_card} based on plot dimensions from a plot widget.
+#'
+#' @param pws (\code{plot_widget}) plot widget that provides dimensions via \code{dim()} method
+#' @param decorated_output_q (\code{reactive}) reactive expression that returns a \code{teal_card}
+#' @param inner_classes (\code{character}) classes within \code{chunk_output} that should be modified.
+#' This can be used to only change \code{recordedplot}, \code{ggplot2} or other type of objects.
+#'
+#' @return A reactive expression that returns the \code{teal_card} with updated dimensions
+#'
+#' @keywords internal
+set_chunk_dims <- function(pws, decorated_output_q, inner_classes = NULL) {
+  checkmate::assert_class(pws, "plot_widget")
+  checkmate::assert_class(decorated_output_q, "reactive")
+  checkmate::assert_character(inner_classes, null.ok = TRUE)
+
+  reactive({
+    dims <- req(pws$dim())
+    q <- req(decorated_output_q())
+    teal.reporter::teal_card(q) <- set_chunk_attrs(
+      teal.reporter::teal_card(q),
+      list(dev.width = dims[[1]], dev.height = dims[[2]]),
+      inner_classes = inner_classes
+    )
+    q
+  })
+}

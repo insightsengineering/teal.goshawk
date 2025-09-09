@@ -869,6 +869,6 @@ srv_g_correlationplot <- function(id,
       verbatim_content = reactive(code()),
       title = "Show R Code for Correlation Plot"
     )
-    plot_q
+    set_chunk_dims(plot_data, plot_q)
   })
 }

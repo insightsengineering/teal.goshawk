@@ -770,7 +770,7 @@ srv_lineplot <- function(id,
       verbatim_content = reactive(code()),
       title = "Show R Code for Line Plot"
     )
-
-    plot_q
+    
+    set_chunk_dims(plot_data, plot_q)
   })
 }
