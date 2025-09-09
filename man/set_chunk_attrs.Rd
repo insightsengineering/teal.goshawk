@@ -22,11 +22,6 @@ it will only change \code{chunk_output} objects.}
 
 \item{inner_classes}{(\code{character}) classes within \code{chunk_output} that should be modified.
 This can be used to only change \code{recordedplot}, \code{ggplot2} or other type of objects.}
-
-\item{quiet}{(\code{logical(1)}) whether to suppress warnings.}
-}
-\value{
-The modified \code{teal_card} object
 }
 \description{
 Set the attributes of the last chunk outputs
