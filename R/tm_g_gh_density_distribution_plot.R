@@ -430,7 +430,7 @@ srv_g_density_distribution_plot <- function(id, # nolint
       title = "Show R Code for Density Distribution Plot"
     )
     creat_plot_dims <- set_chunk_dims(plot_data, create_plot)
-    
+
     c(create_plot_dims, create_table)
   })
 }
