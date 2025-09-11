@@ -374,15 +374,28 @@ srv_g_density_distribution_plot <- function(id, # nolint
       )
     }), 800)
 
+    plot_r <- reactive({
+      create_plot()[["p"]]
+    })
+
+    plot_data <- teal.widgets::plot_with_settings_srv(
+      id = "plot",
+      plot_r = plot_r,
+      height = plot_height,
+      width = plot_width,
+    )
+
+    create_plot_dims <- set_chunk_dims(plot_data, create_plot)
+
     create_table <- debounce(reactive({
       req(iv_r()$is_valid())
-      req(create_plot())
+      req(create_plot_dims())
       param <- input$xaxis_param
       xaxis_var <- input$xaxis_var
       font_size <- input$font_size
       trt_group <- input$trt_group
 
-      obj <- create_plot()
+      obj <- create_plot_dims()
       teal.reporter::teal_card(obj) <- c(teal.reporter::teal_card(obj), "## Descriptive Statistics")
       teal.code::eval_code(
         object = obj,
@@ -399,17 +412,6 @@ srv_g_density_distribution_plot <- function(id, # nolint
         })
       )
     }), 800)
-
-    plot_r <- reactive({
-      create_plot()[["p"]]
-    })
-
-    plot_data <- teal.widgets::plot_with_settings_srv(
-      id = "plot",
-      plot_r = plot_r,
-      height = plot_height,
-      width = plot_width,
-    )
 
     output$table_ui <- DT::renderDataTable({
       req(create_table())
@@ -429,8 +431,7 @@ srv_g_density_distribution_plot <- function(id, # nolint
       verbatim_content = reactive(code()),
       title = "Show R Code for Density Distribution Plot"
     )
-    creat_plot_dims <- set_chunk_dims(plot_data, create_plot)
 
-    c(create_plot_dims, create_table)
+    create_table
   })
 }
