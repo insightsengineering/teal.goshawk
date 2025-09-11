@@ -50,6 +50,9 @@
 #' @author Nick Paszty (npaszty) paszty.nicholas@gene.com
 #' @author Balazs Toth (tothb2)  toth.balazs@gene.com
 #'
+#' @inheritSection teal::example_module Reporting
+#'
+#'
 #' @examples
 #' # Example using ADaM structure analysis dataset.
 #' data <- teal_data()
@@ -278,10 +281,6 @@ ui_g_correlationplot <- function(id, ...) {
   teal.widgets::standard_layout(
     output = templ_ui_output_datatable(ns),
     encoding = tags$div(
-      ### Reporter
-      teal.reporter::add_card_button_ui(ns("add_reporter"), label = "Add Report Card"),
-      tags$br(), tags$br(),
-      ###
       templ_ui_dataname(a$dataname),
       uiOutput(ns("axis_selections")),
       templ_ui_constraint(ns, "X-Axis Data Constraint"), # required by constr_anl_q
@@ -352,8 +351,6 @@ ui_g_correlationplot <- function(id, ...) {
 
 srv_g_correlationplot <- function(id,
                                   data,
-                                  reporter,
-                                  filter_panel_api,
                                   dataname,
                                   param_var,
                                   trt_group,
@@ -367,8 +364,6 @@ srv_g_correlationplot <- function(id,
                                   vline_vars_colors,
                                   vline_vars_labels,
                                   module_args) {
-  with_reporter <- !missing(reporter) && inherits(reporter, "Reporter")
-  with_filter <- !missing(filter_panel_api) && inherits(filter_panel_api, "FilterPanelAPI")
   checkmate::assert_class(data, "reactive")
   checkmate::assert_class(shiny::isolate(data()), "teal_data")
 
@@ -775,8 +770,16 @@ srv_g_correlationplot <- function(id,
       validate(need(input$trt_group, "Please select a treatment variable"))
       trt_group <- input$trt_group
 
+      obj <- plot_data_transpose()$qenv
+      teal.reporter::teal_card(obj) <-
+        c(
+          teal.reporter::teal_card("# Correlation Plot"),
+          teal.reporter::teal_card(obj),
+          teal.reporter::teal_card("## Plot")
+        )
+
       teal.code::eval_code(
-        object = plot_data_transpose()$qenv,
+        object = obj,
         code = bquote({
           # re-establish treatment variable label
           p <- goshawk::g_correlationplot(
@@ -836,41 +839,6 @@ srv_g_correlationplot <- function(id,
 
     code <- reactive(teal.code::get_code(plot_q()))
 
-    ### REPORTER
-    if (with_reporter) {
-      card_fun <- function(comment, label) {
-        constraint_description <- paste(
-          "\nTreatment Variable Faceting:",
-          input$trt_facet,
-          "\nRegression Line:",
-          input$reg_line
-        )
-        card <- report_card_template_goshawk(
-          title = "Correlation Plot",
-          label = label,
-          with_filter = with_filter,
-          filter_panel_api = filter_panel_api,
-          constraint_list = list(
-            constraint_var = input$constraint_var,
-            constraint_range_min = input$constraint_range_min,
-            constraint_range_max = input$constraint_range_max
-          ),
-          constraint_description = constraint_description,
-          style = "verbatim"
-        )
-        card$append_text("Plot", "header3")
-        card$append_plot(plot_r(), dim = plot_data$dim())
-        if (!comment == "") {
-          card$append_text("Comment", "header3")
-          card$append_text(comment)
-        }
-        card$append_src(code())
-        card
-      }
-      teal.reporter::add_card_button_srv("add_reporter", reporter = reporter, card_fun = card_fun)
-    }
-    ###
-
     reactive_df <- debounce(reactive({
       req(iv_r()$is_valid())
       plot_brush <- plot_data$brush()
@@ -901,5 +869,6 @@ srv_g_correlationplot <- function(id,
       verbatim_content = reactive(code()),
       title = "Show R Code for Correlation Plot"
     )
+    set_chunk_dims(plot_data, plot_q)
   })
 }

@@ -31,6 +31,7 @@
 #'
 #' @author Nick Paszty (npaszty) paszty.nicholas@gene.com
 #' @author Balazs Toth (tothb2)  toth.balazs@gene.com
+#' @inheritSection teal::example_module Reporting
 #'
 #' @details None
 #'
@@ -195,10 +196,6 @@ ui_g_density_distribution_plot <- function(id, ...) {
       )
     ),
     encoding = tags$div(
-      ### Reporter
-      teal.reporter::add_card_button_ui(ns("add_reporter"), label = "Add Report Card"),
-      tags$br(), tags$br(),
-      ###
       templ_ui_dataname(a$dataname),
       uiOutput(ns("axis_selections")),
       templ_ui_constraint(ns, label = "Data Constraint"),
@@ -242,8 +239,6 @@ ui_g_density_distribution_plot <- function(id, ...) {
 
 srv_g_density_distribution_plot <- function(id, # nolint
                                             data,
-                                            reporter,
-                                            filter_panel_api,
                                             dataname,
                                             param_var,
                                             param,
@@ -253,8 +248,6 @@ srv_g_density_distribution_plot <- function(id, # nolint
                                             plot_height,
                                             plot_width,
                                             module_args) {
-  with_reporter <- !missing(reporter) && inherits(reporter, "Reporter")
-  with_filter <- !missing(filter_panel_api) && inherits(filter_panel_api, "FilterPanelAPI")
   checkmate::assert_class(data, "reactive")
   checkmate::assert_class(shiny::isolate(data()), "teal_data")
 
@@ -346,8 +339,16 @@ srv_g_density_distribution_plot <- function(id, # nolint
       # nolint end
 
 
+      obj <- anl_q()$qenv
+      teal.reporter::teal_card(obj) <-
+        c(
+          teal.reporter::teal_card("# Density Distribution Plot"),
+          teal.reporter::teal_card(obj),
+          teal.reporter::teal_card("## Plot")
+        )
+
       teal.code::eval_code(
-        object = anl_q()$qenv,
+        object = obj,
         code = bquote({
           p <- goshawk::g_density_distribution_plot(
             data = ANL,
@@ -373,16 +374,31 @@ srv_g_density_distribution_plot <- function(id, # nolint
       )
     }), 800)
 
+    plot_r <- reactive({
+      create_plot()[["p"]]
+    })
+
+    plot_data <- teal.widgets::plot_with_settings_srv(
+      id = "plot",
+      plot_r = plot_r,
+      height = plot_height,
+      width = plot_width,
+    )
+
+    create_plot_dims <- set_chunk_dims(plot_data, create_plot)
+
     create_table <- debounce(reactive({
       req(iv_r()$is_valid())
-      req(anl_q())
+      req(create_plot_dims())
       param <- input$xaxis_param
       xaxis_var <- input$xaxis_var
       font_size <- input$font_size
       trt_group <- input$trt_group
 
+      obj <- create_plot_dims()
+      teal.reporter::teal_card(obj) <- c(teal.reporter::teal_card(obj), "## Descriptive Statistics")
       teal.code::eval_code(
-        object = anl_q()$qenv,
+        object = obj,
         code = bquote({
           tbl <- goshawk::t_summarytable(
             data = ANL,
@@ -397,17 +413,6 @@ srv_g_density_distribution_plot <- function(id, # nolint
       )
     }), 800)
 
-    plot_r <- reactive({
-      create_plot()[["p"]]
-    })
-
-    plot_data <- teal.widgets::plot_with_settings_srv(
-      id = "plot",
-      plot_r = plot_r,
-      height = plot_height,
-      width = plot_width,
-    )
-
     output$table_ui <- DT::renderDataTable({
       req(create_table())
       tbl <- create_table()[["tbl"]]
@@ -419,12 +424,7 @@ srv_g_density_distribution_plot <- function(id, # nolint
         DT::formatRound(numeric_cols, 2)
     })
 
-    joined_qenvs <- reactive({
-      req(create_plot(), create_table())
-      c(create_plot(), create_table())
-    })
-
-    code <- reactive(teal.code::get_code(joined_qenvs()))
+    code <- reactive(teal.code::get_code(create_table()))
 
     teal.widgets::verbatim_popup_srv(
       id = "rcode",
@@ -432,35 +432,6 @@ srv_g_density_distribution_plot <- function(id, # nolint
       title = "Show R Code for Density Distribution Plot"
     )
 
-    ### REPORTER
-    if (with_reporter) {
-      card_fun <- function(comment, label) {
-        card <- report_card_template_goshawk(
-          title = "Density Distribution Plot",
-          label = label,
-          with_filter = with_filter,
-          filter_panel_api = filter_panel_api,
-          constraint_list = list(
-            constraint_var = input$constraint_var,
-            constraint_range_min = input$constraint_range_min,
-            constraint_range_max = input$constraint_range_max
-          )
-        )
-        card$append_text("Plot", "header3")
-        card$append_plot(plot_r(), dim = plot_data$dim())
-        card$append_text("Descriptive Statistics", "header3")
-        card$append_table(
-          create_table()[["tbl"]] %>% dplyr::mutate_if(is.numeric, round, 2)
-        )
-        if (!comment == "") {
-          card$append_text("Comment", "header3")
-          card$append_text(comment)
-        }
-        card$append_src(code())
-        card
-      }
-      teal.reporter::add_card_button_srv("add_reporter", reporter = reporter, card_fun = card_fun)
-    }
-    ###
+    create_table
   })
 }

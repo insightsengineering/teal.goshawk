@@ -42,6 +42,8 @@
 #' @author Jeff Tomlinson (tomlinsj) jeffrey.tomlinson@roche.com
 #' @author Balazs Toth (tothb2) toth.balazs@gene.com
 #'
+#' @inheritSection teal::example_module Reporting
+#'
 #' @return an \code{\link[teal]{module}} object
 #'
 #' @export
@@ -240,10 +242,6 @@ ui_g_boxplot <- function(id, ...) {
       )
     ),
     encoding = tags$div(
-      ### Reporter
-      teal.reporter::add_card_button_ui(ns("add_reporter"), label = "Add Report Card"),
-      tags$br(), tags$br(),
-      ###
       templ_ui_dataname(a$dataname),
       uiOutput(ns("axis_selections")),
       templ_ui_constraint(ns, label = "Data Constraint"), # required by constr_anl_q
@@ -287,8 +285,6 @@ ui_g_boxplot <- function(id, ...) {
 
 srv_g_boxplot <- function(id,
                           data,
-                          reporter,
-                          filter_panel_api,
                           dataname,
                           param_var,
                           trt_group,
@@ -299,8 +295,6 @@ srv_g_boxplot <- function(id,
                           hline_vars_colors,
                           hline_vars_labels,
                           module_args) {
-  with_reporter <- !missing(reporter) && inherits(reporter, "Reporter")
-  with_filter <- !missing(filter_panel_api) && inherits(filter_panel_api, "FilterPanelAPI")
   checkmate::assert_class(data, "reactive")
   checkmate::assert_class(shiny::isolate(data()), "teal_data")
 
@@ -383,7 +377,6 @@ srv_g_boxplot <- function(id,
 
     create_plot <- debounce(reactive({
       teal::validate_inputs(iv_r())
-
       req(anl_q())
       # nolint start
       param <- input$xaxis_param
@@ -426,7 +419,30 @@ srv_g_boxplot <- function(id,
         )
       }
 
-      anl_q()$qenv %>% teal.code::eval_code(
+      obj <- anl_q()$qenv
+
+      constraint_description <- c(
+        paste("\nFacet By:", if (length(input$facet_var) != 0) input$facet_var else "None"),
+        paste("\nSelect an X-axis Variable:", input$xaxis_var)
+      )
+
+      teal.reporter::teal_card(obj) <-
+        c(
+          teal.reporter::teal_card("# Box Plot"),
+          teal.reporter::teal_card(obj),
+          teal.reporter::teal_card(
+            "## Selected Options",
+            formatted_data_constraint(
+              constraint_var = input$xaxis_param,
+              constraint_range_min = input$constraint_range_min,
+              constraint_range_max = input$constraint_range_max
+            ),
+            constraint_description
+          ),
+          teal.reporter::teal_card("## Plot")
+        )
+
+      obj %>% teal.code::eval_code(
         code = bquote({
           p <- goshawk::g_boxplot(
             data = ANL,
@@ -512,41 +528,6 @@ srv_g_boxplot <- function(id,
 
     code <- reactive(teal.code::get_code(joined_qenvs()))
 
-    ### REPORTER
-    if (with_reporter) {
-      card_fun <- function(comment, label) {
-        constraint_description <- paste(
-          "\nFacet By:",
-          if (length(input$facet_var) != 0) input$facet_var else "None",
-          "\nSelect an X-axis Variable:",
-          input$xaxis_var
-        )
-        card <- report_card_template_goshawk(
-          title = "Box Plot",
-          label = label,
-          with_filter = with_filter,
-          filter_panel_api = filter_panel_api,
-          constraint_list = list(
-            constraint_var = input$constraint_var,
-            constraint_range_min = input$constraint_range_min,
-            constraint_range_max = input$constraint_range_max
-          ),
-          constraint_description = constraint_description,
-          style = "verbatim"
-        )
-        card$append_text("Plot", "header3")
-        card$append_plot(plot_r(), dim = boxplot_data$dim())
-        if (!comment == "") {
-          card$append_text("Comment", "header3")
-          card$append_text(comment)
-        }
-        card$append_src(code())
-        card
-      }
-      teal.reporter::add_card_button_srv("add_reporter", reporter = reporter, card_fun = card_fun)
-    }
-    ###
-
     # highlight plot area
     reactive_df <- debounce(reactive({
       boxplot_brush <- boxplot_data$brush()
@@ -584,5 +565,6 @@ srv_g_boxplot <- function(id,
       verbatim_content = reactive(code()),
       title = "Show R Code for Boxplot"
     )
+    set_chunk_dims(boxplot_data, create_plot)
   })
 }
