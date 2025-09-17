@@ -327,9 +327,6 @@ g_ui_spaghettiplot <- function(id, ...) {
           )
         )
       ),
-      forms = tagList(
-        teal.widgets::verbatim_popup_ui(ns("rcode"), "Show R code")
-      ),
       pre_output = a$pre_output,
       post_output = a$post_output
     )
