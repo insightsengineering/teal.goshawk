@@ -523,8 +523,6 @@ srv_g_boxplot <- function(id,
       c(create_plot(), create_table())
     })
 
-    code <- reactive(teal.code::get_code(joined_qenvs()))
-
     # highlight plot area
     reactive_df <- debounce(reactive({
       boxplot_brush <- boxplot_data$brush()
@@ -557,11 +555,6 @@ srv_g_boxplot <- function(id,
         DT::formatRound(numeric_cols, 4)
     })
 
-    teal.widgets::verbatim_popup_srv(
-      id = "rcode",
-      verbatim_content = reactive(code()),
-      title = "Show R Code for Boxplot"
-    )
     set_chunk_dims(boxplot_data, create_plot)
   })
 }

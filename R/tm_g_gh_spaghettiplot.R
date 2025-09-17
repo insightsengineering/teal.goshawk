@@ -528,8 +528,6 @@ srv_g_spaghettiplot <- function(id,
     )
 
 
-    code <- reactive(teal.code::get_code(plot_q()))
-
     reactive_df <- debounce(reactive({
       plot_brush <- plot_data$brush()
 
@@ -561,11 +559,6 @@ srv_g_spaghettiplot <- function(id,
         DT::formatRound(numeric_cols, 4)
     })
 
-    teal.widgets::verbatim_popup_srv(
-      id = "rcode",
-      verbatim_content = reactive(code()),
-      title = "Show R Code for Spaghetti Plot"
-    )
     set_chunk_dims(plot_data, plot_q)
   })
 }

@@ -760,14 +760,6 @@ srv_lineplot <- function(id,
       width = plot_width,
     )
 
-    code <- reactive(teal.code::get_code(plot_q()))
-
-    teal.widgets::verbatim_popup_srv(
-      id = "rcode",
-      verbatim_content = reactive(code()),
-      title = "Show R Code for Line Plot"
-    )
-
     set_chunk_dims(plot_data, plot_q)
   })
 }

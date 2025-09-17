@@ -421,14 +421,6 @@ srv_g_density_distribution_plot <- function(id, # nolint
         DT::formatRound(numeric_cols, 2)
     })
 
-    code <- reactive(teal.code::get_code(create_table()))
-
-    teal.widgets::verbatim_popup_srv(
-      id = "rcode",
-      verbatim_content = reactive(code()),
-      title = "Show R Code for Density Distribution Plot"
-    )
-
     create_table
   })
 }
