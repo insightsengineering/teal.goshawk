@@ -341,9 +341,6 @@ ui_g_correlationplot <- function(id, ...) {
         )
       )
     ),
-    forms = tagList(
-      teal.widgets::verbatim_popup_ui(ns("rcode"), "Show R code")
-    ),
     pre_output = a$pre_output,
     post_output = a$post_output
   )
@@ -837,8 +834,6 @@ srv_g_correlationplot <- function(id,
       brushing = TRUE
     )
 
-    code <- reactive(teal.code::get_code(plot_q()))
-
     reactive_df <- debounce(reactive({
       req(iv_r()$is_valid())
       plot_brush <- plot_data$brush()
@@ -864,11 +859,6 @@ srv_g_correlationplot <- function(id,
         DT::formatRound(numeric_cols, 4)
     })
 
-    teal.widgets::verbatim_popup_srv(
-      id = "rcode",
-      verbatim_content = reactive(code()),
-      title = "Show R Code for Correlation Plot"
-    )
     set_chunk_dims(plot_data, plot_q)
   })
 }
