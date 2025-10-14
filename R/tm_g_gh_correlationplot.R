@@ -772,7 +772,7 @@ srv_g_correlationplot <- function(id,
         c(
           teal.reporter::teal_card("# Correlation Plot"),
           teal.reporter::teal_card(obj),
-          teal.reporter::teal_card("## Plot")
+          teal.reporter::teal_card("### Plot")
         )
 
       teal.code::eval_code(

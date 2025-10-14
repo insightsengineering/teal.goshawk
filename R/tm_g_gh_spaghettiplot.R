@@ -475,7 +475,7 @@ srv_g_spaghettiplot <- function(id,
         c(
           teal.reporter::teal_card("# Spaghetti Plot"),
           teal.reporter::teal_card(obj),
-          teal.reporter::teal_card("## Plot")
+          teal.reporter::teal_card("### Plot")
         )
       teal.code::eval_code(
         object = obj,
