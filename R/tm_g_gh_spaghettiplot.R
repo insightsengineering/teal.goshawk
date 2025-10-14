@@ -334,7 +334,6 @@ g_ui_spaghettiplot <- function(id, ...) {
 }
 
 
-
 srv_g_spaghettiplot <- function(id,
                                 data,
                                 dataname,
