@@ -710,6 +710,7 @@ srv_lineplot <- function(id,
         c(
           teal.reporter::teal_card("# Line Plot"),
           teal.reporter::teal_card(obj),
+          teal.reporter::teal_card("## Module's output(s)"),
           teal.reporter::teal_card("### Plot")
         )
 

@@ -341,6 +341,7 @@ srv_g_density_distribution_plot <- function(id, # nolint
         c(
           teal.reporter::teal_card("# Density Distribution Plot"),
           teal.reporter::teal_card(obj),
+          teal.reporter::teal_card("## Module's output(s)"),
           teal.reporter::teal_card("### Plot")
         )
 

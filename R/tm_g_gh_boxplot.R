@@ -427,6 +427,7 @@ srv_g_boxplot <- function(id,
         c(
           teal.reporter::teal_card("# Box Plot"),
           teal.reporter::teal_card(obj),
+          teal.reporter::teal_card("## Module's output(s)"),
           teal.reporter::teal_card(
             "### Selected Options",
             formatted_data_constraint(
