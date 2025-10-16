@@ -425,7 +425,6 @@ srv_g_boxplot <- function(id,
 
       teal.reporter::teal_card(obj) <-
         c(
-          teal.reporter::teal_card("# Box Plot"),
           teal.reporter::teal_card(obj),
           teal.reporter::teal_card("## Module's output(s)"),
           teal.reporter::teal_card(
