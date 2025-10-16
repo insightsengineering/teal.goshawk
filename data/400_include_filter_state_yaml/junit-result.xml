@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <testsuites>
-  <testsuite name="shinytest2-tm_g_gh_boxplot" timestamp="2025-10-15T11:05:59Z" hostname="9583db293355" tests="6" skipped="0" failures="0" errors="6" time="0.282">
-    <testcase time="0.085" classname="shinytest2_tm_g_gh_boxplot" name="toggle_slider_module_widgets_are_initialized_with_proper_values">
+  <testsuite name="shinytest2-tm_g_gh_boxplot" timestamp="2025-10-16T11:16:24Z" hostname="a405f83fc14c" tests="6" skipped="0" failures="0" errors="6" time="0.277">
+    <testcase time="0.081" classname="shinytest2_tm_g_gh_boxplot" name="toggle_slider_module_widgets_are_initialized_with_proper_values">
       <error type="error" message="Error in `checkmate::assert_class(app, &quot;teal_app&quot;)`: argument &quot;app&quot; is missing, with no default ('test-shinytest2-tm_g_gh_boxplot.R:25:3')">Error in `checkmate::assert_class(app, "teal_app")`: argument "app" is missing, with no default
 Backtrace:
     x
@@ -12,7 +12,7 @@ Backtrace:
  5.       \-teal (local) initialize(...)
  6.         \-checkmate::assert_class(app, "teal_app")</error>
     </testcase>
-    <testcase time="0.081" classname="shinytest2_tm_g_gh_boxplot" name="toggle_slider_module_changing_the_sliderInput_sets_proper_numericInput_values">
+    <testcase time="0.083" classname="shinytest2_tm_g_gh_boxplot" name="toggle_slider_module_changing_the_sliderInput_sets_proper_numericInput_values">
       <error type="error" message="Error in `checkmate::assert_class(app, &quot;teal_app&quot;)`: argument &quot;app&quot; is missing, with no default ('test-shinytest2-tm_g_gh_boxplot.R:38:3')">Error in `checkmate::assert_class(app, "teal_app")`: argument "app" is missing, with no default
 Backtrace:
     x
@@ -23,7 +23,7 @@ Backtrace:
  5.       \-teal (local) initialize(...)
  6.         \-checkmate::assert_class(app, "teal_app")</error>
     </testcase>
-    <testcase time="0.042" classname="shinytest2_tm_g_gh_boxplot" name="toggle_slider_module_changing_the_numericInputs_within_the_sliderInput_range_sets_proper_sliderInput_values">
+    <testcase time="0.0410000000000001" classname="shinytest2_tm_g_gh_boxplot" name="toggle_slider_module_changing_the_numericInputs_within_the_sliderInput_range_sets_proper_sliderInput_values">
       <error type="error" message="Error in `checkmate::assert_class(app, &quot;teal_app&quot;)`: argument &quot;app&quot; is missing, with no default ('test-shinytest2-tm_g_gh_boxplot.R:54:5')">Error in `checkmate::assert_class(app, "teal_app")`: argument "app" is missing, with no default
 Backtrace:
     x
@@ -34,7 +34,7 @@ Backtrace:
  5.       \-teal (local) initialize(...)
  6.         \-checkmate::assert_class(app, "teal_app")</error>
     </testcase>
-    <testcase time="0.024" classname="shinytest2_tm_g_gh_boxplot" name="toggle_slider_module_changing_the_numericInputs_outside_the_sliderInput_range_sets_proper_sliderInput_values_and_range">
+    <testcase time="0.0229999999999999" classname="shinytest2_tm_g_gh_boxplot" name="toggle_slider_module_changing_the_numericInputs_outside_the_sliderInput_range_sets_proper_sliderInput_values_and_range">
       <error type="error" message="Error in `checkmate::assert_class(app, &quot;teal_app&quot;)`: argument &quot;app&quot; is missing, with no default ('test-shinytest2-tm_g_gh_boxplot.R:88:5')">Error in `checkmate::assert_class(app, "teal_app")`: argument "app" is missing, with no default
 Backtrace:
     x
@@ -45,7 +45,7 @@ Backtrace:
  5.       \-teal (local) initialize(...)
  6.         \-checkmate::assert_class(app, "teal_app")</error>
     </testcase>
-    <testcase time="0.0269999999999999" classname="shinytest2_tm_g_gh_boxplot" name="toggle_slider_module_changing_the_numericInputs_within_the_rage_sets_back_the_sliderInput_range_to_initial_range">
+    <testcase time="0.026" classname="shinytest2_tm_g_gh_boxplot" name="toggle_slider_module_changing_the_numericInputs_within_the_rage_sets_back_the_sliderInput_range_to_initial_range">
       <error type="error" message="Error in `checkmate::assert_class(app, &quot;teal_app&quot;)`: argument &quot;app&quot; is missing, with no default ('test-shinytest2-tm_g_gh_boxplot.R:121:5')">Error in `checkmate::assert_class(app, "teal_app")`: argument "app" is missing, with no default
 Backtrace:
     x
