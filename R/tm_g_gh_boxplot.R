@@ -425,10 +425,10 @@ srv_g_boxplot <- function(id,
 
       teal.reporter::teal_card(obj) <-
         c(
-          teal.reporter::teal_card("# Box Plot"),
           teal.reporter::teal_card(obj),
+          teal.reporter::teal_card("## Module's output(s)"),
           teal.reporter::teal_card(
-            "## Selected Options",
+            "### Selected Options",
             formatted_data_constraint(
               constraint_var = input$xaxis_param,
               constraint_range_min = input$constraint_range_min,
@@ -436,7 +436,7 @@ srv_g_boxplot <- function(id,
             ),
             constraint_description
           ),
-          teal.reporter::teal_card("## Plot")
+          teal.reporter::teal_card("### Plot")
         )
 
       obj %>% teal.code::eval_code(

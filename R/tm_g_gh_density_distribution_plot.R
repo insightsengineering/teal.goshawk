@@ -339,9 +339,9 @@ srv_g_density_distribution_plot <- function(id, # nolint
       obj <- anl_q()$qenv
       teal.reporter::teal_card(obj) <-
         c(
-          teal.reporter::teal_card("# Density Distribution Plot"),
           teal.reporter::teal_card(obj),
-          teal.reporter::teal_card("## Plot")
+          teal.reporter::teal_card("## Module's output(s)"),
+          teal.reporter::teal_card("### Plot")
         )
 
       teal.code::eval_code(
@@ -393,7 +393,7 @@ srv_g_density_distribution_plot <- function(id, # nolint
       trt_group <- input$trt_group
 
       obj <- create_plot_dims()
-      teal.reporter::teal_card(obj) <- c(teal.reporter::teal_card(obj), "## Descriptive Statistics")
+      teal.reporter::teal_card(obj) <- c(teal.reporter::teal_card(obj), "### Descriptive Statistics")
       teal.code::eval_code(
         object = obj,
         code = bquote({
