@@ -1,67 +1,23 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <testsuites>
-  <testsuite name="shinytest2-tm_g_gh_boxplot" timestamp="2025-10-17T12:54:56Z" hostname="807ff0cc7026" tests="7" skipped="0" failures="0" errors="5" time="74.575">
-    <testcase time="12.571" classname="shinytest2_tm_g_gh_boxplot" name="toggle_slider_module_widgets_are_initialized_with_proper_values"/>
-    <testcase time="0.0289999999999999" classname="shinytest2_tm_g_gh_boxplot" name="toggle_slider_module_widgets_are_initialized_with_proper_values">
-      <error type="error" message="Error in `sprintf(&quot;%s-yrange_scale-toggle&quot;, app_driver$active_module_ns())`: attempt to apply non-function ('test-shinytest2-tm_g_gh_boxplot.R:30:3')">Error in `sprintf("%s-yrange_scale-toggle", app_driver$active_module_ns())`: attempt to apply non-function
-Backtrace:
-    x
- 1. +-app_driver$click(sprintf("%s-yrange_scale-toggle", app_driver$active_module_ns())) at test-shinytest2-tm_g_gh_boxplot.R:30:3
- 2. | \-super$click(...)
- 3. |   \-shinytest2:::app_click(...)
- 4. |     \-shinytest2:::app_find_node_id(...)
- 5. |       \-shinytest2:::node_id_css_selector(...)
- 6. |         \-rlang::is_missing(input)
- 7. \-base::sprintf("%s-yrange_scale-toggle", app_driver$active_module_ns())</error>
+  <testsuite name="shinytest2-tm_g_gh_boxplot" timestamp="2025-10-17T13:06:05Z" hostname="a9880ca2c772" tests="6" skipped="6" failures="0" errors="0" time="3.947">
+    <testcase time="0.778" classname="shinytest2_tm_g_gh_boxplot" name="toggle_slider_module_widgets_are_initialized_with_proper_values">
+      <skipped message="Reason: On CRAN ('test-shinytest2-tm_g_gh_boxplot.R:25:3')"/>
     </testcase>
-    <testcase time="13.373" classname="shinytest2_tm_g_gh_boxplot" name="toggle_slider_module_changing_the_sliderInput_sets_proper_numericInput_values">
-      <error type="error" message="Error in `sprintf(&quot;%s-yrange_scale-toggle&quot;, app_driver$active_module_ns())`: attempt to apply non-function ('test-shinytest2-tm_g_gh_boxplot.R:43:3')">Error in `sprintf("%s-yrange_scale-toggle", app_driver$active_module_ns())`: attempt to apply non-function
-Backtrace:
-    x
- 1. +-app_driver$click(sprintf("%s-yrange_scale-toggle", app_driver$active_module_ns())) at test-shinytest2-tm_g_gh_boxplot.R:43:3
- 2. | \-super$click(...)
- 3. |   \-shinytest2:::app_click(...)
- 4. |     \-shinytest2:::app_find_node_id(...)
- 5. |       \-shinytest2:::node_id_css_selector(...)
- 6. |         \-rlang::is_missing(input)
- 7. \-base::sprintf("%s-yrange_scale-toggle", app_driver$active_module_ns())</error>
+    <testcase time="0.666" classname="shinytest2_tm_g_gh_boxplot" name="toggle_slider_module_changing_the_sliderInput_sets_proper_numericInput_values">
+      <skipped message="Reason: On CRAN ('test-shinytest2-tm_g_gh_boxplot.R:38:3')"/>
     </testcase>
-    <testcase time="10.97" classname="shinytest2_tm_g_gh_boxplot" name="toggle_slider_module_changing_the_numericInputs_within_the_sliderInput_range_sets_proper_sliderInput_values">
-      <error type="error" message="Error in `sprintf(&quot;%s-yrange_scale-toggle&quot;, app_driver$active_module_ns())`: attempt to apply non-function ('test-shinytest2-tm_g_gh_boxplot.R:55:5')">Error in `sprintf("%s-yrange_scale-toggle", app_driver$active_module_ns())`: attempt to apply non-function
-Backtrace:
-    x
- 1. +-app_driver$click(sprintf("%s-yrange_scale-toggle", app_driver$active_module_ns())) at test-shinytest2-tm_g_gh_boxplot.R:55:5
- 2. | \-super$click(...)
- 3. |   \-shinytest2:::app_click(...)
- 4. |     \-shinytest2:::app_find_node_id(...)
- 5. |       \-shinytest2:::node_id_css_selector(...)
- 6. |         \-rlang::is_missing(input)
- 7. \-base::sprintf("%s-yrange_scale-toggle", app_driver$active_module_ns())</error>
+    <testcase time="0.616" classname="shinytest2_tm_g_gh_boxplot" name="toggle_slider_module_changing_the_numericInputs_within_the_sliderInput_range_sets_proper_sliderInput_values">
+      <skipped message="Reason: On CRAN ('test-shinytest2-tm_g_gh_boxplot.R:54:5')"/>
     </testcase>
-    <testcase time="10.808" classname="shinytest2_tm_g_gh_boxplot" name="toggle_slider_module_changing_the_numericInputs_outside_the_sliderInput_range_sets_proper_sliderInput_values_and_range">
-      <error type="error" message="Error in `sprintf(&quot;%s-yrange_scale-toggle&quot;, app_driver$active_module_ns())`: attempt to apply non-function ('test-shinytest2-tm_g_gh_boxplot.R:89:5')">Error in `sprintf("%s-yrange_scale-toggle", app_driver$active_module_ns())`: attempt to apply non-function
-Backtrace:
-    x
- 1. +-app_driver$click(sprintf("%s-yrange_scale-toggle", app_driver$active_module_ns())) at test-shinytest2-tm_g_gh_boxplot.R:89:5
- 2. | \-super$click(...)
- 3. |   \-shinytest2:::app_click(...)
- 4. |     \-shinytest2:::app_find_node_id(...)
- 5. |       \-shinytest2:::node_id_css_selector(...)
- 6. |         \-rlang::is_missing(input)
- 7. \-base::sprintf("%s-yrange_scale-toggle", app_driver$active_module_ns())</error>
+    <testcase time="0.594" classname="shinytest2_tm_g_gh_boxplot" name="toggle_slider_module_changing_the_numericInputs_outside_the_sliderInput_range_sets_proper_sliderInput_values_and_range">
+      <skipped message="Reason: On CRAN ('test-shinytest2-tm_g_gh_boxplot.R:88:5')"/>
     </testcase>
-    <testcase time="10.976" classname="shinytest2_tm_g_gh_boxplot" name="toggle_slider_module_changing_the_numericInputs_within_the_rage_sets_back_the_sliderInput_range_to_initial_range">
-      <error type="error" message="Error in `sprintf(&quot;%s-yrange_scale-toggle&quot;, app_driver$active_module_ns())`: attempt to apply non-function ('test-shinytest2-tm_g_gh_boxplot.R:122:5')">Error in `sprintf("%s-yrange_scale-toggle", app_driver$active_module_ns())`: attempt to apply non-function
-Backtrace:
-    x
- 1. +-app_driver$click(sprintf("%s-yrange_scale-toggle", app_driver$active_module_ns())) at test-shinytest2-tm_g_gh_boxplot.R:122:5
- 2. | \-super$click(...)
- 3. |   \-shinytest2:::app_click(...)
- 4. |     \-shinytest2:::app_find_node_id(...)
- 5. |       \-shinytest2:::node_id_css_selector(...)
- 6. |         \-rlang::is_missing(input)
- 7. \-base::sprintf("%s-yrange_scale-toggle", app_driver$active_module_ns())</error>
+    <testcase time="0.736" classname="shinytest2_tm_g_gh_boxplot" name="toggle_slider_module_changing_the_numericInputs_within_the_rage_sets_back_the_sliderInput_range_to_initial_range">
+      <skipped message="Reason: On CRAN ('test-shinytest2-tm_g_gh_boxplot.R:121:5')"/>
     </testcase>
-    <testcase time="15.848" classname="shinytest2_tm_g_gh_boxplot" name="toggle_slider_module_changing_dependant_widgets_outside_sets_proper_sliderInput_and_numericInput_values"/>
+    <testcase time="0.557" classname="shinytest2_tm_g_gh_boxplot" name="toggle_slider_module_changing_dependant_widgets_outside_sets_proper_sliderInput_and_numericInput_values">
+      <skipped message="Reason: On CRAN ('test-shinytest2-tm_g_gh_boxplot.R:155:5')"/>
+    </testcase>
   </testsuite>
 </testsuites>
