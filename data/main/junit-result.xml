@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <testsuites>
-  <testsuite name="shinytest2-tm_g_gh_boxplot" timestamp="2025-10-17T12:53:19Z" hostname="9fba0f167694" tests="7" skipped="0" failures="0" errors="5" time="73.211">
-    <testcase time="11.973" classname="shinytest2_tm_g_gh_boxplot" name="toggle_slider_module_widgets_are_initialized_with_proper_values"/>
-    <testcase time="0.0229999999999997" classname="shinytest2_tm_g_gh_boxplot" name="toggle_slider_module_widgets_are_initialized_with_proper_values">
+  <testsuite name="shinytest2-tm_g_gh_boxplot" timestamp="2025-10-17T13:14:51Z" hostname="34e87e2c38fa" tests="7" skipped="0" failures="0" errors="5" time="75.586">
+    <testcase time="12.305" classname="shinytest2_tm_g_gh_boxplot" name="toggle_slider_module_widgets_are_initialized_with_proper_values"/>
+    <testcase time="0.0199999999999996" classname="shinytest2_tm_g_gh_boxplot" name="toggle_slider_module_widgets_are_initialized_with_proper_values">
       <error type="error" message="Error in `sprintf(&quot;%s-yrange_scale-toggle&quot;, app_driver$active_module_ns())`: attempt to apply non-function ('test-shinytest2-tm_g_gh_boxplot.R:30:3')">Error in `sprintf("%s-yrange_scale-toggle", app_driver$active_module_ns())`: attempt to apply non-function
 Backtrace:
     x
@@ -14,7 +14,7 @@ Backtrace:
  6. |         \-rlang::is_missing(input)
  7. \-base::sprintf("%s-yrange_scale-toggle", app_driver$active_module_ns())</error>
     </testcase>
-    <testcase time="12.85" classname="shinytest2_tm_g_gh_boxplot" name="toggle_slider_module_changing_the_sliderInput_sets_proper_numericInput_values">
+    <testcase time="13.124" classname="shinytest2_tm_g_gh_boxplot" name="toggle_slider_module_changing_the_sliderInput_sets_proper_numericInput_values">
       <error type="error" message="Error in `sprintf(&quot;%s-yrange_scale-toggle&quot;, app_driver$active_module_ns())`: attempt to apply non-function ('test-shinytest2-tm_g_gh_boxplot.R:43:3')">Error in `sprintf("%s-yrange_scale-toggle", app_driver$active_module_ns())`: attempt to apply non-function
 Backtrace:
     x
@@ -26,7 +26,7 @@ Backtrace:
  6. |         \-rlang::is_missing(input)
  7. \-base::sprintf("%s-yrange_scale-toggle", app_driver$active_module_ns())</error>
     </testcase>
-    <testcase time="10.839" classname="shinytest2_tm_g_gh_boxplot" name="toggle_slider_module_changing_the_numericInputs_within_the_sliderInput_range_sets_proper_sliderInput_values">
+    <testcase time="11.461" classname="shinytest2_tm_g_gh_boxplot" name="toggle_slider_module_changing_the_numericInputs_within_the_sliderInput_range_sets_proper_sliderInput_values">
       <error type="error" message="Error in `sprintf(&quot;%s-yrange_scale-toggle&quot;, app_driver$active_module_ns())`: attempt to apply non-function ('test-shinytest2-tm_g_gh_boxplot.R:55:5')">Error in `sprintf("%s-yrange_scale-toggle", app_driver$active_module_ns())`: attempt to apply non-function
 Backtrace:
     x
@@ -38,7 +38,7 @@ Backtrace:
  6. |         \-rlang::is_missing(input)
  7. \-base::sprintf("%s-yrange_scale-toggle", app_driver$active_module_ns())</error>
     </testcase>
-    <testcase time="11.136" classname="shinytest2_tm_g_gh_boxplot" name="toggle_slider_module_changing_the_numericInputs_outside_the_sliderInput_range_sets_proper_sliderInput_values_and_range">
+    <testcase time="11.236" classname="shinytest2_tm_g_gh_boxplot" name="toggle_slider_module_changing_the_numericInputs_outside_the_sliderInput_range_sets_proper_sliderInput_values_and_range">
       <error type="error" message="Error in `sprintf(&quot;%s-yrange_scale-toggle&quot;, app_driver$active_module_ns())`: attempt to apply non-function ('test-shinytest2-tm_g_gh_boxplot.R:89:5')">Error in `sprintf("%s-yrange_scale-toggle", app_driver$active_module_ns())`: attempt to apply non-function
 Backtrace:
     x
@@ -50,7 +50,7 @@ Backtrace:
  6. |         \-rlang::is_missing(input)
  7. \-base::sprintf("%s-yrange_scale-toggle", app_driver$active_module_ns())</error>
     </testcase>
-    <testcase time="10.716" classname="shinytest2_tm_g_gh_boxplot" name="toggle_slider_module_changing_the_numericInputs_within_the_rage_sets_back_the_sliderInput_range_to_initial_range">
+    <testcase time="11.027" classname="shinytest2_tm_g_gh_boxplot" name="toggle_slider_module_changing_the_numericInputs_within_the_rage_sets_back_the_sliderInput_range_to_initial_range">
       <error type="error" message="Error in `sprintf(&quot;%s-yrange_scale-toggle&quot;, app_driver$active_module_ns())`: attempt to apply non-function ('test-shinytest2-tm_g_gh_boxplot.R:122:5')">Error in `sprintf("%s-yrange_scale-toggle", app_driver$active_module_ns())`: attempt to apply non-function
 Backtrace:
     x
@@ -62,6 +62,6 @@ Backtrace:
  6. |         \-rlang::is_missing(input)
  7. \-base::sprintf("%s-yrange_scale-toggle", app_driver$active_module_ns())</error>
     </testcase>
-    <testcase time="15.674" classname="shinytest2_tm_g_gh_boxplot" name="toggle_slider_module_changing_dependant_widgets_outside_sets_proper_sliderInput_and_numericInput_values"/>
+    <testcase time="16.413" classname="shinytest2_tm_g_gh_boxplot" name="toggle_slider_module_changing_dependant_widgets_outside_sets_proper_sliderInput_and_numericInput_values"/>
   </testsuite>
 </testsuites>
