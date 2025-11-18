@@ -129,6 +129,22 @@ To learn more check \code{vignette("transform-input-data", package = "teal")}.}
 \description{
 Scatter Plot Teal Module For Biomarker Analysis
 }
+\section{Reporting}{
+
+
+
+This module returns an object of class \code{teal_module}, that contains a \code{server} function.
+Since the server function returns a \code{teal_report} object, this makes this module reportable, which means that
+the reporting functionality will be turned on automatically by the \code{teal} framework.
+
+For more information on reporting in \code{teal}, see the vignettes:
+\itemize{
+\item \code{vignette("reportable-shiny-application", package = "teal.reporter")}
+\item \code{vignette("adding-support-for-reporting-to-custom-modules", package = "teal")}
+}
+
+}
+
 \examples{
 # Example using ADaM structure analysis dataset.
 data <- teal_data()
