@@ -76,6 +76,7 @@ constr_anl_q <- function(session, input, data, dataname, param_id, param_var, tr
       teal.code::eval_code(
         substitute(ANL <- dataname, list(dataname = as.name(dataname))) # nolint
       ) %>%
+      teal.code::eval_code(quote(library(dplyr))) %>%
       teal.code::eval_code(
         code = bquote({
           ANL <- .(as.name(dataset_var)) %>% # nolint
@@ -197,6 +198,10 @@ create_anl_constraint_reactive <- function(anl_param, input, param_id, min_rows)
 
     # filter constraint
     if (constraint_var != "NONE") {
+      private_qenv <- teal.code::eval_code(
+        object = private_qenv,
+        code = quote(library(dplyr))
+      )
       private_qenv <- teal.code::eval_code(
         object = private_qenv,
         code = bquote({
