@@ -1,122 +1,23 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <testsuites>
-  <testsuite name="shinytest2-tm_g_gh_boxplot" timestamp="2025-11-18T17:14:17Z" hostname="db2e63d0dc1c" tests="7" skipped="0" failures="0" errors="5" time="79.868">
-    <testcase time="13.515" classname="shinytest2_tm_g_gh_boxplot" name="toggle_slider_module_widgets_are_initialized_with_proper_values"/>
-    <testcase time="0.0350000000000001" classname="shinytest2_tm_g_gh_boxplot" name="toggle_slider_module_widgets_are_initialized_with_proper_values">
-      <error type="error" message="Error in `callback(...)`: code: -32000 ('test-shinytest2-tm_g_gh_boxplot.R:30:3')">Error in `callback(...)`: code: -32000
-  message: DOM Error while querying
-Backtrace:
-     x
-  1. \-app_driver$click(app_driver$namespaces(TRUE)$module("yrange_scale-toggle")) at test-shinytest2-tm_g_gh_boxplot.R:30:3
-  2.   \-super$click(...)
-  3.     \-shinytest2:::app_click(...)
-  4.       \-shinytest2:::app_find_node_id(...)
-  5.         \-shinytest2:::chromote_find_elements(...)
-  6.           +-base::unlist(chromote_session$DOM$querySelectorAll(root_id, css)$nodeIds)
-  7.           \-chromote_session$DOM$querySelectorAll(root_id, css)
-  8.             \-self$wait_for(p)
-  9.               \-self$parent$wait_for(p)
- 10.                 \-chromote:::synchronize(p, loop = private$child_loop)
- 11.                   +-promises::with_promise_domain(...)
- 12.                   | \-domain$wrapSync(expr)
- 13.                   |   \-base::force(expr)
- 14.                   \-base::tryCatch(...)
- 15.                     \-base (local) tryCatchList(expr, classes, parentenv, handlers)
- 16.                       \-base (local) tryCatchOne(expr, names, parentenv, handlers[[1L]])
- 17.                         \-base (local) doTryCatch(return(expr), name, parentenv, handler)</error>
+  <testsuite name="shinytest2-tm_g_gh_boxplot" timestamp="2025-11-19T15:33:23Z" hostname="48eab93851c9" tests="6" skipped="6" failures="0" errors="0" time="3.642">
+    <testcase time="0.733" classname="shinytest2_tm_g_gh_boxplot" name="toggle_slider_module_widgets_are_initialized_with_proper_values">
+      <skipped message="Reason: On CRAN ('test-shinytest2-tm_g_gh_boxplot.R:25:3')"/>
     </testcase>
-    <testcase time="13.697" classname="shinytest2_tm_g_gh_boxplot" name="toggle_slider_module_changing_the_sliderInput_sets_proper_numericInput_values">
-      <error type="error" message="Error in `callback(...)`: code: -32000 ('test-shinytest2-tm_g_gh_boxplot.R:43:3')">Error in `callback(...)`: code: -32000
-  message: DOM Error while querying
-Backtrace:
-     x
-  1. \-app_driver$click(app_driver$namespaces(TRUE)$module("yrange_scale-toggle")) at test-shinytest2-tm_g_gh_boxplot.R:43:3
-  2.   \-super$click(...)
-  3.     \-shinytest2:::app_click(...)
-  4.       \-shinytest2:::app_find_node_id(...)
-  5.         \-shinytest2:::chromote_find_elements(...)
-  6.           +-base::unlist(chromote_session$DOM$querySelectorAll(root_id, css)$nodeIds)
-  7.           \-chromote_session$DOM$querySelectorAll(root_id, css)
-  8.             \-self$wait_for(p)
-  9.               \-self$parent$wait_for(p)
- 10.                 \-chromote:::synchronize(p, loop = private$child_loop)
- 11.                   +-promises::with_promise_domain(...)
- 12.                   | \-domain$wrapSync(expr)
- 13.                   |   \-base::force(expr)
- 14.                   \-base::tryCatch(...)
- 15.                     \-base (local) tryCatchList(expr, classes, parentenv, handlers)
- 16.                       \-base (local) tryCatchOne(expr, names, parentenv, handlers[[1L]])
- 17.                         \-base (local) doTryCatch(return(expr), name, parentenv, handler)</error>
+    <testcase time="0.634" classname="shinytest2_tm_g_gh_boxplot" name="toggle_slider_module_changing_the_sliderInput_sets_proper_numericInput_values">
+      <skipped message="Reason: On CRAN ('test-shinytest2-tm_g_gh_boxplot.R:38:3')"/>
     </testcase>
-    <testcase time="11.864" classname="shinytest2_tm_g_gh_boxplot" name="toggle_slider_module_changing_the_numericInputs_within_the_sliderInput_range_sets_proper_sliderInput_values">
-      <error type="error" message="Error in `callback(...)`: code: -32000 ('test-shinytest2-tm_g_gh_boxplot.R:55:5')">Error in `callback(...)`: code: -32000
-  message: DOM Error while querying
-Backtrace:
-     x
-  1. \-app_driver$click(app_driver$namespaces(TRUE)$module("yrange_scale-toggle")) at test-shinytest2-tm_g_gh_boxplot.R:55:5
-  2.   \-super$click(...)
-  3.     \-shinytest2:::app_click(...)
-  4.       \-shinytest2:::app_find_node_id(...)
-  5.         \-shinytest2:::chromote_find_elements(...)
-  6.           +-base::unlist(chromote_session$DOM$querySelectorAll(root_id, css)$nodeIds)
-  7.           \-chromote_session$DOM$querySelectorAll(root_id, css)
-  8.             \-self$wait_for(p)
-  9.               \-self$parent$wait_for(p)
- 10.                 \-chromote:::synchronize(p, loop = private$child_loop)
- 11.                   +-promises::with_promise_domain(...)
- 12.                   | \-domain$wrapSync(expr)
- 13.                   |   \-base::force(expr)
- 14.                   \-base::tryCatch(...)
- 15.                     \-base (local) tryCatchList(expr, classes, parentenv, handlers)
- 16.                       \-base (local) tryCatchOne(expr, names, parentenv, handlers[[1L]])
- 17.                         \-base (local) doTryCatch(return(expr), name, parentenv, handler)</error>
+    <testcase time="0.713" classname="shinytest2_tm_g_gh_boxplot" name="toggle_slider_module_changing_the_numericInputs_within_the_sliderInput_range_sets_proper_sliderInput_values">
+      <skipped message="Reason: On CRAN ('test-shinytest2-tm_g_gh_boxplot.R:54:5')"/>
     </testcase>
-    <testcase time="12.316" classname="shinytest2_tm_g_gh_boxplot" name="toggle_slider_module_changing_the_numericInputs_outside_the_sliderInput_range_sets_proper_sliderInput_values_and_range">
-      <error type="error" message="Error in `callback(...)`: code: -32000 ('test-shinytest2-tm_g_gh_boxplot.R:89:5')">Error in `callback(...)`: code: -32000
-  message: DOM Error while querying
-Backtrace:
-     x
-  1. \-app_driver$click(app_driver$namespaces(TRUE)$module("yrange_scale-toggle")) at test-shinytest2-tm_g_gh_boxplot.R:89:5
-  2.   \-super$click(...)
-  3.     \-shinytest2:::app_click(...)
-  4.       \-shinytest2:::app_find_node_id(...)
-  5.         \-shinytest2:::chromote_find_elements(...)
-  6.           +-base::unlist(chromote_session$DOM$querySelectorAll(root_id, css)$nodeIds)
-  7.           \-chromote_session$DOM$querySelectorAll(root_id, css)
-  8.             \-self$wait_for(p)
-  9.               \-self$parent$wait_for(p)
- 10.                 \-chromote:::synchronize(p, loop = private$child_loop)
- 11.                   +-promises::with_promise_domain(...)
- 12.                   | \-domain$wrapSync(expr)
- 13.                   |   \-base::force(expr)
- 14.                   \-base::tryCatch(...)
- 15.                     \-base (local) tryCatchList(expr, classes, parentenv, handlers)
- 16.                       \-base (local) tryCatchOne(expr, names, parentenv, handlers[[1L]])
- 17.                         \-base (local) doTryCatch(return(expr), name, parentenv, handler)</error>
+    <testcase time="0.523" classname="shinytest2_tm_g_gh_boxplot" name="toggle_slider_module_changing_the_numericInputs_outside_the_sliderInput_range_sets_proper_sliderInput_values_and_range">
+      <skipped message="Reason: On CRAN ('test-shinytest2-tm_g_gh_boxplot.R:88:5')"/>
     </testcase>
-    <testcase time="11.8" classname="shinytest2_tm_g_gh_boxplot" name="toggle_slider_module_changing_the_numericInputs_within_the_rage_sets_back_the_sliderInput_range_to_initial_range">
-      <error type="error" message="Error in `callback(...)`: code: -32000 ('test-shinytest2-tm_g_gh_boxplot.R:122:5')">Error in `callback(...)`: code: -32000
-  message: DOM Error while querying
-Backtrace:
-     x
-  1. \-app_driver$click(app_driver$namespaces(TRUE)$module("yrange_scale-toggle")) at test-shinytest2-tm_g_gh_boxplot.R:122:5
-  2.   \-super$click(...)
-  3.     \-shinytest2:::app_click(...)
-  4.       \-shinytest2:::app_find_node_id(...)
-  5.         \-shinytest2:::chromote_find_elements(...)
-  6.           +-base::unlist(chromote_session$DOM$querySelectorAll(root_id, css)$nodeIds)
-  7.           \-chromote_session$DOM$querySelectorAll(root_id, css)
-  8.             \-self$wait_for(p)
-  9.               \-self$parent$wait_for(p)
- 10.                 \-chromote:::synchronize(p, loop = private$child_loop)
- 11.                   +-promises::with_promise_domain(...)
- 12.                   | \-domain$wrapSync(expr)
- 13.                   |   \-base::force(expr)
- 14.                   \-base::tryCatch(...)
- 15.                     \-base (local) tryCatchList(expr, classes, parentenv, handlers)
- 16.                       \-base (local) tryCatchOne(expr, names, parentenv, handlers[[1L]])
- 17.                         \-base (local) doTryCatch(return(expr), name, parentenv, handler)</error>
+    <testcase time="0.518" classname="shinytest2_tm_g_gh_boxplot" name="toggle_slider_module_changing_the_numericInputs_within_the_rage_sets_back_the_sliderInput_range_to_initial_range">
+      <skipped message="Reason: On CRAN ('test-shinytest2-tm_g_gh_boxplot.R:121:5')"/>
     </testcase>
-    <testcase time="16.641" classname="shinytest2_tm_g_gh_boxplot" name="toggle_slider_module_changing_dependant_widgets_outside_sets_proper_sliderInput_and_numericInput_values"/>
+    <testcase time="0.521" classname="shinytest2_tm_g_gh_boxplot" name="toggle_slider_module_changing_dependant_widgets_outside_sets_proper_sliderInput_and_numericInput_values">
+      <skipped message="Reason: On CRAN ('test-shinytest2-tm_g_gh_boxplot.R:155:5')"/>
+    </testcase>
   </testsuite>
 </testsuites>
