@@ -334,7 +334,6 @@ g_ui_spaghettiplot <- function(id, ...) {
 }
 
 
-
 srv_g_spaghettiplot <- function(id,
                                 data,
                                 dataname,
@@ -473,9 +472,9 @@ srv_g_spaghettiplot <- function(id,
       obj <- private_qenv
       teal.reporter::teal_card(obj) <-
         c(
-          teal.reporter::teal_card("# Spaghetti Plot"),
           teal.reporter::teal_card(obj),
-          teal.reporter::teal_card("## Plot")
+          teal.reporter::teal_card("## Module's output(s)"),
+          teal.reporter::teal_card("### Plot")
         )
       teal.code::eval_code(
         object = obj,
