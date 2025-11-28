@@ -27,7 +27,7 @@
 ## Citation
 
 Source:
-[`DESCRIPTION`](https://github.com/insightsengineering/teal.goshawk/blob/v0.5.0-rc1/DESCRIPTION)
+[`DESCRIPTION`](https://github.com/insightsengineering/teal.goshawk/blob/v0.5.0-rc2/DESCRIPTION)
 
 Paszty N, Kaledkowski D, Hallal M, Rucki P, Liu W, Tomlinson J, Toth B,
 Zhao J, Nasinski M (2025). *teal.goshawk: Longitudinal Visualization
