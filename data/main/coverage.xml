@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE coverage SYSTEM "https://raw.githubusercontent.com/cobertura/cobertura/master/cobertura/src/site/htdocs/xml/coverage-04.dtd">
-<coverage line-rate="0.286114445778311" branch-rate="0" lines-covered="715" lines-valid="2499" branches-covered="0" branches-valid="0" complexity="0" version="3.6.4" timestamp="2025-11-19 16:14:17.09569">
+<coverage line-rate="0.286688051323176" branch-rate="0" lines-covered="715" lines-valid="2494" branches-covered="0" branches-valid="0" complexity="0" version="3.6.5" timestamp="2025-11-28 12:10:48.096564">
   <sources>
     <source>/__w/teal.goshawk/teal.goshawk/teal.goshawk</source>
   </sources>
   <packages>
-    <package name="teal.goshawk" line-rate="0.286114445778311" branch-rate="0" complexity="0">
+    <package name="teal.goshawk" line-rate="0.286688051323176" branch-rate="0" complexity="0">
       <classes>
         <class name="tm_g_gh_boxplot.R" filename="R/tm_g_gh_boxplot.R" line-rate="0.91588785046729" branch-rate="0" complexity="0">
           <methods>
@@ -3287,26 +3287,6 @@
             <line number="761" hits="0" branch="false"/>
             <line number="763" hits="0" branch="false"/>
             <line number="764" hits="0" branch="false"/>
-          </lines>
-        </class>
-        <class name="tm_g_gh_scatterplot.R" filename="R/tm_g_gh_scatterplot.R" line-rate="0" branch-rate="0" complexity="0">
-          <methods>
-            <method name="tm_g_gh_scatterplot" signature="" line-rate="0" branch-rate="0" complexity="0">
-              <lines>
-                <line number="13" hits="0" branch="false"/>
-                <line number="14" hits="0" branch="false"/>
-                <line number="15" hits="0" branch="false"/>
-                <line number="16" hits="0" branch="false"/>
-                <line number="17" hits="0" branch="false"/>
-              </lines>
-            </method>
-          </methods>
-          <lines>
-            <line number="13" hits="0" branch="false"/>
-            <line number="14" hits="0" branch="false"/>
-            <line number="15" hits="0" branch="false"/>
-            <line number="16" hits="0" branch="false"/>
-            <line number="17" hits="0" branch="false"/>
           </lines>
         </class>
         <class name="tm_g_gh_spaghettiplot.R" filename="R/tm_g_gh_spaghettiplot.R" line-rate="0" branch-rate="0" complexity="0">
