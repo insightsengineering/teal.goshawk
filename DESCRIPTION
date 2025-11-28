@@ -75,9 +75,8 @@ Config/Needs/verdepcheck: insightsengineering/goshawk, rstudio/shiny,
     insightsengineering/teal.code, insightsengineering/teal.logger,
     insightsengineering/teal.reporter, insightsengineering/teal.widgets,
     yihui/knitr, insightsengineering/nestcolor, rstudio/rmarkdown,
-    tidyverse/stringr, insightsengineering/teal.data,
-    insightsengineering/tern, r-lib/testthat, rstudio/shinytest2,
-    tidyverse/rvest
+    tidyverse/rvest, rstudio/shinytest2, tidyverse/stringr,
+    insightsengineering/teal.data, insightsengineering/tern, r-lib/testthat
 Config/Needs/website: insightsengineering/nesttemplate
 Config/testthat/edition: 3
 Encoding: UTF-8
