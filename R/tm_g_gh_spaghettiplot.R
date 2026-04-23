@@ -15,7 +15,8 @@
 #' that is used as x-axis in the plot for the respective goshawk function.
 #' @param xaxis_var_level vector that can be used to define the factor level of `xaxis_var`.
 #' Only use it when `xaxis_var` is character or factor.
-#' @param filter_var data constraint variable.
+#' @param filter_var `r lifecycle::badge("deprecated")`
+#' data constraint variable.
 #' @param yaxis_var single name of variable in analysis data that is used as
 #' summary variable in the respective `goshawk` function.
 #' @param trt_group \code{\link[teal.transform]{choices_selected}} object with available choices and pre-selected option
@@ -137,10 +138,7 @@
 #'       idvar = "USUBJID",
 #'       xaxis_var = choices_selected(c("Analysis Visit Code" = "AVISITCD"), "AVISITCD"),
 #'       yaxis_var = choices_selected(c("AVAL", "CHG", "PCHG"), "AVAL"),
-#'       filter_var = choices_selected(
-#'         c("None" = "NONE", "Screening" = "BASE2", "Baseline" = "BASE"),
-#'         "NONE"
-#'       ),
+#'       filter_var = lifecycle::deprecated(),
 #'       trt_group = choices_selected(c("ARM", "ACTARM"), "ARM"),
 #'       color_comb = "#39ff14",
 #'       man_color = c(
@@ -169,7 +167,7 @@ tm_g_gh_spaghettiplot <- function(label,
                                   xaxis_var,
                                   yaxis_var,
                                   xaxis_var_level = NULL,
-                                  filter_var = yaxis_var,
+                                  filter_var = lifecycle::deprecated(),
                                   trt_group,
                                   trt_group_level = NULL,
                                   group_stats = "NONE",
@@ -194,6 +192,15 @@ tm_g_gh_spaghettiplot <- function(label,
                                   post_output = NULL,
                                   transformators = list()) {
   message("Initializing tm_g_gh_spaghettiplot")
+
+  # deprecation warning for filter_var
+  if (lifecycle::is_present(filter_var)) {
+    lifecycle::deprecate_warn(
+      when = "0.5.0.9002",
+      what = "tm_g_gh_spaghettiplot(filter_var)",
+      details = "`filter_var` has been deprecated."
+    )
+  }
 
   # Validate string inputs
   checkmate::assert_string(label)

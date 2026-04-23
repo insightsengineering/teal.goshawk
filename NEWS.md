@@ -1,4 +1,6 @@
 # teal.goshawk 0.5.0.9002
+### Miscellaneous
+* Deprecated the `filter_var` argument in `tm_g_gh_spaghettiplot`.
 
 # teal.goshawk 0.5.0
 ### Enhancements

@@ -14,7 +14,7 @@ tm_g_gh_spaghettiplot(
   xaxis_var,
   yaxis_var,
   xaxis_var_level = NULL,
-  filter_var = yaxis_var,
+  filter_var = lifecycle::deprecated(),
   trt_group,
   trt_group_level = NULL,
   group_stats = "NONE",
@@ -64,7 +64,8 @@ summary variable in the respective \code{goshawk} function.}
 \item{xaxis_var_level}{vector that can be used to define the factor level of \code{xaxis_var}.
 Only use it when \code{xaxis_var} is character or factor.}
 
-\item{filter_var}{data constraint variable.}
+\item{filter_var}{\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#deprecated}{\figure{lifecycle-deprecated.svg}{options: alt='[Deprecated]'}}}{\strong{[Deprecated]}}
+data constraint variable.}
 
 \item{trt_group}{\code{\link[teal.transform]{choices_selected}} object with available choices and pre-selected option
 for variable names representing treatment group e.g. \code{ARM}.}
@@ -225,10 +226,7 @@ app <- init(
       idvar = "USUBJID",
       xaxis_var = choices_selected(c("Analysis Visit Code" = "AVISITCD"), "AVISITCD"),
       yaxis_var = choices_selected(c("AVAL", "CHG", "PCHG"), "AVAL"),
-      filter_var = choices_selected(
-        c("None" = "NONE", "Screening" = "BASE2", "Baseline" = "BASE"),
-        "NONE"
-      ),
+      filter_var = lifecycle::deprecated(),
       trt_group = choices_selected(c("ARM", "ACTARM"), "ARM"),
       color_comb = "#39ff14",
       man_color = c(
