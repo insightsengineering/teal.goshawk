@@ -526,6 +526,9 @@ srv_g_correlationplot <- function(id,
       }
 
       validate_has_variable(ANL, param_var_sel())
+      validate_has_variable(ANL, "AVISITCD")
+      validate_has_variable(ANL, "BASE")
+      validate_has_variable(ANL, "BASE2")
 
       teal::validate_input(
         "xaxis_param",
