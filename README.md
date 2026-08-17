@@ -42,17 +42,3 @@ pak::pkg_install("insightsengineering/teal.goshawk@*release")
 # install.packages("pak")
 pak::pkg_install("insightsengineering/teal.goshawk")
 ```
-
-## Stargazers and Forkers
-
-### Stargazers over time
-
-[![Stargazers over time](https://starchart.cc/insightsengineering/teal.goshawk.svg)](https://starchart.cc/insightsengineering/teal.goshawk)
-
-### Stargazers
-
-[![Stargazers repo roster for @insightsengineering/teal.goshawk](https://reporoster.com/stars/insightsengineering/teal.goshawk)](https://github.com/insightsengineering/teal.goshawk/stargazers)
-
-### Forkers
-
-[![Forkers repo roster for @insightsengineering/teal.goshawk](https://reporoster.com/forks/insightsengineering/teal.goshawk)](https://github.com/insightsengineering/teal.goshawk/network/members)
