@@ -232,7 +232,8 @@ tm_g_gh_correlationplot <- function(label,
   checkmate::assert(
     .var.name = "param_var",
     checkmate::check_string(param_var),
-    checkmate::check_class(param_var, c("variables", "pick"))
+    checkmate::check_class(param_var, c("variables", "pick")),
+    checkmate::check_class(param_var, c("picks")),
   )
   checkmate::assert_multi_class(xaxis_param, c("choices_selected", "values", "picks"))
   checkmate::assert_multi_class(yaxis_param, c("choices_selected", "values", "picks"))
