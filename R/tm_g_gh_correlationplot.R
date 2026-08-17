@@ -228,17 +228,27 @@ tm_g_gh_correlationplot <- function(label,
                                     transformators = list()) {
   message("Initializing tm_g_gh_correlationplot")
 
-  if (checkmate::test_string(param_var)) {
-    param_var <- teal.picks::variables(param_var, param_var)
-  }
+  checkmate::assert_string(dataname)
+  checkmate::assert(
+    .var.name = "param_var",
+    checkmate::check_string(param_var),
+    checkmate::check_class(param_var, c("variables", "pick"))
+  )
+  checkmate::assert_multi_class(xaxis_param, c("choices_selected", "values", "picks"))
+  checkmate::assert_multi_class(yaxis_param, c("choices_selected", "values", "picks"))
+  checkmate::assert_multi_class(xaxis_var, c("choices_selected", "variables", "picks"))
+  checkmate::assert_multi_class(yaxis_var, c("choices_selected", "variables", "picks"))
+  checkmate::assert_multi_class(trt_group, c("choices_selected", "variables", "picks"))
 
-  xaxis_param <- migrate_choices_selected_to_values(xaxis_param)
-  yaxis_param <- migrate_choices_selected_to_values(yaxis_param)
-  xaxis_var <- migrate_choices_selected_to_variables(xaxis_var)
-  yaxis_var <- migrate_choices_selected_to_variables(yaxis_var)
-  trt_group <- migrate_choices_selected_to_variables(trt_group)
-
+  checkmate::assert_character(color_manual, null.ok = TRUE, names = "unique")
+  checkmate::assert_vector(shape_manual, null.ok = TRUE, names = "unique")
+  checkmate::assert_integerish(facet_ncol, lower = 1, len = 1)
+  checkmate::assert_flag(visit_facet)
   checkmate::assert_flag(trt_facet)
+  checkmate::assert_flag(reg_line)
+  checkmate::assert_flag(loq_legend)
+  checkmate::assert_flag(rotate_xlab)
+
   validate_line_arb_arg(hline_arb, hline_arb_color, hline_arb_label)
   validate_line_arb_arg(vline_arb, vline_arb_color, vline_arb_label)
   validate_line_vars_arg(hline_vars, hline_vars_colors, hline_vars_labels)
@@ -253,6 +263,19 @@ tm_g_gh_correlationplot <- function(label,
   checkmate::assert_numeric(font_size, len = 3)
   checkmate::assert_numeric(dot_size, len = 3)
   checkmate::assert_numeric(reg_text_size, len = 3)
+
+  checkmate::assert_multi_class(pre_output, c("shiny.tag", "shiny.tag.list"), null.ok = TRUE)
+  checkmate::assert_multi_class(post_output, c("shiny.tag", "shiny.tag.list"), null.ok = TRUE)
+
+  if (checkmate::test_string(param_var)) {
+    param_var <- teal.picks::variables(param_var, param_var)
+  }
+
+  xaxis_param <- migrate_choices_selected_to_values(xaxis_param)
+  yaxis_param <- migrate_choices_selected_to_values(yaxis_param)
+  xaxis_var <- migrate_choices_selected_to_variables(xaxis_var)
+  yaxis_var <- migrate_choices_selected_to_variables(yaxis_var)
+  trt_group <- migrate_choices_selected_to_variables(trt_group)
 
   xaxis_param <- create_picks_helper(teal.picks::datasets(dataname, dataname), param_var, xaxis_param)
   yaxis_param <- create_picks_helper(teal.picks::datasets(dataname, dataname), param_var, yaxis_param)
