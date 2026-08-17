@@ -152,8 +152,8 @@
 #'       label = "Correlation Plot",
 #'       dataname = "ADLB",
 #'       param_var = "PARAMCD",
-#'       xaxis_param = teal.picks::values(c("ALT", "CRP", "IGA"), "ALT"),
-#'       yaxis_param = teal.picks::values(c("ALT", "CRP", "IGA"), "CRP"),
+#'       xaxis_param = teal.picks::values(selected = "ALT"),
+#'       yaxis_param = teal.picks::values(selected = "CRP"),
 #'       xaxis_var = teal.picks::variables(c("AVAL", "BASE", "CHG", "PCHG"), "BASE"),
 #'       yaxis_var = teal.picks::variables(c("AVAL", "BASE", "CHG", "PCHG"), "AVAL"),
 #'       trt_group = teal.picks::variables(c("ARM", "ACTARM"), "ARM"),
@@ -193,9 +193,9 @@
 tm_g_gh_correlationplot <- function(label,
                                     dataname,
                                     param_var = "PARAMCD",
-                                    xaxis_param = teal.picks::values(c("ALT", "CRP", "IGA"), "ALT"),
+                                    xaxis_param = teal.picks::values(selected = "ALT"),
                                     xaxis_var = teal.picks::variables(c("AVAL", "BASE", "CHG", "PCHG"), "BASE"),
-                                    yaxis_param = teal.picks::values(c("ALT", "CRP", "IGA"), "CRP"),
+                                    yaxis_param = teal.picks::values(selected = "CRP"),
                                     yaxis_var = teal.picks::variables(c("AVAL", "BASE", "CHG", "PCHG"), "AVAL"),
                                     trt_group = teal.picks::variables(selected = "ARM"),
                                     color_manual = NULL,
@@ -444,7 +444,7 @@ srv_g_correlationplot <- function(id,
           teal.reporter::teal_card(obj),
           teal.reporter::teal_card("## Module's output(s)")
         )
-      obj
+      teal.code::eval_code(obj, "library(dplyr)")
     })
 
     validated_q <- reactive({
