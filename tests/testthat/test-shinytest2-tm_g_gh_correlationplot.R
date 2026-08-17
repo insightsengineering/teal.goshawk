@@ -60,6 +60,8 @@ describe("e2e - tm_g_gh_correlationplot: changing pick changes plot and does not
   skip_if_not_installed("shinytest2")
   skip_if_too_deep(5)
 
+  withr::local_options(list(shinytest2.duration = 2 * 1000))
+
   action_mod <- list(
     xaxis_param = list(slot_name = "values", value = "CRP"),
     yaxis_param = list(slot_name = "values", value = "ALT"),
