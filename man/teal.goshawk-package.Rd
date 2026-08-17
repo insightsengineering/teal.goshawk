@@ -26,6 +26,7 @@ Useful links:
 
 Authors:
 \itemize{
+  \item Nick Paszty \email{nick.paszty@gene.com}
   \item Dawid Kaledkowski \email{dawid.kaledkowski@roche.com}
   \item Mahmoud Hallal \email{mahmoud.hallal@roche.com}
   \item Pawel Rucki \email{pawel.rucki@roche.com}
