@@ -212,7 +212,7 @@ create_anl_constraint_reactive <- function(anl_param, input, param_id, min_rows)
           # the below includes patients who have at least one non-NA BASE value
           # ideally, a patient should either have all NA values or none at all
           # this could be achieved through preprocessing; otherwise, this is easily overseen
-          filtered_usubjids <- ANL %>% # nolint
+          filtered_usubjids <- ANL %>%
             dplyr::filter(
               PARAMCD == .(param),
               (.(constraint_range_min) <= .data[[.(constraint_var)]]) &
@@ -229,7 +229,7 @@ create_anl_constraint_reactive <- function(anl_param, input, param_id, min_rows)
               dplyr::filter(all_na) %>%
               dplyr::pull(USUBJID)
           )
-          ANL <- ANL %>% dplyr::filter(USUBJID %in% filtered_usubjids) # nolint
+          ANL <- ANL %>% dplyr::filter(USUBJID %in% filtered_usubjids)
         })
       )
       validate_has_data(private_qenv[["ANL"]], min_rows)

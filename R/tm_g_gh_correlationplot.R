@@ -483,7 +483,7 @@ srv_g_correlationplot <- function(id,
     # filter selected biomarkers
     anl_param <- reactive({
       dataset_var <- dataname
-      ANL <- validated_q()[[dataname]] # nolint
+      ANL <- validated_q()[[dataname]]
       validate_has_data(ANL, 1)
 
       if (length(input$hline_vars) > 0) {
@@ -535,7 +535,7 @@ srv_g_correlationplot <- function(id,
       private_qenv <- data() %>%
         teal.code::eval_code(
           code = bquote({
-            ANL <- .(as.name(dataset_var)) %>% # nolint
+            ANL <- .(as.name(dataset_var)) %>%
               dplyr::filter(.data[[.(param_var_sel())]] %in% union(.(xaxis_param_sel()), .(yaxis_param_sel()))) %>%
               dplyr::select(
                 .(c(
@@ -566,8 +566,10 @@ srv_g_correlationplot <- function(id,
       visit_freq <- unique(ANL$AVISITCD)
 
       # get min max values
-      if ((constraint_var == "BASE2" && any(grepl("SCR", visit_freq))) ||
-        (constraint_var == "BASE" && any(grepl("BL", visit_freq)))) { # nolint
+      if (
+        (constraint_var == "BASE2" && any(grepl("SCR", visit_freq))) ||
+          (constraint_var == "BASE" && any(grepl("BL", visit_freq)))
+      ) {
         val <- stats::na.omit(switch(constraint_var,
           "BASE" = ANL$BASE[ANL$AVISITCD == "BL"],
           "BASE2" = ANL$BASE2[ANL$AVISITCD == "SCR"],
@@ -649,59 +651,59 @@ srv_g_correlationplot <- function(id,
       teal::validate_inputs(iv_r())
 
       req(anl_constraint())
-      ANL <- anl_constraint()$ANL # nolint
+      ANL <- anl_constraint()$ANL
       trt_group <- trt_group_sel()
 
       qenv <- anl_constraint()$qenv %>% teal.code::eval_code(
         code = bquote({
-          ANL_x <- ANL %>% # nolint
+          ANL_x <- ANL %>%
             dplyr::filter(.data[[.(param_var_sel())]] == .(xaxis_param_sel()) & !is.na(.data[[.(xaxis_var_sel())]]))
         })
       )
 
       if (xaxis_var_sel() == "BASE") {
         qenv <- qenv %>% within({
-          ANL_x <- ANL_x %>% # nolint
+          ANL_x <- ANL_x %>%
             dplyr::group_by(.data[["USUBJID"]]) %>%
             dplyr::mutate(LOQFL = .data[["LOQFL"]][.data[["AVISITCD"]] == "BL"]) %>%
             dplyr::ungroup()
         })
       } else if (xaxis_var_sel() != "AVAL") {
         qenv <- qenv %>% within({
-          ANL_x <- ANL_x %>% # nolint
+          ANL_x <- ANL_x %>%
             dplyr::mutate(LOQFL = "N")
         })
       }
 
       qenv <- qenv %>% teal.code::eval_code(
         code = bquote({
-          ANL_y <- ANL %>% # nolint
+          ANL_y <- ANL %>%
             dplyr::filter(.data[[.(param_var_sel())]] == .(yaxis_param_sel()) & !is.na(.data[[.(yaxis_var_sel())]]))
         })
       )
 
       if (yaxis_var_sel() == "BASE") {
         qenv <- qenv %>% within({
-          ANL_y <- ANL_y %>% # nolint
+          ANL_y <- ANL_y %>%
             dplyr::group_by(.data[["USUBJID"]]) %>%
             dplyr::mutate(LOQFL = .data[["LOQFL"]][.data[["AVISITCD"]] == "BL"]) %>%
             dplyr::ungroup()
         })
       } else if (yaxis_var_sel() != "AVAL") {
         qenv <- qenv %>% within({
-          ANL_y <- ANL_y %>% # nolint
+          ANL_y <- ANL_y %>%
             dplyr::mutate(LOQFL = "N")
         })
       }
 
       qenv <- qenv %>% teal.code::eval_code(
         code = bquote({
-          ANL_TRANSPOSED <- dplyr::inner_join( # nolint
+          ANL_TRANSPOSED <- dplyr::inner_join(
             ANL_x, ANL_y,
             by = c("USUBJID", "AVISITCD", .(trt_group)),
             suffix = .(sprintf("_%s", c(xaxis_param_sel(), yaxis_param_sel())))
           )
-          ANL_TRANSPOSED <- ANL_TRANSPOSED %>% # nolint
+          ANL_TRANSPOSED <- ANL_TRANSPOSED %>%
             dplyr::mutate(
               LOQFL_COMB = case_when(
                 .data[[.(xloqfl())]] == "Y" | .data[[.(yloqfl())]] == "Y" ~ "Y",
@@ -718,14 +720,14 @@ srv_g_correlationplot <- function(id,
       qenv <- teal.code::eval_code(
         object = qenv,
         code =
-          bquote(attr(ANL_TRANSPOSED[[.(trt_group)]], "label") <- attr(ANL[[.(trt_group)]], "label")) # nolint
+          bquote(attr(ANL_TRANSPOSED[[.(trt_group)]], "label") <- attr(ANL[[.(trt_group)]], "label"))
       )
       return(list(ANL_TRANSPOSED = qenv[["ANL_TRANSPOSED"]], qenv = qenv))
     })
 
     plot_labels <- reactive({
       req(anl_constraint())
-      ANL <- anl_constraint()$qenv[["ANL"]] # nolint
+      ANL <- anl_constraint()$qenv[["ANL"]]
 
       xparam <- ANL$PARAM[ANL[[param_var_sel()]] == xaxis_param_sel()][1]
       yparam <- ANL$PARAM[ANL[[param_var_sel()]] == yaxis_param_sel()][1]
@@ -871,7 +873,7 @@ srv_g_correlationplot <- function(id,
       req(iv_r()$is_valid())
       plot_brush <- plot_data$brush()
 
-      ANL_TRANSPOSED <- isolate(plot_data_transpose()$ANL_TRANSPOSED) # nolint
+      ANL_TRANSPOSED <- isolate(plot_data_transpose()$ANL_TRANSPOSED)
 
       df <- teal.widgets::clean_brushedPoints(
         dplyr::select(
