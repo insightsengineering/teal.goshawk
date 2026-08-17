@@ -152,11 +152,11 @@
 #'       label = "Correlation Plot",
 #'       dataname = "ADLB",
 #'       param_var = "PARAMCD",
-#'       xaxis_param = choices_selected(c("ALT", "CRP", "IGA"), "ALT"),
-#'       yaxis_param = choices_selected(c("ALT", "CRP", "IGA"), "CRP"),
-#'       xaxis_var = choices_selected(c("AVAL", "BASE", "CHG", "PCHG"), "BASE"),
-#'       yaxis_var = choices_selected(c("AVAL", "BASE", "CHG", "PCHG"), "AVAL"),
-#'       trt_group = choices_selected(c("ARM", "ACTARM"), "ARM"),
+#'       xaxis_param = teal.picks::values(c("ALT", "CRP", "IGA"), "ALT"),
+#'       yaxis_param = teal.picks::values(c("ALT", "CRP", "IGA"), "CRP"),
+#'       xaxis_var = teal.picks::variables(c("AVAL", "BASE", "CHG", "PCHG"), "BASE"),
+#'       yaxis_var = teal.picks::variables(c("AVAL", "BASE", "CHG", "PCHG"), "AVAL"),
+#'       trt_group = teal.picks::variables(c("ARM", "ACTARM"), "ARM"),
 #'       color_manual = c(
 #'         "Drug X 100mg" = "#000000",
 #'         "Placebo" = "#3498DB",
@@ -197,7 +197,7 @@ tm_g_gh_correlationplot <- function(label,
                                     xaxis_var = teal.picks::variables(c("AVAL", "BASE", "CHG", "PCHG"), "BASE"),
                                     yaxis_param = teal.picks::values(c("ALT", "CRP", "IGA"), "CRP"),
                                     yaxis_var = teal.picks::variables(c("AVAL", "BASE", "CHG", "PCHG"), "AVAL"),
-                                    trt_group,
+                                    trt_group = teal.picks::variables(selected = "ARM"),
                                     color_manual = NULL,
                                     shape_manual = NULL,
                                     facet_ncol = 2,
@@ -271,7 +271,7 @@ tm_g_gh_correlationplot <- function(label,
 
   module(
     label = label,
-    datanames = dataname,
+    datanames = .picks_datanames(xaxis_param, xaxis_var, yaxis_param, yaxis_var, trt_group),
     server = srv_g_correlationplot,
     server_args = args[names(args) %in% names(formals(srv_g_correlationplot))],
     ui = ui_g_correlationplot,
@@ -483,7 +483,7 @@ srv_g_correlationplot <- function(id,
     # filter selected biomarkers
     anl_param <- reactive({
       dataset_var <- dataname
-      ANL <- data()[[dataname]] # nolint
+      ANL <- validated_q()[[dataname]] # nolint
       validate_has_data(ANL, 1)
 
       if (length(input$hline_vars) > 0) {
@@ -519,64 +519,16 @@ srv_g_correlationplot <- function(id,
         sprintf("Y-Axis Biomarker %s is not available in data %s", yaxis_param_sel(), dataname)
       )
 
-      validate_has_variable(
-        ANL,
-        "AVISITCD",
-        sprintf("Variable AVISITCD is not available in data %s", dataname)
-      )
-
-      validate_has_variable(
-        ANL,
-        "BASE",
-        sprintf("Variable BASE is not available in data %s", dataname)
-      )
-
-      validate_has_variable(
-        ANL,
-        "BASE2",
-        sprintf("Variable BASE2 is not available in data %s", dataname)
-      )
-
-      validate_has_variable(
-        ANL,
-        "LOQFL",
-        sprintf("Variable LOQFL is not available in data %s", dataname)
-      )
-
-      validate_has_variable(
-        ANL,
-        "PARAM",
-        sprintf("Variable PARAM is not available in data %s", dataname)
-      )
-
-      validate_has_variable(
-        ANL,
-        "LBSTRESC",
-        sprintf("Variable LBSTRESC is not available in data %s", dataname)
-      )
-
-      validate_has_variable(
-        ANL,
-        trt_group_sel(),
-        sprintf("Variable %s is not available in data %s", trt_group_sel(), dataname)
-      )
-
-      validate_has_variable(
-        ANL,
-        "USUBJID",
-        sprintf("Variable USUBJID is not available in data %s", dataname)
-      )
-
-      validate_has_variable(
-        ANL,
-        xaxis_var_sel(),
-        sprintf("Variable %s is not available in data %s", xaxis_var_sel(), dataname)
-      )
-
-      validate_has_variable(
-        ANL,
-        yaxis_var_sel(),
-        sprintf("Variable %s is not available in data %s", yaxis_var_sel(), dataname)
+      lapply(
+        list(
+          c(
+            "AVISITCD", "BASE", "BASE2", "LOQFL", "PARAM", "LBSTRESC",
+            trt_group_sel(), "USUBJID", xaxis_var_sel(), yaxis_var_sel(),
+            param_var_sel()
+          )
+        ), function(var) {
+          validate_has_variable(ANL, var, sprintf("Variable %s is not available in data %s", var, dataname))
+        }
       )
 
       # analysis
@@ -607,11 +559,6 @@ srv_g_correlationplot <- function(id,
       # note that filtered is false thus we cannot use anl_param()$ANL
       ANL <- data()[[dataname]] # nolint
       validate_has_data(ANL, 1)
-
-      validate_has_variable(ANL, param_var_sel())
-      validate_has_variable(ANL, "AVISITCD")
-      validate_has_variable(ANL, "BASE")
-      validate_has_variable(ANL, "BASE2")
 
       ANL <- dplyr::filter(ANL, .data[[param_var_sel()]] == xaxis_param_sel())
 
@@ -805,10 +752,27 @@ srv_g_correlationplot <- function(id,
     # plot
     plot_q <- debounce(reactive({
       req(plot_data_transpose())
+
+      validate( # Validation must occur after anl_constraint() has valid data
+        teal::need_input(
+          "xrange_scale",
+          !is.null(xrange_slider$value) &&
+            length(xrange_slider$value) == 2 &&
+            xrange_slider$value[1] < xrange_slider$value[2],
+          "X-Axis Range Zoom: Invalid range"
+        ),
+        teal::need_input(
+          "yrange_scale",
+          !is.null(yrange_slider$value) &&
+            length(yrange_slider$value) == 2 &&
+            yrange_slider$value[1] < yrange_slider$value[2],
+          "Y-Axis Range Zoom: Invalid range"
+        )
+      )
+
       # nolint start
       xlim <- xrange_slider$value
       ylim <- yrange_slider$value
-      browser()
       font_size <- input$font_size
       dot_size <- input$dot_size
       reg_text_size <- input$reg_text_size
@@ -845,7 +809,6 @@ srv_g_correlationplot <- function(id,
           teal.reporter::teal_card("### Plot")
         )
 
-      browser()
       teal.code::eval_code(
         object = obj,
         code = bquote({
