@@ -539,8 +539,9 @@ srv_g_correlationplot <- function(id,
               dplyr::filter(.data[[.(param_var_sel())]] %in% union(.(xaxis_param_sel()), .(yaxis_param_sel()))) %>%
               dplyr::select(
                 .(c(
-                  "USUBJID", trt_group_sel(), "AVISITCD", param_var_sel(), "PARAM", xaxis_var_sel(), yaxis_var_sel(), "AVALU",
-                  "LOQFL", "LBSTRESC", unique(c(input$hline_vars, input$vline_vars))
+                  "USUBJID", trt_group_sel(), "AVISITCD", param_var_sel(), "PARAM",
+                  xaxis_var_sel(), yaxis_var_sel(), "AVALU", "LOQFL", "LBSTRESC",
+                  unique(c(input$hline_vars, input$vline_vars))
                 ))
               )
           })
@@ -557,7 +558,7 @@ srv_g_correlationplot <- function(id,
       req(constraint_var)
 
       # note that filtered is false thus we cannot use anl_param()$ANL
-      ANL <- data()[[dataname]] # nolint
+      ANL <- data()[[dataname]]
       validate_has_data(ANL, 1)
 
       ANL <- dplyr::filter(ANL, .data[[param_var_sel()]] == xaxis_param_sel())
@@ -770,7 +771,6 @@ srv_g_correlationplot <- function(id,
         )
       )
 
-      # nolint start
       xlim <- xrange_slider$value
       ylim <- yrange_slider$value
       font_size <- input$font_size
@@ -798,7 +798,6 @@ srv_g_correlationplot <- function(id,
       reg_line <- input$reg_line
       loq_legend <- input$loq_legend
       rotate_xlab <- input$rotate_xlab
-      # nolint end
       title_text <- plot_labels()$title_text
       xaxis_lab <- plot_labels()$xaxis_lab
       yaxis_lab <- plot_labels()$yaxis_lab
