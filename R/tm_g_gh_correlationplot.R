@@ -556,7 +556,7 @@ srv_g_correlationplot <- function(id,
       )
 
       # analysis
-      private_qenv <- data() %>%
+      private_qenv <- validated_q() %>%
         teal.code::eval_code(
           code = bquote({
             ANL <- .(as.name(dataset_var)) %>%
@@ -582,7 +582,7 @@ srv_g_correlationplot <- function(id,
       req(constraint_var)
 
       # note that filtered is false thus we cannot use anl_param()$ANL
-      ANL <- data()[[dataname]]
+      ANL <- validated_q()[[dataname]]
       validate_has_data(ANL, 1)
 
       ANL <- dplyr::filter(ANL, .data[[param_var_sel()]] == xaxis_param_sel())
