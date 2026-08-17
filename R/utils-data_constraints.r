@@ -193,7 +193,11 @@ create_anl_constraint_reactive <- function(anl_param, input, param_id, min_rows)
     constraint_var <- isolate(input[["constraint_var"]])
     constraint_range_min <- input[["constraint_range_min"]]
     constraint_range_max <- input[["constraint_range_max"]]
-    param <- input[[param_id]]
+    param <- if (is.reactive(param_id)) {
+      param_id()
+    } else {
+      input[[param_id]]
+    }
     req(param)
 
     # filter constraint

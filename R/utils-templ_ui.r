@@ -13,6 +13,62 @@ templ_ui_dataname <- function(dataname) {
   tags$label(dataname, "Data Settings", class = "text-primary")
 }
 
+
+tmpl_axis_selection_ui <- function(ns,
+                                   xaxis_param = NULL,
+                                   xaxis_var = NULL,
+                                   yaxis_param = NULL,
+                                   yaxis_var = NULL,
+                                   facet = NULL,
+                                   trt_group = NULL,
+                                   xparam_label = "Select an X-Axis Biomarker",
+                                   yparam_label = "Select an Y-Axis Biomarker",
+                                   xvar_label = "Select an X-Axis Variable",
+                                   yvar_label = "Select an Y-Axis Variable",
+                                   facet_label = "Facet by",
+                                   trt_label = "Select Treatment Variable") {
+  tags$div(
+    if (!is.null(trt_group)) {
+      tags$div(tags$label(trt_label), teal.picks::picks_ui(ns("trt_group"), trt_group))
+    },
+    if (!is.null(xaxis_param)) {
+      tags$div(tags$label(xparam_label), teal.picks::picks_ui(ns("xaxis_param"), xaxis_param))
+    },
+    if (!is.null(xaxis_var)) {
+      tags$div(tags$label(xvar_label), teal.picks::picks_ui(ns("xaxis_var"), xaxis_var))
+    },
+    if (!is.null(yaxis_param)) {
+      tags$div(tags$label(yparam_label), teal.picks::picks_ui(ns("yaxis_param"), yaxis_param))
+    },
+    if (!is.null(yaxis_var)) {
+      tags$div(tags$label(yvar_label), teal.picks::picks_ui(ns("yaxis_var"), yaxis_var))
+    }
+  )
+
+}
+
+tmpl_axis_selection_selectors <- function(data,
+                                          xaxis_param = NULL,
+                                          xaxis_var = NULL,
+                                          yaxis_param = NULL,
+                                          yaxis_var = NULL,
+                                          facet = NULL,
+                                          trt_group = NULL,
+                                          session = shiny::getDefaultReactiveDomain()) {
+  teal.picks::picks_srv(
+    id = "",
+    picks = list(
+      xaxis_param = xaxis_param,
+      xaxis_var = xaxis_var,
+      yaxis_param = yaxis_param,
+      yaxis_var = yaxis_var,
+      facet = facet,
+      trt_group = trt_group
+    ),
+    data = data
+  )
+}
+
 # UI to create params (biomarker, value of PARAMCD) and vars (column, e.g. AVAL column) select fields for x and y
 templ_ui_params_vars <- function(ns,
                                  # x
