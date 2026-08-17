@@ -78,64 +78,58 @@ migrate_choices_selected_to_variables <- function(x, # nolint: object_length_lin
   x
 }
 
-#' Coerce legacy `teal.transform` specs to [`teal.picks::variables()`] with deprecation
+#' Coerce legacy `choices_selected` to [`teal.picks::values()`] with deprecation
 #'
-#' If `x` is a legacy `choices_selected`, `filter_spec`, or `select_spec` object, it is converted
-#' via [`teal.picks::as.picks()`]. Otherwise `x` must already inherit `"variables"`.
-#'
-#' @param x (`values`, `choices_selected` or `picks`) object.
+#' @param x (`values`, `choices_selected`, [`teal.picks::picks()`], or [`teal.picks::variables()`]) object.
 #' @param arg_name optional (`character(1)`) argument name.
 #' @param multiple optional (`logical(1)`) whether multiple values are allowed.
 #' If `NULL` (default), it is not validated and inferred from the length of `selected` in the
-#' `choices_selected` object.
-#' @param null.ok (`logical(1)`) whether `NULL` is allowed.
+#' `choices_selected` object. If `FALSE`, the result is checked with [teal.picks::is_pick_multiple()].
 #'
 #' @keywords internal
 #' @noRd
 #' @examples
 #' migrate_choices_selected_to_values(choices_selected(c("A", "B"), selected = "A"))
-migrate_choices_selected_to_values <- function(x, # nolint: object_length_linter
+migrate_choices_selected_to_values <- function(x, # nolint: object_length_linter.
                                                arg_name = checkmate::vname(x),
-                                               multiple = NULL,
-                                               null.ok = FALSE) { # nolint: object_name_linter.
-  # nolint: object_name_linter.
+                                               multiple = NULL) {
   checkmate::assert_string(arg_name)
   checkmate::assert_flag(multiple, null.ok = TRUE)
-  checkmate::assert_flag(null.ok)
+
   if (inherits(x, "picks")) {
     return(x)
   }
-
-  if (isTRUE(null.ok) && is.null(x)) {
+  if (inherits(x, "variables")) {
     return(x)
   }
-  legacy <- c("choices_selected", "filter_spec", "select_spec")
-  if (inherits(x, legacy)) {
+  if (inherits(x, "choices_selected")) {
     lifecycle::deprecate_warn(
       when = "0.5.0",
       what = I(paste0("`", arg_name, "`")),
       details = paste(
-        "Pass `teal.picks::values()` (or a full `teal.picks::picks()` chain).",
-        "Support for legacy `teal.transform::choices_selected()`, `filter_spec`, and `select_spec` is deprecated."
+        "Pass `teal.picks::values()`.",
+        "Support for legacy `teal.transform::choices_selected()` is deprecated."
       )
     )
-    x <- teal.picks::values(choices = x$choices, selected = x$selected, multiple = x$multiple %||% multiple %||% FALSE)
-    attr(x, "multiple") <- (!is.null(multiple) && multiple) || (is.null(multiple) && length(x$selected) > 1L)
-  } else {
-    if (!is.null(multiple) && !identical(attr(x, "multiple", exact = TRUE), multiple)) {
+    if (is.null(x$choices) || inherits(x$choices, "delayed_data")) {
       stop(
-        sprintf("`multiple` metadata does not match the requirement for %s.", arg_name),
-        sprintf(" Please set multiple = %s in the picks object.", multiple),
+        "Delayed `choices_selected` objects cannot be coerced automatically; ",
+        "specify `teal.picks::values()` explicitly.",
         call. = FALSE
       )
     }
+    choices <- as.character(x$choices)
+    selected <- as.character(unlist(x$selected, use.names = FALSE))
+    checkmate::assert_character(choices, min.len = 1L)
+    if (length(selected) == 0) {
+      selected <- NULL
+    }
+    checkmate::assert_character(selected, min.len = 1L, null.ok = TRUE)
+    fixed <- isTRUE(x$fixed)
+    multiple <- (!is.null(multiple) && multiple) || (is.null(multiple) && length(selected) > 1L)
+    x <- teal.picks::values(choices, selected, fixed = fixed, multiple = multiple)
   }
-  checkmate::assert_class(
-    x,
-    "values",
-    null.ok = null.ok,
-    .var.name = arg_name
-  )
+  checkmate::assert_class(x, "values", .var.name = arg_name)
   x
 }
 
