@@ -1,14 +1,48 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <testsuites>
-  <testsuite name="shinytest2-tm_g_gh_boxplot" timestamp="2026-08-17T17:09:44Z" hostname="16c1418ebb78" tests="9" skipped="0" failures="0" errors="0" time="133.799">
-    <testcase time="15.069" classname="shinytest2_tm_g_gh_boxplot" name="toggle_slider_module_widgets_are_initialized_with_proper_values"/>
-    <testcase time="2.913" classname="shinytest2_tm_g_gh_boxplot" name="toggle_slider_module_widgets_are_initialized_with_proper_values"/>
-    <testcase time="0.0549999999999997" classname="shinytest2_tm_g_gh_boxplot" name="toggle_slider_module_widgets_are_initialized_with_proper_values"/>
-    <testcase time="19.606" classname="shinytest2_tm_g_gh_boxplot" name="toggle_slider_module_changing_the_sliderInput_sets_proper_numericInput_values"/>
-    <testcase time="0.0499999999999972" classname="shinytest2_tm_g_gh_boxplot" name="toggle_slider_module_changing_the_sliderInput_sets_proper_numericInput_values"/>
-    <testcase time="26.028" classname="shinytest2_tm_g_gh_boxplot" name="toggle_slider_module_changing_the_numericInputs_within_the_sliderInput_range_sets_proper_sliderInput_values"/>
-    <testcase time="25.979" classname="shinytest2_tm_g_gh_boxplot" name="toggle_slider_module_changing_the_numericInputs_outside_the_sliderInput_range_sets_proper_sliderInput_values_and_range"/>
-    <testcase time="25.99" classname="shinytest2_tm_g_gh_boxplot" name="toggle_slider_module_changing_the_numericInputs_within_the_rage_sets_back_the_sliderInput_range_to_initial_range"/>
-    <testcase time="18.109" classname="shinytest2_tm_g_gh_boxplot" name="toggle_slider_module_changing_dependant_widgets_outside_sets_proper_sliderInput_and_numericInput_values"/>
+  <testsuite name="shinytest2-tm_g_gh_boxplot" timestamp="2026-08-17T18:53:55Z" hostname="f86268064f0e" tests="6" skipped="6" failures="0" errors="0" time="3.805">
+    <testcase time="0.756" classname="shinytest2_tm_g_gh_boxplot" name="toggle_slider_module_widgets_are_initialized_with_proper_values">
+      <skipped message="Reason: On CRAN ('test-shinytest2-tm_g_gh_boxplot.R:25:3')"/>
+    </testcase>
+    <testcase time="0.684" classname="shinytest2_tm_g_gh_boxplot" name="toggle_slider_module_changing_the_sliderInput_sets_proper_numericInput_values">
+      <skipped message="Reason: On CRAN ('test-shinytest2-tm_g_gh_boxplot.R:38:3')"/>
+    </testcase>
+    <testcase time="0.75" classname="shinytest2_tm_g_gh_boxplot" name="toggle_slider_module_changing_the_numericInputs_within_the_sliderInput_range_sets_proper_sliderInput_values">
+      <skipped message="Reason: On CRAN ('test-shinytest2-tm_g_gh_boxplot.R:54:5')"/>
+    </testcase>
+    <testcase time="0.558" classname="shinytest2_tm_g_gh_boxplot" name="toggle_slider_module_changing_the_numericInputs_outside_the_sliderInput_range_sets_proper_sliderInput_values_and_range">
+      <skipped message="Reason: On CRAN ('test-shinytest2-tm_g_gh_boxplot.R:88:5')"/>
+    </testcase>
+    <testcase time="0.527" classname="shinytest2_tm_g_gh_boxplot" name="toggle_slider_module_changing_the_numericInputs_within_the_rage_sets_back_the_sliderInput_range_to_initial_range">
+      <skipped message="Reason: On CRAN ('test-shinytest2-tm_g_gh_boxplot.R:121:5')"/>
+    </testcase>
+    <testcase time="0.529999999999999" classname="shinytest2_tm_g_gh_boxplot" name="toggle_slider_module_changing_dependant_widgets_outside_sets_proper_sliderInput_and_numericInput_values">
+      <skipped message="Reason: On CRAN ('test-shinytest2-tm_g_gh_boxplot.R:155:5')"/>
+    </testcase>
+  </testsuite>
+  <testsuite name="shinytest2-tm_g_gh_correlationplot" timestamp="2026-08-17T18:53:59Z" hostname="f86268064f0e" tests="3" skipped="3" failures="0" errors="0" time="0.063">
+    <testcase time="0.0350000000000001" classname="shinytest2_tm_g_gh_correlationplot" name="e2e_tm_g_gh_correlationplot_initializes_and_renders_a_plot">
+      <skipped message="Reason: testing depth 3 is below current testing specification 5 ('test-shinytest2-tm_g_gh_correlationplot.R:19:3')"/>
+    </testcase>
+    <testcase time="0.0140000000000002" classname="shinytest2_tm_g_gh_correlationplot" name="e2e_tm_g_gh_correlationplot_starts_with_expected_label_and_encoding_selections.">
+      <skipped message="Reason: testing depth 3 is below current testing specification 5 ('test-shinytest2-tm_g_gh_correlationplot.R:40:5')"/>
+    </testcase>
+    <testcase time="0.0139999999999993" classname="shinytest2_tm_g_gh_correlationplot" name="e2e_tm_g_gh_correlationplot_changing_pick_changes_plot_and_does_not_throw_validation_errors.">
+      <skipped message="Reason: testing depth 3 is below current testing specification 5 ('test-shinytest2-tm_g_gh_correlationplot.R:61:3')"/>
+    </testcase>
+  </testsuite>
+  <testsuite name="tm_g_gh_correlationplot" timestamp="2026-08-17T18:53:59Z" hostname="f86268064f0e" tests="12" skipped="0" failures="0" errors="0" time="0.179">
+    <testcase time="0.0940000000000003" classname="tm_g_gh_correlationplot" name="tm_g_gh_correlationplot_can_be_created_with_default_arguments"/>
+    <testcase time="0.00300000000000011" classname="tm_g_gh_correlationplot" name="tm_g_gh_correlationplot_can_be_created_with_default_arguments"/>
+    <testcase time="0.0129999999999999" classname="tm_g_gh_correlationplot" name="tm_g_gh_correlationplot_can_be_created_with_choices_selected_arguments"/>
+    <testcase time="0.00300000000000011" classname="tm_g_gh_correlationplot" name="tm_g_gh_correlationplot_can_be_created_with_choices_selected_arguments"/>
+    <testcase time="0.0110000000000001" classname="tm_g_gh_correlationplot" name="tm_g_gh_correlationplot_can_be_created_with_teal.picks_arguments"/>
+    <testcase time="0.00299999999999923" classname="tm_g_gh_correlationplot" name="tm_g_gh_correlationplot_can_be_created_with_teal.picks_arguments"/>
+    <testcase time="0.0120000000000005" classname="tm_g_gh_correlationplot" name="tm_g_gh_correlationplot_handles_multiple_parameter_combinations_with_choices_selected"/>
+    <testcase time="0.00300000000000011" classname="tm_g_gh_correlationplot" name="tm_g_gh_correlationplot_handles_multiple_parameter_combinations_with_choices_selected"/>
+    <testcase time="0.0179999999999998" classname="tm_g_gh_correlationplot" name="tm_g_gh_correlationplot_accepts_custom_color_and_shape_specifications_with_choices_selected"/>
+    <testcase time="0.00300000000000011" classname="tm_g_gh_correlationplot" name="tm_g_gh_correlationplot_accepts_custom_color_and_shape_specifications_with_choices_selected"/>
+    <testcase time="0.0129999999999999" classname="tm_g_gh_correlationplot" name="tm_g_gh_correlationplot_accepts_line_arguments_with_choices_selected"/>
+    <testcase time="0.00300000000000011" classname="tm_g_gh_correlationplot" name="tm_g_gh_correlationplot_accepts_line_arguments_with_choices_selected"/>
   </testsuite>
 </testsuites>
