@@ -60,8 +60,6 @@ describe("e2e - tm_g_gh_correlationplot: changing pick changes plot and does not
   skip_if_not_installed("shinytest2")
   skip_if_too_deep(5)
 
-  withr::local_options(list(shinytest2.duration = 2 * 1000))
-
   action_mod <- list(
     xaxis_param = list(slot_name = "values", value = "CRP"),
     yaxis_param = list(slot_name = "values", value = "ALT"),
@@ -80,7 +78,7 @@ describe("e2e - tm_g_gh_correlationplot: changing pick changes plot and does not
       app_driver$wait_for_idle()
       plot_before <- app_driver$get_active_module_plot_output("plot")
       set_teal_picks_slot(app_driver, pick_id, slot_name, new_value)
-      app_driver$wait_for_idle()
+      app_driver$wait_for_idle(duration = 2000)
       expect_equal(get_teal_picks_slot(app_driver, pick_id, slot_name), new_value)
       expect_false(identical(plot_before, app_driver$get_active_module_plot_output("plot")))
       app_driver$expect_no_validation_error()
