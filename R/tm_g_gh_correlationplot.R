@@ -674,12 +674,11 @@ srv_g_correlationplot <- function(id,
     yloqfl <- reactive(paste0("LOQFL_", yaxis_param_sel()))
 
     # transpose data to plot
-    plot_data_transpose <- reactive({
+    data_transpose_q <- reactive({
       teal::validate_inputs(iv_r())
 
       req(anl_constraint())
       ANL <- anl_constraint()$ANL
-      trt_group <- trt_group_sel()
 
       qenv <- anl_constraint()$qenv %>% teal.code::eval_code(
         code = bquote({
@@ -727,7 +726,7 @@ srv_g_correlationplot <- function(id,
         code = bquote({
           ANL_TRANSPOSED <- dplyr::inner_join(
             ANL_x, ANL_y,
-            by = c("USUBJID", "AVISITCD", .(trt_group)),
+            by = c("USUBJID", "AVISITCD", .(trt_group_sel())),
             suffix = .(sprintf("_%s", c(xaxis_param_sel(), yaxis_param_sel())))
           )
           ANL_TRANSPOSED <- ANL_TRANSPOSED %>%
@@ -744,12 +743,9 @@ srv_g_correlationplot <- function(id,
       validate(need(nrow(qenv[["ANL_TRANSPOSED"]]) > 0, "Plot Data No Observations Left"))
       validate_has_variable(data = qenv[["ANL_TRANSPOSED"]], varname = c(xvar(), yvar(), xloqfl(), yloqfl()))
 
-      qenv <- teal.code::eval_code(
-        object = qenv,
-        code =
-          bquote(attr(ANL_TRANSPOSED[[.(trt_group)]], "label") <- attr(ANL[[.(trt_group)]], "label"))
-      )
-      return(list(ANL_TRANSPOSED = qenv[["ANL_TRANSPOSED"]], qenv = qenv))
+      within(qenv, {
+        attr(ANL_TRANSPOSED[[trt_group_val]], "label") <- attr(ANL[[trt_group_val]], "label")
+      }, trt_group_val = trt_group_sel())
     })
 
     plot_labels <- reactive({
@@ -781,7 +777,7 @@ srv_g_correlationplot <- function(id,
 
     # plot
     plot_q <- debounce(reactive({
-      req(plot_data_transpose())
+      req(data_transpose_q())
 
       validate( # Validation must occur after anl_constraint() has valid data
         teal::need_input(
@@ -830,7 +826,7 @@ srv_g_correlationplot <- function(id,
       title_text <- plot_labels()$title_text
       xaxis_lab <- plot_labels()$xaxis_lab
       yaxis_lab <- plot_labels()$yaxis_lab
-      obj <- plot_data_transpose()$qenv
+      obj <- data_transpose_q()
       teal.reporter::teal_card(obj) <-
         c(
           teal.reporter::teal_card(obj),
@@ -900,7 +896,7 @@ srv_g_correlationplot <- function(id,
       req(iv_r()$is_valid())
       plot_brush <- plot_data$brush()
 
-      ANL_TRANSPOSED <- isolate(plot_data_transpose()$ANL_TRANSPOSED)
+      ANL_TRANSPOSED <- isolate(data_transpose_q()$ANL_TRANSPOSED)
 
       df <- teal.widgets::clean_brushedPoints(
         dplyr::select(
