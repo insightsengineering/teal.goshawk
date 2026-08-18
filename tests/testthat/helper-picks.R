@@ -91,6 +91,7 @@ set_teal_picks_slot <- function(app_driver, id, slot_name = c("variables", "data
 #' @param id (`character(1)`) `pickerInput` id.
 #' @param value The value to set using `AppDriver$set_input`
 .change_selectpicker <- function(app_driver, id, value, wait_ = TRUE) {
+  testthat::skip_if_not_installed("jsonlite")
   if (is.null(value) || length(value) == 0 || identical(value, "")) { # De-select values needs to use shinytest2 API
     app_driver$set_input(id, "")
     value <- ""
