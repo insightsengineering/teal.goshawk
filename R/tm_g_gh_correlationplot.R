@@ -743,9 +743,12 @@ srv_g_correlationplot <- function(id,
       validate(need(nrow(qenv[["ANL_TRANSPOSED"]]) > 0, "Plot Data No Observations Left"))
       validate_has_variable(data = qenv[["ANL_TRANSPOSED"]], varname = c(xvar(), yvar(), xloqfl(), yloqfl()))
 
-      within(qenv, {
-        attr(ANL_TRANSPOSED[[trt_group_val]], "label") <- attr(ANL[[trt_group_val]], "label")
-      }, trt_group_val = trt_group_sel())
+      within(qenv,
+        {
+          attr(ANL_TRANSPOSED[[trt_group_val]], "label") <- attr(ANL[[trt_group_val]], "label")
+        },
+        trt_group_val = trt_group_sel()
+      )
     })
 
     plot_labels <- reactive({
