@@ -9,10 +9,10 @@ export(tm_g_gh_spaghettiplot)
 import(goshawk)
 import(shiny)
 import(teal)
+import(teal.picks)
 import(teal.transform)
 importFrom(ggplot2,ggplot)
 importFrom(rlang,
   .data,
   sym
 )
-importFrom(teal.transform,choices_selected)
