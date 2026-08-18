@@ -176,24 +176,20 @@ create_picks_helper <- function(datasets = NULL, x, ...) {
 force_pick_selection <- function(pick,
                                  arg_name = checkmate::vname(pick),
                                  which = c("variables", "values", "datasets"),
-                                 multiple = FALSE,
-                                 quiet = FALSE) {
+                                 multiple = FALSE) {
   checkmate::assert_class(pick, "picks", .var.name = arg_name)
   checkmate::assert_string(arg_name)
   checkmate::assert_logical(multiple)
-  checkmate::assert_logical(quiet)
   which <- match.arg(which)
   selection <- if (isTRUE(multiple)) "multiple" else "single"
 
   if (!identical(multiple, teal.picks::is_pick_multiple(pick[[which]]))) {
-    if (!isTRUE(quiet)) {
-      warning(
-        sprintf(
-          "`%s` accepts only a %s variable selection. \nForcing `teal.picks::%s(multiple)` to `%s`.",
-          arg_name, selection, which, multiple
-        )
+    warning(
+      sprintf(
+        "`%s` accepts only a %s variable selection. \nForcing `teal.picks::%s(multiple)` to `%s`.",
+        arg_name, selection, which, multiple
       )
-    }
+    )
     attr(pick[[which]], "multiple") <- multiple
   }
 

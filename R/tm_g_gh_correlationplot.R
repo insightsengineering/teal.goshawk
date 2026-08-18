@@ -285,11 +285,11 @@ tm_g_gh_correlationplot <- function(label,
   trt_group <- create_picks_helper(teal.picks::datasets(dataname, dataname), trt_group)
 
   # Defined  per module
-  xaxis_param <- force_pick_selection(xaxis_param, which = "values", multiple = FALSE, quiet = TRUE)
-  yaxis_param <- force_pick_selection(yaxis_param, which = "values", multiple = FALSE, quiet = TRUE)
-  trt_group <- force_pick_selection(trt_group, which = "variables", multiple = FALSE, quiet = TRUE)
-  xaxis_var <- force_pick_selection(xaxis_var, which = "variables", multiple = FALSE, quiet = TRUE)
-  yaxis_var <- force_pick_selection(yaxis_var, which = "variables", multiple = FALSE, quiet = TRUE)
+  xaxis_param <- force_pick_selection(xaxis_param, which = "values")
+  yaxis_param <- force_pick_selection(yaxis_param, which = "values")
+  trt_group <- force_pick_selection(trt_group, which = "variables")
+  xaxis_var <- force_pick_selection(xaxis_var, which = "variables")
+  yaxis_var <- force_pick_selection(yaxis_var, which = "variables")
 
   args <- as.list(environment())
 
