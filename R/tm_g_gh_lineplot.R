@@ -7,18 +7,17 @@
 #' @param label menu item label of the module in the teal app.
 #' @param dataname analysis data passed to the data argument of \code{\link[teal]{init}}. E.g. `ADaM` structured
 #' laboratory data frame `ADLB`.
-#' @param param_var name of variable containing biomarker codes e.g. `PARAMCD`.
-#' @param param biomarker selected.
+#' @param param_var `r badge("deprecated")` name of variable containing biomarker codes e.g. `PARAMCD`.
+#' @param param (`picks` or `choices_selected`) biomarker selected.
 #' @param param_var_label single name of variable in analysis data that includes parameter labels.
-#' @param xaxis_var single name of variable in analysis data that is used as x-axis in the plot for the
-#' respective `goshawk` function.
+#' @param xaxis_var (`variables` or `choices_selected`) single name of variable in analysis data that is used as x-axis in the plot.
 #' @param xvar_level vector that can be used to define the factor level of `xvar`. Only use it when
 #' `xvar` is character or factor.
 #' @param filter_var data constraint variable.
 #' @param filter_var_choices data constraint variable choices.
-#' @param yaxis_var single name of variable in analysis data that is used as summary variable in the
+#' @param yaxis_var (`variables` or `choices_selected`) single name of variable in analysis data that is used as summary variable in the
 #' respective `goshawk` function.
-#' @param trt_group \code{\link[teal.transform]{choices_selected}} object with available choices and pre-selected option
+#' @param trt_group (`variables` or `choices_selected`) object with available choices and pre-selected option
 #' for variable names representing treatment group e.g. `ARM`.
 #' @param trt_group_level vector that can be used to define factor level of `trt_group`.
 #' @param shape_choices Vector or \code{choices_selected} object with names of `ADSL` variables which
@@ -109,12 +108,15 @@
 #'     tm_g_gh_lineplot(
 #'       label = "Line Plot",
 #'       dataname = "ADLB",
-#'       param_var = "PARAMCD",
-#'       param = choices_selected(c("ALT", "CRP", "IGA"), "ALT"),
+#'       param = picks(
+#'         variables("PARAMCD", "PARAMCD"),
+#'         values(selected = "ALT", multiple = FALSE),
+#'         check_dataset = FALSE
+#'       ),
 #'       shape_choices = c("SEX", "RACE"),
-#'       xaxis_var = choices_selected("AVISITCD", "AVISITCD"),
-#'       yaxis_var = choices_selected(c("AVAL", "BASE", "CHG", "PCHG"), "AVAL"),
-#'       trt_group = choices_selected(c("ARM", "ACTARM"), "ARM"),
+#'       xaxis_var = variables("AVISITCD", "AVISITCD"),
+#'       yaxis_var = variables(c("AVAL", "BASE", "CHG", "PCHG"), "AVAL"),
+#'       trt_group = variables(c("ARM", "ACTARM"), "ARM"),
 #'       hline_arb = c(20.5, 19.5),
 #'       hline_arb_color = c("red", "green"),
 #'       hline_arb_label = c("A", "B")
@@ -126,16 +128,20 @@
 #' }
 #'
 tm_g_gh_lineplot <- function(label,
-                             dataname,
-                             param_var,
-                             param,
+                             dataname = "ADLB",
+                             param_var = lifecycle::deprecated(),
+                             param = teal.picks::picks(
+                               teal.picks::variables("PARAMCD", "PARAMCD"),
+                               teal.picks::values(selected = "ALT", multiple = FALSE),
+                               check_dataset = FALSE
+                             ),
                              param_var_label = "PARAM",
-                             xaxis_var,
-                             yaxis_var,
+                             xaxis_var = teal.picks::variables(c("AVISITCD", "AVISIT"), "AVISITCD"),
+                             yaxis_var = teal.picks::variables(c("AVAL", "CHG", "PCHG"), "AVAL"),
                              xvar_level = NULL,
                              filter_var = yaxis_var,
                              filter_var_choices = filter_var,
-                             trt_group,
+                             trt_group = teal.picks::variables(selected = "ARM"),
                              trt_group_level = NULL,
                              shape_choices = NULL,
                              stat = "mean",
@@ -161,23 +167,21 @@ tm_g_gh_lineplot <- function(label,
                              plot_relative_height_value = 1000,
                              transformators = list()) {
   message("Initializing tm_g_gh_lineplot")
-  # Validate string inputs
   checkmate::assert_string(label)
   checkmate::assert_string(dataname)
-  checkmate::assert_string(param_var)
   checkmate::assert_string(param_var_label)
   checkmate::assert_string(stat)
 
-  # Validate choices_selected class inputs
-  checkmate::assert_class(param, "choices_selected")
-  checkmate::assert_class(xaxis_var, "choices_selected")
-  checkmate::assert_class(yaxis_var, "choices_selected")
-  checkmate::assert_class(trt_group, "choices_selected")
+  checkmate::assert_multi_class(param, c("choices_selected", "picks"))
+  checkmate::assert_multi_class(xaxis_var, c("choices_selected", "variables", "picks"))
+  checkmate::assert_multi_class(yaxis_var, c("choices_selected", "variables", "picks"))
+  checkmate::assert_multi_class(trt_group, c("choices_selected", "variables", "picks"))
 
-  # Validate flag inputs
   checkmate::assert_flag(rotate_xlab)
 
-  # Validate numeric vector inputs
+  checkmate::assert_character(color_manual, null.ok = TRUE)
+  checkmate::assert_character(hline_arb_color)
+  checkmate::assert_character(hline_arb_label)
   checkmate::assert_numeric(plot_height, len = 3, any.missing = FALSE, finite = TRUE)
   checkmate::assert_numeric(plot_height[1], lower = plot_height[2], upper = plot_height[3], .var.name = "plot_height")
   checkmate::assert_numeric(plot_width, len = 3, any.missing = FALSE, null.ok = TRUE, finite = TRUE)
@@ -194,53 +198,97 @@ tm_g_gh_lineplot <- function(label,
   )
   checkmate::assert_number(plot_relative_height_value, lower = 500, upper = 5000)
   checkmate::assert_number(count_threshold)
+  checkmate::assert_numeric(dodge, len = 3, any.missing = FALSE, finite = TRUE)
+  checkmate::assert_numeric(plot_font_size, len = 3, any.missing = FALSE, finite = TRUE)
+  checkmate::assert_multi_class(pre_output, c("shiny.tag", "shiny.tag.list"), null.ok = TRUE)
+  checkmate::assert_multi_class(post_output, c("shiny.tag", "shiny.tag.list"), null.ok = TRUE)
 
-  # Validate color manual if provided
-  checkmate::assert_character(color_manual, null.ok = TRUE)
-  checkmate::assert_character(hline_arb_color)
-  checkmate::assert_character(hline_arb_label)
-
-  # Validate line arguments
   validate_line_arb_arg(hline_arb, hline_arb_color, hline_arb_label)
+
+  if (lifecycle::is_present(param_var)) {
+    lifecycle::deprecate_warn(
+      when = "0.6.0",
+      what = "tm_g_gh_lineplot(param_var)",
+      details = "Please use `teal.picks::picks()` to specify `param` instead of `param_var`."
+    )
+    checkmate::assert_string(param_var)
+  } else {
+    param_var <- rlang::maybe_missing(param_var, "PARAMCD")
+  }
+  param_var <- teal.picks::variables(param_var, param_var)
+
+  if (inherits(param, "choices_selected")) {
+    param <- migrate_choices_selected_to_values(param)
+    param <- create_picks_helper(teal.picks::datasets(dataname, dataname), param_var, param)
+  } else {
+    param <- create_picks_helper(teal.picks::datasets(dataname, dataname), param)
+  }
+
+  xaxis_var <- migrate_choices_selected_to_variables(xaxis_var)
+  yaxis_var <- migrate_choices_selected_to_variables(yaxis_var)
+  trt_group <- migrate_choices_selected_to_variables(trt_group)
+
+  teal.picks::assert_last_level(param, "values")
+
+  xaxis_var <- create_picks_helper(teal.picks::datasets(dataname, dataname), xaxis_var)
+  yaxis_var <- create_picks_helper(teal.picks::datasets(dataname, dataname), yaxis_var)
+  trt_group <- create_picks_helper(teal.picks::datasets(dataname, dataname), trt_group)
+
+  param <- force_pick_selection(param, which = "values")
+  trt_group <- force_pick_selection(trt_group, which = "variables")
+  xaxis_var <- force_pick_selection(xaxis_var, which = "variables")
+  yaxis_var <- force_pick_selection(yaxis_var, which = "variables")
 
   args <- as.list(environment())
 
   module(
     label = label,
+    datanames = .picks_datanames(param, xaxis_var, yaxis_var, trt_group),
     server = srv_lineplot,
-    server_args = list(
-      dataname = dataname,
-      param_var = param_var,
-      color_manual = color_manual,
-      xvar_level = xvar_level,
-      trt_group_level = trt_group_level,
-      shape_choices = shape_choices,
-      param_var_label = param_var_label,
-      xtick = xtick,
-      xlabel = xlabel,
-      plot_height = plot_height,
-      plot_width = plot_width,
-      module_args = args
-    ),
+    server_args = args[names(args) %in% names(formals(srv_lineplot))],
     ui = ui_lineplot,
-    ui_args = args,
-    transformators = transformators,
-    datanames = dataname
+    ui_args = args[names(args) %in% names(formals(ui_lineplot))],
+    transformators = transformators
   )
 }
 
-ui_lineplot <- function(id, ...) {
+ui_lineplot <- function(id,
+                        dataname,
+                        param,
+                        xaxis_var,
+                        yaxis_var,
+                        trt_group,
+                        shape_choices,
+                        stat,
+                        rotate_xlab,
+                        hline_arb,
+                        hline_arb_color,
+                        hline_arb_label,
+                        plot_relative_height_value,
+                        count_threshold,
+                        dodge,
+                        plot_font_size,
+                        dot_size,
+                        table_font_size,
+                        pre_output,
+                        post_output) {
   ns <- NS(id)
-  a <- list(...)
 
   shiny::tagList(
     teal.widgets::standard_layout(
       output = teal.widgets::plot_with_settings_ui(id = ns("plot")),
       encoding = tags$div(
-        templ_ui_dataname(a$dataname),
-        uiOutput(ns("axis_selections")),
+        templ_ui_dataname(dataname),
+        tmpl_axis_selection_ui(
+          ns,
+          xaxis_param = param,
+          xaxis_var = xaxis_var,
+          yaxis_var = yaxis_var,
+          trt_group = trt_group,
+          xparam_label = "Select a Biomarker"
+        ),
         uiOutput(ns("shape_ui")),
-        radioButtons(ns("stat"), "Select a Statistic:", c("mean", "median"), a$stat),
+        radioButtons(ns("stat"), "Select a Statistic:", c("mean", "median"), stat),
         checkboxInput(ns("include_stat"), "Include Statistic Table", value = TRUE),
         tags$div(
           sliderInput(
@@ -262,12 +310,12 @@ ui_lineplot <- function(id, ...) {
             min = 500,
             max = 5000,
             step = 50,
-            value = a$plot_relative_height_value,
+            value = plot_relative_height_value,
             ticks = FALSE
           ),
         ),
-        templ_ui_constraint(ns), # required by constr_anl_q
-        ui_arbitrary_lines(id = ns("hline_arb"), a$hline_arb, a$hline_arb_label, a$hline_arb_color),
+        templ_ui_constraint(ns),
+        ui_arbitrary_lines(id = ns("hline_arb"), hline_arb, hline_arb_label, hline_arb_color),
         bslib::accordion(
           bslib::accordion_panel(
             title = "Plot Aesthetic Settings",
@@ -275,12 +323,12 @@ ui_lineplot <- function(id, ...) {
               ns("yrange_scale"),
               label = "Y-Axis Range Zoom"
             ),
-            checkboxInput(ns("rotate_xlab"), "Rotate X-axis Label", a$rotate_xlab),
-            numericInput(ns("count_threshold"), "Contributing Observations Threshold:", a$count_threshold)
+            checkboxInput(ns("rotate_xlab"), "Rotate X-axis Label", rotate_xlab),
+            numericInput(ns("count_threshold"), "Contributing Observations Threshold:", count_threshold)
           ),
           bslib::accordion_panel(
             title = "Plot settings",
-            teal.widgets::optionalSliderInputValMinMax(ns("dodge"), "Error Bar Position Dodge", a$dodge, ticks = FALSE),
+            teal.widgets::optionalSliderInputValMinMax(ns("dodge"), "Error Bar Position Dodge", dodge, ticks = FALSE),
             bslib::accordion(
               bslib::accordion_panel(
                 title = "Line Settings",
@@ -294,13 +342,13 @@ ui_lineplot <- function(id, ...) {
             teal.widgets::optionalSliderInputValMinMax(
               ns("plot_font_size"),
               "Font Size",
-              a$plot_font_size,
+              plot_font_size,
               ticks = FALSE
             ),
             teal.widgets::optionalSliderInputValMinMax(
               ns("dot_size"),
               "Dot Size",
-              a$dot_size,
+              dot_size,
               ticks = FALSE
             )
           ),
@@ -309,14 +357,14 @@ ui_lineplot <- function(id, ...) {
             teal.widgets::optionalSliderInputValMinMax(
               ns("table_font_size"),
               "Table Font Size",
-              a$table_font_size,
+              table_font_size,
               ticks = FALSE
             )
           )
         )
       ),
-      pre_output = a$pre_output,
-      post_output = a$post_output
+      pre_output = pre_output,
+      post_output = post_output
     )
   )
 }
@@ -325,6 +373,9 @@ srv_lineplot <- function(id,
                          data,
                          dataname,
                          param_var,
+                         param,
+                         xaxis_var,
+                         yaxis_var,
                          trt_group,
                          color_manual,
                          xvar_level,
@@ -334,8 +385,7 @@ srv_lineplot <- function(id,
                          xtick,
                          xlabel,
                          plot_height,
-                         plot_width,
-                         module_args) {
+                         plot_width) {
   checkmate::assert_class(data, "reactive")
   checkmate::assert_class(shiny::isolate(data()), "teal_data")
 
@@ -343,25 +393,56 @@ srv_lineplot <- function(id,
     teal.logger::log_shiny_input_changes(input, namespace = "teal.goshawk")
     ns <- session$ns
 
-    output$axis_selections <- renderUI({
-      env <- shiny::isolate(as.list(data()[[".raw_data"]]))
-      resolved_x <- teal.transform::resolve_delayed(module_args$xaxis_var, env)
-      resolved_y <- teal.transform::resolve_delayed(module_args$yaxis_var, env)
-      resolved_param <- teal.transform::resolve_delayed(module_args$param, env)
-      resolved_trt <- teal.transform::resolve_delayed(module_args$trt_group, env)
-      templ_ui_params_vars(
-        ns,
-        # xparam and yparam are identical, so we only show the user one
-        xparam_choices = resolved_param$choices,
-        xparam_selected = resolved_param$selected,
-        xparam_label = "Select a Biomarker",
-        xchoices = resolved_x$choices,
-        xselected = resolved_x$selected,
-        ychoices = resolved_y$choices,
-        yselected = resolved_y$selected,
-        trt_choices = resolved_trt$choices,
-        trt_selected = resolved_trt$selected
+    selectors <- teal.picks::picks_srv(
+      id = "",
+      picks = list(
+        xaxis_param = param,
+        xaxis_var = xaxis_var,
+        yaxis_var = yaxis_var,
+        trt_group = trt_group
+      ),
+      data = data
+    )
+
+    param_sel <- reactive(selectors$xaxis_param()$values$selected)
+    xaxis_var_sel <- reactive(selectors$xaxis_var()$variables$selected)
+    yaxis_var_sel <- reactive(selectors$yaxis_var()$variables$selected)
+    trt_group_sel <- reactive(selectors$trt_group()$variables$selected)
+    param_var_sel <- reactive(selectors$xaxis_param()$variables$selected)
+
+    data_with_card <- reactive({
+      obj <- data()
+      teal.reporter::teal_card(obj) <-
+        c(
+          teal.reporter::teal_card(obj),
+          teal.reporter::teal_card("## Module's output(s)")
+        )
+      teal.code::eval_code(obj, "library(dplyr)")
+    })
+
+    validated_q <- reactive({
+      validate(
+        teal::need_input(
+          inputId = "xaxis_param-values-selected",
+          condition = length(param_sel()) != 0,
+          message = "Please select a biomarker"),
+        teal::need_input(
+          inputId = "trt_group-variables-selected",
+          condition = length(trt_group_sel()) != 0,
+          message = "Please select a treatment variable"
+        ),
+        teal::need_input(
+          inputId = "xaxis_var-variables-selected",
+          condition = length(xaxis_var_sel()) != 0,
+          message = "Please select an X-Axis variable"
+        ),
+        teal::need_input(
+          inputId = "yaxis_var-variables-selected",
+          condition = length(yaxis_var_sel()) != 0,
+          message = "Please select a Y-Axis variable"
+        )
       )
+      data_with_card()
     })
 
     output$shape_ui <- renderUI({
@@ -384,40 +465,33 @@ srv_lineplot <- function(id,
     anl_q_output <- constr_anl_q(
       session = session,
       input = input,
-      data = data,
+      data = validated_q,
       dataname = dataname,
-      param_id = "xaxis_param",
-      param_var = param_var,
-      trt_group = input$trt_group,
+      param_r = param_sel,
+      param_var_r = param_var_sel,
+      trt_group_r = trt_group_sel,
       min_rows = 2
     )
 
     anl_q <- anl_q_output()$value
 
-    keep_data_const_opts_updated(session, input, anl_q, "xaxis_param")
+    keep_data_const_opts_updated(session, input, anl_q, param_sel)
 
     horizontal_line <- srv_arbitrary_lines("hline_arb")
 
     iv_r <- reactive({
       iv <- shinyvalidate::InputValidator$new()
-      iv$add_rule("xaxis_param", shinyvalidate::sv_required("Please select a biomarker"))
-      iv$add_rule("trt_group", shinyvalidate::sv_required("Please select a treatment variable"))
-      iv$add_rule("xaxis_var", shinyvalidate::sv_required("Please select an X-Axis variable"))
-      iv$add_rule("yaxis_var", shinyvalidate::sv_required("Please select a Y-Axis variable"))
-
       iv$add_validator(horizontal_line()$iv_r())
       iv$add_validator(anl_q_output()$iv_r())
       iv$enable()
       iv
     })
 
-
-    # update sliders for axes
     data_state <- reactive({
-      varname <- input[["yaxis_var"]]
+      varname <- yaxis_var_sel()
       validate(need(varname, "Please select variable"))
 
-      ANL <- anl_q()$ANL # nolint
+      ANL <- anl_q()$ANL
       validate_has_variable(ANL, varname, paste("variable", varname, "does not exist"))
 
       shape <- if (!(is.null(input$shape) || input$shape == "None")) {
@@ -426,10 +500,8 @@ srv_lineplot <- function(id,
         NULL
       }
 
-      # we don't need to additionally filter for paramvar here as in get_data_range_states because
-      # xaxis_var and yaxis_var are always distinct
       sum_data <- ANL %>%
-        dplyr::group_by_at(c(input$xaxis_var, input$trt_group, shape)) %>%
+        dplyr::group_by_at(c(xaxis_var_sel(), trt_group_sel(), shape)) %>%
         dplyr::summarise(
           upper = if (input$stat == "mean") {
             mean(!!sym(varname), na.rm = TRUE) +
@@ -478,8 +550,8 @@ srv_lineplot <- function(id,
     )
 
     line_color_selected <- reactive({
-      req(input$trt_group)
-      anl_arm <- as.factor(isolate(anl_q())$ANL[[input$trt_group]])
+      req(trt_group_sel())
+      anl_arm <- as.factor(isolate(anl_q())$ANL[[trt_group_sel()]])
       anl_arm_nlevels <- nlevels(anl_arm)
       anl_arm_levels <- levels(anl_arm)
 
@@ -505,8 +577,8 @@ srv_lineplot <- function(id,
       )
     })
     line_type_selected <- reactive({
-      req(input$trt_group)
-      anl_arm <- as.factor(isolate(anl_q())$ANL[[input$trt_group]])
+      req(trt_group_sel())
+      anl_arm <- as.factor(isolate(anl_q())$ANL[[trt_group_sel()]])
       anl_arm_nlevels <- nlevels(anl_arm)
       anl_arm_levels <- levels(anl_arm)
 
@@ -524,8 +596,8 @@ srv_lineplot <- function(id,
     })
 
     output$lines <- renderUI({
-      req(input$trt_group)
-      anl_arm <- as.factor(anl_q()$ANL[[input$trt_group]])
+      req(trt_group_sel())
+      anl_arm <- as.factor(anl_q()$ANL[[trt_group_sel()]])
       anl_arm_nlevels <- nlevels(anl_arm)
       anl_arm_levels <- levels(anl_arm)
 
@@ -648,7 +720,14 @@ srv_lineplot <- function(id,
     plot_q <- debounce(reactive({
       teal::validate_inputs(iv_r())
       req(anl_q(), line_color_selected(), line_type_selected())
-      # nolint start
+      validate( # Validation must occur after anl_constraint() has valid data
+        teal::need_input(
+          inputId = "yrange_scale",
+          condition = checkmate::test_numeric(yrange_slider$value, len = 2) &&
+            yrange_slider$value[1] < yrange_slider$value[2],
+          message = "Y-Axis Range Zoom: Invalid range"
+        )
+      )
       ylim <- yrange_slider$value
       plot_font_size <- input$plot_font_size
       dot_size <- input$dot_size
@@ -659,16 +738,16 @@ srv_lineplot <- function(id,
 
       median <- ifelse(input$stat == "median", TRUE, FALSE)
       relative_height <- input$relative_height
-      trt_group <- input$trt_group
+      trt_group_val <- trt_group_sel()
       color_selected <- line_color_selected()
       type_selected <- line_type_selected()
       symbol_selected <- symbol_type_selected()
       include_stat <- input$include_stat
 
-      param <- input$xaxis_param
-      xaxis <- input$xaxis_var
-      yaxis <- input$yaxis_var
-      # nolint end
+      param_val <- param_sel()
+      xaxis_val <- xaxis_var_sel()
+      yaxis_val <- yaxis_var_sel()
+      param_var_val <- param_var_sel()
 
       shape <- if (!(is.null(input$shape) || input$shape == "None")) {
         input$shape
@@ -678,7 +757,7 @@ srv_lineplot <- function(id,
 
       validate(
         need(
-          nrow(anl_q()$ANL[stats::complete.cases(anl_q()$ANL[, c(yaxis, xaxis)]), ]) >= 2,
+          nrow(anl_q()$ANL[stats::complete.cases(anl_q()$ANL[, c(yaxis_val, xaxis_val)]), ]) >= 2,
           "Number of complete rows on x and y axis variables is less than 2"
         )
       )
@@ -717,17 +796,17 @@ srv_lineplot <- function(id,
         object = obj,
         code = bquote({
           p <- goshawk::g_lineplot(
-            data = ANL[stats::complete.cases(ANL[, c(.(yaxis), .(xaxis))]), ],
-            biomarker_var = .(param_var),
+            data = ANL[stats::complete.cases(ANL[, c(.(yaxis_val), .(xaxis_val))]), ],
+            biomarker_var = .(param_var_val),
             biomarker_var_label = .(param_var_label),
-            biomarker = .(param),
-            value_var = .(yaxis),
+            biomarker = .(param_val),
+            value_var = .(yaxis_val),
             ylim = .(ylim),
-            trt_group = .(trt_group),
+            trt_group = .(trt_group_val),
             trt_group_level = .(trt_group_level),
             shape = .(shape),
             shape_type = .(symbol_selected),
-            time = .(xaxis),
+            time = .(xaxis_val),
             time_level = .(xvar_level),
             color_manual = .(color_selected),
             line_type = .(type_selected),
@@ -737,13 +816,13 @@ srv_lineplot <- function(id,
             hline_arb_color = .(hline_arb_color),
             xtick = .(if (!is.null(xtick)) quote(xtick) else xtick),
             xlabel = .(if (!is.null(xtick)) quote(xlabel) else xlabel),
-            rotate_xlab = .(rotate_xlab),
-            plot_height = .(relative_height), # in g_lineplot this is relative height of plot to table
-            plot_font_size = .(plot_font_size),
-            dot_size = .(dot_size),
-            dodge = .(dodge),
-            count_threshold = .(count_threshold),
-            table_font_size = .(table_font_size),
+            rotate_xlab = .(input$rotate_xlab),
+            plot_height = .(relative_height),
+            plot_font_size = .(input$plot_font_size),
+            dot_size = .(input$dot_size),
+            dodge = .(input$dodge),
+            count_threshold = .(input$count_threshold),
+            table_font_size = .(input$table_font_size),
             display_center_tbl = .(include_stat)
           )
           p
