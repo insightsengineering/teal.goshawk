@@ -125,21 +125,24 @@ toggle_slider_server <- function(id, data_state, ...) {
 
 #' @keywords internal
 #' @rdname toggle_slider
-get_data_range_states <- function(varname, paramname, ANL, trt_group = NULL, step = NULL) { # nolint object_name_linter
+get_data_range_states <- function(varname, paramname, ANL, trt_group = NULL, step = NULL) {
   validate(need(varname, "Please select variable"))
   validate(need(paramname, "Please select variable"))
   req(length(paramname) == 1)
   step <- NULL
 
-  ANL <- ANL %>% dplyr::filter(.data$PARAMCD == paramname) # nolint object_name_linter
+  ANL <- ANL %>% dplyr::filter(.data$PARAMCD == paramname)
   validate_has_variable(ANL, varname, paste("variable", varname, "does not exist"))
 
   var <- stats::na.omit(ANL[[varname]])
   minmax <- if (length(var)) c(floor(min(var)), ceiling(max(var))) else c(0, 0)
   if (!is.null(trt_group)) {
-    ANL_split <- ANL %>% split(f = factor(paste0(ANL[["AVISITCD"]], ANL[[trt_group]]))) # nolint
+    ANL_split <- ANL %>% split(f = factor(paste0(ANL[["AVISITCD"]], ANL[[trt_group]])))
     density_maxes <- lapply(ANL_split, function(x) {
-      max(stats::density(stats::na.omit(x[[varname]]))$y)
+      tryCatch(
+        max(stats::density(stats::na.omit(x[[varname]]))$y),
+        error = function(e) 0
+      )
     })
     dmax <- max(unlist(density_maxes))
     minmax <- c(0, round(dmax * 1.2, 5))
