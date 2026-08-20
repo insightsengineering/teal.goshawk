@@ -328,7 +328,7 @@ tm_g_gh_correlationplot <- function(label,
     ui_args = args[names(args) %in% names(formals(ui_g_correlationplot))],
     transformators = transformators
   )
-  }
+}
 
 ui_g_correlationplot <- function(id,
                                  dataname,
