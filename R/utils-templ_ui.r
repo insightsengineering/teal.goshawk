@@ -44,7 +44,6 @@ tmpl_axis_selection_ui <- function(ns,
       tags$div(tags$label(yvar_label), teal.picks::picks_ui(ns("yaxis_var"), yaxis_var))
     }
   )
-
 }
 
 tmpl_axis_selection_selectors <- function(data,

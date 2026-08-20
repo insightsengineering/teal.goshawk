@@ -43,9 +43,6 @@ keep_data_const_opts_updated <- function(session, input, data, id_param_var) {
   })
 }
 
-
-
-
 # param_id: input id that contains values of PARAMCD to filter for
 # param_var: currently only "PARAMCD" is supported
 constr_anl_q <- function(session, input, data, dataname, param_id, param_var, trt_group, min_rows) {
