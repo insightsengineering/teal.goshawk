@@ -1,38 +1,167 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <testsuites>
-  <testsuite name="shinytest2-tm_g_gh_boxplot" timestamp="2026-08-20T08:27:32Z" hostname="9eaa0fa721f4" tests="6" skipped="6" failures="0" errors="0" time="2.327">
-    <testcase time="0.492" classname="shinytest2_tm_g_gh_boxplot" name="toggle_slider_module_widgets_are_initialized_with_proper_values">
-      <skipped message="Reason: On CRAN ('test-shinytest2-tm_g_gh_boxplot.R:25:3')"/>
+  <testsuite name="shinytest2-tm_g_gh_boxplot" timestamp="2026-08-20T08:27:49Z" hostname="7b80777af51c" tests="9" skipped="0" failures="0" errors="0" time="131.629">
+    <testcase time="15.24" classname="shinytest2_tm_g_gh_boxplot" name="toggle_slider_module_widgets_are_initialized_with_proper_values"/>
+    <testcase time="2.911" classname="shinytest2_tm_g_gh_boxplot" name="toggle_slider_module_widgets_are_initialized_with_proper_values"/>
+    <testcase time="0.0580000000000034" classname="shinytest2_tm_g_gh_boxplot" name="toggle_slider_module_widgets_are_initialized_with_proper_values"/>
+    <testcase time="19.146" classname="shinytest2_tm_g_gh_boxplot" name="toggle_slider_module_changing_the_sliderInput_sets_proper_numericInput_values"/>
+    <testcase time="0.0519999999999996" classname="shinytest2_tm_g_gh_boxplot" name="toggle_slider_module_changing_the_sliderInput_sets_proper_numericInput_values"/>
+    <testcase time="25.388" classname="shinytest2_tm_g_gh_boxplot" name="toggle_slider_module_changing_the_numericInputs_within_the_sliderInput_range_sets_proper_sliderInput_values"/>
+    <testcase time="25.776" classname="shinytest2_tm_g_gh_boxplot" name="toggle_slider_module_changing_the_numericInputs_outside_the_sliderInput_range_sets_proper_sliderInput_values_and_range"/>
+    <testcase time="25.619" classname="shinytest2_tm_g_gh_boxplot" name="toggle_slider_module_changing_the_numericInputs_within_the_rage_sets_back_the_sliderInput_range_to_initial_range"/>
+    <testcase time="17.439" classname="shinytest2_tm_g_gh_boxplot" name="toggle_slider_module_changing_dependant_widgets_outside_sets_proper_sliderInput_and_numericInput_values"/>
+  </testsuite>
+  <testsuite name="shinytest2-tm_g_gh_correlationplot" timestamp="2026-08-20T08:30:00Z" hostname="7b80777af51c" tests="7" skipped="0" failures="0" errors="7" time="3.459">
+    <testcase time="0.588999999999999" classname="shinytest2_tm_g_gh_correlationplot" name="e2e_tm_g_gh_correlationplot_initializes_and_renders_a_plot">
+      <error type="error" message="Error in `tm_g_gh_correlationplot(label = &quot;Correlation Plot&quot;, dataname = &quot;ADLB&quot;, param_var = &quot;PARAMCD&quot;, xaxis_param = teal.picks::values(c(&quot;ALT&quot;, &quot;CRP&quot;, &quot;IGA&quot;), &quot;ALT&quot;), yaxis_param = teal.picks::values(c(&quot;ALT&quot;, &quot;CRP&quot;, &quot;IGA&quot;), &quot;CRP&quot;), xaxis_var = teal.picks::variables(c(&quot;AVAL&quot;, &quot;BASE&quot;, &quot;CHG&quot;, &quot;PCHG&quot;), &quot;BASE&quot;), yaxis_var = teal.picks::variables(c(&quot;AVAL&quot;, &quot;BASE&quot;, &quot;CHG&quot;, &quot;PCHG&quot;), &quot;AVAL&quot;), trt_group = teal.picks::variables(c(&quot;ARM&quot;, &quot;ACTARM&quot;), &quot;ARM&quot;))`: Assertion on 'xaxis_param' failed: Must inherit from class 'choices_selected'/'picks', but has classes 'values','pick'. ('test-shinytest2-tm_g_gh_correlationplot.R:20:3')">Error in `tm_g_gh_correlationplot(label = "Correlation Plot", dataname = "ADLB", param_var = "PARAMCD", xaxis_param = teal.picks::values(c("ALT", "CRP", "IGA"), "ALT"), yaxis_param = teal.picks::values(c("ALT", "CRP", "IGA"), "CRP"), xaxis_var = teal.picks::variables(c("AVAL", "BASE", "CHG", "PCHG"), "BASE"), yaxis_var = teal.picks::variables(c("AVAL", "BASE", "CHG", "PCHG"), "AVAL"), trt_group = teal.picks::variables(c("ARM", "ACTARM"), "ARM"))`: Assertion on 'xaxis_param' failed: Must inherit from class 'choices_selected'/'picks', but has classes 'values','pick'.
+Backtrace:
+     x
+  1. \-teal.goshawk (local) tm_g_gh_boxplot_driver() at test-shinytest2-tm_g_gh_correlationplot.R:20:3
+  2.   +-teal.goshawk:::init_teal_app_driver(...) at test-shinytest2-tm_g_gh_correlationplot.R:2:3
+  3.   | +-testthat::with_mocked_bindings(...) at ./helper-TealAppDriver.R:2:3
+  4.   | +-TealAppDriver$new(teal::init(...)) at ./helper-TealAppDriver.R:5:7
+  5.   | | \-teal (local) initialize(...)
+  6.   | |   \-checkmate::assert_class(app, "teal_app")
+  7.   | |     \-checkmate::checkClass(x, classes, ordered, null.ok)
+  8.   | \-teal::init(...)
+  9.   |   +-checkmate::assert(...)
+ 10.   |   | \-base::eval(dots[[i]], envir = env)
+ 11.   |   |   \-base::eval(dots[[i]], envir = env)
+ 12.   |   \-checkmate::check_multi_class(modules, c("teal_modules", "teal_module"))
+ 13.   \-teal.goshawk::tm_g_gh_correlationplot(...)
+ 14.     \-checkmate::assert_multi_class(...)
+ 15.       \-checkmate::makeAssertion(x, res, .var.name, add)
+ 16.         \-checkmate:::mstop(...)</error>
     </testcase>
-    <testcase time="0.367" classname="shinytest2_tm_g_gh_boxplot" name="toggle_slider_module_changing_the_sliderInput_sets_proper_numericInput_values">
-      <skipped message="Reason: On CRAN ('test-shinytest2-tm_g_gh_boxplot.R:38:3')"/>
+    <testcase time="0.478000000000009" classname="shinytest2_tm_g_gh_correlationplot" name="e2e_tm_g_gh_correlationplot_starts_with_expected_label_and_encoding_selections.">
+      <error type="error" message="Error in `tm_g_gh_correlationplot(label = &quot;Correlation Plot&quot;, dataname = &quot;ADLB&quot;, param_var = &quot;PARAMCD&quot;, xaxis_param = teal.picks::values(c(&quot;ALT&quot;, &quot;CRP&quot;, &quot;IGA&quot;), &quot;ALT&quot;), yaxis_param = teal.picks::values(c(&quot;ALT&quot;, &quot;CRP&quot;, &quot;IGA&quot;), &quot;CRP&quot;), xaxis_var = teal.picks::variables(c(&quot;AVAL&quot;, &quot;BASE&quot;, &quot;CHG&quot;, &quot;PCHG&quot;), &quot;BASE&quot;), yaxis_var = teal.picks::variables(c(&quot;AVAL&quot;, &quot;BASE&quot;, &quot;CHG&quot;, &quot;PCHG&quot;), &quot;AVAL&quot;), trt_group = teal.picks::variables(c(&quot;ARM&quot;, &quot;ACTARM&quot;), &quot;ARM&quot;))`: Assertion on 'xaxis_param' failed: Must inherit from class 'choices_selected'/'picks', but has classes 'values','pick'. ('test-shinytest2-tm_g_gh_correlationplot.R:41:5')">Error in `tm_g_gh_correlationplot(label = "Correlation Plot", dataname = "ADLB", param_var = "PARAMCD", xaxis_param = teal.picks::values(c("ALT", "CRP", "IGA"), "ALT"), yaxis_param = teal.picks::values(c("ALT", "CRP", "IGA"), "CRP"), xaxis_var = teal.picks::variables(c("AVAL", "BASE", "CHG", "PCHG"), "BASE"), yaxis_var = teal.picks::variables(c("AVAL", "BASE", "CHG", "PCHG"), "AVAL"), trt_group = teal.picks::variables(c("ARM", "ACTARM"), "ARM"))`: Assertion on 'xaxis_param' failed: Must inherit from class 'choices_selected'/'picks', but has classes 'values','pick'.
+Backtrace:
+     x
+  1. \-teal.goshawk (local) tm_g_gh_boxplot_driver() at test-shinytest2-tm_g_gh_correlationplot.R:41:5
+  2.   +-teal.goshawk:::init_teal_app_driver(...) at test-shinytest2-tm_g_gh_correlationplot.R:2:3
+  3.   | +-testthat::with_mocked_bindings(...) at ./helper-TealAppDriver.R:2:3
+  4.   | +-TealAppDriver$new(teal::init(...)) at ./helper-TealAppDriver.R:5:7
+  5.   | | \-teal (local) initialize(...)
+  6.   | |   \-checkmate::assert_class(app, "teal_app")
+  7.   | |     \-checkmate::checkClass(x, classes, ordered, null.ok)
+  8.   | \-teal::init(...)
+  9.   |   +-checkmate::assert(...)
+ 10.   |   | \-base::eval(dots[[i]], envir = env)
+ 11.   |   |   \-base::eval(dots[[i]], envir = env)
+ 12.   |   \-checkmate::check_multi_class(modules, c("teal_modules", "teal_module"))
+ 13.   \-teal.goshawk::tm_g_gh_correlationplot(...)
+ 14.     \-checkmate::assert_multi_class(...)
+ 15.       \-checkmate::makeAssertion(x, res, .var.name, add)
+ 16.         \-checkmate:::mstop(...)</error>
     </testcase>
-    <testcase time="0.334" classname="shinytest2_tm_g_gh_boxplot" name="toggle_slider_module_changing_the_numericInputs_within_the_sliderInput_range_sets_proper_sliderInput_values">
-      <skipped message="Reason: On CRAN ('test-shinytest2-tm_g_gh_boxplot.R:54:5')"/>
+    <testcase time="0.484999999999985" classname="shinytest2_tm_g_gh_correlationplot" name="e2e_tm_g_gh_correlationplot_changing_pick_changes_plot_and_does_not_throw_validation_errors._xaxis_param">
+      <error type="error" message="Error in `tm_g_gh_correlationplot(label = &quot;Correlation Plot&quot;, dataname = &quot;ADLB&quot;, param_var = &quot;PARAMCD&quot;, xaxis_param = teal.picks::values(c(&quot;ALT&quot;, &quot;CRP&quot;, &quot;IGA&quot;), &quot;ALT&quot;), yaxis_param = teal.picks::values(c(&quot;ALT&quot;, &quot;CRP&quot;, &quot;IGA&quot;), &quot;CRP&quot;), xaxis_var = teal.picks::variables(c(&quot;AVAL&quot;, &quot;BASE&quot;, &quot;CHG&quot;, &quot;PCHG&quot;), &quot;BASE&quot;), yaxis_var = teal.picks::variables(c(&quot;AVAL&quot;, &quot;BASE&quot;, &quot;CHG&quot;, &quot;PCHG&quot;), &quot;AVAL&quot;), trt_group = teal.picks::variables(c(&quot;ARM&quot;, &quot;ACTARM&quot;), &quot;ARM&quot;))`: Assertion on 'xaxis_param' failed: Must inherit from class 'choices_selected'/'picks', but has classes 'values','pick'. ('test-shinytest2-tm_g_gh_correlationplot.R:76:7')">Error in `tm_g_gh_correlationplot(label = "Correlation Plot", dataname = "ADLB", param_var = "PARAMCD", xaxis_param = teal.picks::values(c("ALT", "CRP", "IGA"), "ALT"), yaxis_param = teal.picks::values(c("ALT", "CRP", "IGA"), "CRP"), xaxis_var = teal.picks::variables(c("AVAL", "BASE", "CHG", "PCHG"), "BASE"), yaxis_var = teal.picks::variables(c("AVAL", "BASE", "CHG", "PCHG"), "AVAL"), trt_group = teal.picks::variables(c("ARM", "ACTARM"), "ARM"))`: Assertion on 'xaxis_param' failed: Must inherit from class 'choices_selected'/'picks', but has classes 'values','pick'.
+Backtrace:
+     x
+  1. \-teal.goshawk (local) tm_g_gh_boxplot_driver() at test-shinytest2-tm_g_gh_correlationplot.R:76:7
+  2.   +-teal.goshawk:::init_teal_app_driver(...) at test-shinytest2-tm_g_gh_correlationplot.R:2:3
+  3.   | +-testthat::with_mocked_bindings(...) at ./helper-TealAppDriver.R:2:3
+  4.   | +-TealAppDriver$new(teal::init(...)) at ./helper-TealAppDriver.R:5:7
+  5.   | | \-teal (local) initialize(...)
+  6.   | |   \-checkmate::assert_class(app, "teal_app")
+  7.   | |     \-checkmate::checkClass(x, classes, ordered, null.ok)
+  8.   | \-teal::init(...)
+  9.   |   +-checkmate::assert(...)
+ 10.   |   | \-base::eval(dots[[i]], envir = env)
+ 11.   |   |   \-base::eval(dots[[i]], envir = env)
+ 12.   |   \-checkmate::check_multi_class(modules, c("teal_modules", "teal_module"))
+ 13.   \-teal.goshawk::tm_g_gh_correlationplot(...)
+ 14.     \-checkmate::assert_multi_class(...)
+ 15.       \-checkmate::makeAssertion(x, res, .var.name, add)
+ 16.         \-checkmate:::mstop(...)</error>
     </testcase>
-    <testcase time="0.31" classname="shinytest2_tm_g_gh_boxplot" name="toggle_slider_module_changing_the_numericInputs_outside_the_sliderInput_range_sets_proper_sliderInput_values_and_range">
-      <skipped message="Reason: On CRAN ('test-shinytest2-tm_g_gh_boxplot.R:88:5')"/>
+    <testcase time="0.468999999999994" classname="shinytest2_tm_g_gh_correlationplot" name="e2e_tm_g_gh_correlationplot_changing_pick_changes_plot_and_does_not_throw_validation_errors._yaxis_param">
+      <error type="error" message="Error in `tm_g_gh_correlationplot(label = &quot;Correlation Plot&quot;, dataname = &quot;ADLB&quot;, param_var = &quot;PARAMCD&quot;, xaxis_param = teal.picks::values(c(&quot;ALT&quot;, &quot;CRP&quot;, &quot;IGA&quot;), &quot;ALT&quot;), yaxis_param = teal.picks::values(c(&quot;ALT&quot;, &quot;CRP&quot;, &quot;IGA&quot;), &quot;CRP&quot;), xaxis_var = teal.picks::variables(c(&quot;AVAL&quot;, &quot;BASE&quot;, &quot;CHG&quot;, &quot;PCHG&quot;), &quot;BASE&quot;), yaxis_var = teal.picks::variables(c(&quot;AVAL&quot;, &quot;BASE&quot;, &quot;CHG&quot;, &quot;PCHG&quot;), &quot;AVAL&quot;), trt_group = teal.picks::variables(c(&quot;ARM&quot;, &quot;ACTARM&quot;), &quot;ARM&quot;))`: Assertion on 'xaxis_param' failed: Must inherit from class 'choices_selected'/'picks', but has classes 'values','pick'. ('test-shinytest2-tm_g_gh_correlationplot.R:76:7')">Error in `tm_g_gh_correlationplot(label = "Correlation Plot", dataname = "ADLB", param_var = "PARAMCD", xaxis_param = teal.picks::values(c("ALT", "CRP", "IGA"), "ALT"), yaxis_param = teal.picks::values(c("ALT", "CRP", "IGA"), "CRP"), xaxis_var = teal.picks::variables(c("AVAL", "BASE", "CHG", "PCHG"), "BASE"), yaxis_var = teal.picks::variables(c("AVAL", "BASE", "CHG", "PCHG"), "AVAL"), trt_group = teal.picks::variables(c("ARM", "ACTARM"), "ARM"))`: Assertion on 'xaxis_param' failed: Must inherit from class 'choices_selected'/'picks', but has classes 'values','pick'.
+Backtrace:
+     x
+  1. \-teal.goshawk (local) tm_g_gh_boxplot_driver() at test-shinytest2-tm_g_gh_correlationplot.R:76:7
+  2.   +-teal.goshawk:::init_teal_app_driver(...) at test-shinytest2-tm_g_gh_correlationplot.R:2:3
+  3.   | +-testthat::with_mocked_bindings(...) at ./helper-TealAppDriver.R:2:3
+  4.   | +-TealAppDriver$new(teal::init(...)) at ./helper-TealAppDriver.R:5:7
+  5.   | | \-teal (local) initialize(...)
+  6.   | |   \-checkmate::assert_class(app, "teal_app")
+  7.   | |     \-checkmate::checkClass(x, classes, ordered, null.ok)
+  8.   | \-teal::init(...)
+  9.   |   +-checkmate::assert(...)
+ 10.   |   | \-base::eval(dots[[i]], envir = env)
+ 11.   |   |   \-base::eval(dots[[i]], envir = env)
+ 12.   |   \-checkmate::check_multi_class(modules, c("teal_modules", "teal_module"))
+ 13.   \-teal.goshawk::tm_g_gh_correlationplot(...)
+ 14.     \-checkmate::assert_multi_class(...)
+ 15.       \-checkmate::makeAssertion(x, res, .var.name, add)
+ 16.         \-checkmate:::mstop(...)</error>
     </testcase>
-    <testcase time="0.477" classname="shinytest2_tm_g_gh_boxplot" name="toggle_slider_module_changing_the_numericInputs_within_the_rage_sets_back_the_sliderInput_range_to_initial_range">
-      <skipped message="Reason: On CRAN ('test-shinytest2-tm_g_gh_boxplot.R:121:5')"/>
+    <testcase time="0.488" classname="shinytest2_tm_g_gh_correlationplot" name="e2e_tm_g_gh_correlationplot_changing_pick_changes_plot_and_does_not_throw_validation_errors._xaxis_var">
+      <error type="error" message="Error in `tm_g_gh_correlationplot(label = &quot;Correlation Plot&quot;, dataname = &quot;ADLB&quot;, param_var = &quot;PARAMCD&quot;, xaxis_param = teal.picks::values(c(&quot;ALT&quot;, &quot;CRP&quot;, &quot;IGA&quot;), &quot;ALT&quot;), yaxis_param = teal.picks::values(c(&quot;ALT&quot;, &quot;CRP&quot;, &quot;IGA&quot;), &quot;CRP&quot;), xaxis_var = teal.picks::variables(c(&quot;AVAL&quot;, &quot;BASE&quot;, &quot;CHG&quot;, &quot;PCHG&quot;), &quot;BASE&quot;), yaxis_var = teal.picks::variables(c(&quot;AVAL&quot;, &quot;BASE&quot;, &quot;CHG&quot;, &quot;PCHG&quot;), &quot;AVAL&quot;), trt_group = teal.picks::variables(c(&quot;ARM&quot;, &quot;ACTARM&quot;), &quot;ARM&quot;))`: Assertion on 'xaxis_param' failed: Must inherit from class 'choices_selected'/'picks', but has classes 'values','pick'. ('test-shinytest2-tm_g_gh_correlationplot.R:76:7')">Error in `tm_g_gh_correlationplot(label = "Correlation Plot", dataname = "ADLB", param_var = "PARAMCD", xaxis_param = teal.picks::values(c("ALT", "CRP", "IGA"), "ALT"), yaxis_param = teal.picks::values(c("ALT", "CRP", "IGA"), "CRP"), xaxis_var = teal.picks::variables(c("AVAL", "BASE", "CHG", "PCHG"), "BASE"), yaxis_var = teal.picks::variables(c("AVAL", "BASE", "CHG", "PCHG"), "AVAL"), trt_group = teal.picks::variables(c("ARM", "ACTARM"), "ARM"))`: Assertion on 'xaxis_param' failed: Must inherit from class 'choices_selected'/'picks', but has classes 'values','pick'.
+Backtrace:
+     x
+  1. \-teal.goshawk (local) tm_g_gh_boxplot_driver() at test-shinytest2-tm_g_gh_correlationplot.R:76:7
+  2.   +-teal.goshawk:::init_teal_app_driver(...) at test-shinytest2-tm_g_gh_correlationplot.R:2:3
+  3.   | +-testthat::with_mocked_bindings(...) at ./helper-TealAppDriver.R:2:3
+  4.   | +-TealAppDriver$new(teal::init(...)) at ./helper-TealAppDriver.R:5:7
+  5.   | | \-teal (local) initialize(...)
+  6.   | |   \-checkmate::assert_class(app, "teal_app")
+  7.   | |     \-checkmate::checkClass(x, classes, ordered, null.ok)
+  8.   | \-teal::init(...)
+  9.   |   +-checkmate::assert(...)
+ 10.   |   | \-base::eval(dots[[i]], envir = env)
+ 11.   |   |   \-base::eval(dots[[i]], envir = env)
+ 12.   |   \-checkmate::check_multi_class(modules, c("teal_modules", "teal_module"))
+ 13.   \-teal.goshawk::tm_g_gh_correlationplot(...)
+ 14.     \-checkmate::assert_multi_class(...)
+ 15.       \-checkmate::makeAssertion(x, res, .var.name, add)
+ 16.         \-checkmate:::mstop(...)</error>
     </testcase>
-    <testcase time="0.347" classname="shinytest2_tm_g_gh_boxplot" name="toggle_slider_module_changing_dependant_widgets_outside_sets_proper_sliderInput_and_numericInput_values">
-      <skipped message="Reason: On CRAN ('test-shinytest2-tm_g_gh_boxplot.R:155:5')"/>
+    <testcase time="0.474000000000018" classname="shinytest2_tm_g_gh_correlationplot" name="e2e_tm_g_gh_correlationplot_changing_pick_changes_plot_and_does_not_throw_validation_errors._yaxis_var">
+      <error type="error" message="Error in `tm_g_gh_correlationplot(label = &quot;Correlation Plot&quot;, dataname = &quot;ADLB&quot;, param_var = &quot;PARAMCD&quot;, xaxis_param = teal.picks::values(c(&quot;ALT&quot;, &quot;CRP&quot;, &quot;IGA&quot;), &quot;ALT&quot;), yaxis_param = teal.picks::values(c(&quot;ALT&quot;, &quot;CRP&quot;, &quot;IGA&quot;), &quot;CRP&quot;), xaxis_var = teal.picks::variables(c(&quot;AVAL&quot;, &quot;BASE&quot;, &quot;CHG&quot;, &quot;PCHG&quot;), &quot;BASE&quot;), yaxis_var = teal.picks::variables(c(&quot;AVAL&quot;, &quot;BASE&quot;, &quot;CHG&quot;, &quot;PCHG&quot;), &quot;AVAL&quot;), trt_group = teal.picks::variables(c(&quot;ARM&quot;, &quot;ACTARM&quot;), &quot;ARM&quot;))`: Assertion on 'xaxis_param' failed: Must inherit from class 'choices_selected'/'picks', but has classes 'values','pick'. ('test-shinytest2-tm_g_gh_correlationplot.R:76:7')">Error in `tm_g_gh_correlationplot(label = "Correlation Plot", dataname = "ADLB", param_var = "PARAMCD", xaxis_param = teal.picks::values(c("ALT", "CRP", "IGA"), "ALT"), yaxis_param = teal.picks::values(c("ALT", "CRP", "IGA"), "CRP"), xaxis_var = teal.picks::variables(c("AVAL", "BASE", "CHG", "PCHG"), "BASE"), yaxis_var = teal.picks::variables(c("AVAL", "BASE", "CHG", "PCHG"), "AVAL"), trt_group = teal.picks::variables(c("ARM", "ACTARM"), "ARM"))`: Assertion on 'xaxis_param' failed: Must inherit from class 'choices_selected'/'picks', but has classes 'values','pick'.
+Backtrace:
+     x
+  1. \-teal.goshawk (local) tm_g_gh_boxplot_driver() at test-shinytest2-tm_g_gh_correlationplot.R:76:7
+  2.   +-teal.goshawk:::init_teal_app_driver(...) at test-shinytest2-tm_g_gh_correlationplot.R:2:3
+  3.   | +-testthat::with_mocked_bindings(...) at ./helper-TealAppDriver.R:2:3
+  4.   | +-TealAppDriver$new(teal::init(...)) at ./helper-TealAppDriver.R:5:7
+  5.   | | \-teal (local) initialize(...)
+  6.   | |   \-checkmate::assert_class(app, "teal_app")
+  7.   | |     \-checkmate::checkClass(x, classes, ordered, null.ok)
+  8.   | \-teal::init(...)
+  9.   |   +-checkmate::assert(...)
+ 10.   |   | \-base::eval(dots[[i]], envir = env)
+ 11.   |   |   \-base::eval(dots[[i]], envir = env)
+ 12.   |   \-checkmate::check_multi_class(modules, c("teal_modules", "teal_module"))
+ 13.   \-teal.goshawk::tm_g_gh_correlationplot(...)
+ 14.     \-checkmate::assert_multi_class(...)
+ 15.       \-checkmate::makeAssertion(x, res, .var.name, add)
+ 16.         \-checkmate:::mstop(...)</error>
+    </testcase>
+    <testcase time="0.475999999999999" classname="shinytest2_tm_g_gh_correlationplot" name="e2e_tm_g_gh_correlationplot_changing_pick_changes_plot_and_does_not_throw_validation_errors._trt_group">
+      <error type="error" message="Error in `tm_g_gh_correlationplot(label = &quot;Correlation Plot&quot;, dataname = &quot;ADLB&quot;, param_var = &quot;PARAMCD&quot;, xaxis_param = teal.picks::values(c(&quot;ALT&quot;, &quot;CRP&quot;, &quot;IGA&quot;), &quot;ALT&quot;), yaxis_param = teal.picks::values(c(&quot;ALT&quot;, &quot;CRP&quot;, &quot;IGA&quot;), &quot;CRP&quot;), xaxis_var = teal.picks::variables(c(&quot;AVAL&quot;, &quot;BASE&quot;, &quot;CHG&quot;, &quot;PCHG&quot;), &quot;BASE&quot;), yaxis_var = teal.picks::variables(c(&quot;AVAL&quot;, &quot;BASE&quot;, &quot;CHG&quot;, &quot;PCHG&quot;), &quot;AVAL&quot;), trt_group = teal.picks::variables(c(&quot;ARM&quot;, &quot;ACTARM&quot;), &quot;ARM&quot;))`: Assertion on 'xaxis_param' failed: Must inherit from class 'choices_selected'/'picks', but has classes 'values','pick'. ('test-shinytest2-tm_g_gh_correlationplot.R:76:7')">Error in `tm_g_gh_correlationplot(label = "Correlation Plot", dataname = "ADLB", param_var = "PARAMCD", xaxis_param = teal.picks::values(c("ALT", "CRP", "IGA"), "ALT"), yaxis_param = teal.picks::values(c("ALT", "CRP", "IGA"), "CRP"), xaxis_var = teal.picks::variables(c("AVAL", "BASE", "CHG", "PCHG"), "BASE"), yaxis_var = teal.picks::variables(c("AVAL", "BASE", "CHG", "PCHG"), "AVAL"), trt_group = teal.picks::variables(c("ARM", "ACTARM"), "ARM"))`: Assertion on 'xaxis_param' failed: Must inherit from class 'choices_selected'/'picks', but has classes 'values','pick'.
+Backtrace:
+     x
+  1. \-teal.goshawk (local) tm_g_gh_boxplot_driver() at test-shinytest2-tm_g_gh_correlationplot.R:76:7
+  2.   +-teal.goshawk:::init_teal_app_driver(...) at test-shinytest2-tm_g_gh_correlationplot.R:2:3
+  3.   | +-testthat::with_mocked_bindings(...) at ./helper-TealAppDriver.R:2:3
+  4.   | +-TealAppDriver$new(teal::init(...)) at ./helper-TealAppDriver.R:5:7
+  5.   | | \-teal (local) initialize(...)
+  6.   | |   \-checkmate::assert_class(app, "teal_app")
+  7.   | |     \-checkmate::checkClass(x, classes, ordered, null.ok)
+  8.   | \-teal::init(...)
+  9.   |   +-checkmate::assert(...)
+ 10.   |   | \-base::eval(dots[[i]], envir = env)
+ 11.   |   |   \-base::eval(dots[[i]], envir = env)
+ 12.   |   \-checkmate::check_multi_class(modules, c("teal_modules", "teal_module"))
+ 13.   \-teal.goshawk::tm_g_gh_correlationplot(...)
+ 14.     \-checkmate::assert_multi_class(...)
+ 15.       \-checkmate::makeAssertion(x, res, .var.name, add)
+ 16.         \-checkmate:::mstop(...)</error>
     </testcase>
   </testsuite>
-  <testsuite name="shinytest2-tm_g_gh_correlationplot" timestamp="2026-08-20T08:27:34Z" hostname="9eaa0fa721f4" tests="3" skipped="3" failures="0" errors="0" time="0.04">
-    <testcase time="0.0209999999999999" classname="shinytest2_tm_g_gh_correlationplot" name="e2e_tm_g_gh_correlationplot_initializes_and_renders_a_plot">
-      <skipped message="Reason: testing depth 3 is below current testing specification 5 ('test-shinytest2-tm_g_gh_correlationplot.R:19:3')"/>
-    </testcase>
-    <testcase time="0.0089999999999999" classname="shinytest2_tm_g_gh_correlationplot" name="e2e_tm_g_gh_correlationplot_starts_with_expected_label_and_encoding_selections.">
-      <skipped message="Reason: testing depth 3 is below current testing specification 5 ('test-shinytest2-tm_g_gh_correlationplot.R:40:5')"/>
-    </testcase>
-    <testcase time="0.0100000000000002" classname="shinytest2_tm_g_gh_correlationplot" name="e2e_tm_g_gh_correlationplot_changing_pick_changes_plot_and_does_not_throw_validation_errors.">
-      <skipped message="Reason: testing depth 3 is below current testing specification 5 ('test-shinytest2-tm_g_gh_correlationplot.R:61:3')"/>
-    </testcase>
-  </testsuite>
-  <testsuite name="tm_g_gh_correlationplot" timestamp="2026-08-20T08:27:35Z" hostname="9eaa0fa721f4" tests="10" skipped="0" failures="0" errors="2" time="0.103">
-    <testcase time="0.0249999999999999" classname="tm_g_gh_correlationplot" name="tm_g_gh_correlationplot_can_be_created_with_default_arguments">
+  <testsuite name="tm_g_gh_correlationplot" timestamp="2026-08-20T08:30:04Z" hostname="7b80777af51c" tests="10" skipped="0" failures="0" errors="2" time="0.143">
+    <testcase time="0.0480000000000018" classname="tm_g_gh_correlationplot" name="tm_g_gh_correlationplot_can_be_created_with_default_arguments">
       <error type="error" message="Error in `teal.picks(teal.picks::variables(&quot;PARAMCD&quot;, &quot;PARAMCD&quot;), teal.picks::values(selected = &quot;ALT&quot;), check_dataset = FALSE)`: could not find function &quot;teal.picks&quot; ('test-tm_g_gh_correlationplot.R:5:3')">Error in `teal.picks(teal.picks::variables("PARAMCD", "PARAMCD"), teal.picks::values(selected = "ALT"), check_dataset = FALSE)`: could not find function "teal.picks"
 Backtrace:
     x
@@ -42,9 +171,9 @@ Backtrace:
  4.   \-checkmate::assert_multi_class(...)
  5.     \-checkmate::checkMultiClass(x, classes, null.ok)</error>
     </testcase>
-    <testcase time="0.0229999999999997" classname="tm_g_gh_correlationplot" name="tm_g_gh_correlationplot_can_be_created_with_choices_selected_arguments"/>
-    <testcase time="0.00200000000000022" classname="tm_g_gh_correlationplot" name="tm_g_gh_correlationplot_can_be_created_with_choices_selected_arguments"/>
-    <testcase time="0.00700000000000012" classname="tm_g_gh_correlationplot" name="tm_g_gh_correlationplot_can_be_created_with_teal.picks_arguments">
+    <testcase time="0.0279999999999916" classname="tm_g_gh_correlationplot" name="tm_g_gh_correlationplot_can_be_created_with_choices_selected_arguments"/>
+    <testcase time="0.00300000000001432" classname="tm_g_gh_correlationplot" name="tm_g_gh_correlationplot_can_be_created_with_choices_selected_arguments"/>
+    <testcase time="0.00899999999998613" classname="tm_g_gh_correlationplot" name="tm_g_gh_correlationplot_can_be_created_with_teal.picks_arguments">
       <error type="error" message="Error in `tm_g_gh_correlationplot(label = &quot;Correlation Plot&quot;, dataname = &quot;ADLB&quot;, param_var = &quot;PARAMCD&quot;, xaxis_param = teal.picks::values(c(&quot;ALT&quot;, &quot;CRP&quot;, &quot;IGA&quot;), selected = &quot;ALT&quot;), yaxis_param = teal.picks::values(c(&quot;ALT&quot;, &quot;CRP&quot;, &quot;IGA&quot;), selected = &quot;CRP&quot;), xaxis_var = teal.picks::variables(c(&quot;AVAL&quot;, &quot;BASE&quot;, &quot;CHG&quot;, &quot;PCHG&quot;), selected = &quot;BASE&quot;), yaxis_var = teal.picks::variables(c(&quot;AVAL&quot;, &quot;BASE&quot;, &quot;CHG&quot;, &quot;PCHG&quot;), selected = &quot;AVAL&quot;), trt_group = teal.picks::variables(c(&quot;ARM&quot;, &quot;ACTARM&quot;), selected = &quot;ARM&quot;))`: Assertion on 'xaxis_param' failed: Must inherit from class 'choices_selected'/'picks', but has classes 'values','pick'. ('test-tm_g_gh_correlationplot.R:32:3')">Error in `tm_g_gh_correlationplot(label = "Correlation Plot", dataname = "ADLB", param_var = "PARAMCD", xaxis_param = teal.picks::values(c("ALT", "CRP", "IGA"), selected = "ALT"), yaxis_param = teal.picks::values(c("ALT", "CRP", "IGA"), selected = "CRP"), xaxis_var = teal.picks::variables(c("AVAL", "BASE", "CHG", "PCHG"), selected = "BASE"), yaxis_var = teal.picks::variables(c("AVAL", "BASE", "CHG", "PCHG"), selected = "AVAL"), trt_group = teal.picks::variables(c("ARM", "ACTARM"), selected = "ARM"))`: Assertion on 'xaxis_param' failed: Must inherit from class 'choices_selected'/'picks', but has classes 'values','pick'.
 Backtrace:
     x
@@ -53,11 +182,11 @@ Backtrace:
  3.     \-checkmate::makeAssertion(x, res, .var.name, add)
  4.       \-checkmate:::mstop(...)</error>
     </testcase>
-    <testcase time="0.0189999999999997" classname="tm_g_gh_correlationplot" name="tm_g_gh_correlationplot_handles_multiple_parameter_combinations_with_choices_selected"/>
-    <testcase time="0.00200000000000022" classname="tm_g_gh_correlationplot" name="tm_g_gh_correlationplot_handles_multiple_parameter_combinations_with_choices_selected"/>
-    <testcase time="0.0089999999999999" classname="tm_g_gh_correlationplot" name="tm_g_gh_correlationplot_accepts_custom_color_and_shape_specifications_with_choices_selected"/>
-    <testcase time="0.00200000000000022" classname="tm_g_gh_correlationplot" name="tm_g_gh_correlationplot_accepts_custom_color_and_shape_specifications_with_choices_selected"/>
-    <testcase time="0.012" classname="tm_g_gh_correlationplot" name="tm_g_gh_correlationplot_accepts_line_arguments_with_choices_selected"/>
-    <testcase time="0.00199999999999978" classname="tm_g_gh_correlationplot" name="tm_g_gh_correlationplot_accepts_line_arguments_with_choices_selected"/>
+    <testcase time="0.0240000000000009" classname="tm_g_gh_correlationplot" name="tm_g_gh_correlationplot_handles_multiple_parameter_combinations_with_choices_selected"/>
+    <testcase time="0.00300000000001432" classname="tm_g_gh_correlationplot" name="tm_g_gh_correlationplot_handles_multiple_parameter_combinations_with_choices_selected"/>
+    <testcase time="0.0109999999999957" classname="tm_g_gh_correlationplot" name="tm_g_gh_correlationplot_accepts_custom_color_and_shape_specifications_with_choices_selected"/>
+    <testcase time="0.0029999999999859" classname="tm_g_gh_correlationplot" name="tm_g_gh_correlationplot_accepts_custom_color_and_shape_specifications_with_choices_selected"/>
+    <testcase time="0.0120000000000005" classname="tm_g_gh_correlationplot" name="tm_g_gh_correlationplot_accepts_line_arguments_with_choices_selected"/>
+    <testcase time="0.00200000000000955" classname="tm_g_gh_correlationplot" name="tm_g_gh_correlationplot_accepts_line_arguments_with_choices_selected"/>
   </testsuite>
 </testsuites>
