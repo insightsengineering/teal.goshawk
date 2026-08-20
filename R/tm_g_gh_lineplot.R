@@ -180,7 +180,7 @@ tm_g_gh_lineplot <- function(label,
   checkmate::assert(
     .var_name = "shape_choices",
     checkmate::check_character(shape_choices),
-    checkmate::check_class(shape_choices, c("variables", "picks")),
+    checkmate::check_class(shape_choices, c("variables", "pick")),
     checkmate::check_class(shape_choices, "choices_selected"),
     checkmate::check_null(shape_choices)
   )
