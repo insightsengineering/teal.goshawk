@@ -688,7 +688,7 @@ srv_g_correlationplot <- function(id,
       }
     })
 
-    anl_constraint_output <- create_anl_constraint_reactive(anl_param, input, param_id = xaxis_param_sel, min_rows = 1)
+    anl_constraint_output <- create_anl_constraint_reactive(anl_param, input, xaxis_param_sel, min_rows = 1)
     anl_constraint <- anl_constraint_output()$value
 
     # update sliders for axes taking constraints into account
