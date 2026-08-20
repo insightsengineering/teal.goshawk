@@ -1,373 +1,63 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <testsuites>
-  <testsuite name="shinytest2-tm_g_gh_boxplot" timestamp="2026-08-18T14:20:46Z" hostname="3a27f1fd82e8" tests="9" skipped="0" failures="0" errors="0" time="132.9">
-    <testcase time="14.98" classname="shinytest2_tm_g_gh_boxplot" name="toggle_slider_module_widgets_are_initialized_with_proper_values"/>
-    <testcase time="2.677" classname="shinytest2_tm_g_gh_boxplot" name="toggle_slider_module_widgets_are_initialized_with_proper_values"/>
-    <testcase time="0.0560000000000009" classname="shinytest2_tm_g_gh_boxplot" name="toggle_slider_module_widgets_are_initialized_with_proper_values"/>
-    <testcase time="19.536" classname="shinytest2_tm_g_gh_boxplot" name="toggle_slider_module_changing_the_sliderInput_sets_proper_numericInput_values"/>
-    <testcase time="0.0499999999999972" classname="shinytest2_tm_g_gh_boxplot" name="toggle_slider_module_changing_the_sliderInput_sets_proper_numericInput_values"/>
-    <testcase time="25.781" classname="shinytest2_tm_g_gh_boxplot" name="toggle_slider_module_changing_the_numericInputs_within_the_sliderInput_range_sets_proper_sliderInput_values"/>
-    <testcase time="26.272" classname="shinytest2_tm_g_gh_boxplot" name="toggle_slider_module_changing_the_numericInputs_outside_the_sliderInput_range_sets_proper_sliderInput_values_and_range"/>
-    <testcase time="25.847" classname="shinytest2_tm_g_gh_boxplot" name="toggle_slider_module_changing_the_numericInputs_within_the_rage_sets_back_the_sliderInput_range_to_initial_range"/>
-    <testcase time="17.701" classname="shinytest2_tm_g_gh_boxplot" name="toggle_slider_module_changing_dependant_widgets_outside_sets_proper_sliderInput_and_numericInput_values"/>
+  <testsuite name="shinytest2-tm_g_gh_boxplot" timestamp="2026-08-20T08:09:21Z" hostname="c63d23670e76" tests="6" skipped="6" failures="0" errors="0" time="2.655">
+    <testcase time="0.543" classname="shinytest2_tm_g_gh_boxplot" name="toggle_slider_module_widgets_are_initialized_with_proper_values">
+      <skipped message="Reason: On CRAN ('test-shinytest2-tm_g_gh_boxplot.R:25:3')"/>
+    </testcase>
+    <testcase time="0.446" classname="shinytest2_tm_g_gh_boxplot" name="toggle_slider_module_changing_the_sliderInput_sets_proper_numericInput_values">
+      <skipped message="Reason: On CRAN ('test-shinytest2-tm_g_gh_boxplot.R:38:3')"/>
+    </testcase>
+    <testcase time="0.4" classname="shinytest2_tm_g_gh_boxplot" name="toggle_slider_module_changing_the_numericInputs_within_the_sliderInput_range_sets_proper_sliderInput_values">
+      <skipped message="Reason: On CRAN ('test-shinytest2-tm_g_gh_boxplot.R:54:5')"/>
+    </testcase>
+    <testcase time="0.376" classname="shinytest2_tm_g_gh_boxplot" name="toggle_slider_module_changing_the_numericInputs_outside_the_sliderInput_range_sets_proper_sliderInput_values_and_range">
+      <skipped message="Reason: On CRAN ('test-shinytest2-tm_g_gh_boxplot.R:88:5')"/>
+    </testcase>
+    <testcase time="0.526" classname="shinytest2_tm_g_gh_boxplot" name="toggle_slider_module_changing_the_numericInputs_within_the_rage_sets_back_the_sliderInput_range_to_initial_range">
+      <skipped message="Reason: On CRAN ('test-shinytest2-tm_g_gh_boxplot.R:121:5')"/>
+    </testcase>
+    <testcase time="0.364" classname="shinytest2_tm_g_gh_boxplot" name="toggle_slider_module_changing_dependant_widgets_outside_sets_proper_sliderInput_and_numericInput_values">
+      <skipped message="Reason: On CRAN ('test-shinytest2-tm_g_gh_boxplot.R:155:5')"/>
+    </testcase>
   </testsuite>
-  <testsuite name="shinytest2-tm_g_gh_correlationplot" timestamp="2026-08-18T14:22:59Z" hostname="3a27f1fd82e8" tests="41" skipped="0" failures="0" errors="0" time="123.877">
-    <testcase time="0.620000000000005" classname="shinytest2_tm_g_gh_correlationplot" name="e2e_tm_g_gh_correlationplot_initializes_and_renders_a_plot">
-      <system-out>`xaxis_param` accepts only a single variable selection. 
-Forcing `teal.picks::values(multiple)` to `FALSE`.
-Backtrace:
-     x
-  1. \-teal.goshawk (local) tm_g_gh_boxplot_driver() at test-shinytest2-tm_g_gh_correlationplot.R:20:3
-  2.   +-teal.goshawk:::init_teal_app_driver(...) at test-shinytest2-tm_g_gh_correlationplot.R:2:3
-  3.   | +-testthat::with_mocked_bindings(...) at ./helper-TealAppDriver.R:2:3
-  4.   | +-TealAppDriver$new(teal::init(...)) at ./helper-TealAppDriver.R:5:7
-  5.   | | \-teal (local) initialize(...)
-  6.   | |   \-checkmate::assert_class(app, "teal_app")
-  7.   | |     \-checkmate::checkClass(x, classes, ordered, null.ok)
-  8.   | \-teal::init(...)
-  9.   |   +-checkmate::assert(...)
- 10.   |   | \-base::eval(dots[[i]], envir = env)
- 11.   |   |   \-base::eval(dots[[i]], envir = env)
- 12.   |   \-checkmate::check_multi_class(modules, c("teal_modules", "teal_module"))
- 13.   \-teal.goshawk::tm_g_gh_correlationplot(...)
- 14.     \-teal.goshawk:::force_pick_selection(xaxis_param, which = "values")</system-out>
+  <testsuite name="shinytest2-tm_g_gh_correlationplot" timestamp="2026-08-20T08:09:23Z" hostname="c63d23670e76" tests="3" skipped="3" failures="0" errors="0" time="0.042">
+    <testcase time="0.0209999999999999" classname="shinytest2_tm_g_gh_correlationplot" name="e2e_tm_g_gh_correlationplot_initializes_and_renders_a_plot">
+      <skipped message="Reason: testing depth 3 is below current testing specification 5 ('test-shinytest2-tm_g_gh_correlationplot.R:19:3')"/>
     </testcase>
-    <testcase time="0.0160000000000196" classname="shinytest2_tm_g_gh_correlationplot" name="e2e_tm_g_gh_correlationplot_initializes_and_renders_a_plot">
-      <system-out>`yaxis_param` accepts only a single variable selection. 
-Forcing `teal.picks::values(multiple)` to `FALSE`.
-Backtrace:
-     x
-  1. \-teal.goshawk (local) tm_g_gh_boxplot_driver() at test-shinytest2-tm_g_gh_correlationplot.R:20:3
-  2.   +-teal.goshawk:::init_teal_app_driver(...) at test-shinytest2-tm_g_gh_correlationplot.R:2:3
-  3.   | +-testthat::with_mocked_bindings(...) at ./helper-TealAppDriver.R:2:3
-  4.   | +-TealAppDriver$new(teal::init(...)) at ./helper-TealAppDriver.R:5:7
-  5.   | | \-teal (local) initialize(...)
-  6.   | |   \-checkmate::assert_class(app, "teal_app")
-  7.   | |     \-checkmate::checkClass(x, classes, ordered, null.ok)
-  8.   | \-teal::init(...)
-  9.   |   +-checkmate::assert(...)
- 10.   |   | \-base::eval(dots[[i]], envir = env)
- 11.   |   |   \-base::eval(dots[[i]], envir = env)
- 12.   |   \-checkmate::check_multi_class(modules, c("teal_modules", "teal_module"))
- 13.   \-teal.goshawk::tm_g_gh_correlationplot(...)
- 14.     \-teal.goshawk:::force_pick_selection(yaxis_param, which = "values")</system-out>
+    <testcase time="0.0110000000000001" classname="shinytest2_tm_g_gh_correlationplot" name="e2e_tm_g_gh_correlationplot_starts_with_expected_label_and_encoding_selections.">
+      <skipped message="Reason: testing depth 3 is below current testing specification 5 ('test-shinytest2-tm_g_gh_correlationplot.R:40:5')"/>
     </testcase>
-    <testcase time="12.758" classname="shinytest2_tm_g_gh_correlationplot" name="e2e_tm_g_gh_correlationplot_initializes_and_renders_a_plot"/>
-    <testcase time="0.00499999999999545" classname="shinytest2_tm_g_gh_correlationplot" name="e2e_tm_g_gh_correlationplot_initializes_and_renders_a_plot"/>
-    <testcase time="0.0930000000000177" classname="shinytest2_tm_g_gh_correlationplot" name="e2e_tm_g_gh_correlationplot_initializes_and_renders_a_plot"/>
-    <testcase time="0.0109999999999957" classname="shinytest2_tm_g_gh_correlationplot" name="e2e_tm_g_gh_correlationplot_initializes_and_renders_a_plot"/>
-    <testcase time="0.603000000000009" classname="shinytest2_tm_g_gh_correlationplot" name="e2e_tm_g_gh_correlationplot_starts_with_expected_label_and_encoding_selections.">
-      <system-out>`xaxis_param` accepts only a single variable selection. 
-Forcing `teal.picks::values(multiple)` to `FALSE`.
-Backtrace:
-     x
-  1. \-teal.goshawk (local) tm_g_gh_boxplot_driver() at test-shinytest2-tm_g_gh_correlationplot.R:41:5
-  2.   +-teal.goshawk:::init_teal_app_driver(...) at test-shinytest2-tm_g_gh_correlationplot.R:2:3
-  3.   | +-testthat::with_mocked_bindings(...) at ./helper-TealAppDriver.R:2:3
-  4.   | +-TealAppDriver$new(teal::init(...)) at ./helper-TealAppDriver.R:5:7
-  5.   | | \-teal (local) initialize(...)
-  6.   | |   \-checkmate::assert_class(app, "teal_app")
-  7.   | |     \-checkmate::checkClass(x, classes, ordered, null.ok)
-  8.   | \-teal::init(...)
-  9.   |   +-checkmate::assert(...)
- 10.   |   | \-base::eval(dots[[i]], envir = env)
- 11.   |   |   \-base::eval(dots[[i]], envir = env)
- 12.   |   \-checkmate::check_multi_class(modules, c("teal_modules", "teal_module"))
- 13.   \-teal.goshawk::tm_g_gh_correlationplot(...)
- 14.     \-teal.goshawk:::force_pick_selection(xaxis_param, which = "values")</system-out>
+    <testcase time="0.0100000000000002" classname="shinytest2_tm_g_gh_correlationplot" name="e2e_tm_g_gh_correlationplot_changing_pick_changes_plot_and_does_not_throw_validation_errors.">
+      <skipped message="Reason: testing depth 3 is below current testing specification 5 ('test-shinytest2-tm_g_gh_correlationplot.R:61:3')"/>
     </testcase>
-    <testcase time="0.0139999999999816" classname="shinytest2_tm_g_gh_correlationplot" name="e2e_tm_g_gh_correlationplot_starts_with_expected_label_and_encoding_selections.">
-      <system-out>`yaxis_param` accepts only a single variable selection. 
-Forcing `teal.picks::values(multiple)` to `FALSE`.
-Backtrace:
-     x
-  1. \-teal.goshawk (local) tm_g_gh_boxplot_driver() at test-shinytest2-tm_g_gh_correlationplot.R:41:5
-  2.   +-teal.goshawk:::init_teal_app_driver(...) at test-shinytest2-tm_g_gh_correlationplot.R:2:3
-  3.   | +-testthat::with_mocked_bindings(...) at ./helper-TealAppDriver.R:2:3
-  4.   | +-TealAppDriver$new(teal::init(...)) at ./helper-TealAppDriver.R:5:7
-  5.   | | \-teal (local) initialize(...)
-  6.   | |   \-checkmate::assert_class(app, "teal_app")
-  7.   | |     \-checkmate::checkClass(x, classes, ordered, null.ok)
-  8.   | \-teal::init(...)
-  9.   |   +-checkmate::assert(...)
- 10.   |   | \-base::eval(dots[[i]], envir = env)
- 11.   |   |   \-base::eval(dots[[i]], envir = env)
- 12.   |   \-checkmate::check_multi_class(modules, c("teal_modules", "teal_module"))
- 13.   \-teal.goshawk::tm_g_gh_correlationplot(...)
- 14.     \-teal.goshawk:::force_pick_selection(yaxis_param, which = "values")</system-out>
-    </testcase>
-    <testcase time="12.949" classname="shinytest2_tm_g_gh_correlationplot" name="e2e_tm_g_gh_correlationplot_starts_with_expected_label_and_encoding_selections."/>
-    <testcase time="0.0109999999999957" classname="shinytest2_tm_g_gh_correlationplot" name="e2e_tm_g_gh_correlationplot_starts_with_expected_label_and_encoding_selections."/>
-    <testcase time="0.0509999999999877" classname="shinytest2_tm_g_gh_correlationplot" name="e2e_tm_g_gh_correlationplot_starts_with_expected_label_and_encoding_selections."/>
-    <testcase time="0.0510000000000161" classname="shinytest2_tm_g_gh_correlationplot" name="e2e_tm_g_gh_correlationplot_starts_with_expected_label_and_encoding_selections."/>
-    <testcase time="0.0499999999999829" classname="shinytest2_tm_g_gh_correlationplot" name="e2e_tm_g_gh_correlationplot_starts_with_expected_label_and_encoding_selections."/>
-    <testcase time="0.0500000000000114" classname="shinytest2_tm_g_gh_correlationplot" name="e2e_tm_g_gh_correlationplot_starts_with_expected_label_and_encoding_selections."/>
-    <testcase time="0.0500000000000114" classname="shinytest2_tm_g_gh_correlationplot" name="e2e_tm_g_gh_correlationplot_starts_with_expected_label_and_encoding_selections."/>
-    <testcase time="0.0499999999999829" classname="shinytest2_tm_g_gh_correlationplot" name="e2e_tm_g_gh_correlationplot_starts_with_expected_label_and_encoding_selections."/>
-    <testcase time="0.599000000000018" classname="shinytest2_tm_g_gh_correlationplot" name="e2e_tm_g_gh_correlationplot_changing_pick_changes_plot_and_does_not_throw_validation_errors._xaxis_param">
-      <system-out>`xaxis_param` accepts only a single variable selection. 
-Forcing `teal.picks::values(multiple)` to `FALSE`.
-Backtrace:
-     x
-  1. \-teal.goshawk (local) tm_g_gh_boxplot_driver() at test-shinytest2-tm_g_gh_correlationplot.R:76:7
-  2.   +-teal.goshawk:::init_teal_app_driver(...) at test-shinytest2-tm_g_gh_correlationplot.R:2:3
-  3.   | +-testthat::with_mocked_bindings(...) at ./helper-TealAppDriver.R:2:3
-  4.   | +-TealAppDriver$new(teal::init(...)) at ./helper-TealAppDriver.R:5:7
-  5.   | | \-teal (local) initialize(...)
-  6.   | |   \-checkmate::assert_class(app, "teal_app")
-  7.   | |     \-checkmate::checkClass(x, classes, ordered, null.ok)
-  8.   | \-teal::init(...)
-  9.   |   +-checkmate::assert(...)
- 10.   |   | \-base::eval(dots[[i]], envir = env)
- 11.   |   |   \-base::eval(dots[[i]], envir = env)
- 12.   |   \-checkmate::check_multi_class(modules, c("teal_modules", "teal_module"))
- 13.   \-teal.goshawk::tm_g_gh_correlationplot(...)
- 14.     \-teal.goshawk:::force_pick_selection(xaxis_param, which = "values")</system-out>
-    </testcase>
-    <testcase time="0.0149999999999864" classname="shinytest2_tm_g_gh_correlationplot" name="e2e_tm_g_gh_correlationplot_changing_pick_changes_plot_and_does_not_throw_validation_errors._xaxis_param">
-      <system-out>`yaxis_param` accepts only a single variable selection. 
-Forcing `teal.picks::values(multiple)` to `FALSE`.
-Backtrace:
-     x
-  1. \-teal.goshawk (local) tm_g_gh_boxplot_driver() at test-shinytest2-tm_g_gh_correlationplot.R:76:7
-  2.   +-teal.goshawk:::init_teal_app_driver(...) at test-shinytest2-tm_g_gh_correlationplot.R:2:3
-  3.   | +-testthat::with_mocked_bindings(...) at ./helper-TealAppDriver.R:2:3
-  4.   | +-TealAppDriver$new(teal::init(...)) at ./helper-TealAppDriver.R:5:7
-  5.   | | \-teal (local) initialize(...)
-  6.   | |   \-checkmate::assert_class(app, "teal_app")
-  7.   | |     \-checkmate::checkClass(x, classes, ordered, null.ok)
-  8.   | \-teal::init(...)
-  9.   |   +-checkmate::assert(...)
- 10.   |   | \-base::eval(dots[[i]], envir = env)
- 11.   |   |   \-base::eval(dots[[i]], envir = env)
- 12.   |   \-checkmate::check_multi_class(modules, c("teal_modules", "teal_module"))
- 13.   \-teal.goshawk::tm_g_gh_correlationplot(...)
- 14.     \-teal.goshawk:::force_pick_selection(yaxis_param, which = "values")</system-out>
-    </testcase>
-    <testcase time="18.7" classname="shinytest2_tm_g_gh_correlationplot" name="e2e_tm_g_gh_correlationplot_changing_pick_changes_plot_and_does_not_throw_validation_errors._xaxis_param"/>
-    <testcase time="0.0509999999999877" classname="shinytest2_tm_g_gh_correlationplot" name="e2e_tm_g_gh_correlationplot_changing_pick_changes_plot_and_does_not_throw_validation_errors._xaxis_param"/>
-    <testcase time="0.00600000000000023" classname="shinytest2_tm_g_gh_correlationplot" name="e2e_tm_g_gh_correlationplot_changing_pick_changes_plot_and_does_not_throw_validation_errors._xaxis_param"/>
-    <testcase time="0.600999999999999" classname="shinytest2_tm_g_gh_correlationplot" name="e2e_tm_g_gh_correlationplot_changing_pick_changes_plot_and_does_not_throw_validation_errors._yaxis_param">
-      <system-out>`xaxis_param` accepts only a single variable selection. 
-Forcing `teal.picks::values(multiple)` to `FALSE`.
-Backtrace:
-     x
-  1. \-teal.goshawk (local) tm_g_gh_boxplot_driver() at test-shinytest2-tm_g_gh_correlationplot.R:76:7
-  2.   +-teal.goshawk:::init_teal_app_driver(...) at test-shinytest2-tm_g_gh_correlationplot.R:2:3
-  3.   | +-testthat::with_mocked_bindings(...) at ./helper-TealAppDriver.R:2:3
-  4.   | +-TealAppDriver$new(teal::init(...)) at ./helper-TealAppDriver.R:5:7
-  5.   | | \-teal (local) initialize(...)
-  6.   | |   \-checkmate::assert_class(app, "teal_app")
-  7.   | |     \-checkmate::checkClass(x, classes, ordered, null.ok)
-  8.   | \-teal::init(...)
-  9.   |   +-checkmate::assert(...)
- 10.   |   | \-base::eval(dots[[i]], envir = env)
- 11.   |   |   \-base::eval(dots[[i]], envir = env)
- 12.   |   \-checkmate::check_multi_class(modules, c("teal_modules", "teal_module"))
- 13.   \-teal.goshawk::tm_g_gh_correlationplot(...)
- 14.     \-teal.goshawk:::force_pick_selection(xaxis_param, which = "values")</system-out>
-    </testcase>
-    <testcase time="0.01400000000001" classname="shinytest2_tm_g_gh_correlationplot" name="e2e_tm_g_gh_correlationplot_changing_pick_changes_plot_and_does_not_throw_validation_errors._yaxis_param">
-      <system-out>`yaxis_param` accepts only a single variable selection. 
-Forcing `teal.picks::values(multiple)` to `FALSE`.
-Backtrace:
-     x
-  1. \-teal.goshawk (local) tm_g_gh_boxplot_driver() at test-shinytest2-tm_g_gh_correlationplot.R:76:7
-  2.   +-teal.goshawk:::init_teal_app_driver(...) at test-shinytest2-tm_g_gh_correlationplot.R:2:3
-  3.   | +-testthat::with_mocked_bindings(...) at ./helper-TealAppDriver.R:2:3
-  4.   | +-TealAppDriver$new(teal::init(...)) at ./helper-TealAppDriver.R:5:7
-  5.   | | \-teal (local) initialize(...)
-  6.   | |   \-checkmate::assert_class(app, "teal_app")
-  7.   | |     \-checkmate::checkClass(x, classes, ordered, null.ok)
-  8.   | \-teal::init(...)
-  9.   |   +-checkmate::assert(...)
- 10.   |   | \-base::eval(dots[[i]], envir = env)
- 11.   |   |   \-base::eval(dots[[i]], envir = env)
- 12.   |   \-checkmate::check_multi_class(modules, c("teal_modules", "teal_module"))
- 13.   \-teal.goshawk::tm_g_gh_correlationplot(...)
- 14.     \-teal.goshawk:::force_pick_selection(yaxis_param, which = "values")</system-out>
-    </testcase>
-    <testcase time="18.507" classname="shinytest2_tm_g_gh_correlationplot" name="e2e_tm_g_gh_correlationplot_changing_pick_changes_plot_and_does_not_throw_validation_errors._yaxis_param"/>
-    <testcase time="0.0520000000000209" classname="shinytest2_tm_g_gh_correlationplot" name="e2e_tm_g_gh_correlationplot_changing_pick_changes_plot_and_does_not_throw_validation_errors._yaxis_param"/>
-    <testcase time="0.00600000000000023" classname="shinytest2_tm_g_gh_correlationplot" name="e2e_tm_g_gh_correlationplot_changing_pick_changes_plot_and_does_not_throw_validation_errors._yaxis_param"/>
-    <testcase time="0.603999999999985" classname="shinytest2_tm_g_gh_correlationplot" name="e2e_tm_g_gh_correlationplot_changing_pick_changes_plot_and_does_not_throw_validation_errors._xaxis_var">
-      <system-out>`xaxis_param` accepts only a single variable selection. 
-Forcing `teal.picks::values(multiple)` to `FALSE`.
-Backtrace:
-     x
-  1. \-teal.goshawk (local) tm_g_gh_boxplot_driver() at test-shinytest2-tm_g_gh_correlationplot.R:76:7
-  2.   +-teal.goshawk:::init_teal_app_driver(...) at test-shinytest2-tm_g_gh_correlationplot.R:2:3
-  3.   | +-testthat::with_mocked_bindings(...) at ./helper-TealAppDriver.R:2:3
-  4.   | +-TealAppDriver$new(teal::init(...)) at ./helper-TealAppDriver.R:5:7
-  5.   | | \-teal (local) initialize(...)
-  6.   | |   \-checkmate::assert_class(app, "teal_app")
-  7.   | |     \-checkmate::checkClass(x, classes, ordered, null.ok)
-  8.   | \-teal::init(...)
-  9.   |   +-checkmate::assert(...)
- 10.   |   | \-base::eval(dots[[i]], envir = env)
- 11.   |   |   \-base::eval(dots[[i]], envir = env)
- 12.   |   \-checkmate::check_multi_class(modules, c("teal_modules", "teal_module"))
- 13.   \-teal.goshawk::tm_g_gh_correlationplot(...)
- 14.     \-teal.goshawk:::force_pick_selection(xaxis_param, which = "values")</system-out>
-    </testcase>
-    <testcase time="0.01400000000001" classname="shinytest2_tm_g_gh_correlationplot" name="e2e_tm_g_gh_correlationplot_changing_pick_changes_plot_and_does_not_throw_validation_errors._xaxis_var">
-      <system-out>`yaxis_param` accepts only a single variable selection. 
-Forcing `teal.picks::values(multiple)` to `FALSE`.
-Backtrace:
-     x
-  1. \-teal.goshawk (local) tm_g_gh_boxplot_driver() at test-shinytest2-tm_g_gh_correlationplot.R:76:7
-  2.   +-teal.goshawk:::init_teal_app_driver(...) at test-shinytest2-tm_g_gh_correlationplot.R:2:3
-  3.   | +-testthat::with_mocked_bindings(...) at ./helper-TealAppDriver.R:2:3
-  4.   | +-TealAppDriver$new(teal::init(...)) at ./helper-TealAppDriver.R:5:7
-  5.   | | \-teal (local) initialize(...)
-  6.   | |   \-checkmate::assert_class(app, "teal_app")
-  7.   | |     \-checkmate::checkClass(x, classes, ordered, null.ok)
-  8.   | \-teal::init(...)
-  9.   |   +-checkmate::assert(...)
- 10.   |   | \-base::eval(dots[[i]], envir = env)
- 11.   |   |   \-base::eval(dots[[i]], envir = env)
- 12.   |   \-checkmate::check_multi_class(modules, c("teal_modules", "teal_module"))
- 13.   \-teal.goshawk::tm_g_gh_correlationplot(...)
- 14.     \-teal.goshawk:::force_pick_selection(yaxis_param, which = "values")</system-out>
-    </testcase>
-    <testcase time="18.942" classname="shinytest2_tm_g_gh_correlationplot" name="e2e_tm_g_gh_correlationplot_changing_pick_changes_plot_and_does_not_throw_validation_errors._xaxis_var"/>
-    <testcase time="0.0509999999999877" classname="shinytest2_tm_g_gh_correlationplot" name="e2e_tm_g_gh_correlationplot_changing_pick_changes_plot_and_does_not_throw_validation_errors._xaxis_var"/>
-    <testcase time="0.00499999999999545" classname="shinytest2_tm_g_gh_correlationplot" name="e2e_tm_g_gh_correlationplot_changing_pick_changes_plot_and_does_not_throw_validation_errors._xaxis_var"/>
-    <testcase time="0.606999999999999" classname="shinytest2_tm_g_gh_correlationplot" name="e2e_tm_g_gh_correlationplot_changing_pick_changes_plot_and_does_not_throw_validation_errors._yaxis_var">
-      <system-out>`xaxis_param` accepts only a single variable selection. 
-Forcing `teal.picks::values(multiple)` to `FALSE`.
-Backtrace:
-     x
-  1. \-teal.goshawk (local) tm_g_gh_boxplot_driver() at test-shinytest2-tm_g_gh_correlationplot.R:76:7
-  2.   +-teal.goshawk:::init_teal_app_driver(...) at test-shinytest2-tm_g_gh_correlationplot.R:2:3
-  3.   | +-testthat::with_mocked_bindings(...) at ./helper-TealAppDriver.R:2:3
-  4.   | +-TealAppDriver$new(teal::init(...)) at ./helper-TealAppDriver.R:5:7
-  5.   | | \-teal (local) initialize(...)
-  6.   | |   \-checkmate::assert_class(app, "teal_app")
-  7.   | |     \-checkmate::checkClass(x, classes, ordered, null.ok)
-  8.   | \-teal::init(...)
-  9.   |   +-checkmate::assert(...)
- 10.   |   | \-base::eval(dots[[i]], envir = env)
- 11.   |   |   \-base::eval(dots[[i]], envir = env)
- 12.   |   \-checkmate::check_multi_class(modules, c("teal_modules", "teal_module"))
- 13.   \-teal.goshawk::tm_g_gh_correlationplot(...)
- 14.     \-teal.goshawk:::force_pick_selection(xaxis_param, which = "values")</system-out>
-    </testcase>
-    <testcase time="0.0150000000000148" classname="shinytest2_tm_g_gh_correlationplot" name="e2e_tm_g_gh_correlationplot_changing_pick_changes_plot_and_does_not_throw_validation_errors._yaxis_var">
-      <system-out>`yaxis_param` accepts only a single variable selection. 
-Forcing `teal.picks::values(multiple)` to `FALSE`.
-Backtrace:
-     x
-  1. \-teal.goshawk (local) tm_g_gh_boxplot_driver() at test-shinytest2-tm_g_gh_correlationplot.R:76:7
-  2.   +-teal.goshawk:::init_teal_app_driver(...) at test-shinytest2-tm_g_gh_correlationplot.R:2:3
-  3.   | +-testthat::with_mocked_bindings(...) at ./helper-TealAppDriver.R:2:3
-  4.   | +-TealAppDriver$new(teal::init(...)) at ./helper-TealAppDriver.R:5:7
-  5.   | | \-teal (local) initialize(...)
-  6.   | |   \-checkmate::assert_class(app, "teal_app")
-  7.   | |     \-checkmate::checkClass(x, classes, ordered, null.ok)
-  8.   | \-teal::init(...)
-  9.   |   +-checkmate::assert(...)
- 10.   |   | \-base::eval(dots[[i]], envir = env)
- 11.   |   |   \-base::eval(dots[[i]], envir = env)
- 12.   |   \-checkmate::check_multi_class(modules, c("teal_modules", "teal_module"))
- 13.   \-teal.goshawk::tm_g_gh_correlationplot(...)
- 14.     \-teal.goshawk:::force_pick_selection(yaxis_param, which = "values")</system-out>
-    </testcase>
-    <testcase time="18.834" classname="shinytest2_tm_g_gh_correlationplot" name="e2e_tm_g_gh_correlationplot_changing_pick_changes_plot_and_does_not_throw_validation_errors._yaxis_var"/>
-    <testcase time="0.0509999999999877" classname="shinytest2_tm_g_gh_correlationplot" name="e2e_tm_g_gh_correlationplot_changing_pick_changes_plot_and_does_not_throw_validation_errors._yaxis_var"/>
-    <testcase time="0.00600000000000023" classname="shinytest2_tm_g_gh_correlationplot" name="e2e_tm_g_gh_correlationplot_changing_pick_changes_plot_and_does_not_throw_validation_errors._yaxis_var"/>
-    <testcase time="0.597000000000008" classname="shinytest2_tm_g_gh_correlationplot" name="e2e_tm_g_gh_correlationplot_changing_pick_changes_plot_and_does_not_throw_validation_errors._trt_group">
-      <system-out>`xaxis_param` accepts only a single variable selection. 
-Forcing `teal.picks::values(multiple)` to `FALSE`.
-Backtrace:
-     x
-  1. \-teal.goshawk (local) tm_g_gh_boxplot_driver() at test-shinytest2-tm_g_gh_correlationplot.R:76:7
-  2.   +-teal.goshawk:::init_teal_app_driver(...) at test-shinytest2-tm_g_gh_correlationplot.R:2:3
-  3.   | +-testthat::with_mocked_bindings(...) at ./helper-TealAppDriver.R:2:3
-  4.   | +-TealAppDriver$new(teal::init(...)) at ./helper-TealAppDriver.R:5:7
-  5.   | | \-teal (local) initialize(...)
-  6.   | |   \-checkmate::assert_class(app, "teal_app")
-  7.   | |     \-checkmate::checkClass(x, classes, ordered, null.ok)
-  8.   | \-teal::init(...)
-  9.   |   +-checkmate::assert(...)
- 10.   |   | \-base::eval(dots[[i]], envir = env)
- 11.   |   |   \-base::eval(dots[[i]], envir = env)
- 12.   |   \-checkmate::check_multi_class(modules, c("teal_modules", "teal_module"))
- 13.   \-teal.goshawk::tm_g_gh_correlationplot(...)
- 14.     \-teal.goshawk:::force_pick_selection(xaxis_param, which = "values")</system-out>
-    </testcase>
-    <testcase time="0.0139999999999816" classname="shinytest2_tm_g_gh_correlationplot" name="e2e_tm_g_gh_correlationplot_changing_pick_changes_plot_and_does_not_throw_validation_errors._trt_group">
-      <system-out>`yaxis_param` accepts only a single variable selection. 
-Forcing `teal.picks::values(multiple)` to `FALSE`.
-Backtrace:
-     x
-  1. \-teal.goshawk (local) tm_g_gh_boxplot_driver() at test-shinytest2-tm_g_gh_correlationplot.R:76:7
-  2.   +-teal.goshawk:::init_teal_app_driver(...) at test-shinytest2-tm_g_gh_correlationplot.R:2:3
-  3.   | +-testthat::with_mocked_bindings(...) at ./helper-TealAppDriver.R:2:3
-  4.   | +-TealAppDriver$new(teal::init(...)) at ./helper-TealAppDriver.R:5:7
-  5.   | | \-teal (local) initialize(...)
-  6.   | |   \-checkmate::assert_class(app, "teal_app")
-  7.   | |     \-checkmate::checkClass(x, classes, ordered, null.ok)
-  8.   | \-teal::init(...)
-  9.   |   +-checkmate::assert(...)
- 10.   |   | \-base::eval(dots[[i]], envir = env)
- 11.   |   |   \-base::eval(dots[[i]], envir = env)
- 12.   |   \-checkmate::check_multi_class(modules, c("teal_modules", "teal_module"))
- 13.   \-teal.goshawk::tm_g_gh_correlationplot(...)
- 14.     \-teal.goshawk:::force_pick_selection(yaxis_param, which = "values")</system-out>
-    </testcase>
-    <testcase time="18.146" classname="shinytest2_tm_g_gh_correlationplot" name="e2e_tm_g_gh_correlationplot_changing_pick_changes_plot_and_does_not_throw_validation_errors._trt_group"/>
-    <testcase time="0.0510000000000446" classname="shinytest2_tm_g_gh_correlationplot" name="e2e_tm_g_gh_correlationplot_changing_pick_changes_plot_and_does_not_throw_validation_errors._trt_group"/>
-    <testcase time="0.007000000000005" classname="shinytest2_tm_g_gh_correlationplot" name="e2e_tm_g_gh_correlationplot_changing_pick_changes_plot_and_does_not_throw_validation_errors._trt_group"/>
   </testsuite>
-  <testsuite name="tm_g_gh_correlationplot" timestamp="2026-08-18T14:25:03Z" hostname="3a27f1fd82e8" tests="16" skipped="0" failures="0" errors="0" time="0.309">
-    <testcase time="0.187999999999988" classname="tm_g_gh_correlationplot" name="tm_g_gh_correlationplot_can_be_created_with_default_arguments">
-      <system-out>`xaxis_param` accepts only a single variable selection. 
-Forcing `teal.picks::values(multiple)` to `FALSE`.
+  <testsuite name="tm_g_gh_correlationplot" timestamp="2026-08-20T08:09:23Z" hostname="c63d23670e76" tests="10" skipped="0" failures="0" errors="2" time="0.111">
+    <testcase time="0.0259999999999998" classname="tm_g_gh_correlationplot" name="tm_g_gh_correlationplot_can_be_created_with_default_arguments">
+      <error type="error" message="Error in `teal.picks(teal.picks::variables(&quot;PARAMCD&quot;, &quot;PARAMCD&quot;), teal.picks::values(selected = &quot;ALT&quot;), check_dataset = FALSE)`: could not find function &quot;teal.picks&quot; ('test-tm_g_gh_correlationplot.R:5:3')">Error in `teal.picks(teal.picks::variables("PARAMCD", "PARAMCD"), teal.picks::values(selected = "ALT"), check_dataset = FALSE)`: could not find function "teal.picks"
 Backtrace:
     x
  1. +-base::suppressWarnings(...) at test-tm_g_gh_correlationplot.R:5:3
  2. | \-base::withCallingHandlers(...)
  3. \-teal.goshawk::tm_g_gh_correlationplot(...)
- 4.   \-teal.goshawk:::force_pick_selection(xaxis_param, which = "values")</system-out>
+ 4.   \-checkmate::assert_multi_class(...)
+ 5.     \-checkmate::checkMultiClass(x, classes, null.ok)</error>
     </testcase>
-    <testcase time="0.0109999999999673" classname="tm_g_gh_correlationplot" name="tm_g_gh_correlationplot_can_be_created_with_default_arguments">
-      <system-out>`yaxis_param` accepts only a single variable selection. 
-Forcing `teal.picks::values(multiple)` to `FALSE`.
-Backtrace:
-    x
- 1. +-base::suppressWarnings(...) at test-tm_g_gh_correlationplot.R:5:3
- 2. | \-base::withCallingHandlers(...)
- 3. \-teal.goshawk::tm_g_gh_correlationplot(...)
- 4.   \-teal.goshawk:::force_pick_selection(yaxis_param, which = "values")</system-out>
-    </testcase>
-    <testcase time="0.007000000000005" classname="tm_g_gh_correlationplot" name="tm_g_gh_correlationplot_can_be_created_with_default_arguments"/>
-    <testcase time="0.0029999999999859" classname="tm_g_gh_correlationplot" name="tm_g_gh_correlationplot_can_be_created_with_default_arguments"/>
-    <testcase time="0.01400000000001" classname="tm_g_gh_correlationplot" name="tm_g_gh_correlationplot_can_be_created_with_choices_selected_arguments"/>
-    <testcase time="0.00300000000004275" classname="tm_g_gh_correlationplot" name="tm_g_gh_correlationplot_can_be_created_with_choices_selected_arguments"/>
-    <testcase time="0.0189999999999486" classname="tm_g_gh_correlationplot" name="tm_g_gh_correlationplot_can_be_created_with_teal.picks_arguments">
-      <system-out>`xaxis_param` accepts only a single variable selection. 
-Forcing `teal.picks::values(multiple)` to `FALSE`.
+    <testcase time="0.0249999999999999" classname="tm_g_gh_correlationplot" name="tm_g_gh_correlationplot_can_be_created_with_choices_selected_arguments"/>
+    <testcase time="0.00200000000000022" classname="tm_g_gh_correlationplot" name="tm_g_gh_correlationplot_can_be_created_with_choices_selected_arguments"/>
+    <testcase time="0.00699999999999967" classname="tm_g_gh_correlationplot" name="tm_g_gh_correlationplot_can_be_created_with_teal.picks_arguments">
+      <error type="error" message="Error in `tm_g_gh_correlationplot(label = &quot;Correlation Plot&quot;, dataname = &quot;ADLB&quot;, param_var = &quot;PARAMCD&quot;, xaxis_param = teal.picks::values(c(&quot;ALT&quot;, &quot;CRP&quot;, &quot;IGA&quot;), selected = &quot;ALT&quot;), yaxis_param = teal.picks::values(c(&quot;ALT&quot;, &quot;CRP&quot;, &quot;IGA&quot;), selected = &quot;CRP&quot;), xaxis_var = teal.picks::variables(c(&quot;AVAL&quot;, &quot;BASE&quot;, &quot;CHG&quot;, &quot;PCHG&quot;), selected = &quot;BASE&quot;), yaxis_var = teal.picks::variables(c(&quot;AVAL&quot;, &quot;BASE&quot;, &quot;CHG&quot;, &quot;PCHG&quot;), selected = &quot;AVAL&quot;), trt_group = teal.picks::variables(c(&quot;ARM&quot;, &quot;ACTARM&quot;), selected = &quot;ARM&quot;))`: Assertion on 'xaxis_param' failed: Must inherit from class 'choices_selected'/'picks', but has classes 'values','pick'. ('test-tm_g_gh_correlationplot.R:32:3')">Error in `tm_g_gh_correlationplot(label = "Correlation Plot", dataname = "ADLB", param_var = "PARAMCD", xaxis_param = teal.picks::values(c("ALT", "CRP", "IGA"), selected = "ALT"), yaxis_param = teal.picks::values(c("ALT", "CRP", "IGA"), selected = "CRP"), xaxis_var = teal.picks::variables(c("AVAL", "BASE", "CHG", "PCHG"), selected = "BASE"), yaxis_var = teal.picks::variables(c("AVAL", "BASE", "CHG", "PCHG"), selected = "AVAL"), trt_group = teal.picks::variables(c("ARM", "ACTARM"), selected = "ARM"))`: Assertion on 'xaxis_param' failed: Must inherit from class 'choices_selected'/'picks', but has classes 'values','pick'.
 Backtrace:
     x
  1. \-teal.goshawk::tm_g_gh_correlationplot(...) at test-tm_g_gh_correlationplot.R:32:3
- 2.   \-teal.goshawk:::force_pick_selection(xaxis_param, which = "values")</system-out>
+ 2.   \-checkmate::assert_multi_class(...)
+ 3.     \-checkmate::makeAssertion(x, res, .var.name, add)
+ 4.       \-checkmate:::mstop(...)</error>
     </testcase>
-    <testcase time="0.00900000000001455" classname="tm_g_gh_correlationplot" name="tm_g_gh_correlationplot_can_be_created_with_teal.picks_arguments">
-      <system-out>`yaxis_param` accepts only a single variable selection. 
-Forcing `teal.picks::values(multiple)` to `FALSE`.
-Backtrace:
-    x
- 1. \-teal.goshawk::tm_g_gh_correlationplot(...) at test-tm_g_gh_correlationplot.R:32:3
- 2.   \-teal.goshawk:::force_pick_selection(yaxis_param, which = "values")</system-out>
-    </testcase>
-    <testcase time="0.007000000000005" classname="tm_g_gh_correlationplot" name="tm_g_gh_correlationplot_can_be_created_with_teal.picks_arguments"/>
-    <testcase time="0.0029999999999859" classname="tm_g_gh_correlationplot" name="tm_g_gh_correlationplot_can_be_created_with_teal.picks_arguments"/>
-    <testcase time="0.0120000000000005" classname="tm_g_gh_correlationplot" name="tm_g_gh_correlationplot_handles_multiple_parameter_combinations_with_choices_selected"/>
-    <testcase time="0.00300000000004275" classname="tm_g_gh_correlationplot" name="tm_g_gh_correlationplot_handles_multiple_parameter_combinations_with_choices_selected"/>
-    <testcase time="0.0120000000000005" classname="tm_g_gh_correlationplot" name="tm_g_gh_correlationplot_accepts_custom_color_and_shape_specifications_with_choices_selected"/>
-    <testcase time="0.0029999999999859" classname="tm_g_gh_correlationplot" name="tm_g_gh_correlationplot_accepts_custom_color_and_shape_specifications_with_choices_selected"/>
-    <testcase time="0.0120000000000005" classname="tm_g_gh_correlationplot" name="tm_g_gh_correlationplot_accepts_line_arguments_with_choices_selected"/>
-    <testcase time="0.0029999999999859" classname="tm_g_gh_correlationplot" name="tm_g_gh_correlationplot_accepts_line_arguments_with_choices_selected"/>
+    <testcase time="0.02" classname="tm_g_gh_correlationplot" name="tm_g_gh_correlationplot_handles_multiple_parameter_combinations_with_choices_selected"/>
+    <testcase time="0.00200000000000022" classname="tm_g_gh_correlationplot" name="tm_g_gh_correlationplot_handles_multiple_parameter_combinations_with_choices_selected"/>
+    <testcase time="0.0089999999999999" classname="tm_g_gh_correlationplot" name="tm_g_gh_correlationplot_accepts_custom_color_and_shape_specifications_with_choices_selected"/>
+    <testcase time="0.00300000000000011" classname="tm_g_gh_correlationplot" name="tm_g_gh_correlationplot_accepts_custom_color_and_shape_specifications_with_choices_selected"/>
+    <testcase time="0.0150000000000001" classname="tm_g_gh_correlationplot" name="tm_g_gh_correlationplot_accepts_line_arguments_with_choices_selected"/>
+    <testcase time="0.00199999999999978" classname="tm_g_gh_correlationplot" name="tm_g_gh_correlationplot_accepts_line_arguments_with_choices_selected"/>
   </testsuite>
 </testsuites>
