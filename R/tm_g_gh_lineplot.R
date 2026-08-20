@@ -177,6 +177,14 @@ tm_g_gh_lineplot <- function(label,
   checkmate::assert_multi_class(yaxis_var, c("choices_selected", "variables", "picks"))
   checkmate::assert_multi_class(trt_group, c("choices_selected", "variables", "picks"))
 
+  checkmate::assert(
+    .var_name = "shape_choices",
+    checkmate::check_character(shape_choices),
+    checkmate::check_class(shape_choices, c("variables", "picks")),
+    checkmate::check_class(shape_choices, "choices_selected"),
+    checkmate::check_null(shape_choices)
+  )
+
   checkmate::assert_flag(rotate_xlab)
 
   checkmate::assert_character(color_manual, null.ok = TRUE)
@@ -230,14 +238,24 @@ tm_g_gh_lineplot <- function(label,
 
   teal.picks::assert_last_level(param, "values")
 
+  shape_choices <- if (is.character(shape_choices)) {
+    teal.picks::variables(shape_choices, NULL, multiple = FALSE)
+  } else {
+    migrate_choices_selected_to_variables(shape_choices)
+  }
+
   xaxis_var <- create_picks_helper(teal.picks::datasets(dataname, dataname), xaxis_var)
   yaxis_var <- create_picks_helper(teal.picks::datasets(dataname, dataname), yaxis_var)
   trt_group <- create_picks_helper(teal.picks::datasets(dataname, dataname), trt_group)
+  shape_choices <- create_picks_helper(teal.picks::datasets(dataname, dataname), shape_choices)
 
   param <- force_pick_selection(param, which = "values")
   trt_group <- force_pick_selection(trt_group, which = "variables")
   xaxis_var <- force_pick_selection(xaxis_var, which = "variables")
   yaxis_var <- force_pick_selection(yaxis_var, which = "variables")
+
+  shape_choices <- force_pick_selection(shape_choices, which = "variables")
+  attr(shape_choices$variables, "allow-clear") <- TRUE # Enable clearance of selection
 
   args <- as.list(environment())
 
@@ -287,7 +305,12 @@ ui_lineplot <- function(id,
           trt_group = trt_group,
           xparam_label = "Select a Biomarker"
         ),
-        uiOutput(ns("shape_ui")),
+        if (!is.null(shape_choices)) {
+          tagList(
+            tags$strong("Select Line Splitting Variable"),
+            teal.picks::picks_ui(ns("shape_choices"), shape_choices)
+          )
+        },
         radioButtons(ns("stat"), "Select a Statistic:", c("mean", "median"), stat),
         checkboxInput(ns("include_stat"), "Include Statistic Table", value = TRUE),
         tags$div(
@@ -399,7 +422,8 @@ srv_lineplot <- function(id,
         xaxis_param = param,
         xaxis_var = xaxis_var,
         yaxis_var = yaxis_var,
-        trt_group = trt_group
+        trt_group = trt_group,
+        shape_choices = shape_choices
       ),
       data = data
     )
@@ -409,6 +433,7 @@ srv_lineplot <- function(id,
     yaxis_var_sel <- reactive(selectors$yaxis_var()$variables$selected)
     trt_group_sel <- reactive(selectors$trt_group()$variables$selected)
     param_var_sel <- reactive(selectors$xaxis_param()$variables$selected)
+    shape_choices <- reactive(selectors$shape_choices()$variables$selected)
 
     data_with_card <- reactive({
       obj <- data()
@@ -445,23 +470,6 @@ srv_lineplot <- function(id,
       data_with_card()
     })
 
-    output$shape_ui <- renderUI({
-      if (!is.null(shape_choices)) {
-        if (methods::is(shape_choices, "choices_selected")) {
-          choices <- get_choices(shape_choices$choices)
-          selected <- shape_choices$selected
-        } else {
-          choices <- shape_choices
-          selected <- NULL
-        }
-        teal.widgets::optionalSelectInput(
-          ns("shape"),
-          "Select Line Splitting Variable",
-          choices = choices, selected = selected
-        )
-      }
-    })
-
     anl_q_output <- constr_anl_q(
       session = session,
       input = input,
@@ -494,11 +502,7 @@ srv_lineplot <- function(id,
       ANL <- anl_q()$ANL
       validate_has_variable(ANL, varname, paste("variable", varname, "does not exist"))
 
-      shape <- if (!(is.null(input$shape) || input$shape == "None")) {
-        input$shape
-      } else {
-        NULL
-      }
+      shape <- shape_choices()
 
       sum_data <- ANL %>%
         dplyr::group_by_at(c(xaxis_var_sel(), trt_group_sel(), shape)) %>%
@@ -653,15 +657,15 @@ srv_lineplot <- function(id,
 
     # reset shapes when different splitting variable is selected
     observeEvent(
-      eventExpr = input$shape,
+      eventExpr = shape_choices(),
       handlerExpr = symbol_type_defaults(symbol_type_start),
       ignoreNULL = TRUE
     )
 
     observe({
-      req(input$shape)
+      req(shape_choices())
       req(anl_q())
-      anl_shape <- anl_q()$ANL[[input$shape]]
+      anl_shape <- anl_q()$ANL[[shape_choices()]]
       anl_shape_nlevels <- nlevels(anl_shape)
       symbol_type_to_set <- symbol_type_defaults()[pmin(length(symbol_type_defaults()), seq_len(anl_shape_nlevels))]
       symbol_type_defaults(symbol_type_to_set)
@@ -669,10 +673,10 @@ srv_lineplot <- function(id,
 
     symbol_type_selected <- reactive({
       req(anl_q())
-      if (is.null(input$shape)) {
+      if (is.null(shape_choices())) {
         return(NULL)
       }
-      anl_shape <- isolate(anl_q()$ANL[[input$shape]])
+      anl_shape <- isolate(anl_q()$ANL[[shape_choices()]])
       anl_shape_nlevels <- nlevels(anl_shape)
       anl_shape_levels <- levels(anl_shape)
 
@@ -691,9 +695,9 @@ srv_lineplot <- function(id,
 
     output$symbols <- renderUI({
       req(symbol_type_defaults())
-      validate(need(input$shape, "Please select line splitting variable first."))
+      validate(need(shape_choices(), "Please select line splitting variable first."))
 
-      anl_shape <- isolate(anl_q()$ANL[[input$shape]])
+      anl_shape <- isolate(anl_q()$ANL[[shape_choices()]])
       validate(need(is.factor(anl_shape), "Line splitting variable must be a factor."))
 
       anl_shape_nlevels <- nlevels(anl_shape)
@@ -744,20 +748,11 @@ srv_lineplot <- function(id,
       symbol_selected <- symbol_type_selected()
       include_stat <- input$include_stat
 
-      param_val <- param_sel()
-      xaxis_val <- xaxis_var_sel()
-      yaxis_val <- yaxis_var_sel()
-      param_var_val <- param_var_sel()
-
-      shape <- if (!(is.null(input$shape) || input$shape == "None")) {
-        input$shape
-      } else {
-        NULL
-      }
+      shape <- shape_choices()
 
       validate(
         need(
-          nrow(anl_q()$ANL[stats::complete.cases(anl_q()$ANL[, c(yaxis_val, xaxis_val)]), ]) >= 2,
+          nrow(anl_q()$ANL[stats::complete.cases(anl_q()$ANL[, c(yaxis_var_sel(), xaxis_var_sel())]), ]) >= 2,
           "Number of complete rows on x and y axis variables is less than 2"
         )
       )
@@ -788,7 +783,6 @@ srv_lineplot <- function(id,
       teal.reporter::teal_card(obj) <-
         c(
           teal.reporter::teal_card(obj),
-          teal.reporter::teal_card("## Module's output(s)"),
           teal.reporter::teal_card("### Plot")
         )
 
@@ -796,17 +790,17 @@ srv_lineplot <- function(id,
         object = obj,
         code = bquote({
           p <- goshawk::g_lineplot(
-            data = ANL[stats::complete.cases(ANL[, c(.(yaxis_val), .(xaxis_val))]), ],
-            biomarker_var = .(param_var_val),
+            data = ANL[stats::complete.cases(ANL[, c(.(yaxis_var_sel()), .(xaxis_var_sel()))]), ],
+            biomarker_var = .(param_var_sel()),
             biomarker_var_label = .(param_var_label),
-            biomarker = .(param_val),
-            value_var = .(yaxis_val),
+            biomarker = .(param_sel()),
+            value_var = .(yaxis_var_sel()),
             ylim = .(ylim),
             trt_group = .(trt_group_val),
             trt_group_level = .(trt_group_level),
             shape = .(shape),
             shape_type = .(symbol_selected),
-            time = .(xaxis_val),
+            time = .(xaxis_var_sel()),
             time_level = .(xvar_level),
             color_manual = .(color_selected),
             line_type = .(type_selected),
