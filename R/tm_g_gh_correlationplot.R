@@ -511,6 +511,13 @@ srv_g_correlationplot <- function(id,
           "Please select a facet column integer that is greater than 0"
         )
       )
+      validate(
+        teal::need_input(
+          c("xaxis_param-variables-selected", "yaxis_param-variables-selected"),
+          identical(selectors$xaxis_param()$variables$selected, selectors$yaxis_param()$variables$selected),
+          "X-Axis and Y-Axis biomarkers must be from the same biomarker variable in dataset"
+        )
+      )
       data_with_card()
     })
 
