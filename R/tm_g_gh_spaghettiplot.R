@@ -507,12 +507,6 @@ srv_g_spaghettiplot <- function(id,
       font_size_val <- input$font_size
       dot_size_val <- input$dot_size
       alpha_val <- input$alpha
-
-      param_val <- param_sel()
-      xaxis_var_val <- xaxis_var_sel()
-      yaxis_var_val <- yaxis_var_sel()
-      trt_group_val <- trt_group_sel()
-      param_var_val <- param_var_sel()
       hline_vars_val <- input$hline_vars
 
       private_qenv <- anl_q()$qenv
@@ -556,13 +550,13 @@ srv_g_spaghettiplot <- function(id,
           p <- goshawk::g_spaghettiplot(
             data = ANL,
             subj_id = .(idvar),
-            biomarker_var = .(param_var_val),
+            biomarker_var = .(param_var_sel()),
             biomarker_var_label = .(param_var_label),
-            biomarker = .(param_val),
-            value_var = .(yaxis_var_val),
-            trt_group = .(trt_group_val),
+            biomarker = .(param_sel()),
+            value_var = .(yaxis_var_sel()),
+            trt_group = .(trt_group_sel()),
             trt_group_level = .(trt_group_level),
-            time = .(xaxis_var_val),
+            time = .(xaxis_var_sel()),
             time_level = .(xaxis_var_level),
             color_manual = .(man_color),
             color_comb = .(color_comb),
