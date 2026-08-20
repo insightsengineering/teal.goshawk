@@ -471,6 +471,13 @@ srv_g_correlationplot <- function(id,
       data = data
     )
 
+    xaxis_param_sel <- reactive(selectors$xaxis_param()$values$selected)
+    yaxis_param_sel <- reactive(selectors$yaxis_param()$values$selected)
+    xaxis_var_sel <- reactive(selectors$xaxis_var()$variables$selected)
+    yaxis_var_sel <- reactive(selectors$yaxis_var()$variables$selected)
+    trt_group_sel <- reactive(selectors$trt_group()$variables$selected)
+    param_var_sel <- reactive(selectors$xaxis_param()$variables$selected) # Should be the same as yaxis_param
+
     data_with_card <- reactive({
       obj <- data()
       teal.reporter::teal_card(obj) <-
@@ -484,46 +491,46 @@ srv_g_correlationplot <- function(id,
     validated_q <- reactive({
       validate(
         teal::need_input(
-          c("xaxis_param-variables-selected", "yaxis_param-variables-selected"),
-          identical(selectors$xaxis_param()$variables$selected, selectors$yaxis_param()$variables$selected),
-          "X-Axis and Y-Axis biomarkers must be from the same biomarker variable"
+          inputId = c("xaxis_param-variables-selected", "yaxis_param-variables-selected"),
+          condition = identical(selectors$xaxis_param()$variables$selected, selectors$yaxis_param()$variables$selected),
+          msg = "X-Axis and Y-Axis biomarkers must be from the same biomarker variable"
         ),
         teal::need_input(
-          "xaxis_param-values-selected",
-          length(selectors$xaxis_param()$values$selected) != 0,
-          "Please select an X-Axis biomarker"
+          inputId = "xaxis_param-values-selected",
+          condition = length(xaxis_param_sel()) != 0,
+          msg = "Please select an X-Axis biomarker"
         ),
         teal::need_input(
-          "yaxis_param-values-selected",
-          length(selectors$yaxis_param()$values$selected) != 0,
-          "Please select a Y-Axis biomarker"
+          inputId = "yaxis_param-values-selected",
+          condition = length(yaxis_param_sel()) != 0,
+          msg = "Please select a Y-Axis biomarker"
         ),
         teal::need_input(
-          "trt_group-variables-selected",
-          length(selectors$trt_group()$variables$selected) != 0,
-          "Please select a treatment variable"
+          inputId = "trt_group-variables-selected",
+          condition = length(trt_group_sel()) != 0,
+          msg = "Please select a treatment variable"
         ),
         teal::need_input(
-          "xaxis_var-variables-selected",
-          length(selectors$xaxis_var()$variables$selected) != 0,
-          "Please select an X-Axis variable"
+          inputId = "xaxis_var-variables-selected",
+          condition = length(xaxis_var_sel()) != 0,
+          msg = "Please select an X-Axis variable"
         ),
         teal::need_input(
-          "yaxis_var-variables-selected",
-          length(selectors$yaxis_var()$variables$selected) != 0,
-          "Please select a Y-Axis variable"
+          inputId = "yaxis_var-variables-selected",
+          condition = length(yaxis_var_sel()) != 0,
+          msg = "Please select a Y-Axis variable"
         ),
         teal::need_input(
-          "facet_ncol",
-          length(input$facet_ncol) != 0 && input$facet_ncol > 0 && as.numeric(input$facet_ncol) %% 1 == 0,
-          "Please select a facet column integer that is greater than 0"
+          inputId = "facet_ncol",
+          condition = length(input$facet_ncol) != 0 && input$facet_ncol > 0 && as.numeric(input$facet_ncol) %% 1 == 0,
+          msg = "Please select a facet column integer that is greater than 0"
         )
       )
       validate(
         teal::need_input(
-          c("xaxis_param-variables-selected", "yaxis_param-variables-selected"),
-          identical(selectors$xaxis_param()$variables$selected, selectors$yaxis_param()$variables$selected),
-          "X-Axis and Y-Axis biomarkers must be from the same biomarker variable in dataset"
+          inputId = c("xaxis_param-variables-selected", "yaxis_param-variables-selected"),
+          condition = identical(selectors$xaxis_param()$variables$selected, selectors$yaxis_param()$variables$selected),
+          msg = "X-Axis and Y-Axis biomarkers must be from the same biomarker variable in dataset"
         )
       )
       data_with_card()
@@ -538,13 +545,6 @@ srv_g_correlationplot <- function(id,
       iv
     })
 
-    xaxis_param_sel <- reactive(selectors$xaxis_param()$values$selected)
-    yaxis_param_sel <- reactive(selectors$yaxis_param()$values$selected)
-    xaxis_var_sel <- reactive(selectors$xaxis_var()$variables$selected)
-    yaxis_var_sel <- reactive(selectors$yaxis_var()$variables$selected)
-    trt_group_sel <- reactive(selectors$trt_group()$variables$selected)
-    param_var_sel <- reactive(selectors$xaxis_param()$variables$selected) # Should be the same as yaxis_param
-
     # filter selected biomarkers
     anl_param <- reactive({
       dataset_var <- dataname
@@ -554,14 +554,14 @@ srv_g_correlationplot <- function(id,
       if (length(input$hline_vars) > 0) {
         validate(
           teal::need_input(
-            "hline_vars",
-            all(input$hline_vars %in% names(ANL)),
-            "One or more selected horizontal line variable(s) is/are not names to any column in the data"
+            inputId = "hline_vars",
+            condition = all(input$hline_vars %in% names(ANL)),
+            msg = "One or more selected horizontal line variable(s) is/are not names to any column in the data"
           ),
           teal::need_input(
-            "vline_vars",
-            all(input$vline_vars %in% names(ANL)),
-            "One or more selected vertical line variable(s) is/are not names to any column in the data"
+            inputId = "vline_vars",
+            condition = all(input$vline_vars %in% names(ANL)),
+            msg = "One or more selected vertical line variable(s) is/are not names to any column in the data"
           )
         )
       }
@@ -837,18 +837,16 @@ srv_g_correlationplot <- function(id,
 
       validate( # Validation must occur after anl_constraint() has valid data
         teal::need_input(
-          "xrange_scale",
-          !is.null(xrange_slider$value) &&
-            length(xrange_slider$value) == 2 &&
+          inputId = "xrange_scale",
+          condition = checkmate::test_numeric(xrange_slider$value, len = 2) &&
             xrange_slider$value[1] < xrange_slider$value[2],
-          "X-Axis Range Zoom: Invalid range"
+          msg = "X-Axis Range Zoom: Invalid range"
         ),
         teal::need_input(
-          "yrange_scale",
-          !is.null(yrange_slider$value) &&
-            length(yrange_slider$value) == 2 &&
+          inputId = "yrange_scale",
+          condition = checkmate::test_numeric(yrange_slider$value, len = 2) &&
             yrange_slider$value[1] < yrange_slider$value[2],
-          "Y-Axis Range Zoom: Invalid range"
+          msg = "Y-Axis Range Zoom: Invalid range"
         )
       )
 
