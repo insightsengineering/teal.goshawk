@@ -6,16 +6,17 @@
 \usage{
 tm_g_gh_spaghettiplot(
   label,
-  dataname,
-  param_var,
-  param,
+  dataname = "ADLB",
+  param_var = lifecycle::deprecated(),
+  param = teal.picks::picks(teal.picks::variables("PARAMCD", "PARAMCD"),
+    teal.picks::values(selected = "ALT", multiple = FALSE), check_dataset = FALSE),
   param_var_label = "PARAM",
-  idvar,
-  xaxis_var,
-  yaxis_var,
+  idvar = "USUBJID",
+  xaxis_var = teal.picks::variables(c("AVISITCD", "AVISIT"), "AVISITCD"),
+  yaxis_var = teal.picks::variables(c("AVAL", "CHG", "PCHG"), "AVAL"),
   xaxis_var_level = NULL,
   filter_var = yaxis_var,
-  trt_group,
+  trt_group = teal.picks::variables(selected = "ARM"),
   trt_group_level = NULL,
   group_stats = "NONE",
   man_color = NULL,
@@ -35,6 +36,7 @@ tm_g_gh_spaghettiplot(
   hline_vars = character(0),
   hline_vars_colors = "green",
   hline_vars_labels = hline_vars,
+  alpha = c(0.8, 0, 1),
   pre_output = NULL,
   post_output = NULL,
   transformators = list()
@@ -46,19 +48,19 @@ tm_g_gh_spaghettiplot(
 \item{dataname}{analysis data passed to the data argument of \code{\link[teal]{init}}.
 E.g. \code{ADaM} structured laboratory data frame \code{ADLB}.}
 
-\item{param_var}{name of variable containing biomarker codes e.g. \code{PARAMCD}.}
+\item{param_var}{\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#deprecated}{\figure{lifecycle-deprecated.svg}{options: alt='[Deprecated]'}}}{\strong{[Deprecated]}} name of variable containing biomarker codes e.g. \code{PARAMCD}.}
 
-\item{param}{biomarker selected.}
+\item{param}{(\code{picks} or \code{choices_selected}) biomarker selected.}
 
 \item{param_var_label}{single name of variable in analysis data
 that includes parameter labels.}
 
 \item{idvar}{name of unique subject id variable.}
 
-\item{xaxis_var}{single name of variable in analysis data
-that is used as x-axis in the plot for the respective goshawk function.}
+\item{xaxis_var}{(\code{variables} or \code{choices_selected})
+single name of variable in analysis data that is used as x-axis in the plot.}
 
-\item{yaxis_var}{single name of variable in analysis data that is used as
+\item{yaxis_var}{(\code{variables} or \code{choices_selected}) single name of variable in analysis data that is used as
 summary variable in the respective \code{goshawk} function.}
 
 \item{xaxis_var_level}{vector that can be used to define the factor level of \code{xaxis_var}.
@@ -66,7 +68,7 @@ Only use it when \code{xaxis_var} is character or factor.}
 
 \item{filter_var}{data constraint variable.}
 
-\item{trt_group}{\code{\link[teal.transform]{choices_selected}} object with available choices and pre-selected option
+\item{trt_group}{(\code{variables} or \code{choices_selected}) object with available choices and pre-selected option
 for variable names representing treatment group e.g. \code{ARM}.}
 
 \item{trt_group_level}{vector that can be used to define factor
@@ -220,16 +222,16 @@ app <- init(
     tm_g_gh_spaghettiplot(
       label = "Spaghetti Plot",
       dataname = "ADLB",
-      param_var = "PARAMCD",
-      param = choices_selected(c("ALT", "CRP", "IGA"), "ALT"),
-      idvar = "USUBJID",
-      xaxis_var = choices_selected(c("Analysis Visit Code" = "AVISITCD"), "AVISITCD"),
-      yaxis_var = choices_selected(c("AVAL", "CHG", "PCHG"), "AVAL"),
-      filter_var = choices_selected(
-        c("None" = "NONE", "Screening" = "BASE2", "Baseline" = "BASE"),
-        "NONE"
+      param = picks(
+        variables("PARAMCD", "PARAMCD"),
+        values(selected = "ALT", multiple = FALSE),
+        check_dataset = FALSE
       ),
-      trt_group = choices_selected(c("ARM", "ACTARM"), "ARM"),
+      idvar = "USUBJID",
+      xaxis_var = variables(c("AVISITCD", "AVISIT"), "AVISITCD"),
+      yaxis_var = variables(c("AVAL", "CHG", "PCHG"), "AVAL"),
+      filter_var = variables(c("NONE"), "NONE"),
+      trt_group = variables(c("ARM", "ACTARM"), "ARM"),
       color_comb = "#39ff14",
       man_color = c(
         "Combination" = "#000000",
@@ -240,7 +242,7 @@ app <- init(
       hline_arb_color = c("grey", "red"),
       hline_arb_label = c("default A", "default B"),
       hline_vars = c("ANRHI", "ANRLO", "ULOQN", "LLOQN"),
-      hline_vars_colors = c("pink", "brown", "purple", "black"),
+      hline_vars_colors = c("pink", "brown", "purple", "black")
     )
   )
 )
