@@ -4,9 +4,16 @@ tm_g_gh_boxplot_driver <- function() {
     modules = tm_g_gh_correlationplot(
       label = "Correlation Plot",
       dataname = "ADLB",
-      param_var = "PARAMCD",
-      xaxis_param = teal.picks::values(c("ALT", "CRP", "IGA"), "ALT"),
-      yaxis_param = teal.picks::values(c("ALT", "CRP", "IGA"), "CRP"),
+      xaxis_param = teal.picks::picks(
+        teal.picks::variables("PARAMCD", "PARAMCD"),
+        teal.picks::values(c("ALT", "CRP", "IGA"), "ALT", multiple = FALSE),
+        check_dataset = FALSE
+      ),
+      yaxis_param = teal.picks::picks(
+        teal.picks::variables("PARAMCD", "PARAMCD"),
+        teal.picks::values(c("ALT", "CRP", "IGA"), "CRP", multiple = FALSE),
+        check_dataset = FALSE
+      ),
       xaxis_var = teal.picks::variables(c("AVAL", "BASE", "CHG", "PCHG"), "BASE"),
       yaxis_var = teal.picks::variables(c("AVAL", "BASE", "CHG", "PCHG"), "AVAL"),
       trt_group = teal.picks::variables(c("ARM", "ACTARM"), "ARM")

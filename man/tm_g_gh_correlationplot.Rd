@@ -7,12 +7,12 @@
 tm_g_gh_correlationplot(
   label,
   dataname = "ADLB",
-  param_var = lifecyle::deprecated(),
-  xaxis_param = teal.picks(teal.picks::variables("PARAMCD", "PARAMCD"),
-    teal.picks::values(selected = "ALT"), check_dataset = FALSE),
+  param_var = lifecycle::deprecated(),
+  xaxis_param = teal.picks::picks(teal.picks::variables("PARAMCD", "PARAMCD"),
+    teal.picks::values(selected = "ALT", multiple = FALSE), check_dataset = FALSE),
   xaxis_var = teal.picks::variables(c("AVAL", "BASE", "CHG", "PCHG"), "BASE"),
-  yaxis_param = teal.picks(teal.picks::variables("PARAMCD", "PARAMCD"),
-    teal.picks::values(selected = "CRP"), check_dataset = FALSE),
+  yaxis_param = teal.picks::picks(teal.picks::variables("PARAMCD", "PARAMCD"),
+    teal.picks::values(selected = "CRP", multiple = FALSE), check_dataset = FALSE),
   yaxis_var = teal.picks::variables(c("AVAL", "BASE", "CHG", "PCHG"), "AVAL"),
   trt_group = teal.picks::variables(selected = "ARM"),
   color_manual = NULL,
@@ -247,8 +247,16 @@ app <- init(
     tm_g_gh_correlationplot(
       label = "Correlation Plot",
       dataname = "ADLB",
-      xaxis_param = picks(variables("PARAMCD", "PARAMCD"), values(selected = "ALT"), check_dataset = FALSE),
-      yaxis_param = picks(variables("PARAMCD", "PARAMCD"), values(selected = "CRP"), check_dataset = FALSE),
+      xaxis_param = picks(
+        variables("PARAMCD", "PARAMCD"),
+        values(selected = "ALT", multiple = FALSE),
+        check_dataset = FALSE
+      ),
+      yaxis_param = picks(
+        variables("PARAMCD", "PARAMCD"),
+        values(selected = "CRP", multiple = FALSE),
+        check_dataset = FALSE
+      ),
       xaxis_var = variables(c("AVAL", "BASE", "CHG", "PCHG"), "BASE"),
       yaxis_var = variables(c("AVAL", "BASE", "CHG", "PCHG"), "AVAL"),
       trt_group = variables(c("ARM", "ACTARM"), "ARM"),

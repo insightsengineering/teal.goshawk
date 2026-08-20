@@ -1,7 +1,6 @@
 # Tests for tm_g_gh_correlationplot with choices_selected arguments
 
 test_that("tm_g_gh_correlationplot can be created with default arguments", {
-  withr::local_options(lifecycle_verbosity = "quiet")
   module <- suppressWarnings(
     tm_g_gh_correlationplot(label = "Correlation Plot", dataname = "ADLB"),
     classes = "pick_delayed"
@@ -28,33 +27,46 @@ test_that("tm_g_gh_correlationplot can be created with choices_selected argument
   expect_equal(module$label, "Correlation Plot")
 })
 
-test_that("tm_g_gh_correlationplot can be created with teal.picks arguments", {
+test_that("tm_g_gh_correlationplot can be created with custom picks arguments", {
   module <- tm_g_gh_correlationplot(
     label = "Correlation Plot",
     dataname = "ADLB",
-    param_var = "PARAMCD",
-    xaxis_param = teal.picks::values(c("ALT", "CRP", "IGA"), selected = "ALT"),
-    yaxis_param = teal.picks::values(c("ALT", "CRP", "IGA"), selected = "CRP"),
-    xaxis_var = teal.picks::variables(c("AVAL", "BASE", "CHG", "PCHG"), selected = "BASE"),
-    yaxis_var = teal.picks::variables(c("AVAL", "BASE", "CHG", "PCHG"), selected = "AVAL"),
-    trt_group = teal.picks::variables(c("ARM", "ACTARM"), selected = "ARM")
+    xaxis_param = teal.picks::picks(
+      teal.picks::variables("PARAMCD", "PARAMCD"),
+      teal.picks::values(c("ALT", "CRP", "IGA"), "ALT", multiple = FALSE),
+      check_dataset = FALSE
+    ),
+    yaxis_param = teal.picks::picks(
+      teal.picks::variables("PARAMCD", "PARAMCD"),
+      teal.picks::values(c("ALT", "CRP", "IGA"), "CRP", multiple = FALSE),
+      check_dataset = FALSE
+    ),
+    xaxis_var = teal.picks::variables(c("AVAL", "BASE", "CHG", "PCHG"), "BASE"),
+    yaxis_var = teal.picks::variables(c("AVAL", "BASE", "CHG", "PCHG"), "AVAL"),
+    trt_group = teal.picks::variables(c("ARM", "ACTARM"), "ARM")
   )
 
   expect_s3_class(module, "teal_module")
   expect_equal(module$label, "Correlation Plot")
 })
 
-test_that("tm_g_gh_correlationplot handles multiple parameter combinations with choices_selected", {
-  withr::local_options(lifecycle_verbosity = "quiet")
+test_that("tm_g_gh_correlationplot handles multiple parameter combinations", {
   module <- tm_g_gh_correlationplot(
     label = "Correlation Plot - Complex",
     dataname = "ADLB",
-    param_var = "PARAMCD",
-    xaxis_param = choices_selected(c("ALT", "CRP", "IGA"), selected = c("ALT")),
-    yaxis_param = choices_selected(c("ALT", "CRP", "IGA"), selected = c("IGA")),
-    xaxis_var = choices_selected(c("AVAL", "BASE", "CHG", "PCHG"), "CHG"),
-    yaxis_var = choices_selected(c("AVAL", "BASE", "CHG", "PCHG"), "PCHG"),
-    trt_group = choices_selected(c("ARM", "ACTARM"), "ACTARM"),
+    xaxis_param = teal.picks::picks(
+      teal.picks::variables("PARAMCD", "PARAMCD"),
+      teal.picks::values(c("ALT", "CRP", "IGA"), "ALT", multiple = FALSE),
+      check_dataset = FALSE
+    ),
+    yaxis_param = teal.picks::picks(
+      teal.picks::variables("PARAMCD", "PARAMCD"),
+      teal.picks::values(c("ALT", "CRP", "IGA"), "IGA", multiple = FALSE),
+      check_dataset = FALSE
+    ),
+    xaxis_var = teal.picks::variables(c("AVAL", "BASE", "CHG", "PCHG"), "CHG"),
+    yaxis_var = teal.picks::variables(c("AVAL", "BASE", "CHG", "PCHG"), "PCHG"),
+    trt_group = teal.picks::variables(c("ARM", "ACTARM"), "ACTARM"),
     facet_ncol = 2,
     visit_facet = TRUE,
     trt_facet = FALSE,
@@ -68,16 +80,22 @@ test_that("tm_g_gh_correlationplot handles multiple parameter combinations with 
 })
 
 test_that("tm_g_gh_correlationplot accepts custom color and shape specifications with choices_selected", {
-  withr::local_options(lifecycle_verbosity = "quiet")
   module <- tm_g_gh_correlationplot(
     label = "Correlation Plot - Styled",
     dataname = "ADLB",
-    param_var = "PARAMCD",
-    xaxis_param = choices_selected(c("ALT", "CRP", "IGA"), "ALT"),
-    yaxis_param = choices_selected(c("ALT", "CRP", "IGA"), "CRP"),
-    xaxis_var = choices_selected(c("AVAL", "BASE", "CHG", "PCHG"), "BASE"),
-    yaxis_var = choices_selected(c("AVAL", "BASE", "CHG", "PCHG"), "AVAL"),
-    trt_group = choices_selected(c("ARM", "ACTARM"), "ARM"),
+    xaxis_param = teal.picks::picks(
+      teal.picks::variables("PARAMCD", "PARAMCD"),
+      teal.picks::values(c("ALT", "CRP", "IGA"), "ALT", multiple = FALSE),
+      check_dataset = FALSE
+    ),
+    yaxis_param = teal.picks::picks(
+      teal.picks::variables("PARAMCD", "PARAMCD"),
+      teal.picks::values(c("ALT", "CRP", "IGA"), "CRP", multiple = FALSE),
+      check_dataset = FALSE
+    ),
+    xaxis_var = teal.picks::variables(c("AVAL", "BASE", "CHG", "PCHG"), "BASE"),
+    yaxis_var = teal.picks::variables(c("AVAL", "BASE", "CHG", "PCHG"), "AVAL"),
+    trt_group = teal.picks::variables(c("ARM", "ACTARM"), "ARM"),
     color_manual = c("150mg QD" = "#000000", "Placebo" = "#3498DB", "Combination" = "#E74C3C"),
     shape_manual = c("N" = 1, "Y" = 2, "NA" = 0),
     font_size = c(12, 8, 20),
@@ -90,16 +108,22 @@ test_that("tm_g_gh_correlationplot accepts custom color and shape specifications
 })
 
 test_that("tm_g_gh_correlationplot accepts line arguments with choices_selected", {
-  withr::local_options(lifecycle_verbosity = "quiet")
   module <- tm_g_gh_correlationplot(
     label = "Correlation Plot - With Lines",
     dataname = "ADLB",
-    param_var = "PARAMCD",
-    xaxis_param = choices_selected(c("ALT", "CRP", "IGA"), "ALT"),
-    yaxis_param = choices_selected(c("ALT", "CRP", "IGA"), "CRP"),
-    xaxis_var = choices_selected(c("AVAL", "BASE", "CHG", "PCHG"), "BASE"),
-    yaxis_var = choices_selected(c("AVAL", "BASE", "CHG", "PCHG"), "AVAL"),
-    trt_group = choices_selected(c("ARM", "ACTARM"), "ARM"),
+    xaxis_param = teal.picks::picks(
+      teal.picks::variables("PARAMCD", "PARAMCD"),
+      teal.picks::values(c("ALT", "CRP", "IGA"), "ALT", multiple = FALSE),
+      check_dataset = FALSE
+    ),
+    yaxis_param = teal.picks::picks(
+      teal.picks::variables("PARAMCD", "PARAMCD"),
+      teal.picks::values(c("ALT", "CRP", "IGA"), "CRP", multiple = FALSE),
+      check_dataset = FALSE
+    ),
+    xaxis_var = teal.picks::variables(c("AVAL", "BASE", "CHG", "PCHG"), "BASE"),
+    yaxis_var = teal.picks::variables(c("AVAL", "BASE", "CHG", "PCHG"), "AVAL"),
+    trt_group = teal.picks::variables(c("ARM", "ACTARM"), "ARM"),
     hline_arb = c(40, 50),
     hline_arb_label = "arb hori label",
     hline_arb_color = c("red", "blue"),
