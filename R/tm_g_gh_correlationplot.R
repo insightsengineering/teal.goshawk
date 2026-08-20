@@ -585,20 +585,23 @@ srv_g_correlationplot <- function(id,
       )
 
       # analysis
-      private_qenv <- validated_q() %>%
-        teal.code::eval_code(
-          code = bquote({
-            ANL <- .(as.name(dataset_var)) %>%
-              dplyr::filter(.data[[.(param_var_sel())]] %in% union(.(xaxis_param_sel()), .(yaxis_param_sel()))) %>%
-              dplyr::select(
-                .(c(
-                  "USUBJID", trt_group_sel(), "AVISITCD", param_var_sel(), "PARAM",
-                  xaxis_var_sel(), yaxis_var_sel(), "AVALU", "LOQFL", "LBSTRESC",
-                  unique(c(input$hline_vars, input$vline_vars))
-                ))
-              )
-          })
+      private_qenv <- within(
+        validated_q(),
+        {
+          ANL <- env_dataset_var_name %>%
+            dplyr::filter(.data[[env_param_sel]] %in% union(env_xaxis_param_sel, env_yaxis_param_sel)) %>%
+            dplyr::select(dplyr::all_of(env_selected))
+        },
+        env_dataset_var_name = as.name(dataset_var),
+        env_param_sel = param_var_sel(),
+        env_xaxis_param_sel = xaxis_param_sel(),
+        env_yaxis_param_sel = yaxis_param_sel(),
+        env_selected = c(
+          "USUBJID", trt_group_sel(), "AVISITCD", param_var_sel(), "PARAM",
+          xaxis_var_sel(), yaxis_var_sel(), "AVALU", "LOQFL", "LBSTRESC",
+          unique(c(input$hline_vars, input$vline_vars))
         )
+      )
       validate_has_data(private_qenv[["ANL"]], 1)
       return(list(ANL = ANL, qenv = private_qenv))
     })
@@ -706,64 +709,73 @@ srv_g_correlationplot <- function(id,
       req(anl_constraint())
       ANL <- anl_constraint()$ANL
 
-      qenv <- anl_constraint()$qenv %>% teal.code::eval_code(
-        code = bquote({
-          ANL_x <- ANL %>%
-            dplyr::filter(.data[[.(param_var_sel())]] == .(xaxis_param_sel()) & !is.na(.data[[.(xaxis_var_sel())]]))
-        })
+      qenv <- within(
+        anl_constraint()$qenv,
+        ANL_x <- ANL %>%
+          dplyr::filter(.data[[env_param_var_sel]] == env_axis_param_sel & !is.na(.data[[env_xaxis_var_sel]])),
+        env_param_var_sel = param_var_sel(),
+        env_axis_param_sel = xaxis_param_sel(),
+        env_xaxis_var_sel = xaxis_var_sel()
       )
 
       if (xaxis_var_sel() == "BASE") {
-        qenv <- qenv %>% within({
+        qenv <- within(qenv, {
           ANL_x <- ANL_x %>%
             dplyr::group_by(.data[["USUBJID"]]) %>%
             dplyr::mutate(LOQFL = .data[["LOQFL"]][.data[["AVISITCD"]] == "BL"]) %>%
             dplyr::ungroup()
         })
       } else if (xaxis_var_sel() != "AVAL") {
-        qenv <- qenv %>% within({
+        qenv <- within(qenv, {
           ANL_x <- ANL_x %>%
             dplyr::mutate(LOQFL = "N")
         })
       }
 
-      qenv <- qenv %>% teal.code::eval_code(
-        code = bquote({
-          ANL_y <- ANL %>%
-            dplyr::filter(.data[[.(param_var_sel())]] == .(yaxis_param_sel()) & !is.na(.data[[.(yaxis_var_sel())]]))
-        })
+      qenv <- within(
+        qenv,
+        ANL_y <- ANL %>%
+          dplyr::filter(.data[[env_param_var_sel]] == env_axis_param_sel & !is.na(.data[[env_yaxis_var_sel]])),
+        env_param_var_sel = param_var_sel(),
+        env_axis_param_sel = yaxis_param_sel(),
+        env_yaxis_var_sel = yaxis_var_sel()
       )
 
       if (yaxis_var_sel() == "BASE") {
-        qenv <- qenv %>% within({
+        qenv <- within(qenv, {
           ANL_y <- ANL_y %>%
             dplyr::group_by(.data[["USUBJID"]]) %>%
             dplyr::mutate(LOQFL = .data[["LOQFL"]][.data[["AVISITCD"]] == "BL"]) %>%
             dplyr::ungroup()
         })
       } else if (yaxis_var_sel() != "AVAL") {
-        qenv <- qenv %>% within({
+        qenv <- within(qenv, {
           ANL_y <- ANL_y %>%
             dplyr::mutate(LOQFL = "N")
         })
       }
 
-      qenv <- qenv %>% teal.code::eval_code(
-        code = bquote({
+      qenv <- within(
+        qenv,
+        {
           ANL_TRANSPOSED <- dplyr::inner_join(
             ANL_x, ANL_y,
-            by = c("USUBJID", "AVISITCD", .(trt_group_sel())),
-            suffix = .(sprintf("_%s", c(xaxis_param_sel(), yaxis_param_sel())))
+            by = c("USUBJID", "AVISITCD", env_trt_group_sel),
+            suffix = env_suffix
           )
           ANL_TRANSPOSED <- ANL_TRANSPOSED %>%
             dplyr::mutate(
               LOQFL_COMB = case_when(
-                .data[[.(xloqfl())]] == "Y" | .data[[.(yloqfl())]] == "Y" ~ "Y",
-                .data[[.(xloqfl())]] == "N" | .data[[.(yloqfl())]] == "N" ~ "N",
+                .data[[env_xloqfl]] == "Y" | .data[[env_yloqfl]] == "Y" ~ "Y",
+                .data[[env_xloqfl]] == "N" | .data[[env_yloqfl]] == "N" ~ "N",
                 TRUE ~ "NA"
               )
             )
-        })
+        },
+        env_trt_group_sel = trt_group_sel(),
+        env_suffix = sprintf("_%s", c(xaxis_param_sel(), yaxis_param_sel())),
+        env_xloqfl = xloqfl(),
+        env_yloqfl = yloqfl()
       )
 
       validate(need(nrow(qenv[["ANL_TRANSPOSED"]]) > 0, "Plot Data No Observations Left"))
