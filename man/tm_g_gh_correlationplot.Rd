@@ -6,11 +6,13 @@
 \usage{
 tm_g_gh_correlationplot(
   label,
-  dataname,
-  param_var = "PARAMCD",
-  xaxis_param = teal.picks::values(selected = "ALT"),
+  dataname = "ADLB",
+  param_var = lifecyle::deprecated(),
+  xaxis_param = teal.picks(teal.picks::variables("PARAMCD", "PARAMCD"),
+    teal.picks::values(selected = "ALT"), check_dataset = FALSE),
   xaxis_var = teal.picks::variables(c("AVAL", "BASE", "CHG", "PCHG"), "BASE"),
-  yaxis_param = teal.picks::values(selected = "CRP"),
+  yaxis_param = teal.picks(teal.picks::variables("PARAMCD", "PARAMCD"),
+    teal.picks::values(selected = "CRP"), check_dataset = FALSE),
   yaxis_var = teal.picks::variables(c("AVAL", "BASE", "CHG", "PCHG"), "AVAL"),
   trt_group = teal.picks::variables(selected = "ARM"),
   color_manual = NULL,
@@ -49,17 +51,19 @@ tm_g_gh_correlationplot(
 \item{dataname}{analysis data passed to the data argument of \code{\link[teal]{init}}. E.g. \code{ADaM} structured
 laboratory data frame \code{ADLB}.}
 
-\item{param_var}{name of variable containing biomarker codes e.g. \code{PARAMCD}.}
+\item{param_var}{\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#deprecated}{\figure{lifecycle-deprecated.svg}{options: alt='[Deprecated]'}}}{\strong{[Deprecated]}} name of variable containing biomarker codes e.g. \code{PARAMCD}.}
 
-\item{xaxis_param}{biomarker selected for \code{x-axis}.}
+\item{xaxis_param}{(\code{picks} or \code{choices_selected}) biomarker selected for \code{x-axis}.}
 
-\item{xaxis_var}{name of variable containing biomarker results displayed on x-axis e.g. \code{BASE}.}
+\item{xaxis_var}{(\code{variables} or \code{choices_selected})
+name of variable containing biomarker results displayed on x-axis e.g. \code{BASE}.}
 
-\item{yaxis_param}{biomarker selected for \code{y-axis}.}
+\item{yaxis_param}{(\code{picks} or \code{choices_selected}) biomarker selected for \code{y-axis}.}
 
-\item{yaxis_var}{name of variable containing biomarker results displayed on y-axis e.g. \code{AVAL}.}
+\item{yaxis_var}{(\code{variables} or \code{choices_selected})
+name of variable containing biomarker results displayed on y-axis e.g. \code{AVAL}.}
 
-\item{trt_group}{\code{\link[teal.transform]{choices_selected}} object with available choices and pre-selected option
+\item{trt_group}{(\code{variables} or \code{choices_selected}) object with available choices and pre-selected option
 for variable names representing treatment group e.g. \code{ARM}.}
 
 \item{color_manual}{vector of colors applied to treatment values.}
@@ -243,12 +247,11 @@ app <- init(
     tm_g_gh_correlationplot(
       label = "Correlation Plot",
       dataname = "ADLB",
-      param_var = "PARAMCD",
-      xaxis_param = teal.picks::values(selected = "ALT"),
-      yaxis_param = teal.picks::values(selected = "CRP"),
-      xaxis_var = teal.picks::variables(c("AVAL", "BASE", "CHG", "PCHG"), "BASE"),
-      yaxis_var = teal.picks::variables(c("AVAL", "BASE", "CHG", "PCHG"), "AVAL"),
-      trt_group = teal.picks::variables(c("ARM", "ACTARM"), "ARM"),
+      xaxis_param = picks(variables("PARAMCD", "PARAMCD"), values(selected = "ALT"), check_dataset = FALSE),
+      yaxis_param = picks(variables("PARAMCD", "PARAMCD"), values(selected = "CRP"), check_dataset = FALSE),
+      xaxis_var = variables(c("AVAL", "BASE", "CHG", "PCHG"), "BASE"),
+      yaxis_var = variables(c("AVAL", "BASE", "CHG", "PCHG"), "AVAL"),
+      trt_group = variables(c("ARM", "ACTARM"), "ARM"),
       color_manual = c(
         "Drug X 100mg" = "#000000",
         "Placebo" = "#3498DB",

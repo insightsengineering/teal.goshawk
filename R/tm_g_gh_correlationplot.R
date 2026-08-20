@@ -7,12 +7,14 @@
 #' @param label menu item label of the module in the teal app.
 #' @param dataname analysis data passed to the data argument of \code{\link[teal]{init}}. E.g. `ADaM` structured
 #' laboratory data frame \code{ADLB}.
-#' @param param_var name of variable containing biomarker codes e.g. \code{PARAMCD}.
-#' @param xaxis_param biomarker selected for `x-axis`.
-#' @param yaxis_param biomarker selected for `y-axis`.
-#' @param xaxis_var name of variable containing biomarker results displayed on x-axis e.g. \code{BASE}.
-#' @param yaxis_var name of variable containing biomarker results displayed on y-axis e.g. \code{AVAL}.
-#' @param trt_group \code{\link[teal.transform]{choices_selected}} object with available choices and pre-selected option
+#' @param param_var `r badge("deprecated")` name of variable containing biomarker codes e.g. \code{PARAMCD}.
+#' @param xaxis_param (`picks` or `choices_selected`) biomarker selected for `x-axis`.
+#' @param yaxis_param (`picks` or `choices_selected`) biomarker selected for `y-axis`.
+#' @param xaxis_var (`variables` or `choices_selected`)
+#' name of variable containing biomarker results displayed on x-axis e.g. \code{BASE}.
+#' @param yaxis_var (`variables` or `choices_selected`)
+#' name of variable containing biomarker results displayed on y-axis e.g. \code{AVAL}.
+#' @param trt_group (`variables` or `choices_selected`) object with available choices and pre-selected option
 #' for variable names representing treatment group e.g. `ARM`.
 #' @param color_manual vector of colors applied to treatment values.
 #' @param shape_manual vector of symbols applied to `LOQ` values.
@@ -151,12 +153,11 @@
 #'     tm_g_gh_correlationplot(
 #'       label = "Correlation Plot",
 #'       dataname = "ADLB",
-#'       param_var = "PARAMCD",
-#'       xaxis_param = teal.picks::values(selected = "ALT"),
-#'       yaxis_param = teal.picks::values(selected = "CRP"),
-#'       xaxis_var = teal.picks::variables(c("AVAL", "BASE", "CHG", "PCHG"), "BASE"),
-#'       yaxis_var = teal.picks::variables(c("AVAL", "BASE", "CHG", "PCHG"), "AVAL"),
-#'       trt_group = teal.picks::variables(c("ARM", "ACTARM"), "ARM"),
+#'       xaxis_param = picks(variables("PARAMCD", "PARAMCD"), values(selected = "ALT"), check_dataset = FALSE),
+#'       yaxis_param = picks(variables("PARAMCD", "PARAMCD"), values(selected = "CRP"), check_dataset = FALSE),
+#'       xaxis_var = variables(c("AVAL", "BASE", "CHG", "PCHG"), "BASE"),
+#'       yaxis_var = variables(c("AVAL", "BASE", "CHG", "PCHG"), "AVAL"),
+#'       trt_group = variables(c("ARM", "ACTARM"), "ARM"),
 #'       color_manual = c(
 #'         "Drug X 100mg" = "#000000",
 #'         "Placebo" = "#3498DB",
@@ -191,11 +192,19 @@
 #' }
 #'
 tm_g_gh_correlationplot <- function(label,
-                                    dataname,
-                                    param_var = "PARAMCD",
-                                    xaxis_param = teal.picks::values(selected = "ALT"),
+                                    dataname = "ADLB",
+                                    param_var = lifecyle::deprecated(),
+                                    xaxis_param = teal.picks(
+                                      teal.picks::variables("PARAMCD", "PARAMCD"),
+                                      teal.picks::values(selected = "ALT"),
+                                      check_dataset = FALSE
+                                    ),
                                     xaxis_var = teal.picks::variables(c("AVAL", "BASE", "CHG", "PCHG"), "BASE"),
-                                    yaxis_param = teal.picks::values(selected = "CRP"),
+                                    yaxis_param = teal.picks(
+                                      teal.picks::variables("PARAMCD", "PARAMCD"),
+                                      teal.picks::values(selected = "CRP"),
+                                      check_dataset = FALSE
+                                    ),
                                     yaxis_var = teal.picks::variables(c("AVAL", "BASE", "CHG", "PCHG"), "AVAL"),
                                     trt_group = teal.picks::variables(selected = "ARM"),
                                     color_manual = NULL,
@@ -229,14 +238,9 @@ tm_g_gh_correlationplot <- function(label,
   message("Initializing tm_g_gh_correlationplot")
 
   checkmate::assert_string(dataname)
-  checkmate::assert(
-    .var.name = "param_var",
-    checkmate::check_string(param_var),
-    checkmate::check_class(param_var, c("variables", "pick")),
-    checkmate::check_class(param_var, c("picks")),
-  )
-  checkmate::assert_multi_class(xaxis_param, c("choices_selected", "values", "picks"))
-  checkmate::assert_multi_class(yaxis_param, c("choices_selected", "values", "picks"))
+
+  checkmate::assert_multi_class(xaxis_param, c("choices_selected", "picks"))
+  checkmate::assert_multi_class(yaxis_param, c("choices_selected", "picks"))
   checkmate::assert_multi_class(xaxis_var, c("choices_selected", "variables", "picks"))
   checkmate::assert_multi_class(yaxis_var, c("choices_selected", "variables", "picks"))
   checkmate::assert_multi_class(trt_group, c("choices_selected", "variables", "picks"))
@@ -268,18 +272,40 @@ tm_g_gh_correlationplot <- function(label,
   checkmate::assert_multi_class(pre_output, c("shiny.tag", "shiny.tag.list"), null.ok = TRUE)
   checkmate::assert_multi_class(post_output, c("shiny.tag", "shiny.tag.list"), null.ok = TRUE)
 
-  if (checkmate::test_string(param_var)) {
-    param_var <- teal.picks::variables(param_var, param_var)
+  if (lifecycle::is_present(param_var)) {
+    lifecycle::deprecate_warn(
+      when = "0.6.0",
+      what = "tm_g_gh_correlationplot(param_var)",
+      details = "Please use `teal.picks::picks()` to specificy `xaxis_param` and `yaxis_param` instead of `param_var`."
+    )
+    checkmate::assert_string(param_var)
+  } else {
+    param_var <- rlang::maybe_missing(param_var, "PARAMCD")
+  }
+  param_var <- teal.picks::variables(param_var, param_var)
+
+  if (inherits(xaxis_param, "choices_selected")) {
+    xaxis_param <- migrate_choices_selected_to_values(xaxis_param)
+    xaxis_param <- create_picks_helper(teal.picks::datasets(dataname, dataname), param_var, xaxis_param)
+  } else {
+    xaxis_param <- create_picks_helper(teal.picks::datasets(dataname, dataname), xaxis_param)
   }
 
-  xaxis_param <- migrate_choices_selected_to_values(xaxis_param)
-  yaxis_param <- migrate_choices_selected_to_values(yaxis_param)
   xaxis_var <- migrate_choices_selected_to_variables(xaxis_var)
   yaxis_var <- migrate_choices_selected_to_variables(yaxis_var)
   trt_group <- migrate_choices_selected_to_variables(trt_group)
 
-  xaxis_param <- create_picks_helper(teal.picks::datasets(dataname, dataname), param_var, xaxis_param)
-  yaxis_param <- create_picks_helper(teal.picks::datasets(dataname, dataname), param_var, yaxis_param)
+  if (inherits(yaxis_param, "choices_selected")) {
+    yaxis_param <- migrate_choices_selected_to_values(yaxis_param)
+    yaxis_param <- create_picks_helper(teal.picks::datasets(dataname, dataname), param_var, yaxis_param)
+  } else {
+    yaxis_param <- create_picks_helper(teal.picks::datasets(dataname, dataname), yaxis_param)
+  }
+
+  # These 2 assertions should be moved to section above after "choices_selected" migration is removed
+  teal.picks::assert_last_level(xaxis_param, "values")
+  teal.picks::assert_last_level(yaxis_param, "values")
+
   xaxis_var <- create_picks_helper(teal.picks::datasets(dataname, dataname), xaxis_var)
   yaxis_var <- create_picks_helper(teal.picks::datasets(dataname, dataname), yaxis_var)
   trt_group <- create_picks_helper(teal.picks::datasets(dataname, dataname), trt_group)
@@ -302,7 +328,7 @@ tm_g_gh_correlationplot <- function(label,
     ui_args = args[names(args) %in% names(formals(ui_g_correlationplot))],
     transformators = transformators
   )
-}
+  }
 
 ui_g_correlationplot <- function(id,
                                  dataname,

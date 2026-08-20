@@ -12,6 +12,7 @@
 #' @import teal.picks
 #' @importFrom ggplot2 ggplot
 #' @importFrom rlang .data sym
+#' @importFrom lifecycle badge
 #'
 #' @keywords internal
 "_PACKAGE"

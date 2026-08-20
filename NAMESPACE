@@ -12,6 +12,7 @@ import(teal)
 import(teal.picks)
 import(teal.transform)
 importFrom(ggplot2,ggplot)
+importFrom(lifecycle,badge)
 importFrom(rlang,
   .data,
   sym
