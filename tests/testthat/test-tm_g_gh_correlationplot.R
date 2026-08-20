@@ -1,4 +1,7 @@
 # Tests for tm_g_gh_correlationplot with choices_selected arguments
+threshold <- logger::log_threshold(namespace = "teal.goshawk")
+logger::log_threshold("ERROR", namespace = "teal.goshawk")
+withr::defer(logger::log_threshold(threshold, namespace = "teal.goshawk"))
 
 test_that("tm_g_gh_correlationplot can be created with default arguments", {
   module <- suppressWarnings(

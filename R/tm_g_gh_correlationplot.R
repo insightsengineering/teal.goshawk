@@ -493,44 +493,44 @@ srv_g_correlationplot <- function(id,
         teal::need_input(
           inputId = c("xaxis_param-variables-selected", "yaxis_param-variables-selected"),
           condition = identical(selectors$xaxis_param()$variables$selected, selectors$yaxis_param()$variables$selected),
-          msg = "X-Axis and Y-Axis biomarkers must be from the same biomarker variable"
+          message = "X-Axis and Y-Axis biomarkers must be from the same biomarker variable"
         ),
         teal::need_input(
           inputId = "xaxis_param-values-selected",
           condition = length(xaxis_param_sel()) != 0,
-          msg = "Please select an X-Axis biomarker"
+          message = "Please select an X-Axis biomarker"
         ),
         teal::need_input(
           inputId = "yaxis_param-values-selected",
           condition = length(yaxis_param_sel()) != 0,
-          msg = "Please select a Y-Axis biomarker"
+          message = "Please select a Y-Axis biomarker"
         ),
         teal::need_input(
           inputId = "trt_group-variables-selected",
           condition = length(trt_group_sel()) != 0,
-          msg = "Please select a treatment variable"
+          message = "Please select a treatment variable"
         ),
         teal::need_input(
           inputId = "xaxis_var-variables-selected",
           condition = length(xaxis_var_sel()) != 0,
-          msg = "Please select an X-Axis variable"
+          message = "Please select an X-Axis variable"
         ),
         teal::need_input(
           inputId = "yaxis_var-variables-selected",
           condition = length(yaxis_var_sel()) != 0,
-          msg = "Please select a Y-Axis variable"
+          message = "Please select a Y-Axis variable"
         ),
         teal::need_input(
           inputId = "facet_ncol",
           condition = length(input$facet_ncol) != 0 && input$facet_ncol > 0 && as.numeric(input$facet_ncol) %% 1 == 0,
-          msg = "Please select a facet column integer that is greater than 0"
+          message = "Please select a facet column integer that is greater than 0"
         )
       )
       validate(
         teal::need_input(
           inputId = c("xaxis_param-variables-selected", "yaxis_param-variables-selected"),
           condition = identical(selectors$xaxis_param()$variables$selected, selectors$yaxis_param()$variables$selected),
-          msg = "X-Axis and Y-Axis biomarkers must be from the same biomarker variable in dataset"
+          message = "X-Axis and Y-Axis biomarkers must be from the same biomarker variable in dataset"
         )
       )
       data_with_card()
@@ -556,12 +556,12 @@ srv_g_correlationplot <- function(id,
           teal::need_input(
             inputId = "hline_vars",
             condition = all(input$hline_vars %in% names(ANL)),
-            msg = "One or more selected horizontal line variable(s) is/are not names to any column in the data"
+            message = "One or more selected horizontal line variable(s) is/are not names to any column in the data"
           ),
           teal::need_input(
             inputId = "vline_vars",
             condition = all(input$vline_vars %in% names(ANL)),
-            msg = "One or more selected vertical line variable(s) is/are not names to any column in the data"
+            message = "One or more selected vertical line variable(s) is/are not names to any column in the data"
           )
         )
       }
@@ -840,13 +840,13 @@ srv_g_correlationplot <- function(id,
           inputId = "xrange_scale",
           condition = checkmate::test_numeric(xrange_slider$value, len = 2) &&
             xrange_slider$value[1] < xrange_slider$value[2],
-          msg = "X-Axis Range Zoom: Invalid range"
+          message = "X-Axis Range Zoom: Invalid range"
         ),
         teal::need_input(
           inputId = "yrange_scale",
           condition = checkmate::test_numeric(yrange_slider$value, len = 2) &&
             yrange_slider$value[1] < yrange_slider$value[2],
-          msg = "Y-Axis Range Zoom: Invalid range"
+          message = "Y-Axis Range Zoom: Invalid range"
         )
       )
 
