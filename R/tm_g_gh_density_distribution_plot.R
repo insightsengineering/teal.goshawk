@@ -119,7 +119,7 @@
 #'   shinyApp(app$ui, app$server)
 #' }
 #'
-tm_g_gh_density_distribution_plot <- function(label, # nolint
+tm_g_gh_density_distribution_plot <- function(label, # nolint: object_length_linter.
                                               dataname = "ADLB",
                                               param_var = lifecycle::deprecated(),
                                               param = teal.picks::picks(
@@ -281,7 +281,7 @@ ui_g_density_distribution_plot <- function(id,
   )
 }
 
-srv_g_density_distribution_plot <- function(id, # nolint
+srv_g_density_distribution_plot <- function(id, # nolint: object_length_linter.
                                             data,
                                             dataname,
                                             param_var,
@@ -381,7 +381,6 @@ srv_g_density_distribution_plot <- function(id, # nolint
       iv$enable()
       iv
     })
-
 
     create_plot <- debounce(reactive({
       teal::validate_inputs(iv_r())
