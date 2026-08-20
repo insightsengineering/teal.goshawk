@@ -709,7 +709,7 @@ srv_g_correlationplot <- function(id,
     })
     yrange_slider <- toggle_slider_server("yrange_scale", data_state_y)
 
-    keep_data_const_opts_updated(session, input, anl_constraint, "xaxis_param")
+    keep_data_const_opts_updated(session, input, anl_constraint, xaxis_param_sel)
 
     # selector names after transposition
     xvar <- reactive(paste0(xaxis_var_sel(), "_", xaxis_param_sel()))
