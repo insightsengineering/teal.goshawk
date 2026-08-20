@@ -101,7 +101,7 @@ test_that("e2e - tm_g_gh_density_distribution_plot handles comb_line toggle", {
   plot_initial <- app_driver$get_active_module_plot_output("plot")
 
   # Toggle comb_line checkbox
-  app_driver$find_element("input[id$=comb_line]")$click()
+  app_driver$click(selector = "input[id$=comb_line]")
   app_driver$wait_for_idle(duration = 2000)
 
   # Verify the plot changed and no errors
