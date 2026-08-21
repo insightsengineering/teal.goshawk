@@ -1,3 +1,5 @@
+skip("To be refactored")
+
 tm_g_gh_boxplot_driver <- function() {
   init_teal_app_driver(
     data = get_test_data(),

@@ -5,7 +5,7 @@ linters: linters_with_defaults(
       styles = c("snake_case", "symbols"),
       regexes = c(
         ANL = "^ANL_?[0-9A-Z_]*$",
-        ANL_local = "^ANL_?[xy]*$",
+        ANL_local = "^ANL(_[a-z]+)?$",
         ADaM = "^r?AD[A-Z]{2,5}_?[0-9]*$",
         column_names = "^AVAL$|^USUBJID$|^PARAM$|^PARAMCD$"
       )
