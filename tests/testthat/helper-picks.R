@@ -1,3 +1,6 @@
+# File copied from `teal.modules.general/tests/testthat/helper-picks.R`
+# This will be moved to centraly to `teal.picks` on the next release
+
 # Read the Shiny value for a categorical teal.picks slot (variables, values, datasets, ...).
 # While the badge has never been opened, picker inputs are not bound (see teal.picks
 # badge-dropdown script.js). `get_active_module_input` can list every choice after
