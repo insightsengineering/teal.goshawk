@@ -14,7 +14,7 @@ tm_g_gh_correlationplot(
   yaxis_param = teal.picks::picks(teal.picks::variables("PARAMCD", "PARAMCD"),
     teal.picks::values(selected = "CRP", multiple = FALSE), check_dataset = FALSE),
   yaxis_var = teal.picks::variables(c("AVAL", "BASE", "CHG", "PCHG"), "AVAL"),
-  trt_group = teal.picks::variables(selected = "ARM"),
+  trt_group = teal.picks::variables(dplyr::starts_with("ARM"), selected = "ARM"),
   color_manual = NULL,
   shape_manual = NULL,
   facet_ncol = 2,
