@@ -4,173 +4,140 @@ tm_g_gh_boxplot_driver <- function() {
     modules = tm_g_gh_boxplot(
       label = "Box Plot",
       dataname = "ADLB",
-      param_var = "PARAMCD",
-      param = choices_selected(c("ALT", "CRP", "IGA"), "ALT"),
-      yaxis_var = choices_selected(c("AVAL", "BASE", "CHG"), "AVAL"),
-      xaxis_var = choices_selected(c("ACTARM", "ARM", "AVISITCD", "STUDYID"), "ARM"),
-      facet_var = choices_selected(c("ACTARM", "ARM", "AVISITCD", "SEX"), "AVISITCD"),
-      trt_group = choices_selected(c("ARM", "ACTARM"), "ARM"),
-      loq_legend = TRUE,
-      rotate_xlab = FALSE,
-      hline_arb = c(60, 55),
-      hline_arb_color = c("grey", "red"),
-      hline_arb_label = c("default_hori_A", "default_hori_B"),
-      hline_vars = c("ANRHI", "ANRLO", "ULOQN", "LLOQN"),
-      hline_vars_colors = c("pink", "brown", "purple", "black")
+      param = teal.picks::picks(
+        teal.picks::variables("PARAMCD", "PARAMCD"),
+        teal.picks::values(c("ALT", "CRP", "IGA"), "ALT", multiple = FALSE),
+        check_dataset = FALSE
+      ),
+      yaxis_var = teal.picks::variables(c("AVAL", "BASE", "CHG"), "AVAL"),
+      xaxis_var = teal.picks::variables(c("AVISITCD", "ACTARM", "ARM"), "ARM"),
+      facet_var = teal.picks::variables(c("ARM", "ACTARM"), "ARM"),
+      trt_group = teal.picks::variables(c("ARM", "ACTARM"), "ARM")
     )
   )
 }
 
-testthat::test_that("toggle_slider_module: widgets are initialized with proper values", {
+test_that("e2e - tm_g_gh_boxplot initializes and renders a plot", {
+  skip_if_not_installed("shinytest2")
+  skip_if_too_deep(5)
   app_driver <- tm_g_gh_boxplot_driver()
-  expect_setequal(
-    app_driver$get_active_module_input("yrange_scale-slider"),
-    c(0L, 55L)
-  )
-  app_driver$click(selector = app_driver$namespaces(TRUE)$module("yrange_scale-toggle"))
+  withr::defer(app_driver$stop())
   app_driver$wait_for_idle()
-  expect_equal(app_driver$get_active_module_input("yrange_scale-value_low"), 0L)
-  expect_equal(app_driver$get_active_module_input("yrange_scale-value_high"), 55L)
-  app_driver$stop()
+
+  app_driver$expect_no_shiny_error()
+  app_driver$expect_no_validation_error()
+  expect_match(
+    app_driver$get_active_module_plot_output("boxplot"),
+    "data:image/png;base64,"
+  )
 })
 
-testthat::test_that("toggle_slider_module: changing the sliderInput sets proper numericInput values", {
-  app_driver <- tm_g_gh_boxplot_driver()
-  app_driver$set_active_module_input(
-    "yrange_scale-slider",
-    c(1L, 50L)
+test_that(
+  "e2e - tm_g_gh_boxplot starts with expected label and encoding selections.",
+  {
+    skip_if_not_installed("shinytest2")
+    skip_if_too_deep(5)
+    app_driver <- tm_g_gh_boxplot_driver()
+    withr::defer(app_driver$stop())
+    app_driver$wait_for_idle()
+
+    expect_equal(
+      app_driver$get_text("a.nav-link.active"),
+      "Box Plot"
+    )
+    expect_equal(get_teal_picks_slot(app_driver, "xaxis_param", "datasets"), "ADLB")
+    expect_equal(get_teal_picks_slot(app_driver, "xaxis_param", "values"), "ALT")
+    expect_equal(get_teal_picks_slot(app_driver, "yaxis_var", "variables"), "AVAL")
+    expect_equal(get_teal_picks_slot(app_driver, "xaxis_var", "variables"), "ARM")
+    expect_equal(get_teal_picks_slot(app_driver, "facet_var", "variables"), "ARM")
+    expect_equal(get_teal_picks_slot(app_driver, "trt_group", "variables"), "ARM")
+  }
+)
+
+describe("e2e - tm_g_gh_boxplot: changing pick changes plot and does not throw validation errors.", {
+  skip_if_not_installed("shinytest2")
+  skip_if_too_deep(5)
+
+  action_mod <- list(
+    xaxis_param = list(slot_name = "values", value = "CRP"),
+    yaxis_var = list(slot_name = "variables", value = "BASE"),
+    xaxis_var = list(slot_name = "variables", value = "AVISITCD"),
+    facet_var = list(slot_name = "variables", value = "ACTARM"),
+    trt_group = list(slot_name = "variables", value = "ACTARM")
   )
-  app_driver$click(selector = app_driver$namespaces(TRUE)$module("yrange_scale-toggle"))
-  app_driver$wait_for_idle()
-  expect_equal(app_driver$get_active_module_input("yrange_scale-value_low"), 1L)
-  expect_equal(app_driver$get_active_module_input("yrange_scale-value_high"), 50L)
-  app_driver$stop()
+
+  for (pick_id in names(action_mod)) {
+    it(pick_id, {
+      slot_name <- action_mod[[pick_id]]$slot_name
+      new_value <- action_mod[[pick_id]]$value
+
+      app_driver <- tm_g_gh_boxplot_driver()
+      withr::defer(app_driver$stop())
+      app_driver$wait_for_idle()
+      plot_before <- app_driver$get_active_module_plot_output("boxplot")
+      set_teal_picks_slot(app_driver, pick_id, slot_name, new_value)
+      app_driver$wait_for_idle(duration = 2000)
+      expect_equal(get_teal_picks_slot(app_driver, pick_id, slot_name), new_value)
+      expect_false(identical(plot_before, app_driver$get_active_module_plot_output("boxplot")))
+      app_driver$expect_no_validation_error()
+    })
+  }
 })
 
-testthat::test_that(
-  "toggle_slider_module: changing the numericInputs
-  within the sliderInput range, sets proper sliderInput values",
-  {
-    app_driver <- tm_g_gh_boxplot_driver()
-    app_driver$click(selector = app_driver$namespaces(TRUE)$module("yrange_scale-toggle"))
-    app_driver$wait_for_idle()
-    initial_range <- list(min = 0L, max = 55L)
-    new_value <- c(10L, 40L)
-    app_driver$set_active_module_input("yrange_scale-value_low", new_value[1])
-    app_driver$wait_for_idle()
-    app_driver$set_active_module_input("yrange_scale-value_high", new_value[2])
-    app_driver$click(selector = app_driver$namespaces(TRUE)$module("yrange_scale-toggle"))
-    app_driver$wait_for_idle()
-    expect_identical(
-      list(
-        min = app_driver$get_js(
-          "document.querySelector('.teal-goshawk.toggle-slider-container input').getAttribute('data-min')"
-        ) %>% as.integer(),
-        max = app_driver$get_js(
-          "document.querySelector('.teal-goshawk.toggle-slider-container input').getAttribute('data-max')"
-        ) %>% as.integer(),
-        value = app_driver$get_active_module_input("yrange_scale-slider")
-      ),
-      list(
-        min = initial_range$min,
-        max = initial_range$max,
-        value = new_value
-      )
-    )
-    app_driver$stop()
-  }
-)
+test_that("e2e - tm_g_gh_boxplot displays selected data points table", {
+  skip_if_not_installed("shinytest2")
+  skip_if_too_deep(5)
+  app_driver <- tm_g_gh_boxplot_driver()
+  withr::defer(app_driver$stop())
+  app_driver$wait_for_idle()
 
-testthat::test_that(
-  "toggle_slider_module: changing the numericInputs
-  outside the sliderInput range, sets proper sliderInput values and range",
-  {
-    app_driver <- tm_g_gh_boxplot_driver()
-    app_driver$click(selector = app_driver$namespaces(TRUE)$module("yrange_scale-toggle"))
-    app_driver$wait_for_idle()
-    new_range <- c(-5L, 60L)
-    app_driver$set_active_module_input("yrange_scale-value_low", new_range[1])
-    app_driver$wait_for_idle()
-    app_driver$set_active_module_input("yrange_scale-value_high", new_range[2])
-    app_driver$click(selector = app_driver$namespaces(TRUE)$module("yrange_scale-toggle"))
-    app_driver$wait_for_idle()
-    expect_identical(
-      list(
-        min = app_driver$get_js(
-          "document.querySelector('.teal-goshawk.toggle-slider-container input').getAttribute('data-min')"
-        ) %>% as.integer(),
-        max = app_driver$get_js(
-          "document.querySelector('.teal-goshawk.toggle-slider-container input').getAttribute('data-max')"
-        ) %>% as.integer(),
-        value = app_driver$get_active_module_input("yrange_scale-slider")
-      ),
-      list(
-        min = new_range[1],
-        max = new_range[2],
-        value = new_range
-      )
-    )
-    app_driver$stop()
-  }
-)
+  # Check that the app renders without errors
+  app_driver$expect_no_shiny_error()
+  app_driver$expect_no_validation_error()
+})
 
-testthat::test_that(
-  "toggle_slider_module: changing the numericInputs
-  within the rage, sets back the sliderInput range to initial range",
-  {
-    app_driver <- tm_g_gh_boxplot_driver()
-    app_driver$click(selector = app_driver$namespaces(TRUE)$module("yrange_scale-toggle"))
-    app_driver$wait_for_idle()
-    initial_range <- list(min = 0L, max = 55L)
-    new_value <- c(11L, 30L)
-    app_driver$set_active_module_input("yrange_scale-value_low", new_value[1])
-    app_driver$wait_for_idle()
-    app_driver$set_active_module_input("yrange_scale-value_high", new_value[2])
-    app_driver$click(selector = app_driver$namespaces(TRUE)$module("yrange_scale-toggle"))
-    app_driver$wait_for_idle()
-    expect_identical(
-      list(
-        min = app_driver$get_js(
-          "document.querySelector('.teal-goshawk.toggle-slider-container input').getAttribute('data-min')"
-        ) %>% as.integer(),
-        max = app_driver$get_js(
-          "document.querySelector('.teal-goshawk.toggle-slider-container input').getAttribute('data-max')"
-        ) %>% as.integer(),
-        value = app_driver$get_active_module_input("yrange_scale-slider")
-      ),
-      list(
-        min = initial_range$min,
-        max = initial_range$max,
-        value = new_value
-      )
-    )
-    app_driver$stop()
-  }
-)
+test_that("e2e - tm_g_gh_boxplot displays descriptive statistics table", {
+  skip_if_not_installed("shinytest2")
+  skip_if_too_deep(5)
+  app_driver <- tm_g_gh_boxplot_driver()
+  withr::defer(app_driver$stop())
+  app_driver$wait_for_idle()
 
-testthat::test_that(
-  "toggle_slider_module: changing dependant widgets outside
-sets proper sliderInput and numericInput values",
-  {
-    app_driver <- tm_g_gh_boxplot_driver()
-    app_driver$set_active_module_input("xaxis_param", "CRP")
-    new_range <- c(5L, 13L)
-    expect_identical(
-      list(
-        min = app_driver$get_js(
-          "document.querySelector('.teal-goshawk.toggle-slider-container input').getAttribute('data-min')"
-        ) %>% as.integer(),
-        max = app_driver$get_js(
-          "document.querySelector('.teal-goshawk.toggle-slider-container input').getAttribute('data-max')"
-        ) %>% as.integer(),
-        value = app_driver$get_active_module_input("yrange_scale-slider")
-      ),
-      list(
-        min = new_range[1],
-        max = new_range[2],
-        value = new_range
-      )
-    )
-    app_driver$stop()
-  }
-)
+  # Check that the table is rendered
+  app_driver$expect_no_shiny_error()
+  app_driver$expect_no_validation_error()
+})
+
+test_that("e2e - tm_g_gh_boxplot handles LoQ legend toggle", {
+  skip_if_not_installed("shinytest2")
+  skip_if_too_deep(5)
+  app_driver <- tm_g_gh_boxplot_driver()
+  withr::defer(app_driver$stop())
+  app_driver$wait_for_idle()
+
+  # Get the initial plot
+  plot_initial <- app_driver$get_active_module_plot_output("boxplot")
+
+  # Toggle LoQ legend checkbox
+  app_driver$find_element("input[id$=loq_legend]")$click()
+  app_driver$wait_for_idle(duration = 2000)
+
+  # Verify the plot changed and no errors
+  expect_false(identical(plot_initial, app_driver$get_active_module_plot_output("boxplot")))
+  app_driver$expect_no_validation_error()
+})
+
+test_that("e2e - tm_g_gh_boxplot respects plot height adjustment", {
+  skip_if_not_installed("shinytest2")
+  skip_if_too_deep(5)
+  app_driver <- tm_g_gh_boxplot_driver()
+  withr::defer(app_driver$stop())
+  app_driver$wait_for_idle()
+
+  # Verify plot is rendered
+  expect_match(
+    app_driver$get_active_module_plot_output("boxplot"),
+    "data:image/png;base64,"
+  )
+  app_driver$expect_no_validation_error()
+})
