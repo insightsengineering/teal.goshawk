@@ -301,7 +301,7 @@ ui_g_boxplot <- function(id,
         xaxis_param = param,
         xaxis_var = xaxis_var,
         yaxis_var = yaxis_var,
-        facet = facet_var,
+        facet_var = facet_var,
         trt_group = trt_group,
         xparam_label = "Select a Biomarker"
       ),
@@ -426,7 +426,7 @@ srv_g_boxplot <- function(id,
         ),
         teal::need_input(
           inputId = c("facet_var-variables-selected", "trt_group-variables-selected"),
-          condition = isFALSE(facet_var_sel() %in% c("ACTARM", "ARM")) || isTRUE(facet_var_sel() != trt_group_sel()),
+          condition = isFALSE(facet_var_sel() %in% c("ACTARM", "ARM")) || isTRUE(facet_var_sel() == trt_group_sel()),
           message = sprintf(
             "You can not choose %s as faceting variable for treatment variable %s.", facet_var_sel(), trt_group_sel()
           )

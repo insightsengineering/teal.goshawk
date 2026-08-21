@@ -13,8 +13,8 @@ tm_g_gh_boxplot_driver <- function() {
       ),
       yaxis_var = teal.picks::variables(c("AVAL", "BASE", "CHG"), "AVAL"),
       xaxis_var = teal.picks::variables(c("AVISITCD", "ACTARM", "ARM"), "ARM"),
-      facet_var = teal.picks::variables(c("ARM", "ACTARM"), "ARM"),
-      trt_group = teal.picks::variables(c("ARM", "ACTARM"), "ARM")
+      facet_var = variables(c("ACTARM", "ARM", "AVISITCD", "SEX"), "ARM"),
+      trt_group = variables(c("ACTARM", "ARM", "AVISITCD", "SEX"), "ARM"),
     )
   )
 }
@@ -64,8 +64,7 @@ describe("e2e - tm_g_gh_boxplot: changing pick changes plot and does not throw v
     xaxis_param = list(slot_name = "values", value = "CRP"),
     yaxis_var = list(slot_name = "variables", value = "BASE"),
     xaxis_var = list(slot_name = "variables", value = "AVISITCD"),
-    facet_var = list(slot_name = "variables", value = "ACTARM"),
-    trt_group = list(slot_name = "variables", value = "ACTARM")
+    facet_var = list(slot_name = "variables", value = "SEX")
   )
 
   for (pick_id in names(action_mod)) {
@@ -84,6 +83,20 @@ describe("e2e - tm_g_gh_boxplot: changing pick changes plot and does not throw v
       app_driver$expect_no_validation_error()
     })
   }
+
+  it("trt_group", {
+    app_driver <- tm_g_gh_boxplot_driver()
+    withr::defer(app_driver$stop())
+    app_driver$wait_for_idle()
+    plot_before <- app_driver$get_active_module_plot_output("boxplot")
+    set_teal_picks_slot(app_driver, "trt_group", "variables", "ACTARM")
+    set_teal_picks_slot(app_driver, "xaxis_var", "variables", "ACTARM")
+    set_teal_picks_slot(app_driver, "facet_var", "variables", "ACTARM")
+    app_driver$wait_for_idle(duration = 2000, timeout = 60000)
+    expect_equal(get_teal_picks_slot(app_driver, "trt_group", "variables"), "ACTARM")
+    expect_false(identical(plot_before, app_driver$get_active_module_plot_output("boxplot")))
+    app_driver$expect_no_validation_error()
+  })
 })
 
 test_that("e2e - tm_g_gh_boxplot displays selected data points table", {
@@ -93,19 +106,12 @@ test_that("e2e - tm_g_gh_boxplot displays selected data points table", {
   withr::defer(app_driver$stop())
   app_driver$wait_for_idle()
 
+  expect_match(
+    app_driver$get_active_module_plot_output("boxplot"),
+    "data:image/png;base64,"
+  )
+
   # Check that the app renders without errors
-  app_driver$expect_no_shiny_error()
-  app_driver$expect_no_validation_error()
-})
-
-test_that("e2e - tm_g_gh_boxplot displays descriptive statistics table", {
-  skip_if_not_installed("shinytest2")
-  skip_if_too_deep(5)
-  app_driver <- tm_g_gh_boxplot_driver()
-  withr::defer(app_driver$stop())
-  app_driver$wait_for_idle()
-
-  # Check that the table is rendered
   app_driver$expect_no_shiny_error()
   app_driver$expect_no_validation_error()
 })
@@ -121,7 +127,7 @@ test_that("e2e - tm_g_gh_boxplot handles LoQ legend toggle", {
   plot_initial <- app_driver$get_active_module_plot_output("boxplot")
 
   # Toggle LoQ legend checkbox
-  app_driver$find_element("input[id$=loq_legend]")$click()
+  app_driver$click(selector = "input[id$=loq_legend]")
   app_driver$wait_for_idle(duration = 2000)
 
   # Verify the plot changed and no errors
