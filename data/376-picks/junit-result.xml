@@ -1,48 +1,720 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <testsuites>
-  <testsuite name="shinytest2-tm_g_gh_boxplot" timestamp="2026-08-21T15:08:57Z" hostname="4c19f4ee4256" tests="6" skipped="6" failures="0" errors="0" time="4.256">
-    <testcase time="0.84" classname="shinytest2_tm_g_gh_boxplot" name="toggle_slider_module_widgets_are_initialized_with_proper_values">
-      <skipped message="Reason: On CRAN ('test-shinytest2-tm_g_gh_boxplot.R:25:3')"/>
+  <testsuite name="shinytest2-tm_g_gh_boxplot" timestamp="2026-08-21T15:08:14Z" hostname="74a072bd0fd9" tests="6" skipped="0" failures="0" errors="6" time="749.093">
+    <testcase time="126.161" classname="shinytest2_tm_g_gh_boxplot" name="toggle_slider_module_widgets_are_initialized_with_proper_values">
+      <error type="error" message="Error in `app_initialize(self, private, app_dir = app_dir, ..., load_timeout = load_timeout, timeout = timeout, wait = wait, expect_values_screenshot_args = expect_values_screenshot_args, screenshot_args = screenshot_args, check_names = check_names, name = name, variant = variant, view = view, height = height, width = width, seed = seed, clean_logs = clean_logs, shiny_args = shiny_args, render_args = render_args, options = options)`: Shiny app did not become stable in 120000ms. ('test-shinytest2-tm_g_gh_boxplot.R:25:3')">Error in `app_initialize(self, private, app_dir = app_dir, ..., load_timeout = load_timeout, timeout = timeout, wait = wait, expect_values_screenshot_args = expect_values_screenshot_args, screenshot_args = screenshot_args, check_names = check_names, name = name, variant = variant, view = view, height = height, width = width, seed = seed, clean_logs = clean_logs, shiny_args = shiny_args, render_args = render_args, options = options)`: Shiny app did not become stable in 120000ms.
+Message: An error occurred while waiting for Shiny to be stable
+Caused by error in `app_wait_for_idle()`:
+! An error occurred while waiting for Shiny to be stable
+
+
+i You can inspect the failed AppDriver object via `rlang::last_error()$app`
+i AppDriver logs:
+{shinytest2} R  info   15:08:16.26 Start AppDriver initialization
+{shinytest2} R  info   15:08:16.48 Starting Shiny app
+{shinytest2} R  info   15:08:18.44 Creating new ChromoteSession
+{shinytest2} R  info   15:08:18.54 Navigating to Shiny app
+{shinytest2} R  info   15:08:19.91 Injecting shiny-tracer.js
+{chromote}   JS info   15:08:19.95 shinytest2; jQuery not found
+{chromote}   JS info   15:08:19.96 shinytest2; Loaded
+{shinytest2} R  info   15:08:19.96 Waiting for Shiny to become ready
+{chromote}   JS info   15:08:20.00 shinytest2; jQuery found
+{chromote}   JS info   15:08:20.00 shinytest2; Waiting for shiny session to connect
+{chromote}   JS info   15:08:20.37 shinytest2; Connected
+{shinytest2} R  info   15:08:20.41 Waiting for Shiny to become idle for 200ms within 120000ms
+{chromote}   JS info   15:08:20.41 shinytest2; Waiting for Shiny to be stable
+{chromote}   JS info   15:08:20.43 shinytest2; shiny:busy
+{chromote}   JS log    15:08:20.60 Teal: Sending document title: teal app to input: teal-teal_modules-app_title
+                                   (anonymous)             @ :522:10
+                                   _sendMessagesToHandlers @ shiny-javascript-1.14.0/shiny.min.js:443:9166
+                                   (anonymous)             @ shiny-javascript-1.14.0/shiny.min.js:443:10855
+                                   _sendMessagesToHandlers @ shiny-javascript-1.14.0/shiny.min.js:443:9166
+                                   dispatchMessage         @ shiny-javascript-1.14.0/shiny.min.js:443:9001
+                                   (anonymous)             @ shiny-javascript-1.14.0/shiny.min.js:443:4924
+                                   startActionQueueLoop    @ shiny-javascript-1.14.0/shiny.min.js:443:5210
+{shinytest2} R  info   15:10:20.43 Error while initializing AppDriver:
+                                   Shiny app did not become stable in 120000ms.
+                                   Message: An error occurred while waiting for Shiny to be stable
+                                   Caused by error in `app_wait_for_idle()`:
+                                   ! An error occurred while waiting for Shiny to be stable
+{shiny}      R  stderr ----------- Loading required package: shiny
+{shiny}      R  stderr ----------- Attempting to load the environment ‘package:stringr’
+{shiny}      R  stderr ----------- Loading required package: teal.data
+{shiny}      R  stderr ----------- Loading required package: teal.code
+{shiny}      R  stderr ----------- Loading required package: teal.slice
+{shiny}      R  stderr ----------- 
+{shiny}      R  stderr ----------- You are using teal version 1.2.1
+{shiny}      R  stderr ----------- 
+{shiny}      R  stderr ----------- Attaching package: ‘teal’
+{shiny}      R  stderr ----------- 
+{shiny}      R  stderr ----------- The following objects are masked from ‘package:teal.slice’:
+{shiny}      R  stderr ----------- 
+{shiny}      R  stderr -----------     as.teal_slices, teal_slices
+{shiny}      R  stderr ----------- 
+{shiny}      R  stderr ----------- Running application in test mode.
+{shiny}      R  stderr ----------- 
+{shiny}      R  stderr ----------- Listening on http://127.0.0.1:3532
+{shiny}      R  stderr ----------- Warning: Error in constr_anl_q: unused argument (param_id = "xaxis_param")
+{shiny}      R  stderr -----------   109: module
+{shiny}      R  stderr -----------   104: callModule
+{shiny}      R  stderr -----------   103: moduleServer
+{shiny}      R  stderr -----------   102: &lt;Anonymous&gt;
+{shiny}      R  stderr -----------   100: .call_teal_module
+{shiny}      R  stderr -----------    99: rlang::eval_tidy
+{shiny}      R  stderr -----------    98: observe
+{shiny}      R  stderr -----------    97: &lt;observer:observeEvent(activator())&gt;
+{shiny}      R  stderr -----------    14: &lt;Anonymous&gt;
+{shiny}      R  stderr -----------    12: &lt;Anonymous&gt;
+{shiny}      R  stderr -----------    11: &lt;Anonymous&gt;
+{shiny}      R  stderr -----------    10: base::do.call
+{shiny}      R  stderr -----------     9: base::saveRDS
+{shiny}      R  stderr -----------     8: base::withCallingHandlers
+{shiny}      R  stderr -----------     7: doTryCatch
+{shiny}      R  stderr -----------     6: tryCatchOne
+{shiny}      R  stderr -----------     5: tryCatchList
+{shiny}      R  stderr -----------     2: tryCatchList
+{shiny}      R  stderr -----------     1: base::tryCatch
+{shiny}      R  stderr ----------- Active module changed: app="teal app", module="Box Plot"
+
+
+Caused by error in `app_initialize_()`:
+! Shiny app did not become stable in 120000ms.
+Message: An error occurred while waiting for Shiny to be stable
+Caused by error in `app_wait_for_idle()`:
+! An error occurred while waiting for Shiny to be stable
+Backtrace:
+     x
+  1. +-teal.goshawk (local) tm_g_gh_boxplot_driver() at test-shinytest2-tm_g_gh_boxplot.R:25:3
+  2. | \-teal.goshawk:::init_teal_app_driver(...) at test-shinytest2-tm_g_gh_boxplot.R:2:3
+  3. |   +-testthat::with_mocked_bindings(...) at ./helper-TealAppDriver.R:21:3
+  4. |   \-TealAppDriver$new(teal::init(...)) at ./helper-TealAppDriver.R:24:7
+  5. |     \-teal (local) initialize(...)
+  6. |       +-base::suppressWarnings(...)
+  7. |       | \-base::withCallingHandlers(...)
+  8. |       +-withr::with_envvar(...)
+  9. |       | \-base::force(code)
+ 10. |       \-super$initialize(...)
+ 11. |         \-shinytest2:::app_initialize(...)
+ 12. |           +-base::withCallingHandlers(...)
+ 13. |           \-shinytest2:::app_initialize_(self, private, ..., view = view)
+ 14. |             +-base::withCallingHandlers(...)
+ 15. |             \-self$wait_for_idle(duration = 200, timeout = private$load_timeout)
+ 16. |               \-shinytest2:::app_wait_for_idle(...)
+ 17. |                 \-shinytest2:::app_abort(self, private, "An error occurred while waiting for Shiny to be stable")
+ 18. |                   \-rlang::abort(..., app = self, call = call)
+ 19. |                     \-rlang:::signal_abort(cnd, .file)
+ 20. |                       \-base::signalCondition(cnd)
+ 21. +-shinytest2 (local) `&lt;fn&gt;`(`&lt;rlng_rrr&gt;`)
+ 22. | \-shinytest2:::app_abort(...)
+ 23. |   \-rlang::abort(..., app = self, call = call)
+ 24. |     \-rlang:::signal_abort(cnd, .file)
+ 25. |       \-base::signalCondition(cnd)
+ 26. \-shinytest2 (local) `&lt;fn&gt;`(`&lt;rlng_rrr&gt;`)
+ 27.   \-shinytest2:::app_abort(...)
+ 28.     \-rlang::abort(..., app = self, call = call)</error>
     </testcase>
-    <testcase time="0.718" classname="shinytest2_tm_g_gh_boxplot" name="toggle_slider_module_changing_the_sliderInput_sets_proper_numericInput_values">
-      <skipped message="Reason: On CRAN ('test-shinytest2-tm_g_gh_boxplot.R:38:3')"/>
+    <testcase time="124.689" classname="shinytest2_tm_g_gh_boxplot" name="toggle_slider_module_changing_the_sliderInput_sets_proper_numericInput_values">
+      <error type="error" message="Error in `app_initialize(self, private, app_dir = app_dir, ..., load_timeout = load_timeout, timeout = timeout, wait = wait, expect_values_screenshot_args = expect_values_screenshot_args, screenshot_args = screenshot_args, check_names = check_names, name = name, variant = variant, view = view, height = height, width = width, seed = seed, clean_logs = clean_logs, shiny_args = shiny_args, render_args = render_args, options = options)`: Shiny app did not become stable in 120000ms. ('test-shinytest2-tm_g_gh_boxplot.R:38:3')">Error in `app_initialize(self, private, app_dir = app_dir, ..., load_timeout = load_timeout, timeout = timeout, wait = wait, expect_values_screenshot_args = expect_values_screenshot_args, screenshot_args = screenshot_args, check_names = check_names, name = name, variant = variant, view = view, height = height, width = width, seed = seed, clean_logs = clean_logs, shiny_args = shiny_args, render_args = render_args, options = options)`: Shiny app did not become stable in 120000ms.
+Message: An error occurred while waiting for Shiny to be stable
+Caused by error in `app_wait_for_idle()`:
+! An error occurred while waiting for Shiny to be stable
+
+
+i You can inspect the failed AppDriver object via `rlang::last_error()$app`
+i AppDriver logs:
+{shinytest2} R  info   15:10:21.34 Start AppDriver initialization
+{shinytest2} R  info   15:10:21.51 Starting Shiny app
+{shinytest2} R  info   15:10:23.17 Creating new ChromoteSession
+{shinytest2} R  info   15:10:23.22 Navigating to Shiny app
+{shinytest2} R  info   15:10:24.60 Injecting shiny-tracer.js
+{chromote}   JS info   15:10:24.62 shinytest2; jQuery not found
+{chromote}   JS info   15:10:24.62 shinytest2; Loaded
+{shinytest2} R  info   15:10:24.62 Waiting for Shiny to become ready
+{chromote}   JS info   15:10:24.68 shinytest2; jQuery found
+{chromote}   JS info   15:10:24.69 shinytest2; Waiting for shiny session to connect
+{chromote}   JS info   15:10:25.07 shinytest2; Connected
+{shinytest2} R  info   15:10:25.08 Waiting for Shiny to become idle for 200ms within 120000ms
+{chromote}   JS info   15:10:25.08 shinytest2; Waiting for Shiny to be stable
+{chromote}   JS info   15:10:25.10 shinytest2; shiny:busy
+{chromote}   JS log    15:10:25.27 Teal: Sending document title: teal app to input: teal-teal_modules-app_title
+                                   (anonymous)             @ :522:10
+                                   _sendMessagesToHandlers @ shiny-javascript-1.14.0/shiny.min.js:443:9166
+                                   (anonymous)             @ shiny-javascript-1.14.0/shiny.min.js:443:10855
+                                   _sendMessagesToHandlers @ shiny-javascript-1.14.0/shiny.min.js:443:9166
+                                   dispatchMessage         @ shiny-javascript-1.14.0/shiny.min.js:443:9001
+                                   (anonymous)             @ shiny-javascript-1.14.0/shiny.min.js:443:4924
+                                   startActionQueueLoop    @ shiny-javascript-1.14.0/shiny.min.js:443:5210
+{shinytest2} R  info   15:12:25.10 Error while initializing AppDriver:
+                                   Shiny app did not become stable in 120000ms.
+                                   Message: An error occurred while waiting for Shiny to be stable
+                                   Caused by error in `app_wait_for_idle()`:
+                                   ! An error occurred while waiting for Shiny to be stable
+{shiny}      R  stderr ----------- Loading required package: shiny
+{shiny}      R  stderr ----------- Attempting to load the environment ‘package:stringr’
+{shiny}      R  stderr ----------- Loading required package: teal.data
+{shiny}      R  stderr ----------- Loading required package: teal.code
+{shiny}      R  stderr ----------- Loading required package: teal.slice
+{shiny}      R  stderr ----------- 
+{shiny}      R  stderr ----------- You are using teal version 1.2.1
+{shiny}      R  stderr ----------- 
+{shiny}      R  stderr ----------- Attaching package: ‘teal’
+{shiny}      R  stderr ----------- 
+{shiny}      R  stderr ----------- The following objects are masked from ‘package:teal.slice’:
+{shiny}      R  stderr ----------- 
+{shiny}      R  stderr -----------     as.teal_slices, teal_slices
+{shiny}      R  stderr ----------- 
+{shiny}      R  stderr ----------- Running application in test mode.
+{shiny}      R  stderr ----------- 
+{shiny}      R  stderr ----------- Listening on http://127.0.0.1:5153
+{shiny}      R  stderr ----------- Warning: Error in constr_anl_q: unused argument (param_id = "xaxis_param")
+{shiny}      R  stderr -----------   109: module
+{shiny}      R  stderr -----------   104: callModule
+{shiny}      R  stderr -----------   103: moduleServer
+{shiny}      R  stderr -----------   102: &lt;Anonymous&gt;
+{shiny}      R  stderr -----------   100: .call_teal_module
+{shiny}      R  stderr -----------    99: rlang::eval_tidy
+{shiny}      R  stderr -----------    98: observe
+{shiny}      R  stderr -----------    97: &lt;observer:observeEvent(activator())&gt;
+{shiny}      R  stderr -----------    14: &lt;Anonymous&gt;
+{shiny}      R  stderr -----------    12: &lt;Anonymous&gt;
+{shiny}      R  stderr -----------    11: &lt;Anonymous&gt;
+{shiny}      R  stderr -----------    10: base::do.call
+{shiny}      R  stderr -----------     9: base::saveRDS
+{shiny}      R  stderr -----------     8: base::withCallingHandlers
+{shiny}      R  stderr -----------     7: doTryCatch
+{shiny}      R  stderr -----------     6: tryCatchOne
+{shiny}      R  stderr -----------     5: tryCatchList
+{shiny}      R  stderr -----------     2: tryCatchList
+{shiny}      R  stderr -----------     1: base::tryCatch
+{shiny}      R  stderr ----------- Active module changed: app="teal app", module="Box Plot"
+
+
+Caused by error in `app_initialize_()`:
+! Shiny app did not become stable in 120000ms.
+Message: An error occurred while waiting for Shiny to be stable
+Caused by error in `app_wait_for_idle()`:
+! An error occurred while waiting for Shiny to be stable
+Backtrace:
+     x
+  1. +-teal.goshawk (local) tm_g_gh_boxplot_driver() at test-shinytest2-tm_g_gh_boxplot.R:38:3
+  2. | \-teal.goshawk:::init_teal_app_driver(...) at test-shinytest2-tm_g_gh_boxplot.R:2:3
+  3. |   +-testthat::with_mocked_bindings(...) at ./helper-TealAppDriver.R:21:3
+  4. |   \-TealAppDriver$new(teal::init(...)) at ./helper-TealAppDriver.R:24:7
+  5. |     \-teal (local) initialize(...)
+  6. |       +-base::suppressWarnings(...)
+  7. |       | \-base::withCallingHandlers(...)
+  8. |       +-withr::with_envvar(...)
+  9. |       | \-base::force(code)
+ 10. |       \-super$initialize(...)
+ 11. |         \-shinytest2:::app_initialize(...)
+ 12. |           +-base::withCallingHandlers(...)
+ 13. |           \-shinytest2:::app_initialize_(self, private, ..., view = view)
+ 14. |             +-base::withCallingHandlers(...)
+ 15. |             \-self$wait_for_idle(duration = 200, timeout = private$load_timeout)
+ 16. |               \-shinytest2:::app_wait_for_idle(...)
+ 17. |                 \-shinytest2:::app_abort(self, private, "An error occurred while waiting for Shiny to be stable")
+ 18. |                   \-rlang::abort(..., app = self, call = call)
+ 19. |                     \-rlang:::signal_abort(cnd, .file)
+ 20. |                       \-base::signalCondition(cnd)
+ 21. +-shinytest2 (local) `&lt;fn&gt;`(`&lt;rlng_rrr&gt;`)
+ 22. | \-shinytest2:::app_abort(...)
+ 23. |   \-rlang::abort(..., app = self, call = call)
+ 24. |     \-rlang:::signal_abort(cnd, .file)
+ 25. |       \-base::signalCondition(cnd)
+ 26. \-shinytest2 (local) `&lt;fn&gt;`(`&lt;rlng_rrr&gt;`)
+ 27.   \-shinytest2:::app_abort(...)
+ 28.     \-rlang::abort(..., app = self, call = call)</error>
     </testcase>
-    <testcase time="0.655" classname="shinytest2_tm_g_gh_boxplot" name="toggle_slider_module_changing_the_numericInputs_within_the_sliderInput_range_sets_proper_sliderInput_values">
-      <skipped message="Reason: On CRAN ('test-shinytest2-tm_g_gh_boxplot.R:54:5')"/>
+    <testcase time="124.591" classname="shinytest2_tm_g_gh_boxplot" name="toggle_slider_module_changing_the_numericInputs_within_the_sliderInput_range_sets_proper_sliderInput_values">
+      <error type="error" message="Error in `app_initialize(self, private, app_dir = app_dir, ..., load_timeout = load_timeout, timeout = timeout, wait = wait, expect_values_screenshot_args = expect_values_screenshot_args, screenshot_args = screenshot_args, check_names = check_names, name = name, variant = variant, view = view, height = height, width = width, seed = seed, clean_logs = clean_logs, shiny_args = shiny_args, render_args = render_args, options = options)`: Shiny app did not become stable in 120000ms. ('test-shinytest2-tm_g_gh_boxplot.R:54:5')">Error in `app_initialize(self, private, app_dir = app_dir, ..., load_timeout = load_timeout, timeout = timeout, wait = wait, expect_values_screenshot_args = expect_values_screenshot_args, screenshot_args = screenshot_args, check_names = check_names, name = name, variant = variant, view = view, height = height, width = width, seed = seed, clean_logs = clean_logs, shiny_args = shiny_args, render_args = render_args, options = options)`: Shiny app did not become stable in 120000ms.
+Message: An error occurred while waiting for Shiny to be stable
+Caused by error in `app_wait_for_idle()`:
+! An error occurred while waiting for Shiny to be stable
+
+
+i You can inspect the failed AppDriver object via `rlang::last_error()$app`
+i AppDriver logs:
+{shinytest2} R  info   15:12:25.97 Start AppDriver initialization
+{shinytest2} R  info   15:12:26.14 Starting Shiny app
+{shinytest2} R  info   15:12:27.81 Creating new ChromoteSession
+{shinytest2} R  info   15:12:27.85 Navigating to Shiny app
+{shinytest2} R  info   15:12:29.22 Injecting shiny-tracer.js
+{chromote}   JS info   15:12:29.25 shinytest2; jQuery not found
+{chromote}   JS info   15:12:29.25 shinytest2; Loaded
+{shinytest2} R  info   15:12:29.25 Waiting for Shiny to become ready
+{chromote}   JS info   15:12:29.29 shinytest2; jQuery found
+{chromote}   JS info   15:12:29.30 shinytest2; Waiting for shiny session to connect
+{chromote}   JS info   15:12:29.67 shinytest2; Connected
+{shinytest2} R  info   15:12:29.69 Waiting for Shiny to become idle for 200ms within 120000ms
+{chromote}   JS info   15:12:29.70 shinytest2; Waiting for Shiny to be stable
+{chromote}   JS info   15:12:29.73 shinytest2; shiny:busy
+{chromote}   JS log    15:12:29.91 Teal: Sending document title: teal app to input: teal-teal_modules-app_title
+                                   (anonymous)             @ :522:10
+                                   _sendMessagesToHandlers @ shiny-javascript-1.14.0/shiny.min.js:443:9166
+                                   (anonymous)             @ shiny-javascript-1.14.0/shiny.min.js:443:10855
+                                   _sendMessagesToHandlers @ shiny-javascript-1.14.0/shiny.min.js:443:9166
+                                   dispatchMessage         @ shiny-javascript-1.14.0/shiny.min.js:443:9001
+                                   (anonymous)             @ shiny-javascript-1.14.0/shiny.min.js:443:4924
+                                   startActionQueueLoop    @ shiny-javascript-1.14.0/shiny.min.js:443:5210
+{shinytest2} R  info   15:14:29.71 Error while initializing AppDriver:
+                                   Shiny app did not become stable in 120000ms.
+                                   Message: An error occurred while waiting for Shiny to be stable
+                                   Caused by error in `app_wait_for_idle()`:
+                                   ! An error occurred while waiting for Shiny to be stable
+{shiny}      R  stderr ----------- Loading required package: shiny
+{shiny}      R  stderr ----------- Attempting to load the environment ‘package:stringr’
+{shiny}      R  stderr ----------- Loading required package: teal.data
+{shiny}      R  stderr ----------- Loading required package: teal.code
+{shiny}      R  stderr ----------- Loading required package: teal.slice
+{shiny}      R  stderr ----------- 
+{shiny}      R  stderr ----------- You are using teal version 1.2.1
+{shiny}      R  stderr ----------- 
+{shiny}      R  stderr ----------- Attaching package: ‘teal’
+{shiny}      R  stderr ----------- 
+{shiny}      R  stderr ----------- The following objects are masked from ‘package:teal.slice’:
+{shiny}      R  stderr ----------- 
+{shiny}      R  stderr -----------     as.teal_slices, teal_slices
+{shiny}      R  stderr ----------- 
+{shiny}      R  stderr ----------- Running application in test mode.
+{shiny}      R  stderr ----------- 
+{shiny}      R  stderr ----------- Listening on http://127.0.0.1:4692
+{shiny}      R  stderr ----------- Warning: Error in constr_anl_q: unused argument (param_id = "xaxis_param")
+{shiny}      R  stderr -----------   109: module
+{shiny}      R  stderr -----------   104: callModule
+{shiny}      R  stderr -----------   103: moduleServer
+{shiny}      R  stderr -----------   102: &lt;Anonymous&gt;
+{shiny}      R  stderr -----------   100: .call_teal_module
+{shiny}      R  stderr -----------    99: rlang::eval_tidy
+{shiny}      R  stderr -----------    98: observe
+{shiny}      R  stderr -----------    97: &lt;observer:observeEvent(activator())&gt;
+{shiny}      R  stderr -----------    14: &lt;Anonymous&gt;
+{shiny}      R  stderr -----------    12: &lt;Anonymous&gt;
+{shiny}      R  stderr -----------    11: &lt;Anonymous&gt;
+{shiny}      R  stderr -----------    10: base::do.call
+{shiny}      R  stderr -----------     9: base::saveRDS
+{shiny}      R  stderr -----------     8: base::withCallingHandlers
+{shiny}      R  stderr -----------     7: doTryCatch
+{shiny}      R  stderr -----------     6: tryCatchOne
+{shiny}      R  stderr -----------     5: tryCatchList
+{shiny}      R  stderr -----------     2: tryCatchList
+{shiny}      R  stderr -----------     1: base::tryCatch
+{shiny}      R  stderr ----------- Active module changed: app="teal app", module="Box Plot"
+
+
+Caused by error in `app_initialize_()`:
+! Shiny app did not become stable in 120000ms.
+Message: An error occurred while waiting for Shiny to be stable
+Caused by error in `app_wait_for_idle()`:
+! An error occurred while waiting for Shiny to be stable
+Backtrace:
+     x
+  1. +-teal.goshawk (local) tm_g_gh_boxplot_driver() at test-shinytest2-tm_g_gh_boxplot.R:54:5
+  2. | \-teal.goshawk:::init_teal_app_driver(...) at test-shinytest2-tm_g_gh_boxplot.R:2:3
+  3. |   +-testthat::with_mocked_bindings(...) at ./helper-TealAppDriver.R:21:3
+  4. |   \-TealAppDriver$new(teal::init(...)) at ./helper-TealAppDriver.R:24:7
+  5. |     \-teal (local) initialize(...)
+  6. |       +-base::suppressWarnings(...)
+  7. |       | \-base::withCallingHandlers(...)
+  8. |       +-withr::with_envvar(...)
+  9. |       | \-base::force(code)
+ 10. |       \-super$initialize(...)
+ 11. |         \-shinytest2:::app_initialize(...)
+ 12. |           +-base::withCallingHandlers(...)
+ 13. |           \-shinytest2:::app_initialize_(self, private, ..., view = view)
+ 14. |             +-base::withCallingHandlers(...)
+ 15. |             \-self$wait_for_idle(duration = 200, timeout = private$load_timeout)
+ 16. |               \-shinytest2:::app_wait_for_idle(...)
+ 17. |                 \-shinytest2:::app_abort(self, private, "An error occurred while waiting for Shiny to be stable")
+ 18. |                   \-rlang::abort(..., app = self, call = call)
+ 19. |                     \-rlang:::signal_abort(cnd, .file)
+ 20. |                       \-base::signalCondition(cnd)
+ 21. +-shinytest2 (local) `&lt;fn&gt;`(`&lt;rlng_rrr&gt;`)
+ 22. | \-shinytest2:::app_abort(...)
+ 23. |   \-rlang::abort(..., app = self, call = call)
+ 24. |     \-rlang:::signal_abort(cnd, .file)
+ 25. |       \-base::signalCondition(cnd)
+ 26. \-shinytest2 (local) `&lt;fn&gt;`(`&lt;rlng_rrr&gt;`)
+ 27.   \-shinytest2:::app_abort(...)
+ 28.     \-rlang::abort(..., app = self, call = call)</error>
     </testcase>
-    <testcase time="0.64" classname="shinytest2_tm_g_gh_boxplot" name="toggle_slider_module_changing_the_numericInputs_outside_the_sliderInput_range_sets_proper_sliderInput_values_and_range">
-      <skipped message="Reason: On CRAN ('test-shinytest2-tm_g_gh_boxplot.R:88:5')"/>
+    <testcase time="124.58" classname="shinytest2_tm_g_gh_boxplot" name="toggle_slider_module_changing_the_numericInputs_outside_the_sliderInput_range_sets_proper_sliderInput_values_and_range">
+      <error type="error" message="Error in `app_initialize(self, private, app_dir = app_dir, ..., load_timeout = load_timeout, timeout = timeout, wait = wait, expect_values_screenshot_args = expect_values_screenshot_args, screenshot_args = screenshot_args, check_names = check_names, name = name, variant = variant, view = view, height = height, width = width, seed = seed, clean_logs = clean_logs, shiny_args = shiny_args, render_args = render_args, options = options)`: Shiny app did not become stable in 120000ms. ('test-shinytest2-tm_g_gh_boxplot.R:88:5')">Error in `app_initialize(self, private, app_dir = app_dir, ..., load_timeout = load_timeout, timeout = timeout, wait = wait, expect_values_screenshot_args = expect_values_screenshot_args, screenshot_args = screenshot_args, check_names = check_names, name = name, variant = variant, view = view, height = height, width = width, seed = seed, clean_logs = clean_logs, shiny_args = shiny_args, render_args = render_args, options = options)`: Shiny app did not become stable in 120000ms.
+Message: An error occurred while waiting for Shiny to be stable
+Caused by error in `app_wait_for_idle()`:
+! An error occurred while waiting for Shiny to be stable
+
+
+i You can inspect the failed AppDriver object via `rlang::last_error()$app`
+i AppDriver logs:
+{shinytest2} R  info   15:14:30.53 Start AppDriver initialization
+{shinytest2} R  info   15:14:30.71 Starting Shiny app
+{shinytest2} R  info   15:14:32.36 Creating new ChromoteSession
+{shinytest2} R  info   15:14:32.42 Navigating to Shiny app
+{shinytest2} R  info   15:14:33.80 Injecting shiny-tracer.js
+{chromote}   JS info   15:14:33.82 shinytest2; jQuery not found
+{chromote}   JS info   15:14:33.82 shinytest2; Loaded
+{shinytest2} R  info   15:14:33.82 Waiting for Shiny to become ready
+{chromote}   JS info   15:14:33.88 shinytest2; jQuery found
+{chromote}   JS info   15:14:33.88 shinytest2; Waiting for shiny session to connect
+{chromote}   JS info   15:14:34.25 shinytest2; Connected
+{shinytest2} R  info   15:14:34.28 Waiting for Shiny to become idle for 200ms within 120000ms
+{chromote}   JS info   15:14:34.28 shinytest2; Waiting for Shiny to be stable
+{chromote}   JS info   15:14:34.31 shinytest2; shiny:busy
+{chromote}   JS log    15:14:34.49 Teal: Sending document title: teal app to input: teal-teal_modules-app_title
+                                   (anonymous)             @ :522:10
+                                   _sendMessagesToHandlers @ shiny-javascript-1.14.0/shiny.min.js:443:9166
+                                   (anonymous)             @ shiny-javascript-1.14.0/shiny.min.js:443:10855
+                                   _sendMessagesToHandlers @ shiny-javascript-1.14.0/shiny.min.js:443:9166
+                                   dispatchMessage         @ shiny-javascript-1.14.0/shiny.min.js:443:9001
+                                   (anonymous)             @ shiny-javascript-1.14.0/shiny.min.js:443:4924
+                                   startActionQueueLoop    @ shiny-javascript-1.14.0/shiny.min.js:443:5210
+{shinytest2} R  info   15:16:34.29 Error while initializing AppDriver:
+                                   Shiny app did not become stable in 120000ms.
+                                   Message: An error occurred while waiting for Shiny to be stable
+                                   Caused by error in `app_wait_for_idle()`:
+                                   ! An error occurred while waiting for Shiny to be stable
+{shiny}      R  stderr ----------- Loading required package: shiny
+{shiny}      R  stderr ----------- Attempting to load the environment ‘package:stringr’
+{shiny}      R  stderr ----------- Loading required package: teal.data
+{shiny}      R  stderr ----------- Loading required package: teal.code
+{shiny}      R  stderr ----------- Loading required package: teal.slice
+{shiny}      R  stderr ----------- 
+{shiny}      R  stderr ----------- You are using teal version 1.2.1
+{shiny}      R  stderr ----------- 
+{shiny}      R  stderr ----------- Attaching package: ‘teal’
+{shiny}      R  stderr ----------- 
+{shiny}      R  stderr ----------- The following objects are masked from ‘package:teal.slice’:
+{shiny}      R  stderr ----------- 
+{shiny}      R  stderr -----------     as.teal_slices, teal_slices
+{shiny}      R  stderr ----------- 
+{shiny}      R  stderr ----------- Running application in test mode.
+{shiny}      R  stderr ----------- 
+{shiny}      R  stderr ----------- Listening on http://127.0.0.1:6350
+{shiny}      R  stderr ----------- Warning: Error in constr_anl_q: unused argument (param_id = "xaxis_param")
+{shiny}      R  stderr -----------   109: module
+{shiny}      R  stderr -----------   104: callModule
+{shiny}      R  stderr -----------   103: moduleServer
+{shiny}      R  stderr -----------   102: &lt;Anonymous&gt;
+{shiny}      R  stderr -----------   100: .call_teal_module
+{shiny}      R  stderr -----------    99: rlang::eval_tidy
+{shiny}      R  stderr -----------    98: observe
+{shiny}      R  stderr -----------    97: &lt;observer:observeEvent(activator())&gt;
+{shiny}      R  stderr -----------    14: &lt;Anonymous&gt;
+{shiny}      R  stderr -----------    12: &lt;Anonymous&gt;
+{shiny}      R  stderr -----------    11: &lt;Anonymous&gt;
+{shiny}      R  stderr -----------    10: base::do.call
+{shiny}      R  stderr -----------     9: base::saveRDS
+{shiny}      R  stderr -----------     8: base::withCallingHandlers
+{shiny}      R  stderr -----------     7: doTryCatch
+{shiny}      R  stderr -----------     6: tryCatchOne
+{shiny}      R  stderr -----------     5: tryCatchList
+{shiny}      R  stderr -----------     2: tryCatchList
+{shiny}      R  stderr -----------     1: base::tryCatch
+{shiny}      R  stderr ----------- Active module changed: app="teal app", module="Box Plot"
+
+
+Caused by error in `app_initialize_()`:
+! Shiny app did not become stable in 120000ms.
+Message: An error occurred while waiting for Shiny to be stable
+Caused by error in `app_wait_for_idle()`:
+! An error occurred while waiting for Shiny to be stable
+Backtrace:
+     x
+  1. +-teal.goshawk (local) tm_g_gh_boxplot_driver() at test-shinytest2-tm_g_gh_boxplot.R:88:5
+  2. | \-teal.goshawk:::init_teal_app_driver(...) at test-shinytest2-tm_g_gh_boxplot.R:2:3
+  3. |   +-testthat::with_mocked_bindings(...) at ./helper-TealAppDriver.R:21:3
+  4. |   \-TealAppDriver$new(teal::init(...)) at ./helper-TealAppDriver.R:24:7
+  5. |     \-teal (local) initialize(...)
+  6. |       +-base::suppressWarnings(...)
+  7. |       | \-base::withCallingHandlers(...)
+  8. |       +-withr::with_envvar(...)
+  9. |       | \-base::force(code)
+ 10. |       \-super$initialize(...)
+ 11. |         \-shinytest2:::app_initialize(...)
+ 12. |           +-base::withCallingHandlers(...)
+ 13. |           \-shinytest2:::app_initialize_(self, private, ..., view = view)
+ 14. |             +-base::withCallingHandlers(...)
+ 15. |             \-self$wait_for_idle(duration = 200, timeout = private$load_timeout)
+ 16. |               \-shinytest2:::app_wait_for_idle(...)
+ 17. |                 \-shinytest2:::app_abort(self, private, "An error occurred while waiting for Shiny to be stable")
+ 18. |                   \-rlang::abort(..., app = self, call = call)
+ 19. |                     \-rlang:::signal_abort(cnd, .file)
+ 20. |                       \-base::signalCondition(cnd)
+ 21. +-shinytest2 (local) `&lt;fn&gt;`(`&lt;rlng_rrr&gt;`)
+ 22. | \-shinytest2:::app_abort(...)
+ 23. |   \-rlang::abort(..., app = self, call = call)
+ 24. |     \-rlang:::signal_abort(cnd, .file)
+ 25. |       \-base::signalCondition(cnd)
+ 26. \-shinytest2 (local) `&lt;fn&gt;`(`&lt;rlng_rrr&gt;`)
+ 27.   \-shinytest2:::app_abort(...)
+ 28.     \-rlang::abort(..., app = self, call = call)</error>
     </testcase>
-    <testcase time="0.815" classname="shinytest2_tm_g_gh_boxplot" name="toggle_slider_module_changing_the_numericInputs_within_the_rage_sets_back_the_sliderInput_range_to_initial_range">
-      <skipped message="Reason: On CRAN ('test-shinytest2-tm_g_gh_boxplot.R:121:5')"/>
+    <testcase time="124.55" classname="shinytest2_tm_g_gh_boxplot" name="toggle_slider_module_changing_the_numericInputs_within_the_rage_sets_back_the_sliderInput_range_to_initial_range">
+      <error type="error" message="Error in `app_initialize(self, private, app_dir = app_dir, ..., load_timeout = load_timeout, timeout = timeout, wait = wait, expect_values_screenshot_args = expect_values_screenshot_args, screenshot_args = screenshot_args, check_names = check_names, name = name, variant = variant, view = view, height = height, width = width, seed = seed, clean_logs = clean_logs, shiny_args = shiny_args, render_args = render_args, options = options)`: Shiny app did not become stable in 120000ms. ('test-shinytest2-tm_g_gh_boxplot.R:121:5')">Error in `app_initialize(self, private, app_dir = app_dir, ..., load_timeout = load_timeout, timeout = timeout, wait = wait, expect_values_screenshot_args = expect_values_screenshot_args, screenshot_args = screenshot_args, check_names = check_names, name = name, variant = variant, view = view, height = height, width = width, seed = seed, clean_logs = clean_logs, shiny_args = shiny_args, render_args = render_args, options = options)`: Shiny app did not become stable in 120000ms.
+Message: An error occurred while waiting for Shiny to be stable
+Caused by error in `app_wait_for_idle()`:
+! An error occurred while waiting for Shiny to be stable
+
+
+i You can inspect the failed AppDriver object via `rlang::last_error()$app`
+i AppDriver logs:
+{shinytest2} R  info   15:16:35.09 Start AppDriver initialization
+{shinytest2} R  info   15:16:35.26 Starting Shiny app
+{shinytest2} R  info   15:16:36.91 Creating new ChromoteSession
+{shinytest2} R  info   15:16:36.96 Navigating to Shiny app
+{shinytest2} R  info   15:16:38.34 Injecting shiny-tracer.js
+{chromote}   JS info   15:16:38.37 shinytest2; jQuery not found
+{chromote}   JS info   15:16:38.37 shinytest2; Loaded
+{shinytest2} R  info   15:16:38.37 Waiting for Shiny to become ready
+{chromote}   JS info   15:16:38.42 shinytest2; jQuery found
+{chromote}   JS info   15:16:38.42 shinytest2; Waiting for shiny session to connect
+{chromote}   JS info   15:16:38.79 shinytest2; Connected
+{shinytest2} R  info   15:16:38.83 Waiting for Shiny to become idle for 200ms within 120000ms
+{chromote}   JS info   15:16:38.83 shinytest2; Waiting for Shiny to be stable
+{chromote}   JS info   15:16:38.85 shinytest2; shiny:busy
+{chromote}   JS log    15:16:39.02 Teal: Sending document title: teal app to input: teal-teal_modules-app_title
+                                   (anonymous)             @ :522:10
+                                   _sendMessagesToHandlers @ shiny-javascript-1.14.0/shiny.min.js:443:9166
+                                   (anonymous)             @ shiny-javascript-1.14.0/shiny.min.js:443:10855
+                                   _sendMessagesToHandlers @ shiny-javascript-1.14.0/shiny.min.js:443:9166
+                                   dispatchMessage         @ shiny-javascript-1.14.0/shiny.min.js:443:9001
+                                   (anonymous)             @ shiny-javascript-1.14.0/shiny.min.js:443:4924
+                                   startActionQueueLoop    @ shiny-javascript-1.14.0/shiny.min.js:443:5210
+{shinytest2} R  info   15:18:38.84 Error while initializing AppDriver:
+                                   Shiny app did not become stable in 120000ms.
+                                   Message: An error occurred while waiting for Shiny to be stable
+                                   Caused by error in `app_wait_for_idle()`:
+                                   ! An error occurred while waiting for Shiny to be stable
+{shiny}      R  stderr ----------- Loading required package: shiny
+{shiny}      R  stderr ----------- Attempting to load the environment ‘package:stringr’
+{shiny}      R  stderr ----------- Loading required package: teal.data
+{shiny}      R  stderr ----------- Loading required package: teal.code
+{shiny}      R  stderr ----------- Loading required package: teal.slice
+{shiny}      R  stderr ----------- 
+{shiny}      R  stderr ----------- You are using teal version 1.2.1
+{shiny}      R  stderr ----------- 
+{shiny}      R  stderr ----------- Attaching package: ‘teal’
+{shiny}      R  stderr ----------- 
+{shiny}      R  stderr ----------- The following objects are masked from ‘package:teal.slice’:
+{shiny}      R  stderr ----------- 
+{shiny}      R  stderr -----------     as.teal_slices, teal_slices
+{shiny}      R  stderr ----------- 
+{shiny}      R  stderr ----------- Running application in test mode.
+{shiny}      R  stderr ----------- 
+{shiny}      R  stderr ----------- Listening on http://127.0.0.1:4137
+{shiny}      R  stderr ----------- Warning: Error in constr_anl_q: unused argument (param_id = "xaxis_param")
+{shiny}      R  stderr -----------   109: module
+{shiny}      R  stderr -----------   104: callModule
+{shiny}      R  stderr -----------   103: moduleServer
+{shiny}      R  stderr -----------   102: &lt;Anonymous&gt;
+{shiny}      R  stderr -----------   100: .call_teal_module
+{shiny}      R  stderr -----------    99: rlang::eval_tidy
+{shiny}      R  stderr -----------    98: observe
+{shiny}      R  stderr -----------    97: &lt;observer:observeEvent(activator())&gt;
+{shiny}      R  stderr -----------    14: &lt;Anonymous&gt;
+{shiny}      R  stderr -----------    12: &lt;Anonymous&gt;
+{shiny}      R  stderr -----------    11: &lt;Anonymous&gt;
+{shiny}      R  stderr -----------    10: base::do.call
+{shiny}      R  stderr -----------     9: base::saveRDS
+{shiny}      R  stderr -----------     8: base::withCallingHandlers
+{shiny}      R  stderr -----------     7: doTryCatch
+{shiny}      R  stderr -----------     6: tryCatchOne
+{shiny}      R  stderr -----------     5: tryCatchList
+{shiny}      R  stderr -----------     2: tryCatchList
+{shiny}      R  stderr -----------     1: base::tryCatch
+{shiny}      R  stderr ----------- Active module changed: app="teal app", module="Box Plot"
+
+
+Caused by error in `app_initialize_()`:
+! Shiny app did not become stable in 120000ms.
+Message: An error occurred while waiting for Shiny to be stable
+Caused by error in `app_wait_for_idle()`:
+! An error occurred while waiting for Shiny to be stable
+Backtrace:
+     x
+  1. +-teal.goshawk (local) tm_g_gh_boxplot_driver() at test-shinytest2-tm_g_gh_boxplot.R:121:5
+  2. | \-teal.goshawk:::init_teal_app_driver(...) at test-shinytest2-tm_g_gh_boxplot.R:2:3
+  3. |   +-testthat::with_mocked_bindings(...) at ./helper-TealAppDriver.R:21:3
+  4. |   \-TealAppDriver$new(teal::init(...)) at ./helper-TealAppDriver.R:24:7
+  5. |     \-teal (local) initialize(...)
+  6. |       +-base::suppressWarnings(...)
+  7. |       | \-base::withCallingHandlers(...)
+  8. |       +-withr::with_envvar(...)
+  9. |       | \-base::force(code)
+ 10. |       \-super$initialize(...)
+ 11. |         \-shinytest2:::app_initialize(...)
+ 12. |           +-base::withCallingHandlers(...)
+ 13. |           \-shinytest2:::app_initialize_(self, private, ..., view = view)
+ 14. |             +-base::withCallingHandlers(...)
+ 15. |             \-self$wait_for_idle(duration = 200, timeout = private$load_timeout)
+ 16. |               \-shinytest2:::app_wait_for_idle(...)
+ 17. |                 \-shinytest2:::app_abort(self, private, "An error occurred while waiting for Shiny to be stable")
+ 18. |                   \-rlang::abort(..., app = self, call = call)
+ 19. |                     \-rlang:::signal_abort(cnd, .file)
+ 20. |                       \-base::signalCondition(cnd)
+ 21. +-shinytest2 (local) `&lt;fn&gt;`(`&lt;rlng_rrr&gt;`)
+ 22. | \-shinytest2:::app_abort(...)
+ 23. |   \-rlang::abort(..., app = self, call = call)
+ 24. |     \-rlang:::signal_abort(cnd, .file)
+ 25. |       \-base::signalCondition(cnd)
+ 26. \-shinytest2 (local) `&lt;fn&gt;`(`&lt;rlng_rrr&gt;`)
+ 27.   \-shinytest2:::app_abort(...)
+ 28.     \-rlang::abort(..., app = self, call = call)</error>
     </testcase>
-    <testcase time="0.588" classname="shinytest2_tm_g_gh_boxplot" name="toggle_slider_module_changing_dependant_widgets_outside_sets_proper_sliderInput_and_numericInput_values">
-      <skipped message="Reason: On CRAN ('test-shinytest2-tm_g_gh_boxplot.R:155:5')"/>
+    <testcase time="124.522" classname="shinytest2_tm_g_gh_boxplot" name="toggle_slider_module_changing_dependant_widgets_outside_sets_proper_sliderInput_and_numericInput_values">
+      <error type="error" message="Error in `app_initialize(self, private, app_dir = app_dir, ..., load_timeout = load_timeout, timeout = timeout, wait = wait, expect_values_screenshot_args = expect_values_screenshot_args, screenshot_args = screenshot_args, check_names = check_names, name = name, variant = variant, view = view, height = height, width = width, seed = seed, clean_logs = clean_logs, shiny_args = shiny_args, render_args = render_args, options = options)`: Shiny app did not become stable in 120000ms. ('test-shinytest2-tm_g_gh_boxplot.R:155:5')">Error in `app_initialize(self, private, app_dir = app_dir, ..., load_timeout = load_timeout, timeout = timeout, wait = wait, expect_values_screenshot_args = expect_values_screenshot_args, screenshot_args = screenshot_args, check_names = check_names, name = name, variant = variant, view = view, height = height, width = width, seed = seed, clean_logs = clean_logs, shiny_args = shiny_args, render_args = render_args, options = options)`: Shiny app did not become stable in 120000ms.
+Message: An error occurred while waiting for Shiny to be stable
+Caused by error in `app_wait_for_idle()`:
+! An error occurred while waiting for Shiny to be stable
+
+
+i You can inspect the failed AppDriver object via `rlang::last_error()$app`
+i AppDriver logs:
+{shinytest2} R  info   15:18:39.64 Start AppDriver initialization
+{shinytest2} R  info   15:18:39.81 Starting Shiny app
+{shinytest2} R  info   15:18:41.46 Creating new ChromoteSession
+{shinytest2} R  info   15:18:41.51 Navigating to Shiny app
+{shinytest2} R  info   15:18:42.85 Injecting shiny-tracer.js
+{chromote}   JS info   15:18:42.87 shinytest2; jQuery not found
+{chromote}   JS info   15:18:42.88 shinytest2; Loaded
+{shinytest2} R  info   15:18:42.88 Waiting for Shiny to become ready
+{chromote}   JS info   15:18:42.93 shinytest2; jQuery found
+{chromote}   JS info   15:18:42.93 shinytest2; Waiting for shiny session to connect
+{chromote}   JS info   15:18:43.33 shinytest2; Connected
+{shinytest2} R  info   15:18:43.34 Waiting for Shiny to become idle for 200ms within 120000ms
+{chromote}   JS info   15:18:43.35 shinytest2; Waiting for Shiny to be stable
+{chromote}   JS info   15:18:43.36 shinytest2; shiny:busy
+{chromote}   JS log    15:18:43.55 Teal: Sending document title: teal app to input: teal-teal_modules-app_title
+                                   (anonymous)             @ :522:10
+                                   _sendMessagesToHandlers @ shiny-javascript-1.14.0/shiny.min.js:443:9166
+                                   (anonymous)             @ shiny-javascript-1.14.0/shiny.min.js:443:10855
+                                   _sendMessagesToHandlers @ shiny-javascript-1.14.0/shiny.min.js:443:9166
+                                   dispatchMessage         @ shiny-javascript-1.14.0/shiny.min.js:443:9001
+                                   (anonymous)             @ shiny-javascript-1.14.0/shiny.min.js:443:4924
+                                   startActionQueueLoop    @ shiny-javascript-1.14.0/shiny.min.js:443:5210
+{shinytest2} R  info   15:20:43.36 Error while initializing AppDriver:
+                                   Shiny app did not become stable in 120000ms.
+                                   Message: An error occurred while waiting for Shiny to be stable
+                                   Caused by error in `app_wait_for_idle()`:
+                                   ! An error occurred while waiting for Shiny to be stable
+{shiny}      R  stderr ----------- Loading required package: shiny
+{shiny}      R  stderr ----------- Attempting to load the environment ‘package:stringr’
+{shiny}      R  stderr ----------- Loading required package: teal.data
+{shiny}      R  stderr ----------- Loading required package: teal.code
+{shiny}      R  stderr ----------- Loading required package: teal.slice
+{shiny}      R  stderr ----------- 
+{shiny}      R  stderr ----------- You are using teal version 1.2.1
+{shiny}      R  stderr ----------- 
+{shiny}      R  stderr ----------- Attaching package: ‘teal’
+{shiny}      R  stderr ----------- 
+{shiny}      R  stderr ----------- The following objects are masked from ‘package:teal.slice’:
+{shiny}      R  stderr ----------- 
+{shiny}      R  stderr -----------     as.teal_slices, teal_slices
+{shiny}      R  stderr ----------- 
+{shiny}      R  stderr ----------- Running application in test mode.
+{shiny}      R  stderr ----------- 
+{shiny}      R  stderr ----------- Listening on http://127.0.0.1:4569
+{shiny}      R  stderr ----------- Warning: Error in constr_anl_q: unused argument (param_id = "xaxis_param")
+{shiny}      R  stderr -----------   109: module
+{shiny}      R  stderr -----------   104: callModule
+{shiny}      R  stderr -----------   103: moduleServer
+{shiny}      R  stderr -----------   102: &lt;Anonymous&gt;
+{shiny}      R  stderr -----------   100: .call_teal_module
+{shiny}      R  stderr -----------    99: rlang::eval_tidy
+{shiny}      R  stderr -----------    98: observe
+{shiny}      R  stderr -----------    97: &lt;observer:observeEvent(activator())&gt;
+{shiny}      R  stderr -----------    14: &lt;Anonymous&gt;
+{shiny}      R  stderr -----------    12: &lt;Anonymous&gt;
+{shiny}      R  stderr -----------    11: &lt;Anonymous&gt;
+{shiny}      R  stderr -----------    10: base::do.call
+{shiny}      R  stderr -----------     9: base::saveRDS
+{shiny}      R  stderr -----------     8: base::withCallingHandlers
+{shiny}      R  stderr -----------     7: doTryCatch
+{shiny}      R  stderr -----------     6: tryCatchOne
+{shiny}      R  stderr -----------     5: tryCatchList
+{shiny}      R  stderr -----------     2: tryCatchList
+{shiny}      R  stderr -----------     1: base::tryCatch
+{shiny}      R  stderr ----------- Active module changed: app="teal app", module="Box Plot"
+
+
+Caused by error in `app_initialize_()`:
+! Shiny app did not become stable in 120000ms.
+Message: An error occurred while waiting for Shiny to be stable
+Caused by error in `app_wait_for_idle()`:
+! An error occurred while waiting for Shiny to be stable
+Backtrace:
+     x
+  1. +-teal.goshawk (local) tm_g_gh_boxplot_driver() at test-shinytest2-tm_g_gh_boxplot.R:155:5
+  2. | \-teal.goshawk:::init_teal_app_driver(...) at test-shinytest2-tm_g_gh_boxplot.R:2:3
+  3. |   +-testthat::with_mocked_bindings(...) at ./helper-TealAppDriver.R:21:3
+  4. |   \-TealAppDriver$new(teal::init(...)) at ./helper-TealAppDriver.R:24:7
+  5. |     \-teal (local) initialize(...)
+  6. |       +-base::suppressWarnings(...)
+  7. |       | \-base::withCallingHandlers(...)
+  8. |       +-withr::with_envvar(...)
+  9. |       | \-base::force(code)
+ 10. |       \-super$initialize(...)
+ 11. |         \-shinytest2:::app_initialize(...)
+ 12. |           +-base::withCallingHandlers(...)
+ 13. |           \-shinytest2:::app_initialize_(self, private, ..., view = view)
+ 14. |             +-base::withCallingHandlers(...)
+ 15. |             \-self$wait_for_idle(duration = 200, timeout = private$load_timeout)
+ 16. |               \-shinytest2:::app_wait_for_idle(...)
+ 17. |                 \-shinytest2:::app_abort(self, private, "An error occurred while waiting for Shiny to be stable")
+ 18. |                   \-rlang::abort(..., app = self, call = call)
+ 19. |                     \-rlang:::signal_abort(cnd, .file)
+ 20. |                       \-base::signalCondition(cnd)
+ 21. +-shinytest2 (local) `&lt;fn&gt;`(`&lt;rlng_rrr&gt;`)
+ 22. | \-shinytest2:::app_abort(...)
+ 23. |   \-rlang::abort(..., app = self, call = call)
+ 24. |     \-rlang:::signal_abort(cnd, .file)
+ 25. |       \-base::signalCondition(cnd)
+ 26. \-shinytest2 (local) `&lt;fn&gt;`(`&lt;rlng_rrr&gt;`)
+ 27.   \-shinytest2:::app_abort(...)
+ 28.     \-rlang::abort(..., app = self, call = call)</error>
     </testcase>
   </testsuite>
-  <testsuite name="shinytest2-tm_g_gh_correlationplot" timestamp="2026-08-21T15:09:01Z" hostname="4c19f4ee4256" tests="3" skipped="3" failures="0" errors="0" time="0.062">
-    <testcase time="0.0309999999999997" classname="shinytest2_tm_g_gh_correlationplot" name="e2e_tm_g_gh_correlationplot_initializes_and_renders_a_plot">
-      <skipped message="Reason: testing depth 3 is below current testing specification 5 ('test-shinytest2-tm_g_gh_correlationplot.R:28:3')"/>
-    </testcase>
-    <testcase time="0.016" classname="shinytest2_tm_g_gh_correlationplot" name="e2e_tm_g_gh_correlationplot_starts_with_expected_label_and_encoding_selections.">
-      <skipped message="Reason: testing depth 3 is below current testing specification 5 ('test-shinytest2-tm_g_gh_correlationplot.R:49:5')"/>
-    </testcase>
-    <testcase time="0.0149999999999997" classname="shinytest2_tm_g_gh_correlationplot" name="e2e_tm_g_gh_correlationplot_changing_pick_changes_plot_and_does_not_throw_validation_errors.">
-      <skipped message="Reason: testing depth 3 is below current testing specification 5 ('test-shinytest2-tm_g_gh_correlationplot.R:70:3')"/>
-    </testcase>
+  <testsuite name="shinytest2-tm_g_gh_correlationplot" timestamp="2026-08-21T15:20:43Z" hostname="74a072bd0fd9" tests="27" skipped="0" failures="0" errors="0" time="123.638">
+    <testcase time="13.563" classname="shinytest2_tm_g_gh_correlationplot" name="e2e_tm_g_gh_correlationplot_initializes_and_renders_a_plot"/>
+    <testcase time="0.00600000000008549" classname="shinytest2_tm_g_gh_correlationplot" name="e2e_tm_g_gh_correlationplot_initializes_and_renders_a_plot"/>
+    <testcase time="0.0909999999998945" classname="shinytest2_tm_g_gh_correlationplot" name="e2e_tm_g_gh_correlationplot_initializes_and_renders_a_plot"/>
+    <testcase time="0.0120000000000573" classname="shinytest2_tm_g_gh_correlationplot" name="e2e_tm_g_gh_correlationplot_initializes_and_renders_a_plot"/>
+    <testcase time="13.7569999999999" classname="shinytest2_tm_g_gh_correlationplot" name="e2e_tm_g_gh_correlationplot_starts_with_expected_label_and_encoding_selections."/>
+    <testcase time="0.0110000000000809" classname="shinytest2_tm_g_gh_correlationplot" name="e2e_tm_g_gh_correlationplot_starts_with_expected_label_and_encoding_selections."/>
+    <testcase time="0.0509999999999309" classname="shinytest2_tm_g_gh_correlationplot" name="e2e_tm_g_gh_correlationplot_starts_with_expected_label_and_encoding_selections."/>
+    <testcase time="0.0510000000000446" classname="shinytest2_tm_g_gh_correlationplot" name="e2e_tm_g_gh_correlationplot_starts_with_expected_label_and_encoding_selections."/>
+    <testcase time="0.0510000000000446" classname="shinytest2_tm_g_gh_correlationplot" name="e2e_tm_g_gh_correlationplot_starts_with_expected_label_and_encoding_selections."/>
+    <testcase time="0.0509999999999309" classname="shinytest2_tm_g_gh_correlationplot" name="e2e_tm_g_gh_correlationplot_starts_with_expected_label_and_encoding_selections."/>
+    <testcase time="0.0520000000000209" classname="shinytest2_tm_g_gh_correlationplot" name="e2e_tm_g_gh_correlationplot_starts_with_expected_label_and_encoding_selections."/>
+    <testcase time="0.0499999999999545" classname="shinytest2_tm_g_gh_correlationplot" name="e2e_tm_g_gh_correlationplot_starts_with_expected_label_and_encoding_selections."/>
+    <testcase time="19.047" classname="shinytest2_tm_g_gh_correlationplot" name="e2e_tm_g_gh_correlationplot_changing_pick_changes_plot_and_does_not_throw_validation_errors._xaxis_param"/>
+    <testcase time="0.0500000000000682" classname="shinytest2_tm_g_gh_correlationplot" name="e2e_tm_g_gh_correlationplot_changing_pick_changes_plot_and_does_not_throw_validation_errors._xaxis_param"/>
+    <testcase time="0.00799999999992451" classname="shinytest2_tm_g_gh_correlationplot" name="e2e_tm_g_gh_correlationplot_changing_pick_changes_plot_and_does_not_throw_validation_errors._xaxis_param"/>
+    <testcase time="19.063" classname="shinytest2_tm_g_gh_correlationplot" name="e2e_tm_g_gh_correlationplot_changing_pick_changes_plot_and_does_not_throw_validation_errors._yaxis_param"/>
+    <testcase time="0.0520000000000209" classname="shinytest2_tm_g_gh_correlationplot" name="e2e_tm_g_gh_correlationplot_changing_pick_changes_plot_and_does_not_throw_validation_errors._yaxis_param"/>
+    <testcase time="0.00599999999997181" classname="shinytest2_tm_g_gh_correlationplot" name="e2e_tm_g_gh_correlationplot_changing_pick_changes_plot_and_does_not_throw_validation_errors._yaxis_param"/>
+    <testcase time="19.3910000000001" classname="shinytest2_tm_g_gh_correlationplot" name="e2e_tm_g_gh_correlationplot_changing_pick_changes_plot_and_does_not_throw_validation_errors._xaxis_var"/>
+    <testcase time="0.0499999999999545" classname="shinytest2_tm_g_gh_correlationplot" name="e2e_tm_g_gh_correlationplot_changing_pick_changes_plot_and_does_not_throw_validation_errors._xaxis_var"/>
+    <testcase time="0.00599999999997181" classname="shinytest2_tm_g_gh_correlationplot" name="e2e_tm_g_gh_correlationplot_changing_pick_changes_plot_and_does_not_throw_validation_errors._xaxis_var"/>
+    <testcase time="19.3720000000001" classname="shinytest2_tm_g_gh_correlationplot" name="e2e_tm_g_gh_correlationplot_changing_pick_changes_plot_and_does_not_throw_validation_errors._yaxis_var"/>
+    <testcase time="0.0520000000000209" classname="shinytest2_tm_g_gh_correlationplot" name="e2e_tm_g_gh_correlationplot_changing_pick_changes_plot_and_does_not_throw_validation_errors._yaxis_var"/>
+    <testcase time="0.00499999999999545" classname="shinytest2_tm_g_gh_correlationplot" name="e2e_tm_g_gh_correlationplot_changing_pick_changes_plot_and_does_not_throw_validation_errors._yaxis_var"/>
+    <testcase time="18.7329999999999" classname="shinytest2_tm_g_gh_correlationplot" name="e2e_tm_g_gh_correlationplot_changing_pick_changes_plot_and_does_not_throw_validation_errors._trt_group"/>
+    <testcase time="0.0510000000000446" classname="shinytest2_tm_g_gh_correlationplot" name="e2e_tm_g_gh_correlationplot_changing_pick_changes_plot_and_does_not_throw_validation_errors._trt_group"/>
+    <testcase time="0.00599999999997181" classname="shinytest2_tm_g_gh_correlationplot" name="e2e_tm_g_gh_correlationplot_changing_pick_changes_plot_and_does_not_throw_validation_errors._trt_group"/>
   </testsuite>
-  <testsuite name="tm_g_gh_correlationplot" timestamp="2026-08-21T15:09:01Z" hostname="4c19f4ee4256" tests="12" skipped="0" failures="0" errors="0" time="0.185">
-    <testcase time="0.0970000000000004" classname="tm_g_gh_correlationplot" name="tm_g_gh_correlationplot_can_be_created_with_default_arguments"/>
-    <testcase time="0.00300000000000011" classname="tm_g_gh_correlationplot" name="tm_g_gh_correlationplot_can_be_created_with_default_arguments"/>
-    <testcase time="0.0140000000000002" classname="tm_g_gh_correlationplot" name="tm_g_gh_correlationplot_can_be_created_with_choices_selected_arguments"/>
-    <testcase time="0.00300000000000011" classname="tm_g_gh_correlationplot" name="tm_g_gh_correlationplot_can_be_created_with_choices_selected_arguments"/>
-    <testcase time="0.0119999999999996" classname="tm_g_gh_correlationplot" name="tm_g_gh_correlationplot_can_be_created_with_custom_picks_arguments"/>
-    <testcase time="0.00300000000000011" classname="tm_g_gh_correlationplot" name="tm_g_gh_correlationplot_can_be_created_with_custom_picks_arguments"/>
-    <testcase time="0.0180000000000007" classname="tm_g_gh_correlationplot" name="tm_g_gh_correlationplot_handles_multiple_parameter_combinations"/>
-    <testcase time="0.00399999999999956" classname="tm_g_gh_correlationplot" name="tm_g_gh_correlationplot_handles_multiple_parameter_combinations"/>
-    <testcase time="0.0120000000000005" classname="tm_g_gh_correlationplot" name="tm_g_gh_correlationplot_accepts_custom_color_and_shape_specifications_with_choices_selected"/>
-    <testcase time="0.00300000000000011" classname="tm_g_gh_correlationplot" name="tm_g_gh_correlationplot_accepts_custom_color_and_shape_specifications_with_choices_selected"/>
-    <testcase time="0.0129999999999999" classname="tm_g_gh_correlationplot" name="tm_g_gh_correlationplot_accepts_line_arguments_with_choices_selected"/>
-    <testcase time="0.00300000000000011" classname="tm_g_gh_correlationplot" name="tm_g_gh_correlationplot_accepts_line_arguments_with_choices_selected"/>
+  <testsuite name="tm_g_gh_correlationplot" timestamp="2026-08-21T15:22:47Z" hostname="74a072bd0fd9" tests="12" skipped="0" failures="0" errors="0" time="0.261">
+    <testcase time="0.177999999999997" classname="tm_g_gh_correlationplot" name="tm_g_gh_correlationplot_can_be_created_with_default_arguments"/>
+    <testcase time="0.00300000000004275" classname="tm_g_gh_correlationplot" name="tm_g_gh_correlationplot_can_be_created_with_default_arguments"/>
+    <testcase time="0.01299999999992" classname="tm_g_gh_correlationplot" name="tm_g_gh_correlationplot_can_be_created_with_choices_selected_arguments"/>
+    <testcase time="0.00200000000006639" classname="tm_g_gh_correlationplot" name="tm_g_gh_correlationplot_can_be_created_with_choices_selected_arguments"/>
+    <testcase time="0.0130000000000337" classname="tm_g_gh_correlationplot" name="tm_g_gh_correlationplot_can_be_created_with_custom_picks_arguments"/>
+    <testcase time="0.00199999999995271" classname="tm_g_gh_correlationplot" name="tm_g_gh_correlationplot_can_be_created_with_custom_picks_arguments"/>
+    <testcase time="0.0180000000000291" classname="tm_g_gh_correlationplot" name="tm_g_gh_correlationplot_handles_multiple_parameter_combinations"/>
+    <testcase time="0.00199999999995271" classname="tm_g_gh_correlationplot" name="tm_g_gh_correlationplot_handles_multiple_parameter_combinations"/>
+    <testcase time="0.0120000000000573" classname="tm_g_gh_correlationplot" name="tm_g_gh_correlationplot_accepts_custom_color_and_shape_specifications_with_choices_selected"/>
+    <testcase time="0.00299999999992906" classname="tm_g_gh_correlationplot" name="tm_g_gh_correlationplot_accepts_custom_color_and_shape_specifications_with_choices_selected"/>
+    <testcase time="0.0120000000000573" classname="tm_g_gh_correlationplot" name="tm_g_gh_correlationplot_accepts_line_arguments_with_choices_selected"/>
+    <testcase time="0.00299999999992906" classname="tm_g_gh_correlationplot" name="tm_g_gh_correlationplot_accepts_line_arguments_with_choices_selected"/>
   </testsuite>
 </testsuites>
