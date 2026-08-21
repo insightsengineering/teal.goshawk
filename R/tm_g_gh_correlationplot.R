@@ -490,11 +490,6 @@ srv_g_correlationplot <- function(id,
     validated_q <- reactive({
       validate(
         teal::need_input(
-          inputId = c("xaxis_param-variables-selected", "yaxis_param-variables-selected"),
-          condition = identical(selectors$xaxis_param()$variables$selected, selectors$yaxis_param()$variables$selected),
-          message = "X-Axis and Y-Axis biomarkers must be from the same biomarker variable"
-        ),
-        teal::need_input(
           inputId = "xaxis_param-values-selected",
           condition = length(xaxis_param_sel()) != 0,
           message = "Please select an X-Axis biomarker"
