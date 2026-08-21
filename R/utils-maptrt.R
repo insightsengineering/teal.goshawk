@@ -13,7 +13,7 @@
 #' @export
 #'
 #' @examples
-#' ADSL <- rADSL
+#' ADSL <- teal.data::rADSL
 #'
 #' # get treatment mapping code
 #' maptrt(df_armvar = ADSL$ARMCD, code = "M")

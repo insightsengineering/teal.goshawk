@@ -14,7 +14,7 @@ tm_g_gh_correlationplot(
   yaxis_param = teal.picks::picks(teal.picks::variables("PARAMCD", "PARAMCD"),
     teal.picks::values(selected = "CRP", multiple = FALSE), check_dataset = FALSE),
   yaxis_var = teal.picks::variables(c("AVAL", "BASE", "CHG", "PCHG"), "AVAL"),
-  trt_group = teal.picks::variables(selected = "ARM"),
+  trt_group = teal.picks::variables(dplyr::starts_with("ARM"), selected = "ARM"),
   color_manual = NULL,
   shape_manual = NULL,
   facet_ncol = 2,
@@ -169,9 +169,8 @@ data <- within(data, {
   # assign LOQ flag symbols: circles for "N" and triangles for "Y", squares for "NA"
   .shape_manual <- c("N" = 1, "Y" = 2, "NA" = 0)
 
-  set.seed(1) # @linksto ADSL ADLB
-  ADSL <- rADSL
-  ADLB <- rADLB
+  ADSL <- teal.data::rADSL
+  ADLB <- teal.data::rADLB
   .var_labels <- lapply(ADLB, function(x) attributes(x)$label)
   ADLB <- ADLB \%>\%
     mutate(AVISITCD = case_when(
