@@ -301,7 +301,7 @@ ui_g_boxplot <- function(id,
         xaxis_param = param,
         xaxis_var = xaxis_var,
         yaxis_var = yaxis_var,
-        facet_var = facet_var,
+        facet = facet_var,
         trt_group = trt_group,
         xparam_label = "Select a Biomarker"
       ),
@@ -409,6 +409,27 @@ srv_g_boxplot <- function(id,
           inputId = "yaxis_var-variables-selected",
           condition = length(yaxis_var_sel()) != 0,
           message = "Please select a Y-Axis variable"
+        ),
+        teal::need_input(
+          inputId = "facet_ncol",
+          condition = checkmate::test_integerish(input$facet_ncol, lower = 1, null.ok = TRUE),
+          message = "Please select a facet column integer that is greater than 0"
+        )
+      )
+      validate(
+        teal::need_input(
+          inputId = c("xaxis_var-variables-selected", "trt_group-variables-selected"),
+          condition = isFALSE(xaxis_var_sel() %in% c("ACTARM", "ARM")) || isTRUE(xaxis_var_sel() == trt_group_sel()),
+          message = sprintf(
+            "You can not choose %s as x-axis variable for treatment variable %s.", xaxis_var_sel(), trt_group_sel()
+          )
+        ),
+        teal::need_input(
+          inputId = c("facet_var-variables-selected", "trt_group-variables-selected"),
+          condition = isFALSE(facet_var_sel() %in% c("ACTARM", "ARM")) || isTRUE(facet_var_sel() != trt_group_sel()),
+          message = sprintf(
+            "You can not choose %s as faceting variable for treatment variable %s.", facet_var_sel(), trt_group_sel()
+          )
         )
       )
       data_with_card()
@@ -429,27 +450,13 @@ srv_g_boxplot <- function(id,
         ANL = anl_q()$ANL
       )
     })
-    yrange_slider_state <- toggle_slider_server("yrange_scale", data_state)
+    yrange_slider <- toggle_slider_server("yrange_scale", data_state)
     keep_data_const_opts_updated(session, input, anl_q, param_sel)
 
     horizontal_line <- srv_arbitrary_lines("hline_arb")
 
     iv_r <- reactive({
       iv <- shinyvalidate::InputValidator$new()
-
-      iv$add_rule("xaxis_var", ~ if (length(xaxis_var_sel()) > 0 && xaxis_var_sel() %in% c("ACTARM", "ARM") && isTRUE(xaxis_var_sel() != trt_group_sel())) {
-        sprintf("You can not choose %s as x-axis variable for treatment variable %s.", xaxis_var_sel(), trt_group_sel())
-      })
-
-      iv$add_rule("facet_var", ~ if (length(facet_var_sel()) > 0 && facet_var_sel() %in% c("ACTARM", "ARM") && isTRUE(facet_var_sel() != trt_group_sel())) {
-        sprintf("You can not choose %s as faceting variable for treatment variable %s.", facet_var_sel(), trt_group_sel())
-      })
-
-      iv_facet <- shinyvalidate::InputValidator$new()
-      iv_facet$condition(~ !is.null(facet_var_sel()) && length(facet_var_sel()) > 0)
-      iv_facet$add_rule("facet_ncol", plots_per_row_validate_rules(required = FALSE))
-      iv$add_validator(iv_facet)
-
       iv$add_validator(horizontal_line()$iv_r())
       iv$add_validator(anl_q_output()$iv_r())
       iv$enable()
@@ -460,8 +467,21 @@ srv_g_boxplot <- function(id,
       teal::validate_inputs(iv_r())
       req(anl_q())
 
-      facet_var_val <- `if`(is.null(facet_var_sel()) || length(facet_var_sel()) == 0, "None", facet_var_sel())
-      ylim <- yrange_slider_state$value
+      facet_var_val <- if (is.null(facet_var_sel()) || length(facet_var_sel()) == 0) {
+        "None"
+      } else {
+        facet_var_sel()
+      }
+
+      validate( # Validation must occur after anl_constraint() has valid data
+        teal::need_input(
+          inputId = "yrange_scale",
+          condition = checkmate::test_numeric(yrange_slider$value, len = 2) &&
+            yrange_slider$value[1] < yrange_slider$value[2],
+          message = "Y-Axis Range Zoom: Invalid range"
+        )
+      )
+      ylim <- yrange_slider$value
       facet_ncol <- input$facet_ncol
 
       alpha <- input$alpha
@@ -547,7 +567,7 @@ srv_g_boxplot <- function(id,
           p
         })
       )
-    }), 800)
+      }), 800)
 
     create_table <- debounce(reactive({
       req(iv_r()$is_valid())

@@ -1,4 +1,4 @@
-skip("To be refactored")
+local_log_threshold("WARN")
 
 tm_g_gh_boxplot_driver <- function() {
   init_teal_app_driver(
