@@ -143,14 +143,23 @@ check_color <- function(col) {
 }
 
 # to check the arbitrary line arguments
-validate_line_arb_arg <- function(line_arb, line_arb_color, line_arb_label) {
-  checkmate::assert_numeric(line_arb)
+validate_line_arb_arg <- function(
+  line_arb,
+  line_arb_color,
+  line_arb_label,
+  line_arg_var_name = checkmate::vname(line_arb),
+  line_arb_color_var_name = checkmate::vname(line_arb_color),
+  line_arb_label_var_name = checkmate::vname(line_arb_label)
+) {
+  checkmate::assert_numeric(line_arb, .var.name = line_arg_var_name)
   if (length(line_arb) > 0) {
     checkmate::assert(
+      .var.name = line_arb_color_var_name,
       checkmate::check_string(line_arb_color),
       checkmate::check_character(line_arb_color, len = length(line_arb))
     )
     checkmate::assert(
+      .var.name = line_arb_label_var_name,
       checkmate::check_string(line_arb_label),
       checkmate::check_character(line_arb_label, len = length(line_arb))
     )
@@ -162,10 +171,12 @@ validate_line_vars_arg <- function(line_vars, line_vars_colors, line_vars_labels
   checkmate::assert_character(line_vars)
   if (length(line_vars) > 0) {
     checkmate::assert(
+      .var.name = "line_vars_colors",
       checkmate::check_string(line_vars_colors),
       checkmate::check_character(line_vars_colors, len = length(line_vars))
     )
     checkmate::assert(
+      .var.name = "line_vars_labels",
       checkmate::check_string(line_vars_labels),
       checkmate::check_character(line_vars_labels, len = length(line_vars))
     )
