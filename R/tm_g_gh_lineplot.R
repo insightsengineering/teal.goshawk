@@ -249,7 +249,7 @@ tm_g_gh_lineplot <- function(label,
   shape_choices <- if (is.character(shape_choices)) {
     teal.picks::variables(shape_choices, NULL, multiple = FALSE)
   } else {
-    migrate_choices_selected_to_variables(shape_choices)
+    migrate_choices_selected_to_variables(shape_choices, null.ok = TRUE)
   }
 
   xaxis_var <- create_picks_helper(teal.picks::datasets(dataname, dataname), xaxis_var)
