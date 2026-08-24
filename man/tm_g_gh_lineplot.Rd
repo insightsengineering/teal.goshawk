@@ -11,11 +11,11 @@ tm_g_gh_lineplot(
   param = teal.picks::picks(teal.picks::variables("PARAMCD", "PARAMCD"),
     teal.picks::values(selected = "ALT", multiple = FALSE), check_dataset = FALSE),
   param_var_label = "PARAM",
-  xaxis_var = teal.picks::variables(c("AVISITCD", "AVISIT"), "AVISITCD"),
+  xaxis_var = teal.picks::variables(dplyr::starts_with("AVISIT"), "AVISITCD"),
   yaxis_var = teal.picks::variables(c("AVAL", "CHG", "PCHG"), "AVAL"),
   xvar_level = NULL,
-  filter_var = yaxis_var,
-  filter_var_choices = filter_var,
+  filter_var = lifecycle::deprecated(),
+  filter_var_choices = lifecycle::deprecated(),
   trt_group = teal.picks::variables(selected = "ARM"),
   trt_group_level = NULL,
   shape_choices = NULL,
@@ -59,11 +59,11 @@ laboratory data frame \code{ADLB}.}
 respective \code{goshawk} function.}
 
 \item{xvar_level}{vector that can be used to define the factor level of \code{xvar}. Only use it when
-\code{xvar} is character or factor.}
+\code{xaxis_var} is of type character or factor.}
 
-\item{filter_var}{data constraint variable.}
+\item{filter_var}{\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#deprecated}{\figure{lifecycle-deprecated.svg}{options: alt='[Deprecated]'}}}{\strong{[Deprecated]}} data constraint variable.}
 
-\item{filter_var_choices}{data constraint variable choices.}
+\item{filter_var_choices}{\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#deprecated}{\figure{lifecycle-deprecated.svg}{options: alt='[Deprecated]'}}}{\strong{[Deprecated]}} data constraint variable choices.}
 
 \item{trt_group}{(\code{variables} or \code{choices_selected}) object with available choices and pre-selected option
 for variable names representing treatment group e.g. \code{ARM}.}

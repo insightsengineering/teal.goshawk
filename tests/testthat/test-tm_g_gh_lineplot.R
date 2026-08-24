@@ -106,3 +106,58 @@ test_that("tm_g_gh_lineplot accepts line arguments with picks", {
   expect_s3_class(module, "teal_module")
   expect_equal(module$label, "Line Plot - With Lines")
 })
+
+describe("tm_g_gh_lineplot: invalid arguments", {
+  wrong_params <- list(
+    label = 2L,
+    dataname = list("A list of strings"),
+    param = list("A list of strings"),
+    param_var_label = 123,
+    xaxis_var = 1.5,
+    yaxis_var = "1.5",
+    trt_group = TRUE,
+    stat = 42,
+    color_manual = c(1, 2, 3, 4),
+    rotate_xlab = data.frame(letters = letters),
+    hline_arb = c("0.02", "0.05"),
+    plot_height = c("600", "300", "2000"),
+    plot_width = c("1000", "500", "2000"),
+    plot_font_size = c("12", "8", "20"),
+    dodge = c("0.4", "0", "1"),
+    count_threshold = "0",
+    table_font_size = c("12", "4", "20"),
+    dot_size = c("2", "1", "12"),
+    plot_relative_height_value = "1000",
+    pre_output = 123L,
+    post_output = list(TRUE),
+    transformators = list("not a function")
+  )
+  for (wrong_param in names(wrong_params)) {
+    it(paste0("throws an error when ", wrong_param, " is invalid"), {
+      args <- list(label = "module")
+      args[[wrong_param]] <- wrong_params[[wrong_param]]
+      expect_error(
+        suppressWarnings(do.call(tm_g_gh_lineplot, args), classes = "pick_delayed"),
+        sprintf("Assertion on '%s' failed", wrong_param)
+      )
+    })
+  }
+
+  wrong_params2 <- list(
+    hline_arb_label = c(1, 2), hline_arb_color = c(1, 2)
+  )
+  for (wrong_param2 in names(wrong_params2)) {
+    it(paste0("throws an error when ", wrong_param2, " is invalid"), {
+      args <- list(
+        label = "module",
+        hline_arb = c(0.02, 0.05)
+      )
+      args[[wrong_param2]] <- wrong_params2[[wrong_param2]]
+      expect_error(
+        suppressWarnings(do.call(tm_g_gh_lineplot, args), classes = "pick_delayed"),
+        sprintf("Assertion on '%s' failed", wrong_param2)
+      )
+    })
+  }
+})
+

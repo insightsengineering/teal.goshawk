@@ -12,7 +12,7 @@
 #' @param param_var_label single name of variable in analysis data that includes parameter labels.
 #' @param xaxis_var (`variables` or `choices_selected`) single name of variable in analysis data that is used as x-axis in the plot.
 #' @param xvar_level vector that can be used to define the factor level of `xvar`. Only use it when
-#' `xvar` is character or factor.
+#' `xaxis_var` is of type character or factor.
 #' @param filter_var `r badge("deprecated")` data constraint variable.
 #' @param filter_var_choices `r badge("deprecated")` data constraint variable choices.
 #' @param yaxis_var (`variables` or `choices_selected`) single name of variable in analysis data that is used as summary variable in the
@@ -177,21 +177,27 @@ tm_g_gh_lineplot <- function(label,
 
   checkmate::assert_string(label)
   checkmate::assert_string(dataname)
-  checkmate::assert_string(param_var_label)
-  checkmate::assert_string(stat)
-
   checkmate::assert_multi_class(param, c("choices_selected", "picks"))
+  checkmate::assert_string(param_var_label)
+
   checkmate::assert_multi_class(xaxis_var, c("choices_selected", "variables", "picks"))
   checkmate::assert_multi_class(yaxis_var, c("choices_selected", "variables", "picks"))
+  checkmate::assert_character(xvar_level, null.ok = TRUE, names = "named")
+
   checkmate::assert_multi_class(trt_group, c("choices_selected", "variables", "picks"))
+  checkmate::assert_character(trt_group_level, null.ok = TRUE, names = "named")
 
   checkmate::assert_multi_class(shape_choices, c("choices_selected", "variables", "character"), null.ok = TRUE)
+  checkmate::assert_string(stat)
 
-  checkmate::assert_flag(rotate_xlab)
-
-  checkmate::assert_character(color_manual, null.ok = TRUE)
   checkmate::assert_character(hline_arb_color)
   checkmate::assert_character(hline_arb_label)
+  validate_line_arb_arg(hline_arb, hline_arb_color, hline_arb_label)
+
+  checkmate::assert_character(color_manual, null.ok = TRUE)
+  checkmate::assert(.var.name = "xtick", checkmate::check_class(xtick, "waiver"), checkmate::check_numeric(xtick))
+  checkmate::assert(.var.name = "xlabel", checkmate::check_class(xlabel, "waiver"), checkmate::check_character(xlabel))
+  checkmate::assert_flag(rotate_xlab)
   checkmate::assert_numeric(plot_height, len = 3, any.missing = FALSE, finite = TRUE)
   checkmate::assert_numeric(plot_height[1], lower = plot_height[2], upper = plot_height[3], .var.name = "plot_height")
   checkmate::assert_numeric(plot_width, len = 3, any.missing = FALSE, null.ok = TRUE, finite = TRUE)
@@ -199,6 +205,11 @@ tm_g_gh_lineplot <- function(label,
     plot_width[1],
     lower = plot_width[2], upper = plot_width[3], null.ok = TRUE, .var.name = "plot_width"
   )
+  checkmate::assert_numeric(plot_font_size, len = 3, any.missing = FALSE, finite = TRUE)
+  checkmate::assert_numeric(dodge, len = 3, any.missing = FALSE, finite = TRUE)
+  checkmate::assert_multi_class(pre_output, c("shiny.tag", "shiny.tag.list"), null.ok = TRUE)
+  checkmate::assert_multi_class(post_output, c("shiny.tag", "shiny.tag.list"), null.ok = TRUE)
+  checkmate::assert_number(count_threshold)
   checkmate::assert_numeric(table_font_size, len = 3, any.missing = FALSE, null.ok = TRUE, finite = TRUE)
   checkmate::assert_numeric(dot_size, len = 3)
   checkmate::assert_numeric(
@@ -207,13 +218,7 @@ tm_g_gh_lineplot <- function(label,
     null.ok = TRUE, .var.name = "table_font_size"
   )
   checkmate::assert_number(plot_relative_height_value, lower = 500, upper = 5000)
-  checkmate::assert_number(count_threshold)
-  checkmate::assert_numeric(dodge, len = 3, any.missing = FALSE, finite = TRUE)
-  checkmate::assert_numeric(plot_font_size, len = 3, any.missing = FALSE, finite = TRUE)
-  checkmate::assert_multi_class(pre_output, c("shiny.tag", "shiny.tag.list"), null.ok = TRUE)
-  checkmate::assert_multi_class(post_output, c("shiny.tag", "shiny.tag.list"), null.ok = TRUE)
-
-  validate_line_arb_arg(hline_arb, hline_arb_color, hline_arb_label)
+  checkmate::assert_list(transformators, types = "teal_transform_module")
 
   if (lifecycle::is_present(param_var)) {
     lifecycle::deprecate_warn(
@@ -249,15 +254,18 @@ tm_g_gh_lineplot <- function(label,
   xaxis_var <- create_picks_helper(teal.picks::datasets(dataname, dataname), xaxis_var)
   yaxis_var <- create_picks_helper(teal.picks::datasets(dataname, dataname), yaxis_var)
   trt_group <- create_picks_helper(teal.picks::datasets(dataname, dataname), trt_group)
-if (!is.null(shape_choices)) shape_choices <- create_picks_helper(teal.picks::datasets(dataname, dataname), shape_choices)
 
   param <- force_pick_selection(param, which = "values")
   trt_group <- force_pick_selection(trt_group, which = "variables")
   xaxis_var <- force_pick_selection(xaxis_var, which = "variables")
   yaxis_var <- force_pick_selection(yaxis_var, which = "variables")
 
-  shape_choices <- force_pick_selection(shape_choices, which = "variables")
-  attr(shape_choices$variables, "allow-clear") <- TRUE # Enable clearance of selection
+  if (!is.null(shape_choices)) {
+    browser()
+    shape_choices <- create_picks_helper(teal.picks::datasets(dataname, dataname), shape_choices)
+    shape_choices <- force_pick_selection(shape_choices, which = "variables")
+    attr(shape_choices$variables, "allow-clear") <- TRUE # Enable clearance of selection
+  }
 
   args <- as.list(environment())
 
