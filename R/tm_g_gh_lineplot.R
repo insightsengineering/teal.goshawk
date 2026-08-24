@@ -13,8 +13,8 @@
 #' @param xaxis_var (`variables` or `choices_selected`) single name of variable in analysis data that is used as x-axis in the plot.
 #' @param xvar_level vector that can be used to define the factor level of `xvar`. Only use it when
 #' `xvar` is character or factor.
-#' @param filter_var data constraint variable.
-#' @param filter_var_choices data constraint variable choices.
+#' @param filter_var `r badge("deprecated")` data constraint variable.
+#' @param filter_var_choices `r badge("deprecated")` data constraint variable choices.
 #' @param yaxis_var (`variables` or `choices_selected`) single name of variable in analysis data that is used as summary variable in the
 #' respective `goshawk` function.
 #' @param trt_group (`variables` or `choices_selected`) object with available choices and pre-selected option
@@ -138,8 +138,8 @@ tm_g_gh_lineplot <- function(label,
                              xaxis_var = teal.picks::variables(dplyr::starts_with("AVISIT"), "AVISITCD"),
                              yaxis_var = teal.picks::variables(c("AVAL", "CHG", "PCHG"), "AVAL"),
                              xvar_level = NULL,
-                             filter_var = yaxis_var,
-                             filter_var_choices = filter_var,
+                             filter_var = lifecycle::deprecated(),
+                             filter_var_choices = lifecycle::deprecated(),
                              trt_group = teal.picks::variables(selected = "ARM"),
                              trt_group_level = NULL,
                              shape_choices = NULL,
@@ -166,6 +166,15 @@ tm_g_gh_lineplot <- function(label,
                              plot_relative_height_value = 1000,
                              transformators = list()) {
   message("Initializing tm_g_gh_lineplot")
+
+  if (lifecycle::is_present(filter_var)) {
+    lifecycle::deprecate_stop("0.6.0", "tm_g_gh_lineplot(filter_var)", details = "Variable has been removed.")
+  }
+
+  if (lifecycle::is_present(filter_var_choices)) {
+    lifecycle::deprecate_stop("0.6.0", "tm_g_gh_lineplot(filter_var_choices)", details = "Variable has been removed.")
+  }
+
   checkmate::assert_string(label)
   checkmate::assert_string(dataname)
   checkmate::assert_string(param_var_label)

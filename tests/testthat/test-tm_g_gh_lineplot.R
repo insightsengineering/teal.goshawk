@@ -1,7 +1,4 @@
-# Tests for tm_g_gh_lineplot with choices_selected arguments
-threshold <- logger::log_threshold(namespace = "teal.goshawk")
-logger::log_threshold("ERROR", namespace = "teal.goshawk")
-withr::defer(logger::log_threshold(threshold, namespace = "teal.goshawk"))
+local_log_threshold("WARN")
 
 test_that("tm_g_gh_lineplot can be created with default arguments", {
   module <- suppressWarnings(
