@@ -6,11 +6,12 @@
 \usage{
 tm_g_gh_density_distribution_plot(
   label,
-  dataname,
-  param_var,
-  param,
-  xaxis_var,
-  trt_group,
+  dataname = "ADLB",
+  param_var = lifecycle::deprecated(),
+  param = teal.picks::picks(teal.picks::variables("PARAMCD", "PARAMCD"),
+    teal.picks::values(selected = "ALT", multiple = FALSE), check_dataset = FALSE),
+  xaxis_var = teal.picks::variables(c("AVAL", "BASE", "CHG", "PCHG"), "AVAL"),
+  trt_group = teal.picks::variables(dplyr::starts_with("ARM"), selected = "ARM"),
   color_manual = NULL,
   color_comb = NULL,
   plot_height = c(500, 200, 2000),
@@ -31,15 +32,17 @@ tm_g_gh_density_distribution_plot(
 \arguments{
 \item{label}{menu item label of the module in the teal app.}
 
-\item{dataname}{analysis data passed to the data argument of \code{\link[teal]{init}}. E.g. \code{ADaM} structured}
+\item{dataname}{analysis data passed to the data argument of \code{\link[teal]{init}}. E.g. \code{ADaM} structured
+laboratory data frame \code{ADLB}.}
 
-\item{param_var}{name of variable containing biomarker codes e.g. \code{PARAMCD}.}
+\item{param_var}{\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#deprecated}{\figure{lifecycle-deprecated.svg}{options: alt='[Deprecated]'}}}{\strong{[Deprecated]}} name of variable containing biomarker codes e.g. \code{PARAMCD}.}
 
-\item{param}{biomarker selected.}
+\item{param}{(\code{picks} or \code{choices_selected}) biomarker selected.}
 
-\item{xaxis_var}{name of variable containing biomarker results displayed on \code{x-axis} e.g. \code{BASE}.}
+\item{xaxis_var}{(\code{variables} or \code{choices_selected})
+name of variable containing biomarker results displayed on \code{x-axis} e.g. \code{BASE}.}
 
-\item{trt_group}{\code{\link[teal.transform]{choices_selected}} object with available choices and pre-selected option
+\item{trt_group}{(\code{variables} or \code{choices_selected}) object with available choices and pre-selected option
 for variable names representing treatment group e.g. \code{ARM}.}
 
 \item{color_manual}{vector of colors applied to treatment values.}
@@ -80,9 +83,6 @@ To learn more check \code{vignette("transform-input-data", package = "teal")}.}
 \description{
 This teal module renders the UI and calls the functions that create a density distribution plot
 and an accompanying summary table.
-}
-\details{
-None
 }
 \section{Reporting}{
 
@@ -154,10 +154,13 @@ app <- init(
     tm_g_gh_density_distribution_plot(
       label = "Density Distribution Plot",
       dataname = "ADLB",
-      param_var = "PARAMCD",
-      param = choices_selected(c("ALT", "CRP", "IGA"), "ALT"),
-      xaxis_var = choices_selected(c("AVAL", "BASE", "CHG", "PCHG"), "AVAL"),
-      trt_group = choices_selected(c("ARM", "ACTARM"), "ARM"),
+      param = picks(
+        variables("PARAMCD", "PARAMCD"),
+        values(selected = "ALT", multiple = FALSE),
+        check_dataset = FALSE
+      ),
+      xaxis_var = variables(c("AVAL", "BASE", "CHG", "PCHG"), "AVAL"),
+      trt_group = variables(c("ARM", "ACTARM"), "ARM"),
       color_manual = c(
         "150mg QD" = "#000000",
         "Placebo" = "#3498DB",
