@@ -1,4 +1,3 @@
-# Tests for tm_g_gh_correlationplot with arguments
 local_log_threshold("WARN")
 
 test_that("tm_g_gh_correlationplot can be created with default arguments", {
@@ -141,4 +140,75 @@ test_that("tm_g_gh_correlationplot accepts line arguments with choices_selected"
 
   expect_s3_class(module, "teal_module")
   expect_equal(module$label, "Correlation Plot - With Lines")
+})
+
+describe("tm_g_gh_correlationplot: invalid arguments", {
+  wrong_params <- list(
+    label = 2L,
+    dataname = list("A list of strings"),
+    xaxis_param = list("A list of strings"),
+    yaxis_param = list("A list of strings"),
+    xaxis_var = 1.5,
+    yaxis_var = "1.5",
+    trt_group = TRUE,
+    color_manual = c(1, 2, 3, 4),
+    shape_manual = c(1, 2, 3, 4),
+    facet_ncol = "2",
+    visit_facet = "A string",
+    trt_facet = 1L,
+    reg_line = 12.5,
+    loq_legend = "A string",
+    rotate_xlab = data.frame(letters = letters),
+    hline_arb = c("0.02", "0.05"),
+    # hline_arb_color = "red", # own test
+    # hline_arb_label = "Horizontal line", # own test
+    hline_vars = c(0.02, 0.05),
+    # hline_vars_colors = "green", # own test
+    # hline_vars_labels = hline_vars, # own test
+    vline_arb = c("0.02", "0.05"),
+    # vline_arb_color = "red", # own test
+    # vline_arb_label = "Vertical line", # own test
+    vline_vars = c(0.02, 0.05),
+    # vline_vars_colors = "green", # own test
+    # vline_vars_labels = vline_vars, # own test
+    plot_height = c("600", "300", "2000"),
+    plot_width = c("1000", "500", "2000"),
+    font_size = c("12", "8", "20"),
+    dot_size = c("12", "8", "20"),
+    reg_text_size = c("12", "8", "20"),
+    pre_output = 123L,
+    post_output = list(TRUE),
+    transformators = list("not a function")
+  )
+  for (wrong_param in names(wrong_params)) {
+    it(paste0("throws an error when ", wrong_param, " is invalid"), {
+      args <- list(label = "module")
+      args[[wrong_param]] <- wrong_params[[wrong_param]]
+      expect_error(
+        suppressWarnings(do.call(tm_g_gh_correlationplot, args), classes = "pick_delayed"),
+        sprintf("Assertion on '%s' failed", wrong_param)
+      )
+    })
+  }
+
+  wrong_params2 <- list(
+    hline_arb_label = c(1, 2), hline_arb_color = c(1, 2), hline_vars_colors = c(1, 2), hline_vars_labels = c(1, 2),
+    vline_arb_label = c(1, 2), vline_arb_color = c(1, 2), vline_vars_colors = c(1, 2), vline_vars_labels = c(1, 2)
+  )
+  for (wrong_param2 in names(wrong_params2)) {
+    it(paste0("throws an error when ", wrong_param2, " is invalid"), {
+      args <- list(
+        label = "module",
+        hline_arb = c(0.02, 0.05),
+        vline_arb = c(0.02, 0.05),
+        hline_vars = c("ANRHI", "ANRLO"),
+        vline_vars = c("ANRHI", "ANRLO")
+      )
+      args[[wrong_param2]] <- wrong_params2[[wrong_param2]]
+      expect_error(
+        suppressWarnings(do.call(tm_g_gh_correlationplot, args), classes = "pick_delayed"),
+        sprintf("Assertion on '%s' failed", wrong_param2)
+      )
+    })
+  }
 })
