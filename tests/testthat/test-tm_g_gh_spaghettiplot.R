@@ -1,4 +1,3 @@
-# Tests for tm_g_gh_spaghettiplot with choices_selected arguments
 threshold <- logger::log_threshold(namespace = "teal.goshawk")
 logger::log_threshold("ERROR", namespace = "teal.goshawk")
 withr::defer(logger::log_threshold(threshold, namespace = "teal.goshawk"))
