@@ -1,6 +1,4 @@
-threshold <- logger::log_threshold(namespace = "teal.goshawk")
-logger::log_threshold("ERROR", namespace = "teal.goshawk")
-withr::defer(logger::log_threshold(threshold, namespace = "teal.goshawk"))
+local_log_threshold("WARN")
 
 test_that("tm_g_gh_density_distribution_plot can be created with default arguments", {
   module <- suppressWarnings(
