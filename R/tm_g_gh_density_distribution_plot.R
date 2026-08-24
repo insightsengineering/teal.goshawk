@@ -219,20 +219,20 @@ tm_g_gh_density_distribution_plot <- function(label, # nolint: object_length_lin
 }
 
 ui_g_density_distribution_plot <- function(id,
-                                            dataname,
-                                            param,
-                                            xaxis_var,
-                                            trt_group,
-                                            facet_ncol,
-                                            comb_line,
-                                            rotate_xlab,
-                                            hline_arb,
-                                            hline_arb_color,
-                                            hline_arb_label,
-                                            font_size,
-                                            line_size,
-                                            pre_output,
-                                            post_output) {
+                                           dataname,
+                                           param,
+                                           xaxis_var,
+                                           trt_group,
+                                           facet_ncol,
+                                           comb_line,
+                                           rotate_xlab,
+                                           hline_arb,
+                                           hline_arb_color,
+                                           hline_arb_label,
+                                           font_size,
+                                           line_size,
+                                           pre_output,
+                                           post_output) {
   ns <- NS(id)
 
   teal.widgets::standard_layout(

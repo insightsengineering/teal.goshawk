@@ -167,16 +167,23 @@ validate_line_arb_arg <- function(
 }
 
 # to check the variable line arguments
-validate_line_vars_arg <- function(line_vars, line_vars_colors, line_vars_labels) {
-  checkmate::assert_character(line_vars)
+validate_line_vars_arg <- function(
+  line_vars,
+  line_vars_colors,
+  line_vars_labels,
+  line_vars_var_name = checkmate::vname(line_vars),
+  line_vars_colors_var_name = checkmate::vname(line_vars_colors),
+  line_vars_labels_var_name = checkmate::vname(line_vars_labels)
+) {
+  checkmate::assert_character(line_vars, .var.name = line_vars_var_name)
   if (length(line_vars) > 0) {
     checkmate::assert(
-      .var.name = "line_vars_colors",
+      .var.name = line_vars_colors_var_name,
       checkmate::check_string(line_vars_colors),
       checkmate::check_character(line_vars_colors, len = length(line_vars))
     )
     checkmate::assert(
-      .var.name = "line_vars_labels",
+      .var.name = line_vars_labels_var_name,
       checkmate::check_string(line_vars_labels),
       checkmate::check_character(line_vars_labels, len = length(line_vars))
     )
