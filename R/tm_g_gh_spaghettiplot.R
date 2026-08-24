@@ -172,7 +172,7 @@ tm_g_gh_spaghettiplot <- function(label,
                                   xaxis_var = teal.picks::variables(c("AVISITCD", "AVISIT"), "AVISITCD"),
                                   yaxis_var = teal.picks::variables(c("AVAL", "CHG", "PCHG"), "AVAL"),
                                   xaxis_var_level = NULL,
-                                  filter_var = yaxis_var,
+                                  filter_var = lifecycle::deprecated(),
                                   trt_group = teal.picks::variables(dplyr::starts_with("ARM"), selected = "ARM"),
                                   trt_group_level = NULL,
                                   group_stats = "NONE",
@@ -198,6 +198,10 @@ tm_g_gh_spaghettiplot <- function(label,
                                   post_output = NULL,
                                   transformators = list()) {
   message("Initializing tm_g_gh_spaghettiplot")
+
+  if (lifecycle::is_present(filter_var)) {
+    lifecycle::deprecate_stop("0.6.0", "tm_g_gh_spaghettiplot(filter_var)", details = "Variable has been removed.")
+  }
 
   checkmate::assert_string(label)
   checkmate::assert_string(dataname)
