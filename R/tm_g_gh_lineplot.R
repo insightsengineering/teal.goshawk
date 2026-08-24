@@ -185,13 +185,7 @@ tm_g_gh_lineplot <- function(label,
   checkmate::assert_multi_class(yaxis_var, c("choices_selected", "variables", "picks"))
   checkmate::assert_multi_class(trt_group, c("choices_selected", "variables", "picks"))
 
-  checkmate::assert(
-    .var_name = "shape_choices",
-    checkmate::check_character(shape_choices),
-    checkmate::check_class(shape_choices, c("variables", "pick")),
-    checkmate::check_class(shape_choices, "choices_selected"),
-    checkmate::check_null(shape_choices)
-  )
+  checkmate::assert_multi_class(shape_choices, c("choices_selected", "variables", "character"), null.ok = TRUE)
 
   checkmate::assert_flag(rotate_xlab)
 
