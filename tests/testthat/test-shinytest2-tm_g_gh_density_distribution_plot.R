@@ -24,10 +24,7 @@ test_that("e2e - tm_g_gh_density_distribution_plot initializes and renders a plo
 
   app_driver$expect_no_shiny_error()
   app_driver$expect_no_validation_error()
-  expect_match(
-    app_driver$get_active_module_plot_output("plot"),
-    "data:image/png;base64,"
-  )
+  expect_match(app_driver$get_active_module_plot_output("plot"), "data:image/png;base64,")
 })
 
 test_that(
@@ -78,18 +75,6 @@ describe("e2e - tm_g_gh_density_distribution_plot: changing pick changes plot an
   }
 })
 
-test_that("e2e - tm_g_gh_density_distribution_plot displays descriptive statistics table", {
-  skip_if_not_installed("shinytest2")
-  skip_if_too_deep(5)
-  app_driver <- tm_g_gh_density_distribution_plot_driver()
-  withr::defer(app_driver$stop())
-  app_driver$wait_for_idle()
-
-  # Check that the table is rendered
-  app_driver$expect_no_shiny_error()
-  app_driver$expect_no_validation_error()
-})
-
 test_that("e2e - tm_g_gh_density_distribution_plot handles comb_line toggle", {
   skip_if_not_installed("shinytest2")
   skip_if_too_deep(5)
@@ -106,20 +91,5 @@ test_that("e2e - tm_g_gh_density_distribution_plot handles comb_line toggle", {
 
   # Verify the plot changed and no errors
   expect_false(identical(plot_initial, app_driver$get_active_module_plot_output("plot")))
-  app_driver$expect_no_validation_error()
-})
-
-test_that("e2e - tm_g_gh_density_distribution_plot respects plot height adjustment", {
-  skip_if_not_installed("shinytest2")
-  skip_if_too_deep(5)
-  app_driver <- tm_g_gh_density_distribution_plot_driver()
-  withr::defer(app_driver$stop())
-  app_driver$wait_for_idle()
-
-  # Verify plot is rendered
-  expect_match(
-    app_driver$get_active_module_plot_output("plot"),
-    "data:image/png;base64,"
-  )
   app_driver$expect_no_validation_error()
 })

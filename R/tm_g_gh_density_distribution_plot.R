@@ -151,16 +151,9 @@ tm_g_gh_density_distribution_plot <- function(label, # nolint: object_length_lin
   checkmate::assert_multi_class(xaxis_var, c("choices_selected", "variables", "picks"))
   checkmate::assert_multi_class(trt_group, c("choices_selected", "variables", "picks"))
 
-  checkmate::assert_numeric(font_size, len = 3)
-  checkmate::assert_numeric(line_size, len = 3)
-  checkmate::assert_integerish(facet_ncol, lower = 1, len = 1)
-  checkmate::assert_flag(comb_line)
-  checkmate::assert_flag(rotate_xlab)
+  checkmate::assert_character(color_manual, null.ok = TRUE, any.missing = FALSE, unique = TRUE, names = "named")
+  checkmate::assert_string(color_comb, null.ok = TRUE)
 
-  checkmate::assert_multi_class(pre_output, c("shiny.tag", "shiny.tag.list"), null.ok = TRUE)
-  checkmate::assert_multi_class(post_output, c("shiny.tag", "shiny.tag.list"), null.ok = TRUE)
-
-  validate_line_arb_arg(hline_arb, hline_arb_color, hline_arb_label)
   checkmate::assert_numeric(plot_height, len = 3, any.missing = FALSE, finite = TRUE)
   checkmate::assert_numeric(plot_height[1], lower = plot_height[2], upper = plot_height[3], .var.name = "plot_height")
   checkmate::assert_numeric(plot_width, len = 3, any.missing = FALSE, null.ok = TRUE, finite = TRUE)
@@ -168,6 +161,18 @@ tm_g_gh_density_distribution_plot <- function(label, # nolint: object_length_lin
     plot_width[1],
     lower = plot_width[2], upper = plot_width[3], null.ok = TRUE, .var.name = "plot_width"
   )
+
+  checkmate::assert_numeric(font_size, len = 3)
+  checkmate::assert_numeric(line_size, len = 3)
+
+  validate_line_arb_arg(hline_arb, hline_arb_color, hline_arb_label)
+
+  checkmate::assert_integerish(facet_ncol, lower = 1, len = 1)
+  checkmate::assert_flag(comb_line)
+  checkmate::assert_flag(rotate_xlab)
+
+  checkmate::assert_multi_class(pre_output, c("shiny.tag", "shiny.tag.list"), null.ok = TRUE)
+  checkmate::assert_multi_class(post_output, c("shiny.tag", "shiny.tag.list"), null.ok = TRUE)
 
   if (lifecycle::is_present(param_var)) {
     lifecycle::deprecate_warn(
