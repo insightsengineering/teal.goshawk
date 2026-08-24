@@ -135,7 +135,7 @@ tm_g_gh_lineplot <- function(label,
                                check_dataset = FALSE
                              ),
                              param_var_label = "PARAM",
-                             xaxis_var = teal.picks::variables(c("AVISITCD", "AVISIT"), "AVISITCD"),
+                             xaxis_var = teal.picks::variables(dplyr::starts_with("AVISIT"), "AVISITCD"),
                              yaxis_var = teal.picks::variables(c("AVAL", "CHG", "PCHG"), "AVAL"),
                              xvar_level = NULL,
                              filter_var = yaxis_var,
