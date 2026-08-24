@@ -1,4 +1,3 @@
-# Tests for tm_g_gh_boxplot with picks arguments
 local_log_threshold("WARN")
 
 threshold <- logger::log_threshold(namespace = "teal.goshawk")
