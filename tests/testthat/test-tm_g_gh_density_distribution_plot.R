@@ -1,4 +1,3 @@
-# Tests for tm_g_gh_density_distribution_plot with picks arguments
 threshold <- logger::log_threshold(namespace = "teal.goshawk")
 logger::log_threshold("ERROR", namespace = "teal.goshawk")
 withr::defer(logger::log_threshold(threshold, namespace = "teal.goshawk"))
