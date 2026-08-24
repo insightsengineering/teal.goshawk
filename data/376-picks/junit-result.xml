@@ -1,51 +1,83 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <testsuites>
-  <testsuite name="(unknown)" timestamp="2026-08-21T15:54:51Z" hostname="6a86fce8174d">
+  <testsuite name="(unknown)" timestamp="2026-08-24T13:12:37Z" hostname="c66c331680ef">
     <testcase time="0.00800000000000001" classname="character(0)" name="_unnamed_">
       <skipped message="Reason: To be refactored ('test-shinytest2-tm_g_gh_boxplot.R:1:1')"/>
     </testcase>
   </testsuite>
-  <testsuite name="shinytest2-tm_g_gh_correlationplot" timestamp="2026-08-21T15:54:51Z" hostname="6a86fce8174d" tests="28" skipped="1" failures="0" errors="0" time="128.479">
-    <testcase time="15.564" classname="shinytest2_tm_g_gh_correlationplot" name="e2e_tm_g_gh_correlationplot_initializes_and_renders_a_plot"/>
-    <testcase time="0.0069999999999979" classname="shinytest2_tm_g_gh_correlationplot" name="e2e_tm_g_gh_correlationplot_initializes_and_renders_a_plot"/>
-    <testcase time="0.105" classname="shinytest2_tm_g_gh_correlationplot" name="e2e_tm_g_gh_correlationplot_initializes_and_renders_a_plot"/>
-    <testcase time="0.0130000000000017" classname="shinytest2_tm_g_gh_correlationplot" name="e2e_tm_g_gh_correlationplot_initializes_and_renders_a_plot"/>
-    <testcase time="14.109" classname="shinytest2_tm_g_gh_correlationplot" name="e2e_tm_g_gh_correlationplot_starts_with_expected_label_and_encoding_selections."/>
-    <testcase time="0.0120000000000005" classname="shinytest2_tm_g_gh_correlationplot" name="e2e_tm_g_gh_correlationplot_starts_with_expected_label_and_encoding_selections."/>
-    <testcase time="0.054000000000002" classname="shinytest2_tm_g_gh_correlationplot" name="e2e_tm_g_gh_correlationplot_starts_with_expected_label_and_encoding_selections."/>
-    <testcase time="0.0539999999999985" classname="shinytest2_tm_g_gh_correlationplot" name="e2e_tm_g_gh_correlationplot_starts_with_expected_label_and_encoding_selections."/>
-    <testcase time="0.0539999999999985" classname="shinytest2_tm_g_gh_correlationplot" name="e2e_tm_g_gh_correlationplot_starts_with_expected_label_and_encoding_selections."/>
-    <testcase time="0.054000000000002" classname="shinytest2_tm_g_gh_correlationplot" name="e2e_tm_g_gh_correlationplot_starts_with_expected_label_and_encoding_selections."/>
-    <testcase time="0.0549999999999997" classname="shinytest2_tm_g_gh_correlationplot" name="e2e_tm_g_gh_correlationplot_starts_with_expected_label_and_encoding_selections."/>
-    <testcase time="0.0539999999999985" classname="shinytest2_tm_g_gh_correlationplot" name="e2e_tm_g_gh_correlationplot_starts_with_expected_label_and_encoding_selections."/>
-    <testcase time="19.841" classname="shinytest2_tm_g_gh_correlationplot" name="e2e_tm_g_gh_correlationplot_changing_pick_changes_plot_and_does_not_throw_validation_errors._xaxis_param"/>
-    <testcase time="0.0519999999999996" classname="shinytest2_tm_g_gh_correlationplot" name="e2e_tm_g_gh_correlationplot_changing_pick_changes_plot_and_does_not_throw_validation_errors._xaxis_param"/>
-    <testcase time="0.00600000000000023" classname="shinytest2_tm_g_gh_correlationplot" name="e2e_tm_g_gh_correlationplot_changing_pick_changes_plot_and_does_not_throw_validation_errors._xaxis_param"/>
-    <testcase time="19.617" classname="shinytest2_tm_g_gh_correlationplot" name="e2e_tm_g_gh_correlationplot_changing_pick_changes_plot_and_does_not_throw_validation_errors._yaxis_param"/>
-    <testcase time="0.0519999999999925" classname="shinytest2_tm_g_gh_correlationplot" name="e2e_tm_g_gh_correlationplot_changing_pick_changes_plot_and_does_not_throw_validation_errors._yaxis_param"/>
-    <testcase time="0.00600000000000023" classname="shinytest2_tm_g_gh_correlationplot" name="e2e_tm_g_gh_correlationplot_changing_pick_changes_plot_and_does_not_throw_validation_errors._yaxis_param"/>
-    <testcase time="19.471" classname="shinytest2_tm_g_gh_correlationplot" name="e2e_tm_g_gh_correlationplot_changing_pick_changes_plot_and_does_not_throw_validation_errors._xaxis_var"/>
-    <testcase time="0.0510000000000019" classname="shinytest2_tm_g_gh_correlationplot" name="e2e_tm_g_gh_correlationplot_changing_pick_changes_plot_and_does_not_throw_validation_errors._xaxis_var"/>
-    <testcase time="0.00600000000000023" classname="shinytest2_tm_g_gh_correlationplot" name="e2e_tm_g_gh_correlationplot_changing_pick_changes_plot_and_does_not_throw_validation_errors._xaxis_var"/>
-    <testcase time="20.113" classname="shinytest2_tm_g_gh_correlationplot" name="e2e_tm_g_gh_correlationplot_changing_pick_changes_plot_and_does_not_throw_validation_errors._yaxis_var"/>
-    <testcase time="0.0559999999999974" classname="shinytest2_tm_g_gh_correlationplot" name="e2e_tm_g_gh_correlationplot_changing_pick_changes_plot_and_does_not_throw_validation_errors._yaxis_var"/>
-    <testcase time="0.007000000000005" classname="shinytest2_tm_g_gh_correlationplot" name="e2e_tm_g_gh_correlationplot_changing_pick_changes_plot_and_does_not_throw_validation_errors._yaxis_var"/>
-    <testcase time="19.001" classname="shinytest2_tm_g_gh_correlationplot" name="e2e_tm_g_gh_correlationplot_changing_pick_changes_plot_and_does_not_throw_validation_errors._trt_group"/>
-    <testcase time="0.0509999999999877" classname="shinytest2_tm_g_gh_correlationplot" name="e2e_tm_g_gh_correlationplot_changing_pick_changes_plot_and_does_not_throw_validation_errors._trt_group"/>
-    <testcase time="0.00600000000000023" classname="shinytest2_tm_g_gh_correlationplot" name="e2e_tm_g_gh_correlationplot_changing_pick_changes_plot_and_does_not_throw_validation_errors._trt_group"/>
+  <testsuite name="shinytest2-tm_g_gh_correlationplot" timestamp="2026-08-24T13:12:37Z" hostname="c66c331680ef" tests="4" skipped="4" failures="0" errors="0" time="0.169">
+    <testcase time="0.104" classname="shinytest2_tm_g_gh_correlationplot" name="e2e_tm_g_gh_correlationplot_initializes_and_renders_a_plot">
+      <skipped message="Reason: testing depth 3 is below current testing specification 5 ('test-shinytest2-tm_g_gh_correlationplot.R:28:3')"/>
+    </testcase>
+    <testcase time="0.024" classname="shinytest2_tm_g_gh_correlationplot" name="e2e_tm_g_gh_correlationplot_starts_with_expected_label_and_encoding_selections.">
+      <skipped message="Reason: testing depth 3 is below current testing specification 5 ('test-shinytest2-tm_g_gh_correlationplot.R:49:5')"/>
+    </testcase>
+    <testcase time="0.0329999999999999" classname="shinytest2_tm_g_gh_correlationplot" name="e2e_tm_g_gh_correlationplot_changing_pick_changes_plot_and_does_not_throw_validation_errors.">
+      <skipped message="Reason: testing depth 3 is below current testing specification 5 ('test-shinytest2-tm_g_gh_correlationplot.R:70:3')"/>
+    </testcase>
   </testsuite>
-  <testsuite name="tm_g_gh_correlationplot" timestamp="2026-08-21T15:57:00Z" hostname="6a86fce8174d" tests="12" skipped="0" failures="0" errors="0" time="0.268">
-    <testcase time="0.185000000000002" classname="tm_g_gh_correlationplot" name="tm_g_gh_correlationplot_can_be_created_with_default_arguments"/>
-    <testcase time="0.00300000000001432" classname="tm_g_gh_correlationplot" name="tm_g_gh_correlationplot_can_be_created_with_default_arguments"/>
-    <testcase time="0.0149999999999864" classname="tm_g_gh_correlationplot" name="tm_g_gh_correlationplot_can_be_created_with_choices_selected_arguments"/>
-    <testcase time="0.00300000000001432" classname="tm_g_gh_correlationplot" name="tm_g_gh_correlationplot_can_be_created_with_choices_selected_arguments"/>
-    <testcase time="0.0120000000000005" classname="tm_g_gh_correlationplot" name="tm_g_gh_correlationplot_can_be_created_with_custom_picks_arguments"/>
-    <testcase time="0.0029999999999859" classname="tm_g_gh_correlationplot" name="tm_g_gh_correlationplot_can_be_created_with_custom_picks_arguments"/>
-    <testcase time="0.0130000000000052" classname="tm_g_gh_correlationplot" name="tm_g_gh_correlationplot_handles_multiple_parameter_combinations"/>
-    <testcase time="0.0029999999999859" classname="tm_g_gh_correlationplot" name="tm_g_gh_correlationplot_handles_multiple_parameter_combinations"/>
-    <testcase time="0.0120000000000005" classname="tm_g_gh_correlationplot" name="tm_g_gh_correlationplot_accepts_custom_color_and_shape_specifications_with_choices_selected"/>
-    <testcase time="0.00300000000001432" classname="tm_g_gh_correlationplot" name="tm_g_gh_correlationplot_accepts_custom_color_and_shape_specifications_with_choices_selected"/>
-    <testcase time="0.0130000000000052" classname="tm_g_gh_correlationplot" name="tm_g_gh_correlationplot_accepts_line_arguments_with_choices_selected"/>
-    <testcase time="0.0029999999999859" classname="tm_g_gh_correlationplot" name="tm_g_gh_correlationplot_accepts_line_arguments_with_choices_selected"/>
+  <testsuite name="shinytest2-tm_g_gh_density_distribution_plot" timestamp="2026-08-24T13:12:37Z" hostname="c66c331680ef" tests="4" skipped="4" failures="0" errors="0" time="0.063">
+    <testcase time="0.0210000000000001" classname="shinytest2_tm_g_gh_density_distribution_plot" name="e2e_tm_g_gh_density_distribution_plot_initializes_and_renders_a_plot">
+      <skipped message="Reason: testing depth 3 is below current testing specification 5 ('test-shinytest2-tm_g_gh_density_distribution_plot.R:20:3')"/>
+    </testcase>
+    <testcase time="0.0129999999999999" classname="shinytest2_tm_g_gh_density_distribution_plot" name="e2e_tm_g_gh_density_distribution_plot_starts_with_expected_label_and_encoding_selections.">
+      <skipped message="Reason: testing depth 3 is below current testing specification 5 ('test-shinytest2-tm_g_gh_density_distribution_plot.R:34:5')"/>
+    </testcase>
+    <testcase time="0.0129999999999999" classname="shinytest2_tm_g_gh_density_distribution_plot" name="e2e_tm_g_gh_density_distribution_plot_changing_pick_changes_plot_and_does_not_throw_validation_errors.">
+      <skipped message="Reason: testing depth 3 is below current testing specification 5 ('test-shinytest2-tm_g_gh_density_distribution_plot.R:52:3')"/>
+    </testcase>
+    <testcase time="0.016" classname="shinytest2_tm_g_gh_density_distribution_plot" name="e2e_tm_g_gh_density_distribution_plot_handles_comb_line_toggle">
+      <skipped message="Reason: testing depth 3 is below current testing specification 5 ('test-shinytest2-tm_g_gh_density_distribution_plot.R:80:3')"/>
+    </testcase>
+  </testsuite>
+  <testsuite name="tm_g_gh_correlationplot" timestamp="2026-08-24T13:12:37Z" hostname="c66c331680ef" tests="12" skipped="0" failures="0" errors="0" time="0.215">
+    <testcase time="0.0910000000000002" classname="tm_g_gh_correlationplot" name="tm_g_gh_correlationplot_can_be_created_with_default_arguments"/>
+    <testcase time="0.00299999999999989" classname="tm_g_gh_correlationplot" name="tm_g_gh_correlationplot_can_be_created_with_default_arguments"/>
+    <testcase time="0.0130000000000001" classname="tm_g_gh_correlationplot" name="tm_g_gh_correlationplot_can_be_created_with_choices_selected_arguments"/>
+    <testcase time="0.00199999999999978" classname="tm_g_gh_correlationplot" name="tm_g_gh_correlationplot_can_be_created_with_choices_selected_arguments"/>
+    <testcase time="0.012" classname="tm_g_gh_correlationplot" name="tm_g_gh_correlationplot_can_be_created_with_custom_picks_arguments"/>
+    <testcase time="0.002" classname="tm_g_gh_correlationplot" name="tm_g_gh_correlationplot_can_be_created_with_custom_picks_arguments"/>
+    <testcase time="0.0110000000000001" classname="tm_g_gh_correlationplot" name="tm_g_gh_correlationplot_handles_multiple_parameter_combinations"/>
+    <testcase time="0.00299999999999989" classname="tm_g_gh_correlationplot" name="tm_g_gh_correlationplot_handles_multiple_parameter_combinations"/>
+    <testcase time="0.0600000000000001" classname="tm_g_gh_correlationplot" name="tm_g_gh_correlationplot_accepts_custom_color_and_shape_specifications_with_choices_selected"/>
+    <testcase time="0.00300000000000011" classname="tm_g_gh_correlationplot" name="tm_g_gh_correlationplot_accepts_custom_color_and_shape_specifications_with_choices_selected"/>
+    <testcase time="0.012" classname="tm_g_gh_correlationplot" name="tm_g_gh_correlationplot_accepts_line_arguments_with_choices_selected"/>
+    <testcase time="0.00299999999999989" classname="tm_g_gh_correlationplot" name="tm_g_gh_correlationplot_accepts_line_arguments_with_choices_selected"/>
+  </testsuite>
+  <testsuite name="tm_g_gh_density_distribution_plot" timestamp="2026-08-24T13:12:38Z" hostname="c66c331680ef" tests="34" skipped="0" failures="0" errors="0" time="1.115">
+    <testcase time="0.0569999999999999" classname="tm_g_gh_density_distribution_plot" name="tm_g_gh_density_distribution_plot_can_be_created_with_default_arguments"/>
+    <testcase time="0.00300000000000011" classname="tm_g_gh_density_distribution_plot" name="tm_g_gh_density_distribution_plot_can_be_created_with_default_arguments"/>
+    <testcase time="0.01" classname="tm_g_gh_density_distribution_plot" name="tm_g_gh_density_distribution_plot_can_be_created_with_choices_selected_arguments"/>
+    <testcase time="0.002" classname="tm_g_gh_density_distribution_plot" name="tm_g_gh_density_distribution_plot_can_be_created_with_choices_selected_arguments"/>
+    <testcase time="0.0089999999999999" classname="tm_g_gh_density_distribution_plot" name="tm_g_gh_density_distribution_plot_can_be_created_with_custom_picks_arguments"/>
+    <testcase time="0.00300000000000011" classname="tm_g_gh_density_distribution_plot" name="tm_g_gh_density_distribution_plot_can_be_created_with_custom_picks_arguments"/>
+    <testcase time="0.0089999999999999" classname="tm_g_gh_density_distribution_plot" name="tm_g_gh_density_distribution_plot_handles_different_parameter_combinations"/>
+    <testcase time="0.002" classname="tm_g_gh_density_distribution_plot" name="tm_g_gh_density_distribution_plot_handles_different_parameter_combinations"/>
+    <testcase time="0.00900000000000012" classname="tm_g_gh_density_distribution_plot" name="tm_g_gh_density_distribution_plot_accepts_custom_color_specifications"/>
+    <testcase time="0.00299999999999989" classname="tm_g_gh_density_distribution_plot" name="tm_g_gh_density_distribution_plot_accepts_custom_color_specifications"/>
+    <testcase time="0.00800000000000001" classname="tm_g_gh_density_distribution_plot" name="tm_g_gh_density_distribution_plot_accepts_line_arguments"/>
+    <testcase time="0.00300000000000011" classname="tm_g_gh_density_distribution_plot" name="tm_g_gh_density_distribution_plot_accepts_line_arguments"/>
+    <testcase time="0.012" classname="tm_g_gh_density_distribution_plot" name="tm_g_gh_density_distribution_plot_handles_plot_dimensions_correctly"/>
+    <testcase time="0.00299999999999989" classname="tm_g_gh_density_distribution_plot" name="tm_g_gh_density_distribution_plot_handles_plot_dimensions_correctly"/>
+    <testcase time="0.012" classname="tm_g_gh_density_distribution_plot" name="tm_g_gh_density_distribution_plot_invalid_arguments_throws_an_error_when_label_is_invalid"/>
+    <testcase time="0.0109999999999999" classname="tm_g_gh_density_distribution_plot" name="tm_g_gh_density_distribution_plot_invalid_arguments_throws_an_error_when_dataname_is_invalid"/>
+    <testcase time="0.01" classname="tm_g_gh_density_distribution_plot" name="tm_g_gh_density_distribution_plot_invalid_arguments_throws_an_error_when_param_is_invalid"/>
+    <testcase time="0.01" classname="tm_g_gh_density_distribution_plot" name="tm_g_gh_density_distribution_plot_invalid_arguments_throws_an_error_when_xaxis_var_is_invalid"/>
+    <testcase time="0.0110000000000001" classname="tm_g_gh_density_distribution_plot" name="tm_g_gh_density_distribution_plot_invalid_arguments_throws_an_error_when_trt_group_is_invalid"/>
+    <testcase time="0.0619999999999998" classname="tm_g_gh_density_distribution_plot" name="tm_g_gh_density_distribution_plot_invalid_arguments_throws_an_error_when_color_manual_is_invalid"/>
+    <testcase time="0.0600000000000001" classname="tm_g_gh_density_distribution_plot" name="tm_g_gh_density_distribution_plot_invalid_arguments_throws_an_error_when_comb_line_is_invalid"/>
+    <testcase time="0.0630000000000002" classname="tm_g_gh_density_distribution_plot" name="tm_g_gh_density_distribution_plot_invalid_arguments_throws_an_error_when_font_size_is_invalid"/>
+    <testcase time="0.0619999999999998" classname="tm_g_gh_density_distribution_plot" name="tm_g_gh_density_distribution_plot_invalid_arguments_throws_an_error_when_line_size_is_invalid"/>
+    <testcase time="0.0620000000000003" classname="tm_g_gh_density_distribution_plot" name="tm_g_gh_density_distribution_plot_invalid_arguments_throws_an_error_when_hline_arb_is_invalid"/>
+    <testcase time="0.0579999999999998" classname="tm_g_gh_density_distribution_plot" name="tm_g_gh_density_distribution_plot_invalid_arguments_throws_an_error_when_comb_line_is_invalid"/>
+    <testcase time="0.0590000000000002" classname="tm_g_gh_density_distribution_plot" name="tm_g_gh_density_distribution_plot_invalid_arguments_throws_an_error_when_facet_ncol_is_invalid"/>
+    <testcase time="0.0589999999999997" classname="tm_g_gh_density_distribution_plot" name="tm_g_gh_density_distribution_plot_invalid_arguments_throws_an_error_when_rotate_xlab_is_invalid"/>
+    <testcase time="0.0620000000000003" classname="tm_g_gh_density_distribution_plot" name="tm_g_gh_density_distribution_plot_invalid_arguments_throws_an_error_when_plot_height_is_invalid"/>
+    <testcase time="0.0589999999999997" classname="tm_g_gh_density_distribution_plot" name="tm_g_gh_density_distribution_plot_invalid_arguments_throws_an_error_when_plot_width_is_invalid"/>
+    <testcase time="0.0600000000000001" classname="tm_g_gh_density_distribution_plot" name="tm_g_gh_density_distribution_plot_invalid_arguments_throws_an_error_when_pre_output_is_invalid"/>
+    <testcase time="0.0630000000000002" classname="tm_g_gh_density_distribution_plot" name="tm_g_gh_density_distribution_plot_invalid_arguments_throws_an_error_when_post_output_is_invalid"/>
+    <testcase time="0.0659999999999998" classname="tm_g_gh_density_distribution_plot" name="tm_g_gh_density_distribution_plot_invalid_arguments_throws_an_error_when_transformators_is_invalid"/>
+    <testcase time="0.0649999999999999" classname="tm_g_gh_density_distribution_plot" name="tm_g_gh_density_distribution_plot_invalid_arguments_throws_error_when_hline_arb_label_is_invalid"/>
+    <testcase time="0.0680000000000001" classname="tm_g_gh_density_distribution_plot" name="tm_g_gh_density_distribution_plot_invalid_arguments_throws_error_when_hline_arb_color_is_invalid"/>
   </testsuite>
 </testsuites>
