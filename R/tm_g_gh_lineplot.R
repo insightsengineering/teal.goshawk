@@ -255,7 +255,7 @@ tm_g_gh_lineplot <- function(label,
   xaxis_var <- create_picks_helper(teal.picks::datasets(dataname, dataname), xaxis_var)
   yaxis_var <- create_picks_helper(teal.picks::datasets(dataname, dataname), yaxis_var)
   trt_group <- create_picks_helper(teal.picks::datasets(dataname, dataname), trt_group)
-  shape_choices <- create_picks_helper(teal.picks::datasets(dataname, dataname), shape_choices)
+if (!is.null(shape_choices)) shape_choices <- create_picks_helper(teal.picks::datasets(dataname, dataname), shape_choices)
 
   param <- force_pick_selection(param, which = "values")
   trt_group <- force_pick_selection(trt_group, which = "variables")
