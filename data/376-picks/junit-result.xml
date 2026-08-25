@@ -1,1392 +1,281 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <testsuites>
-  <testsuite name="shinytest2-tm_g_gh_boxplot" timestamp="2026-08-25T21:49:56Z" hostname="6258816e9ca7" tests="32" skipped="0" failures="0" errors="0" time="168.552">
-    <testcase time="15.29" classname="shinytest2_tm_g_gh_boxplot" name="e2e_tm_g_gh_boxplot_initializes_and_renders_a_plot"/>
-    <testcase time="0.0219999999999985" classname="shinytest2_tm_g_gh_boxplot" name="e2e_tm_g_gh_boxplot_initializes_and_renders_a_plot"/>
-    <testcase time="0.093" classname="shinytest2_tm_g_gh_boxplot" name="e2e_tm_g_gh_boxplot_initializes_and_renders_a_plot"/>
-    <testcase time="13.651" classname="shinytest2_tm_g_gh_boxplot" name="e2e_tm_g_gh_boxplot_starts_with_expected_label_and_encoding_selections."/>
-    <testcase time="0.0119999999999969" classname="shinytest2_tm_g_gh_boxplot" name="e2e_tm_g_gh_boxplot_starts_with_expected_label_and_encoding_selections."/>
-    <testcase time="0.0530000000000008" classname="shinytest2_tm_g_gh_boxplot" name="e2e_tm_g_gh_boxplot_starts_with_expected_label_and_encoding_selections."/>
-    <testcase time="0.0530000000000008" classname="shinytest2_tm_g_gh_boxplot" name="e2e_tm_g_gh_boxplot_starts_with_expected_label_and_encoding_selections."/>
-    <testcase time="0.0530000000000008" classname="shinytest2_tm_g_gh_boxplot" name="e2e_tm_g_gh_boxplot_starts_with_expected_label_and_encoding_selections."/>
-    <testcase time="0.0530000000000008" classname="shinytest2_tm_g_gh_boxplot" name="e2e_tm_g_gh_boxplot_starts_with_expected_label_and_encoding_selections."/>
-    <testcase time="0.0529999999999973" classname="shinytest2_tm_g_gh_boxplot" name="e2e_tm_g_gh_boxplot_starts_with_expected_label_and_encoding_selections."/>
-    <testcase time="18.774" classname="shinytest2_tm_g_gh_boxplot" name="e2e_tm_g_gh_boxplot_changing_pick_changes_plot_and_does_not_throw_validation_errors._xaxis_param"/>
-    <testcase time="0.0479999999999947" classname="shinytest2_tm_g_gh_boxplot" name="e2e_tm_g_gh_boxplot_changing_pick_changes_plot_and_does_not_throw_validation_errors._xaxis_param"/>
-    <testcase time="0.007000000000005" classname="shinytest2_tm_g_gh_boxplot" name="e2e_tm_g_gh_boxplot_changing_pick_changes_plot_and_does_not_throw_validation_errors._xaxis_param"/>
-    <testcase time="18.23" classname="shinytest2_tm_g_gh_boxplot" name="e2e_tm_g_gh_boxplot_changing_pick_changes_plot_and_does_not_throw_validation_errors._yaxis_var"/>
-    <testcase time="0.0429999999999922" classname="shinytest2_tm_g_gh_boxplot" name="e2e_tm_g_gh_boxplot_changing_pick_changes_plot_and_does_not_throw_validation_errors._yaxis_var"/>
-    <testcase time="0.00600000000000023" classname="shinytest2_tm_g_gh_boxplot" name="e2e_tm_g_gh_boxplot_changing_pick_changes_plot_and_does_not_throw_validation_errors._yaxis_var"/>
-    <testcase time="18.856" classname="shinytest2_tm_g_gh_boxplot" name="e2e_tm_g_gh_boxplot_changing_pick_changes_plot_and_does_not_throw_validation_errors._xaxis_var"/>
-    <testcase time="0.0640000000000072" classname="shinytest2_tm_g_gh_boxplot" name="e2e_tm_g_gh_boxplot_changing_pick_changes_plot_and_does_not_throw_validation_errors._xaxis_var"/>
-    <testcase time="0.00600000000000023" classname="shinytest2_tm_g_gh_boxplot" name="e2e_tm_g_gh_boxplot_changing_pick_changes_plot_and_does_not_throw_validation_errors._xaxis_var"/>
-    <testcase time="18.092" classname="shinytest2_tm_g_gh_boxplot" name="e2e_tm_g_gh_boxplot_changing_pick_changes_plot_and_does_not_throw_validation_errors._facet_var"/>
-    <testcase time="0.0529999999999973" classname="shinytest2_tm_g_gh_boxplot" name="e2e_tm_g_gh_boxplot_changing_pick_changes_plot_and_does_not_throw_validation_errors._facet_var"/>
-    <testcase time="0.00600000000000023" classname="shinytest2_tm_g_gh_boxplot" name="e2e_tm_g_gh_boxplot_changing_pick_changes_plot_and_does_not_throw_validation_errors._facet_var"/>
-    <testcase time="19.399" classname="shinytest2_tm_g_gh_boxplot" name="e2e_tm_g_gh_boxplot_changing_pick_changes_plot_and_does_not_throw_validation_errors._trt_group"/>
-    <testcase time="0.0439999999999969" classname="shinytest2_tm_g_gh_boxplot" name="e2e_tm_g_gh_boxplot_changing_pick_changes_plot_and_does_not_throw_validation_errors._trt_group"/>
-    <testcase time="0.00600000000000023" classname="shinytest2_tm_g_gh_boxplot" name="e2e_tm_g_gh_boxplot_changing_pick_changes_plot_and_does_not_throw_validation_errors._trt_group"/>
-    <testcase time="13.321" classname="shinytest2_tm_g_gh_boxplot" name="e2e_tm_g_gh_boxplot_displays_selected_data_points_table"/>
-    <testcase time="0.00600000000000023" classname="shinytest2_tm_g_gh_boxplot" name="e2e_tm_g_gh_boxplot_displays_selected_data_points_table"/>
-    <testcase time="0.00499999999999545" classname="shinytest2_tm_g_gh_boxplot" name="e2e_tm_g_gh_boxplot_displays_selected_data_points_table"/>
-    <testcase time="19.089" classname="shinytest2_tm_g_gh_boxplot" name="e2e_tm_g_gh_boxplot_handles_LoQ_legend_toggle"/>
-    <testcase time="0.00499999999999545" classname="shinytest2_tm_g_gh_boxplot" name="e2e_tm_g_gh_boxplot_handles_LoQ_legend_toggle"/>
-    <testcase time="13.153" classname="shinytest2_tm_g_gh_boxplot" name="e2e_tm_g_gh_boxplot_respects_plot_height_adjustment"/>
-    <testcase time="0.00600000000000023" classname="shinytest2_tm_g_gh_boxplot" name="e2e_tm_g_gh_boxplot_respects_plot_height_adjustment"/>
-  </testsuite>
-  <testsuite name="shinytest2-tm_g_gh_correlationplot" timestamp="2026-08-25T21:52:45Z" hostname="6258816e9ca7" tests="27" skipped="0" failures="0" errors="0" time="121.921">
-    <testcase time="13.385" classname="shinytest2_tm_g_gh_correlationplot" name="e2e_tm_g_gh_correlationplot_initializes_and_renders_a_plot"/>
-    <testcase time="0.00600000000000023" classname="shinytest2_tm_g_gh_correlationplot" name="e2e_tm_g_gh_correlationplot_initializes_and_renders_a_plot"/>
-    <testcase time="0.0989999999999895" classname="shinytest2_tm_g_gh_correlationplot" name="e2e_tm_g_gh_correlationplot_initializes_and_renders_a_plot"/>
-    <testcase time="0.0109999999999957" classname="shinytest2_tm_g_gh_correlationplot" name="e2e_tm_g_gh_correlationplot_initializes_and_renders_a_plot"/>
-    <testcase time="13.287" classname="shinytest2_tm_g_gh_correlationplot" name="e2e_tm_g_gh_correlationplot_starts_with_expected_label_and_encoding_selections."/>
-    <testcase time="0.0120000000000005" classname="shinytest2_tm_g_gh_correlationplot" name="e2e_tm_g_gh_correlationplot_starts_with_expected_label_and_encoding_selections."/>
-    <testcase time="0.0519999999999925" classname="shinytest2_tm_g_gh_correlationplot" name="e2e_tm_g_gh_correlationplot_starts_with_expected_label_and_encoding_selections."/>
-    <testcase time="0.0520000000000209" classname="shinytest2_tm_g_gh_correlationplot" name="e2e_tm_g_gh_correlationplot_starts_with_expected_label_and_encoding_selections."/>
-    <testcase time="0.0519999999999925" classname="shinytest2_tm_g_gh_correlationplot" name="e2e_tm_g_gh_correlationplot_starts_with_expected_label_and_encoding_selections."/>
-    <testcase time="0.0519999999999925" classname="shinytest2_tm_g_gh_correlationplot" name="e2e_tm_g_gh_correlationplot_starts_with_expected_label_and_encoding_selections."/>
-    <testcase time="0.0529999999999973" classname="shinytest2_tm_g_gh_correlationplot" name="e2e_tm_g_gh_correlationplot_starts_with_expected_label_and_encoding_selections."/>
-    <testcase time="0.0529999999999973" classname="shinytest2_tm_g_gh_correlationplot" name="e2e_tm_g_gh_correlationplot_starts_with_expected_label_and_encoding_selections."/>
-    <testcase time="18.97" classname="shinytest2_tm_g_gh_correlationplot" name="e2e_tm_g_gh_correlationplot_changing_pick_changes_plot_and_does_not_throw_validation_errors._xaxis_param"/>
-    <testcase time="0.0480000000000018" classname="shinytest2_tm_g_gh_correlationplot" name="e2e_tm_g_gh_correlationplot_changing_pick_changes_plot_and_does_not_throw_validation_errors._xaxis_param"/>
-    <testcase time="0.00600000000000023" classname="shinytest2_tm_g_gh_correlationplot" name="e2e_tm_g_gh_correlationplot_changing_pick_changes_plot_and_does_not_throw_validation_errors._xaxis_param"/>
-    <testcase time="19.131" classname="shinytest2_tm_g_gh_correlationplot" name="e2e_tm_g_gh_correlationplot_changing_pick_changes_plot_and_does_not_throw_validation_errors._yaxis_param"/>
-    <testcase time="0.0500000000000114" classname="shinytest2_tm_g_gh_correlationplot" name="e2e_tm_g_gh_correlationplot_changing_pick_changes_plot_and_does_not_throw_validation_errors._yaxis_param"/>
-    <testcase time="0.00600000000000023" classname="shinytest2_tm_g_gh_correlationplot" name="e2e_tm_g_gh_correlationplot_changing_pick_changes_plot_and_does_not_throw_validation_errors._yaxis_param"/>
-    <testcase time="19.138" classname="shinytest2_tm_g_gh_correlationplot" name="e2e_tm_g_gh_correlationplot_changing_pick_changes_plot_and_does_not_throw_validation_errors._xaxis_var"/>
-    <testcase time="0.0489999999999782" classname="shinytest2_tm_g_gh_correlationplot" name="e2e_tm_g_gh_correlationplot_changing_pick_changes_plot_and_does_not_throw_validation_errors._xaxis_var"/>
-    <testcase time="0.00600000000000023" classname="shinytest2_tm_g_gh_correlationplot" name="e2e_tm_g_gh_correlationplot_changing_pick_changes_plot_and_does_not_throw_validation_errors._xaxis_var"/>
-    <testcase time="18.985" classname="shinytest2_tm_g_gh_correlationplot" name="e2e_tm_g_gh_correlationplot_changing_pick_changes_plot_and_does_not_throw_validation_errors._yaxis_var"/>
-    <testcase time="0.0529999999999973" classname="shinytest2_tm_g_gh_correlationplot" name="e2e_tm_g_gh_correlationplot_changing_pick_changes_plot_and_does_not_throw_validation_errors._yaxis_var"/>
-    <testcase time="0.00600000000002865" classname="shinytest2_tm_g_gh_correlationplot" name="e2e_tm_g_gh_correlationplot_changing_pick_changes_plot_and_does_not_throw_validation_errors._yaxis_var"/>
-    <testcase time="18.302" classname="shinytest2_tm_g_gh_correlationplot" name="e2e_tm_g_gh_correlationplot_changing_pick_changes_plot_and_does_not_throw_validation_errors._trt_group"/>
-    <testcase time="0.0509999999999877" classname="shinytest2_tm_g_gh_correlationplot" name="e2e_tm_g_gh_correlationplot_changing_pick_changes_plot_and_does_not_throw_validation_errors._trt_group"/>
-    <testcase time="0.00600000000002865" classname="shinytest2_tm_g_gh_correlationplot" name="e2e_tm_g_gh_correlationplot_changing_pick_changes_plot_and_does_not_throw_validation_errors._trt_group"/>
-  </testsuite>
-  <testsuite name="shinytest2-tm_g_gh_density_distribution_plot" timestamp="2026-08-25T21:54:47Z" hostname="6258816e9ca7" tests="19" skipped="0" failures="0" errors="0" time="102.124">
-    <testcase time="12.761" classname="shinytest2_tm_g_gh_density_distribution_plot" name="e2e_tm_g_gh_density_distribution_plot_initializes_and_renders_a_plot"/>
-    <testcase time="0.0050000000000523" classname="shinytest2_tm_g_gh_density_distribution_plot" name="e2e_tm_g_gh_density_distribution_plot_initializes_and_renders_a_plot"/>
-    <testcase time="0.0739999999999554" classname="shinytest2_tm_g_gh_density_distribution_plot" name="e2e_tm_g_gh_density_distribution_plot_initializes_and_renders_a_plot"/>
-    <testcase time="12.735" classname="shinytest2_tm_g_gh_density_distribution_plot" name="e2e_tm_g_gh_density_distribution_plot_starts_with_expected_label_and_encoding_selections."/>
-    <testcase time="0.00999999999999091" classname="shinytest2_tm_g_gh_density_distribution_plot" name="e2e_tm_g_gh_density_distribution_plot_starts_with_expected_label_and_encoding_selections."/>
-    <testcase time="0.0500000000000114" classname="shinytest2_tm_g_gh_density_distribution_plot" name="e2e_tm_g_gh_density_distribution_plot_starts_with_expected_label_and_encoding_selections."/>
-    <testcase time="0.0509999999999877" classname="shinytest2_tm_g_gh_density_distribution_plot" name="e2e_tm_g_gh_density_distribution_plot_starts_with_expected_label_and_encoding_selections."/>
-    <testcase time="0.0509999999999877" classname="shinytest2_tm_g_gh_density_distribution_plot" name="e2e_tm_g_gh_density_distribution_plot_starts_with_expected_label_and_encoding_selections."/>
-    <testcase time="19.793" classname="shinytest2_tm_g_gh_density_distribution_plot" name="e2e_tm_g_gh_density_distribution_plot_changing_pick_changes_plot_and_does_not_throw_validation_errors._xaxis_param"/>
-    <testcase time="0.0450000000000159" classname="shinytest2_tm_g_gh_density_distribution_plot" name="e2e_tm_g_gh_density_distribution_plot_changing_pick_changes_plot_and_does_not_throw_validation_errors._xaxis_param"/>
-    <testcase time="0.00499999999999545" classname="shinytest2_tm_g_gh_density_distribution_plot" name="e2e_tm_g_gh_density_distribution_plot_changing_pick_changes_plot_and_does_not_throw_validation_errors._xaxis_param"/>
-    <testcase time="18.866" classname="shinytest2_tm_g_gh_density_distribution_plot" name="e2e_tm_g_gh_density_distribution_plot_changing_pick_changes_plot_and_does_not_throw_validation_errors._xaxis_var"/>
-    <testcase time="0.0470000000000255" classname="shinytest2_tm_g_gh_density_distribution_plot" name="e2e_tm_g_gh_density_distribution_plot_changing_pick_changes_plot_and_does_not_throw_validation_errors._xaxis_var"/>
-    <testcase time="0.00499999999999545" classname="shinytest2_tm_g_gh_density_distribution_plot" name="e2e_tm_g_gh_density_distribution_plot_changing_pick_changes_plot_and_does_not_throw_validation_errors._xaxis_var"/>
-    <testcase time="18.144" classname="shinytest2_tm_g_gh_density_distribution_plot" name="e2e_tm_g_gh_density_distribution_plot_changing_pick_changes_plot_and_does_not_throw_validation_errors._trt_group"/>
-    <testcase time="0.0430000000000064" classname="shinytest2_tm_g_gh_density_distribution_plot" name="e2e_tm_g_gh_density_distribution_plot_changing_pick_changes_plot_and_does_not_throw_validation_errors._trt_group"/>
-    <testcase time="0.00599999999997181" classname="shinytest2_tm_g_gh_density_distribution_plot" name="e2e_tm_g_gh_density_distribution_plot_changing_pick_changes_plot_and_does_not_throw_validation_errors._trt_group"/>
-    <testcase time="19.427" classname="shinytest2_tm_g_gh_density_distribution_plot" name="e2e_tm_g_gh_density_distribution_plot_handles_comb_line_toggle"/>
-    <testcase time="0.00599999999997181" classname="shinytest2_tm_g_gh_density_distribution_plot" name="e2e_tm_g_gh_density_distribution_plot_handles_comb_line_toggle"/>
-  </testsuite>
-  <testsuite name="shinytest2-tm_g_gh_lineplot" timestamp="2026-08-25T21:56:29Z" hostname="6258816e9ca7" tests="6" skipped="0" failures="0" errors="6" time="746.466">
-    <testcase time="124.367" classname="shinytest2_tm_g_gh_lineplot" name="e2e_tm_g_gh_lineplot_initializes_and_renders_a_plot">
-      <error type="error" message="Error in `app_initialize(self, private, app_dir = app_dir, ..., load_timeout = load_timeout, timeout = timeout, wait = wait, expect_values_screenshot_args = expect_values_screenshot_args, screenshot_args = screenshot_args, check_names = check_names, name = name, variant = variant, view = view, height = height, width = width, seed = seed, clean_logs = clean_logs, shiny_args = shiny_args, render_args = render_args, options = options)`: Shiny app did not become stable in 120000ms. ('test-shinytest2-tm_g_gh_lineplot.R:22:3')">Error in `app_initialize(self, private, app_dir = app_dir, ..., load_timeout = load_timeout, timeout = timeout, wait = wait, expect_values_screenshot_args = expect_values_screenshot_args, screenshot_args = screenshot_args, check_names = check_names, name = name, variant = variant, view = view, height = height, width = width, seed = seed, clean_logs = clean_logs, shiny_args = shiny_args, render_args = render_args, options = options)`: Shiny app did not become stable in 120000ms.
-Message: An error occurred while waiting for Shiny to be stable
-Caused by error in `app_wait_for_idle()`:
-! An error occurred while waiting for Shiny to be stable
-
-
-i You can inspect the failed AppDriver object via `rlang::last_error()$app`
-i AppDriver logs:
-{shinytest2} R  info    21:56:30.20 Start AppDriver initialization
-{shinytest2} R  info    21:56:30.38 Starting Shiny app
-{shinytest2} R  info    21:56:31.83 Creating new ChromoteSession
-{shinytest2} R  info    21:56:31.88 Navigating to Shiny app
-{shinytest2} R  info    21:56:33.12 Injecting shiny-tracer.js
-{chromote}   JS info    21:56:33.14 shinytest2; jQuery not found
-{chromote}   JS info    21:56:33.14 shinytest2; Loaded
-{shinytest2} R  info    21:56:33.14 Waiting for Shiny to become ready
-{chromote}   JS info    21:56:33.20 shinytest2; jQuery found
-{chromote}   JS info    21:56:33.20 shinytest2; Waiting for shiny session to connect
-{chromote}   JS info    21:56:33.51 shinytest2; Connected
-{chromote}   JS info    21:56:33.56 shinytest2; shiny:busy
-{shinytest2} R  info    21:56:33.60 Waiting for Shiny to become idle for 200ms within 120000ms
-{chromote}   JS info    21:56:33.60 shinytest2; Waiting for Shiny to be stable
-{chromote}   JS log     21:56:33.71 Teal: Sending document title: teal app to input: teal-teal_modules-app_title
-                                    (anonymous)             @ :669:10
-                                    _sendMessagesToHandlers @ shiny-javascript-1.14.0/shiny.min.js:443:9166
-                                    (anonymous)             @ shiny-javascript-1.14.0/shiny.min.js:443:10855
-                                    _sendMessagesToHandlers @ shiny-javascript-1.14.0/shiny.min.js:443:9166
-                                    dispatchMessage         @ shiny-javascript-1.14.0/shiny.min.js:443:9001
-                                    (anonymous)             @ shiny-javascript-1.14.0/shiny.min.js:443:4924
-                                    startActionQueueLoop    @ shiny-javascript-1.14.0/shiny.min.js:443:5210
-{chromote}   JS warning 21:56:39.99 Container not found for input after timeout: teal-teal_modules-nav-line_plot-module-xaxis_param-values-selected
-                                    (anonymous) @ js/input-validator.js:56:14
-{chromote}   JS warning 21:56:39.99 Container not found for input after timeout: teal-teal_modules-nav-line_plot-module-trt_group-variables-selected
-                                    (anonymous) @ js/input-validator.js:56:14
-{chromote}   JS warning 21:56:39.99 Container not found for input after timeout: teal-teal_modules-nav-line_plot-module-xaxis_var-variables-selected
-                                    (anonymous) @ js/input-validator.js:56:14
-{chromote}   JS warning 21:56:39.99 Container not found for input after timeout: teal-teal_modules-nav-line_plot-module-yaxis_var-variables-selected
-                                    (anonymous) @ js/input-validator.js:56:14
-{chromote}   JS warning 21:56:40.26 Container not found for input after timeout: teal-teal_modules-nav-line_plot-module-yrange_scale
-                                    (anonymous) @ js/input-validator.js:56:14
-{shinytest2} R  info    21:58:33.62 Error while initializing AppDriver:
-                                    Shiny app did not become stable in 120000ms.
-                                    Message: An error occurred while waiting for Shiny to be stable
-                                    Caused by error in `app_wait_for_idle()`:
-                                    ! An error occurred while waiting for Shiny to be stable
-{shiny}      R  stderr  ----------- Loading required package: shiny
-{shiny}      R  stderr  ----------- Attempting to load the environment ‘package:stringr’
-{shiny}      R  stderr  ----------- Loading required package: teal.data
-{shiny}      R  stderr  ----------- Loading required package: teal.code
-{shiny}      R  stderr  ----------- Loading required package: teal.slice
-{shiny}      R  stderr  ----------- 
-{shiny}      R  stderr  ----------- You are using teal version 1.2.1
-{shiny}      R  stderr  ----------- 
-{shiny}      R  stderr  ----------- Attaching package: ‘teal’
-{shiny}      R  stderr  ----------- 
-{shiny}      R  stderr  ----------- The following objects are masked from ‘package:teal.slice’:
-{shiny}      R  stderr  ----------- 
-{shiny}      R  stderr  -----------     as.teal_slices, teal_slices
-{shiny}      R  stderr  ----------- 
-{shiny}      R  stderr  ----------- Running application in test mode.
-{shiny}      R  stderr  ----------- 
-{shiny}      R  stderr  ----------- Listening on http://127.0.0.1:6930
-{shiny}      R  stderr  ----------- Warning: Error in &lt;reactive&gt;: attempt to apply non-function
-{shiny}      R  stderr  -----------   122: &lt;reactive&gt;
-{shiny}      R  stderr  -----------   100: shape_choices
-{shiny}      R  stderr  -----------    99: &lt;reactive&gt;
-{shiny}      R  stderr  -----------    77: data_state
-{shiny}      R  stderr  -----------    76: eval_tidy
-{shiny}      R  stderr  -----------    75: eventFunc
-{shiny}      R  stderr  -----------    62: observeEvent(data_state()$range)
-{shiny}      R  stderr  -----------    61: contextFunc
-{shiny}      R  stderr  -----------    60: env$runWith
-{shiny}      R  stderr  -----------    47: ctx$run
-{shiny}      R  stderr  -----------    46: run
-{shiny}      R  stderr  -----------    27: flushCallback
-{shiny}      R  stderr  -----------    26: FUN
-{shiny}      R  stderr  -----------    25: lapply
-{shiny}      R  stderr  -----------    24: ctx$executeFlushCallbacks
-{shiny}      R  stderr  -----------    23: .getReactiveEnvironment()$flush
-{shiny}      R  stderr  -----------    22: flushReact
-{shiny}      R  stderr  -----------    21: serviceApp
-{shiny}      R  stderr  -----------    14: &lt;Anonymous&gt;
-{shiny}      R  stderr  -----------    12: &lt;Anonymous&gt;
-{shiny}      R  stderr  -----------    11: &lt;Anonymous&gt;
-{shiny}      R  stderr  -----------    10: base::do.call
-{shiny}      R  stderr  -----------     9: base::saveRDS
-{shiny}      R  stderr  -----------     8: base::withCallingHandlers
-{shiny}      R  stderr  -----------     7: doTryCatch
-{shiny}      R  stderr  -----------     6: tryCatchOne
-{shiny}      R  stderr  -----------     5: tryCatchList
-{shiny}      R  stderr  -----------     2: tryCatchList
-{shiny}      R  stderr  -----------     1: base::tryCatch
-{shiny}      R  stderr  ----------- Warning: Error in &lt;reactive&gt;: attempt to apply non-function
-{shiny}      R  stderr  -----------   79: &lt;Anonymous&gt;
-{shiny}      R  stderr  -----------   78: stop
-{shiny}      R  stderr  -----------   77: shape_choices
-{shiny}      R  stderr  -----------   76: eval_tidy
-{shiny}      R  stderr  -----------   75: eventFunc
-{shiny}      R  stderr  -----------   62: observeEvent(shape_choices())
-{shiny}      R  stderr  -----------   61: contextFunc
-{shiny}      R  stderr  -----------   60: env$runWith
-{shiny}      R  stderr  -----------   47: ctx$run
-{shiny}      R  stderr  -----------   46: run
-{shiny}      R  stderr  -----------   27: flushCallback
-{shiny}      R  stderr  -----------   26: FUN
-{shiny}      R  stderr  -----------   25: lapply
-{shiny}      R  stderr  -----------   24: ctx$executeFlushCallbacks
-{shiny}      R  stderr  -----------   23: .getReactiveEnvironment()$flush
-{shiny}      R  stderr  -----------   22: flushReact
-{shiny}      R  stderr  -----------   21: serviceApp
-{shiny}      R  stderr  -----------   14: &lt;Anonymous&gt;
-{shiny}      R  stderr  -----------   12: &lt;Anonymous&gt;
-{shiny}      R  stderr  -----------   11: &lt;Anonymous&gt;
-{shiny}      R  stderr  -----------   10: base::do.call
-{shiny}      R  stderr  -----------    9: base::saveRDS
-{shiny}      R  stderr  -----------    8: base::withCallingHandlers
-{shiny}      R  stderr  -----------    7: doTryCatch
-{shiny}      R  stderr  -----------    6: tryCatchOne
-{shiny}      R  stderr  -----------    5: tryCatchList
-{shiny}      R  stderr  -----------    2: tryCatchList
-{shiny}      R  stderr  -----------    1: base::tryCatch
-{shiny}      R  stderr  ----------- Warning: Error in &lt;reactive&gt;: attempt to apply non-function
-{shiny}      R  stderr  -----------   73: &lt;Anonymous&gt;
-{shiny}      R  stderr  -----------   72: stop
-{shiny}      R  stderr  -----------   71: shape_choices
-{shiny}      R  stderr  -----------   64: observe
-{shiny}      R  stderr  -----------   63: &lt;observer&gt;
-{shiny}      R  stderr  -----------   14: &lt;Anonymous&gt;
-{shiny}      R  stderr  -----------   12: &lt;Anonymous&gt;
-{shiny}      R  stderr  -----------   11: &lt;Anonymous&gt;
-{shiny}      R  stderr  -----------   10: base::do.call
-{shiny}      R  stderr  -----------    9: base::saveRDS
-{shiny}      R  stderr  -----------    8: base::withCallingHandlers
-{shiny}      R  stderr  -----------    7: doTryCatch
-{shiny}      R  stderr  -----------    6: tryCatchOne
-{shiny}      R  stderr  -----------    5: tryCatchList
-{shiny}      R  stderr  -----------    2: tryCatchList
-{shiny}      R  stderr  -----------    1: base::tryCatch
-{shiny}      R  stderr  ----------- Active module changed: app="teal app", module="Line Plot"
-
-
-Caused by error in `app_initialize_()`:
-! Shiny app did not become stable in 120000ms.
-Message: An error occurred while waiting for Shiny to be stable
-Caused by error in `app_wait_for_idle()`:
-! An error occurred while waiting for Shiny to be stable
-Backtrace:
-     x
-  1. +-teal.goshawk (local) tm_g_gh_lineplot_driver() at test-shinytest2-tm_g_gh_lineplot.R:22:3
-  2. | \-teal.goshawk:::init_teal_app_driver(...) at test-shinytest2-tm_g_gh_lineplot.R:2:3
-  3. |   +-testthat::with_mocked_bindings(...) at ./helper-TealAppDriver.R:21:3
-  4. |   \-TealAppDriver$new(teal::init(...)) at ./helper-TealAppDriver.R:24:7
-  5. |     \-teal (local) initialize(...)
-  6. |       +-base::suppressWarnings(...)
-  7. |       | \-base::withCallingHandlers(...)
-  8. |       +-withr::with_envvar(...)
-  9. |       | \-base::force(code)
- 10. |       \-super$initialize(...)
- 11. |         \-shinytest2:::app_initialize(...)
- 12. |           +-base::withCallingHandlers(...)
- 13. |           \-shinytest2:::app_initialize_(self, private, ..., view = view)
- 14. |             +-base::withCallingHandlers(...)
- 15. |             \-self$wait_for_idle(duration = 200, timeout = private$load_timeout)
- 16. |               \-shinytest2:::app_wait_for_idle(...)
- 17. |                 \-shinytest2:::app_abort(self, private, "An error occurred while waiting for Shiny to be stable")
- 18. |                   \-rlang::abort(..., app = self, call = call)
- 19. |                     \-rlang:::signal_abort(cnd, .file)
- 20. |                       \-base::signalCondition(cnd)
- 21. +-shinytest2 (local) `&lt;fn&gt;`(`&lt;rlng_rrr&gt;`)
- 22. | \-shinytest2:::app_abort(...)
- 23. |   \-rlang::abort(..., app = self, call = call)
- 24. |     \-rlang:::signal_abort(cnd, .file)
- 25. |       \-base::signalCondition(cnd)
- 26. \-shinytest2 (local) `&lt;fn&gt;`(`&lt;rlng_rrr&gt;`)
- 27.   \-shinytest2:::app_abort(...)
- 28.     \-rlang::abort(..., app = self, call = call)</error>
+  <testsuite name="shinytest2-tm_g_gh_boxplot" timestamp="2026-08-25T22:21:14Z" hostname="d5a0ab8f136f" tests="6" skipped="6" failures="0" errors="0" time="0.205">
+    <testcase time="0.0529999999999999" classname="shinytest2_tm_g_gh_boxplot" name="e2e_tm_g_gh_boxplot_initializes_and_renders_a_plot">
+      <skipped message="Reason: testing depth 3 is below current testing specification 5 ('test-shinytest2-tm_g_gh_boxplot.R:24:3')"/>
     </testcase>
-    <testcase time="124.427" classname="shinytest2_tm_g_gh_lineplot" name="e2e_tm_g_gh_lineplot_starts_with_expected_label_and_encoding_selections.">
-      <error type="error" message="Error in `app_initialize(self, private, app_dir = app_dir, ..., load_timeout = load_timeout, timeout = timeout, wait = wait, expect_values_screenshot_args = expect_values_screenshot_args, screenshot_args = screenshot_args, check_names = check_names, name = name, variant = variant, view = view, height = height, width = width, seed = seed, clean_logs = clean_logs, shiny_args = shiny_args, render_args = render_args, options = options)`: Shiny app did not become stable in 120000ms. ('test-shinytest2-tm_g_gh_lineplot.R:39:5')">Error in `app_initialize(self, private, app_dir = app_dir, ..., load_timeout = load_timeout, timeout = timeout, wait = wait, expect_values_screenshot_args = expect_values_screenshot_args, screenshot_args = screenshot_args, check_names = check_names, name = name, variant = variant, view = view, height = height, width = width, seed = seed, clean_logs = clean_logs, shiny_args = shiny_args, render_args = render_args, options = options)`: Shiny app did not become stable in 120000ms.
-Message: An error occurred while waiting for Shiny to be stable
-Caused by error in `app_wait_for_idle()`:
-! An error occurred while waiting for Shiny to be stable
-
-
-i You can inspect the failed AppDriver object via `rlang::last_error()$app`
-i AppDriver logs:
-{shinytest2} R  info    21:58:34.47 Start AppDriver initialization
-{shinytest2} R  info    21:58:34.65 Starting Shiny app
-{shinytest2} R  info    21:58:36.30 Creating new ChromoteSession
-{shinytest2} R  info    21:58:36.34 Navigating to Shiny app
-{shinytest2} R  info    21:58:37.57 Injecting shiny-tracer.js
-{chromote}   JS info    21:58:37.59 shinytest2; jQuery not found
-{chromote}   JS info    21:58:37.59 shinytest2; Loaded
-{shinytest2} R  info    21:58:37.59 Waiting for Shiny to become ready
-{chromote}   JS info    21:58:37.65 shinytest2; jQuery found
-{chromote}   JS info    21:58:37.65 shinytest2; Waiting for shiny session to connect
-{chromote}   JS info    21:58:37.99 shinytest2; Connected
-{chromote}   JS info    21:58:38.03 shinytest2; shiny:busy
-{shinytest2} R  info    21:58:38.04 Waiting for Shiny to become idle for 200ms within 120000ms
-{chromote}   JS info    21:58:38.04 shinytest2; Waiting for Shiny to be stable
-{chromote}   JS log     21:58:38.19 Teal: Sending document title: teal app to input: teal-teal_modules-app_title
-                                    (anonymous)             @ :669:10
-                                    _sendMessagesToHandlers @ shiny-javascript-1.14.0/shiny.min.js:443:9166
-                                    (anonymous)             @ shiny-javascript-1.14.0/shiny.min.js:443:10855
-                                    _sendMessagesToHandlers @ shiny-javascript-1.14.0/shiny.min.js:443:9166
-                                    dispatchMessage         @ shiny-javascript-1.14.0/shiny.min.js:443:9001
-                                    (anonymous)             @ shiny-javascript-1.14.0/shiny.min.js:443:4924
-                                    startActionQueueLoop    @ shiny-javascript-1.14.0/shiny.min.js:443:5210
-{chromote}   JS warning 21:58:44.45 Container not found for input after timeout: teal-teal_modules-nav-line_plot-module-xaxis_param-values-selected
-                                    (anonymous) @ js/input-validator.js:56:14
-{chromote}   JS warning 21:58:44.45 Container not found for input after timeout: teal-teal_modules-nav-line_plot-module-trt_group-variables-selected
-                                    (anonymous) @ js/input-validator.js:56:14
-{chromote}   JS warning 21:58:44.46 Container not found for input after timeout: teal-teal_modules-nav-line_plot-module-xaxis_var-variables-selected
-                                    (anonymous) @ js/input-validator.js:56:14
-{chromote}   JS warning 21:58:44.46 Container not found for input after timeout: teal-teal_modules-nav-line_plot-module-yaxis_var-variables-selected
-                                    (anonymous) @ js/input-validator.js:56:14
-{chromote}   JS warning 21:58:44.73 Container not found for input after timeout: teal-teal_modules-nav-line_plot-module-yrange_scale
-                                    (anonymous) @ js/input-validator.js:56:14
-{shinytest2} R  info    22:00:38.05 Error while initializing AppDriver:
-                                    Shiny app did not become stable in 120000ms.
-                                    Message: An error occurred while waiting for Shiny to be stable
-                                    Caused by error in `app_wait_for_idle()`:
-                                    ! An error occurred while waiting for Shiny to be stable
-{shiny}      R  stderr  ----------- Loading required package: shiny
-{shiny}      R  stderr  ----------- Attempting to load the environment ‘package:stringr’
-{shiny}      R  stderr  ----------- Loading required package: teal.data
-{shiny}      R  stderr  ----------- Loading required package: teal.code
-{shiny}      R  stderr  ----------- Loading required package: teal.slice
-{shiny}      R  stderr  ----------- 
-{shiny}      R  stderr  ----------- You are using teal version 1.2.1
-{shiny}      R  stderr  ----------- 
-{shiny}      R  stderr  ----------- Attaching package: ‘teal’
-{shiny}      R  stderr  ----------- 
-{shiny}      R  stderr  ----------- The following objects are masked from ‘package:teal.slice’:
-{shiny}      R  stderr  ----------- 
-{shiny}      R  stderr  -----------     as.teal_slices, teal_slices
-{shiny}      R  stderr  ----------- 
-{shiny}      R  stderr  ----------- Running application in test mode.
-{shiny}      R  stderr  ----------- 
-{shiny}      R  stderr  ----------- Listening on http://127.0.0.1:5081
-{shiny}      R  stderr  ----------- Warning: Error in &lt;reactive&gt;: attempt to apply non-function
-{shiny}      R  stderr  -----------   122: &lt;reactive&gt;
-{shiny}      R  stderr  -----------   100: shape_choices
-{shiny}      R  stderr  -----------    99: &lt;reactive&gt;
-{shiny}      R  stderr  -----------    77: data_state
-{shiny}      R  stderr  -----------    76: eval_tidy
-{shiny}      R  stderr  -----------    75: eventFunc
-{shiny}      R  stderr  -----------    62: observeEvent(data_state()$range)
-{shiny}      R  stderr  -----------    61: contextFunc
-{shiny}      R  stderr  -----------    60: env$runWith
-{shiny}      R  stderr  -----------    47: ctx$run
-{shiny}      R  stderr  -----------    46: run
-{shiny}      R  stderr  -----------    27: flushCallback
-{shiny}      R  stderr  -----------    26: FUN
-{shiny}      R  stderr  -----------    25: lapply
-{shiny}      R  stderr  -----------    24: ctx$executeFlushCallbacks
-{shiny}      R  stderr  -----------    23: .getReactiveEnvironment()$flush
-{shiny}      R  stderr  -----------    22: flushReact
-{shiny}      R  stderr  -----------    21: serviceApp
-{shiny}      R  stderr  -----------    14: &lt;Anonymous&gt;
-{shiny}      R  stderr  -----------    12: &lt;Anonymous&gt;
-{shiny}      R  stderr  -----------    11: &lt;Anonymous&gt;
-{shiny}      R  stderr  -----------    10: base::do.call
-{shiny}      R  stderr  -----------     9: base::saveRDS
-{shiny}      R  stderr  -----------     8: base::withCallingHandlers
-{shiny}      R  stderr  -----------     7: doTryCatch
-{shiny}      R  stderr  -----------     6: tryCatchOne
-{shiny}      R  stderr  -----------     5: tryCatchList
-{shiny}      R  stderr  -----------     2: tryCatchList
-{shiny}      R  stderr  -----------     1: base::tryCatch
-{shiny}      R  stderr  ----------- Warning: Error in &lt;reactive&gt;: attempt to apply non-function
-{shiny}      R  stderr  -----------   79: &lt;Anonymous&gt;
-{shiny}      R  stderr  -----------   78: stop
-{shiny}      R  stderr  -----------   77: shape_choices
-{shiny}      R  stderr  -----------   76: eval_tidy
-{shiny}      R  stderr  -----------   75: eventFunc
-{shiny}      R  stderr  -----------   62: observeEvent(shape_choices())
-{shiny}      R  stderr  -----------   61: contextFunc
-{shiny}      R  stderr  -----------   60: env$runWith
-{shiny}      R  stderr  -----------   47: ctx$run
-{shiny}      R  stderr  -----------   46: run
-{shiny}      R  stderr  -----------   27: flushCallback
-{shiny}      R  stderr  -----------   26: FUN
-{shiny}      R  stderr  -----------   25: lapply
-{shiny}      R  stderr  -----------   24: ctx$executeFlushCallbacks
-{shiny}      R  stderr  -----------   23: .getReactiveEnvironment()$flush
-{shiny}      R  stderr  -----------   22: flushReact
-{shiny}      R  stderr  -----------   21: serviceApp
-{shiny}      R  stderr  -----------   14: &lt;Anonymous&gt;
-{shiny}      R  stderr  -----------   12: &lt;Anonymous&gt;
-{shiny}      R  stderr  -----------   11: &lt;Anonymous&gt;
-{shiny}      R  stderr  -----------   10: base::do.call
-{shiny}      R  stderr  -----------    9: base::saveRDS
-{shiny}      R  stderr  -----------    8: base::withCallingHandlers
-{shiny}      R  stderr  -----------    7: doTryCatch
-{shiny}      R  stderr  -----------    6: tryCatchOne
-{shiny}      R  stderr  -----------    5: tryCatchList
-{shiny}      R  stderr  -----------    2: tryCatchList
-{shiny}      R  stderr  -----------    1: base::tryCatch
-{shiny}      R  stderr  ----------- Warning: Error in &lt;reactive&gt;: attempt to apply non-function
-{shiny}      R  stderr  -----------   73: &lt;Anonymous&gt;
-{shiny}      R  stderr  -----------   72: stop
-{shiny}      R  stderr  -----------   71: shape_choices
-{shiny}      R  stderr  -----------   64: observe
-{shiny}      R  stderr  -----------   63: &lt;observer&gt;
-{shiny}      R  stderr  -----------   14: &lt;Anonymous&gt;
-{shiny}      R  stderr  -----------   12: &lt;Anonymous&gt;
-{shiny}      R  stderr  -----------   11: &lt;Anonymous&gt;
-{shiny}      R  stderr  -----------   10: base::do.call
-{shiny}      R  stderr  -----------    9: base::saveRDS
-{shiny}      R  stderr  -----------    8: base::withCallingHandlers
-{shiny}      R  stderr  -----------    7: doTryCatch
-{shiny}      R  stderr  -----------    6: tryCatchOne
-{shiny}      R  stderr  -----------    5: tryCatchList
-{shiny}      R  stderr  -----------    2: tryCatchList
-{shiny}      R  stderr  -----------    1: base::tryCatch
-{shiny}      R  stderr  ----------- Active module changed: app="teal app", module="Line Plot"
-
-
-Caused by error in `app_initialize_()`:
-! Shiny app did not become stable in 120000ms.
-Message: An error occurred while waiting for Shiny to be stable
-Caused by error in `app_wait_for_idle()`:
-! An error occurred while waiting for Shiny to be stable
-Backtrace:
-     x
-  1. +-teal.goshawk (local) tm_g_gh_lineplot_driver() at test-shinytest2-tm_g_gh_lineplot.R:39:5
-  2. | \-teal.goshawk:::init_teal_app_driver(...) at test-shinytest2-tm_g_gh_lineplot.R:2:3
-  3. |   +-testthat::with_mocked_bindings(...) at ./helper-TealAppDriver.R:21:3
-  4. |   \-TealAppDriver$new(teal::init(...)) at ./helper-TealAppDriver.R:24:7
-  5. |     \-teal (local) initialize(...)
-  6. |       +-base::suppressWarnings(...)
-  7. |       | \-base::withCallingHandlers(...)
-  8. |       +-withr::with_envvar(...)
-  9. |       | \-base::force(code)
- 10. |       \-super$initialize(...)
- 11. |         \-shinytest2:::app_initialize(...)
- 12. |           +-base::withCallingHandlers(...)
- 13. |           \-shinytest2:::app_initialize_(self, private, ..., view = view)
- 14. |             +-base::withCallingHandlers(...)
- 15. |             \-self$wait_for_idle(duration = 200, timeout = private$load_timeout)
- 16. |               \-shinytest2:::app_wait_for_idle(...)
- 17. |                 \-shinytest2:::app_abort(self, private, "An error occurred while waiting for Shiny to be stable")
- 18. |                   \-rlang::abort(..., app = self, call = call)
- 19. |                     \-rlang:::signal_abort(cnd, .file)
- 20. |                       \-base::signalCondition(cnd)
- 21. +-shinytest2 (local) `&lt;fn&gt;`(`&lt;rlng_rrr&gt;`)
- 22. | \-shinytest2:::app_abort(...)
- 23. |   \-rlang::abort(..., app = self, call = call)
- 24. |     \-rlang:::signal_abort(cnd, .file)
- 25. |       \-base::signalCondition(cnd)
- 26. \-shinytest2 (local) `&lt;fn&gt;`(`&lt;rlng_rrr&gt;`)
- 27.   \-shinytest2:::app_abort(...)
- 28.     \-rlang::abort(..., app = self, call = call)</error>
+    <testcase time="0.0670000000000002" classname="shinytest2_tm_g_gh_boxplot" name="e2e_tm_g_gh_boxplot_starts_with_expected_label_and_encoding_selections.">
+      <skipped message="Reason: testing depth 3 is below current testing specification 5 ('test-shinytest2-tm_g_gh_boxplot.R:41:5')"/>
     </testcase>
-    <testcase time="124.428" classname="shinytest2_tm_g_gh_lineplot" name="e2e_tm_g_gh_lineplot_changing_pick_changes_plot_and_does_not_throw_validation_errors._xaxis_param">
-      <error type="error" message="Error in `app_initialize(self, private, app_dir = app_dir, ..., load_timeout = load_timeout, timeout = timeout, wait = wait, expect_values_screenshot_args = expect_values_screenshot_args, screenshot_args = screenshot_args, check_names = check_names, name = name, variant = variant, view = view, height = height, width = width, seed = seed, clean_logs = clean_logs, shiny_args = shiny_args, render_args = render_args, options = options)`: Shiny app did not become stable in 120000ms. ('test-shinytest2-tm_g_gh_lineplot.R:71:7')">Error in `app_initialize(self, private, app_dir = app_dir, ..., load_timeout = load_timeout, timeout = timeout, wait = wait, expect_values_screenshot_args = expect_values_screenshot_args, screenshot_args = screenshot_args, check_names = check_names, name = name, variant = variant, view = view, height = height, width = width, seed = seed, clean_logs = clean_logs, shiny_args = shiny_args, render_args = render_args, options = options)`: Shiny app did not become stable in 120000ms.
-Message: An error occurred while waiting for Shiny to be stable
-Caused by error in `app_wait_for_idle()`:
-! An error occurred while waiting for Shiny to be stable
-
-
-i You can inspect the failed AppDriver object via `rlang::last_error()$app`
-i AppDriver logs:
-{shinytest2} R  info    22:00:38.91 Start AppDriver initialization
-{shinytest2} R  info    22:00:39.08 Starting Shiny app
-{shinytest2} R  info    22:00:40.73 Creating new ChromoteSession
-{shinytest2} R  info    22:00:40.78 Navigating to Shiny app
-{shinytest2} R  info    22:00:42.01 Injecting shiny-tracer.js
-{chromote}   JS info    22:00:42.03 shinytest2; jQuery not found
-{chromote}   JS info    22:00:42.03 shinytest2; Loaded
-{shinytest2} R  info    22:00:42.03 Waiting for Shiny to become ready
-{chromote}   JS info    22:00:42.09 shinytest2; jQuery found
-{chromote}   JS info    22:00:42.09 shinytest2; Waiting for shiny session to connect
-{chromote}   JS info    22:00:42.44 shinytest2; Connected
-{shinytest2} R  info    22:00:42.46 Waiting for Shiny to become idle for 200ms within 120000ms
-{chromote}   JS info    22:00:42.46 shinytest2; Waiting for Shiny to be stable
-{chromote}   JS info    22:00:42.49 shinytest2; shiny:busy
-{chromote}   JS log     22:00:42.65 Teal: Sending document title: teal app to input: teal-teal_modules-app_title
-                                    (anonymous)             @ :669:10
-                                    _sendMessagesToHandlers @ shiny-javascript-1.14.0/shiny.min.js:443:9166
-                                    (anonymous)             @ shiny-javascript-1.14.0/shiny.min.js:443:10855
-                                    _sendMessagesToHandlers @ shiny-javascript-1.14.0/shiny.min.js:443:9166
-                                    dispatchMessage         @ shiny-javascript-1.14.0/shiny.min.js:443:9001
-                                    (anonymous)             @ shiny-javascript-1.14.0/shiny.min.js:443:4924
-                                    startActionQueueLoop    @ shiny-javascript-1.14.0/shiny.min.js:443:5210
-{chromote}   JS warning 22:00:48.90 Container not found for input after timeout: teal-teal_modules-nav-line_plot-module-xaxis_param-values-selected
-                                    (anonymous) @ js/input-validator.js:56:14
-{chromote}   JS warning 22:00:48.90 Container not found for input after timeout: teal-teal_modules-nav-line_plot-module-trt_group-variables-selected
-                                    (anonymous) @ js/input-validator.js:56:14
-{chromote}   JS warning 22:00:48.90 Container not found for input after timeout: teal-teal_modules-nav-line_plot-module-xaxis_var-variables-selected
-                                    (anonymous) @ js/input-validator.js:56:14
-{chromote}   JS warning 22:00:48.90 Container not found for input after timeout: teal-teal_modules-nav-line_plot-module-yaxis_var-variables-selected
-                                    (anonymous) @ js/input-validator.js:56:14
-{chromote}   JS warning 22:00:49.17 Container not found for input after timeout: teal-teal_modules-nav-line_plot-module-yrange_scale
-                                    (anonymous) @ js/input-validator.js:56:14
-{shinytest2} R  info    22:02:42.47 Error while initializing AppDriver:
-                                    Shiny app did not become stable in 120000ms.
-                                    Message: An error occurred while waiting for Shiny to be stable
-                                    Caused by error in `app_wait_for_idle()`:
-                                    ! An error occurred while waiting for Shiny to be stable
-{shiny}      R  stderr  ----------- Loading required package: shiny
-{shiny}      R  stderr  ----------- Attempting to load the environment ‘package:stringr’
-{shiny}      R  stderr  ----------- Loading required package: teal.data
-{shiny}      R  stderr  ----------- Loading required package: teal.code
-{shiny}      R  stderr  ----------- Loading required package: teal.slice
-{shiny}      R  stderr  ----------- 
-{shiny}      R  stderr  ----------- You are using teal version 1.2.1
-{shiny}      R  stderr  ----------- 
-{shiny}      R  stderr  ----------- Attaching package: ‘teal’
-{shiny}      R  stderr  ----------- 
-{shiny}      R  stderr  ----------- The following objects are masked from ‘package:teal.slice’:
-{shiny}      R  stderr  ----------- 
-{shiny}      R  stderr  -----------     as.teal_slices, teal_slices
-{shiny}      R  stderr  ----------- 
-{shiny}      R  stderr  ----------- Running application in test mode.
-{shiny}      R  stderr  ----------- 
-{shiny}      R  stderr  ----------- Listening on http://127.0.0.1:6416
-{shiny}      R  stderr  ----------- Warning: Error in &lt;reactive&gt;: attempt to apply non-function
-{shiny}      R  stderr  -----------   122: &lt;reactive&gt;
-{shiny}      R  stderr  -----------   100: shape_choices
-{shiny}      R  stderr  -----------    99: &lt;reactive&gt;
-{shiny}      R  stderr  -----------    77: data_state
-{shiny}      R  stderr  -----------    76: eval_tidy
-{shiny}      R  stderr  -----------    75: eventFunc
-{shiny}      R  stderr  -----------    62: observeEvent(data_state()$range)
-{shiny}      R  stderr  -----------    61: contextFunc
-{shiny}      R  stderr  -----------    60: env$runWith
-{shiny}      R  stderr  -----------    47: ctx$run
-{shiny}      R  stderr  -----------    46: run
-{shiny}      R  stderr  -----------    27: flushCallback
-{shiny}      R  stderr  -----------    26: FUN
-{shiny}      R  stderr  -----------    25: lapply
-{shiny}      R  stderr  -----------    24: ctx$executeFlushCallbacks
-{shiny}      R  stderr  -----------    23: .getReactiveEnvironment()$flush
-{shiny}      R  stderr  -----------    22: flushReact
-{shiny}      R  stderr  -----------    21: serviceApp
-{shiny}      R  stderr  -----------    14: &lt;Anonymous&gt;
-{shiny}      R  stderr  -----------    12: &lt;Anonymous&gt;
-{shiny}      R  stderr  -----------    11: &lt;Anonymous&gt;
-{shiny}      R  stderr  -----------    10: base::do.call
-{shiny}      R  stderr  -----------     9: base::saveRDS
-{shiny}      R  stderr  -----------     8: base::withCallingHandlers
-{shiny}      R  stderr  -----------     7: doTryCatch
-{shiny}      R  stderr  -----------     6: tryCatchOne
-{shiny}      R  stderr  -----------     5: tryCatchList
-{shiny}      R  stderr  -----------     2: tryCatchList
-{shiny}      R  stderr  -----------     1: base::tryCatch
-{shiny}      R  stderr  ----------- Warning: Error in &lt;reactive&gt;: attempt to apply non-function
-{shiny}      R  stderr  -----------   79: &lt;Anonymous&gt;
-{shiny}      R  stderr  -----------   78: stop
-{shiny}      R  stderr  -----------   77: shape_choices
-{shiny}      R  stderr  -----------   76: eval_tidy
-{shiny}      R  stderr  -----------   75: eventFunc
-{shiny}      R  stderr  -----------   62: observeEvent(shape_choices())
-{shiny}      R  stderr  -----------   61: contextFunc
-{shiny}      R  stderr  -----------   60: env$runWith
-{shiny}      R  stderr  -----------   47: ctx$run
-{shiny}      R  stderr  -----------   46: run
-{shiny}      R  stderr  -----------   27: flushCallback
-{shiny}      R  stderr  -----------   26: FUN
-{shiny}      R  stderr  -----------   25: lapply
-{shiny}      R  stderr  -----------   24: ctx$executeFlushCallbacks
-{shiny}      R  stderr  -----------   23: .getReactiveEnvironment()$flush
-{shiny}      R  stderr  -----------   22: flushReact
-{shiny}      R  stderr  -----------   21: serviceApp
-{shiny}      R  stderr  -----------   14: &lt;Anonymous&gt;
-{shiny}      R  stderr  -----------   12: &lt;Anonymous&gt;
-{shiny}      R  stderr  -----------   11: &lt;Anonymous&gt;
-{shiny}      R  stderr  -----------   10: base::do.call
-{shiny}      R  stderr  -----------    9: base::saveRDS
-{shiny}      R  stderr  -----------    8: base::withCallingHandlers
-{shiny}      R  stderr  -----------    7: doTryCatch
-{shiny}      R  stderr  -----------    6: tryCatchOne
-{shiny}      R  stderr  -----------    5: tryCatchList
-{shiny}      R  stderr  -----------    2: tryCatchList
-{shiny}      R  stderr  -----------    1: base::tryCatch
-{shiny}      R  stderr  ----------- Warning: Error in &lt;reactive&gt;: attempt to apply non-function
-{shiny}      R  stderr  -----------   73: &lt;Anonymous&gt;
-{shiny}      R  stderr  -----------   72: stop
-{shiny}      R  stderr  -----------   71: shape_choices
-{shiny}      R  stderr  -----------   64: observe
-{shiny}      R  stderr  -----------   63: &lt;observer&gt;
-{shiny}      R  stderr  -----------   14: &lt;Anonymous&gt;
-{shiny}      R  stderr  -----------   12: &lt;Anonymous&gt;
-{shiny}      R  stderr  -----------   11: &lt;Anonymous&gt;
-{shiny}      R  stderr  -----------   10: base::do.call
-{shiny}      R  stderr  -----------    9: base::saveRDS
-{shiny}      R  stderr  -----------    8: base::withCallingHandlers
-{shiny}      R  stderr  -----------    7: doTryCatch
-{shiny}      R  stderr  -----------    6: tryCatchOne
-{shiny}      R  stderr  -----------    5: tryCatchList
-{shiny}      R  stderr  -----------    2: tryCatchList
-{shiny}      R  stderr  -----------    1: base::tryCatch
-{shiny}      R  stderr  ----------- Active module changed: app="teal app", module="Line Plot"
-
-
-Caused by error in `app_initialize_()`:
-! Shiny app did not become stable in 120000ms.
-Message: An error occurred while waiting for Shiny to be stable
-Caused by error in `app_wait_for_idle()`:
-! An error occurred while waiting for Shiny to be stable
-Backtrace:
-     x
-  1. +-teal.goshawk (local) tm_g_gh_lineplot_driver() at test-shinytest2-tm_g_gh_lineplot.R:71:7
-  2. | \-teal.goshawk:::init_teal_app_driver(...) at test-shinytest2-tm_g_gh_lineplot.R:2:3
-  3. |   +-testthat::with_mocked_bindings(...) at ./helper-TealAppDriver.R:21:3
-  4. |   \-TealAppDriver$new(teal::init(...)) at ./helper-TealAppDriver.R:24:7
-  5. |     \-teal (local) initialize(...)
-  6. |       +-base::suppressWarnings(...)
-  7. |       | \-base::withCallingHandlers(...)
-  8. |       +-withr::with_envvar(...)
-  9. |       | \-base::force(code)
- 10. |       \-super$initialize(...)
- 11. |         \-shinytest2:::app_initialize(...)
- 12. |           +-base::withCallingHandlers(...)
- 13. |           \-shinytest2:::app_initialize_(self, private, ..., view = view)
- 14. |             +-base::withCallingHandlers(...)
- 15. |             \-self$wait_for_idle(duration = 200, timeout = private$load_timeout)
- 16. |               \-shinytest2:::app_wait_for_idle(...)
- 17. |                 \-shinytest2:::app_abort(self, private, "An error occurred while waiting for Shiny to be stable")
- 18. |                   \-rlang::abort(..., app = self, call = call)
- 19. |                     \-rlang:::signal_abort(cnd, .file)
- 20. |                       \-base::signalCondition(cnd)
- 21. +-shinytest2 (local) `&lt;fn&gt;`(`&lt;rlng_rrr&gt;`)
- 22. | \-shinytest2:::app_abort(...)
- 23. |   \-rlang::abort(..., app = self, call = call)
- 24. |     \-rlang:::signal_abort(cnd, .file)
- 25. |       \-base::signalCondition(cnd)
- 26. \-shinytest2 (local) `&lt;fn&gt;`(`&lt;rlng_rrr&gt;`)
- 27.   \-shinytest2:::app_abort(...)
- 28.     \-rlang::abort(..., app = self, call = call)</error>
+    <testcase time="0.0409999999999999" classname="shinytest2_tm_g_gh_boxplot" name="e2e_tm_g_gh_boxplot_changing_pick_changes_plot_and_does_not_throw_validation_errors.">
+      <skipped message="Reason: testing depth 3 is below current testing specification 5 ('test-shinytest2-tm_g_gh_boxplot.R:61:3')"/>
     </testcase>
-    <testcase time="124.519" classname="shinytest2_tm_g_gh_lineplot" name="e2e_tm_g_gh_lineplot_changing_pick_changes_plot_and_does_not_throw_validation_errors._xaxis_var">
-      <error type="error" message="Error in `app_initialize(self, private, app_dir = app_dir, ..., load_timeout = load_timeout, timeout = timeout, wait = wait, expect_values_screenshot_args = expect_values_screenshot_args, screenshot_args = screenshot_args, check_names = check_names, name = name, variant = variant, view = view, height = height, width = width, seed = seed, clean_logs = clean_logs, shiny_args = shiny_args, render_args = render_args, options = options)`: Shiny app did not become stable in 120000ms. ('test-shinytest2-tm_g_gh_lineplot.R:71:7')">Error in `app_initialize(self, private, app_dir = app_dir, ..., load_timeout = load_timeout, timeout = timeout, wait = wait, expect_values_screenshot_args = expect_values_screenshot_args, screenshot_args = screenshot_args, check_names = check_names, name = name, variant = variant, view = view, height = height, width = width, seed = seed, clean_logs = clean_logs, shiny_args = shiny_args, render_args = render_args, options = options)`: Shiny app did not become stable in 120000ms.
-Message: An error occurred while waiting for Shiny to be stable
-Caused by error in `app_wait_for_idle()`:
-! An error occurred while waiting for Shiny to be stable
-
-
-i You can inspect the failed AppDriver object via `rlang::last_error()$app`
-i AppDriver logs:
-{shinytest2} R  info    22:02:43.40 Start AppDriver initialization
-{shinytest2} R  info    22:02:43.58 Starting Shiny app
-{shinytest2} R  info    22:02:45.23 Creating new ChromoteSession
-{shinytest2} R  info    22:02:45.28 Navigating to Shiny app
-{shinytest2} R  info    22:02:46.51 Injecting shiny-tracer.js
-{chromote}   JS info    22:02:46.52 shinytest2; jQuery not found
-{chromote}   JS info    22:02:46.53 shinytest2; Loaded
-{shinytest2} R  info    22:02:46.53 Waiting for Shiny to become ready
-{chromote}   JS info    22:02:46.59 shinytest2; jQuery found
-{chromote}   JS info    22:02:46.59 shinytest2; Waiting for shiny session to connect
-{chromote}   JS info    22:02:46.94 shinytest2; Connected
-{chromote}   JS info    22:02:46.98 shinytest2; shiny:busy
-{shinytest2} R  info    22:02:46.98 Waiting for Shiny to become idle for 200ms within 120000ms
-{chromote}   JS info    22:02:46.99 shinytest2; Waiting for Shiny to be stable
-{chromote}   JS log     22:02:47.13 Teal: Sending document title: teal app to input: teal-teal_modules-app_title
-                                    (anonymous)             @ :669:10
-                                    _sendMessagesToHandlers @ shiny-javascript-1.14.0/shiny.min.js:443:9166
-                                    (anonymous)             @ shiny-javascript-1.14.0/shiny.min.js:443:10855
-                                    _sendMessagesToHandlers @ shiny-javascript-1.14.0/shiny.min.js:443:9166
-                                    dispatchMessage         @ shiny-javascript-1.14.0/shiny.min.js:443:9001
-                                    (anonymous)             @ shiny-javascript-1.14.0/shiny.min.js:443:4924
-                                    startActionQueueLoop    @ shiny-javascript-1.14.0/shiny.min.js:443:5210
-{chromote}   JS warning 22:02:53.40 Container not found for input after timeout: teal-teal_modules-nav-line_plot-module-xaxis_param-values-selected
-                                    (anonymous) @ js/input-validator.js:56:14
-{chromote}   JS warning 22:02:53.40 Container not found for input after timeout: teal-teal_modules-nav-line_plot-module-trt_group-variables-selected
-                                    (anonymous) @ js/input-validator.js:56:14
-{chromote}   JS warning 22:02:53.40 Container not found for input after timeout: teal-teal_modules-nav-line_plot-module-xaxis_var-variables-selected
-                                    (anonymous) @ js/input-validator.js:56:14
-{chromote}   JS warning 22:02:53.40 Container not found for input after timeout: teal-teal_modules-nav-line_plot-module-yaxis_var-variables-selected
-                                    (anonymous) @ js/input-validator.js:56:14
-{chromote}   JS warning 22:02:53.67 Container not found for input after timeout: teal-teal_modules-nav-line_plot-module-yrange_scale
-                                    (anonymous) @ js/input-validator.js:56:14
-{shinytest2} R  info    22:04:47.00 Error while initializing AppDriver:
-                                    Shiny app did not become stable in 120000ms.
-                                    Message: An error occurred while waiting for Shiny to be stable
-                                    Caused by error in `app_wait_for_idle()`:
-                                    ! An error occurred while waiting for Shiny to be stable
-{shiny}      R  stderr  ----------- Loading required package: shiny
-{shiny}      R  stderr  ----------- Attempting to load the environment ‘package:stringr’
-{shiny}      R  stderr  ----------- Loading required package: teal.data
-{shiny}      R  stderr  ----------- Loading required package: teal.code
-{shiny}      R  stderr  ----------- Loading required package: teal.slice
-{shiny}      R  stderr  ----------- 
-{shiny}      R  stderr  ----------- You are using teal version 1.2.1
-{shiny}      R  stderr  ----------- 
-{shiny}      R  stderr  ----------- Attaching package: ‘teal’
-{shiny}      R  stderr  ----------- 
-{shiny}      R  stderr  ----------- The following objects are masked from ‘package:teal.slice’:
-{shiny}      R  stderr  ----------- 
-{shiny}      R  stderr  -----------     as.teal_slices, teal_slices
-{shiny}      R  stderr  ----------- 
-{shiny}      R  stderr  ----------- Running application in test mode.
-{shiny}      R  stderr  ----------- 
-{shiny}      R  stderr  ----------- Listening on http://127.0.0.1:4208
-{shiny}      R  stderr  ----------- Warning: Error in &lt;reactive&gt;: attempt to apply non-function
-{shiny}      R  stderr  -----------   122: &lt;reactive&gt;
-{shiny}      R  stderr  -----------   100: shape_choices
-{shiny}      R  stderr  -----------    99: &lt;reactive&gt;
-{shiny}      R  stderr  -----------    77: data_state
-{shiny}      R  stderr  -----------    76: eval_tidy
-{shiny}      R  stderr  -----------    75: eventFunc
-{shiny}      R  stderr  -----------    62: observeEvent(data_state()$range)
-{shiny}      R  stderr  -----------    61: contextFunc
-{shiny}      R  stderr  -----------    60: env$runWith
-{shiny}      R  stderr  -----------    47: ctx$run
-{shiny}      R  stderr  -----------    46: run
-{shiny}      R  stderr  -----------    27: flushCallback
-{shiny}      R  stderr  -----------    26: FUN
-{shiny}      R  stderr  -----------    25: lapply
-{shiny}      R  stderr  -----------    24: ctx$executeFlushCallbacks
-{shiny}      R  stderr  -----------    23: .getReactiveEnvironment()$flush
-{shiny}      R  stderr  -----------    22: flushReact
-{shiny}      R  stderr  -----------    21: serviceApp
-{shiny}      R  stderr  -----------    14: &lt;Anonymous&gt;
-{shiny}      R  stderr  -----------    12: &lt;Anonymous&gt;
-{shiny}      R  stderr  -----------    11: &lt;Anonymous&gt;
-{shiny}      R  stderr  -----------    10: base::do.call
-{shiny}      R  stderr  -----------     9: base::saveRDS
-{shiny}      R  stderr  -----------     8: base::withCallingHandlers
-{shiny}      R  stderr  -----------     7: doTryCatch
-{shiny}      R  stderr  -----------     6: tryCatchOne
-{shiny}      R  stderr  -----------     5: tryCatchList
-{shiny}      R  stderr  -----------     2: tryCatchList
-{shiny}      R  stderr  -----------     1: base::tryCatch
-{shiny}      R  stderr  ----------- Warning: Error in &lt;reactive&gt;: attempt to apply non-function
-{shiny}      R  stderr  -----------   79: &lt;Anonymous&gt;
-{shiny}      R  stderr  -----------   78: stop
-{shiny}      R  stderr  -----------   77: shape_choices
-{shiny}      R  stderr  -----------   76: eval_tidy
-{shiny}      R  stderr  -----------   75: eventFunc
-{shiny}      R  stderr  -----------   62: observeEvent(shape_choices())
-{shiny}      R  stderr  -----------   61: contextFunc
-{shiny}      R  stderr  -----------   60: env$runWith
-{shiny}      R  stderr  -----------   47: ctx$run
-{shiny}      R  stderr  -----------   46: run
-{shiny}      R  stderr  -----------   27: flushCallback
-{shiny}      R  stderr  -----------   26: FUN
-{shiny}      R  stderr  -----------   25: lapply
-{shiny}      R  stderr  -----------   24: ctx$executeFlushCallbacks
-{shiny}      R  stderr  -----------   23: .getReactiveEnvironment()$flush
-{shiny}      R  stderr  -----------   22: flushReact
-{shiny}      R  stderr  -----------   21: serviceApp
-{shiny}      R  stderr  -----------   14: &lt;Anonymous&gt;
-{shiny}      R  stderr  -----------   12: &lt;Anonymous&gt;
-{shiny}      R  stderr  -----------   11: &lt;Anonymous&gt;
-{shiny}      R  stderr  -----------   10: base::do.call
-{shiny}      R  stderr  -----------    9: base::saveRDS
-{shiny}      R  stderr  -----------    8: base::withCallingHandlers
-{shiny}      R  stderr  -----------    7: doTryCatch
-{shiny}      R  stderr  -----------    6: tryCatchOne
-{shiny}      R  stderr  -----------    5: tryCatchList
-{shiny}      R  stderr  -----------    2: tryCatchList
-{shiny}      R  stderr  -----------    1: base::tryCatch
-{shiny}      R  stderr  ----------- Warning: Error in &lt;reactive&gt;: attempt to apply non-function
-{shiny}      R  stderr  -----------   73: &lt;Anonymous&gt;
-{shiny}      R  stderr  -----------   72: stop
-{shiny}      R  stderr  -----------   71: shape_choices
-{shiny}      R  stderr  -----------   64: observe
-{shiny}      R  stderr  -----------   63: &lt;observer&gt;
-{shiny}      R  stderr  -----------   14: &lt;Anonymous&gt;
-{shiny}      R  stderr  -----------   12: &lt;Anonymous&gt;
-{shiny}      R  stderr  -----------   11: &lt;Anonymous&gt;
-{shiny}      R  stderr  -----------   10: base::do.call
-{shiny}      R  stderr  -----------    9: base::saveRDS
-{shiny}      R  stderr  -----------    8: base::withCallingHandlers
-{shiny}      R  stderr  -----------    7: doTryCatch
-{shiny}      R  stderr  -----------    6: tryCatchOne
-{shiny}      R  stderr  -----------    5: tryCatchList
-{shiny}      R  stderr  -----------    2: tryCatchList
-{shiny}      R  stderr  -----------    1: base::tryCatch
-{shiny}      R  stderr  ----------- Active module changed: app="teal app", module="Line Plot"
-
-
-Caused by error in `app_initialize_()`:
-! Shiny app did not become stable in 120000ms.
-Message: An error occurred while waiting for Shiny to be stable
-Caused by error in `app_wait_for_idle()`:
-! An error occurred while waiting for Shiny to be stable
-Backtrace:
-     x
-  1. +-teal.goshawk (local) tm_g_gh_lineplot_driver() at test-shinytest2-tm_g_gh_lineplot.R:71:7
-  2. | \-teal.goshawk:::init_teal_app_driver(...) at test-shinytest2-tm_g_gh_lineplot.R:2:3
-  3. |   +-testthat::with_mocked_bindings(...) at ./helper-TealAppDriver.R:21:3
-  4. |   \-TealAppDriver$new(teal::init(...)) at ./helper-TealAppDriver.R:24:7
-  5. |     \-teal (local) initialize(...)
-  6. |       +-base::suppressWarnings(...)
-  7. |       | \-base::withCallingHandlers(...)
-  8. |       +-withr::with_envvar(...)
-  9. |       | \-base::force(code)
- 10. |       \-super$initialize(...)
- 11. |         \-shinytest2:::app_initialize(...)
- 12. |           +-base::withCallingHandlers(...)
- 13. |           \-shinytest2:::app_initialize_(self, private, ..., view = view)
- 14. |             +-base::withCallingHandlers(...)
- 15. |             \-self$wait_for_idle(duration = 200, timeout = private$load_timeout)
- 16. |               \-shinytest2:::app_wait_for_idle(...)
- 17. |                 \-shinytest2:::app_abort(self, private, "An error occurred while waiting for Shiny to be stable")
- 18. |                   \-rlang::abort(..., app = self, call = call)
- 19. |                     \-rlang:::signal_abort(cnd, .file)
- 20. |                       \-base::signalCondition(cnd)
- 21. +-shinytest2 (local) `&lt;fn&gt;`(`&lt;rlng_rrr&gt;`)
- 22. | \-shinytest2:::app_abort(...)
- 23. |   \-rlang::abort(..., app = self, call = call)
- 24. |     \-rlang:::signal_abort(cnd, .file)
- 25. |       \-base::signalCondition(cnd)
- 26. \-shinytest2 (local) `&lt;fn&gt;`(`&lt;rlng_rrr&gt;`)
- 27.   \-shinytest2:::app_abort(...)
- 28.     \-rlang::abort(..., app = self, call = call)</error>
+    <testcase time="0.0149999999999999" classname="shinytest2_tm_g_gh_boxplot" name="e2e_tm_g_gh_boxplot_displays_selected_data_points_table">
+      <skipped message="Reason: testing depth 3 is below current testing specification 5 ('test-shinytest2-tm_g_gh_boxplot.R:104:3')"/>
     </testcase>
-    <testcase time="124.246" classname="shinytest2_tm_g_gh_lineplot" name="e2e_tm_g_gh_lineplot_changing_pick_changes_plot_and_does_not_throw_validation_errors._yaxis_var">
-      <error type="error" message="Error in `app_initialize(self, private, app_dir = app_dir, ..., load_timeout = load_timeout, timeout = timeout, wait = wait, expect_values_screenshot_args = expect_values_screenshot_args, screenshot_args = screenshot_args, check_names = check_names, name = name, variant = variant, view = view, height = height, width = width, seed = seed, clean_logs = clean_logs, shiny_args = shiny_args, render_args = render_args, options = options)`: Shiny app did not become stable in 120000ms. ('test-shinytest2-tm_g_gh_lineplot.R:71:7')">Error in `app_initialize(self, private, app_dir = app_dir, ..., load_timeout = load_timeout, timeout = timeout, wait = wait, expect_values_screenshot_args = expect_values_screenshot_args, screenshot_args = screenshot_args, check_names = check_names, name = name, variant = variant, view = view, height = height, width = width, seed = seed, clean_logs = clean_logs, shiny_args = shiny_args, render_args = render_args, options = options)`: Shiny app did not become stable in 120000ms.
-Message: An error occurred while waiting for Shiny to be stable
-Caused by error in `app_wait_for_idle()`:
-! An error occurred while waiting for Shiny to be stable
-
-
-i You can inspect the failed AppDriver object via `rlang::last_error()$app`
-i AppDriver logs:
-{shinytest2} R  info    22:04:47.85 Start AppDriver initialization
-{shinytest2} R  info    22:04:48.02 Starting Shiny app
-{shinytest2} R  info    22:04:49.47 Creating new ChromoteSession
-{shinytest2} R  info    22:04:49.52 Navigating to Shiny app
-{shinytest2} R  info    22:04:50.75 Injecting shiny-tracer.js
-{chromote}   JS info    22:04:50.78 shinytest2; jQuery not found
-{chromote}   JS info    22:04:50.78 shinytest2; Loaded
-{shinytest2} R  info    22:04:50.78 Waiting for Shiny to become ready
-{chromote}   JS info    22:04:50.83 shinytest2; jQuery found
-{chromote}   JS info    22:04:50.83 shinytest2; Waiting for shiny session to connect
-{chromote}   JS info    22:04:51.19 shinytest2; Connected
-{chromote}   JS info    22:04:51.22 shinytest2; shiny:busy
-{shinytest2} R  info    22:04:51.23 Waiting for Shiny to become idle for 200ms within 120000ms
-{chromote}   JS info    22:04:51.23 shinytest2; Waiting for Shiny to be stable
-{chromote}   JS log     22:04:51.37 Teal: Sending document title: teal app to input: teal-teal_modules-app_title
-                                    (anonymous)             @ :669:10
-                                    _sendMessagesToHandlers @ shiny-javascript-1.14.0/shiny.min.js:443:9166
-                                    (anonymous)             @ shiny-javascript-1.14.0/shiny.min.js:443:10855
-                                    _sendMessagesToHandlers @ shiny-javascript-1.14.0/shiny.min.js:443:9166
-                                    dispatchMessage         @ shiny-javascript-1.14.0/shiny.min.js:443:9001
-                                    (anonymous)             @ shiny-javascript-1.14.0/shiny.min.js:443:4924
-                                    startActionQueueLoop    @ shiny-javascript-1.14.0/shiny.min.js:443:5210
-{chromote}   JS warning 22:04:57.63 Container not found for input after timeout: teal-teal_modules-nav-line_plot-module-xaxis_param-values-selected
-                                    (anonymous) @ js/input-validator.js:56:14
-{chromote}   JS warning 22:04:57.63 Container not found for input after timeout: teal-teal_modules-nav-line_plot-module-trt_group-variables-selected
-                                    (anonymous) @ js/input-validator.js:56:14
-{chromote}   JS warning 22:04:57.63 Container not found for input after timeout: teal-teal_modules-nav-line_plot-module-xaxis_var-variables-selected
-                                    (anonymous) @ js/input-validator.js:56:14
-{chromote}   JS warning 22:04:57.63 Container not found for input after timeout: teal-teal_modules-nav-line_plot-module-yaxis_var-variables-selected
-                                    (anonymous) @ js/input-validator.js:56:14
-{chromote}   JS warning 22:04:57.92 Container not found for input after timeout: teal-teal_modules-nav-line_plot-module-yrange_scale
-                                    (anonymous) @ js/input-validator.js:56:14
-{shinytest2} R  info    22:06:51.24 Error while initializing AppDriver:
-                                    Shiny app did not become stable in 120000ms.
-                                    Message: An error occurred while waiting for Shiny to be stable
-                                    Caused by error in `app_wait_for_idle()`:
-                                    ! An error occurred while waiting for Shiny to be stable
-{shiny}      R  stderr  ----------- Loading required package: shiny
-{shiny}      R  stderr  ----------- Attempting to load the environment ‘package:stringr’
-{shiny}      R  stderr  ----------- Loading required package: teal.data
-{shiny}      R  stderr  ----------- Loading required package: teal.code
-{shiny}      R  stderr  ----------- Loading required package: teal.slice
-{shiny}      R  stderr  ----------- 
-{shiny}      R  stderr  ----------- You are using teal version 1.2.1
-{shiny}      R  stderr  ----------- 
-{shiny}      R  stderr  ----------- Attaching package: ‘teal’
-{shiny}      R  stderr  ----------- 
-{shiny}      R  stderr  ----------- The following objects are masked from ‘package:teal.slice’:
-{shiny}      R  stderr  ----------- 
-{shiny}      R  stderr  -----------     as.teal_slices, teal_slices
-{shiny}      R  stderr  ----------- 
-{shiny}      R  stderr  ----------- Running application in test mode.
-{shiny}      R  stderr  ----------- 
-{shiny}      R  stderr  ----------- Listening on http://127.0.0.1:7675
-{shiny}      R  stderr  ----------- Warning: Error in &lt;reactive&gt;: attempt to apply non-function
-{shiny}      R  stderr  -----------   122: &lt;reactive&gt;
-{shiny}      R  stderr  -----------   100: shape_choices
-{shiny}      R  stderr  -----------    99: &lt;reactive&gt;
-{shiny}      R  stderr  -----------    77: data_state
-{shiny}      R  stderr  -----------    76: eval_tidy
-{shiny}      R  stderr  -----------    75: eventFunc
-{shiny}      R  stderr  -----------    62: observeEvent(data_state()$range)
-{shiny}      R  stderr  -----------    61: contextFunc
-{shiny}      R  stderr  -----------    60: env$runWith
-{shiny}      R  stderr  -----------    47: ctx$run
-{shiny}      R  stderr  -----------    46: run
-{shiny}      R  stderr  -----------    27: flushCallback
-{shiny}      R  stderr  -----------    26: FUN
-{shiny}      R  stderr  -----------    25: lapply
-{shiny}      R  stderr  -----------    24: ctx$executeFlushCallbacks
-{shiny}      R  stderr  -----------    23: .getReactiveEnvironment()$flush
-{shiny}      R  stderr  -----------    22: flushReact
-{shiny}      R  stderr  -----------    21: serviceApp
-{shiny}      R  stderr  -----------    14: &lt;Anonymous&gt;
-{shiny}      R  stderr  -----------    12: &lt;Anonymous&gt;
-{shiny}      R  stderr  -----------    11: &lt;Anonymous&gt;
-{shiny}      R  stderr  -----------    10: base::do.call
-{shiny}      R  stderr  -----------     9: base::saveRDS
-{shiny}      R  stderr  -----------     8: base::withCallingHandlers
-{shiny}      R  stderr  -----------     7: doTryCatch
-{shiny}      R  stderr  -----------     6: tryCatchOne
-{shiny}      R  stderr  -----------     5: tryCatchList
-{shiny}      R  stderr  -----------     2: tryCatchList
-{shiny}      R  stderr  -----------     1: base::tryCatch
-{shiny}      R  stderr  ----------- Warning: Error in &lt;reactive&gt;: attempt to apply non-function
-{shiny}      R  stderr  -----------   79: &lt;Anonymous&gt;
-{shiny}      R  stderr  -----------   78: stop
-{shiny}      R  stderr  -----------   77: shape_choices
-{shiny}      R  stderr  -----------   76: eval_tidy
-{shiny}      R  stderr  -----------   75: eventFunc
-{shiny}      R  stderr  -----------   62: observeEvent(shape_choices())
-{shiny}      R  stderr  -----------   61: contextFunc
-{shiny}      R  stderr  -----------   60: env$runWith
-{shiny}      R  stderr  -----------   47: ctx$run
-{shiny}      R  stderr  -----------   46: run
-{shiny}      R  stderr  -----------   27: flushCallback
-{shiny}      R  stderr  -----------   26: FUN
-{shiny}      R  stderr  -----------   25: lapply
-{shiny}      R  stderr  -----------   24: ctx$executeFlushCallbacks
-{shiny}      R  stderr  -----------   23: .getReactiveEnvironment()$flush
-{shiny}      R  stderr  -----------   22: flushReact
-{shiny}      R  stderr  -----------   21: serviceApp
-{shiny}      R  stderr  -----------   14: &lt;Anonymous&gt;
-{shiny}      R  stderr  -----------   12: &lt;Anonymous&gt;
-{shiny}      R  stderr  -----------   11: &lt;Anonymous&gt;
-{shiny}      R  stderr  -----------   10: base::do.call
-{shiny}      R  stderr  -----------    9: base::saveRDS
-{shiny}      R  stderr  -----------    8: base::withCallingHandlers
-{shiny}      R  stderr  -----------    7: doTryCatch
-{shiny}      R  stderr  -----------    6: tryCatchOne
-{shiny}      R  stderr  -----------    5: tryCatchList
-{shiny}      R  stderr  -----------    2: tryCatchList
-{shiny}      R  stderr  -----------    1: base::tryCatch
-{shiny}      R  stderr  ----------- Warning: Error in &lt;reactive&gt;: attempt to apply non-function
-{shiny}      R  stderr  -----------   73: &lt;Anonymous&gt;
-{shiny}      R  stderr  -----------   72: stop
-{shiny}      R  stderr  -----------   71: shape_choices
-{shiny}      R  stderr  -----------   64: observe
-{shiny}      R  stderr  -----------   63: &lt;observer&gt;
-{shiny}      R  stderr  -----------   14: &lt;Anonymous&gt;
-{shiny}      R  stderr  -----------   12: &lt;Anonymous&gt;
-{shiny}      R  stderr  -----------   11: &lt;Anonymous&gt;
-{shiny}      R  stderr  -----------   10: base::do.call
-{shiny}      R  stderr  -----------    9: base::saveRDS
-{shiny}      R  stderr  -----------    8: base::withCallingHandlers
-{shiny}      R  stderr  -----------    7: doTryCatch
-{shiny}      R  stderr  -----------    6: tryCatchOne
-{shiny}      R  stderr  -----------    5: tryCatchList
-{shiny}      R  stderr  -----------    2: tryCatchList
-{shiny}      R  stderr  -----------    1: base::tryCatch
-{shiny}      R  stderr  ----------- Active module changed: app="teal app", module="Line Plot"
-
-
-Caused by error in `app_initialize_()`:
-! Shiny app did not become stable in 120000ms.
-Message: An error occurred while waiting for Shiny to be stable
-Caused by error in `app_wait_for_idle()`:
-! An error occurred while waiting for Shiny to be stable
-Backtrace:
-     x
-  1. +-teal.goshawk (local) tm_g_gh_lineplot_driver() at test-shinytest2-tm_g_gh_lineplot.R:71:7
-  2. | \-teal.goshawk:::init_teal_app_driver(...) at test-shinytest2-tm_g_gh_lineplot.R:2:3
-  3. |   +-testthat::with_mocked_bindings(...) at ./helper-TealAppDriver.R:21:3
-  4. |   \-TealAppDriver$new(teal::init(...)) at ./helper-TealAppDriver.R:24:7
-  5. |     \-teal (local) initialize(...)
-  6. |       +-base::suppressWarnings(...)
-  7. |       | \-base::withCallingHandlers(...)
-  8. |       +-withr::with_envvar(...)
-  9. |       | \-base::force(code)
- 10. |       \-super$initialize(...)
- 11. |         \-shinytest2:::app_initialize(...)
- 12. |           +-base::withCallingHandlers(...)
- 13. |           \-shinytest2:::app_initialize_(self, private, ..., view = view)
- 14. |             +-base::withCallingHandlers(...)
- 15. |             \-self$wait_for_idle(duration = 200, timeout = private$load_timeout)
- 16. |               \-shinytest2:::app_wait_for_idle(...)
- 17. |                 \-shinytest2:::app_abort(self, private, "An error occurred while waiting for Shiny to be stable")
- 18. |                   \-rlang::abort(..., app = self, call = call)
- 19. |                     \-rlang:::signal_abort(cnd, .file)
- 20. |                       \-base::signalCondition(cnd)
- 21. +-shinytest2 (local) `&lt;fn&gt;`(`&lt;rlng_rrr&gt;`)
- 22. | \-shinytest2:::app_abort(...)
- 23. |   \-rlang::abort(..., app = self, call = call)
- 24. |     \-rlang:::signal_abort(cnd, .file)
- 25. |       \-base::signalCondition(cnd)
- 26. \-shinytest2 (local) `&lt;fn&gt;`(`&lt;rlng_rrr&gt;`)
- 27.   \-shinytest2:::app_abort(...)
- 28.     \-rlang::abort(..., app = self, call = call)</error>
+    <testcase time="0.0150000000000001" classname="shinytest2_tm_g_gh_boxplot" name="e2e_tm_g_gh_boxplot_handles_LoQ_legend_toggle">
+      <skipped message="Reason: testing depth 3 is below current testing specification 5 ('test-shinytest2-tm_g_gh_boxplot.R:121:3')"/>
     </testcase>
-    <testcase time="124.479" classname="shinytest2_tm_g_gh_lineplot" name="e2e_tm_g_gh_lineplot_changing_pick_changes_plot_and_does_not_throw_validation_errors._trt_group">
-      <error type="error" message="Error in `app_initialize(self, private, app_dir = app_dir, ..., load_timeout = load_timeout, timeout = timeout, wait = wait, expect_values_screenshot_args = expect_values_screenshot_args, screenshot_args = screenshot_args, check_names = check_names, name = name, variant = variant, view = view, height = height, width = width, seed = seed, clean_logs = clean_logs, shiny_args = shiny_args, render_args = render_args, options = options)`: Shiny app did not become stable in 120000ms. ('test-shinytest2-tm_g_gh_lineplot.R:71:7')">Error in `app_initialize(self, private, app_dir = app_dir, ..., load_timeout = load_timeout, timeout = timeout, wait = wait, expect_values_screenshot_args = expect_values_screenshot_args, screenshot_args = screenshot_args, check_names = check_names, name = name, variant = variant, view = view, height = height, width = width, seed = seed, clean_logs = clean_logs, shiny_args = shiny_args, render_args = render_args, options = options)`: Shiny app did not become stable in 120000ms.
-Message: An error occurred while waiting for Shiny to be stable
-Caused by error in `app_wait_for_idle()`:
-! An error occurred while waiting for Shiny to be stable
-
-
-i You can inspect the failed AppDriver object via `rlang::last_error()$app`
-i AppDriver logs:
-{shinytest2} R  info    22:06:52.10 Start AppDriver initialization
-{shinytest2} R  info    22:06:52.27 Starting Shiny app
-{shinytest2} R  info    22:06:53.93 Creating new ChromoteSession
-{shinytest2} R  info    22:06:53.98 Navigating to Shiny app
-{shinytest2} R  info    22:06:55.20 Injecting shiny-tracer.js
-{chromote}   JS info    22:06:55.22 shinytest2; jQuery not found
-{chromote}   JS info    22:06:55.22 shinytest2; Loaded
-{shinytest2} R  info    22:06:55.22 Waiting for Shiny to become ready
-{chromote}   JS info    22:06:55.29 shinytest2; jQuery found
-{chromote}   JS info    22:06:55.29 shinytest2; Waiting for shiny session to connect
-{chromote}   JS info    22:06:55.61 shinytest2; Connected
-{chromote}   JS info    22:06:55.66 shinytest2; shiny:busy
-{shinytest2} R  info    22:06:55.70 Waiting for Shiny to become idle for 200ms within 120000ms
-{chromote}   JS info    22:06:55.71 shinytest2; Waiting for Shiny to be stable
-{chromote}   JS log     22:06:55.83 Teal: Sending document title: teal app to input: teal-teal_modules-app_title
-                                    (anonymous)             @ :669:10
-                                    _sendMessagesToHandlers @ shiny-javascript-1.14.0/shiny.min.js:443:9166
-                                    (anonymous)             @ shiny-javascript-1.14.0/shiny.min.js:443:10855
-                                    _sendMessagesToHandlers @ shiny-javascript-1.14.0/shiny.min.js:443:9166
-                                    dispatchMessage         @ shiny-javascript-1.14.0/shiny.min.js:443:9001
-                                    (anonymous)             @ shiny-javascript-1.14.0/shiny.min.js:443:4924
-                                    startActionQueueLoop    @ shiny-javascript-1.14.0/shiny.min.js:443:5210
-{chromote}   JS warning 22:07:02.08 Container not found for input after timeout: teal-teal_modules-nav-line_plot-module-xaxis_param-values-selected
-                                    (anonymous) @ js/input-validator.js:56:14
-{chromote}   JS warning 22:07:02.08 Container not found for input after timeout: teal-teal_modules-nav-line_plot-module-trt_group-variables-selected
-                                    (anonymous) @ js/input-validator.js:56:14
-{chromote}   JS warning 22:07:02.08 Container not found for input after timeout: teal-teal_modules-nav-line_plot-module-xaxis_var-variables-selected
-                                    (anonymous) @ js/input-validator.js:56:14
-{chromote}   JS warning 22:07:02.08 Container not found for input after timeout: teal-teal_modules-nav-line_plot-module-yaxis_var-variables-selected
-                                    (anonymous) @ js/input-validator.js:56:14
-{chromote}   JS warning 22:07:02.35 Container not found for input after timeout: teal-teal_modules-nav-line_plot-module-yrange_scale
-                                    (anonymous) @ js/input-validator.js:56:14
-{shinytest2} R  info    22:08:55.72 Error while initializing AppDriver:
-                                    Shiny app did not become stable in 120000ms.
-                                    Message: An error occurred while waiting for Shiny to be stable
-                                    Caused by error in `app_wait_for_idle()`:
-                                    ! An error occurred while waiting for Shiny to be stable
-{shiny}      R  stderr  ----------- Loading required package: shiny
-{shiny}      R  stderr  ----------- Attempting to load the environment ‘package:stringr’
-{shiny}      R  stderr  ----------- Loading required package: teal.data
-{shiny}      R  stderr  ----------- Loading required package: teal.code
-{shiny}      R  stderr  ----------- Loading required package: teal.slice
-{shiny}      R  stderr  ----------- 
-{shiny}      R  stderr  ----------- You are using teal version 1.2.1
-{shiny}      R  stderr  ----------- 
-{shiny}      R  stderr  ----------- Attaching package: ‘teal’
-{shiny}      R  stderr  ----------- 
-{shiny}      R  stderr  ----------- The following objects are masked from ‘package:teal.slice’:
-{shiny}      R  stderr  ----------- 
-{shiny}      R  stderr  -----------     as.teal_slices, teal_slices
-{shiny}      R  stderr  ----------- 
-{shiny}      R  stderr  ----------- Running application in test mode.
-{shiny}      R  stderr  ----------- 
-{shiny}      R  stderr  ----------- Listening on http://127.0.0.1:3425
-{shiny}      R  stderr  ----------- Warning: Error in &lt;reactive&gt;: attempt to apply non-function
-{shiny}      R  stderr  -----------   122: &lt;reactive&gt;
-{shiny}      R  stderr  -----------   100: shape_choices
-{shiny}      R  stderr  -----------    99: &lt;reactive&gt;
-{shiny}      R  stderr  -----------    77: data_state
-{shiny}      R  stderr  -----------    76: eval_tidy
-{shiny}      R  stderr  -----------    75: eventFunc
-{shiny}      R  stderr  -----------    62: observeEvent(data_state()$range)
-{shiny}      R  stderr  -----------    61: contextFunc
-{shiny}      R  stderr  -----------    60: env$runWith
-{shiny}      R  stderr  -----------    47: ctx$run
-{shiny}      R  stderr  -----------    46: run
-{shiny}      R  stderr  -----------    27: flushCallback
-{shiny}      R  stderr  -----------    26: FUN
-{shiny}      R  stderr  -----------    25: lapply
-{shiny}      R  stderr  -----------    24: ctx$executeFlushCallbacks
-{shiny}      R  stderr  -----------    23: .getReactiveEnvironment()$flush
-{shiny}      R  stderr  -----------    22: flushReact
-{shiny}      R  stderr  -----------    21: serviceApp
-{shiny}      R  stderr  -----------    14: &lt;Anonymous&gt;
-{shiny}      R  stderr  -----------    12: &lt;Anonymous&gt;
-{shiny}      R  stderr  -----------    11: &lt;Anonymous&gt;
-{shiny}      R  stderr  -----------    10: base::do.call
-{shiny}      R  stderr  -----------     9: base::saveRDS
-{shiny}      R  stderr  -----------     8: base::withCallingHandlers
-{shiny}      R  stderr  -----------     7: doTryCatch
-{shiny}      R  stderr  -----------     6: tryCatchOne
-{shiny}      R  stderr  -----------     5: tryCatchList
-{shiny}      R  stderr  -----------     2: tryCatchList
-{shiny}      R  stderr  -----------     1: base::tryCatch
-{shiny}      R  stderr  ----------- Warning: Error in &lt;reactive&gt;: attempt to apply non-function
-{shiny}      R  stderr  -----------   79: &lt;Anonymous&gt;
-{shiny}      R  stderr  -----------   78: stop
-{shiny}      R  stderr  -----------   77: shape_choices
-{shiny}      R  stderr  -----------   76: eval_tidy
-{shiny}      R  stderr  -----------   75: eventFunc
-{shiny}      R  stderr  -----------   62: observeEvent(shape_choices())
-{shiny}      R  stderr  -----------   61: contextFunc
-{shiny}      R  stderr  -----------   60: env$runWith
-{shiny}      R  stderr  -----------   47: ctx$run
-{shiny}      R  stderr  -----------   46: run
-{shiny}      R  stderr  -----------   27: flushCallback
-{shiny}      R  stderr  -----------   26: FUN
-{shiny}      R  stderr  -----------   25: lapply
-{shiny}      R  stderr  -----------   24: ctx$executeFlushCallbacks
-{shiny}      R  stderr  -----------   23: .getReactiveEnvironment()$flush
-{shiny}      R  stderr  -----------   22: flushReact
-{shiny}      R  stderr  -----------   21: serviceApp
-{shiny}      R  stderr  -----------   14: &lt;Anonymous&gt;
-{shiny}      R  stderr  -----------   12: &lt;Anonymous&gt;
-{shiny}      R  stderr  -----------   11: &lt;Anonymous&gt;
-{shiny}      R  stderr  -----------   10: base::do.call
-{shiny}      R  stderr  -----------    9: base::saveRDS
-{shiny}      R  stderr  -----------    8: base::withCallingHandlers
-{shiny}      R  stderr  -----------    7: doTryCatch
-{shiny}      R  stderr  -----------    6: tryCatchOne
-{shiny}      R  stderr  -----------    5: tryCatchList
-{shiny}      R  stderr  -----------    2: tryCatchList
-{shiny}      R  stderr  -----------    1: base::tryCatch
-{shiny}      R  stderr  ----------- Warning: Error in &lt;reactive&gt;: attempt to apply non-function
-{shiny}      R  stderr  -----------   73: &lt;Anonymous&gt;
-{shiny}      R  stderr  -----------   72: stop
-{shiny}      R  stderr  -----------   71: shape_choices
-{shiny}      R  stderr  -----------   64: observe
-{shiny}      R  stderr  -----------   63: &lt;observer&gt;
-{shiny}      R  stderr  -----------   14: &lt;Anonymous&gt;
-{shiny}      R  stderr  -----------   12: &lt;Anonymous&gt;
-{shiny}      R  stderr  -----------   11: &lt;Anonymous&gt;
-{shiny}      R  stderr  -----------   10: base::do.call
-{shiny}      R  stderr  -----------    9: base::saveRDS
-{shiny}      R  stderr  -----------    8: base::withCallingHandlers
-{shiny}      R  stderr  -----------    7: doTryCatch
-{shiny}      R  stderr  -----------    6: tryCatchOne
-{shiny}      R  stderr  -----------    5: tryCatchList
-{shiny}      R  stderr  -----------    2: tryCatchList
-{shiny}      R  stderr  -----------    1: base::tryCatch
-{shiny}      R  stderr  ----------- Active module changed: app="teal app", module="Line Plot"
-
-
-Caused by error in `app_initialize_()`:
-! Shiny app did not become stable in 120000ms.
-Message: An error occurred while waiting for Shiny to be stable
-Caused by error in `app_wait_for_idle()`:
-! An error occurred while waiting for Shiny to be stable
-Backtrace:
-     x
-  1. +-teal.goshawk (local) tm_g_gh_lineplot_driver() at test-shinytest2-tm_g_gh_lineplot.R:71:7
-  2. | \-teal.goshawk:::init_teal_app_driver(...) at test-shinytest2-tm_g_gh_lineplot.R:2:3
-  3. |   +-testthat::with_mocked_bindings(...) at ./helper-TealAppDriver.R:21:3
-  4. |   \-TealAppDriver$new(teal::init(...)) at ./helper-TealAppDriver.R:24:7
-  5. |     \-teal (local) initialize(...)
-  6. |       +-base::suppressWarnings(...)
-  7. |       | \-base::withCallingHandlers(...)
-  8. |       +-withr::with_envvar(...)
-  9. |       | \-base::force(code)
- 10. |       \-super$initialize(...)
- 11. |         \-shinytest2:::app_initialize(...)
- 12. |           +-base::withCallingHandlers(...)
- 13. |           \-shinytest2:::app_initialize_(self, private, ..., view = view)
- 14. |             +-base::withCallingHandlers(...)
- 15. |             \-self$wait_for_idle(duration = 200, timeout = private$load_timeout)
- 16. |               \-shinytest2:::app_wait_for_idle(...)
- 17. |                 \-shinytest2:::app_abort(self, private, "An error occurred while waiting for Shiny to be stable")
- 18. |                   \-rlang::abort(..., app = self, call = call)
- 19. |                     \-rlang:::signal_abort(cnd, .file)
- 20. |                       \-base::signalCondition(cnd)
- 21. +-shinytest2 (local) `&lt;fn&gt;`(`&lt;rlng_rrr&gt;`)
- 22. | \-shinytest2:::app_abort(...)
- 23. |   \-rlang::abort(..., app = self, call = call)
- 24. |     \-rlang:::signal_abort(cnd, .file)
- 25. |       \-base::signalCondition(cnd)
- 26. \-shinytest2 (local) `&lt;fn&gt;`(`&lt;rlng_rrr&gt;`)
- 27.   \-shinytest2:::app_abort(...)
- 28.     \-rlang::abort(..., app = self, call = call)</error>
+    <testcase time="0.014" classname="shinytest2_tm_g_gh_boxplot" name="e2e_tm_g_gh_boxplot_respects_plot_height_adjustment">
+      <skipped message="Reason: testing depth 3 is below current testing specification 5 ('test-shinytest2-tm_g_gh_boxplot.R:140:3')"/>
     </testcase>
   </testsuite>
-  <testsuite name="shinytest2-tm_g_gh_spaghettiplot" timestamp="2026-08-25T22:08:55Z" hostname="6258816e9ca7" tests="22" skipped="0" failures="0" errors="0" time="95.03">
-    <testcase time="12.4209999999998" classname="shinytest2_tm_g_gh_spaghettiplot" name="e2e_tm_g_gh_spaghettiplot_initializes_and_renders_a_plot"/>
-    <testcase time="0.00500000000010914" classname="shinytest2_tm_g_gh_spaghettiplot" name="e2e_tm_g_gh_spaghettiplot_initializes_and_renders_a_plot"/>
-    <testcase time="0.0879999999999654" classname="shinytest2_tm_g_gh_spaghettiplot" name="e2e_tm_g_gh_spaghettiplot_initializes_and_renders_a_plot"/>
-    <testcase time="0.00900000000001455" classname="shinytest2_tm_g_gh_spaghettiplot" name="e2e_tm_g_gh_spaghettiplot_initializes_and_renders_a_plot"/>
-    <testcase time="12.4970000000001" classname="shinytest2_tm_g_gh_spaghettiplot" name="e2e_tm_g_gh_spaghettiplot_starts_with_expected_label_and_encoding_selections."/>
-    <testcase time="0.0109999999999673" classname="shinytest2_tm_g_gh_spaghettiplot" name="e2e_tm_g_gh_spaghettiplot_starts_with_expected_label_and_encoding_selections."/>
-    <testcase time="0.0499999999999545" classname="shinytest2_tm_g_gh_spaghettiplot" name="e2e_tm_g_gh_spaghettiplot_starts_with_expected_label_and_encoding_selections."/>
-    <testcase time="0.0509999999999309" classname="shinytest2_tm_g_gh_spaghettiplot" name="e2e_tm_g_gh_spaghettiplot_starts_with_expected_label_and_encoding_selections."/>
-    <testcase time="0.0510000000001583" classname="shinytest2_tm_g_gh_spaghettiplot" name="e2e_tm_g_gh_spaghettiplot_starts_with_expected_label_and_encoding_selections."/>
-    <testcase time="0.0509999999999309" classname="shinytest2_tm_g_gh_spaghettiplot" name="e2e_tm_g_gh_spaghettiplot_starts_with_expected_label_and_encoding_selections."/>
-    <testcase time="17.5940000000001" classname="shinytest2_tm_g_gh_spaghettiplot" name="e2e_tm_g_gh_spaghettiplot_changing_pick_changes_plot_and_does_not_throw_validation_errors._xaxis_param"/>
-    <testcase time="0.0460000000000491" classname="shinytest2_tm_g_gh_spaghettiplot" name="e2e_tm_g_gh_spaghettiplot_changing_pick_changes_plot_and_does_not_throw_validation_errors._xaxis_param"/>
-    <testcase time="0.00599999999985812" classname="shinytest2_tm_g_gh_spaghettiplot" name="e2e_tm_g_gh_spaghettiplot_changing_pick_changes_plot_and_does_not_throw_validation_errors._xaxis_param"/>
-    <testcase time="17.098" classname="shinytest2_tm_g_gh_spaghettiplot" name="e2e_tm_g_gh_spaghettiplot_changing_pick_changes_plot_and_does_not_throw_validation_errors._xaxis_var"/>
-    <testcase time="0.0500000000001819" classname="shinytest2_tm_g_gh_spaghettiplot" name="e2e_tm_g_gh_spaghettiplot_changing_pick_changes_plot_and_does_not_throw_validation_errors._xaxis_var"/>
-    <testcase time="0.00999999999999091" classname="shinytest2_tm_g_gh_spaghettiplot" name="e2e_tm_g_gh_spaghettiplot_changing_pick_changes_plot_and_does_not_throw_validation_errors._xaxis_var"/>
-    <testcase time="17.6899999999998" classname="shinytest2_tm_g_gh_spaghettiplot" name="e2e_tm_g_gh_spaghettiplot_changing_pick_changes_plot_and_does_not_throw_validation_errors._yaxis_var"/>
-    <testcase time="0.0480000000000018" classname="shinytest2_tm_g_gh_spaghettiplot" name="e2e_tm_g_gh_spaghettiplot_changing_pick_changes_plot_and_does_not_throw_validation_errors._yaxis_var"/>
-    <testcase time="0.00600000000008549" classname="shinytest2_tm_g_gh_spaghettiplot" name="e2e_tm_g_gh_spaghettiplot_changing_pick_changes_plot_and_does_not_throw_validation_errors._yaxis_var"/>
-    <testcase time="17.1949999999999" classname="shinytest2_tm_g_gh_spaghettiplot" name="e2e_tm_g_gh_spaghettiplot_changing_pick_changes_plot_and_does_not_throw_validation_errors._trt_group"/>
-    <testcase time="0.0470000000000255" classname="shinytest2_tm_g_gh_spaghettiplot" name="e2e_tm_g_gh_spaghettiplot_changing_pick_changes_plot_and_does_not_throw_validation_errors._trt_group"/>
-    <testcase time="0.00600000000008549" classname="shinytest2_tm_g_gh_spaghettiplot" name="e2e_tm_g_gh_spaghettiplot_changing_pick_changes_plot_and_does_not_throw_validation_errors._trt_group"/>
+  <testsuite name="shinytest2-tm_g_gh_correlationplot" timestamp="2026-08-25T22:21:14Z" hostname="d5a0ab8f136f" tests="3" skipped="3" failures="0" errors="0" time="0.064">
+    <testcase time="0.0309999999999999" classname="shinytest2_tm_g_gh_correlationplot" name="e2e_tm_g_gh_correlationplot_initializes_and_renders_a_plot">
+      <skipped message="Reason: testing depth 3 is below current testing specification 5 ('test-shinytest2-tm_g_gh_correlationplot.R:28:3')"/>
+    </testcase>
+    <testcase time="0.018" classname="shinytest2_tm_g_gh_correlationplot" name="e2e_tm_g_gh_correlationplot_starts_with_expected_label_and_encoding_selections.">
+      <skipped message="Reason: testing depth 3 is below current testing specification 5 ('test-shinytest2-tm_g_gh_correlationplot.R:49:5')"/>
+    </testcase>
+    <testcase time="0.0149999999999999" classname="shinytest2_tm_g_gh_correlationplot" name="e2e_tm_g_gh_correlationplot_changing_pick_changes_plot_and_does_not_throw_validation_errors.">
+      <skipped message="Reason: testing depth 3 is below current testing specification 5 ('test-shinytest2-tm_g_gh_correlationplot.R:70:3')"/>
+    </testcase>
   </testsuite>
-  <testsuite name="tm_g_gh_boxplot" timestamp="2026-08-25T22:10:30Z" hostname="6258816e9ca7" tests="42" skipped="0" failures="0" errors="0" time="2.505">
-    <testcase time="0.211999999999989" classname="tm_g_gh_boxplot" name="tm_g_gh_boxplot_can_be_created_with_default_arguments"/>
-    <testcase time="0.00299999999992906" classname="tm_g_gh_boxplot" name="tm_g_gh_boxplot_can_be_created_with_default_arguments"/>
-    <testcase time="0.0119999999999436" classname="tm_g_gh_boxplot" name="tm_g_gh_boxplot_can_be_created_with_choices_selected_arguments"/>
-    <testcase time="0.00300000000015643" classname="tm_g_gh_boxplot" name="tm_g_gh_boxplot_can_be_created_with_choices_selected_arguments"/>
-    <testcase time="0.00999999999999091" classname="tm_g_gh_boxplot" name="tm_g_gh_boxplot_can_be_created_with_custom_picks_arguments"/>
-    <testcase time="0.00299999999992906" classname="tm_g_gh_boxplot" name="tm_g_gh_boxplot_can_be_created_with_custom_picks_arguments"/>
-    <testcase time="0.00999999999999091" classname="tm_g_gh_boxplot" name="tm_g_gh_boxplot_handles_different_parameter_combinations"/>
-    <testcase time="0.00299999999992906" classname="tm_g_gh_boxplot" name="tm_g_gh_boxplot_handles_different_parameter_combinations"/>
-    <testcase time="0.00999999999999091" classname="tm_g_gh_boxplot" name="tm_g_gh_boxplot_accepts_custom_color_and_shape_specifications"/>
-    <testcase time="0.00300000000015643" classname="tm_g_gh_boxplot" name="tm_g_gh_boxplot_accepts_custom_color_and_shape_specifications"/>
-    <testcase time="0.0109999999999673" classname="tm_g_gh_boxplot" name="tm_g_gh_boxplot_accepts_line_arguments"/>
-    <testcase time="0.00199999999995271" classname="tm_g_gh_boxplot" name="tm_g_gh_boxplot_accepts_line_arguments"/>
-    <testcase time="0.0119999999999436" classname="tm_g_gh_boxplot" name="tm_g_gh_boxplot_handles_plot_dimensions_correctly"/>
-    <testcase time="0.00200000000018008" classname="tm_g_gh_boxplot" name="tm_g_gh_boxplot_handles_plot_dimensions_correctly"/>
-    <testcase time="0.0109999999999673" classname="tm_g_gh_boxplot" name="tm_g_gh_boxplot_invalid_arguments_throws_an_error_when_label_is_invalid"/>
-    <testcase time="0.00999999999999091" classname="tm_g_gh_boxplot" name="tm_g_gh_boxplot_invalid_arguments_throws_an_error_when_dataname_is_invalid"/>
-    <testcase time="0.00999999999999091" classname="tm_g_gh_boxplot" name="tm_g_gh_boxplot_invalid_arguments_throws_an_error_when_param_is_invalid"/>
-    <testcase time="0.00900000000001455" classname="tm_g_gh_boxplot" name="tm_g_gh_boxplot_invalid_arguments_throws_an_error_when_yaxis_var_is_invalid"/>
-    <testcase time="0.0109999999999673" classname="tm_g_gh_boxplot" name="tm_g_gh_boxplot_invalid_arguments_throws_an_error_when_xaxis_var_is_invalid"/>
-    <testcase time="0.00999999999999091" classname="tm_g_gh_boxplot" name="tm_g_gh_boxplot_invalid_arguments_throws_an_error_when_facet_var_is_invalid"/>
-    <testcase time="0.0599999999999454" classname="tm_g_gh_boxplot" name="tm_g_gh_boxplot_invalid_arguments_throws_an_error_when_trt_group_is_invalid"/>
-    <testcase time="0.0989999999999327" classname="tm_g_gh_boxplot" name="tm_g_gh_boxplot_invalid_arguments_throws_an_error_when_color_manual_is_invalid"/>
-    <testcase time="0.103000000000065" classname="tm_g_gh_boxplot" name="tm_g_gh_boxplot_invalid_arguments_throws_an_error_when_shape_manual_is_invalid"/>
-    <testcase time="0.103000000000065" classname="tm_g_gh_boxplot" name="tm_g_gh_boxplot_invalid_arguments_throws_an_error_when_facet_ncol_is_invalid"/>
-    <testcase time="0.0940000000000509" classname="tm_g_gh_boxplot" name="tm_g_gh_boxplot_invalid_arguments_throws_an_error_when_loq_legend_is_invalid"/>
-    <testcase time="0.0999999999999091" classname="tm_g_gh_boxplot" name="tm_g_gh_boxplot_invalid_arguments_throws_an_error_when_rotate_xlab_is_invalid"/>
-    <testcase time="0.0989999999999327" classname="tm_g_gh_boxplot" name="tm_g_gh_boxplot_invalid_arguments_throws_an_error_when_hline_arb_is_invalid"/>
-    <testcase time="0.104000000000042" classname="tm_g_gh_boxplot" name="tm_g_gh_boxplot_invalid_arguments_throws_an_error_when_hline_vars_is_invalid"/>
-    <testcase time="0.105999999999995" classname="tm_g_gh_boxplot" name="tm_g_gh_boxplot_invalid_arguments_throws_an_error_when_plot_height_is_invalid"/>
-    <testcase time="0.0979999999999563" classname="tm_g_gh_boxplot" name="tm_g_gh_boxplot_invalid_arguments_throws_an_error_when_plot_width_is_invalid"/>
-    <testcase time="0.104000000000042" classname="tm_g_gh_boxplot" name="tm_g_gh_boxplot_invalid_arguments_throws_an_error_when_font_size_is_invalid"/>
-    <testcase time="0.0990000000001601" classname="tm_g_gh_boxplot" name="tm_g_gh_boxplot_invalid_arguments_throws_an_error_when_dot_size_is_invalid"/>
-    <testcase time="0.103999999999814" classname="tm_g_gh_boxplot" name="tm_g_gh_boxplot_invalid_arguments_throws_an_error_when_alpha_is_invalid"/>
-    <testcase time="0.102000000000089" classname="tm_g_gh_boxplot" name="tm_g_gh_boxplot_invalid_arguments_throws_an_error_when_pre_output_is_invalid"/>
-    <testcase time="0.0989999999999327" classname="tm_g_gh_boxplot" name="tm_g_gh_boxplot_invalid_arguments_throws_an_error_when_post_output_is_invalid"/>
-    <testcase time="0.108000000000175" classname="tm_g_gh_boxplot" name="tm_g_gh_boxplot_invalid_arguments_throws_an_error_when_transformators_is_invalid"/>
-    <testcase time="0.107999999999947" classname="tm_g_gh_boxplot" name="tm_g_gh_boxplot_invalid_arguments_throws_an_error_when_hline_arb_label_is_invalid"/>
-    <testcase time="0.111999999999853" classname="tm_g_gh_boxplot" name="tm_g_gh_boxplot_invalid_arguments_throws_an_error_when_hline_arb_color_is_invalid"/>
-    <testcase time="0.11200000000008" classname="tm_g_gh_boxplot" name="tm_g_gh_boxplot_invalid_arguments_throws_an_error_when_hline_vars_colors_is_invalid"/>
-    <testcase time="0.106999999999971" classname="tm_g_gh_boxplot" name="tm_g_gh_boxplot_invalid_arguments_throws_an_error_when_hline_vars_labels_is_invalid"/>
-    <testcase time="0.122000000000071" classname="tm_g_gh_boxplot" name="tm_g_gh_boxplot_invalid_arguments_gives_a_deprecation_warning_when_param_var_is_used"/>
-    <testcase time="0.00499999999988177" classname="tm_g_gh_boxplot" name="tm_g_gh_boxplot_invalid_arguments_all_arguments_are_tested"/>
+  <testsuite name="shinytest2-tm_g_gh_density_distribution_plot" timestamp="2026-08-25T22:21:14Z" hostname="d5a0ab8f136f" tests="4" skipped="4" failures="0" errors="0" time="0.073">
+    <testcase time="0.028" classname="shinytest2_tm_g_gh_density_distribution_plot" name="e2e_tm_g_gh_density_distribution_plot_initializes_and_renders_a_plot">
+      <skipped message="Reason: testing depth 3 is below current testing specification 5 ('test-shinytest2-tm_g_gh_density_distribution_plot.R:20:3')"/>
+    </testcase>
+    <testcase time="0.014" classname="shinytest2_tm_g_gh_density_distribution_plot" name="e2e_tm_g_gh_density_distribution_plot_starts_with_expected_label_and_encoding_selections.">
+      <skipped message="Reason: testing depth 3 is below current testing specification 5 ('test-shinytest2-tm_g_gh_density_distribution_plot.R:34:5')"/>
+    </testcase>
+    <testcase time="0.0170000000000001" classname="shinytest2_tm_g_gh_density_distribution_plot" name="e2e_tm_g_gh_density_distribution_plot_changing_pick_changes_plot_and_does_not_throw_validation_errors.">
+      <skipped message="Reason: testing depth 3 is below current testing specification 5 ('test-shinytest2-tm_g_gh_density_distribution_plot.R:52:3')"/>
+    </testcase>
+    <testcase time="0.014" classname="shinytest2_tm_g_gh_density_distribution_plot" name="e2e_tm_g_gh_density_distribution_plot_handles_comb_line_toggle">
+      <skipped message="Reason: testing depth 3 is below current testing specification 5 ('test-shinytest2-tm_g_gh_density_distribution_plot.R:80:3')"/>
+    </testcase>
   </testsuite>
-  <testsuite name="tm_g_gh_correlationplot" timestamp="2026-08-25T22:10:33Z" hostname="6258816e9ca7" tests="47" skipped="0" failures="0" errors="0" time="1.965">
-    <testcase time="0.0570000000000164" classname="tm_g_gh_correlationplot" name="tm_g_gh_correlationplot_can_be_created_with_default_arguments"/>
-    <testcase time="0.00300000000015643" classname="tm_g_gh_correlationplot" name="tm_g_gh_correlationplot_can_be_created_with_default_arguments"/>
-    <testcase time="0.0109999999999673" classname="tm_g_gh_correlationplot" name="tm_g_gh_correlationplot_can_be_created_with_choices_selected_arguments"/>
-    <testcase time="0.00299999999992906" classname="tm_g_gh_correlationplot" name="tm_g_gh_correlationplot_can_be_created_with_choices_selected_arguments"/>
-    <testcase time="0.0170000000000528" classname="tm_g_gh_correlationplot" name="tm_g_gh_correlationplot_can_be_created_with_custom_picks_arguments"/>
-    <testcase time="0.00199999999995271" classname="tm_g_gh_correlationplot" name="tm_g_gh_correlationplot_can_be_created_with_custom_picks_arguments"/>
-    <testcase time="0.0109999999999673" classname="tm_g_gh_correlationplot" name="tm_g_gh_correlationplot_handles_multiple_parameter_combinations"/>
-    <testcase time="0.00300000000015643" classname="tm_g_gh_correlationplot" name="tm_g_gh_correlationplot_handles_multiple_parameter_combinations"/>
-    <testcase time="0.0109999999999673" classname="tm_g_gh_correlationplot" name="tm_g_gh_correlationplot_accepts_custom_color_and_shape_specifications_with_choices_selected"/>
-    <testcase time="0.00299999999992906" classname="tm_g_gh_correlationplot" name="tm_g_gh_correlationplot_accepts_custom_color_and_shape_specifications_with_choices_selected"/>
-    <testcase time="0.0109999999999673" classname="tm_g_gh_correlationplot" name="tm_g_gh_correlationplot_accepts_line_arguments_with_choices_selected"/>
-    <testcase time="0.00299999999992906" classname="tm_g_gh_correlationplot" name="tm_g_gh_correlationplot_accepts_line_arguments_with_choices_selected"/>
-    <testcase time="0.0640000000000782" classname="tm_g_gh_correlationplot" name="tm_g_gh_correlationplot_invalid_arguments_throws_an_error_when_label_is_invalid"/>
-    <testcase time="0.00999999999999091" classname="tm_g_gh_correlationplot" name="tm_g_gh_correlationplot_invalid_arguments_throws_an_error_when_dataname_is_invalid"/>
-    <testcase time="0.00999999999999091" classname="tm_g_gh_correlationplot" name="tm_g_gh_correlationplot_invalid_arguments_throws_an_error_when_xaxis_param_is_invalid"/>
-    <testcase time="0.00999999999999091" classname="tm_g_gh_correlationplot" name="tm_g_gh_correlationplot_invalid_arguments_throws_an_error_when_yaxis_param_is_invalid"/>
-    <testcase time="0.0109999999999673" classname="tm_g_gh_correlationplot" name="tm_g_gh_correlationplot_invalid_arguments_throws_an_error_when_xaxis_var_is_invalid"/>
-    <testcase time="0.0110000000001946" classname="tm_g_gh_correlationplot" name="tm_g_gh_correlationplot_invalid_arguments_throws_an_error_when_yaxis_var_is_invalid"/>
-    <testcase time="0.0119999999999436" classname="tm_g_gh_correlationplot" name="tm_g_gh_correlationplot_invalid_arguments_throws_an_error_when_trt_group_is_invalid"/>
-    <testcase time="0.0619999999998981" classname="tm_g_gh_correlationplot" name="tm_g_gh_correlationplot_invalid_arguments_throws_an_error_when_color_manual_is_invalid"/>
-    <testcase time="0.05600000000004" classname="tm_g_gh_correlationplot" name="tm_g_gh_correlationplot_invalid_arguments_throws_an_error_when_shape_manual_is_invalid"/>
-    <testcase time="0.0550000000000637" classname="tm_g_gh_correlationplot" name="tm_g_gh_correlationplot_invalid_arguments_throws_an_error_when_facet_ncol_is_invalid"/>
-    <testcase time="0.0589999999999691" classname="tm_g_gh_correlationplot" name="tm_g_gh_correlationplot_invalid_arguments_throws_an_error_when_visit_facet_is_invalid"/>
-    <testcase time="0.0540000000000873" classname="tm_g_gh_correlationplot" name="tm_g_gh_correlationplot_invalid_arguments_throws_an_error_when_trt_facet_is_invalid"/>
-    <testcase time="0.0539999999998599" classname="tm_g_gh_correlationplot" name="tm_g_gh_correlationplot_invalid_arguments_throws_an_error_when_reg_line_is_invalid"/>
-    <testcase time="0.0589999999999691" classname="tm_g_gh_correlationplot" name="tm_g_gh_correlationplot_invalid_arguments_throws_an_error_when_loq_legend_is_invalid"/>
-    <testcase time="0.0570000000000164" classname="tm_g_gh_correlationplot" name="tm_g_gh_correlationplot_invalid_arguments_throws_an_error_when_rotate_xlab_is_invalid"/>
-    <testcase time="0.05600000000004" classname="tm_g_gh_correlationplot" name="tm_g_gh_correlationplot_invalid_arguments_throws_an_error_when_hline_arb_is_invalid"/>
-    <testcase time="0.0620000000001255" classname="tm_g_gh_correlationplot" name="tm_g_gh_correlationplot_invalid_arguments_throws_an_error_when_hline_vars_is_invalid"/>
-    <testcase time="0.056999999999789" classname="tm_g_gh_correlationplot" name="tm_g_gh_correlationplot_invalid_arguments_throws_an_error_when_vline_arb_is_invalid"/>
-    <testcase time="0.0610000000001492" classname="tm_g_gh_correlationplot" name="tm_g_gh_correlationplot_invalid_arguments_throws_an_error_when_vline_vars_is_invalid"/>
-    <testcase time="0.05600000000004" classname="tm_g_gh_correlationplot" name="tm_g_gh_correlationplot_invalid_arguments_throws_an_error_when_plot_height_is_invalid"/>
-    <testcase time="0.0570000000000164" classname="tm_g_gh_correlationplot" name="tm_g_gh_correlationplot_invalid_arguments_throws_an_error_when_plot_width_is_invalid"/>
-    <testcase time="0.0629999999998745" classname="tm_g_gh_correlationplot" name="tm_g_gh_correlationplot_invalid_arguments_throws_an_error_when_font_size_is_invalid"/>
-    <testcase time="0.05600000000004" classname="tm_g_gh_correlationplot" name="tm_g_gh_correlationplot_invalid_arguments_throws_an_error_when_dot_size_is_invalid"/>
-    <testcase time="0.0570000000000164" classname="tm_g_gh_correlationplot" name="tm_g_gh_correlationplot_invalid_arguments_throws_an_error_when_reg_text_size_is_invalid"/>
-    <testcase time="0.0599999999999454" classname="tm_g_gh_correlationplot" name="tm_g_gh_correlationplot_invalid_arguments_throws_an_error_when_pre_output_is_invalid"/>
-    <testcase time="0.05600000000004" classname="tm_g_gh_correlationplot" name="tm_g_gh_correlationplot_invalid_arguments_throws_an_error_when_post_output_is_invalid"/>
-    <testcase time="0.0609999999999218" classname="tm_g_gh_correlationplot" name="tm_g_gh_correlationplot_invalid_arguments_throws_an_error_when_transformators_is_invalid"/>
-    <testcase time="0.0710000000001401" classname="tm_g_gh_correlationplot" name="tm_g_gh_correlationplot_invalid_arguments_throws_an_error_when_hline_arb_label_is_invalid"/>
-    <testcase time="0.0649999999998272" classname="tm_g_gh_correlationplot" name="tm_g_gh_correlationplot_invalid_arguments_throws_an_error_when_hline_arb_color_is_invalid"/>
-    <testcase time="0.0670000000000073" classname="tm_g_gh_correlationplot" name="tm_g_gh_correlationplot_invalid_arguments_throws_an_error_when_hline_vars_colors_is_invalid"/>
-    <testcase time="0.0700000000001637" classname="tm_g_gh_correlationplot" name="tm_g_gh_correlationplot_invalid_arguments_throws_an_error_when_hline_vars_labels_is_invalid"/>
-    <testcase time="0.06899999999996" classname="tm_g_gh_correlationplot" name="tm_g_gh_correlationplot_invalid_arguments_throws_an_error_when_vline_arb_label_is_invalid"/>
-    <testcase time="0.0709999999999127" classname="tm_g_gh_correlationplot" name="tm_g_gh_correlationplot_invalid_arguments_throws_an_error_when_vline_arb_color_is_invalid"/>
-    <testcase time="0.0650000000000546" classname="tm_g_gh_correlationplot" name="tm_g_gh_correlationplot_invalid_arguments_throws_an_error_when_vline_vars_colors_is_invalid"/>
-    <testcase time="0.0660000000000309" classname="tm_g_gh_correlationplot" name="tm_g_gh_correlationplot_invalid_arguments_throws_an_error_when_vline_vars_labels_is_invalid"/>
+  <testsuite name="shinytest2-tm_g_gh_lineplot" timestamp="2026-08-25T22:21:15Z" hostname="d5a0ab8f136f" tests="3" skipped="3" failures="0" errors="0" time="0.046">
+    <testcase time="0.0189999999999999" classname="shinytest2_tm_g_gh_lineplot" name="e2e_tm_g_gh_lineplot_initializes_and_renders_a_plot">
+      <skipped message="Reason: testing depth 3 is below current testing specification 5 ('test-shinytest2-tm_g_gh_lineplot.R:21:3')"/>
+    </testcase>
+    <testcase time="0.0130000000000001" classname="shinytest2_tm_g_gh_lineplot" name="e2e_tm_g_gh_lineplot_starts_with_expected_label_and_encoding_selections.">
+      <skipped message="Reason: testing depth 3 is below current testing specification 5 ('test-shinytest2-tm_g_gh_lineplot.R:38:5')"/>
+    </testcase>
+    <testcase time="0.014" classname="shinytest2_tm_g_gh_lineplot" name="e2e_tm_g_gh_lineplot_changing_pick_changes_plot_and_does_not_throw_validation_errors.">
+      <skipped message="Reason: testing depth 3 is below current testing specification 5 ('test-shinytest2-tm_g_gh_lineplot.R:57:3')"/>
+    </testcase>
   </testsuite>
-  <testsuite name="tm_g_gh_density_distribution_plot" timestamp="2026-08-25T22:10:35Z" hostname="6258816e9ca7" tests="34" skipped="0" failures="0" errors="0" time="1.028">
-    <testcase time="0.0579999999999927" classname="tm_g_gh_density_distribution_plot" name="tm_g_gh_density_distribution_plot_can_be_created_with_default_arguments"/>
-    <testcase time="0.00299999999992906" classname="tm_g_gh_density_distribution_plot" name="tm_g_gh_density_distribution_plot_can_be_created_with_default_arguments"/>
-    <testcase time="0.0080000000000382" classname="tm_g_gh_density_distribution_plot" name="tm_g_gh_density_distribution_plot_can_be_created_with_choices_selected_arguments"/>
-    <testcase time="0.00299999999992906" classname="tm_g_gh_density_distribution_plot" name="tm_g_gh_density_distribution_plot_can_be_created_with_choices_selected_arguments"/>
-    <testcase time="0.0080000000000382" classname="tm_g_gh_density_distribution_plot" name="tm_g_gh_density_distribution_plot_can_be_created_with_custom_picks_arguments"/>
-    <testcase time="0.00300000000015643" classname="tm_g_gh_density_distribution_plot" name="tm_g_gh_density_distribution_plot_can_be_created_with_custom_picks_arguments"/>
-    <testcase time="0.00799999999981083" classname="tm_g_gh_density_distribution_plot" name="tm_g_gh_density_distribution_plot_handles_different_parameter_combinations"/>
-    <testcase time="0.00200000000018008" classname="tm_g_gh_density_distribution_plot" name="tm_g_gh_density_distribution_plot_handles_different_parameter_combinations"/>
-    <testcase time="0.00900000000001455" classname="tm_g_gh_density_distribution_plot" name="tm_g_gh_density_distribution_plot_accepts_custom_color_specifications"/>
-    <testcase time="0.00199999999995271" classname="tm_g_gh_density_distribution_plot" name="tm_g_gh_density_distribution_plot_accepts_custom_color_specifications"/>
-    <testcase time="0.00900000000001455" classname="tm_g_gh_density_distribution_plot" name="tm_g_gh_density_distribution_plot_accepts_line_arguments"/>
-    <testcase time="0.00299999999992906" classname="tm_g_gh_density_distribution_plot" name="tm_g_gh_density_distribution_plot_accepts_line_arguments"/>
-    <testcase time="0.00900000000001455" classname="tm_g_gh_density_distribution_plot" name="tm_g_gh_density_distribution_plot_handles_plot_dimensions_correctly"/>
-    <testcase time="0.00199999999995271" classname="tm_g_gh_density_distribution_plot" name="tm_g_gh_density_distribution_plot_handles_plot_dimensions_correctly"/>
-    <testcase time="0.00999999999999091" classname="tm_g_gh_density_distribution_plot" name="tm_g_gh_density_distribution_plot_invalid_arguments_throws_an_error_when_label_is_invalid"/>
-    <testcase time="0.00900000000001455" classname="tm_g_gh_density_distribution_plot" name="tm_g_gh_density_distribution_plot_invalid_arguments_throws_an_error_when_dataname_is_invalid"/>
-    <testcase time="0.00999999999999091" classname="tm_g_gh_density_distribution_plot" name="tm_g_gh_density_distribution_plot_invalid_arguments_throws_an_error_when_param_is_invalid"/>
-    <testcase time="0.00999999999999091" classname="tm_g_gh_density_distribution_plot" name="tm_g_gh_density_distribution_plot_invalid_arguments_throws_an_error_when_xaxis_var_is_invalid"/>
-    <testcase time="0.0109999999999673" classname="tm_g_gh_density_distribution_plot" name="tm_g_gh_density_distribution_plot_invalid_arguments_throws_an_error_when_trt_group_is_invalid"/>
-    <testcase time="0.0610000000001492" classname="tm_g_gh_density_distribution_plot" name="tm_g_gh_density_distribution_plot_invalid_arguments_throws_an_error_when_color_manual_is_invalid"/>
-    <testcase time="0.0529999999998836" classname="tm_g_gh_density_distribution_plot" name="tm_g_gh_density_distribution_plot_invalid_arguments_throws_an_error_when_comb_line_is_invalid"/>
-    <testcase time="0.05600000000004" classname="tm_g_gh_density_distribution_plot" name="tm_g_gh_density_distribution_plot_invalid_arguments_throws_an_error_when_font_size_is_invalid"/>
-    <testcase time="0.0599999999999454" classname="tm_g_gh_density_distribution_plot" name="tm_g_gh_density_distribution_plot_invalid_arguments_throws_an_error_when_line_size_is_invalid"/>
-    <testcase time="0.0550000000000637" classname="tm_g_gh_density_distribution_plot" name="tm_g_gh_density_distribution_plot_invalid_arguments_throws_an_error_when_hline_arb_is_invalid"/>
-    <testcase time="0.053000000000111" classname="tm_g_gh_density_distribution_plot" name="tm_g_gh_density_distribution_plot_invalid_arguments_throws_an_error_when_comb_line_is_invalid"/>
-    <testcase time="0.0570000000000164" classname="tm_g_gh_density_distribution_plot" name="tm_g_gh_density_distribution_plot_invalid_arguments_throws_an_error_when_facet_ncol_is_invalid"/>
-    <testcase time="0.0519999999999072" classname="tm_g_gh_density_distribution_plot" name="tm_g_gh_density_distribution_plot_invalid_arguments_throws_an_error_when_rotate_xlab_is_invalid"/>
-    <testcase time="0.05600000000004" classname="tm_g_gh_density_distribution_plot" name="tm_g_gh_density_distribution_plot_invalid_arguments_throws_an_error_when_plot_height_is_invalid"/>
-    <testcase time="0.0599999999999454" classname="tm_g_gh_density_distribution_plot" name="tm_g_gh_density_distribution_plot_invalid_arguments_throws_an_error_when_plot_width_is_invalid"/>
-    <testcase time="0.0519999999999072" classname="tm_g_gh_density_distribution_plot" name="tm_g_gh_density_distribution_plot_invalid_arguments_throws_an_error_when_pre_output_is_invalid"/>
-    <testcase time="0.0559999999998126" classname="tm_g_gh_density_distribution_plot" name="tm_g_gh_density_distribution_plot_invalid_arguments_throws_an_error_when_post_output_is_invalid"/>
-    <testcase time="0.0630000000001019" classname="tm_g_gh_density_distribution_plot" name="tm_g_gh_density_distribution_plot_invalid_arguments_throws_an_error_when_transformators_is_invalid"/>
-    <testcase time="0.0570000000000164" classname="tm_g_gh_density_distribution_plot" name="tm_g_gh_density_distribution_plot_invalid_arguments_throws_error_when_hline_arb_label_is_invalid"/>
-    <testcase time="0.0599999999999454" classname="tm_g_gh_density_distribution_plot" name="tm_g_gh_density_distribution_plot_invalid_arguments_throws_error_when_hline_arb_color_is_invalid"/>
+  <testsuite name="shinytest2-tm_g_gh_spaghettiplot" timestamp="2026-08-25T22:21:15Z" hostname="d5a0ab8f136f" tests="3" skipped="3" failures="0" errors="0" time="0.082">
+    <testcase time="0.0179999999999998" classname="shinytest2_tm_g_gh_spaghettiplot" name="e2e_tm_g_gh_spaghettiplot_initializes_and_renders_a_plot">
+      <skipped message="Reason: testing depth 3 is below current testing specification 5 ('test-shinytest2-tm_g_gh_spaghettiplot.R:22:3')"/>
+    </testcase>
+    <testcase time="0.0490000000000002" classname="shinytest2_tm_g_gh_spaghettiplot" name="e2e_tm_g_gh_spaghettiplot_starts_with_expected_label_and_encoding_selections.">
+      <skipped message="Reason: testing depth 3 is below current testing specification 5 ('test-shinytest2-tm_g_gh_spaghettiplot.R:43:5')"/>
+    </testcase>
+    <testcase time="0.0149999999999999" classname="shinytest2_tm_g_gh_spaghettiplot" name="e2e_tm_g_gh_spaghettiplot_changing_pick_changes_plot_and_does_not_throw_validation_errors.">
+      <skipped message="Reason: testing depth 3 is below current testing specification 5 ('test-shinytest2-tm_g_gh_spaghettiplot.R:62:3')"/>
+    </testcase>
   </testsuite>
-  <testsuite name="tm_g_gh_lineplot" timestamp="2026-08-25T22:10:36Z" hostname="6258816e9ca7" tests="36" skipped="0" failures="0" errors="0" time="2.077">
-    <testcase time="0.0940000000000509" classname="tm_g_gh_lineplot" name="tm_g_gh_lineplot_can_be_created_with_default_arguments"/>
-    <testcase time="0.00299999999992906" classname="tm_g_gh_lineplot" name="tm_g_gh_lineplot_can_be_created_with_default_arguments"/>
-    <testcase time="0.0109999999999673" classname="tm_g_gh_lineplot" name="tm_g_gh_lineplot_can_be_created_with_choices_selected_arguments"/>
-    <testcase time="0.00300000000015643" classname="tm_g_gh_lineplot" name="tm_g_gh_lineplot_can_be_created_with_choices_selected_arguments"/>
-    <testcase time="0.00900000000001455" classname="tm_g_gh_lineplot" name="tm_g_gh_lineplot_can_be_created_with_custom_picks_arguments"/>
-    <testcase time="0.00299999999992906" classname="tm_g_gh_lineplot" name="tm_g_gh_lineplot_can_be_created_with_custom_picks_arguments"/>
-    <testcase time="0.00999999999999091" classname="tm_g_gh_lineplot" name="tm_g_gh_lineplot_handles_multiple_parameter_combinations"/>
-    <testcase time="0.00299999999992906" classname="tm_g_gh_lineplot" name="tm_g_gh_lineplot_handles_multiple_parameter_combinations"/>
-    <testcase time="0.00900000000001455" classname="tm_g_gh_lineplot" name="tm_g_gh_lineplot_accepts_custom_color_specifications_with_picks"/>
-    <testcase time="0.00299999999992906" classname="tm_g_gh_lineplot" name="tm_g_gh_lineplot_accepts_custom_color_specifications_with_picks"/>
-    <testcase time="0.0100000000002183" classname="tm_g_gh_lineplot" name="tm_g_gh_lineplot_accepts_line_arguments_with_picks"/>
-    <testcase time="0.00299999999992906" classname="tm_g_gh_lineplot" name="tm_g_gh_lineplot_accepts_line_arguments_with_picks"/>
-    <testcase time="0.00999999999999091" classname="tm_g_gh_lineplot" name="tm_g_gh_lineplot_invalid_arguments_throws_an_error_when_label_is_invalid"/>
-    <testcase time="0.00999999999999091" classname="tm_g_gh_lineplot" name="tm_g_gh_lineplot_invalid_arguments_throws_an_error_when_dataname_is_invalid"/>
-    <testcase time="0.0149999999998727" classname="tm_g_gh_lineplot" name="tm_g_gh_lineplot_invalid_arguments_throws_an_error_when_param_is_invalid"/>
-    <testcase time="0.0100000000002183" classname="tm_g_gh_lineplot" name="tm_g_gh_lineplot_invalid_arguments_throws_an_error_when_param_var_label_is_invalid"/>
-    <testcase time="0.00899999999978718" classname="tm_g_gh_lineplot" name="tm_g_gh_lineplot_invalid_arguments_throws_an_error_when_xaxis_var_is_invalid"/>
-    <testcase time="0.0520000000001346" classname="tm_g_gh_lineplot" name="tm_g_gh_lineplot_invalid_arguments_throws_an_error_when_yaxis_var_is_invalid"/>
-    <testcase time="0.0539999999998599" classname="tm_g_gh_lineplot" name="tm_g_gh_lineplot_invalid_arguments_throws_an_error_when_trt_group_is_invalid"/>
-    <testcase time="0.100000000000136" classname="tm_g_gh_lineplot" name="tm_g_gh_lineplot_invalid_arguments_throws_an_error_when_stat_is_invalid"/>
-    <testcase time="0.11200000000008" classname="tm_g_gh_lineplot" name="tm_g_gh_lineplot_invalid_arguments_throws_an_error_when_color_manual_is_invalid"/>
-    <testcase time="0.0989999999999327" classname="tm_g_gh_lineplot" name="tm_g_gh_lineplot_invalid_arguments_throws_an_error_when_rotate_xlab_is_invalid"/>
-    <testcase time="0.105999999999995" classname="tm_g_gh_lineplot" name="tm_g_gh_lineplot_invalid_arguments_throws_an_error_when_hline_arb_is_invalid"/>
-    <testcase time="0.0989999999999327" classname="tm_g_gh_lineplot" name="tm_g_gh_lineplot_invalid_arguments_throws_an_error_when_plot_height_is_invalid"/>
-    <testcase time="0.104000000000042" classname="tm_g_gh_lineplot" name="tm_g_gh_lineplot_invalid_arguments_throws_an_error_when_plot_width_is_invalid"/>
-    <testcase time="0.106999999999971" classname="tm_g_gh_lineplot" name="tm_g_gh_lineplot_invalid_arguments_throws_an_error_when_plot_font_size_is_invalid"/>
-    <testcase time="0.0989999999999327" classname="tm_g_gh_lineplot" name="tm_g_gh_lineplot_invalid_arguments_throws_an_error_when_dodge_is_invalid"/>
-    <testcase time="0.102000000000089" classname="tm_g_gh_lineplot" name="tm_g_gh_lineplot_invalid_arguments_throws_an_error_when_count_threshold_is_invalid"/>
-    <testcase time="0.0989999999999327" classname="tm_g_gh_lineplot" name="tm_g_gh_lineplot_invalid_arguments_throws_an_error_when_table_font_size_is_invalid"/>
-    <testcase time="0.105000000000018" classname="tm_g_gh_lineplot" name="tm_g_gh_lineplot_invalid_arguments_throws_an_error_when_dot_size_is_invalid"/>
-    <testcase time="0.103000000000065" classname="tm_g_gh_lineplot" name="tm_g_gh_lineplot_invalid_arguments_throws_an_error_when_plot_relative_height_value_is_invalid"/>
-    <testcase time="0.0950000000000273" classname="tm_g_gh_lineplot" name="tm_g_gh_lineplot_invalid_arguments_throws_an_error_when_pre_output_is_invalid"/>
-    <testcase time="0.105999999999995" classname="tm_g_gh_lineplot" name="tm_g_gh_lineplot_invalid_arguments_throws_an_error_when_post_output_is_invalid"/>
-    <testcase time="0.0999999999999091" classname="tm_g_gh_lineplot" name="tm_g_gh_lineplot_invalid_arguments_throws_an_error_when_transformators_is_invalid"/>
-    <testcase time="0.109000000000151" classname="tm_g_gh_lineplot" name="tm_g_gh_lineplot_invalid_arguments_throws_an_error_when_hline_arb_label_is_invalid"/>
-    <testcase time="0.110999999999876" classname="tm_g_gh_lineplot" name="tm_g_gh_lineplot_invalid_arguments_throws_an_error_when_hline_arb_color_is_invalid"/>
+  <testsuite name="tm_g_gh_boxplot" timestamp="2026-08-25T22:21:15Z" hostname="d5a0ab8f136f" tests="42" skipped="0" failures="0" errors="0" time="2.923">
+    <testcase time="0.128" classname="tm_g_gh_boxplot" name="tm_g_gh_boxplot_can_be_created_with_default_arguments"/>
+    <testcase time="0.004" classname="tm_g_gh_boxplot" name="tm_g_gh_boxplot_can_be_created_with_default_arguments"/>
+    <testcase time="0.0170000000000003" classname="tm_g_gh_boxplot" name="tm_g_gh_boxplot_can_be_created_with_choices_selected_arguments"/>
+    <testcase time="0.00299999999999967" classname="tm_g_gh_boxplot" name="tm_g_gh_boxplot_can_be_created_with_choices_selected_arguments"/>
+    <testcase time="0.0130000000000003" classname="tm_g_gh_boxplot" name="tm_g_gh_boxplot_can_be_created_with_custom_picks_arguments"/>
+    <testcase time="0.00299999999999967" classname="tm_g_gh_boxplot" name="tm_g_gh_boxplot_can_be_created_with_custom_picks_arguments"/>
+    <testcase time="0.012" classname="tm_g_gh_boxplot" name="tm_g_gh_boxplot_handles_different_parameter_combinations"/>
+    <testcase time="0.00200000000000022" classname="tm_g_gh_boxplot" name="tm_g_gh_boxplot_handles_different_parameter_combinations"/>
+    <testcase time="0.012" classname="tm_g_gh_boxplot" name="tm_g_gh_boxplot_accepts_custom_color_and_shape_specifications"/>
+    <testcase time="0.00299999999999967" classname="tm_g_gh_boxplot" name="tm_g_gh_boxplot_accepts_custom_color_and_shape_specifications"/>
+    <testcase time="0.012" classname="tm_g_gh_boxplot" name="tm_g_gh_boxplot_accepts_line_arguments"/>
+    <testcase time="0.00300000000000011" classname="tm_g_gh_boxplot" name="tm_g_gh_boxplot_accepts_line_arguments"/>
+    <testcase time="0.016" classname="tm_g_gh_boxplot" name="tm_g_gh_boxplot_handles_plot_dimensions_correctly"/>
+    <testcase time="0.00300000000000011" classname="tm_g_gh_boxplot" name="tm_g_gh_boxplot_handles_plot_dimensions_correctly"/>
+    <testcase time="0.0129999999999999" classname="tm_g_gh_boxplot" name="tm_g_gh_boxplot_invalid_arguments_throws_an_error_when_label_is_invalid"/>
+    <testcase time="0.0110000000000001" classname="tm_g_gh_boxplot" name="tm_g_gh_boxplot_invalid_arguments_throws_an_error_when_dataname_is_invalid"/>
+    <testcase time="0.0110000000000001" classname="tm_g_gh_boxplot" name="tm_g_gh_boxplot_invalid_arguments_throws_an_error_when_param_is_invalid"/>
+    <testcase time="0.0109999999999997" classname="tm_g_gh_boxplot" name="tm_g_gh_boxplot_invalid_arguments_throws_an_error_when_yaxis_var_is_invalid"/>
+    <testcase time="0.012" classname="tm_g_gh_boxplot" name="tm_g_gh_boxplot_invalid_arguments_throws_an_error_when_xaxis_var_is_invalid"/>
+    <testcase time="0.016" classname="tm_g_gh_boxplot" name="tm_g_gh_boxplot_invalid_arguments_throws_an_error_when_facet_var_is_invalid"/>
+    <testcase time="0.0630000000000002" classname="tm_g_gh_boxplot" name="tm_g_gh_boxplot_invalid_arguments_throws_an_error_when_trt_group_is_invalid"/>
+    <testcase time="0.127" classname="tm_g_gh_boxplot" name="tm_g_gh_boxplot_invalid_arguments_throws_an_error_when_color_manual_is_invalid"/>
+    <testcase time="0.122" classname="tm_g_gh_boxplot" name="tm_g_gh_boxplot_invalid_arguments_throws_an_error_when_shape_manual_is_invalid"/>
+    <testcase time="0.111" classname="tm_g_gh_boxplot" name="tm_g_gh_boxplot_invalid_arguments_throws_an_error_when_facet_ncol_is_invalid"/>
+    <testcase time="0.12" classname="tm_g_gh_boxplot" name="tm_g_gh_boxplot_invalid_arguments_throws_an_error_when_loq_legend_is_invalid"/>
+    <testcase time="0.121" classname="tm_g_gh_boxplot" name="tm_g_gh_boxplot_invalid_arguments_throws_an_error_when_rotate_xlab_is_invalid"/>
+    <testcase time="0.12" classname="tm_g_gh_boxplot" name="tm_g_gh_boxplot_invalid_arguments_throws_an_error_when_hline_arb_is_invalid"/>
+    <testcase time="0.122" classname="tm_g_gh_boxplot" name="tm_g_gh_boxplot_invalid_arguments_throws_an_error_when_hline_vars_is_invalid"/>
+    <testcase time="0.121" classname="tm_g_gh_boxplot" name="tm_g_gh_boxplot_invalid_arguments_throws_an_error_when_plot_height_is_invalid"/>
+    <testcase time="0.123" classname="tm_g_gh_boxplot" name="tm_g_gh_boxplot_invalid_arguments_throws_an_error_when_plot_width_is_invalid"/>
+    <testcase time="0.137" classname="tm_g_gh_boxplot" name="tm_g_gh_boxplot_invalid_arguments_throws_an_error_when_font_size_is_invalid"/>
+    <testcase time="0.134" classname="tm_g_gh_boxplot" name="tm_g_gh_boxplot_invalid_arguments_throws_an_error_when_dot_size_is_invalid"/>
+    <testcase time="0.132" classname="tm_g_gh_boxplot" name="tm_g_gh_boxplot_invalid_arguments_throws_an_error_when_alpha_is_invalid"/>
+    <testcase time="0.123" classname="tm_g_gh_boxplot" name="tm_g_gh_boxplot_invalid_arguments_throws_an_error_when_pre_output_is_invalid"/>
+    <testcase time="0.123" classname="tm_g_gh_boxplot" name="tm_g_gh_boxplot_invalid_arguments_throws_an_error_when_post_output_is_invalid"/>
+    <testcase time="0.123" classname="tm_g_gh_boxplot" name="tm_g_gh_boxplot_invalid_arguments_throws_an_error_when_transformators_is_invalid"/>
+    <testcase time="0.131" classname="tm_g_gh_boxplot" name="tm_g_gh_boxplot_invalid_arguments_throws_an_error_when_hline_arb_label_is_invalid"/>
+    <testcase time="0.143" classname="tm_g_gh_boxplot" name="tm_g_gh_boxplot_invalid_arguments_throws_an_error_when_hline_arb_color_is_invalid"/>
+    <testcase time="0.143" classname="tm_g_gh_boxplot" name="tm_g_gh_boxplot_invalid_arguments_throws_an_error_when_hline_vars_colors_is_invalid"/>
+    <testcase time="0.140000000000001" classname="tm_g_gh_boxplot" name="tm_g_gh_boxplot_invalid_arguments_throws_an_error_when_hline_vars_labels_is_invalid"/>
+    <testcase time="0.133" classname="tm_g_gh_boxplot" name="tm_g_gh_boxplot_invalid_arguments_gives_a_deprecation_warning_when_param_var_is_used"/>
+    <testcase time="0.00599999999999934" classname="tm_g_gh_boxplot" name="tm_g_gh_boxplot_invalid_arguments_all_arguments_are_tested"/>
   </testsuite>
-  <testsuite name="tm_g_gh_spaghettiplot" timestamp="2026-08-25T22:10:38Z" hostname="6258816e9ca7" tests="42" skipped="0" failures="0" errors="0" time="1.444">
-    <testcase time="0.053000000000111" classname="tm_g_gh_spaghettiplot" name="tm_g_gh_spaghettiplot_can_be_created_with_default_arguments"/>
-    <testcase time="0.00299999999992906" classname="tm_g_gh_spaghettiplot" name="tm_g_gh_spaghettiplot_can_be_created_with_default_arguments"/>
-    <testcase time="0.00999999999999091" classname="tm_g_gh_spaghettiplot" name="tm_g_gh_spaghettiplot_can_be_created_with_choices_selected_arguments"/>
-    <testcase time="0.00199999999995271" classname="tm_g_gh_spaghettiplot" name="tm_g_gh_spaghettiplot_can_be_created_with_choices_selected_arguments"/>
-    <testcase time="0.00999999999999091" classname="tm_g_gh_spaghettiplot" name="tm_g_gh_spaghettiplot_can_be_created_with_custom_picks_arguments"/>
-    <testcase time="0.00300000000015643" classname="tm_g_gh_spaghettiplot" name="tm_g_gh_spaghettiplot_can_be_created_with_custom_picks_arguments"/>
-    <testcase time="0.00999999999999091" classname="tm_g_gh_spaghettiplot" name="tm_g_gh_spaghettiplot_handles_multiple_parameter_combinations"/>
-    <testcase time="0.00299999999992906" classname="tm_g_gh_spaghettiplot" name="tm_g_gh_spaghettiplot_handles_multiple_parameter_combinations"/>
-    <testcase time="0.00999999999999091" classname="tm_g_gh_spaghettiplot" name="tm_g_gh_spaghettiplot_accepts_custom_color_specifications_with_choices_selected"/>
-    <testcase time="0.00299999999992906" classname="tm_g_gh_spaghettiplot" name="tm_g_gh_spaghettiplot_accepts_custom_color_specifications_with_choices_selected"/>
-    <testcase time="0.00999999999999091" classname="tm_g_gh_spaghettiplot" name="tm_g_gh_spaghettiplot_accepts_line_arguments_with_choices_selected"/>
-    <testcase time="0.00300000000015643" classname="tm_g_gh_spaghettiplot" name="tm_g_gh_spaghettiplot_accepts_line_arguments_with_choices_selected"/>
-    <testcase time="0.00999999999999091" classname="tm_g_gh_spaghettiplot" name="tm_g_gh_spaghettiplot_invalid_arguments_throws_an_error_when_label_is_invalid"/>
-    <testcase time="0.00900000000001455" classname="tm_g_gh_spaghettiplot" name="tm_g_gh_spaghettiplot_invalid_arguments_throws_an_error_when_dataname_is_invalid"/>
-    <testcase time="0.00899999999978718" classname="tm_g_gh_spaghettiplot" name="tm_g_gh_spaghettiplot_invalid_arguments_throws_an_error_when_param_var_label_is_invalid"/>
-    <testcase time="0.0140000000001237" classname="tm_g_gh_spaghettiplot" name="tm_g_gh_spaghettiplot_invalid_arguments_throws_an_error_when_idvar_is_invalid"/>
-    <testcase time="0.0119999999999436" classname="tm_g_gh_spaghettiplot" name="tm_g_gh_spaghettiplot_invalid_arguments_throws_an_error_when_group_stats_is_invalid"/>
-    <testcase time="0.00900000000001455" classname="tm_g_gh_spaghettiplot" name="tm_g_gh_spaghettiplot_invalid_arguments_throws_an_error_when_param_is_invalid"/>
-    <testcase time="0.0109999999999673" classname="tm_g_gh_spaghettiplot" name="tm_g_gh_spaghettiplot_invalid_arguments_throws_an_error_when_xaxis_var_is_invalid"/>
-    <testcase time="0.00999999999999091" classname="tm_g_gh_spaghettiplot" name="tm_g_gh_spaghettiplot_invalid_arguments_throws_an_error_when_yaxis_var_is_invalid"/>
-    <testcase time="0.00999999999999091" classname="tm_g_gh_spaghettiplot" name="tm_g_gh_spaghettiplot_invalid_arguments_throws_an_error_when_trt_group_is_invalid"/>
-    <testcase time="0.0540000000000873" classname="tm_g_gh_spaghettiplot" name="tm_g_gh_spaghettiplot_invalid_arguments_throws_an_error_when_xaxis_var_level_is_invalid"/>
-    <testcase time="0.05600000000004" classname="tm_g_gh_spaghettiplot" name="tm_g_gh_spaghettiplot_invalid_arguments_throws_an_error_when_trt_group_level_is_invalid"/>
-    <testcase time="0.0629999999998745" classname="tm_g_gh_spaghettiplot" name="tm_g_gh_spaghettiplot_invalid_arguments_throws_an_error_when_man_color_is_invalid"/>
-    <testcase time="0.053000000000111" classname="tm_g_gh_spaghettiplot" name="tm_g_gh_spaghettiplot_invalid_arguments_throws_an_error_when_color_comb_is_invalid"/>
-    <testcase time="0.0570000000000164" classname="tm_g_gh_spaghettiplot" name="tm_g_gh_spaghettiplot_invalid_arguments_throws_an_error_when_hline_arb_is_invalid"/>
-    <testcase time="0.0629999999998745" classname="tm_g_gh_spaghettiplot" name="tm_g_gh_spaghettiplot_invalid_arguments_throws_an_error_when_hline_vars_is_invalid"/>
-    <testcase time="0.0540000000000873" classname="tm_g_gh_spaghettiplot" name="tm_g_gh_spaghettiplot_invalid_arguments_throws_an_error_when_facet_ncol_is_invalid"/>
-    <testcase time="0.0540000000000873" classname="tm_g_gh_spaghettiplot" name="tm_g_gh_spaghettiplot_invalid_arguments_throws_an_error_when_free_x_is_invalid"/>
-    <testcase time="0.0599999999999454" classname="tm_g_gh_spaghettiplot" name="tm_g_gh_spaghettiplot_invalid_arguments_throws_an_error_when_rotate_xlab_is_invalid"/>
-    <testcase time="0.0570000000000164" classname="tm_g_gh_spaghettiplot" name="tm_g_gh_spaghettiplot_invalid_arguments_throws_an_error_when_plot_height_is_invalid"/>
-    <testcase time="0.05600000000004" classname="tm_g_gh_spaghettiplot" name="tm_g_gh_spaghettiplot_invalid_arguments_throws_an_error_when_plot_width_is_invalid"/>
-    <testcase time="0.0619999999998981" classname="tm_g_gh_spaghettiplot" name="tm_g_gh_spaghettiplot_invalid_arguments_throws_an_error_when_font_size_is_invalid"/>
-    <testcase time="0.0570000000000164" classname="tm_g_gh_spaghettiplot" name="tm_g_gh_spaghettiplot_invalid_arguments_throws_an_error_when_dot_size_is_invalid"/>
-    <testcase time="0.0619999999998981" classname="tm_g_gh_spaghettiplot" name="tm_g_gh_spaghettiplot_invalid_arguments_throws_an_error_when_alpha_is_invalid"/>
-    <testcase time="0.0550000000000637" classname="tm_g_gh_spaghettiplot" name="tm_g_gh_spaghettiplot_invalid_arguments_throws_an_error_when_pre_output_is_invalid"/>
-    <testcase time="0.0570000000000164" classname="tm_g_gh_spaghettiplot" name="tm_g_gh_spaghettiplot_invalid_arguments_throws_an_error_when_post_output_is_invalid"/>
-    <testcase time="0.0619999999998981" classname="tm_g_gh_spaghettiplot" name="tm_g_gh_spaghettiplot_invalid_arguments_throws_an_error_when_transformators_is_invalid"/>
-    <testcase time="0.0590000000001965" classname="tm_g_gh_spaghettiplot" name="tm_g_gh_spaghettiplot_invalid_arguments_throws_an_error_when_hline_arb_label_is_invalid"/>
-    <testcase time="0.0609999999999218" classname="tm_g_gh_spaghettiplot" name="tm_g_gh_spaghettiplot_invalid_arguments_throws_an_error_when_hline_arb_color_is_invalid"/>
-    <testcase time="0.0679999999999836" classname="tm_g_gh_spaghettiplot" name="tm_g_gh_spaghettiplot_invalid_arguments_throws_an_error_when_hline_vars_colors_is_invalid"/>
-    <testcase time="0.0599999999999454" classname="tm_g_gh_spaghettiplot" name="tm_g_gh_spaghettiplot_invalid_arguments_throws_an_error_when_hline_vars_labels_is_invalid"/>
+  <testsuite name="tm_g_gh_correlationplot" timestamp="2026-08-25T22:21:18Z" hostname="d5a0ab8f136f" tests="47" skipped="0" failures="0" errors="0" time="2.532">
+    <testcase time="0.0730000000000004" classname="tm_g_gh_correlationplot" name="tm_g_gh_correlationplot_can_be_created_with_default_arguments"/>
+    <testcase time="0.00300000000000011" classname="tm_g_gh_correlationplot" name="tm_g_gh_correlationplot_can_be_created_with_default_arguments"/>
+    <testcase time="0.0140000000000002" classname="tm_g_gh_correlationplot" name="tm_g_gh_correlationplot_can_be_created_with_choices_selected_arguments"/>
+    <testcase time="0.00399999999999956" classname="tm_g_gh_correlationplot" name="tm_g_gh_correlationplot_can_be_created_with_choices_selected_arguments"/>
+    <testcase time="0.0129999999999999" classname="tm_g_gh_correlationplot" name="tm_g_gh_correlationplot_can_be_created_with_custom_picks_arguments"/>
+    <testcase time="0.00300000000000011" classname="tm_g_gh_correlationplot" name="tm_g_gh_correlationplot_can_be_created_with_custom_picks_arguments"/>
+    <testcase time="0.0129999999999999" classname="tm_g_gh_correlationplot" name="tm_g_gh_correlationplot_handles_multiple_parameter_combinations"/>
+    <testcase time="0.00300000000000011" classname="tm_g_gh_correlationplot" name="tm_g_gh_correlationplot_handles_multiple_parameter_combinations"/>
+    <testcase time="0.0190000000000001" classname="tm_g_gh_correlationplot" name="tm_g_gh_correlationplot_accepts_custom_color_and_shape_specifications_with_choices_selected"/>
+    <testcase time="0.00300000000000011" classname="tm_g_gh_correlationplot" name="tm_g_gh_correlationplot_accepts_custom_color_and_shape_specifications_with_choices_selected"/>
+    <testcase time="0.0140000000000002" classname="tm_g_gh_correlationplot" name="tm_g_gh_correlationplot_accepts_line_arguments_with_choices_selected"/>
+    <testcase time="0.00299999999999923" classname="tm_g_gh_correlationplot" name="tm_g_gh_correlationplot_accepts_line_arguments_with_choices_selected"/>
+    <testcase time="0.0760000000000005" classname="tm_g_gh_correlationplot" name="tm_g_gh_correlationplot_invalid_arguments_throws_an_error_when_label_is_invalid"/>
+    <testcase time="0.0110000000000001" classname="tm_g_gh_correlationplot" name="tm_g_gh_correlationplot_invalid_arguments_throws_an_error_when_dataname_is_invalid"/>
+    <testcase time="0.0110000000000001" classname="tm_g_gh_correlationplot" name="tm_g_gh_correlationplot_invalid_arguments_throws_an_error_when_xaxis_param_is_invalid"/>
+    <testcase time="0.0119999999999996" classname="tm_g_gh_correlationplot" name="tm_g_gh_correlationplot_invalid_arguments_throws_an_error_when_yaxis_param_is_invalid"/>
+    <testcase time="0.0170000000000003" classname="tm_g_gh_correlationplot" name="tm_g_gh_correlationplot_invalid_arguments_throws_an_error_when_xaxis_var_is_invalid"/>
+    <testcase time="0.016" classname="tm_g_gh_correlationplot" name="tm_g_gh_correlationplot_invalid_arguments_throws_an_error_when_yaxis_var_is_invalid"/>
+    <testcase time="0.0139999999999993" classname="tm_g_gh_correlationplot" name="tm_g_gh_correlationplot_invalid_arguments_throws_an_error_when_trt_group_is_invalid"/>
+    <testcase time="0.0700000000000003" classname="tm_g_gh_correlationplot" name="tm_g_gh_correlationplot_invalid_arguments_throws_an_error_when_color_manual_is_invalid"/>
+    <testcase time="0.0720000000000001" classname="tm_g_gh_correlationplot" name="tm_g_gh_correlationplot_invalid_arguments_throws_an_error_when_shape_manual_is_invalid"/>
+    <testcase time="0.069" classname="tm_g_gh_correlationplot" name="tm_g_gh_correlationplot_invalid_arguments_throws_an_error_when_facet_ncol_is_invalid"/>
+    <testcase time="0.0679999999999996" classname="tm_g_gh_correlationplot" name="tm_g_gh_correlationplot_invalid_arguments_throws_an_error_when_visit_facet_is_invalid"/>
+    <testcase time="0.0710000000000006" classname="tm_g_gh_correlationplot" name="tm_g_gh_correlationplot_invalid_arguments_throws_an_error_when_trt_facet_is_invalid"/>
+    <testcase time="0.0739999999999998" classname="tm_g_gh_correlationplot" name="tm_g_gh_correlationplot_invalid_arguments_throws_an_error_when_reg_line_is_invalid"/>
+    <testcase time="0.0659999999999998" classname="tm_g_gh_correlationplot" name="tm_g_gh_correlationplot_invalid_arguments_throws_an_error_when_loq_legend_is_invalid"/>
+    <testcase time="0.0709999999999997" classname="tm_g_gh_correlationplot" name="tm_g_gh_correlationplot_invalid_arguments_throws_an_error_when_rotate_xlab_is_invalid"/>
+    <testcase time="0.0720000000000001" classname="tm_g_gh_correlationplot" name="tm_g_gh_correlationplot_invalid_arguments_throws_an_error_when_hline_arb_is_invalid"/>
+    <testcase time="0.0720000000000001" classname="tm_g_gh_correlationplot" name="tm_g_gh_correlationplot_invalid_arguments_throws_an_error_when_hline_vars_is_invalid"/>
+    <testcase time="0.0709999999999997" classname="tm_g_gh_correlationplot" name="tm_g_gh_correlationplot_invalid_arguments_throws_an_error_when_vline_arb_is_invalid"/>
+    <testcase time="0.0760000000000005" classname="tm_g_gh_correlationplot" name="tm_g_gh_correlationplot_invalid_arguments_throws_an_error_when_vline_vars_is_invalid"/>
+    <testcase time="0.0749999999999993" classname="tm_g_gh_correlationplot" name="tm_g_gh_correlationplot_invalid_arguments_throws_an_error_when_plot_height_is_invalid"/>
+    <testcase time="0.0750000000000002" classname="tm_g_gh_correlationplot" name="tm_g_gh_correlationplot_invalid_arguments_throws_an_error_when_plot_width_is_invalid"/>
+    <testcase time="0.0730000000000004" classname="tm_g_gh_correlationplot" name="tm_g_gh_correlationplot_invalid_arguments_throws_an_error_when_font_size_is_invalid"/>
+    <testcase time="0.0729999999999995" classname="tm_g_gh_correlationplot" name="tm_g_gh_correlationplot_invalid_arguments_throws_an_error_when_dot_size_is_invalid"/>
+    <testcase time="0.0710000000000006" classname="tm_g_gh_correlationplot" name="tm_g_gh_correlationplot_invalid_arguments_throws_an_error_when_reg_text_size_is_invalid"/>
+    <testcase time="0.069" classname="tm_g_gh_correlationplot" name="tm_g_gh_correlationplot_invalid_arguments_throws_an_error_when_pre_output_is_invalid"/>
+    <testcase time="0.0759999999999996" classname="tm_g_gh_correlationplot" name="tm_g_gh_correlationplot_invalid_arguments_throws_an_error_when_post_output_is_invalid"/>
+    <testcase time="0.0840000000000005" classname="tm_g_gh_correlationplot" name="tm_g_gh_correlationplot_invalid_arguments_throws_an_error_when_transformators_is_invalid"/>
+    <testcase time="0.202999999999999" classname="tm_g_gh_correlationplot" name="tm_g_gh_correlationplot_invalid_arguments_throws_an_error_when_hline_arb_label_is_invalid"/>
+    <testcase time="0.093" classname="tm_g_gh_correlationplot" name="tm_g_gh_correlationplot_invalid_arguments_throws_an_error_when_hline_arb_color_is_invalid"/>
+    <testcase time="0.085" classname="tm_g_gh_correlationplot" name="tm_g_gh_correlationplot_invalid_arguments_throws_an_error_when_hline_vars_colors_is_invalid"/>
+    <testcase time="0.0740000000000007" classname="tm_g_gh_correlationplot" name="tm_g_gh_correlationplot_invalid_arguments_throws_an_error_when_hline_vars_labels_is_invalid"/>
+    <testcase time="0.0789999999999997" classname="tm_g_gh_correlationplot" name="tm_g_gh_correlationplot_invalid_arguments_throws_an_error_when_vline_arb_label_is_invalid"/>
+    <testcase time="0.0750000000000002" classname="tm_g_gh_correlationplot" name="tm_g_gh_correlationplot_invalid_arguments_throws_an_error_when_vline_arb_color_is_invalid"/>
+    <testcase time="0.0789999999999997" classname="tm_g_gh_correlationplot" name="tm_g_gh_correlationplot_invalid_arguments_throws_an_error_when_vline_vars_colors_is_invalid"/>
+    <testcase time="0.0739999999999998" classname="tm_g_gh_correlationplot" name="tm_g_gh_correlationplot_invalid_arguments_throws_an_error_when_vline_vars_labels_is_invalid"/>
+  </testsuite>
+  <testsuite name="tm_g_gh_density_distribution_plot" timestamp="2026-08-25T22:21:20Z" hostname="d5a0ab8f136f" tests="34" skipped="0" failures="0" errors="0" time="1.173">
+    <testcase time="0.0590000000000002" classname="tm_g_gh_density_distribution_plot" name="tm_g_gh_density_distribution_plot_can_be_created_with_default_arguments"/>
+    <testcase time="0.00300000000000011" classname="tm_g_gh_density_distribution_plot" name="tm_g_gh_density_distribution_plot_can_be_created_with_default_arguments"/>
+    <testcase time="0.00999999999999979" classname="tm_g_gh_density_distribution_plot" name="tm_g_gh_density_distribution_plot_can_be_created_with_choices_selected_arguments"/>
+    <testcase time="0.00300000000000011" classname="tm_g_gh_density_distribution_plot" name="tm_g_gh_density_distribution_plot_can_be_created_with_choices_selected_arguments"/>
+    <testcase time="0.0140000000000002" classname="tm_g_gh_density_distribution_plot" name="tm_g_gh_density_distribution_plot_can_be_created_with_custom_picks_arguments"/>
+    <testcase time="0.00300000000000011" classname="tm_g_gh_density_distribution_plot" name="tm_g_gh_density_distribution_plot_can_be_created_with_custom_picks_arguments"/>
+    <testcase time="0.00899999999999945" classname="tm_g_gh_density_distribution_plot" name="tm_g_gh_density_distribution_plot_handles_different_parameter_combinations"/>
+    <testcase time="0.00300000000000011" classname="tm_g_gh_density_distribution_plot" name="tm_g_gh_density_distribution_plot_handles_different_parameter_combinations"/>
+    <testcase time="0.00999999999999979" classname="tm_g_gh_density_distribution_plot" name="tm_g_gh_density_distribution_plot_accepts_custom_color_specifications"/>
+    <testcase time="0.00300000000000011" classname="tm_g_gh_density_distribution_plot" name="tm_g_gh_density_distribution_plot_accepts_custom_color_specifications"/>
+    <testcase time="0.0110000000000001" classname="tm_g_gh_density_distribution_plot" name="tm_g_gh_density_distribution_plot_accepts_line_arguments"/>
+    <testcase time="0.00300000000000011" classname="tm_g_gh_density_distribution_plot" name="tm_g_gh_density_distribution_plot_accepts_line_arguments"/>
+    <testcase time="0.00999999999999979" classname="tm_g_gh_density_distribution_plot" name="tm_g_gh_density_distribution_plot_handles_plot_dimensions_correctly"/>
+    <testcase time="0.00300000000000011" classname="tm_g_gh_density_distribution_plot" name="tm_g_gh_density_distribution_plot_handles_plot_dimensions_correctly"/>
+    <testcase time="0.0129999999999999" classname="tm_g_gh_density_distribution_plot" name="tm_g_gh_density_distribution_plot_invalid_arguments_throws_an_error_when_label_is_invalid"/>
+    <testcase time="0.0110000000000001" classname="tm_g_gh_density_distribution_plot" name="tm_g_gh_density_distribution_plot_invalid_arguments_throws_an_error_when_dataname_is_invalid"/>
+    <testcase time="0.0119999999999996" classname="tm_g_gh_density_distribution_plot" name="tm_g_gh_density_distribution_plot_invalid_arguments_throws_an_error_when_param_is_invalid"/>
+    <testcase time="0.0130000000000008" classname="tm_g_gh_density_distribution_plot" name="tm_g_gh_density_distribution_plot_invalid_arguments_throws_an_error_when_xaxis_var_is_invalid"/>
+    <testcase time="0.0129999999999999" classname="tm_g_gh_density_distribution_plot" name="tm_g_gh_density_distribution_plot_invalid_arguments_throws_an_error_when_trt_group_is_invalid"/>
+    <testcase time="0.0649999999999995" classname="tm_g_gh_density_distribution_plot" name="tm_g_gh_density_distribution_plot_invalid_arguments_throws_an_error_when_color_manual_is_invalid"/>
+    <testcase time="0.0620000000000003" classname="tm_g_gh_density_distribution_plot" name="tm_g_gh_density_distribution_plot_invalid_arguments_throws_an_error_when_comb_line_is_invalid"/>
+    <testcase time="0.0620000000000003" classname="tm_g_gh_density_distribution_plot" name="tm_g_gh_density_distribution_plot_invalid_arguments_throws_an_error_when_font_size_is_invalid"/>
+    <testcase time="0.0659999999999998" classname="tm_g_gh_density_distribution_plot" name="tm_g_gh_density_distribution_plot_invalid_arguments_throws_an_error_when_line_size_is_invalid"/>
+    <testcase time="0.0609999999999999" classname="tm_g_gh_density_distribution_plot" name="tm_g_gh_density_distribution_plot_invalid_arguments_throws_an_error_when_hline_arb_is_invalid"/>
+    <testcase time="0.0590000000000002" classname="tm_g_gh_density_distribution_plot" name="tm_g_gh_density_distribution_plot_invalid_arguments_throws_an_error_when_comb_line_is_invalid"/>
+    <testcase time="0.0620000000000003" classname="tm_g_gh_density_distribution_plot" name="tm_g_gh_density_distribution_plot_invalid_arguments_throws_an_error_when_facet_ncol_is_invalid"/>
+    <testcase time="0.0600000000000005" classname="tm_g_gh_density_distribution_plot" name="tm_g_gh_density_distribution_plot_invalid_arguments_throws_an_error_when_rotate_xlab_is_invalid"/>
+    <testcase time="0.0609999999999999" classname="tm_g_gh_density_distribution_plot" name="tm_g_gh_density_distribution_plot_invalid_arguments_throws_an_error_when_plot_height_is_invalid"/>
+    <testcase time="0.0709999999999997" classname="tm_g_gh_density_distribution_plot" name="tm_g_gh_density_distribution_plot_invalid_arguments_throws_an_error_when_plot_width_is_invalid"/>
+    <testcase time="0.0649999999999995" classname="tm_g_gh_density_distribution_plot" name="tm_g_gh_density_distribution_plot_invalid_arguments_throws_an_error_when_pre_output_is_invalid"/>
+    <testcase time="0.0670000000000002" classname="tm_g_gh_density_distribution_plot" name="tm_g_gh_density_distribution_plot_invalid_arguments_throws_an_error_when_post_output_is_invalid"/>
+    <testcase time="0.0649999999999995" classname="tm_g_gh_density_distribution_plot" name="tm_g_gh_density_distribution_plot_invalid_arguments_throws_an_error_when_transformators_is_invalid"/>
+    <testcase time="0.0650000000000013" classname="tm_g_gh_density_distribution_plot" name="tm_g_gh_density_distribution_plot_invalid_arguments_throws_error_when_hline_arb_label_is_invalid"/>
+    <testcase time="0.0759999999999987" classname="tm_g_gh_density_distribution_plot" name="tm_g_gh_density_distribution_plot_invalid_arguments_throws_error_when_hline_arb_color_is_invalid"/>
+  </testsuite>
+  <testsuite name="tm_g_gh_lineplot" timestamp="2026-08-25T22:21:21Z" hostname="d5a0ab8f136f" tests="36" skipped="0" failures="0" errors="0" time="2.329">
+    <testcase time="0.112" classname="tm_g_gh_lineplot" name="tm_g_gh_lineplot_can_be_created_with_default_arguments"/>
+    <testcase time="0.00300000000000011" classname="tm_g_gh_lineplot" name="tm_g_gh_lineplot_can_be_created_with_default_arguments"/>
+    <testcase time="0.0129999999999999" classname="tm_g_gh_lineplot" name="tm_g_gh_lineplot_can_be_created_with_choices_selected_arguments"/>
+    <testcase time="0.00300000000000011" classname="tm_g_gh_lineplot" name="tm_g_gh_lineplot_can_be_created_with_choices_selected_arguments"/>
+    <testcase time="0.0150000000000006" classname="tm_g_gh_lineplot" name="tm_g_gh_lineplot_can_be_created_with_custom_picks_arguments"/>
+    <testcase time="0.00300000000000011" classname="tm_g_gh_lineplot" name="tm_g_gh_lineplot_can_be_created_with_custom_picks_arguments"/>
+    <testcase time="0.0109999999999992" classname="tm_g_gh_lineplot" name="tm_g_gh_lineplot_handles_multiple_parameter_combinations"/>
+    <testcase time="0.00300000000000011" classname="tm_g_gh_lineplot" name="tm_g_gh_lineplot_handles_multiple_parameter_combinations"/>
+    <testcase time="0.0109999999999992" classname="tm_g_gh_lineplot" name="tm_g_gh_lineplot_accepts_custom_color_specifications_with_picks"/>
+    <testcase time="0.00200000000000067" classname="tm_g_gh_lineplot" name="tm_g_gh_lineplot_accepts_custom_color_specifications_with_picks"/>
+    <testcase time="0.0119999999999987" classname="tm_g_gh_lineplot" name="tm_g_gh_lineplot_accepts_line_arguments_with_picks"/>
+    <testcase time="0.00300000000000011" classname="tm_g_gh_lineplot" name="tm_g_gh_lineplot_accepts_line_arguments_with_picks"/>
+    <testcase time="0.011000000000001" classname="tm_g_gh_lineplot" name="tm_g_gh_lineplot_invalid_arguments_throws_an_error_when_label_is_invalid"/>
+    <testcase time="0.0109999999999992" classname="tm_g_gh_lineplot" name="tm_g_gh_lineplot_invalid_arguments_throws_an_error_when_dataname_is_invalid"/>
+    <testcase time="0.0120000000000005" classname="tm_g_gh_lineplot" name="tm_g_gh_lineplot_invalid_arguments_throws_an_error_when_param_is_invalid"/>
+    <testcase time="0.0109999999999992" classname="tm_g_gh_lineplot" name="tm_g_gh_lineplot_invalid_arguments_throws_an_error_when_param_var_label_is_invalid"/>
+    <testcase time="0.0120000000000005" classname="tm_g_gh_lineplot" name="tm_g_gh_lineplot_invalid_arguments_throws_an_error_when_xaxis_var_is_invalid"/>
+    <testcase time="0.0589999999999993" classname="tm_g_gh_lineplot" name="tm_g_gh_lineplot_invalid_arguments_throws_an_error_when_yaxis_var_is_invalid"/>
+    <testcase time="0.0640000000000001" classname="tm_g_gh_lineplot" name="tm_g_gh_lineplot_invalid_arguments_throws_an_error_when_trt_group_is_invalid"/>
+    <testcase time="0.106" classname="tm_g_gh_lineplot" name="tm_g_gh_lineplot_invalid_arguments_throws_an_error_when_stat_is_invalid"/>
+    <testcase time="0.113000000000001" classname="tm_g_gh_lineplot" name="tm_g_gh_lineplot_invalid_arguments_throws_an_error_when_color_manual_is_invalid"/>
+    <testcase time="0.110999999999999" classname="tm_g_gh_lineplot" name="tm_g_gh_lineplot_invalid_arguments_throws_an_error_when_rotate_xlab_is_invalid"/>
+    <testcase time="0.115" classname="tm_g_gh_lineplot" name="tm_g_gh_lineplot_invalid_arguments_throws_an_error_when_hline_arb_is_invalid"/>
+    <testcase time="0.110000000000001" classname="tm_g_gh_lineplot" name="tm_g_gh_lineplot_invalid_arguments_throws_an_error_when_plot_height_is_invalid"/>
+    <testcase time="0.125" classname="tm_g_gh_lineplot" name="tm_g_gh_lineplot_invalid_arguments_throws_an_error_when_plot_width_is_invalid"/>
+    <testcase time="0.113999999999999" classname="tm_g_gh_lineplot" name="tm_g_gh_lineplot_invalid_arguments_throws_an_error_when_plot_font_size_is_invalid"/>
+    <testcase time="0.111000000000001" classname="tm_g_gh_lineplot" name="tm_g_gh_lineplot_invalid_arguments_throws_an_error_when_dodge_is_invalid"/>
+    <testcase time="0.113" classname="tm_g_gh_lineplot" name="tm_g_gh_lineplot_invalid_arguments_throws_an_error_when_count_threshold_is_invalid"/>
+    <testcase time="0.115" classname="tm_g_gh_lineplot" name="tm_g_gh_lineplot_invalid_arguments_throws_an_error_when_table_font_size_is_invalid"/>
+    <testcase time="0.111000000000001" classname="tm_g_gh_lineplot" name="tm_g_gh_lineplot_invalid_arguments_throws_an_error_when_dot_size_is_invalid"/>
+    <testcase time="0.109999999999999" classname="tm_g_gh_lineplot" name="tm_g_gh_lineplot_invalid_arguments_throws_an_error_when_plot_relative_height_value_is_invalid"/>
+    <testcase time="0.116" classname="tm_g_gh_lineplot" name="tm_g_gh_lineplot_invalid_arguments_throws_an_error_when_pre_output_is_invalid"/>
+    <testcase time="0.121" classname="tm_g_gh_lineplot" name="tm_g_gh_lineplot_invalid_arguments_throws_an_error_when_post_output_is_invalid"/>
+    <testcase time="0.122" classname="tm_g_gh_lineplot" name="tm_g_gh_lineplot_invalid_arguments_throws_an_error_when_transformators_is_invalid"/>
+    <testcase time="0.122" classname="tm_g_gh_lineplot" name="tm_g_gh_lineplot_invalid_arguments_throws_an_error_when_hline_arb_label_is_invalid"/>
+    <testcase time="0.123000000000001" classname="tm_g_gh_lineplot" name="tm_g_gh_lineplot_invalid_arguments_throws_an_error_when_hline_arb_color_is_invalid"/>
+  </testsuite>
+  <testsuite name="tm_g_gh_spaghettiplot" timestamp="2026-08-25T22:21:24Z" hostname="d5a0ab8f136f" tests="42" skipped="0" failures="0" errors="0" time="1.618">
+    <testcase time="0.0599999999999987" classname="tm_g_gh_spaghettiplot" name="tm_g_gh_spaghettiplot_can_be_created_with_default_arguments"/>
+    <testcase time="0.00400000000000134" classname="tm_g_gh_spaghettiplot" name="tm_g_gh_spaghettiplot_can_be_created_with_default_arguments"/>
+    <testcase time="0.0119999999999987" classname="tm_g_gh_spaghettiplot" name="tm_g_gh_spaghettiplot_can_be_created_with_choices_selected_arguments"/>
+    <testcase time="0.00300000000000011" classname="tm_g_gh_spaghettiplot" name="tm_g_gh_spaghettiplot_can_be_created_with_choices_selected_arguments"/>
+    <testcase time="0.00999999999999979" classname="tm_g_gh_spaghettiplot" name="tm_g_gh_spaghettiplot_can_be_created_with_custom_picks_arguments"/>
+    <testcase time="0.00300000000000011" classname="tm_g_gh_spaghettiplot" name="tm_g_gh_spaghettiplot_can_be_created_with_custom_picks_arguments"/>
+    <testcase time="0.011000000000001" classname="tm_g_gh_spaghettiplot" name="tm_g_gh_spaghettiplot_handles_multiple_parameter_combinations"/>
+    <testcase time="0.00300000000000011" classname="tm_g_gh_spaghettiplot" name="tm_g_gh_spaghettiplot_handles_multiple_parameter_combinations"/>
+    <testcase time="0.0109999999999992" classname="tm_g_gh_spaghettiplot" name="tm_g_gh_spaghettiplot_accepts_custom_color_specifications_with_choices_selected"/>
+    <testcase time="0.00200000000000067" classname="tm_g_gh_spaghettiplot" name="tm_g_gh_spaghettiplot_accepts_custom_color_specifications_with_choices_selected"/>
+    <testcase time="0.0120000000000005" classname="tm_g_gh_spaghettiplot" name="tm_g_gh_spaghettiplot_accepts_line_arguments_with_choices_selected"/>
+    <testcase time="0.00199999999999889" classname="tm_g_gh_spaghettiplot" name="tm_g_gh_spaghettiplot_accepts_line_arguments_with_choices_selected"/>
+    <testcase time="0.0120000000000005" classname="tm_g_gh_spaghettiplot" name="tm_g_gh_spaghettiplot_invalid_arguments_throws_an_error_when_label_is_invalid"/>
+    <testcase time="0.0109999999999992" classname="tm_g_gh_spaghettiplot" name="tm_g_gh_spaghettiplot_invalid_arguments_throws_an_error_when_dataname_is_invalid"/>
+    <testcase time="0.0150000000000006" classname="tm_g_gh_spaghettiplot" name="tm_g_gh_spaghettiplot_invalid_arguments_throws_an_error_when_param_var_label_is_invalid"/>
+    <testcase time="0.0109999999999992" classname="tm_g_gh_spaghettiplot" name="tm_g_gh_spaghettiplot_invalid_arguments_throws_an_error_when_idvar_is_invalid"/>
+    <testcase time="0.0100000000000016" classname="tm_g_gh_spaghettiplot" name="tm_g_gh_spaghettiplot_invalid_arguments_throws_an_error_when_group_stats_is_invalid"/>
+    <testcase time="0.00999999999999979" classname="tm_g_gh_spaghettiplot" name="tm_g_gh_spaghettiplot_invalid_arguments_throws_an_error_when_param_is_invalid"/>
+    <testcase time="0.0109999999999992" classname="tm_g_gh_spaghettiplot" name="tm_g_gh_spaghettiplot_invalid_arguments_throws_an_error_when_xaxis_var_is_invalid"/>
+    <testcase time="0.0120000000000005" classname="tm_g_gh_spaghettiplot" name="tm_g_gh_spaghettiplot_invalid_arguments_throws_an_error_when_yaxis_var_is_invalid"/>
+    <testcase time="0.0120000000000005" classname="tm_g_gh_spaghettiplot" name="tm_g_gh_spaghettiplot_invalid_arguments_throws_an_error_when_trt_group_is_invalid"/>
+    <testcase time="0.0599999999999987" classname="tm_g_gh_spaghettiplot" name="tm_g_gh_spaghettiplot_invalid_arguments_throws_an_error_when_xaxis_var_level_is_invalid"/>
+    <testcase time="0.0670000000000002" classname="tm_g_gh_spaghettiplot" name="tm_g_gh_spaghettiplot_invalid_arguments_throws_an_error_when_trt_group_level_is_invalid"/>
+    <testcase time="0.0630000000000006" classname="tm_g_gh_spaghettiplot" name="tm_g_gh_spaghettiplot_invalid_arguments_throws_an_error_when_man_color_is_invalid"/>
+    <testcase time="0.0589999999999993" classname="tm_g_gh_spaghettiplot" name="tm_g_gh_spaghettiplot_invalid_arguments_throws_an_error_when_color_comb_is_invalid"/>
+    <testcase time="0.0680000000000014" classname="tm_g_gh_spaghettiplot" name="tm_g_gh_spaghettiplot_invalid_arguments_throws_an_error_when_hline_arb_is_invalid"/>
+    <testcase time="0.0649999999999995" classname="tm_g_gh_spaghettiplot" name="tm_g_gh_spaghettiplot_invalid_arguments_throws_an_error_when_hline_vars_is_invalid"/>
+    <testcase time="0.0709999999999997" classname="tm_g_gh_spaghettiplot" name="tm_g_gh_spaghettiplot_invalid_arguments_throws_an_error_when_facet_ncol_is_invalid"/>
+    <testcase time="0.0649999999999995" classname="tm_g_gh_spaghettiplot" name="tm_g_gh_spaghettiplot_invalid_arguments_throws_an_error_when_free_x_is_invalid"/>
+    <testcase time="0.0620000000000012" classname="tm_g_gh_spaghettiplot" name="tm_g_gh_spaghettiplot_invalid_arguments_throws_an_error_when_rotate_xlab_is_invalid"/>
+    <testcase time="0.0689999999999991" classname="tm_g_gh_spaghettiplot" name="tm_g_gh_spaghettiplot_invalid_arguments_throws_an_error_when_plot_height_is_invalid"/>
+    <testcase time="0.0640000000000001" classname="tm_g_gh_spaghettiplot" name="tm_g_gh_spaghettiplot_invalid_arguments_throws_an_error_when_plot_width_is_invalid"/>
+    <testcase time="0.0650000000000013" classname="tm_g_gh_spaghettiplot" name="tm_g_gh_spaghettiplot_invalid_arguments_throws_an_error_when_font_size_is_invalid"/>
+    <testcase time="0.0689999999999991" classname="tm_g_gh_spaghettiplot" name="tm_g_gh_spaghettiplot_invalid_arguments_throws_an_error_when_dot_size_is_invalid"/>
+    <testcase time="0.0640000000000001" classname="tm_g_gh_spaghettiplot" name="tm_g_gh_spaghettiplot_invalid_arguments_throws_an_error_when_alpha_is_invalid"/>
+    <testcase time="0.0660000000000007" classname="tm_g_gh_spaghettiplot" name="tm_g_gh_spaghettiplot_invalid_arguments_throws_an_error_when_pre_output_is_invalid"/>
+    <testcase time="0.0619999999999994" classname="tm_g_gh_spaghettiplot" name="tm_g_gh_spaghettiplot_invalid_arguments_throws_an_error_when_post_output_is_invalid"/>
+    <testcase time="0.0589999999999993" classname="tm_g_gh_spaghettiplot" name="tm_g_gh_spaghettiplot_invalid_arguments_throws_an_error_when_transformators_is_invalid"/>
+    <testcase time="0.0730000000000004" classname="tm_g_gh_spaghettiplot" name="tm_g_gh_spaghettiplot_invalid_arguments_throws_an_error_when_hline_arb_label_is_invalid"/>
+    <testcase time="0.0670000000000002" classname="tm_g_gh_spaghettiplot" name="tm_g_gh_spaghettiplot_invalid_arguments_throws_an_error_when_hline_arb_color_is_invalid"/>
+    <testcase time="0.0730000000000004" classname="tm_g_gh_spaghettiplot" name="tm_g_gh_spaghettiplot_invalid_arguments_throws_an_error_when_hline_vars_colors_is_invalid"/>
+    <testcase time="0.0700000000000003" classname="tm_g_gh_spaghettiplot" name="tm_g_gh_spaghettiplot_invalid_arguments_throws_an_error_when_hline_vars_labels_is_invalid"/>
   </testsuite>
 </testsuites>
