@@ -4,48 +4,53 @@
 #'
 #' @inheritParams teal.widgets::standard_layout
 #' @inheritParams teal::module
-#' @param label menu item label of the module in the teal app.
-#' @param dataname analysis data passed to the data argument of \code{\link[teal]{init}}. E.g. `ADaM` structured
-#' laboratory data frame \code{ADLB}.
-#' @param param_var `r badge("deprecated")` name of variable containing biomarker codes e.g. \code{PARAMCD}.
-#' @param xaxis_param (`picks` or `choices_selected`) biomarker selected for `x-axis`.
-#' @param yaxis_param (`picks` or `choices_selected`) biomarker selected for `y-axis`.
-#' @param xaxis_var (`variables` or `choices_selected`)
-#' name of variable containing biomarker results displayed on x-axis e.g. \code{BASE}.
-#' @param yaxis_var (`variables` or `choices_selected`)
-#' name of variable containing biomarker results displayed on y-axis e.g. \code{AVAL}.
-#' @param trt_group (`variables` or `choices_selected`) object with available choices and pre-selected option
-#' for variable names representing treatment group e.g. `ARM`.
-#' @param color_manual vector of colors applied to treatment values.
-#' @param shape_manual vector of symbols applied to `LOQ` values.
-#' @param facet_ncol numeric value indicating number of facets per row.
-#' @param trt_facet facet by treatment group \code{trt_group}.
-#' @param visit_facet visit facet toggle.
-#' @param reg_line include regression line and annotations for slope and coefficient in visualization. Use with facet
-#'   TRUE.
-#' @param loq_legend `loq` legend toggle.
-#' @param rotate_xlab 45 degree rotation of `x-axis` values.
-#' @param hline_arb numeric vector of at most 2 values identifying intercepts for arbitrary horizontal lines.
-#' @param hline_arb_color a character vector of at most length of \code{hline_arb}.
+#' @param label (`character(1)`) menu item label of the module in the teal app.
+#' @param dataname (`character(1)`) analysis data passed to the data argument of [teal::init()].
+#' E.g. `ADaM` structured laboratory data frame `ADLB`.
+#' @param param_var `r badge("deprecated")` (`character(1)`)
+#' name of variable containing biomarker codes e.g. `PARAMCD`.
+#' @param xaxis_param (`[teal.picks::picks()]` or legacy `[teal.transform::choices_selected()]`)
+#' biomarker selected for `x-axis`.
+#' @param yaxis_param (`[teal.picks::picks()]` or legacy `[teal.transform::choices_selected()]`)
+#' biomarker selected for `y-axis`.
+#' @param xaxis_var (`[teal.picks::variables()]` or legacy `[teal.transform::choices_selected()]`)
+#' name of variable containing biomarker results displayed on x-axis e.g. `BASE`.
+#' @param yaxis_var (`[teal.picks::variables()]` or legacy `[teal.transform::choices_selected()]`)
+#' name of variable containing biomarker results displayed on y-axis e.g. `AVAL`.
+#' @param trt_group (`[teal.picks::variables()]` or legacy `[teal.transform::choices_selected()]`)
+#' object with available choices and pre-selected option for variable names representing treatment group e.g. `ARM`.
+#' @param color_manual (named `character`, optional) vector of colors applied to treatment values.
+#' @param shape_manual (named `numeric`, optional) vector of symbols applied to `LOQ` values.
+#' @param facet_ncol (`integer(1)`) numeric value indicating number of facets per row.
+#' @param trt_facet (`logical(1)`) facet by treatment group `trt_group`.
+#' @param visit_facet (`logical(1)`) visit facet toggle.
+#' @param reg_line (`logical(1)`) include regression line and annotations for slope and coefficient in visualization.
+#' Use with facet `TRUE`.
+#' @param loq_legend (`logical(1)`) `loq` legend toggle.
+#' @param rotate_xlab (`logical(1)`) 45 degree rotation of `x-axis` values.
+#' @param hline_arb (`numeric`) vector of at most 2 values identifying intercepts for arbitrary horizontal lines.
+#' @param hline_arb_color (`character`) a character vector of at most length of `hline_arb`.
 #' naming the color for the arbitrary horizontal lines.
-#' @param hline_arb_label a character vector of at most length of \code{hline_arb}.
+#' @param hline_arb_label (`character`) a character vector of at most length of `hline_arb`.
 #' naming the label for the arbitrary horizontal lines.
-#' @param hline_vars a character vector to name the columns that will define additional horizontal lines.
-#' @param hline_vars_colors a character vector naming the colors for the additional horizontal lines.
-#' @param hline_vars_labels a character vector naming the labels for the additional horizontal lines that will appear
-#' @param vline_arb numeric vector of at most 2 values identifying intercepts for arbitrary horizontal lines.
-#' @param vline_arb_color a character vector of at most length of \code{vline_arb}.
-#' naming the color for the arbitrary horizontal lines.
-#' @param vline_arb_label a character vector of at most length of \code{vline_arb}.
-#' naming the label for the arbitrary horizontal lines.
-#' @param vline_vars a character vector to name the columns that will define additional vertical lines.
-#' @param vline_vars_colors a character vector naming the colors for the additional vertical lines.
-#' @param vline_vars_labels a character vector naming the labels for the additional vertical lines that will appear
-#' @param plot_height controls plot height.
-#' @param plot_width optional, controls plot width.
-#' @param font_size font size control for title, `x-axis` label, `y-axis` label and legend.
-#' @param dot_size plot dot size.
-#' @param reg_text_size font size control for regression line annotations.
+#' @param hline_vars (`character`) a character vector to name the columns that will define additional horizontal lines.
+#' @param hline_vars_colors (`character`) a character vector naming the colors for the additional horizontal lines.
+#' @param hline_vars_labels (`character`) a character vector naming the labels for the additional horizontal lines
+#' that will appear in the plot.
+#' @param vline_arb (`numeric`) vector of at most 2 values identifying intercepts for arbitrary vertical lines.
+#' @param vline_arb_color (`character`) a character vector of at most length of `vline_arb`.
+#' naming the color for the arbitrary vertical lines.
+#' @param vline_arb_label (`character`) a character vector of at most length of `vline_arb`.
+#' naming the label for the arbitrary vertical lines.
+#' @param vline_vars (`character`) a character vector to name the columns that will define additional vertical lines.
+#' @param vline_vars_colors (`character`) a character vector naming the colors for the additional vertical lines.
+#' @param vline_vars_labels (`character`) a character vector naming the labels for the additional vertical lines
+#' that will appear in the plot.
+#' @param plot_height (`numeric(3)`) controls plot height.
+#' @param plot_width (`numeric(3)`, optional) controls plot width.
+#' @param font_size (`numeric(3)`) font size control for title, `x-axis` label, `y-axis` label and legend.
+#' @param dot_size (`numeric(3)`) plot dot size.
+#' @param reg_text_size (`numeric(3)`) font size control for regression line annotations.
 #'
 #' @export
 #'
@@ -278,6 +283,7 @@ tm_g_gh_correlationplot <- function(label,
 
   checkmate::assert_multi_class(pre_output, c("shiny.tag", "shiny.tag.list"), null.ok = TRUE)
   checkmate::assert_multi_class(post_output, c("shiny.tag", "shiny.tag.list"), null.ok = TRUE)
+  checkmate::assert_list(transformators, types = "teal_transform_module")
 
   if (lifecycle::is_present(param_var)) {
     lifecycle::deprecate_warn(

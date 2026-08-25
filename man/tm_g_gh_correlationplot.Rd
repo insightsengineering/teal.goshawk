@@ -46,80 +46,85 @@ tm_g_gh_correlationplot(
 )
 }
 \arguments{
-\item{label}{menu item label of the module in the teal app.}
+\item{label}{(\code{character(1)}) menu item label of the module in the teal app.}
 
-\item{dataname}{analysis data passed to the data argument of \code{\link[teal]{init}}. E.g. \code{ADaM} structured
-laboratory data frame \code{ADLB}.}
+\item{dataname}{(\code{character(1)}) analysis data passed to the data argument of \code{\link[teal:init]{teal::init()}}.
+E.g. \code{ADaM} structured laboratory data frame \code{ADLB}.}
 
-\item{param_var}{\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#deprecated}{\figure{lifecycle-deprecated.svg}{options: alt='[Deprecated]'}}}{\strong{[Deprecated]}} name of variable containing biomarker codes e.g. \code{PARAMCD}.}
+\item{param_var}{\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#deprecated}{\figure{lifecycle-deprecated.svg}{options: alt='[Deprecated]'}}}{\strong{[Deprecated]}} (\code{character(1)})
+name of variable containing biomarker codes e.g. \code{PARAMCD}.}
 
-\item{xaxis_param}{(\code{picks} or \code{choices_selected}) biomarker selected for \code{x-axis}.}
+\item{xaxis_param}{(\verb{[teal.picks::picks()]} or legacy \verb{[teal.transform::choices_selected()]})
+biomarker selected for \code{x-axis}.}
 
-\item{xaxis_var}{(\code{variables} or \code{choices_selected})
+\item{xaxis_var}{(\verb{[teal.picks::variables()]} or legacy \verb{[teal.transform::choices_selected()]})
 name of variable containing biomarker results displayed on x-axis e.g. \code{BASE}.}
 
-\item{yaxis_param}{(\code{picks} or \code{choices_selected}) biomarker selected for \code{y-axis}.}
+\item{yaxis_param}{(\verb{[teal.picks::picks()]} or legacy \verb{[teal.transform::choices_selected()]})
+biomarker selected for \code{y-axis}.}
 
-\item{yaxis_var}{(\code{variables} or \code{choices_selected})
+\item{yaxis_var}{(\verb{[teal.picks::variables()]} or legacy \verb{[teal.transform::choices_selected()]})
 name of variable containing biomarker results displayed on y-axis e.g. \code{AVAL}.}
 
-\item{trt_group}{(\code{variables} or \code{choices_selected}) object with available choices and pre-selected option
-for variable names representing treatment group e.g. \code{ARM}.}
+\item{trt_group}{(\verb{[teal.picks::variables()]} or legacy \verb{[teal.transform::choices_selected()]})
+object with available choices and pre-selected option for variable names representing treatment group e.g. \code{ARM}.}
 
-\item{color_manual}{vector of colors applied to treatment values.}
+\item{color_manual}{(named \code{character}, optional) vector of colors applied to treatment values.}
 
-\item{shape_manual}{vector of symbols applied to \code{LOQ} values.}
+\item{shape_manual}{(named \code{numeric}, optional) vector of symbols applied to \code{LOQ} values.}
 
-\item{facet_ncol}{numeric value indicating number of facets per row.}
+\item{facet_ncol}{(\code{integer(1)}) numeric value indicating number of facets per row.}
 
-\item{visit_facet}{visit facet toggle.}
+\item{visit_facet}{(\code{logical(1)}) visit facet toggle.}
 
-\item{trt_facet}{facet by treatment group \code{trt_group}.}
+\item{trt_facet}{(\code{logical(1)}) facet by treatment group \code{trt_group}.}
 
-\item{reg_line}{include regression line and annotations for slope and coefficient in visualization. Use with facet
-TRUE.}
+\item{reg_line}{(\code{logical(1)}) include regression line and annotations for slope and coefficient in visualization.
+Use with facet \code{TRUE}.}
 
-\item{loq_legend}{\code{loq} legend toggle.}
+\item{loq_legend}{(\code{logical(1)}) \code{loq} legend toggle.}
 
-\item{rotate_xlab}{45 degree rotation of \code{x-axis} values.}
+\item{rotate_xlab}{(\code{logical(1)}) 45 degree rotation of \code{x-axis} values.}
 
-\item{hline_arb}{numeric vector of at most 2 values identifying intercepts for arbitrary horizontal lines.}
+\item{hline_arb}{(\code{numeric}) vector of at most 2 values identifying intercepts for arbitrary horizontal lines.}
 
-\item{hline_arb_color}{a character vector of at most length of \code{hline_arb}.
+\item{hline_arb_color}{(\code{character}) a character vector of at most length of \code{hline_arb}.
 naming the color for the arbitrary horizontal lines.}
 
-\item{hline_arb_label}{a character vector of at most length of \code{hline_arb}.
+\item{hline_arb_label}{(\code{character}) a character vector of at most length of \code{hline_arb}.
 naming the label for the arbitrary horizontal lines.}
 
-\item{hline_vars}{a character vector to name the columns that will define additional horizontal lines.}
+\item{hline_vars}{(\code{character}) a character vector to name the columns that will define additional horizontal lines.}
 
-\item{hline_vars_colors}{a character vector naming the colors for the additional horizontal lines.}
+\item{hline_vars_colors}{(\code{character}) a character vector naming the colors for the additional horizontal lines.}
 
-\item{hline_vars_labels}{a character vector naming the labels for the additional horizontal lines that will appear}
+\item{hline_vars_labels}{(\code{character}) a character vector naming the labels for the additional horizontal lines
+that will appear in the plot.}
 
-\item{vline_arb}{numeric vector of at most 2 values identifying intercepts for arbitrary horizontal lines.}
+\item{vline_arb}{(\code{numeric}) vector of at most 2 values identifying intercepts for arbitrary vertical lines.}
 
-\item{vline_arb_color}{a character vector of at most length of \code{vline_arb}.
-naming the color for the arbitrary horizontal lines.}
+\item{vline_arb_color}{(\code{character}) a character vector of at most length of \code{vline_arb}.
+naming the color for the arbitrary vertical lines.}
 
-\item{vline_arb_label}{a character vector of at most length of \code{vline_arb}.
-naming the label for the arbitrary horizontal lines.}
+\item{vline_arb_label}{(\code{character}) a character vector of at most length of \code{vline_arb}.
+naming the label for the arbitrary vertical lines.}
 
-\item{vline_vars}{a character vector to name the columns that will define additional vertical lines.}
+\item{vline_vars}{(\code{character}) a character vector to name the columns that will define additional vertical lines.}
 
-\item{vline_vars_colors}{a character vector naming the colors for the additional vertical lines.}
+\item{vline_vars_colors}{(\code{character}) a character vector naming the colors for the additional vertical lines.}
 
-\item{vline_vars_labels}{a character vector naming the labels for the additional vertical lines that will appear}
+\item{vline_vars_labels}{(\code{character}) a character vector naming the labels for the additional vertical lines
+that will appear in the plot.}
 
-\item{plot_height}{controls plot height.}
+\item{plot_height}{(\code{numeric(3)}) controls plot height.}
 
-\item{plot_width}{optional, controls plot width.}
+\item{plot_width}{(\code{numeric(3)}, optional) controls plot width.}
 
-\item{font_size}{font size control for title, \code{x-axis} label, \code{y-axis} label and legend.}
+\item{font_size}{(\code{numeric(3)}) font size control for title, \code{x-axis} label, \code{y-axis} label and legend.}
 
-\item{dot_size}{plot dot size.}
+\item{dot_size}{(\code{numeric(3)}) plot dot size.}
 
-\item{reg_text_size}{font size control for regression line annotations.}
+\item{reg_text_size}{(\code{numeric(3)}) font size control for regression line annotations.}
 
 \item{pre_output}{(\code{shiny.tag}) optional,\cr
 with text placed before the output to put the output into context. For example a title.}
