@@ -6,16 +6,17 @@
 \usage{
 tm_g_gh_lineplot(
   label,
-  dataname,
-  param_var,
-  param,
+  dataname = "ADLB",
+  param_var = lifecycle::deprecated(),
+  param = teal.picks::picks(teal.picks::variables("PARAMCD", "PARAMCD"),
+    teal.picks::values(selected = "ALT", multiple = FALSE), check_dataset = FALSE),
   param_var_label = "PARAM",
-  xaxis_var,
-  yaxis_var,
+  xaxis_var = teal.picks::variables(dplyr::starts_with("AVISIT"), "AVISITCD"),
+  yaxis_var = teal.picks::variables(c("AVAL", "CHG", "PCHG"), "AVAL"),
   xvar_level = NULL,
-  filter_var = yaxis_var,
-  filter_var_choices = filter_var,
-  trt_group,
+  filter_var = lifecycle::deprecated(),
+  filter_var_choices = lifecycle::deprecated(),
+  trt_group = teal.picks::variables(selected = "ARM"),
   trt_group_level = NULL,
   shape_choices = NULL,
   stat = "mean",
@@ -46,26 +47,25 @@ tm_g_gh_lineplot(
 \item{dataname}{analysis data passed to the data argument of \code{\link[teal]{init}}. E.g. \code{ADaM} structured
 laboratory data frame \code{ADLB}.}
 
-\item{param_var}{name of variable containing biomarker codes e.g. \code{PARAMCD}.}
+\item{param_var}{\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#deprecated}{\figure{lifecycle-deprecated.svg}{options: alt='[Deprecated]'}}}{\strong{[Deprecated]}} name of variable containing biomarker codes e.g. \code{PARAMCD}.}
 
-\item{param}{biomarker selected.}
+\item{param}{(\code{picks} or \code{choices_selected}) biomarker selected.}
 
 \item{param_var_label}{single name of variable in analysis data that includes parameter labels.}
 
-\item{xaxis_var}{single name of variable in analysis data that is used as x-axis in the plot for the
-respective \code{goshawk} function.}
+\item{xaxis_var}{(\code{variables} or \code{choices_selected}) single name of variable in analysis data that is used as x-axis in the plot.}
 
-\item{yaxis_var}{single name of variable in analysis data that is used as summary variable in the
+\item{yaxis_var}{(\code{variables} or \code{choices_selected}) single name of variable in analysis data that is used as summary variable in the
 respective \code{goshawk} function.}
 
 \item{xvar_level}{vector that can be used to define the factor level of \code{xvar}. Only use it when
-\code{xvar} is character or factor.}
+\code{xaxis_var} is of type character or factor.}
 
-\item{filter_var}{data constraint variable.}
+\item{filter_var}{\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#deprecated}{\figure{lifecycle-deprecated.svg}{options: alt='[Deprecated]'}}}{\strong{[Deprecated]}} data constraint variable.}
 
-\item{filter_var_choices}{data constraint variable choices.}
+\item{filter_var_choices}{\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#deprecated}{\figure{lifecycle-deprecated.svg}{options: alt='[Deprecated]'}}}{\strong{[Deprecated]}} data constraint variable choices.}
 
-\item{trt_group}{\code{\link[teal.transform]{choices_selected}} object with available choices and pre-selected option
+\item{trt_group}{(\code{variables} or \code{choices_selected}) object with available choices and pre-selected option
 for variable names representing treatment group e.g. \code{ARM}.}
 
 \item{trt_group_level}{vector that can be used to define factor level of \code{trt_group}.}
@@ -197,12 +197,15 @@ app <- init(
     tm_g_gh_lineplot(
       label = "Line Plot",
       dataname = "ADLB",
-      param_var = "PARAMCD",
-      param = choices_selected(c("ALT", "CRP", "IGA"), "ALT"),
+      param = picks(
+        variables("PARAMCD", "PARAMCD"),
+        values(selected = "ALT", multiple = FALSE),
+        check_dataset = FALSE
+      ),
       shape_choices = c("SEX", "RACE"),
-      xaxis_var = choices_selected("AVISITCD", "AVISITCD"),
-      yaxis_var = choices_selected(c("AVAL", "BASE", "CHG", "PCHG"), "AVAL"),
-      trt_group = choices_selected(c("ARM", "ACTARM"), "ARM"),
+      xaxis_var = variables("AVISITCD", "AVISITCD"),
+      yaxis_var = variables(c("AVAL", "BASE", "CHG", "PCHG"), "AVAL"),
+      trt_group = variables(c("ARM", "ACTARM"), "ARM"),
       hline_arb = c(20.5, 19.5),
       hline_arb_color = c("red", "green"),
       hline_arb_label = c("A", "B")
