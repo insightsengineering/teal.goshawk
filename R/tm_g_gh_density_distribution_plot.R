@@ -3,29 +3,11 @@
 #' This teal module renders the UI and calls the functions that create a density distribution plot
 #' and an accompanying summary table.
 #'
-#' @param label menu item label of the module in the teal app.
-#' @param dataname analysis data passed to the data argument of \code{\link[teal]{init}}. E.g. `ADaM` structured
-#' laboratory data frame \code{ADLB}.
-#' @param param_var `r badge("deprecated")` name of variable containing biomarker codes e.g. \code{PARAMCD}.
-#' @param param (`picks` or `choices_selected`) biomarker selected.
-#' @param xaxis_var (`variables` or `choices_selected`)
-#' name of variable containing biomarker results displayed on `x-axis` e.g. \code{BASE}.
-#' @param trt_group (`variables` or `choices_selected`) object with available choices and pre-selected option
-#' for variable names representing treatment group e.g. `ARM`.
-#' @param color_manual vector of colors applied to treatment values.
+#' @inheritParams tm_g_gh_correlationplot
+#' @inheritParams tm_g_gh_lineplot
 #' @param color_comb name or hex value for combined treatment color.
-#' @param plot_height controls plot height.
-#' @param plot_width optional, controls plot width.
-#' @param font_size font size control for title, `x-axis` label, `y-axis` label and legend.
 #' @param line_size plot line thickness.
-#' @param hline_arb numeric vector of at most 2 values identifying intercepts for arbitrary horizontal lines.
-#' @param hline_arb_color a character vector of at most length of \code{hline_arb}.
-#' naming the color for the arbitrary horizontal lines.
-#' @param hline_arb_label a character vector of at most length of \code{hline_arb}.
-#' naming the label for the arbitrary horizontal lines.
-#' @param facet_ncol numeric value indicating number of facets per row.
 #' @param comb_line display combined treatment line toggle.
-#' @param rotate_xlab 45 degree rotation of `x-axis` values.
 #'
 #' @inheritParams teal.widgets::standard_layout
 #' @inheritParams teal::module
@@ -173,6 +155,7 @@ tm_g_gh_density_distribution_plot <- function(label, # nolint: object_length_lin
 
   checkmate::assert_multi_class(pre_output, c("shiny.tag", "shiny.tag.list"), null.ok = TRUE)
   checkmate::assert_multi_class(post_output, c("shiny.tag", "shiny.tag.list"), null.ok = TRUE)
+  checkmate::assert_list(transformators, types = "teal_transform_module")
 
   if (lifecycle::is_present(param_var)) {
     lifecycle::deprecate_warn(

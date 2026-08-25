@@ -4,45 +4,26 @@
 #'
 #' @inheritParams teal.widgets::standard_layout
 #' @inheritParams teal::module
-#' @param label menu item label of the module in the teal app.
-#' @param dataname analysis data passed to the data argument of \code{\link[teal]{init}}. E.g. `ADaM` structured
-#' laboratory data frame `ADLB`.
-#' @param param_var `r badge("deprecated")` name of variable containing biomarker codes e.g. `PARAMCD`.
+#' @inheritParams tm_g_gh_correlationplot
 #' @param param (`picks` or `choices_selected`) biomarker selected.
-#' @param param_var_label single name of variable in analysis data that includes parameter labels.
-#' @param xaxis_var (`variables` or `choices_selected`) single name of variable in analysis data that is used as x-axis in the plot.
-#' @param xvar_level vector that can be used to define the factor level of `xvar`. Only use it when
+#' @param param_var_label (`character(1)`) single name of variable in analysis data that includes parameter labels.
+#' @param xvar_level (`character()`) vector that can be used to define the factor level of `xvar`. Only use it when
 #' `xaxis_var` is of type character or factor.
 #' @param filter_var `r badge("deprecated")` data constraint variable.
 #' @param filter_var_choices `r badge("deprecated")` data constraint variable choices.
-#' @param yaxis_var (`variables` or `choices_selected`) single name of variable in analysis data that is used as summary variable in the
-#' respective `goshawk` function.
-#' @param trt_group (`variables` or `choices_selected`) object with available choices and pre-selected option
-#' for variable names representing treatment group e.g. `ARM`.
-#' @param trt_group_level vector that can be used to define factor level of `trt_group`.
-#' @param shape_choices Vector or \code{choices_selected} object with names of `ADSL` variables which
+#' @param trt_group_level (`named character()`) vector that can be used to define factor level of `trt_group`.
+#' @param shape_choices (`character()` or `choices_selected`) vector or \code{choices_selected} object with names of `ADSL` variables which
 #' can be used to change shape
-#' @param color_manual string vector representing customized colors
-#' @param stat string of statistics
-#' @param hline_arb numeric vector of at most 2 values identifying intercepts for arbitrary horizontal lines.
-#' @param hline_arb_color a character vector of at most length of \code{hline_arb}.
-#' naming the color for the arbitrary horizontal lines.
-#' @param hline_arb_label a character vector of at most length of \code{hline_arb}.
-#' naming the label for the arbitrary horizontal lines.
-#' @param xtick numeric vector to define the tick values of x-axis when x variable is numeric.
+#' @param stat (`character(1)`) string of statistics
+#' @param xtick (`numeric()`) numeric vector to define the tick values of x-axis when x variable is numeric.
 #' Default value is waive().
-#' @param xlabel vector with same length of `xtick` to define the label of x-axis tick values.
+#' @param xlabel (`character()`) vector with same length of `xtick` to define the label of x-axis tick values.
 #' Default value is waive().
-#' @param rotate_xlab `logical(1)` value indicating whether to rotate `x-axis` labels.
-#' @param plot_height controls plot height.
-#' @param plot_width optional, controls plot width.
-#' @param plot_font_size control font size for title, `x-axis`, `y-axis` and legend font.
-#' @param dodge controls the position dodge of error bar
-#' @param count_threshold minimum count of observations (as listed in the output table) to plot
+#' @param plot_font_size (`numeric(3)`) control font size for title, `x-axis`, `y-axis` and legend font.
+#' @param dodge (`numeric(3)`) controls the position dodge of error bar
+#' @param count_threshold (`numeric(1)`) minimum count of observations (as listed in the output table) to plot
 #' nodes on the graph
-#' @param table_font_size controls the font size of values in the table
-#' @param dot_size plot dot size.
-#' @param plot_relative_height_value numeric value between 500 and 5000 for controlling the starting value
+#' @param plot_relative_height_value (`numeric(1)`) numeric value between 500 and 5000 for controlling the starting value
 #' of the relative plot height slider
 #' @inheritSection teal::example_module Reporting
 #'
