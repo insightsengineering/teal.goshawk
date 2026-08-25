@@ -140,7 +140,7 @@ migrate_choices_selected_to_values <- function(x, # nolint: object_length_linter
 #' @keywords internal
 #' @noRd
 create_picks_helper <- function(datasets = NULL, x, ...) {
-  if (inherits(x, "picks") && !is.null(x$datasets)) {
+  if ((inherits(x, "picks") && !is.null(x$datasets) || is.null(x))) {
     return(x)
   }
   checkmate::assert_class(datasets, "datasets", null.ok = FALSE)
