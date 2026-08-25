@@ -196,6 +196,9 @@ tm_g_gh_boxplot <- function(label,
 
   checkmate::assert_multi_class(pre_output, c("shiny.tag", "shiny.tag.list"), null.ok = TRUE)
   checkmate::assert_multi_class(post_output, c("shiny.tag", "shiny.tag.list"), null.ok = TRUE)
+  checkmate::assert_list(transformators)
+  checkmate::assert_character(color_manual, null.ok = TRUE)
+  checkmate::assert_integerish(shape_manual, null.ok = TRUE)
 
   validate_line_arb_arg(hline_arb, hline_arb_color, hline_arb_label)
   validate_line_vars_arg(hline_vars, hline_vars_colors, hline_vars_labels)

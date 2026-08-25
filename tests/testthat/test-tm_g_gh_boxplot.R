@@ -141,3 +141,76 @@ test_that("tm_g_gh_boxplot handles plot dimensions correctly", {
   expect_s3_class(module, "teal_module")
   expect_equal(module$label, "Box Plot - Sized")
 })
+
+describe("tm_g_gh_boxplot: invalid arguments", {
+  wrong_params <- list(
+    label = 2L,
+    dataname = list("A list of strings"),
+    param = list("A list of strings"),
+    yaxis_var = 1.5,
+    xaxis_var = "1.5",
+    facet_var = TRUE,
+    trt_group = data.frame(),
+    color_manual = c(1, 2, 3, 4),
+    shape_manual = c("a", "b", "c"),
+    facet_ncol = "2",
+    loq_legend = "A string",
+    rotate_xlab = 1L,
+    hline_arb = c("0.02", "0.05"),
+    hline_vars = c(0.02, 0.05),
+    plot_height = c("600", "300", "2000"),
+    plot_width = c("1000", "500", "2000"),
+    font_size = c("12", "8", "20"),
+    dot_size = c("2", "1", "12"),
+    alpha = c("0.8", "0.0", "1.0"),
+    pre_output = 123L,
+    post_output = list(TRUE),
+    transformators = list("not a function")
+  )
+  for (wrong_param in names(wrong_params)) {
+    it(paste0("throws an error when ", wrong_param, " is invalid"), {
+      args <- list(label = "module")
+      args[[wrong_param]] <- wrong_params[[wrong_param]]
+      expect_error(
+        suppressWarnings(do.call(tm_g_gh_boxplot, args), classes = "pick_delayed"),
+        sprintf("Assertion on '%s' failed", wrong_param)
+      )
+    })
+  }
+
+  wrong_params2 <- list(
+    hline_arb_label = c(1, 2),
+    hline_arb_color = c(1, 2),
+    hline_vars_colors = c(1, 2),
+    hline_vars_labels = c(1, 2)
+  )
+  for (wrong_param2 in names(wrong_params2)) {
+    it(paste0("throws an error when ", wrong_param2, " is invalid"), {
+      args <- list(
+        label = "module",
+        hline_arb = c(0.02, 0.05),
+        hline_vars = c("ANRHI", "ANRLO")
+      )
+      args[[wrong_param2]] <- wrong_params2[[wrong_param2]]
+      expect_error(
+        suppressWarnings(do.call(tm_g_gh_boxplot, args), classes = "pick_delayed"),
+        sprintf("Assertion on '%s' failed", wrong_param2)
+      )
+    })
+  }
+
+  deprecated <- c("param_var")
+  for (deprecated_param in deprecated) {
+    it(paste0("gives a deprecation warning when ", deprecated_param, " is used"), {
+      args <- list(label = "module")
+      args[[deprecated_param]] <- "PARAMCD"
+      lifecycle::expect_deprecated(
+        suppressWarnings(do.call(tm_g_gh_boxplot, args), classes = "pick_delayed")
+      )
+    })
+  }
+
+  it("all arguments are tested", {
+    expect_setequal(unique(c(names(wrong_params), names(wrong_params2), deprecated)), names(formals(tm_g_gh_boxplot)))
+  })
+})
