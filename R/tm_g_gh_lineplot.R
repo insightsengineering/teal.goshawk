@@ -261,7 +261,6 @@ tm_g_gh_lineplot <- function(label,
   yaxis_var <- force_pick_selection(yaxis_var, which = "variables")
 
   if (!is.null(shape_choices)) {
-    browser()
     shape_choices <- create_picks_helper(teal.picks::datasets(dataname, dataname), shape_choices)
     shape_choices <- force_pick_selection(shape_choices, which = "variables")
     attr(shape_choices$variables, "allow-clear") <- TRUE # Enable clearance of selection
