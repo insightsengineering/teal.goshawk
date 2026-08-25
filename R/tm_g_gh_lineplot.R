@@ -775,7 +775,7 @@ srv_lineplot <- function(id,
         private_qenv <- teal.code::eval_code(
           object = private_qenv,
           code = bquote({
-            keep_index <- which(.(xtick) %in% ANL[[.(xaxis)]])
+            keep_index <- which(.(xtick) %in% ANL[[.(xaxis_var_sel())]])
             xtick <- (.(xtick))[keep_index] # extra parentheses needed for edge case, e.g. 1:5[keep_index]
             xlabel <- (.(xlabel))[keep_index]
           })
