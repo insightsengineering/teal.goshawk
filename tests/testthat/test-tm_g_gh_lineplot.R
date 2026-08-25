@@ -160,4 +160,3 @@ describe("tm_g_gh_lineplot: invalid arguments", {
     })
   }
 })
-
