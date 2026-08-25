@@ -463,7 +463,7 @@ srv_g_spaghettiplot <- function(id,
 
     anl_q_output <- constr_anl_q(
       session, input, data, dataname,
-      param_r = param_sel, param_var_r = param_var_sel, trt_group = trt_group_sel, min_rows = 1
+      param_r = param_sel, param_var_r = param_var_sel, trt_group_r = trt_group_sel, min_rows = 1
     )
 
     anl_q <- anl_q_output()$value
