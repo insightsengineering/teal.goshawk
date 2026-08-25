@@ -46,6 +46,7 @@
 #' @param hline_vars_colors a character vector naming the colors for the additional horizontal lines.
 #' @param hline_vars_labels a character vector naming the labels for the additional horizontal lines that will appear
 #'  in the legend.
+#' @param alpha (`numeric(3)`) vector to define transparency of plotted points.
 #' @inheritParams teal::module
 #' @inheritParams teal.widgets::standard_layout
 #'
