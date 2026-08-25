@@ -10,12 +10,14 @@
 #' @param param_var `r badge("deprecated")` name of variable containing biomarker codes e.g. `PARAMCD`.
 #' @param param (`picks` or `choices_selected`) biomarker selected.
 #' @param param_var_label single name of variable in analysis data that includes parameter labels.
-#' @param xaxis_var (`variables` or `choices_selected`) single name of variable in analysis data that is used as x-axis in the plot.
+#' @param xaxis_var (`variables` or `choices_selected`)
+#' single name of variable in analysis data that is used as x-axis in the plot.
 #' @param xvar_level vector that can be used to define the factor level of `xvar`. Only use it when
 #' `xaxis_var` is of type character or factor.
 #' @param filter_var `r badge("deprecated")` data constraint variable.
 #' @param filter_var_choices `r badge("deprecated")` data constraint variable choices.
-#' @param yaxis_var (`variables` or `choices_selected`) single name of variable in analysis data that is used as summary variable in the
+#' @param yaxis_var (`variables` or `choices_selected`)
+#' single name of variable in analysis data that is used as summary variable in the
 #' respective `goshawk` function.
 #' @param trt_group (`variables` or `choices_selected`) object with available choices and pre-selected option
 #' for variable names representing treatment group e.g. `ARM`.
