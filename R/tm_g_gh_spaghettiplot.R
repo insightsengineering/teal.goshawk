@@ -218,8 +218,12 @@ tm_g_gh_spaghettiplot <- function(label,
 
   checkmate::assert_character(man_color, null.ok = TRUE)
   checkmate::assert_character(color_comb, null.ok = TRUE)
+  checkmate::assert_character(xaxis_var_level, null.ok = TRUE)
+  checkmate::assert_character(trt_group_level, null.ok = TRUE)
+  checkmate::assert_numeric(hline_arb, null.ok = TRUE)
   checkmate::assert_character(hline_arb_color)
   checkmate::assert_character(hline_arb_label)
+  checkmate::assert_character(hline_vars)
   checkmate::assert_integerish(facet_ncol, lower = 1, len = 1)
   checkmate::assert_numeric(plot_height, len = 3, any.missing = FALSE, finite = TRUE)
   checkmate::assert_numeric(plot_height[1], lower = plot_height[2], upper = plot_height[3], .var.name = "plot_height")
@@ -234,6 +238,7 @@ tm_g_gh_spaghettiplot <- function(label,
   checkmate::assert_numeric(alpha, len = 3, any.missing = FALSE, finite = TRUE)
   checkmate::assert_multi_class(pre_output, c("shiny.tag", "shiny.tag.list"), null.ok = TRUE)
   checkmate::assert_multi_class(post_output, c("shiny.tag", "shiny.tag.list"), null.ok = TRUE)
+  checkmate::assert_list(transformators, types = "teal_transform_module")
 
   validate_line_arb_arg(hline_arb, hline_arb_color, hline_arb_label)
   validate_line_vars_arg(hline_vars, hline_vars_colors, hline_vars_labels)
