@@ -108,8 +108,13 @@ tm_g_gh_density_distribution_plot <- function(label, # nolint: object_length_lin
                                                 teal.picks::values(selected = "ALT", multiple = FALSE),
                                                 check_dataset = FALSE
                                               ),
-                                              xaxis_var = teal.picks::variables(c("AVAL", "BASE", "CHG", "PCHG"), "AVAL"),
-                                              trt_group = teal.picks::variables(dplyr::starts_with("ARM"), selected = "ARM"),
+                                              xaxis_var = teal.picks::variables(
+                                                c("AVAL", "BASE", "CHG", "PCHG"), "AVAL"
+                                              ),
+                                              trt_group = teal.picks::variables(
+                                                dplyr::starts_with("ARM"),
+                                                selected = "ARM"
+                                              ),
                                               color_manual = NULL,
                                               color_comb = NULL,
                                               plot_height = c(500, 200, 2000),

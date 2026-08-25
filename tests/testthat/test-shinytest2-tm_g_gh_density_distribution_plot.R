@@ -1,4 +1,4 @@
-tm_g_gh_density_distribution_plot_driver <- function() {
+tm_g_gh_density_distribution_plot_driver <- function() { # nolint: object_length_linter.
   init_teal_app_driver(
     data = get_test_data(),
     modules = tm_g_gh_density_distribution_plot(
