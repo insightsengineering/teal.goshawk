@@ -22,10 +22,11 @@ Useful links:
 
 }
 \author{
-\strong{Maintainer}: Nick Paszty \email{nick.paszty@gene.com}
+\strong{Maintainer}: Dony Unardi \email{unardid@gene.com}
 
 Authors:
 \itemize{
+  \item Dony Unardi \email{unardid@gene.com}
   \item Nick Paszty \email{nick.paszty@gene.com}
   \item Dawid Kaledkowski \email{dawid.kaledkowski@roche.com}
   \item Mahmoud Hallal \email{mahmoud.hallal@roche.com}
