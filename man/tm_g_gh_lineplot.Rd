@@ -53,9 +53,11 @@ laboratory data frame \code{ADLB}.}
 
 \item{param_var_label}{single name of variable in analysis data that includes parameter labels.}
 
-\item{xaxis_var}{(\code{variables} or \code{choices_selected}) single name of variable in analysis data that is used as x-axis in the plot.}
+\item{xaxis_var}{(\code{variables} or \code{choices_selected})
+single name of variable in analysis data that is used as x-axis in the plot.}
 
-\item{yaxis_var}{(\code{variables} or \code{choices_selected}) single name of variable in analysis data that is used as summary variable in the
+\item{yaxis_var}{(\code{variables} or \code{choices_selected})
+single name of variable in analysis data that is used as summary variable in the
 respective \code{goshawk} function.}
 
 \item{xvar_level}{vector that can be used to define the factor level of \code{xvar}. Only use it when
