@@ -437,7 +437,7 @@ srv_g_boxplot <- function(id,
 
     anl_q_output <- constr_anl_q(
       session, input, validated_q, dataname,
-      param_r = param_sel, param_var_r = param_var_sel, trt_group = trt_group_sel, min_rows = 2
+      param_r = param_sel, param_var_r = param_var_sel, trt_group_r = trt_group_sel, min_rows = 2
     )
 
     anl_q <- anl_q_output()$value
