@@ -38,7 +38,7 @@ E.g. \code{ADaM} structured laboratory data frame \code{ADLB}.}
 \item{param_var}{\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#deprecated}{\figure{lifecycle-deprecated.svg}{options: alt='[Deprecated]'}}}{\strong{[Deprecated]}} (\code{character(1)})
 name of variable containing biomarker codes e.g. \code{PARAMCD}.}
 
-\item{param}{(\code{picks} or \code{choices_selected}) biomarker selected.}
+\item{param}{(\code{\link[teal.picks:picks]{teal.picks::picks()}} or \code{\link[teal.transform:choices_selected]{teal.transform::choices_selected()}}) biomarker selected.}
 
 \item{xaxis_var}{(\verb{[teal.picks::variables()]} or legacy \verb{[teal.transform::choices_selected()]})
 name of variable containing biomarker results displayed on x-axis e.g. \code{BASE}.}

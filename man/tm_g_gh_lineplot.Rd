@@ -51,7 +51,7 @@ E.g. \code{ADaM} structured laboratory data frame \code{ADLB}.}
 \item{param_var}{\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#deprecated}{\figure{lifecycle-deprecated.svg}{options: alt='[Deprecated]'}}}{\strong{[Deprecated]}} (\code{character(1)})
 name of variable containing biomarker codes e.g. \code{PARAMCD}.}
 
-\item{param}{(\code{picks} or \code{choices_selected}) biomarker selected.}
+\item{param}{(\code{\link[teal.picks:picks]{teal.picks::picks()}} or \code{\link[teal.transform:choices_selected]{teal.transform::choices_selected()}}) biomarker selected.}
 
 \item{param_var_label}{(\code{character(1)}) single name of variable in analysis data that includes parameter labels.}
 
@@ -73,8 +73,8 @@ object with available choices and pre-selected option for variable names represe
 
 \item{trt_group_level}{(\verb{named character()}) vector that can be used to define factor level of \code{trt_group}.}
 
-\item{shape_choices}{(\code{character()} or \code{choices_selected}) vector or \code{choices_selected} object with names of \code{ADSL} variables which
-can be used to change shape}
+\item{shape_choices}{(\code{character()}, \code{\link[teal.picks:variables]{teal.picks::variables()}} or legacy \code{\link[teal.transform:choices_selected]{teal.transform::choices_selected()}})
+vector or \code{\link[teal.picks:variables]{teal.picks::variables()}} object with names of \code{ADSL} variables which can be used to change shape}
 
 \item{stat}{(\code{character(1)}) string of statistics}
 
@@ -115,8 +115,8 @@ nodes on the graph}
 
 \item{dot_size}{(\code{numeric(3)}) plot dot size.}
 
-\item{plot_relative_height_value}{(\code{numeric(1)}) numeric value between 500 and 5000 for controlling the starting value
-of the relative plot height slider}
+\item{plot_relative_height_value}{(\code{numeric(1)}) numeric value between 500 and 5000 for controlling the starting
+value of the relative plot height slider}
 
 \item{transformators}{(\code{list} of \code{teal_transform_module}) that will be applied to transform module's data input.
 To learn more check \code{vignette("transform-input-data", package = "teal")}.}

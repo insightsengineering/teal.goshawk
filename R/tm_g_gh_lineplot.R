@@ -5,15 +5,15 @@
 #' @inheritParams teal.widgets::standard_layout
 #' @inheritParams teal::module
 #' @inheritParams tm_g_gh_correlationplot
-#' @param param (`picks` or `choices_selected`) biomarker selected.
+#' @param param ([teal.picks::picks()] or [teal.transform::choices_selected()]) biomarker selected.
 #' @param param_var_label (`character(1)`) single name of variable in analysis data that includes parameter labels.
 #' @param xvar_level (`character()`) vector that can be used to define the factor level of `xvar`. Only use it when
 #' `xaxis_var` is of type character or factor.
 #' @param filter_var `r badge("deprecated")` data constraint variable.
 #' @param filter_var_choices `r badge("deprecated")` data constraint variable choices.
 #' @param trt_group_level (`named character()`) vector that can be used to define factor level of `trt_group`.
-#' @param shape_choices (`character()` or `choices_selected`) vector or \code{choices_selected} object with names of `ADSL` variables which
-#' can be used to change shape
+#' @param shape_choices (`character()`, [teal.picks::variables()] or legacy [teal.transform::choices_selected()])
+#' vector or [teal.picks::variables()] object with names of `ADSL` variables which can be used to change shape
 #' @param stat (`character(1)`) string of statistics
 #' @param xtick (`numeric()`) numeric vector to define the tick values of x-axis when x variable is numeric.
 #' Default value is waive().
@@ -23,8 +23,8 @@
 #' @param dodge (`numeric(3)`) controls the position dodge of error bar
 #' @param count_threshold (`numeric(1)`) minimum count of observations (as listed in the output table) to plot
 #' nodes on the graph
-#' @param plot_relative_height_value (`numeric(1)`) numeric value between 500 and 5000 for controlling the starting value
-#' of the relative plot height slider
+#' @param plot_relative_height_value (`numeric(1)`) numeric value between 500 and 5000 for controlling the starting
+#' value of the relative plot height slider
 #' @inheritSection teal::example_module Reporting
 #'
 #' @author Wenyi Liu (luiw2) wenyi.liu@roche.com
