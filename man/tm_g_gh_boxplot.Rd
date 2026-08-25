@@ -6,13 +6,14 @@
 \usage{
 tm_g_gh_boxplot(
   label,
-  dataname,
-  param_var,
-  param,
-  yaxis_var = teal.transform::choices_selected(c("AVAL", "CHG"), "AVAL"),
-  xaxis_var = teal.transform::choices_selected("AVISITCD", "AVISITCD"),
-  facet_var = teal.transform::choices_selected(c("ARM", "ACTARM"), "ARM"),
-  trt_group,
+  dataname = "ADLB",
+  param_var = lifecycle::deprecated(),
+  param = teal.picks::picks(teal.picks::variables("PARAMCD", "PARAMCD"),
+    teal.picks::values(selected = "ALT", multiple = FALSE), check_dataset = FALSE),
+  yaxis_var = teal.picks::variables(c("AVAL", "CHG"), "AVAL"),
+  xaxis_var = teal.picks::variables("AVISITCD", "AVISITCD"),
+  facet_var = teal.picks::variables(dplyr::starts_with("ARM"), selected = "ARM"),
+  trt_group = teal.picks::variables(selected = "ARM"),
   color_manual = NULL,
   shape_manual = NULL,
   facet_ncol = NULL,
@@ -38,23 +39,21 @@ tm_g_gh_boxplot(
 \item{label}{menu item label of the module in the teal app.}
 
 \item{dataname}{analysis data passed to the data argument of \code{\link[teal]{init}}. E.g. \code{ADaM} structured
-laboratory data frame \code{ALB}.}
+laboratory data frame \code{ADLB}.}
 
-\item{param_var}{name of variable containing biomarker codes e.g. \code{PARAMCD}.}
+\item{param_var}{\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#deprecated}{\figure{lifecycle-deprecated.svg}{options: alt='[Deprecated]'}}}{\strong{[Deprecated]}} name of variable containing biomarker codes e.g. \code{PARAMCD}.}
 
-\item{param}{list of biomarkers of interest.}
+\item{param}{(\code{picks} or \code{choices_selected}) biomarker selected.}
 
-\item{yaxis_var}{name of variable containing biomarker results displayed on y-axis e.g. \code{AVAL}. When not provided,
-it defaults to \code{choices_selected(c("AVAL", "CHG"), "AVAL")}.}
+\item{yaxis_var}{(\code{variables} or \code{choices_selected}) name of variable containing biomarker results displayed on
+y-axis e.g. \code{AVAL}.}
 
-\item{xaxis_var}{variable to categorize the x-axis. When not provided, it defaults to
-\code{choices_selected("AVISITCD", "AVISITCD")}.}
+\item{xaxis_var}{(\code{variables} or \code{choices_selected}) variable to categorize the x-axis.}
 
-\item{facet_var}{variable to facet the plots by. When not provided, it defaults to
-\code{choices_selected(c("ARM", "ACTARM"), "ARM")}.}
+\item{facet_var}{(\code{variables} or \code{choices_selected}) variable to facet the plots by.}
 
-\item{trt_group}{\code{\link[teal.transform]{choices_selected}} object with available choices and pre-selected
-option for variable names representing treatment group e.g. \code{ARM}.}
+\item{trt_group}{(\code{variables} or \code{choices_selected}) object with available choices and pre-selected option
+for variable names representing treatment group e.g. \code{ARM}.}
 
 \item{color_manual}{vector of colors applied to treatment values.}
 
@@ -201,12 +200,15 @@ app <- init(
     tm_g_gh_boxplot(
       label = "Box Plot",
       dataname = "ADLB",
-      param_var = "PARAMCD",
-      param = choices_selected(c("ALT", "CRP", "IGA"), "ALT"),
-      yaxis_var = choices_selected(c("AVAL", "BASE", "CHG"), "AVAL"),
-      xaxis_var = choices_selected(c("ACTARM", "ARM", "AVISITCD", "STUDYID"), "ARM"),
-      facet_var = choices_selected(c("ACTARM", "ARM", "AVISITCD", "SEX"), "AVISITCD"),
-      trt_group = choices_selected(c("ARM", "ACTARM"), "ARM"),
+      param = picks(
+        variables("PARAMCD", "PARAMCD"),
+        values(selected = "ALT", multiple = FALSE),
+        check_dataset = FALSE
+      ),
+      yaxis_var = variables(c("AVAL", "BASE", "CHG"), "AVAL"),
+      xaxis_var = variables(c("ACTARM", "ARM", "AVISITCD", "STUDYID"), "ARM"),
+      facet_var = variables(c("ACTARM", "ARM", "AVISITCD", "SEX"), "AVISITCD"),
+      trt_group = variables(c("ARM", "ACTARM"), "ARM"),
       loq_legend = TRUE,
       rotate_xlab = FALSE,
       hline_arb = c(60, 55),

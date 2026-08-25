@@ -435,7 +435,8 @@ srv_g_spaghettiplot <- function(id,
         teal::need_input(
           inputId = "xaxis_param-values-selected",
           condition = length(param_sel()) != 0,
-          msg = "Please select a biomarker"),
+          msg = "Please select a biomarker"
+        ),
         teal::need_input(
           inputId = "trt_group-variables-selected",
           condition = length(trt_group_sel()) != 0,

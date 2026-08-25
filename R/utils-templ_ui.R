@@ -19,7 +19,7 @@ tmpl_axis_selection_ui <- function(ns,
                                    xaxis_var = NULL,
                                    yaxis_param = NULL,
                                    yaxis_var = NULL,
-                                   facet = NULL,
+                                   facet_var = NULL,
                                    trt_group = NULL,
                                    xparam_label = "Select an X-Axis Biomarker",
                                    yparam_label = "Select an Y-Axis Biomarker",
@@ -42,6 +42,9 @@ tmpl_axis_selection_ui <- function(ns,
     },
     if (!is.null(yaxis_var)) {
       tags$div(tags$label(yvar_label), teal.picks::picks_ui(ns("yaxis_var"), yaxis_var))
+    },
+    if (!is.null(facet_var)) {
+      tags$div(tags$label(facet_label), teal.picks::picks_ui(ns("facet_var"), facet_var))
     }
   )
 }
