@@ -570,7 +570,7 @@ srv_g_boxplot <- function(id,
           p
         })
       )
-      }), 800)
+    }), 800)
 
     create_table <- debounce(reactive({
       req(iv_r()$is_valid())
