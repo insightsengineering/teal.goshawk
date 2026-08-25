@@ -12,7 +12,7 @@ tm_g_gh_boxplot(
     teal.picks::values(selected = "ALT", multiple = FALSE), check_dataset = FALSE),
   yaxis_var = teal.picks::variables(c("AVAL", "CHG"), "AVAL"),
   xaxis_var = teal.picks::variables("AVISITCD", "AVISITCD"),
-  facet_var = teal.picks::variables(selected = "ARM"),
+  facet_var = teal.picks::variables(dplyr::starts_with("ARM"), selected = "ARM"),
   trt_group = teal.picks::variables(selected = "ARM"),
   color_manual = NULL,
   shape_manual = NULL,
