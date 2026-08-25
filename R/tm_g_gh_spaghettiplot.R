@@ -15,7 +15,7 @@
 #' single name of variable in analysis data that is used as x-axis in the plot.
 #' @param xaxis_var_level vector that can be used to define the factor level of `xaxis_var`.
 #' Only use it when `xaxis_var` is character or factor.
-#' @param filter_var data constraint variable.
+#' @param filter_var `r badge("deprecated")` data constraint variable.
 #' @param yaxis_var (`variables` or `choices_selected`) single name of variable in analysis data that is used as
 #' summary variable in the respective `goshawk` function.
 #' @param trt_group (`variables` or `choices_selected`) object with available choices and pre-selected option
@@ -139,7 +139,6 @@
 #'       idvar = "USUBJID",
 #'       xaxis_var = variables(c("AVISITCD", "AVISIT"), "AVISITCD"),
 #'       yaxis_var = variables(c("AVAL", "CHG", "PCHG"), "AVAL"),
-#'       filter_var = variables(c("NONE"), "NONE"),
 #'       trt_group = variables(c("ARM", "ACTARM"), "ARM"),
 #'       color_comb = "#39ff14",
 #'       man_color = c(
