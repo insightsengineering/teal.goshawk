@@ -40,6 +40,27 @@
 #' @author Jeff Tomlinson (tomlinsj) jeffrey.tomlinson@roche.com
 #' @author Balazs Toth (tothb2) toth.balazs@gene.com
 #'
+#' @section Decorating Module:
+#'
+#' This module generates the following objects, which can be modified in place using decorators:
+#' - `plot` (`ggplot`)
+#'
+#' A Decorator is applied to the specific output using a named list of `teal_transform_module` objects.
+#' The name of this list corresponds to the name of the output to which the decorator is applied.
+#' See code snippet below:
+#'
+#' ```
+#' tm_g_gh_boxplot(
+#'    ..., # arguments for module
+#'    decorators = list(
+#'      plot = teal_transform_module(...) # applied only to `plot` output
+#'    )
+#' )
+#' ```
+#'
+#' To learn more please refer to the vignette
+#' `vignette("transform-module-output", package = "teal")` or the [`teal::teal_transform_module()`] documentation.
+#'
 #' @inheritSection teal::example_module Reporting
 #'
 #' @return an \code{\link[teal]{module}} object
@@ -176,7 +197,8 @@ tm_g_gh_boxplot <- function(label,
                             alpha = c(0.8, 0.0, 1.0),
                             pre_output = NULL,
                             post_output = NULL,
-                            transformators = list()) {
+                            transformators = list(),
+                            decorators = list()) {
   message("Initializing tm_g_gh_boxplot")
   checkmate::assert_string(label)
   checkmate::assert_string(dataname)
@@ -199,6 +221,8 @@ tm_g_gh_boxplot <- function(label,
   checkmate::assert_list(transformators)
   checkmate::assert_character(color_manual, null.ok = TRUE)
   checkmate::assert_integerish(shape_manual, null.ok = TRUE)
+
+  teal::assert_decorators(decorators, names = "plot")
 
   validate_line_arb_arg(hline_arb, hline_arb_color, hline_arb_label)
   validate_line_vars_arg(hline_vars, hline_vars_colors, hline_vars_labels)
@@ -278,7 +302,8 @@ ui_g_boxplot <- function(id,
                          dot_size,
                          alpha,
                          pre_output,
-                         post_output) {
+                         post_output,
+                         decorators) {
   ns <- NS(id)
 
   teal.widgets::standard_layout(
@@ -319,6 +344,7 @@ ui_g_boxplot <- function(id,
         )
       },
       ui_arbitrary_lines(id = ns("hline_arb"), hline_arb, hline_arb_label, hline_arb_color),
+      teal::ui_transform_teal_data("decorator", select_decorators(decorators, "plot")),
       bslib::accordion(
         bslib::accordion_panel(
           title = "Plot Aesthetic Settings",
@@ -355,7 +381,8 @@ srv_g_boxplot <- function(id,
                           plot_height,
                           plot_width,
                           hline_vars_colors,
-                          hline_vars_labels) {
+                          hline_vars_labels,
+                          decorators) {
   checkmate::assert_class(data, "reactive")
   checkmate::assert_class(shiny::isolate(data()), "teal_data")
 
@@ -543,7 +570,7 @@ srv_g_boxplot <- function(id,
 
       obj %>% teal.code::eval_code(
         code = bquote({
-          p <- goshawk::g_boxplot(
+          plot <- goshawk::g_boxplot(
             data = ANL,
             biomarker = .(param_sel()),
             xaxis_var = .(xaxis_var_sel()),
@@ -567,10 +594,18 @@ srv_g_boxplot <- function(id,
             font_size = .(font_size),
             unit = .("AVALU")
           )
-          p
         })
       )
     }), 800)
+
+    decorated_plot_q <- teal::srv_transform_teal_data(
+      "decorators",
+      create_plot,
+      select_decorators(decorators, "plot"),
+      expr = quote(plot)
+    )
+
+    plot_r <- reactive(decorated_plot_q()[["plot"]])
 
     create_table <- debounce(reactive({
       req(iv_r()$is_valid())
@@ -593,10 +628,6 @@ srv_g_boxplot <- function(id,
       )
     }), 800)
 
-    plot_r <- reactive({
-      create_plot()[["p"]]
-    })
-
     boxplot_data <- teal.widgets::plot_with_settings_srv(
       id = "boxplot",
       plot_r = plot_r,
@@ -618,8 +649,8 @@ srv_g_boxplot <- function(id,
     })
 
     joined_qenvs <- reactive({
-      req(create_plot(), create_table())
-      c(create_plot(), create_table())
+      req(decorated_plot_q(), create_table())
+      c(decorated_plot_q(), create_table())
     })
 
     # highlight plot area
@@ -658,6 +689,6 @@ srv_g_boxplot <- function(id,
         DT::formatRound(numeric_cols, 4)
     })
 
-    set_chunk_dims(boxplot_data, create_plot)
+    set_chunk_dims(boxplot_data, joined_qenvs)
   })
 }

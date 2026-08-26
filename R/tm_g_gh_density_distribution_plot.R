@@ -33,6 +33,28 @@
 #'
 #' @author Nick Paszty (npaszty) paszty.nicholas@gene.com
 #' @author Balazs Toth (tothb2)  toth.balazs@gene.com
+#'
+#' @section Decorating Module:
+#'
+#' This module generates the following objects, which can be modified in place using decorators:
+#' - `plot` (`ggplot`)
+#'
+#' A Decorator is applied to the specific output using a named list of `teal_transform_module` objects.
+#' The name of this list corresponds to the name of the output to which the decorator is applied.
+#' See code snippet below:
+#'
+#' ```
+#' tm_g_gh_density_distribution_plot(
+#'    ..., # arguments for module
+#'    decorators = list(
+#'      plot = teal_transform_module(...) # applied only to `plot` output
+#'    )
+#' )
+#' ```
+#'
+#' To learn more please refer to the vignette
+#' `vignette("transform-module-output", package = "teal")` or the [`teal::teal_transform_module()`] documentation.
+#'
 #' @inheritSection teal::example_module Reporting
 #'
 #' @export
@@ -147,7 +169,8 @@ tm_g_gh_density_distribution_plot <- function(label, # nolint: object_length_lin
                                               rotate_xlab = FALSE,
                                               pre_output = NULL,
                                               post_output = NULL,
-                                              transformators = list()) {
+                                              transformators = list(),
+                                              decorators = list()) {
   message("Initializing tm_g_gh_density_distribution_plot")
   checkmate::assert_string(label)
   checkmate::assert_string(dataname)
@@ -178,6 +201,8 @@ tm_g_gh_density_distribution_plot <- function(label, # nolint: object_length_lin
 
   checkmate::assert_multi_class(pre_output, c("shiny.tag", "shiny.tag.list"), null.ok = TRUE)
   checkmate::assert_multi_class(post_output, c("shiny.tag", "shiny.tag.list"), null.ok = TRUE)
+
+  teal::assert_decorators(decorators, names = "plot")
 
   if (lifecycle::is_present(param_var)) {
     lifecycle::deprecate_warn(
@@ -237,7 +262,8 @@ ui_g_density_distribution_plot <- function(id,
                                            font_size,
                                            line_size,
                                            pre_output,
-                                           post_output) {
+                                           post_output,
+                                           decorators) {
   ns <- NS(id)
 
   teal.widgets::standard_layout(
@@ -262,6 +288,7 @@ ui_g_density_distribution_plot <- function(id,
       ),
       templ_ui_constraint(ns, label = "Data Constraint"),
       ui_arbitrary_lines(id = ns("hline_arb"), hline_arb, hline_arb_label, hline_arb_color),
+      teal::ui_transform_teal_data("decorator", select_decorators(decorators, "plot")),
       bslib::accordion(
         bslib::accordion_panel(
           title = "Plot Aesthetic Settings",
@@ -300,7 +327,8 @@ srv_g_density_distribution_plot <- function(id, # nolint: object_length_linter.
                                             color_manual,
                                             color_comb,
                                             plot_height,
-                                            plot_width) {
+                                            plot_width,
+                                            decorators) {
   checkmate::assert_class(data, "reactive")
   checkmate::assert_class(shiny::isolate(data()), "teal_data")
 
@@ -433,7 +461,7 @@ srv_g_density_distribution_plot <- function(id, # nolint: object_length_linter.
       teal.code::eval_code(
         object = obj,
         code = bquote({
-          p <- goshawk::g_density_distribution_plot(
+          plot <- goshawk::g_density_distribution_plot(
             data = ANL,
             param_var = .(param_var_sel()),
             param = .(param_sel()),
@@ -452,13 +480,19 @@ srv_g_density_distribution_plot <- function(id, # nolint: object_length_linter.
             hline_arb_color = .(hline_arb_color),
             rug_plot = .(rug_plot)
           )
-          p
         })
       )
     }), 800)
 
+    decorated_plot_q <- teal::srv_transform_teal_data(
+      "decorators",
+      create_plot,
+      select_decorators(decorators, "plot"),
+      expr = quote(plot)
+    )
+
     plot_r <- reactive({
-      create_plot()[["p"]]
+      decorated_plot_q()[["plot"]]
     })
 
     plot_data <- teal.widgets::plot_with_settings_srv(
@@ -468,7 +502,7 @@ srv_g_density_distribution_plot <- function(id, # nolint: object_length_linter.
       width = plot_width,
     )
 
-    create_plot_dims <- set_chunk_dims(plot_data, create_plot)
+    create_plot_dims <- set_chunk_dims(plot_data, decorated_plot_q)
 
     create_table <- debounce(reactive({
       req(iv_r()$is_valid())

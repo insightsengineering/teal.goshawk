@@ -52,8 +52,28 @@
 #' @author Nick Paszty (npaszty) paszty.nicholas@gene.com
 #' @author Balazs Toth (tothb2)  toth.balazs@gene.com
 #'
-#' @inheritSection teal::example_module Reporting
+#' @section Decorating Module:
 #'
+#' This module generates the following objects, which can be modified in place using decorators:
+#' - `plot` (`ggplot`)
+#'
+#' A Decorator is applied to the specific output using a named list of `teal_transform_module` objects.
+#' The name of this list corresponds to the name of the output to which the decorator is applied.
+#' See code snippet below:
+#'
+#' ```
+#' tm_g_gh_correlationplot(
+#'    ..., # arguments for module
+#'    decorators = list(
+#'      plot = teal_transform_module(...) # applied only to `plot` output
+#'    )
+#' )
+#' ```
+#'
+#' To learn more please refer to the vignette
+#' `vignette("transform-module-output", package = "teal")` or the [`teal::teal_transform_module()`] documentation.
+#'
+#' @inheritSection teal::example_module Reporting
 #'
 #' @examples
 #' # Example using ADaM structure analysis dataset.
@@ -241,7 +261,8 @@ tm_g_gh_correlationplot <- function(label,
                                     reg_text_size = c(3, 3, 10),
                                     pre_output = NULL,
                                     post_output = NULL,
-                                    transformators = list()) {
+                                    transformators = list(),
+                                    decorators = list()) {
   message("Initializing tm_g_gh_correlationplot")
 
   checkmate::assert_string(dataname)
@@ -278,6 +299,8 @@ tm_g_gh_correlationplot <- function(label,
 
   checkmate::assert_multi_class(pre_output, c("shiny.tag", "shiny.tag.list"), null.ok = TRUE)
   checkmate::assert_multi_class(post_output, c("shiny.tag", "shiny.tag.list"), null.ok = TRUE)
+
+  teal::assert_decorators(decorators, names = "plot")
 
   if (lifecycle::is_present(param_var)) {
     lifecycle::deprecate_warn(
@@ -362,7 +385,8 @@ ui_g_correlationplot <- function(id,
                                  dot_size,
                                  reg_text_size,
                                  pre_output,
-                                 post_output) {
+                                 post_output,
+                                 decorators) {
   ns <- NS(id)
 
   teal.widgets::standard_layout(
@@ -404,6 +428,7 @@ ui_g_correlationplot <- function(id,
         vline_arb_color,
         title = "Arbitrary Vertical Lines:"
       ),
+      teal::ui_transform_teal_data("decorator", select_decorators(decorators, "plot")),
       bslib::accordion(
         bslib::accordion_panel(
           title = "Plot Aesthetic Settings",
@@ -451,7 +476,8 @@ srv_g_correlationplot <- function(id,
                                   hline_vars_colors,
                                   hline_vars_labels,
                                   vline_vars_colors,
-                                  vline_vars_labels) {
+                                  vline_vars_labels,
+                                  decorators) {
   checkmate::assert_class(data, "reactive")
   checkmate::assert_class(shiny::isolate(data()), "teal_data")
 
@@ -885,7 +911,7 @@ srv_g_correlationplot <- function(id,
         object = obj,
         code = bquote({
           # re-establish treatment variable label
-          p <- goshawk::g_correlationplot(
+          plot <- goshawk::g_correlationplot(
             data = ANL_TRANSPOSED,
             param_var = .(param_var_sel()),
             xaxis_param = .(xaxis_param_sel()),
@@ -925,12 +951,17 @@ srv_g_correlationplot <- function(id,
             vline_vars_colors = .(vline_vars_colors[seq_along(vline_vars)]),
             vline_vars_labels = .(paste(vline_vars_labels[seq_along(vline_vars)], "-", xaxis_param_sel()))
           )
-          p
         })
       )
     }), 800)
 
-    plot_r <- reactive(plot_q()[["p"]])
+    decorated_plot_q <- teal::srv_transform_teal_data(
+      "decorators",
+      plot_q,
+      select_decorators(decorators, "plot"),
+      expr = quote(plot)
+    )
+    plot_r <- reactive(decorated_plot_q()[["plot"]])
 
     plot_data <- teal.widgets::plot_with_settings_srv(
       id = "plot",
@@ -965,6 +996,6 @@ srv_g_correlationplot <- function(id,
         DT::formatRound(numeric_cols, 4)
     })
 
-    set_chunk_dims(plot_data, plot_q)
-  })
+    set_chunk_dims(plot_data, decorated_plot_q)
+    })
 }

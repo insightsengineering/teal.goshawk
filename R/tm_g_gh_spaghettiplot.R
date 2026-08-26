@@ -53,6 +53,27 @@
 #' @author Wenyi Liu (luiw2) wenyi.liu@roche.com
 #' @author Balazs Toth (tothb2) toth.balazs@gene.com
 #'
+#' @section Decorating Module:
+#'
+#' This module generates the following objects, which can be modified in place using decorators:
+#' - `plot` (`ggplot`)
+#'
+#' A Decorator is applied to the specific output using a named list of `teal_transform_module` objects.
+#' The name of this list corresponds to the name of the output to which the decorator is applied.
+#' See code snippet below:
+#'
+#' ```
+#' tm_g_gh_spaghettiplot(
+#'    ..., # arguments for module
+#'    decorators = list(
+#'      plot = teal_transform_module(...) # applied only to `plot` output
+#'    )
+#' )
+#' ```
+#'
+#' To learn more please refer to the vignette
+#' `vignette("transform-module-output", package = "teal")` or the [`teal::teal_transform_module()`] documentation.
+#'
 #' @inheritSection teal::example_module Reporting
 #'
 #' @return \code{shiny} object
@@ -196,7 +217,8 @@ tm_g_gh_spaghettiplot <- function(label,
                                   alpha = c(0.8, 0.0, 1.0),
                                   pre_output = NULL,
                                   post_output = NULL,
-                                  transformators = list()) {
+                                  transformators = list(),
+                                  decorators = list()) {
   message("Initializing tm_g_gh_spaghettiplot")
 
   if (lifecycle::is_present(filter_var)) {
@@ -243,6 +265,8 @@ tm_g_gh_spaghettiplot <- function(label,
 
   validate_line_arb_arg(hline_arb, hline_arb_color, hline_arb_label)
   validate_line_vars_arg(hline_vars, hline_vars_colors, hline_vars_labels)
+
+  teal::assert_decorators(decorators, names = "plot")
 
   if (lifecycle::is_present(param_var)) {
     lifecycle::deprecate_warn(
@@ -309,7 +333,8 @@ g_ui_spaghettiplot <- function(id,
                                alpha,
                                group_stats,
                                pre_output,
-                               post_output) {
+                               post_output,
+                               decorators) {
   ns <- NS(id)
 
   tags$div(
@@ -343,6 +368,7 @@ g_ui_spaghettiplot <- function(id,
           )
         },
         ui_arbitrary_lines(id = ns("hline_arb"), hline_arb, hline_arb_label, hline_arb_color),
+        teal::ui_transform_teal_data("decorator", select_decorators(decorators, "plot")),
         bslib::accordion(
           bslib::accordion_panel(
             title = "Plot Aesthetic Settings",
@@ -397,7 +423,8 @@ srv_g_spaghettiplot <- function(id,
                                 plot_height,
                                 plot_width,
                                 hline_vars_colors,
-                                hline_vars_labels) {
+                                hline_vars_labels,
+                                decorators) {
   checkmate::assert_class(data, "reactive")
   checkmate::assert_class(shiny::isolate(data()), "teal_data")
 
@@ -556,7 +583,7 @@ srv_g_spaghettiplot <- function(id,
       teal.code::eval_code(
         object = obj,
         code = bquote({
-          p <- goshawk::g_spaghettiplot(
+          plot <- goshawk::g_spaghettiplot(
             data = ANL,
             subj_id = .(idvar),
             biomarker_var = .(param_var_sel()),
@@ -586,14 +613,17 @@ srv_g_spaghettiplot <- function(id,
             hline_vars_colors = .(hline_vars_colors[seq_along(hline_vars_val)]),
             hline_vars_labels = .(hline_vars_labels[seq_along(hline_vars_val)])
           )
-          p
         })
       )
     }), 800)
 
-    plot_r <- reactive({
-      plot_q()[["p"]]
-    })
+    decorated_plot_q <- teal::srv_transform_teal_data(
+      "decorators",
+      plot_q,
+      select_decorators(decorators, "plot"),
+      expr = quote(plot)
+    )
+    plot_r <- reactive(decorated_plot_q()[["plot"]])
 
     plot_data <- teal.widgets::plot_with_settings_srv(
       id = "plot",
@@ -602,7 +632,6 @@ srv_g_spaghettiplot <- function(id,
       width = plot_width,
       brushing = TRUE
     )
-
 
     reactive_df <- debounce(reactive({
       plot_brush <- plot_data$brush()
@@ -635,6 +664,6 @@ srv_g_spaghettiplot <- function(id,
         DT::formatRound(numeric_cols, 4)
     })
 
-    set_chunk_dims(plot_data, plot_q)
+    set_chunk_dims(plot_data, decorated_plot_q)
   })
 }
