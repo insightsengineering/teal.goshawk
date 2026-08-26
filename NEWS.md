@@ -1,8 +1,12 @@
 # teal.goshawk 0.5.0.9002
 
-# teal.goshawk 0.5.0
 ### Enhancements
-- Adds support for reporter and reproducibility by returning a `qenv`-based object from modules.
+- Added decoratrors to all modules (#329).
+
+# teal.goshawk 0.5.0
+
+### Enhancements
+- Added support for reporter and reproducibility by returning a `qenv`-based object from modules.
 
 ### Miscellaneous
 * Removed deprecated function `tm_g_gh_scatterplot()`.
