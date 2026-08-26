@@ -428,7 +428,7 @@ ui_g_correlationplot <- function(id,
         vline_arb_color,
         title = "Arbitrary Vertical Lines:"
       ),
-      teal::ui_transform_teal_data("decorator", select_decorators(decorators, "plot")),
+      teal::ui_transform_teal_data(ns("decorator"), select_decorators(decorators, "plot")),
       bslib::accordion(
         bslib::accordion_panel(
           title = "Plot Aesthetic Settings",
@@ -956,7 +956,7 @@ srv_g_correlationplot <- function(id,
     }), 800)
 
     decorated_plot_q <- teal::srv_transform_teal_data(
-      "decorators",
+      "decorator",
       plot_q,
       select_decorators(decorators, "plot"),
       expr = quote(plot)

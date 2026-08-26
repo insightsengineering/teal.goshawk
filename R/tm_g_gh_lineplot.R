@@ -375,7 +375,7 @@ ui_lineplot <- function(id,
         ),
         templ_ui_constraint(ns),
         ui_arbitrary_lines(id = ns("hline_arb"), hline_arb, hline_arb_label, hline_arb_color),
-        teal::ui_transform_teal_data("decorator", select_decorators(decorators, "plot")),
+        teal::ui_transform_teal_data(ns("decorator"), select_decorators(decorators, "plot")),
         bslib::accordion(
           bslib::accordion_panel(
             title = "Plot Aesthetic Settings",
@@ -867,7 +867,7 @@ srv_lineplot <- function(id,
     }), 800)
 
     decorated_plot_q <- teal::srv_transform_teal_data(
-      "decorators",
+      "decorator",
       plot_q,
       select_decorators(decorators, "plot"),
       expr = quote(plot)

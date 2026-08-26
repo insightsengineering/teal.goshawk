@@ -288,7 +288,7 @@ ui_g_density_distribution_plot <- function(id,
       ),
       templ_ui_constraint(ns, label = "Data Constraint"),
       ui_arbitrary_lines(id = ns("hline_arb"), hline_arb, hline_arb_label, hline_arb_color),
-      teal::ui_transform_teal_data("decorator", select_decorators(decorators, "plot")),
+      teal::ui_transform_teal_data(ns("decorator"), select_decorators(decorators, "plot")),
       bslib::accordion(
         bslib::accordion_panel(
           title = "Plot Aesthetic Settings",
@@ -485,7 +485,7 @@ srv_g_density_distribution_plot <- function(id, # nolint: object_length_linter.
     }), 800)
 
     decorated_plot_q <- teal::srv_transform_teal_data(
-      "decorators",
+      "decorator",
       create_plot,
       select_decorators(decorators, "plot"),
       expr = quote(plot)
