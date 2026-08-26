@@ -195,11 +195,11 @@ tm_g_gh_lineplot <- function(label,
   message("Initializing tm_g_gh_lineplot")
 
   if (lifecycle::is_present(filter_var)) {
-    lifecycle::deprecate_stop("0.6.0", "tm_g_gh_lineplot(filter_var)", details = "Variable has been removed.")
+    lifecycle::deprecate_warn("0.6.0", "tm_g_gh_lineplot(filter_var)", details = "Variable has been removed.")
   }
 
   if (lifecycle::is_present(filter_var_choices)) {
-    lifecycle::deprecate_stop("0.6.0", "tm_g_gh_lineplot(filter_var_choices)", details = "Variable has been removed.")
+    lifecycle::deprecate_warn("0.6.0", "tm_g_gh_lineplot(filter_var_choices)", details = "Variable has been removed.")
   }
 
   checkmate::assert_string(label)
