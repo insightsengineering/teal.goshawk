@@ -200,7 +200,7 @@ tm_g_gh_spaghettiplot <- function(label,
   message("Initializing tm_g_gh_spaghettiplot")
 
   if (lifecycle::is_present(filter_var)) {
-    lifecycle::deprecate_stop("0.6.0", "tm_g_gh_spaghettiplot(filter_var)", details = "Variable has been removed.")
+    lifecycle::deprecate_warn("0.6.0", "tm_g_gh_spaghettiplot(filter_var)", details = "Variable has been removed.")
   }
 
   checkmate::assert_string(label)
