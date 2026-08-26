@@ -149,11 +149,11 @@ tm_g_gh_lineplot <- function(label,
   message("Initializing tm_g_gh_lineplot")
 
   if (lifecycle::is_present(filter_var)) {
-    lifecycle::deprecate_stop("0.6.0", "tm_g_gh_lineplot(filter_var)", details = "Variable has been removed.")
+    lifecycle::deprecate_warn("0.6.0", "tm_g_gh_lineplot(filter_var)", details = "Variable has been removed.")
   }
 
   if (lifecycle::is_present(filter_var_choices)) {
-    lifecycle::deprecate_stop("0.6.0", "tm_g_gh_lineplot(filter_var_choices)", details = "Variable has been removed.")
+    lifecycle::deprecate_warn("0.6.0", "tm_g_gh_lineplot(filter_var_choices)", details = "Variable has been removed.")
   }
 
   checkmate::assert_string(label)
@@ -423,7 +423,11 @@ srv_lineplot <- function(id,
     yaxis_var_sel <- reactive(selectors$yaxis_var()$variables$selected)
     trt_group_sel <- reactive(selectors$trt_group()$variables$selected)
     param_var_sel <- reactive(selectors$xaxis_param()$variables$selected)
-    shape_choices <- reactive(selectors$shape_choices()$variables$selected)
+    shape_choices_sel <- if (is.null(shape_choices)) {
+      function() NULL
+    } else {
+      reactive(selectors$shape_choices()$variables$selected)
+    }
 
     data_with_card <- reactive({
       obj <- data()
@@ -493,7 +497,7 @@ srv_lineplot <- function(id,
       ANL <- anl_q()$ANL
       validate_has_variable(ANL, varname, paste("variable", varname, "does not exist"))
 
-      shape <- shape_choices()
+      shape <- shape_choices_sel()
 
       sum_data <- ANL %>%
         dplyr::group_by_at(c(xaxis_var_sel(), trt_group_sel(), shape)) %>%
@@ -648,15 +652,15 @@ srv_lineplot <- function(id,
 
     # reset shapes when different splitting variable is selected
     observeEvent(
-      eventExpr = shape_choices(),
+      eventExpr = shape_choices_sel(),
       handlerExpr = symbol_type_defaults(symbol_type_start),
       ignoreNULL = TRUE
     )
 
     observe({
-      req(shape_choices())
+      req(shape_choices_sel())
       req(anl_q())
-      anl_shape <- anl_q()$ANL[[shape_choices()]]
+      anl_shape <- anl_q()$ANL[[shape_choices_sel()]]
       anl_shape_nlevels <- nlevels(anl_shape)
       symbol_type_to_set <- symbol_type_defaults()[pmin(length(symbol_type_defaults()), seq_len(anl_shape_nlevels))]
       symbol_type_defaults(symbol_type_to_set)
@@ -664,10 +668,10 @@ srv_lineplot <- function(id,
 
     symbol_type_selected <- reactive({
       req(anl_q())
-      if (is.null(shape_choices())) {
+      if (is.null(shape_choices_sel())) {
         return(NULL)
       }
-      anl_shape <- isolate(anl_q()$ANL[[shape_choices()]])
+      anl_shape <- isolate(anl_q()$ANL[[shape_choices_sel()]])
       anl_shape_nlevels <- nlevels(anl_shape)
       anl_shape_levels <- levels(anl_shape)
 
@@ -686,9 +690,9 @@ srv_lineplot <- function(id,
 
     output$symbols <- renderUI({
       req(symbol_type_defaults())
-      validate(need(shape_choices(), "Please select line splitting variable first."))
+      validate(need(shape_choices_sel(), "Please select line splitting variable first."))
 
-      anl_shape <- isolate(anl_q()$ANL[[shape_choices()]])
+      anl_shape <- isolate(anl_q()$ANL[[shape_choices_sel()]])
       validate(need(is.factor(anl_shape), "Line splitting variable must be a factor."))
 
       anl_shape_nlevels <- nlevels(anl_shape)
@@ -739,7 +743,7 @@ srv_lineplot <- function(id,
       symbol_selected <- symbol_type_selected()
       include_stat <- input$include_stat
 
-      shape <- shape_choices()
+      shape <- shape_choices_sel()
 
       validate(
         need(

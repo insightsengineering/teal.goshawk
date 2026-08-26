@@ -46,6 +46,7 @@
 #' @param hline_vars_colors a character vector naming the colors for the additional horizontal lines.
 #' @param hline_vars_labels a character vector naming the labels for the additional horizontal lines that will appear
 #'  in the legend.
+#' @param alpha (`numeric(3)`) vector to define transparency of plotted points.
 #' @inheritParams teal::module
 #' @inheritParams teal.widgets::standard_layout
 #'
@@ -199,7 +200,7 @@ tm_g_gh_spaghettiplot <- function(label,
   message("Initializing tm_g_gh_spaghettiplot")
 
   if (lifecycle::is_present(filter_var)) {
-    lifecycle::deprecate_stop("0.6.0", "tm_g_gh_spaghettiplot(filter_var)", details = "Variable has been removed.")
+    lifecycle::deprecate_warn("0.6.0", "tm_g_gh_spaghettiplot(filter_var)", details = "Variable has been removed.")
   }
 
   checkmate::assert_string(label)
@@ -463,7 +464,7 @@ srv_g_spaghettiplot <- function(id,
 
     anl_q_output <- constr_anl_q(
       session, input, data, dataname,
-      param_r = param_sel, param_var_r = param_var_sel, trt_group = trt_group_sel, min_rows = 1
+      param_r = param_sel, param_var_r = param_var_sel, trt_group_r = trt_group_sel, min_rows = 1
     )
 
     anl_q <- anl_q_output()$value

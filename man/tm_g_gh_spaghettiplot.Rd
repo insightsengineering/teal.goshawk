@@ -116,6 +116,8 @@ naming the label for the arbitrary horizontal lines.}
 \item{hline_vars_labels}{a character vector naming the labels for the additional horizontal lines that will appear
 in the legend.}
 
+\item{alpha}{(\code{numeric(3)}) vector to define transparency of plotted points.}
+
 \item{pre_output}{(\code{shiny.tag}) optional,\cr
 with text placed before the output to put the output into context. For example a title.}
 
