@@ -1,345 +1,281 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <testsuites>
-  <testsuite name="shinytest2-tm_g_gh_boxplot" timestamp="2026-08-25T23:13:31Z" hostname="f99244012c5f" tests="32" skipped="0" failures="0" errors="0" time="165.175">
-    <testcase time="14.757" classname="shinytest2_tm_g_gh_boxplot" name="e2e_tm_g_gh_boxplot_initializes_and_renders_a_plot"/>
-    <testcase time="0.0209999999999972" classname="shinytest2_tm_g_gh_boxplot" name="e2e_tm_g_gh_boxplot_initializes_and_renders_a_plot"/>
-    <testcase time="0.0869999999999997" classname="shinytest2_tm_g_gh_boxplot" name="e2e_tm_g_gh_boxplot_initializes_and_renders_a_plot"/>
-    <testcase time="13.094" classname="shinytest2_tm_g_gh_boxplot" name="e2e_tm_g_gh_boxplot_starts_with_expected_label_and_encoding_selections."/>
-    <testcase time="0.0109999999999992" classname="shinytest2_tm_g_gh_boxplot" name="e2e_tm_g_gh_boxplot_starts_with_expected_label_and_encoding_selections."/>
-    <testcase time="0.0590000000000011" classname="shinytest2_tm_g_gh_boxplot" name="e2e_tm_g_gh_boxplot_starts_with_expected_label_and_encoding_selections."/>
-    <testcase time="0.0510000000000019" classname="shinytest2_tm_g_gh_boxplot" name="e2e_tm_g_gh_boxplot_starts_with_expected_label_and_encoding_selections."/>
-    <testcase time="0.0509999999999984" classname="shinytest2_tm_g_gh_boxplot" name="e2e_tm_g_gh_boxplot_starts_with_expected_label_and_encoding_selections."/>
-    <testcase time="0.0509999999999984" classname="shinytest2_tm_g_gh_boxplot" name="e2e_tm_g_gh_boxplot_starts_with_expected_label_and_encoding_selections."/>
-    <testcase time="0.0510000000000019" classname="shinytest2_tm_g_gh_boxplot" name="e2e_tm_g_gh_boxplot_starts_with_expected_label_and_encoding_selections."/>
-    <testcase time="18.277" classname="shinytest2_tm_g_gh_boxplot" name="e2e_tm_g_gh_boxplot_changing_pick_changes_plot_and_does_not_throw_validation_errors._xaxis_param"/>
-    <testcase time="0.0420000000000016" classname="shinytest2_tm_g_gh_boxplot" name="e2e_tm_g_gh_boxplot_changing_pick_changes_plot_and_does_not_throw_validation_errors._xaxis_param"/>
-    <testcase time="0.00600000000000023" classname="shinytest2_tm_g_gh_boxplot" name="e2e_tm_g_gh_boxplot_changing_pick_changes_plot_and_does_not_throw_validation_errors._xaxis_param"/>
-    <testcase time="17.544" classname="shinytest2_tm_g_gh_boxplot" name="e2e_tm_g_gh_boxplot_changing_pick_changes_plot_and_does_not_throw_validation_errors._yaxis_var"/>
-    <testcase time="0.0429999999999922" classname="shinytest2_tm_g_gh_boxplot" name="e2e_tm_g_gh_boxplot_changing_pick_changes_plot_and_does_not_throw_validation_errors._yaxis_var"/>
-    <testcase time="0.00600000000000023" classname="shinytest2_tm_g_gh_boxplot" name="e2e_tm_g_gh_boxplot_changing_pick_changes_plot_and_does_not_throw_validation_errors._yaxis_var"/>
-    <testcase time="18.119" classname="shinytest2_tm_g_gh_boxplot" name="e2e_tm_g_gh_boxplot_changing_pick_changes_plot_and_does_not_throw_validation_errors._xaxis_var"/>
-    <testcase time="0.0640000000000072" classname="shinytest2_tm_g_gh_boxplot" name="e2e_tm_g_gh_boxplot_changing_pick_changes_plot_and_does_not_throw_validation_errors._xaxis_var"/>
-    <testcase time="0.00499999999999545" classname="shinytest2_tm_g_gh_boxplot" name="e2e_tm_g_gh_boxplot_changing_pick_changes_plot_and_does_not_throw_validation_errors._xaxis_var"/>
-    <testcase time="17.566" classname="shinytest2_tm_g_gh_boxplot" name="e2e_tm_g_gh_boxplot_changing_pick_changes_plot_and_does_not_throw_validation_errors._facet_var"/>
-    <testcase time="0.054000000000002" classname="shinytest2_tm_g_gh_boxplot" name="e2e_tm_g_gh_boxplot_changing_pick_changes_plot_and_does_not_throw_validation_errors._facet_var"/>
-    <testcase time="0.00499999999999545" classname="shinytest2_tm_g_gh_boxplot" name="e2e_tm_g_gh_boxplot_changing_pick_changes_plot_and_does_not_throw_validation_errors._facet_var"/>
-    <testcase time="20.002" classname="shinytest2_tm_g_gh_boxplot" name="e2e_tm_g_gh_boxplot_changing_pick_changes_plot_and_does_not_throw_validation_errors._trt_group"/>
-    <testcase time="0.0429999999999922" classname="shinytest2_tm_g_gh_boxplot" name="e2e_tm_g_gh_boxplot_changing_pick_changes_plot_and_does_not_throw_validation_errors._trt_group"/>
-    <testcase time="0.00600000000000023" classname="shinytest2_tm_g_gh_boxplot" name="e2e_tm_g_gh_boxplot_changing_pick_changes_plot_and_does_not_throw_validation_errors._trt_group"/>
-    <testcase time="13.128" classname="shinytest2_tm_g_gh_boxplot" name="e2e_tm_g_gh_boxplot_displays_selected_data_points_table"/>
-    <testcase time="0.00600000000000023" classname="shinytest2_tm_g_gh_boxplot" name="e2e_tm_g_gh_boxplot_displays_selected_data_points_table"/>
-    <testcase time="0.00499999999999545" classname="shinytest2_tm_g_gh_boxplot" name="e2e_tm_g_gh_boxplot_displays_selected_data_points_table"/>
-    <testcase time="18.901" classname="shinytest2_tm_g_gh_boxplot" name="e2e_tm_g_gh_boxplot_handles_LoQ_legend_toggle"/>
-    <testcase time="0.00600000000000023" classname="shinytest2_tm_g_gh_boxplot" name="e2e_tm_g_gh_boxplot_handles_LoQ_legend_toggle"/>
-    <testcase time="13.108" classname="shinytest2_tm_g_gh_boxplot" name="e2e_tm_g_gh_boxplot_respects_plot_height_adjustment"/>
-    <testcase time="0.00600000000000023" classname="shinytest2_tm_g_gh_boxplot" name="e2e_tm_g_gh_boxplot_respects_plot_height_adjustment"/>
+  <testsuite name="shinytest2-tm_g_gh_boxplot" timestamp="2026-08-26T12:26:52Z" hostname="8189f63693a0" tests="6" skipped="6" failures="0" errors="0" time="0.196">
+    <testcase time="0.048" classname="shinytest2_tm_g_gh_boxplot" name="e2e_tm_g_gh_boxplot_initializes_and_renders_a_plot">
+      <skipped message="Reason: testing depth 3 is below current testing specification 5 ('test-shinytest2-tm_g_gh_boxplot.R:24:3')"/>
+    </testcase>
+    <testcase time="0.069" classname="shinytest2_tm_g_gh_boxplot" name="e2e_tm_g_gh_boxplot_starts_with_expected_label_and_encoding_selections.">
+      <skipped message="Reason: testing depth 3 is below current testing specification 5 ('test-shinytest2-tm_g_gh_boxplot.R:41:5')"/>
+    </testcase>
+    <testcase time="0.038" classname="shinytest2_tm_g_gh_boxplot" name="e2e_tm_g_gh_boxplot_changing_pick_changes_plot_and_does_not_throw_validation_errors.">
+      <skipped message="Reason: testing depth 3 is below current testing specification 5 ('test-shinytest2-tm_g_gh_boxplot.R:61:3')"/>
+    </testcase>
+    <testcase time="0.014" classname="shinytest2_tm_g_gh_boxplot" name="e2e_tm_g_gh_boxplot_displays_selected_data_points_table">
+      <skipped message="Reason: testing depth 3 is below current testing specification 5 ('test-shinytest2-tm_g_gh_boxplot.R:104:3')"/>
+    </testcase>
+    <testcase time="0.014" classname="shinytest2_tm_g_gh_boxplot" name="e2e_tm_g_gh_boxplot_handles_LoQ_legend_toggle">
+      <skipped message="Reason: testing depth 3 is below current testing specification 5 ('test-shinytest2-tm_g_gh_boxplot.R:121:3')"/>
+    </testcase>
+    <testcase time="0.0129999999999999" classname="shinytest2_tm_g_gh_boxplot" name="e2e_tm_g_gh_boxplot_respects_plot_height_adjustment">
+      <skipped message="Reason: testing depth 3 is below current testing specification 5 ('test-shinytest2-tm_g_gh_boxplot.R:140:3')"/>
+    </testcase>
   </testsuite>
-  <testsuite name="shinytest2-tm_g_gh_correlationplot" timestamp="2026-08-25T23:16:16Z" hostname="f99244012c5f" tests="27" skipped="0" failures="0" errors="0" time="120.741">
-    <testcase time="13.313" classname="shinytest2_tm_g_gh_correlationplot" name="e2e_tm_g_gh_correlationplot_initializes_and_renders_a_plot"/>
-    <testcase time="0.00499999999999545" classname="shinytest2_tm_g_gh_correlationplot" name="e2e_tm_g_gh_correlationplot_initializes_and_renders_a_plot"/>
-    <testcase time="0.0939999999999941" classname="shinytest2_tm_g_gh_correlationplot" name="e2e_tm_g_gh_correlationplot_initializes_and_renders_a_plot"/>
-    <testcase time="0.00999999999999091" classname="shinytest2_tm_g_gh_correlationplot" name="e2e_tm_g_gh_correlationplot_initializes_and_renders_a_plot"/>
-    <testcase time="13.235" classname="shinytest2_tm_g_gh_correlationplot" name="e2e_tm_g_gh_correlationplot_starts_with_expected_label_and_encoding_selections."/>
-    <testcase time="0.0109999999999957" classname="shinytest2_tm_g_gh_correlationplot" name="e2e_tm_g_gh_correlationplot_starts_with_expected_label_and_encoding_selections."/>
-    <testcase time="0.0499999999999829" classname="shinytest2_tm_g_gh_correlationplot" name="e2e_tm_g_gh_correlationplot_starts_with_expected_label_and_encoding_selections."/>
-    <testcase time="0.0510000000000161" classname="shinytest2_tm_g_gh_correlationplot" name="e2e_tm_g_gh_correlationplot_starts_with_expected_label_and_encoding_selections."/>
-    <testcase time="0.0509999999999877" classname="shinytest2_tm_g_gh_correlationplot" name="e2e_tm_g_gh_correlationplot_starts_with_expected_label_and_encoding_selections."/>
-    <testcase time="0.0510000000000161" classname="shinytest2_tm_g_gh_correlationplot" name="e2e_tm_g_gh_correlationplot_starts_with_expected_label_and_encoding_selections."/>
-    <testcase time="0.0509999999999877" classname="shinytest2_tm_g_gh_correlationplot" name="e2e_tm_g_gh_correlationplot_starts_with_expected_label_and_encoding_selections."/>
-    <testcase time="0.0510000000000161" classname="shinytest2_tm_g_gh_correlationplot" name="e2e_tm_g_gh_correlationplot_starts_with_expected_label_and_encoding_selections."/>
-    <testcase time="18.737" classname="shinytest2_tm_g_gh_correlationplot" name="e2e_tm_g_gh_correlationplot_changing_pick_changes_plot_and_does_not_throw_validation_errors._xaxis_param"/>
-    <testcase time="0.0490000000000066" classname="shinytest2_tm_g_gh_correlationplot" name="e2e_tm_g_gh_correlationplot_changing_pick_changes_plot_and_does_not_throw_validation_errors._xaxis_param"/>
-    <testcase time="0.00600000000000023" classname="shinytest2_tm_g_gh_correlationplot" name="e2e_tm_g_gh_correlationplot_changing_pick_changes_plot_and_does_not_throw_validation_errors._xaxis_param"/>
-    <testcase time="18.603" classname="shinytest2_tm_g_gh_correlationplot" name="e2e_tm_g_gh_correlationplot_changing_pick_changes_plot_and_does_not_throw_validation_errors._yaxis_param"/>
-    <testcase time="0.0510000000000161" classname="shinytest2_tm_g_gh_correlationplot" name="e2e_tm_g_gh_correlationplot_changing_pick_changes_plot_and_does_not_throw_validation_errors._yaxis_param"/>
-    <testcase time="0.00600000000000023" classname="shinytest2_tm_g_gh_correlationplot" name="e2e_tm_g_gh_correlationplot_changing_pick_changes_plot_and_does_not_throw_validation_errors._yaxis_param"/>
-    <testcase time="18.783" classname="shinytest2_tm_g_gh_correlationplot" name="e2e_tm_g_gh_correlationplot_changing_pick_changes_plot_and_does_not_throw_validation_errors._xaxis_var"/>
-    <testcase time="0.0490000000000066" classname="shinytest2_tm_g_gh_correlationplot" name="e2e_tm_g_gh_correlationplot_changing_pick_changes_plot_and_does_not_throw_validation_errors._xaxis_var"/>
-    <testcase time="0.00499999999999545" classname="shinytest2_tm_g_gh_correlationplot" name="e2e_tm_g_gh_correlationplot_changing_pick_changes_plot_and_does_not_throw_validation_errors._xaxis_var"/>
-    <testcase time="18.955" classname="shinytest2_tm_g_gh_correlationplot" name="e2e_tm_g_gh_correlationplot_changing_pick_changes_plot_and_does_not_throw_validation_errors._yaxis_var"/>
-    <testcase time="0.0550000000000068" classname="shinytest2_tm_g_gh_correlationplot" name="e2e_tm_g_gh_correlationplot_changing_pick_changes_plot_and_does_not_throw_validation_errors._yaxis_var"/>
-    <testcase time="0.00599999999997181" classname="shinytest2_tm_g_gh_correlationplot" name="e2e_tm_g_gh_correlationplot_changing_pick_changes_plot_and_does_not_throw_validation_errors._yaxis_var"/>
-    <testcase time="18.407" classname="shinytest2_tm_g_gh_correlationplot" name="e2e_tm_g_gh_correlationplot_changing_pick_changes_plot_and_does_not_throw_validation_errors._trt_group"/>
-    <testcase time="0.0509999999999877" classname="shinytest2_tm_g_gh_correlationplot" name="e2e_tm_g_gh_correlationplot_changing_pick_changes_plot_and_does_not_throw_validation_errors._trt_group"/>
-    <testcase time="0.00499999999999545" classname="shinytest2_tm_g_gh_correlationplot" name="e2e_tm_g_gh_correlationplot_changing_pick_changes_plot_and_does_not_throw_validation_errors._trt_group"/>
+  <testsuite name="shinytest2-tm_g_gh_correlationplot" timestamp="2026-08-26T12:26:52Z" hostname="8189f63693a0" tests="3" skipped="3" failures="0" errors="0" time="0.062">
+    <testcase time="0.03" classname="shinytest2_tm_g_gh_correlationplot" name="e2e_tm_g_gh_correlationplot_initializes_and_renders_a_plot">
+      <skipped message="Reason: testing depth 3 is below current testing specification 5 ('test-shinytest2-tm_g_gh_correlationplot.R:28:3')"/>
+    </testcase>
+    <testcase time="0.018" classname="shinytest2_tm_g_gh_correlationplot" name="e2e_tm_g_gh_correlationplot_starts_with_expected_label_and_encoding_selections.">
+      <skipped message="Reason: testing depth 3 is below current testing specification 5 ('test-shinytest2-tm_g_gh_correlationplot.R:49:5')"/>
+    </testcase>
+    <testcase time="0.014" classname="shinytest2_tm_g_gh_correlationplot" name="e2e_tm_g_gh_correlationplot_changing_pick_changes_plot_and_does_not_throw_validation_errors.">
+      <skipped message="Reason: testing depth 3 is below current testing specification 5 ('test-shinytest2-tm_g_gh_correlationplot.R:70:3')"/>
+    </testcase>
   </testsuite>
-  <testsuite name="shinytest2-tm_g_gh_density_distribution_plot" timestamp="2026-08-25T23:18:17Z" hostname="f99244012c5f" tests="19" skipped="0" failures="0" errors="0" time="101.286">
-    <testcase time="12.376" classname="shinytest2_tm_g_gh_density_distribution_plot" name="e2e_tm_g_gh_density_distribution_plot_initializes_and_renders_a_plot"/>
-    <testcase time="0.00499999999999545" classname="shinytest2_tm_g_gh_density_distribution_plot" name="e2e_tm_g_gh_density_distribution_plot_initializes_and_renders_a_plot"/>
-    <testcase time="0.0960000000000036" classname="shinytest2_tm_g_gh_density_distribution_plot" name="e2e_tm_g_gh_density_distribution_plot_initializes_and_renders_a_plot"/>
-    <testcase time="12.804" classname="shinytest2_tm_g_gh_density_distribution_plot" name="e2e_tm_g_gh_density_distribution_plot_starts_with_expected_label_and_encoding_selections."/>
-    <testcase time="0.00999999999999091" classname="shinytest2_tm_g_gh_density_distribution_plot" name="e2e_tm_g_gh_density_distribution_plot_starts_with_expected_label_and_encoding_selections."/>
-    <testcase time="0.0500000000000114" classname="shinytest2_tm_g_gh_density_distribution_plot" name="e2e_tm_g_gh_density_distribution_plot_starts_with_expected_label_and_encoding_selections."/>
-    <testcase time="0.0509999999999877" classname="shinytest2_tm_g_gh_density_distribution_plot" name="e2e_tm_g_gh_density_distribution_plot_starts_with_expected_label_and_encoding_selections."/>
-    <testcase time="0.0509999999999877" classname="shinytest2_tm_g_gh_density_distribution_plot" name="e2e_tm_g_gh_density_distribution_plot_starts_with_expected_label_and_encoding_selections."/>
-    <testcase time="19.698" classname="shinytest2_tm_g_gh_density_distribution_plot" name="e2e_tm_g_gh_density_distribution_plot_changing_pick_changes_plot_and_does_not_throw_validation_errors._xaxis_param"/>
-    <testcase time="0.0489999999999782" classname="shinytest2_tm_g_gh_density_distribution_plot" name="e2e_tm_g_gh_density_distribution_plot_changing_pick_changes_plot_and_does_not_throw_validation_errors._xaxis_param"/>
-    <testcase time="0.00499999999999545" classname="shinytest2_tm_g_gh_density_distribution_plot" name="e2e_tm_g_gh_density_distribution_plot_changing_pick_changes_plot_and_does_not_throw_validation_errors._xaxis_param"/>
-    <testcase time="18.657" classname="shinytest2_tm_g_gh_density_distribution_plot" name="e2e_tm_g_gh_density_distribution_plot_changing_pick_changes_plot_and_does_not_throw_validation_errors._xaxis_var"/>
-    <testcase time="0.0430000000000064" classname="shinytest2_tm_g_gh_density_distribution_plot" name="e2e_tm_g_gh_density_distribution_plot_changing_pick_changes_plot_and_does_not_throw_validation_errors._xaxis_var"/>
-    <testcase time="0.00600000000002865" classname="shinytest2_tm_g_gh_density_distribution_plot" name="e2e_tm_g_gh_density_distribution_plot_changing_pick_changes_plot_and_does_not_throw_validation_errors._xaxis_var"/>
-    <testcase time="18.005" classname="shinytest2_tm_g_gh_density_distribution_plot" name="e2e_tm_g_gh_density_distribution_plot_changing_pick_changes_plot_and_does_not_throw_validation_errors._trt_group"/>
-    <testcase time="0.0430000000000064" classname="shinytest2_tm_g_gh_density_distribution_plot" name="e2e_tm_g_gh_density_distribution_plot_changing_pick_changes_plot_and_does_not_throw_validation_errors._trt_group"/>
-    <testcase time="0.00499999999999545" classname="shinytest2_tm_g_gh_density_distribution_plot" name="e2e_tm_g_gh_density_distribution_plot_changing_pick_changes_plot_and_does_not_throw_validation_errors._trt_group"/>
-    <testcase time="19.326" classname="shinytest2_tm_g_gh_density_distribution_plot" name="e2e_tm_g_gh_density_distribution_plot_handles_comb_line_toggle"/>
-    <testcase time="0.00600000000002865" classname="shinytest2_tm_g_gh_density_distribution_plot" name="e2e_tm_g_gh_density_distribution_plot_handles_comb_line_toggle"/>
+  <testsuite name="shinytest2-tm_g_gh_density_distribution_plot" timestamp="2026-08-26T12:26:52Z" hostname="8189f63693a0" tests="4" skipped="4" failures="0" errors="0" time="0.075">
+    <testcase time="0.0289999999999999" classname="shinytest2_tm_g_gh_density_distribution_plot" name="e2e_tm_g_gh_density_distribution_plot_initializes_and_renders_a_plot">
+      <skipped message="Reason: testing depth 3 is below current testing specification 5 ('test-shinytest2-tm_g_gh_density_distribution_plot.R:20:3')"/>
+    </testcase>
+    <testcase time="0.014" classname="shinytest2_tm_g_gh_density_distribution_plot" name="e2e_tm_g_gh_density_distribution_plot_starts_with_expected_label_and_encoding_selections.">
+      <skipped message="Reason: testing depth 3 is below current testing specification 5 ('test-shinytest2-tm_g_gh_density_distribution_plot.R:34:5')"/>
+    </testcase>
+    <testcase time="0.018" classname="shinytest2_tm_g_gh_density_distribution_plot" name="e2e_tm_g_gh_density_distribution_plot_changing_pick_changes_plot_and_does_not_throw_validation_errors.">
+      <skipped message="Reason: testing depth 3 is below current testing specification 5 ('test-shinytest2-tm_g_gh_density_distribution_plot.R:52:3')"/>
+    </testcase>
+    <testcase time="0.014" classname="shinytest2_tm_g_gh_density_distribution_plot" name="e2e_tm_g_gh_density_distribution_plot_handles_comb_line_toggle">
+      <skipped message="Reason: testing depth 3 is below current testing specification 5 ('test-shinytest2-tm_g_gh_density_distribution_plot.R:80:3')"/>
+    </testcase>
   </testsuite>
-  <testsuite name="shinytest2-tm_g_gh_lineplot" timestamp="2026-08-25T23:19:58Z" hostname="f99244012c5f" tests="21" skipped="0" failures="0" errors="0" time="93.183">
-    <testcase time="11.969" classname="shinytest2_tm_g_gh_lineplot" name="e2e_tm_g_gh_lineplot_initializes_and_renders_a_plot"/>
-    <testcase time="0.00599999999997181" classname="shinytest2_tm_g_gh_lineplot" name="e2e_tm_g_gh_lineplot_initializes_and_renders_a_plot"/>
-    <testcase time="0.0750000000000455" classname="shinytest2_tm_g_gh_lineplot" name="e2e_tm_g_gh_lineplot_initializes_and_renders_a_plot"/>
-    <testcase time="12.002" classname="shinytest2_tm_g_gh_lineplot" name="e2e_tm_g_gh_lineplot_starts_with_expected_label_and_encoding_selections."/>
-    <testcase time="0.0110000000000241" classname="shinytest2_tm_g_gh_lineplot" name="e2e_tm_g_gh_lineplot_starts_with_expected_label_and_encoding_selections."/>
-    <testcase time="0.0500000000000114" classname="shinytest2_tm_g_gh_lineplot" name="e2e_tm_g_gh_lineplot_starts_with_expected_label_and_encoding_selections."/>
-    <testcase time="0.0509999999999877" classname="shinytest2_tm_g_gh_lineplot" name="e2e_tm_g_gh_lineplot_starts_with_expected_label_and_encoding_selections."/>
-    <testcase time="0.0509999999999877" classname="shinytest2_tm_g_gh_lineplot" name="e2e_tm_g_gh_lineplot_starts_with_expected_label_and_encoding_selections."/>
-    <testcase time="0.0510000000000446" classname="shinytest2_tm_g_gh_lineplot" name="e2e_tm_g_gh_lineplot_starts_with_expected_label_and_encoding_selections."/>
-    <testcase time="17.546" classname="shinytest2_tm_g_gh_lineplot" name="e2e_tm_g_gh_lineplot_changing_pick_changes_plot_and_does_not_throw_validation_errors._xaxis_param"/>
-    <testcase time="0.0399999999999636" classname="shinytest2_tm_g_gh_lineplot" name="e2e_tm_g_gh_lineplot_changing_pick_changes_plot_and_does_not_throw_validation_errors._xaxis_param"/>
-    <testcase time="0.00600000000002865" classname="shinytest2_tm_g_gh_lineplot" name="e2e_tm_g_gh_lineplot_changing_pick_changes_plot_and_does_not_throw_validation_errors._xaxis_param"/>
-    <testcase time="16.822" classname="shinytest2_tm_g_gh_lineplot" name="e2e_tm_g_gh_lineplot_changing_pick_changes_plot_and_does_not_throw_validation_errors._xaxis_var"/>
-    <testcase time="0.0389999999999873" classname="shinytest2_tm_g_gh_lineplot" name="e2e_tm_g_gh_lineplot_changing_pick_changes_plot_and_does_not_throw_validation_errors._xaxis_var"/>
-    <testcase time="0.00599999999997181" classname="shinytest2_tm_g_gh_lineplot" name="e2e_tm_g_gh_lineplot_changing_pick_changes_plot_and_does_not_throw_validation_errors._xaxis_var"/>
-    <testcase time="17.554" classname="shinytest2_tm_g_gh_lineplot" name="e2e_tm_g_gh_lineplot_changing_pick_changes_plot_and_does_not_throw_validation_errors._yaxis_var"/>
-    <testcase time="0.0430000000000064" classname="shinytest2_tm_g_gh_lineplot" name="e2e_tm_g_gh_lineplot_changing_pick_changes_plot_and_does_not_throw_validation_errors._yaxis_var"/>
-    <testcase time="0.00499999999999545" classname="shinytest2_tm_g_gh_lineplot" name="e2e_tm_g_gh_lineplot_changing_pick_changes_plot_and_does_not_throw_validation_errors._yaxis_var"/>
-    <testcase time="16.811" classname="shinytest2_tm_g_gh_lineplot" name="e2e_tm_g_gh_lineplot_changing_pick_changes_plot_and_does_not_throw_validation_errors._trt_group"/>
-    <testcase time="0.0400000000000205" classname="shinytest2_tm_g_gh_lineplot" name="e2e_tm_g_gh_lineplot_changing_pick_changes_plot_and_does_not_throw_validation_errors._trt_group"/>
-    <testcase time="0.00499999999999545" classname="shinytest2_tm_g_gh_lineplot" name="e2e_tm_g_gh_lineplot_changing_pick_changes_plot_and_does_not_throw_validation_errors._trt_group"/>
+  <testsuite name="shinytest2-tm_g_gh_lineplot" timestamp="2026-08-26T12:26:52Z" hostname="8189f63693a0" tests="3" skipped="3" failures="0" errors="0" time="0.045">
+    <testcase time="0.018" classname="shinytest2_tm_g_gh_lineplot" name="e2e_tm_g_gh_lineplot_initializes_and_renders_a_plot">
+      <skipped message="Reason: testing depth 3 is below current testing specification 5 ('test-shinytest2-tm_g_gh_lineplot.R:23:3')"/>
+    </testcase>
+    <testcase time="0.014" classname="shinytest2_tm_g_gh_lineplot" name="e2e_tm_g_gh_lineplot_starts_with_expected_label_and_encoding_selections.">
+      <skipped message="Reason: testing depth 3 is below current testing specification 5 ('test-shinytest2-tm_g_gh_lineplot.R:40:5')"/>
+    </testcase>
+    <testcase time="0.0129999999999999" classname="shinytest2_tm_g_gh_lineplot" name="e2e_tm_g_gh_lineplot_changing_pick_changes_plot_and_does_not_throw_validation_errors.">
+      <skipped message="Reason: testing depth 3 is below current testing specification 5 ('test-shinytest2-tm_g_gh_lineplot.R:59:3')"/>
+    </testcase>
   </testsuite>
-  <testsuite name="shinytest2-tm_g_gh_spaghettiplot" timestamp="2026-08-25T23:21:31Z" hostname="f99244012c5f" tests="22" skipped="0" failures="0" errors="0" time="95.638">
-    <testcase time="12.728" classname="shinytest2_tm_g_gh_spaghettiplot" name="e2e_tm_g_gh_spaghettiplot_initializes_and_renders_a_plot"/>
-    <testcase time="0.00499999999999545" classname="shinytest2_tm_g_gh_spaghettiplot" name="e2e_tm_g_gh_spaghettiplot_initializes_and_renders_a_plot"/>
-    <testcase time="0.0880000000000223" classname="shinytest2_tm_g_gh_spaghettiplot" name="e2e_tm_g_gh_spaghettiplot_initializes_and_renders_a_plot"/>
-    <testcase time="0.00899999999995771" classname="shinytest2_tm_g_gh_spaghettiplot" name="e2e_tm_g_gh_spaghettiplot_initializes_and_renders_a_plot"/>
-    <testcase time="12.723" classname="shinytest2_tm_g_gh_spaghettiplot" name="e2e_tm_g_gh_spaghettiplot_starts_with_expected_label_and_encoding_selections."/>
-    <testcase time="0.0110000000000241" classname="shinytest2_tm_g_gh_spaghettiplot" name="e2e_tm_g_gh_spaghettiplot_starts_with_expected_label_and_encoding_selections."/>
-    <testcase time="0.0509999999999877" classname="shinytest2_tm_g_gh_spaghettiplot" name="e2e_tm_g_gh_spaghettiplot_starts_with_expected_label_and_encoding_selections."/>
-    <testcase time="0.0509999999999877" classname="shinytest2_tm_g_gh_spaghettiplot" name="e2e_tm_g_gh_spaghettiplot_starts_with_expected_label_and_encoding_selections."/>
-    <testcase time="0.0509999999999877" classname="shinytest2_tm_g_gh_spaghettiplot" name="e2e_tm_g_gh_spaghettiplot_starts_with_expected_label_and_encoding_selections."/>
-    <testcase time="0.0510000000000446" classname="shinytest2_tm_g_gh_spaghettiplot" name="e2e_tm_g_gh_spaghettiplot_starts_with_expected_label_and_encoding_selections."/>
-    <testcase time="17.756" classname="shinytest2_tm_g_gh_spaghettiplot" name="e2e_tm_g_gh_spaghettiplot_changing_pick_changes_plot_and_does_not_throw_validation_errors._xaxis_param"/>
-    <testcase time="0.0480000000000018" classname="shinytest2_tm_g_gh_spaghettiplot" name="e2e_tm_g_gh_spaghettiplot_changing_pick_changes_plot_and_does_not_throw_validation_errors._xaxis_param"/>
-    <testcase time="0.00599999999997181" classname="shinytest2_tm_g_gh_spaghettiplot" name="e2e_tm_g_gh_spaghettiplot_changing_pick_changes_plot_and_does_not_throw_validation_errors._xaxis_param"/>
-    <testcase time="17.207" classname="shinytest2_tm_g_gh_spaghettiplot" name="e2e_tm_g_gh_spaghettiplot_changing_pick_changes_plot_and_does_not_throw_validation_errors._xaxis_var"/>
-    <testcase time="0.0500000000000682" classname="shinytest2_tm_g_gh_spaghettiplot" name="e2e_tm_g_gh_spaghettiplot_changing_pick_changes_plot_and_does_not_throw_validation_errors._xaxis_var"/>
-    <testcase time="0.00499999999999545" classname="shinytest2_tm_g_gh_spaghettiplot" name="e2e_tm_g_gh_spaghettiplot_changing_pick_changes_plot_and_does_not_throw_validation_errors._xaxis_var"/>
-    <testcase time="17.659" classname="shinytest2_tm_g_gh_spaghettiplot" name="e2e_tm_g_gh_spaghettiplot_changing_pick_changes_plot_and_does_not_throw_validation_errors._yaxis_var"/>
-    <testcase time="0.0489999999999782" classname="shinytest2_tm_g_gh_spaghettiplot" name="e2e_tm_g_gh_spaghettiplot_changing_pick_changes_plot_and_does_not_throw_validation_errors._yaxis_var"/>
-    <testcase time="0.00499999999999545" classname="shinytest2_tm_g_gh_spaghettiplot" name="e2e_tm_g_gh_spaghettiplot_changing_pick_changes_plot_and_does_not_throw_validation_errors._yaxis_var"/>
-    <testcase time="17.0309999999999" classname="shinytest2_tm_g_gh_spaghettiplot" name="e2e_tm_g_gh_spaghettiplot_changing_pick_changes_plot_and_does_not_throw_validation_errors._trt_group"/>
-    <testcase time="0.0480000000000018" classname="shinytest2_tm_g_gh_spaghettiplot" name="e2e_tm_g_gh_spaghettiplot_changing_pick_changes_plot_and_does_not_throw_validation_errors._trt_group"/>
-    <testcase time="0.00600000000008549" classname="shinytest2_tm_g_gh_spaghettiplot" name="e2e_tm_g_gh_spaghettiplot_changing_pick_changes_plot_and_does_not_throw_validation_errors._trt_group"/>
+  <testsuite name="shinytest2-tm_g_gh_spaghettiplot" timestamp="2026-08-26T12:26:52Z" hostname="8189f63693a0" tests="3" skipped="3" failures="0" errors="0" time="0.08">
+    <testcase time="0.0170000000000001" classname="shinytest2_tm_g_gh_spaghettiplot" name="e2e_tm_g_gh_spaghettiplot_initializes_and_renders_a_plot">
+      <skipped message="Reason: testing depth 3 is below current testing specification 5 ('test-shinytest2-tm_g_gh_spaghettiplot.R:22:3')"/>
+    </testcase>
+    <testcase time="0.0489999999999999" classname="shinytest2_tm_g_gh_spaghettiplot" name="e2e_tm_g_gh_spaghettiplot_starts_with_expected_label_and_encoding_selections.">
+      <skipped message="Reason: testing depth 3 is below current testing specification 5 ('test-shinytest2-tm_g_gh_spaghettiplot.R:43:5')"/>
+    </testcase>
+    <testcase time="0.014" classname="shinytest2_tm_g_gh_spaghettiplot" name="e2e_tm_g_gh_spaghettiplot_changing_pick_changes_plot_and_does_not_throw_validation_errors.">
+      <skipped message="Reason: testing depth 3 is below current testing specification 5 ('test-shinytest2-tm_g_gh_spaghettiplot.R:62:3')"/>
+    </testcase>
   </testsuite>
-  <testsuite name="tm_g_gh_boxplot" timestamp="2026-08-25T23:23:07Z" hostname="f99244012c5f" tests="42" skipped="0" failures="0" errors="0" time="2.541">
-    <testcase time="0.216999999999985" classname="tm_g_gh_boxplot" name="tm_g_gh_boxplot_can_be_created_with_default_arguments"/>
-    <testcase time="0.00299999999992906" classname="tm_g_gh_boxplot" name="tm_g_gh_boxplot_can_be_created_with_default_arguments"/>
-    <testcase time="0.0120000000000573" classname="tm_g_gh_boxplot" name="tm_g_gh_boxplot_can_be_created_with_choices_selected_arguments"/>
-    <testcase time="0.00200000000006639" classname="tm_g_gh_boxplot" name="tm_g_gh_boxplot_can_be_created_with_choices_selected_arguments"/>
-    <testcase time="0.0109999999999673" classname="tm_g_gh_boxplot" name="tm_g_gh_boxplot_can_be_created_with_custom_picks_arguments"/>
-    <testcase time="0.00300000000004275" classname="tm_g_gh_boxplot" name="tm_g_gh_boxplot_can_be_created_with_custom_picks_arguments"/>
-    <testcase time="0.0109999999999673" classname="tm_g_gh_boxplot" name="tm_g_gh_boxplot_handles_different_parameter_combinations"/>
-    <testcase time="0.00299999999992906" classname="tm_g_gh_boxplot" name="tm_g_gh_boxplot_handles_different_parameter_combinations"/>
-    <testcase time="0.0110000000000809" classname="tm_g_gh_boxplot" name="tm_g_gh_boxplot_accepts_custom_color_and_shape_specifications"/>
-    <testcase time="0.00299999999992906" classname="tm_g_gh_boxplot" name="tm_g_gh_boxplot_accepts_custom_color_and_shape_specifications"/>
-    <testcase time="0.0110000000000809" classname="tm_g_gh_boxplot" name="tm_g_gh_boxplot_accepts_line_arguments"/>
-    <testcase time="0.00199999999995271" classname="tm_g_gh_boxplot" name="tm_g_gh_boxplot_accepts_line_arguments"/>
-    <testcase time="0.0120000000000573" classname="tm_g_gh_boxplot" name="tm_g_gh_boxplot_handles_plot_dimensions_correctly"/>
-    <testcase time="0.00299999999992906" classname="tm_g_gh_boxplot" name="tm_g_gh_boxplot_handles_plot_dimensions_correctly"/>
-    <testcase time="0.0120000000000573" classname="tm_g_gh_boxplot" name="tm_g_gh_boxplot_invalid_arguments_throws_an_error_when_label_is_invalid"/>
-    <testcase time="0.0109999999999673" classname="tm_g_gh_boxplot" name="tm_g_gh_boxplot_invalid_arguments_throws_an_error_when_dataname_is_invalid"/>
-    <testcase time="0.00999999999999091" classname="tm_g_gh_boxplot" name="tm_g_gh_boxplot_invalid_arguments_throws_an_error_when_param_is_invalid"/>
-    <testcase time="0.0149999999999864" classname="tm_g_gh_boxplot" name="tm_g_gh_boxplot_invalid_arguments_throws_an_error_when_yaxis_var_is_invalid"/>
-    <testcase time="0.00999999999999091" classname="tm_g_gh_boxplot" name="tm_g_gh_boxplot_invalid_arguments_throws_an_error_when_xaxis_var_is_invalid"/>
-    <testcase time="0.0110000000000809" classname="tm_g_gh_boxplot" name="tm_g_gh_boxplot_invalid_arguments_throws_an_error_when_facet_var_is_invalid"/>
-    <testcase time="0.0559999999999263" classname="tm_g_gh_boxplot" name="tm_g_gh_boxplot_invalid_arguments_throws_an_error_when_trt_group_is_invalid"/>
-    <testcase time="0.106999999999971" classname="tm_g_gh_boxplot" name="tm_g_gh_boxplot_invalid_arguments_throws_an_error_when_color_manual_is_invalid"/>
-    <testcase time="0.100000000000023" classname="tm_g_gh_boxplot" name="tm_g_gh_boxplot_invalid_arguments_throws_an_error_when_shape_manual_is_invalid"/>
-    <testcase time="0.100999999999999" classname="tm_g_gh_boxplot" name="tm_g_gh_boxplot_invalid_arguments_throws_an_error_when_facet_ncol_is_invalid"/>
-    <testcase time="0.09699999999998" classname="tm_g_gh_boxplot" name="tm_g_gh_boxplot_invalid_arguments_throws_an_error_when_loq_legend_is_invalid"/>
-    <testcase time="0.102000000000089" classname="tm_g_gh_boxplot" name="tm_g_gh_boxplot_invalid_arguments_throws_an_error_when_rotate_xlab_is_invalid"/>
-    <testcase time="0.102999999999952" classname="tm_g_gh_boxplot" name="tm_g_gh_boxplot_invalid_arguments_throws_an_error_when_hline_arb_is_invalid"/>
-    <testcase time="0.105999999999995" classname="tm_g_gh_boxplot" name="tm_g_gh_boxplot_invalid_arguments_throws_an_error_when_hline_vars_is_invalid"/>
-    <testcase time="0.105999999999995" classname="tm_g_gh_boxplot" name="tm_g_gh_boxplot_invalid_arguments_throws_an_error_when_plot_height_is_invalid"/>
-    <testcase time="0.100999999999999" classname="tm_g_gh_boxplot" name="tm_g_gh_boxplot_invalid_arguments_throws_an_error_when_plot_width_is_invalid"/>
-    <testcase time="0.105000000000018" classname="tm_g_gh_boxplot" name="tm_g_gh_boxplot_invalid_arguments_throws_an_error_when_font_size_is_invalid"/>
-    <testcase time="0.102999999999952" classname="tm_g_gh_boxplot" name="tm_g_gh_boxplot_invalid_arguments_throws_an_error_when_dot_size_is_invalid"/>
-    <testcase time="0.104000000000042" classname="tm_g_gh_boxplot" name="tm_g_gh_boxplot_invalid_arguments_throws_an_error_when_alpha_is_invalid"/>
-    <testcase time="0.102999999999952" classname="tm_g_gh_boxplot" name="tm_g_gh_boxplot_invalid_arguments_throws_an_error_when_pre_output_is_invalid"/>
-    <testcase time="0.0999999999999091" classname="tm_g_gh_boxplot" name="tm_g_gh_boxplot_invalid_arguments_throws_an_error_when_post_output_is_invalid"/>
-    <testcase time="0.109000000000037" classname="tm_g_gh_boxplot" name="tm_g_gh_boxplot_invalid_arguments_throws_an_error_when_transformators_is_invalid"/>
-    <testcase time="0.11099999999999" classname="tm_g_gh_boxplot" name="tm_g_gh_boxplot_invalid_arguments_throws_an_error_when_hline_arb_label_is_invalid"/>
-    <testcase time="0.114000000000033" classname="tm_g_gh_boxplot" name="tm_g_gh_boxplot_invalid_arguments_throws_an_error_when_hline_arb_color_is_invalid"/>
-    <testcase time="0.112999999999943" classname="tm_g_gh_boxplot" name="tm_g_gh_boxplot_invalid_arguments_throws_an_error_when_hline_vars_colors_is_invalid"/>
-    <testcase time="0.109000000000037" classname="tm_g_gh_boxplot" name="tm_g_gh_boxplot_invalid_arguments_throws_an_error_when_hline_vars_labels_is_invalid"/>
-    <testcase time="0.113000000000056" classname="tm_g_gh_boxplot" name="tm_g_gh_boxplot_invalid_arguments_gives_a_deprecation_warning_when_param_var_is_used"/>
-    <testcase time="0.00499999999999545" classname="tm_g_gh_boxplot" name="tm_g_gh_boxplot_invalid_arguments_all_arguments_are_tested"/>
+  <testsuite name="tm_g_gh_boxplot" timestamp="2026-08-26T12:26:52Z" hostname="8189f63693a0" tests="42" skipped="0" failures="0" errors="0" time="2.729">
+    <testcase time="0.125" classname="tm_g_gh_boxplot" name="tm_g_gh_boxplot_can_be_created_with_default_arguments"/>
+    <testcase time="0.00300000000000011" classname="tm_g_gh_boxplot" name="tm_g_gh_boxplot_can_be_created_with_default_arguments"/>
+    <testcase time="0.0169999999999999" classname="tm_g_gh_boxplot" name="tm_g_gh_boxplot_can_be_created_with_choices_selected_arguments"/>
+    <testcase time="0.002" classname="tm_g_gh_boxplot" name="tm_g_gh_boxplot_can_be_created_with_choices_selected_arguments"/>
+    <testcase time="0.012" classname="tm_g_gh_boxplot" name="tm_g_gh_boxplot_can_be_created_with_custom_picks_arguments"/>
+    <testcase time="0.00299999999999989" classname="tm_g_gh_boxplot" name="tm_g_gh_boxplot_can_be_created_with_custom_picks_arguments"/>
+    <testcase time="0.0110000000000001" classname="tm_g_gh_boxplot" name="tm_g_gh_boxplot_handles_different_parameter_combinations"/>
+    <testcase time="0.00299999999999989" classname="tm_g_gh_boxplot" name="tm_g_gh_boxplot_handles_different_parameter_combinations"/>
+    <testcase time="0.012" classname="tm_g_gh_boxplot" name="tm_g_gh_boxplot_accepts_custom_color_and_shape_specifications"/>
+    <testcase time="0.002" classname="tm_g_gh_boxplot" name="tm_g_gh_boxplot_accepts_custom_color_and_shape_specifications"/>
+    <testcase time="0.012" classname="tm_g_gh_boxplot" name="tm_g_gh_boxplot_accepts_line_arguments"/>
+    <testcase time="0.00300000000000011" classname="tm_g_gh_boxplot" name="tm_g_gh_boxplot_accepts_line_arguments"/>
+    <testcase time="0.0139999999999998" classname="tm_g_gh_boxplot" name="tm_g_gh_boxplot_handles_plot_dimensions_correctly"/>
+    <testcase time="0.00300000000000011" classname="tm_g_gh_boxplot" name="tm_g_gh_boxplot_handles_plot_dimensions_correctly"/>
+    <testcase time="0.012" classname="tm_g_gh_boxplot" name="tm_g_gh_boxplot_invalid_arguments_throws_an_error_when_label_is_invalid"/>
+    <testcase time="0.012" classname="tm_g_gh_boxplot" name="tm_g_gh_boxplot_invalid_arguments_throws_an_error_when_dataname_is_invalid"/>
+    <testcase time="0.0110000000000001" classname="tm_g_gh_boxplot" name="tm_g_gh_boxplot_invalid_arguments_throws_an_error_when_param_is_invalid"/>
+    <testcase time="0.0109999999999997" classname="tm_g_gh_boxplot" name="tm_g_gh_boxplot_invalid_arguments_throws_an_error_when_yaxis_var_is_invalid"/>
+    <testcase time="0.012" classname="tm_g_gh_boxplot" name="tm_g_gh_boxplot_invalid_arguments_throws_an_error_when_xaxis_var_is_invalid"/>
+    <testcase time="0.016" classname="tm_g_gh_boxplot" name="tm_g_gh_boxplot_invalid_arguments_throws_an_error_when_facet_var_is_invalid"/>
+    <testcase time="0.0610000000000004" classname="tm_g_gh_boxplot" name="tm_g_gh_boxplot_invalid_arguments_throws_an_error_when_trt_group_is_invalid"/>
+    <testcase time="0.114" classname="tm_g_gh_boxplot" name="tm_g_gh_boxplot_invalid_arguments_throws_an_error_when_color_manual_is_invalid"/>
+    <testcase time="0.113" classname="tm_g_gh_boxplot" name="tm_g_gh_boxplot_invalid_arguments_throws_an_error_when_shape_manual_is_invalid"/>
+    <testcase time="0.106" classname="tm_g_gh_boxplot" name="tm_g_gh_boxplot_invalid_arguments_throws_an_error_when_facet_ncol_is_invalid"/>
+    <testcase time="0.11" classname="tm_g_gh_boxplot" name="tm_g_gh_boxplot_invalid_arguments_throws_an_error_when_loq_legend_is_invalid"/>
+    <testcase time="0.113" classname="tm_g_gh_boxplot" name="tm_g_gh_boxplot_invalid_arguments_throws_an_error_when_rotate_xlab_is_invalid"/>
+    <testcase time="0.116" classname="tm_g_gh_boxplot" name="tm_g_gh_boxplot_invalid_arguments_throws_an_error_when_hline_arb_is_invalid"/>
+    <testcase time="0.115" classname="tm_g_gh_boxplot" name="tm_g_gh_boxplot_invalid_arguments_throws_an_error_when_hline_vars_is_invalid"/>
+    <testcase time="0.114" classname="tm_g_gh_boxplot" name="tm_g_gh_boxplot_invalid_arguments_throws_an_error_when_plot_height_is_invalid"/>
+    <testcase time="0.112" classname="tm_g_gh_boxplot" name="tm_g_gh_boxplot_invalid_arguments_throws_an_error_when_plot_width_is_invalid"/>
+    <testcase time="0.121" classname="tm_g_gh_boxplot" name="tm_g_gh_boxplot_invalid_arguments_throws_an_error_when_font_size_is_invalid"/>
+    <testcase time="0.119" classname="tm_g_gh_boxplot" name="tm_g_gh_boxplot_invalid_arguments_throws_an_error_when_dot_size_is_invalid"/>
+    <testcase time="0.113" classname="tm_g_gh_boxplot" name="tm_g_gh_boxplot_invalid_arguments_throws_an_error_when_alpha_is_invalid"/>
+    <testcase time="0.115" classname="tm_g_gh_boxplot" name="tm_g_gh_boxplot_invalid_arguments_throws_an_error_when_pre_output_is_invalid"/>
+    <testcase time="0.117" classname="tm_g_gh_boxplot" name="tm_g_gh_boxplot_invalid_arguments_throws_an_error_when_post_output_is_invalid"/>
+    <testcase time="0.121" classname="tm_g_gh_boxplot" name="tm_g_gh_boxplot_invalid_arguments_throws_an_error_when_transformators_is_invalid"/>
+    <testcase time="0.131" classname="tm_g_gh_boxplot" name="tm_g_gh_boxplot_invalid_arguments_throws_an_error_when_hline_arb_label_is_invalid"/>
+    <testcase time="0.132" classname="tm_g_gh_boxplot" name="tm_g_gh_boxplot_invalid_arguments_throws_an_error_when_hline_arb_color_is_invalid"/>
+    <testcase time="0.13" classname="tm_g_gh_boxplot" name="tm_g_gh_boxplot_invalid_arguments_throws_an_error_when_hline_vars_colors_is_invalid"/>
+    <testcase time="0.128" classname="tm_g_gh_boxplot" name="tm_g_gh_boxplot_invalid_arguments_throws_an_error_when_hline_vars_labels_is_invalid"/>
+    <testcase time="0.126" classname="tm_g_gh_boxplot" name="tm_g_gh_boxplot_invalid_arguments_gives_a_deprecation_warning_when_param_var_is_used"/>
+    <testcase time="0.00600000000000023" classname="tm_g_gh_boxplot" name="tm_g_gh_boxplot_invalid_arguments_all_arguments_are_tested"/>
   </testsuite>
-  <testsuite name="tm_g_gh_correlationplot" timestamp="2026-08-25T23:23:09Z" hostname="f99244012c5f" tests="47" skipped="0" failures="0" errors="0" time="2.013">
-    <testcase time="0.0579999999999927" classname="tm_g_gh_correlationplot" name="tm_g_gh_correlationplot_can_be_created_with_default_arguments"/>
-    <testcase time="0.00299999999992906" classname="tm_g_gh_correlationplot" name="tm_g_gh_correlationplot_can_be_created_with_default_arguments"/>
-    <testcase time="0.0120000000000573" classname="tm_g_gh_correlationplot" name="tm_g_gh_correlationplot_can_be_created_with_choices_selected_arguments"/>
-    <testcase time="0.00299999999992906" classname="tm_g_gh_correlationplot" name="tm_g_gh_correlationplot_can_be_created_with_choices_selected_arguments"/>
-    <testcase time="0.0120000000000573" classname="tm_g_gh_correlationplot" name="tm_g_gh_correlationplot_can_be_created_with_custom_picks_arguments"/>
-    <testcase time="0.0080000000000382" classname="tm_g_gh_correlationplot" name="tm_g_gh_correlationplot_can_be_created_with_custom_picks_arguments"/>
-    <testcase time="0.0109999999999673" classname="tm_g_gh_correlationplot" name="tm_g_gh_correlationplot_handles_multiple_parameter_combinations"/>
-    <testcase time="0.00300000000004275" classname="tm_g_gh_correlationplot" name="tm_g_gh_correlationplot_handles_multiple_parameter_combinations"/>
-    <testcase time="0.0109999999999673" classname="tm_g_gh_correlationplot" name="tm_g_gh_correlationplot_accepts_custom_color_and_shape_specifications_with_choices_selected"/>
-    <testcase time="0.00199999999995271" classname="tm_g_gh_correlationplot" name="tm_g_gh_correlationplot_accepts_custom_color_and_shape_specifications_with_choices_selected"/>
-    <testcase time="0.0120000000000573" classname="tm_g_gh_correlationplot" name="tm_g_gh_correlationplot_accepts_line_arguments_with_choices_selected"/>
-    <testcase time="0.00199999999995271" classname="tm_g_gh_correlationplot" name="tm_g_gh_correlationplot_accepts_line_arguments_with_choices_selected"/>
-    <testcase time="0.0620000000000118" classname="tm_g_gh_correlationplot" name="tm_g_gh_correlationplot_invalid_arguments_throws_an_error_when_label_is_invalid"/>
-    <testcase time="0.0109999999999673" classname="tm_g_gh_correlationplot" name="tm_g_gh_correlationplot_invalid_arguments_throws_an_error_when_dataname_is_invalid"/>
-    <testcase time="0.0110000000000809" classname="tm_g_gh_correlationplot" name="tm_g_gh_correlationplot_invalid_arguments_throws_an_error_when_xaxis_param_is_invalid"/>
-    <testcase time="0.0109999999999673" classname="tm_g_gh_correlationplot" name="tm_g_gh_correlationplot_invalid_arguments_throws_an_error_when_yaxis_param_is_invalid"/>
-    <testcase time="0.0109999999999673" classname="tm_g_gh_correlationplot" name="tm_g_gh_correlationplot_invalid_arguments_throws_an_error_when_xaxis_var_is_invalid"/>
-    <testcase time="0.0120000000000573" classname="tm_g_gh_correlationplot" name="tm_g_gh_correlationplot_invalid_arguments_throws_an_error_when_yaxis_var_is_invalid"/>
-    <testcase time="0.0119999999999436" classname="tm_g_gh_correlationplot" name="tm_g_gh_correlationplot_invalid_arguments_throws_an_error_when_trt_group_is_invalid"/>
-    <testcase time="0.0610000000000355" classname="tm_g_gh_correlationplot" name="tm_g_gh_correlationplot_invalid_arguments_throws_an_error_when_color_manual_is_invalid"/>
-    <testcase time="0.0579999999999927" classname="tm_g_gh_correlationplot" name="tm_g_gh_correlationplot_invalid_arguments_throws_an_error_when_shape_manual_is_invalid"/>
-    <testcase time="0.0570000000000164" classname="tm_g_gh_correlationplot" name="tm_g_gh_correlationplot_invalid_arguments_throws_an_error_when_facet_ncol_is_invalid"/>
-    <testcase time="0.0599999999999454" classname="tm_g_gh_correlationplot" name="tm_g_gh_correlationplot_invalid_arguments_throws_an_error_when_visit_facet_is_invalid"/>
-    <testcase time="0.05600000000004" classname="tm_g_gh_correlationplot" name="tm_g_gh_correlationplot_invalid_arguments_throws_an_error_when_trt_facet_is_invalid"/>
-    <testcase time="0.05600000000004" classname="tm_g_gh_correlationplot" name="tm_g_gh_correlationplot_invalid_arguments_throws_an_error_when_reg_line_is_invalid"/>
-    <testcase time="0.0589999999999691" classname="tm_g_gh_correlationplot" name="tm_g_gh_correlationplot_invalid_arguments_throws_an_error_when_loq_legend_is_invalid"/>
-    <testcase time="0.0579999999999927" classname="tm_g_gh_correlationplot" name="tm_g_gh_correlationplot_invalid_arguments_throws_an_error_when_rotate_xlab_is_invalid"/>
-    <testcase time="0.0579999999999927" classname="tm_g_gh_correlationplot" name="tm_g_gh_correlationplot_invalid_arguments_throws_an_error_when_hline_arb_is_invalid"/>
-    <testcase time="0.0620000000000118" classname="tm_g_gh_correlationplot" name="tm_g_gh_correlationplot_invalid_arguments_throws_an_error_when_hline_vars_is_invalid"/>
-    <testcase time="0.0579999999999927" classname="tm_g_gh_correlationplot" name="tm_g_gh_correlationplot_invalid_arguments_throws_an_error_when_vline_arb_is_invalid"/>
-    <testcase time="0.0570000000000164" classname="tm_g_gh_correlationplot" name="tm_g_gh_correlationplot_invalid_arguments_throws_an_error_when_vline_vars_is_invalid"/>
-    <testcase time="0.0629999999999882" classname="tm_g_gh_correlationplot" name="tm_g_gh_correlationplot_invalid_arguments_throws_an_error_when_plot_height_is_invalid"/>
-    <testcase time="0.0579999999999927" classname="tm_g_gh_correlationplot" name="tm_g_gh_correlationplot_invalid_arguments_throws_an_error_when_plot_width_is_invalid"/>
-    <testcase time="0.0629999999999882" classname="tm_g_gh_correlationplot" name="tm_g_gh_correlationplot_invalid_arguments_throws_an_error_when_font_size_is_invalid"/>
-    <testcase time="0.05600000000004" classname="tm_g_gh_correlationplot" name="tm_g_gh_correlationplot_invalid_arguments_throws_an_error_when_dot_size_is_invalid"/>
-    <testcase time="0.0579999999999927" classname="tm_g_gh_correlationplot" name="tm_g_gh_correlationplot_invalid_arguments_throws_an_error_when_reg_text_size_is_invalid"/>
-    <testcase time="0.06899999999996" classname="tm_g_gh_correlationplot" name="tm_g_gh_correlationplot_invalid_arguments_throws_an_error_when_pre_output_is_invalid"/>
-    <testcase time="0.0579999999999927" classname="tm_g_gh_correlationplot" name="tm_g_gh_correlationplot_invalid_arguments_throws_an_error_when_post_output_is_invalid"/>
-    <testcase time="0.0640000000000782" classname="tm_g_gh_correlationplot" name="tm_g_gh_correlationplot_invalid_arguments_throws_an_error_when_transformators_is_invalid"/>
-    <testcase time="0.0739999999999554" classname="tm_g_gh_correlationplot" name="tm_g_gh_correlationplot_invalid_arguments_throws_an_error_when_hline_arb_label_is_invalid"/>
-    <testcase time="0.0670000000000073" classname="tm_g_gh_correlationplot" name="tm_g_gh_correlationplot_invalid_arguments_throws_an_error_when_hline_arb_color_is_invalid"/>
-    <testcase time="0.0679999999999836" classname="tm_g_gh_correlationplot" name="tm_g_gh_correlationplot_invalid_arguments_throws_an_error_when_hline_vars_colors_is_invalid"/>
-    <testcase time="0.0729999999999791" classname="tm_g_gh_correlationplot" name="tm_g_gh_correlationplot_invalid_arguments_throws_an_error_when_hline_vars_labels_is_invalid"/>
-    <testcase time="0.0670000000000073" classname="tm_g_gh_correlationplot" name="tm_g_gh_correlationplot_invalid_arguments_throws_an_error_when_vline_arb_label_is_invalid"/>
-    <testcase time="0.0740000000000691" classname="tm_g_gh_correlationplot" name="tm_g_gh_correlationplot_invalid_arguments_throws_an_error_when_vline_arb_color_is_invalid"/>
-    <testcase time="0.0649999999999409" classname="tm_g_gh_correlationplot" name="tm_g_gh_correlationplot_invalid_arguments_throws_an_error_when_vline_vars_colors_is_invalid"/>
-    <testcase time="0.06899999999996" classname="tm_g_gh_correlationplot" name="tm_g_gh_correlationplot_invalid_arguments_throws_an_error_when_vline_vars_labels_is_invalid"/>
+  <testsuite name="tm_g_gh_correlationplot" timestamp="2026-08-26T12:26:55Z" hostname="8189f63693a0" tests="47" skipped="0" failures="0" errors="0" time="2.445">
+    <testcase time="0.0709999999999997" classname="tm_g_gh_correlationplot" name="tm_g_gh_correlationplot_can_be_created_with_default_arguments"/>
+    <testcase time="0.00300000000000011" classname="tm_g_gh_correlationplot" name="tm_g_gh_correlationplot_can_be_created_with_default_arguments"/>
+    <testcase time="0.0129999999999999" classname="tm_g_gh_correlationplot" name="tm_g_gh_correlationplot_can_be_created_with_choices_selected_arguments"/>
+    <testcase time="0.00300000000000011" classname="tm_g_gh_correlationplot" name="tm_g_gh_correlationplot_can_be_created_with_choices_selected_arguments"/>
+    <testcase time="0.0129999999999999" classname="tm_g_gh_correlationplot" name="tm_g_gh_correlationplot_can_be_created_with_custom_picks_arguments"/>
+    <testcase time="0.00300000000000011" classname="tm_g_gh_correlationplot" name="tm_g_gh_correlationplot_can_be_created_with_custom_picks_arguments"/>
+    <testcase time="0.0129999999999999" classname="tm_g_gh_correlationplot" name="tm_g_gh_correlationplot_handles_multiple_parameter_combinations"/>
+    <testcase time="0.00300000000000011" classname="tm_g_gh_correlationplot" name="tm_g_gh_correlationplot_handles_multiple_parameter_combinations"/>
+    <testcase time="0.0190000000000001" classname="tm_g_gh_correlationplot" name="tm_g_gh_correlationplot_accepts_custom_color_and_shape_specifications_with_choices_selected"/>
+    <testcase time="0.00399999999999956" classname="tm_g_gh_correlationplot" name="tm_g_gh_correlationplot_accepts_custom_color_and_shape_specifications_with_choices_selected"/>
+    <testcase time="0.0129999999999999" classname="tm_g_gh_correlationplot" name="tm_g_gh_correlationplot_accepts_line_arguments_with_choices_selected"/>
+    <testcase time="0.00300000000000011" classname="tm_g_gh_correlationplot" name="tm_g_gh_correlationplot_accepts_line_arguments_with_choices_selected"/>
+    <testcase time="0.0780000000000003" classname="tm_g_gh_correlationplot" name="tm_g_gh_correlationplot_invalid_arguments_throws_an_error_when_label_is_invalid"/>
+    <testcase time="0.0110000000000001" classname="tm_g_gh_correlationplot" name="tm_g_gh_correlationplot_invalid_arguments_throws_an_error_when_dataname_is_invalid"/>
+    <testcase time="0.00999999999999979" classname="tm_g_gh_correlationplot" name="tm_g_gh_correlationplot_invalid_arguments_throws_an_error_when_xaxis_param_is_invalid"/>
+    <testcase time="0.0120000000000005" classname="tm_g_gh_correlationplot" name="tm_g_gh_correlationplot_invalid_arguments_throws_an_error_when_yaxis_param_is_invalid"/>
+    <testcase time="0.0129999999999999" classname="tm_g_gh_correlationplot" name="tm_g_gh_correlationplot_invalid_arguments_throws_an_error_when_xaxis_var_is_invalid"/>
+    <testcase time="0.0200000000000005" classname="tm_g_gh_correlationplot" name="tm_g_gh_correlationplot_invalid_arguments_throws_an_error_when_yaxis_var_is_invalid"/>
+    <testcase time="0.0139999999999993" classname="tm_g_gh_correlationplot" name="tm_g_gh_correlationplot_invalid_arguments_throws_an_error_when_trt_group_is_invalid"/>
+    <testcase time="0.0730000000000004" classname="tm_g_gh_correlationplot" name="tm_g_gh_correlationplot_invalid_arguments_throws_an_error_when_color_manual_is_invalid"/>
+    <testcase time="0.0709999999999997" classname="tm_g_gh_correlationplot" name="tm_g_gh_correlationplot_invalid_arguments_throws_an_error_when_shape_manual_is_invalid"/>
+    <testcase time="0.0680000000000005" classname="tm_g_gh_correlationplot" name="tm_g_gh_correlationplot_invalid_arguments_throws_an_error_when_facet_ncol_is_invalid"/>
+    <testcase time="0.0679999999999996" classname="tm_g_gh_correlationplot" name="tm_g_gh_correlationplot_invalid_arguments_throws_an_error_when_visit_facet_is_invalid"/>
+    <testcase time="0.0679999999999996" classname="tm_g_gh_correlationplot" name="tm_g_gh_correlationplot_invalid_arguments_throws_an_error_when_trt_facet_is_invalid"/>
+    <testcase time="0.0650000000000004" classname="tm_g_gh_correlationplot" name="tm_g_gh_correlationplot_invalid_arguments_throws_an_error_when_reg_line_is_invalid"/>
+    <testcase time="0.0679999999999996" classname="tm_g_gh_correlationplot" name="tm_g_gh_correlationplot_invalid_arguments_throws_an_error_when_loq_legend_is_invalid"/>
+    <testcase time="0.069" classname="tm_g_gh_correlationplot" name="tm_g_gh_correlationplot_invalid_arguments_throws_an_error_when_rotate_xlab_is_invalid"/>
+    <testcase time="0.0680000000000005" classname="tm_g_gh_correlationplot" name="tm_g_gh_correlationplot_invalid_arguments_throws_an_error_when_hline_arb_is_invalid"/>
+    <testcase time="0.0679999999999996" classname="tm_g_gh_correlationplot" name="tm_g_gh_correlationplot_invalid_arguments_throws_an_error_when_hline_vars_is_invalid"/>
+    <testcase time="0.0660000000000007" classname="tm_g_gh_correlationplot" name="tm_g_gh_correlationplot_invalid_arguments_throws_an_error_when_vline_arb_is_invalid"/>
+    <testcase time="0.0679999999999996" classname="tm_g_gh_correlationplot" name="tm_g_gh_correlationplot_invalid_arguments_throws_an_error_when_vline_vars_is_invalid"/>
+    <testcase time="0.0670000000000002" classname="tm_g_gh_correlationplot" name="tm_g_gh_correlationplot_invalid_arguments_throws_an_error_when_plot_height_is_invalid"/>
+    <testcase time="0.0729999999999995" classname="tm_g_gh_correlationplot" name="tm_g_gh_correlationplot_invalid_arguments_throws_an_error_when_plot_width_is_invalid"/>
+    <testcase time="0.069" classname="tm_g_gh_correlationplot" name="tm_g_gh_correlationplot_invalid_arguments_throws_an_error_when_font_size_is_invalid"/>
+    <testcase time="0.0700000000000003" classname="tm_g_gh_correlationplot" name="tm_g_gh_correlationplot_invalid_arguments_throws_an_error_when_dot_size_is_invalid"/>
+    <testcase time="0.0700000000000003" classname="tm_g_gh_correlationplot" name="tm_g_gh_correlationplot_invalid_arguments_throws_an_error_when_reg_text_size_is_invalid"/>
+    <testcase time="0.0659999999999998" classname="tm_g_gh_correlationplot" name="tm_g_gh_correlationplot_invalid_arguments_throws_an_error_when_pre_output_is_invalid"/>
+    <testcase time="0.069" classname="tm_g_gh_correlationplot" name="tm_g_gh_correlationplot_invalid_arguments_throws_an_error_when_post_output_is_invalid"/>
+    <testcase time="0.0739999999999998" classname="tm_g_gh_correlationplot" name="tm_g_gh_correlationplot_invalid_arguments_throws_an_error_when_transformators_is_invalid"/>
+    <testcase time="0.196" classname="tm_g_gh_correlationplot" name="tm_g_gh_correlationplot_invalid_arguments_throws_an_error_when_hline_arb_label_is_invalid"/>
+    <testcase time="0.0880000000000001" classname="tm_g_gh_correlationplot" name="tm_g_gh_correlationplot_invalid_arguments_throws_an_error_when_hline_arb_color_is_invalid"/>
+    <testcase time="0.0820000000000007" classname="tm_g_gh_correlationplot" name="tm_g_gh_correlationplot_invalid_arguments_throws_an_error_when_hline_vars_colors_is_invalid"/>
+    <testcase time="0.0729999999999995" classname="tm_g_gh_correlationplot" name="tm_g_gh_correlationplot_invalid_arguments_throws_an_error_when_hline_vars_labels_is_invalid"/>
+    <testcase time="0.0760000000000005" classname="tm_g_gh_correlationplot" name="tm_g_gh_correlationplot_invalid_arguments_throws_an_error_when_vline_arb_label_is_invalid"/>
+    <testcase time="0.0749999999999993" classname="tm_g_gh_correlationplot" name="tm_g_gh_correlationplot_invalid_arguments_throws_an_error_when_vline_arb_color_is_invalid"/>
+    <testcase time="0.0820000000000007" classname="tm_g_gh_correlationplot" name="tm_g_gh_correlationplot_invalid_arguments_throws_an_error_when_vline_vars_colors_is_invalid"/>
+    <testcase time="0.0759999999999996" classname="tm_g_gh_correlationplot" name="tm_g_gh_correlationplot_invalid_arguments_throws_an_error_when_vline_vars_labels_is_invalid"/>
   </testsuite>
-  <testsuite name="tm_g_gh_density_distribution_plot" timestamp="2026-08-25T23:23:11Z" hostname="f99244012c5f" tests="34" skipped="0" failures="0" errors="0" time="1.062">
-    <testcase time="0.0600000000000591" classname="tm_g_gh_density_distribution_plot" name="tm_g_gh_density_distribution_plot_can_be_created_with_default_arguments"/>
-    <testcase time="0.00299999999992906" classname="tm_g_gh_density_distribution_plot" name="tm_g_gh_density_distribution_plot_can_be_created_with_default_arguments"/>
-    <testcase time="0.00900000000001455" classname="tm_g_gh_density_distribution_plot" name="tm_g_gh_density_distribution_plot_can_be_created_with_choices_selected_arguments"/>
-    <testcase time="0.00300000000004275" classname="tm_g_gh_density_distribution_plot" name="tm_g_gh_density_distribution_plot_can_be_created_with_choices_selected_arguments"/>
-    <testcase time="0.0080000000000382" classname="tm_g_gh_density_distribution_plot" name="tm_g_gh_density_distribution_plot_can_be_created_with_custom_picks_arguments"/>
-    <testcase time="0.00299999999992906" classname="tm_g_gh_density_distribution_plot" name="tm_g_gh_density_distribution_plot_can_be_created_with_custom_picks_arguments"/>
-    <testcase time="0.0080000000000382" classname="tm_g_gh_density_distribution_plot" name="tm_g_gh_density_distribution_plot_handles_different_parameter_combinations"/>
-    <testcase time="0.00300000000004275" classname="tm_g_gh_density_distribution_plot" name="tm_g_gh_density_distribution_plot_handles_different_parameter_combinations"/>
-    <testcase time="0.00799999999992451" classname="tm_g_gh_density_distribution_plot" name="tm_g_gh_density_distribution_plot_accepts_custom_color_specifications"/>
-    <testcase time="0.00300000000004275" classname="tm_g_gh_density_distribution_plot" name="tm_g_gh_density_distribution_plot_accepts_custom_color_specifications"/>
-    <testcase time="0.0080000000000382" classname="tm_g_gh_density_distribution_plot" name="tm_g_gh_density_distribution_plot_accepts_line_arguments"/>
-    <testcase time="0.00299999999992906" classname="tm_g_gh_density_distribution_plot" name="tm_g_gh_density_distribution_plot_accepts_line_arguments"/>
-    <testcase time="0.00900000000001455" classname="tm_g_gh_density_distribution_plot" name="tm_g_gh_density_distribution_plot_handles_plot_dimensions_correctly"/>
-    <testcase time="0.00300000000004275" classname="tm_g_gh_density_distribution_plot" name="tm_g_gh_density_distribution_plot_handles_plot_dimensions_correctly"/>
-    <testcase time="0.00999999999999091" classname="tm_g_gh_density_distribution_plot" name="tm_g_gh_density_distribution_plot_invalid_arguments_throws_an_error_when_label_is_invalid"/>
-    <testcase time="0.00999999999999091" classname="tm_g_gh_density_distribution_plot" name="tm_g_gh_density_distribution_plot_invalid_arguments_throws_an_error_when_dataname_is_invalid"/>
-    <testcase time="0.00999999999999091" classname="tm_g_gh_density_distribution_plot" name="tm_g_gh_density_distribution_plot_invalid_arguments_throws_an_error_when_param_is_invalid"/>
-    <testcase time="0.00999999999999091" classname="tm_g_gh_density_distribution_plot" name="tm_g_gh_density_distribution_plot_invalid_arguments_throws_an_error_when_xaxis_var_is_invalid"/>
-    <testcase time="0.00999999999999091" classname="tm_g_gh_density_distribution_plot" name="tm_g_gh_density_distribution_plot_invalid_arguments_throws_an_error_when_trt_group_is_invalid"/>
-    <testcase time="0.0639999999999645" classname="tm_g_gh_density_distribution_plot" name="tm_g_gh_density_distribution_plot_invalid_arguments_throws_an_error_when_color_manual_is_invalid"/>
-    <testcase time="0.0529999999999973" classname="tm_g_gh_density_distribution_plot" name="tm_g_gh_density_distribution_plot_invalid_arguments_throws_an_error_when_comb_line_is_invalid"/>
-    <testcase time="0.0570000000000164" classname="tm_g_gh_density_distribution_plot" name="tm_g_gh_density_distribution_plot_invalid_arguments_throws_an_error_when_font_size_is_invalid"/>
-    <testcase time="0.0640000000000782" classname="tm_g_gh_density_distribution_plot" name="tm_g_gh_density_distribution_plot_invalid_arguments_throws_an_error_when_line_size_is_invalid"/>
-    <testcase time="0.0559999999999263" classname="tm_g_gh_density_distribution_plot" name="tm_g_gh_density_distribution_plot_invalid_arguments_throws_an_error_when_hline_arb_is_invalid"/>
-    <testcase time="0.05600000000004" classname="tm_g_gh_density_distribution_plot" name="tm_g_gh_density_distribution_plot_invalid_arguments_throws_an_error_when_comb_line_is_invalid"/>
-    <testcase time="0.0610000000000355" classname="tm_g_gh_density_distribution_plot" name="tm_g_gh_density_distribution_plot_invalid_arguments_throws_an_error_when_facet_ncol_is_invalid"/>
-    <testcase time="0.0539999999999736" classname="tm_g_gh_density_distribution_plot" name="tm_g_gh_density_distribution_plot_invalid_arguments_throws_an_error_when_rotate_xlab_is_invalid"/>
-    <testcase time="0.0570000000000164" classname="tm_g_gh_density_distribution_plot" name="tm_g_gh_density_distribution_plot_invalid_arguments_throws_an_error_when_plot_height_is_invalid"/>
-    <testcase time="0.0569999999999027" classname="tm_g_gh_density_distribution_plot" name="tm_g_gh_density_distribution_plot_invalid_arguments_throws_an_error_when_plot_width_is_invalid"/>
-    <testcase time="0.0600000000000591" classname="tm_g_gh_density_distribution_plot" name="tm_g_gh_density_distribution_plot_invalid_arguments_throws_an_error_when_pre_output_is_invalid"/>
-    <testcase time="0.05600000000004" classname="tm_g_gh_density_distribution_plot" name="tm_g_gh_density_distribution_plot_invalid_arguments_throws_an_error_when_post_output_is_invalid"/>
-    <testcase time="0.0599999999999454" classname="tm_g_gh_density_distribution_plot" name="tm_g_gh_density_distribution_plot_invalid_arguments_throws_an_error_when_transformators_is_invalid"/>
-    <testcase time="0.0650000000000546" classname="tm_g_gh_density_distribution_plot" name="tm_g_gh_density_distribution_plot_invalid_arguments_throws_error_when_hline_arb_label_is_invalid"/>
-    <testcase time="0.0609999999999218" classname="tm_g_gh_density_distribution_plot" name="tm_g_gh_density_distribution_plot_invalid_arguments_throws_error_when_hline_arb_color_is_invalid"/>
+  <testsuite name="tm_g_gh_density_distribution_plot" timestamp="2026-08-26T12:26:58Z" hostname="8189f63693a0" tests="34" skipped="0" failures="0" errors="0" time="1.116">
+    <testcase time="0.0590000000000002" classname="tm_g_gh_density_distribution_plot" name="tm_g_gh_density_distribution_plot_can_be_created_with_default_arguments"/>
+    <testcase time="0.00300000000000011" classname="tm_g_gh_density_distribution_plot" name="tm_g_gh_density_distribution_plot_can_be_created_with_default_arguments"/>
+    <testcase time="0.00999999999999979" classname="tm_g_gh_density_distribution_plot" name="tm_g_gh_density_distribution_plot_can_be_created_with_choices_selected_arguments"/>
+    <testcase time="0.00300000000000011" classname="tm_g_gh_density_distribution_plot" name="tm_g_gh_density_distribution_plot_can_be_created_with_choices_selected_arguments"/>
+    <testcase time="0.0139999999999993" classname="tm_g_gh_density_distribution_plot" name="tm_g_gh_density_distribution_plot_can_be_created_with_custom_picks_arguments"/>
+    <testcase time="0.00300000000000011" classname="tm_g_gh_density_distribution_plot" name="tm_g_gh_density_distribution_plot_can_be_created_with_custom_picks_arguments"/>
+    <testcase time="0.00900000000000034" classname="tm_g_gh_density_distribution_plot" name="tm_g_gh_density_distribution_plot_handles_different_parameter_combinations"/>
+    <testcase time="0.00300000000000011" classname="tm_g_gh_density_distribution_plot" name="tm_g_gh_density_distribution_plot_handles_different_parameter_combinations"/>
+    <testcase time="0.00899999999999945" classname="tm_g_gh_density_distribution_plot" name="tm_g_gh_density_distribution_plot_accepts_custom_color_specifications"/>
+    <testcase time="0.00300000000000011" classname="tm_g_gh_density_distribution_plot" name="tm_g_gh_density_distribution_plot_accepts_custom_color_specifications"/>
+    <testcase time="0.00900000000000034" classname="tm_g_gh_density_distribution_plot" name="tm_g_gh_density_distribution_plot_accepts_line_arguments"/>
+    <testcase time="0.00300000000000011" classname="tm_g_gh_density_distribution_plot" name="tm_g_gh_density_distribution_plot_accepts_line_arguments"/>
+    <testcase time="0.00899999999999945" classname="tm_g_gh_density_distribution_plot" name="tm_g_gh_density_distribution_plot_handles_plot_dimensions_correctly"/>
+    <testcase time="0.00300000000000011" classname="tm_g_gh_density_distribution_plot" name="tm_g_gh_density_distribution_plot_handles_plot_dimensions_correctly"/>
+    <testcase time="0.0110000000000001" classname="tm_g_gh_density_distribution_plot" name="tm_g_gh_density_distribution_plot_invalid_arguments_throws_an_error_when_label_is_invalid"/>
+    <testcase time="0.0110000000000001" classname="tm_g_gh_density_distribution_plot" name="tm_g_gh_density_distribution_plot_invalid_arguments_throws_an_error_when_dataname_is_invalid"/>
+    <testcase time="0.00999999999999979" classname="tm_g_gh_density_distribution_plot" name="tm_g_gh_density_distribution_plot_invalid_arguments_throws_an_error_when_param_is_invalid"/>
+    <testcase time="0.0120000000000005" classname="tm_g_gh_density_distribution_plot" name="tm_g_gh_density_distribution_plot_invalid_arguments_throws_an_error_when_xaxis_var_is_invalid"/>
+    <testcase time="0.0110000000000001" classname="tm_g_gh_density_distribution_plot" name="tm_g_gh_density_distribution_plot_invalid_arguments_throws_an_error_when_trt_group_is_invalid"/>
+    <testcase time="0.0609999999999999" classname="tm_g_gh_density_distribution_plot" name="tm_g_gh_density_distribution_plot_invalid_arguments_throws_an_error_when_color_manual_is_invalid"/>
+    <testcase time="0.0609999999999999" classname="tm_g_gh_density_distribution_plot" name="tm_g_gh_density_distribution_plot_invalid_arguments_throws_an_error_when_comb_line_is_invalid"/>
+    <testcase time="0.0609999999999999" classname="tm_g_gh_density_distribution_plot" name="tm_g_gh_density_distribution_plot_invalid_arguments_throws_an_error_when_font_size_is_invalid"/>
+    <testcase time="0.0659999999999998" classname="tm_g_gh_density_distribution_plot" name="tm_g_gh_density_distribution_plot_invalid_arguments_throws_an_error_when_line_size_is_invalid"/>
+    <testcase time="0.0609999999999999" classname="tm_g_gh_density_distribution_plot" name="tm_g_gh_density_distribution_plot_invalid_arguments_throws_an_error_when_hline_arb_is_invalid"/>
+    <testcase time="0.0579999999999998" classname="tm_g_gh_density_distribution_plot" name="tm_g_gh_density_distribution_plot_invalid_arguments_throws_an_error_when_comb_line_is_invalid"/>
+    <testcase time="0.0600000000000005" classname="tm_g_gh_density_distribution_plot" name="tm_g_gh_density_distribution_plot_invalid_arguments_throws_an_error_when_facet_ncol_is_invalid"/>
+    <testcase time="0.0569999999999995" classname="tm_g_gh_density_distribution_plot" name="tm_g_gh_density_distribution_plot_invalid_arguments_throws_an_error_when_rotate_xlab_is_invalid"/>
+    <testcase time="0.0609999999999999" classname="tm_g_gh_density_distribution_plot" name="tm_g_gh_density_distribution_plot_invalid_arguments_throws_an_error_when_plot_height_is_invalid"/>
+    <testcase time="0.0620000000000003" classname="tm_g_gh_density_distribution_plot" name="tm_g_gh_density_distribution_plot_invalid_arguments_throws_an_error_when_plot_width_is_invalid"/>
+    <testcase time="0.0569999999999995" classname="tm_g_gh_density_distribution_plot" name="tm_g_gh_density_distribution_plot_invalid_arguments_throws_an_error_when_pre_output_is_invalid"/>
+    <testcase time="0.0630000000000006" classname="tm_g_gh_density_distribution_plot" name="tm_g_gh_density_distribution_plot_invalid_arguments_throws_an_error_when_post_output_is_invalid"/>
+    <testcase time="0.0629999999999997" classname="tm_g_gh_density_distribution_plot" name="tm_g_gh_density_distribution_plot_invalid_arguments_throws_an_error_when_transformators_is_invalid"/>
+    <testcase time="0.0620000000000003" classname="tm_g_gh_density_distribution_plot" name="tm_g_gh_density_distribution_plot_invalid_arguments_throws_error_when_hline_arb_label_is_invalid"/>
+    <testcase time="0.0679999999999996" classname="tm_g_gh_density_distribution_plot" name="tm_g_gh_density_distribution_plot_invalid_arguments_throws_error_when_hline_arb_color_is_invalid"/>
   </testsuite>
-  <testsuite name="tm_g_gh_lineplot" timestamp="2026-08-25T23:23:12Z" hostname="f99244012c5f" tests="36" skipped="0" failures="0" errors="0" time="2.148">
-    <testcase time="0.0990000000000464" classname="tm_g_gh_lineplot" name="tm_g_gh_lineplot_can_be_created_with_default_arguments"/>
-    <testcase time="0.00299999999992906" classname="tm_g_gh_lineplot" name="tm_g_gh_lineplot_can_be_created_with_default_arguments"/>
-    <testcase time="0.0100000000001046" classname="tm_g_gh_lineplot" name="tm_g_gh_lineplot_can_be_created_with_choices_selected_arguments"/>
-    <testcase time="0.00299999999992906" classname="tm_g_gh_lineplot" name="tm_g_gh_lineplot_can_be_created_with_choices_selected_arguments"/>
-    <testcase time="0.00999999999999091" classname="tm_g_gh_lineplot" name="tm_g_gh_lineplot_can_be_created_with_custom_picks_arguments"/>
-    <testcase time="0.00200000000006639" classname="tm_g_gh_lineplot" name="tm_g_gh_lineplot_can_be_created_with_custom_picks_arguments"/>
-    <testcase time="0.00999999999999091" classname="tm_g_gh_lineplot" name="tm_g_gh_lineplot_handles_multiple_parameter_combinations"/>
-    <testcase time="0.00299999999992906" classname="tm_g_gh_lineplot" name="tm_g_gh_lineplot_handles_multiple_parameter_combinations"/>
-    <testcase time="0.00999999999999091" classname="tm_g_gh_lineplot" name="tm_g_gh_lineplot_accepts_custom_color_specifications_with_picks"/>
-    <testcase time="0.00200000000006639" classname="tm_g_gh_lineplot" name="tm_g_gh_lineplot_accepts_custom_color_specifications_with_picks"/>
-    <testcase time="0.0109999999999673" classname="tm_g_gh_lineplot" name="tm_g_gh_lineplot_accepts_line_arguments_with_picks"/>
-    <testcase time="0.00300000000004275" classname="tm_g_gh_lineplot" name="tm_g_gh_lineplot_accepts_line_arguments_with_picks"/>
-    <testcase time="0.00999999999999091" classname="tm_g_gh_lineplot" name="tm_g_gh_lineplot_invalid_arguments_throws_an_error_when_label_is_invalid"/>
-    <testcase time="0.00999999999999091" classname="tm_g_gh_lineplot" name="tm_g_gh_lineplot_invalid_arguments_throws_an_error_when_dataname_is_invalid"/>
-    <testcase time="0.00900000000001455" classname="tm_g_gh_lineplot" name="tm_g_gh_lineplot_invalid_arguments_throws_an_error_when_param_is_invalid"/>
-    <testcase time="0.0109999999999673" classname="tm_g_gh_lineplot" name="tm_g_gh_lineplot_invalid_arguments_throws_an_error_when_param_var_label_is_invalid"/>
-    <testcase time="0.00999999999999091" classname="tm_g_gh_lineplot" name="tm_g_gh_lineplot_invalid_arguments_throws_an_error_when_xaxis_var_is_invalid"/>
-    <testcase time="0.0600000000000591" classname="tm_g_gh_lineplot" name="tm_g_gh_lineplot_invalid_arguments_throws_an_error_when_yaxis_var_is_invalid"/>
-    <testcase time="0.0529999999999973" classname="tm_g_gh_lineplot" name="tm_g_gh_lineplot_invalid_arguments_throws_an_error_when_trt_group_is_invalid"/>
-    <testcase time="0.107999999999947" classname="tm_g_gh_lineplot" name="tm_g_gh_lineplot_invalid_arguments_throws_an_error_when_stat_is_invalid"/>
-    <testcase time="0.104000000000042" classname="tm_g_gh_lineplot" name="tm_g_gh_lineplot_invalid_arguments_throws_an_error_when_color_manual_is_invalid"/>
-    <testcase time="0.108999999999924" classname="tm_g_gh_lineplot" name="tm_g_gh_lineplot_invalid_arguments_throws_an_error_when_rotate_xlab_is_invalid"/>
-    <testcase time="0.105000000000018" classname="tm_g_gh_lineplot" name="tm_g_gh_lineplot_invalid_arguments_throws_an_error_when_hline_arb_is_invalid"/>
-    <testcase time="0.11099999999999" classname="tm_g_gh_lineplot" name="tm_g_gh_lineplot_invalid_arguments_throws_an_error_when_plot_height_is_invalid"/>
-    <testcase time="0.110000000000014" classname="tm_g_gh_lineplot" name="tm_g_gh_lineplot_invalid_arguments_throws_an_error_when_plot_width_is_invalid"/>
-    <testcase time="0.100999999999999" classname="tm_g_gh_lineplot" name="tm_g_gh_lineplot_invalid_arguments_throws_an_error_when_plot_font_size_is_invalid"/>
-    <testcase time="0.109000000000037" classname="tm_g_gh_lineplot" name="tm_g_gh_lineplot_invalid_arguments_throws_an_error_when_dodge_is_invalid"/>
-    <testcase time="0.0979999999999563" classname="tm_g_gh_lineplot" name="tm_g_gh_lineplot_invalid_arguments_throws_an_error_when_count_threshold_is_invalid"/>
-    <testcase time="0.108000000000061" classname="tm_g_gh_lineplot" name="tm_g_gh_lineplot_invalid_arguments_throws_an_error_when_table_font_size_is_invalid"/>
-    <testcase time="0.110000000000014" classname="tm_g_gh_lineplot" name="tm_g_gh_lineplot_invalid_arguments_throws_an_error_when_dot_size_is_invalid"/>
-    <testcase time="0.0979999999999563" classname="tm_g_gh_lineplot" name="tm_g_gh_lineplot_invalid_arguments_throws_an_error_when_plot_relative_height_value_is_invalid"/>
-    <testcase time="0.105000000000018" classname="tm_g_gh_lineplot" name="tm_g_gh_lineplot_invalid_arguments_throws_an_error_when_pre_output_is_invalid"/>
-    <testcase time="0.102999999999952" classname="tm_g_gh_lineplot" name="tm_g_gh_lineplot_invalid_arguments_throws_an_error_when_post_output_is_invalid"/>
-    <testcase time="0.107000000000085" classname="tm_g_gh_lineplot" name="tm_g_gh_lineplot_invalid_arguments_throws_an_error_when_transformators_is_invalid"/>
-    <testcase time="0.126999999999953" classname="tm_g_gh_lineplot" name="tm_g_gh_lineplot_invalid_arguments_throws_an_error_when_hline_arb_label_is_invalid"/>
-    <testcase time="0.105999999999995" classname="tm_g_gh_lineplot" name="tm_g_gh_lineplot_invalid_arguments_throws_an_error_when_hline_arb_color_is_invalid"/>
+  <testsuite name="tm_g_gh_lineplot" timestamp="2026-08-26T12:26:59Z" hostname="8189f63693a0" tests="36" skipped="0" failures="0" errors="0" time="2.223">
+    <testcase time="0.0980000000000008" classname="tm_g_gh_lineplot" name="tm_g_gh_lineplot_can_be_created_with_default_arguments"/>
+    <testcase time="0.00300000000000011" classname="tm_g_gh_lineplot" name="tm_g_gh_lineplot_can_be_created_with_default_arguments"/>
+    <testcase time="0.0119999999999987" classname="tm_g_gh_lineplot" name="tm_g_gh_lineplot_can_be_created_with_choices_selected_arguments"/>
+    <testcase time="0.00300000000000011" classname="tm_g_gh_lineplot" name="tm_g_gh_lineplot_can_be_created_with_choices_selected_arguments"/>
+    <testcase time="0.0140000000000011" classname="tm_g_gh_lineplot" name="tm_g_gh_lineplot_can_be_created_with_custom_picks_arguments"/>
+    <testcase time="0.00299999999999834" classname="tm_g_gh_lineplot" name="tm_g_gh_lineplot_can_be_created_with_custom_picks_arguments"/>
+    <testcase time="0.011000000000001" classname="tm_g_gh_lineplot" name="tm_g_gh_lineplot_handles_multiple_parameter_combinations"/>
+    <testcase time="0.00300000000000011" classname="tm_g_gh_lineplot" name="tm_g_gh_lineplot_handles_multiple_parameter_combinations"/>
+    <testcase time="0.00999999999999979" classname="tm_g_gh_lineplot" name="tm_g_gh_lineplot_accepts_custom_color_specifications_with_picks"/>
+    <testcase time="0.00300000000000011" classname="tm_g_gh_lineplot" name="tm_g_gh_lineplot_accepts_custom_color_specifications_with_picks"/>
+    <testcase time="0.0109999999999992" classname="tm_g_gh_lineplot" name="tm_g_gh_lineplot_accepts_line_arguments_with_picks"/>
+    <testcase time="0.00300000000000011" classname="tm_g_gh_lineplot" name="tm_g_gh_lineplot_accepts_line_arguments_with_picks"/>
+    <testcase time="0.011000000000001" classname="tm_g_gh_lineplot" name="tm_g_gh_lineplot_invalid_arguments_throws_an_error_when_label_is_invalid"/>
+    <testcase time="0.0109999999999992" classname="tm_g_gh_lineplot" name="tm_g_gh_lineplot_invalid_arguments_throws_an_error_when_dataname_is_invalid"/>
+    <testcase time="0.00999999999999979" classname="tm_g_gh_lineplot" name="tm_g_gh_lineplot_invalid_arguments_throws_an_error_when_param_is_invalid"/>
+    <testcase time="0.011000000000001" classname="tm_g_gh_lineplot" name="tm_g_gh_lineplot_invalid_arguments_throws_an_error_when_param_var_label_is_invalid"/>
+    <testcase time="0.0109999999999992" classname="tm_g_gh_lineplot" name="tm_g_gh_lineplot_invalid_arguments_throws_an_error_when_xaxis_var_is_invalid"/>
+    <testcase time="0.0579999999999998" classname="tm_g_gh_lineplot" name="tm_g_gh_lineplot_invalid_arguments_throws_an_error_when_yaxis_var_is_invalid"/>
+    <testcase time="0.0600000000000005" classname="tm_g_gh_lineplot" name="tm_g_gh_lineplot_invalid_arguments_throws_an_error_when_trt_group_is_invalid"/>
+    <testcase time="0.103999999999999" classname="tm_g_gh_lineplot" name="tm_g_gh_lineplot_invalid_arguments_throws_an_error_when_stat_is_invalid"/>
+    <testcase time="0.113000000000001" classname="tm_g_gh_lineplot" name="tm_g_gh_lineplot_invalid_arguments_throws_an_error_when_color_manual_is_invalid"/>
+    <testcase time="0.110999999999999" classname="tm_g_gh_lineplot" name="tm_g_gh_lineplot_invalid_arguments_throws_an_error_when_rotate_xlab_is_invalid"/>
+    <testcase time="0.114000000000001" classname="tm_g_gh_lineplot" name="tm_g_gh_lineplot_invalid_arguments_throws_an_error_when_hline_arb_is_invalid"/>
+    <testcase time="0.109" classname="tm_g_gh_lineplot" name="tm_g_gh_lineplot_invalid_arguments_throws_an_error_when_plot_height_is_invalid"/>
+    <testcase time="0.110999999999999" classname="tm_g_gh_lineplot" name="tm_g_gh_lineplot_invalid_arguments_throws_an_error_when_plot_width_is_invalid"/>
+    <testcase time="0.111000000000001" classname="tm_g_gh_lineplot" name="tm_g_gh_lineplot_invalid_arguments_throws_an_error_when_plot_font_size_is_invalid"/>
+    <testcase time="0.107000000000001" classname="tm_g_gh_lineplot" name="tm_g_gh_lineplot_invalid_arguments_throws_an_error_when_dodge_is_invalid"/>
+    <testcase time="0.106" classname="tm_g_gh_lineplot" name="tm_g_gh_lineplot_invalid_arguments_throws_an_error_when_count_threshold_is_invalid"/>
+    <testcase time="0.110999999999999" classname="tm_g_gh_lineplot" name="tm_g_gh_lineplot_invalid_arguments_throws_an_error_when_table_font_size_is_invalid"/>
+    <testcase time="0.107000000000001" classname="tm_g_gh_lineplot" name="tm_g_gh_lineplot_invalid_arguments_throws_an_error_when_dot_size_is_invalid"/>
+    <testcase time="0.106" classname="tm_g_gh_lineplot" name="tm_g_gh_lineplot_invalid_arguments_throws_an_error_when_plot_relative_height_value_is_invalid"/>
+    <testcase time="0.110999999999999" classname="tm_g_gh_lineplot" name="tm_g_gh_lineplot_invalid_arguments_throws_an_error_when_pre_output_is_invalid"/>
+    <testcase time="0.111000000000001" classname="tm_g_gh_lineplot" name="tm_g_gh_lineplot_invalid_arguments_throws_an_error_when_post_output_is_invalid"/>
+    <testcase time="0.107000000000001" classname="tm_g_gh_lineplot" name="tm_g_gh_lineplot_invalid_arguments_throws_an_error_when_transformators_is_invalid"/>
+    <testcase time="0.116" classname="tm_g_gh_lineplot" name="tm_g_gh_lineplot_invalid_arguments_throws_an_error_when_hline_arb_label_is_invalid"/>
+    <testcase time="0.122" classname="tm_g_gh_lineplot" name="tm_g_gh_lineplot_invalid_arguments_throws_an_error_when_hline_arb_color_is_invalid"/>
   </testsuite>
-  <testsuite name="tm_g_gh_spaghettiplot" timestamp="2026-08-25T23:23:14Z" hostname="f99244012c5f" tests="42" skipped="0" failures="0" errors="0" time="1.468">
-    <testcase time="0.0629999999999882" classname="tm_g_gh_spaghettiplot" name="tm_g_gh_spaghettiplot_can_be_created_with_default_arguments"/>
-    <testcase time="0.00300000000004275" classname="tm_g_gh_spaghettiplot" name="tm_g_gh_spaghettiplot_can_be_created_with_default_arguments"/>
-    <testcase time="0.00999999999999091" classname="tm_g_gh_spaghettiplot" name="tm_g_gh_spaghettiplot_can_be_created_with_choices_selected_arguments"/>
-    <testcase time="0.00299999999992906" classname="tm_g_gh_spaghettiplot" name="tm_g_gh_spaghettiplot_can_be_created_with_choices_selected_arguments"/>
-    <testcase time="0.0100000000001046" classname="tm_g_gh_spaghettiplot" name="tm_g_gh_spaghettiplot_can_be_created_with_custom_picks_arguments"/>
-    <testcase time="0.00199999999995271" classname="tm_g_gh_spaghettiplot" name="tm_g_gh_spaghettiplot_can_be_created_with_custom_picks_arguments"/>
-    <testcase time="0.00999999999999091" classname="tm_g_gh_spaghettiplot" name="tm_g_gh_spaghettiplot_handles_multiple_parameter_combinations"/>
-    <testcase time="0.00300000000004275" classname="tm_g_gh_spaghettiplot" name="tm_g_gh_spaghettiplot_handles_multiple_parameter_combinations"/>
-    <testcase time="0.00900000000001455" classname="tm_g_gh_spaghettiplot" name="tm_g_gh_spaghettiplot_accepts_custom_color_specifications_with_choices_selected"/>
-    <testcase time="0.00299999999992906" classname="tm_g_gh_spaghettiplot" name="tm_g_gh_spaghettiplot_accepts_custom_color_specifications_with_choices_selected"/>
-    <testcase time="0.00999999999999091" classname="tm_g_gh_spaghettiplot" name="tm_g_gh_spaghettiplot_accepts_line_arguments_with_choices_selected"/>
-    <testcase time="0.00300000000004275" classname="tm_g_gh_spaghettiplot" name="tm_g_gh_spaghettiplot_accepts_line_arguments_with_choices_selected"/>
-    <testcase time="0.00999999999999091" classname="tm_g_gh_spaghettiplot" name="tm_g_gh_spaghettiplot_invalid_arguments_throws_an_error_when_label_is_invalid"/>
-    <testcase time="0.00999999999999091" classname="tm_g_gh_spaghettiplot" name="tm_g_gh_spaghettiplot_invalid_arguments_throws_an_error_when_dataname_is_invalid"/>
-    <testcase time="0.00900000000001455" classname="tm_g_gh_spaghettiplot" name="tm_g_gh_spaghettiplot_invalid_arguments_throws_an_error_when_param_var_label_is_invalid"/>
-    <testcase time="0.00900000000001455" classname="tm_g_gh_spaghettiplot" name="tm_g_gh_spaghettiplot_invalid_arguments_throws_an_error_when_idvar_is_invalid"/>
-    <testcase time="0.00999999999999091" classname="tm_g_gh_spaghettiplot" name="tm_g_gh_spaghettiplot_invalid_arguments_throws_an_error_when_group_stats_is_invalid"/>
-    <testcase time="0.00900000000001455" classname="tm_g_gh_spaghettiplot" name="tm_g_gh_spaghettiplot_invalid_arguments_throws_an_error_when_param_is_invalid"/>
-    <testcase time="0.00999999999999091" classname="tm_g_gh_spaghettiplot" name="tm_g_gh_spaghettiplot_invalid_arguments_throws_an_error_when_xaxis_var_is_invalid"/>
-    <testcase time="0.0109999999999673" classname="tm_g_gh_spaghettiplot" name="tm_g_gh_spaghettiplot_invalid_arguments_throws_an_error_when_yaxis_var_is_invalid"/>
-    <testcase time="0.0109999999999673" classname="tm_g_gh_spaghettiplot" name="tm_g_gh_spaghettiplot_invalid_arguments_throws_an_error_when_trt_group_is_invalid"/>
-    <testcase time="0.0620000000000118" classname="tm_g_gh_spaghettiplot" name="tm_g_gh_spaghettiplot_invalid_arguments_throws_an_error_when_xaxis_var_level_is_invalid"/>
-    <testcase time="0.0579999999999927" classname="tm_g_gh_spaghettiplot" name="tm_g_gh_spaghettiplot_invalid_arguments_throws_an_error_when_trt_group_level_is_invalid"/>
-    <testcase time="0.0570000000000164" classname="tm_g_gh_spaghettiplot" name="tm_g_gh_spaghettiplot_invalid_arguments_throws_an_error_when_man_color_is_invalid"/>
-    <testcase time="0.0610000000000355" classname="tm_g_gh_spaghettiplot" name="tm_g_gh_spaghettiplot_invalid_arguments_throws_an_error_when_color_comb_is_invalid"/>
-    <testcase time="0.0570000000000164" classname="tm_g_gh_spaghettiplot" name="tm_g_gh_spaghettiplot_invalid_arguments_throws_an_error_when_hline_arb_is_invalid"/>
-    <testcase time="0.0570000000000164" classname="tm_g_gh_spaghettiplot" name="tm_g_gh_spaghettiplot_invalid_arguments_throws_an_error_when_hline_vars_is_invalid"/>
-    <testcase time="0.0620000000000118" classname="tm_g_gh_spaghettiplot" name="tm_g_gh_spaghettiplot_invalid_arguments_throws_an_error_when_facet_ncol_is_invalid"/>
-    <testcase time="0.0539999999999736" classname="tm_g_gh_spaghettiplot" name="tm_g_gh_spaghettiplot_invalid_arguments_throws_an_error_when_free_x_is_invalid"/>
-    <testcase time="0.05499999999995" classname="tm_g_gh_spaghettiplot" name="tm_g_gh_spaghettiplot_invalid_arguments_throws_an_error_when_rotate_xlab_is_invalid"/>
-    <testcase time="0.0639999999999645" classname="tm_g_gh_spaghettiplot" name="tm_g_gh_spaghettiplot_invalid_arguments_throws_an_error_when_plot_height_is_invalid"/>
-    <testcase time="0.05600000000004" classname="tm_g_gh_spaghettiplot" name="tm_g_gh_spaghettiplot_invalid_arguments_throws_an_error_when_plot_width_is_invalid"/>
-    <testcase time="0.0579999999999927" classname="tm_g_gh_spaghettiplot" name="tm_g_gh_spaghettiplot_invalid_arguments_throws_an_error_when_font_size_is_invalid"/>
-    <testcase time="0.0640000000000782" classname="tm_g_gh_spaghettiplot" name="tm_g_gh_spaghettiplot_invalid_arguments_throws_an_error_when_dot_size_is_invalid"/>
-    <testcase time="0.0559999999999263" classname="tm_g_gh_spaghettiplot" name="tm_g_gh_spaghettiplot_invalid_arguments_throws_an_error_when_alpha_is_invalid"/>
-    <testcase time="0.0550000000000637" classname="tm_g_gh_spaghettiplot" name="tm_g_gh_spaghettiplot_invalid_arguments_throws_an_error_when_pre_output_is_invalid"/>
-    <testcase time="0.0639999999999645" classname="tm_g_gh_spaghettiplot" name="tm_g_gh_spaghettiplot_invalid_arguments_throws_an_error_when_post_output_is_invalid"/>
-    <testcase time="0.0539999999999736" classname="tm_g_gh_spaghettiplot" name="tm_g_gh_spaghettiplot_invalid_arguments_throws_an_error_when_transformators_is_invalid"/>
-    <testcase time="0.0620000000000118" classname="tm_g_gh_spaghettiplot" name="tm_g_gh_spaghettiplot_invalid_arguments_throws_an_error_when_hline_arb_label_is_invalid"/>
-    <testcase time="0.07000000000005" classname="tm_g_gh_spaghettiplot" name="tm_g_gh_spaghettiplot_invalid_arguments_throws_an_error_when_hline_arb_color_is_invalid"/>
-    <testcase time="0.0609999999999218" classname="tm_g_gh_spaghettiplot" name="tm_g_gh_spaghettiplot_invalid_arguments_throws_an_error_when_hline_vars_colors_is_invalid"/>
-    <testcase time="0.0629999999999882" classname="tm_g_gh_spaghettiplot" name="tm_g_gh_spaghettiplot_invalid_arguments_throws_an_error_when_hline_vars_labels_is_invalid"/>
+  <testsuite name="tm_g_gh_spaghettiplot" timestamp="2026-08-26T12:27:01Z" hostname="8189f63693a0" tests="42" skipped="0" failures="0" errors="0" time="1.551">
+    <testcase time="0.0579999999999998" classname="tm_g_gh_spaghettiplot" name="tm_g_gh_spaghettiplot_can_be_created_with_default_arguments"/>
+    <testcase time="0.00300000000000011" classname="tm_g_gh_spaghettiplot" name="tm_g_gh_spaghettiplot_can_be_created_with_default_arguments"/>
+    <testcase time="0.0109999999999992" classname="tm_g_gh_spaghettiplot" name="tm_g_gh_spaghettiplot_can_be_created_with_choices_selected_arguments"/>
+    <testcase time="0.00300000000000011" classname="tm_g_gh_spaghettiplot" name="tm_g_gh_spaghettiplot_can_be_created_with_choices_selected_arguments"/>
+    <testcase time="0.011000000000001" classname="tm_g_gh_spaghettiplot" name="tm_g_gh_spaghettiplot_can_be_created_with_custom_picks_arguments"/>
+    <testcase time="0.00300000000000011" classname="tm_g_gh_spaghettiplot" name="tm_g_gh_spaghettiplot_can_be_created_with_custom_picks_arguments"/>
+    <testcase time="0.00999999999999979" classname="tm_g_gh_spaghettiplot" name="tm_g_gh_spaghettiplot_handles_multiple_parameter_combinations"/>
+    <testcase time="0.00300000000000011" classname="tm_g_gh_spaghettiplot" name="tm_g_gh_spaghettiplot_handles_multiple_parameter_combinations"/>
+    <testcase time="0.0109999999999992" classname="tm_g_gh_spaghettiplot" name="tm_g_gh_spaghettiplot_accepts_custom_color_specifications_with_choices_selected"/>
+    <testcase time="0.00300000000000011" classname="tm_g_gh_spaghettiplot" name="tm_g_gh_spaghettiplot_accepts_custom_color_specifications_with_choices_selected"/>
+    <testcase time="0.011000000000001" classname="tm_g_gh_spaghettiplot" name="tm_g_gh_spaghettiplot_accepts_line_arguments_with_choices_selected"/>
+    <testcase time="0.00299999999999834" classname="tm_g_gh_spaghettiplot" name="tm_g_gh_spaghettiplot_accepts_line_arguments_with_choices_selected"/>
+    <testcase time="0.011000000000001" classname="tm_g_gh_spaghettiplot" name="tm_g_gh_spaghettiplot_invalid_arguments_throws_an_error_when_label_is_invalid"/>
+    <testcase time="0.0150000000000006" classname="tm_g_gh_spaghettiplot" name="tm_g_gh_spaghettiplot_invalid_arguments_throws_an_error_when_dataname_is_invalid"/>
+    <testcase time="0.00999999999999979" classname="tm_g_gh_spaghettiplot" name="tm_g_gh_spaghettiplot_invalid_arguments_throws_an_error_when_param_var_label_is_invalid"/>
+    <testcase time="0.00999999999999979" classname="tm_g_gh_spaghettiplot" name="tm_g_gh_spaghettiplot_invalid_arguments_throws_an_error_when_idvar_is_invalid"/>
+    <testcase time="0.00999999999999979" classname="tm_g_gh_spaghettiplot" name="tm_g_gh_spaghettiplot_invalid_arguments_throws_an_error_when_group_stats_is_invalid"/>
+    <testcase time="0.00999999999999979" classname="tm_g_gh_spaghettiplot" name="tm_g_gh_spaghettiplot_invalid_arguments_throws_an_error_when_param_is_invalid"/>
+    <testcase time="0.0109999999999992" classname="tm_g_gh_spaghettiplot" name="tm_g_gh_spaghettiplot_invalid_arguments_throws_an_error_when_xaxis_var_is_invalid"/>
+    <testcase time="0.011000000000001" classname="tm_g_gh_spaghettiplot" name="tm_g_gh_spaghettiplot_invalid_arguments_throws_an_error_when_yaxis_var_is_invalid"/>
+    <testcase time="0.0120000000000005" classname="tm_g_gh_spaghettiplot" name="tm_g_gh_spaghettiplot_invalid_arguments_throws_an_error_when_trt_group_is_invalid"/>
+    <testcase time="0.0579999999999998" classname="tm_g_gh_spaghettiplot" name="tm_g_gh_spaghettiplot_invalid_arguments_throws_an_error_when_xaxis_var_level_is_invalid"/>
+    <testcase time="0.0640000000000001" classname="tm_g_gh_spaghettiplot" name="tm_g_gh_spaghettiplot_invalid_arguments_throws_an_error_when_trt_group_level_is_invalid"/>
+    <testcase time="0.0609999999999999" classname="tm_g_gh_spaghettiplot" name="tm_g_gh_spaghettiplot_invalid_arguments_throws_an_error_when_man_color_is_invalid"/>
+    <testcase time="0.0589999999999993" classname="tm_g_gh_spaghettiplot" name="tm_g_gh_spaghettiplot_invalid_arguments_throws_an_error_when_color_comb_is_invalid"/>
+    <testcase time="0.0670000000000002" classname="tm_g_gh_spaghettiplot" name="tm_g_gh_spaghettiplot_invalid_arguments_throws_an_error_when_hline_arb_is_invalid"/>
+    <testcase time="0.0609999999999999" classname="tm_g_gh_spaghettiplot" name="tm_g_gh_spaghettiplot_invalid_arguments_throws_an_error_when_hline_vars_is_invalid"/>
+    <testcase time="0.0640000000000001" classname="tm_g_gh_spaghettiplot" name="tm_g_gh_spaghettiplot_invalid_arguments_throws_an_error_when_facet_ncol_is_invalid"/>
+    <testcase time="0.0589999999999993" classname="tm_g_gh_spaghettiplot" name="tm_g_gh_spaghettiplot_invalid_arguments_throws_an_error_when_free_x_is_invalid"/>
+    <testcase time="0.0580000000000016" classname="tm_g_gh_spaghettiplot" name="tm_g_gh_spaghettiplot_invalid_arguments_throws_an_error_when_rotate_xlab_is_invalid"/>
+    <testcase time="0.0669999999999984" classname="tm_g_gh_spaghettiplot" name="tm_g_gh_spaghettiplot_invalid_arguments_throws_an_error_when_plot_height_is_invalid"/>
+    <testcase time="0.0600000000000005" classname="tm_g_gh_spaghettiplot" name="tm_g_gh_spaghettiplot_invalid_arguments_throws_an_error_when_plot_width_is_invalid"/>
+    <testcase time="0.0649999999999995" classname="tm_g_gh_spaghettiplot" name="tm_g_gh_spaghettiplot_invalid_arguments_throws_an_error_when_font_size_is_invalid"/>
+    <testcase time="0.0610000000000017" classname="tm_g_gh_spaghettiplot" name="tm_g_gh_spaghettiplot_invalid_arguments_throws_an_error_when_dot_size_is_invalid"/>
+    <testcase time="0.0599999999999987" classname="tm_g_gh_spaghettiplot" name="tm_g_gh_spaghettiplot_invalid_arguments_throws_an_error_when_alpha_is_invalid"/>
+    <testcase time="0.0650000000000013" classname="tm_g_gh_spaghettiplot" name="tm_g_gh_spaghettiplot_invalid_arguments_throws_an_error_when_pre_output_is_invalid"/>
+    <testcase time="0.0619999999999994" classname="tm_g_gh_spaghettiplot" name="tm_g_gh_spaghettiplot_invalid_arguments_throws_an_error_when_post_output_is_invalid"/>
+    <testcase time="0.0579999999999998" classname="tm_g_gh_spaghettiplot" name="tm_g_gh_spaghettiplot_invalid_arguments_throws_an_error_when_transformators_is_invalid"/>
+    <testcase time="0.0700000000000003" classname="tm_g_gh_spaghettiplot" name="tm_g_gh_spaghettiplot_invalid_arguments_throws_an_error_when_hline_arb_label_is_invalid"/>
+    <testcase time="0.0649999999999995" classname="tm_g_gh_spaghettiplot" name="tm_g_gh_spaghettiplot_invalid_arguments_throws_an_error_when_hline_arb_color_is_invalid"/>
+    <testcase time="0.0709999999999997" classname="tm_g_gh_spaghettiplot" name="tm_g_gh_spaghettiplot_invalid_arguments_throws_an_error_when_hline_vars_colors_is_invalid"/>
+    <testcase time="0.0660000000000007" classname="tm_g_gh_spaghettiplot" name="tm_g_gh_spaghettiplot_invalid_arguments_throws_an_error_when_hline_vars_labels_is_invalid"/>
   </testsuite>
 </testsuites>
