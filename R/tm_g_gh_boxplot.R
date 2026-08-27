@@ -39,8 +39,8 @@
 #'
 #' @return A [teal::module()] object that can be used in a [teal::init()] call.
 #'
-#' @author Jeff Tomlinson (tomlinsj) jeffrey.tomlinson@roche.com
-#' @author Balazs Toth (tothb2) toth.balazs@gene.com
+#' @author Jeff Tomlinson
+#' @author Balazs Toth
 #'
 #' @inheritSection teal::example_module Reporting
 #'

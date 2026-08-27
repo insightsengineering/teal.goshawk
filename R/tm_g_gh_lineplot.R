@@ -30,7 +30,7 @@
 #' @return A [teal::module()] object that can be used in a [teal::init()] call.
 #'
 #' @author Wenyi Liu (luiw2) wenyi.liu@roche.com
-#' @author Balazs Toth (tothb2) toth.balazs@gene.com
+#' @author Balazs Toth
 #'
 #' @export
 #'

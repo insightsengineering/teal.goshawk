@@ -14,8 +14,9 @@
 #'
 #' @return A [teal::module()] object that can be used in a [teal::init()] call.
 #'
-#' @author Nick Paszty (npaszty) paszty.nicholas@gene.com
-#' @author Balazs Toth (tothb2)  toth.balazs@gene.com
+#' @author Nick Paszty
+#' @author Balazs Toth
+#'
 #' @inheritSection teal::example_module Reporting
 #'
 #' @export
