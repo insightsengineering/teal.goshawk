@@ -55,7 +55,7 @@
 #'
 #' @inheritSection teal::example_module Reporting
 #'
-#' @return \code{shiny} object
+#' @return A [teal::module()] object that can be used in a [teal::init()] call.
 #'
 #' @export
 #'

@@ -21,11 +21,26 @@ get_data_range_states(varname, paramname, ANL, trt_group = NULL, step = NULL)
 \item{...}{additional parameters to pass to \code{sliderInput}}
 }
 \value{
-\code{NULL}.
+\code{toggle_slider_ui} returns a \code{shiny.tag} object with the UI for the toggleable slider module.
+\code{toggle_slider_server} returns a shiny module which itself returns a \code{reactiveValues}
+object with \code{min}, \code{max}, and \code{value} elements.
 }
 \description{
 This is useful when a slider should be shown, but it is sometimes hard to configure sliders,
 so one can toggle to one or two numeric input fields to set slider instead.
 The toggle button will show two numeric input field for selecting the from and to range.
+}
+\examples{
+if (interactive()) {
+  shinyApp(
+    ui = fluidPage(toggle_slider_ui("slider", "Select range")),
+    server = function(input, output, session) {
+      data_state <- reactiveVal(
+        list(range = c(0, 100), step = 1)
+      )
+      toggle_slider_server("slider", data_state)
+    }
+  )
+}
 }
 \keyword{internal}

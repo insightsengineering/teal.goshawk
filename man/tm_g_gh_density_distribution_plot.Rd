@@ -81,6 +81,9 @@ into context. For example the \code{\link[shiny:helpText]{shiny::helpText()}} el
 \item{transformators}{(\code{list} of \code{teal_transform_module}) that will be applied to transform module's data input.
 To learn more check \code{vignette("transform-input-data", package = "teal")}.}
 }
+\value{
+A \code{\link[teal:module]{teal::module()}} object that can be used in a \code{\link[teal:init]{teal::init()}} call.
+}
 \description{
 This teal module renders the UI and calls the functions that create a density distribution plot
 and an accompanying summary table.

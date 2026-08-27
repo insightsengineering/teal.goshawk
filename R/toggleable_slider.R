@@ -11,9 +11,22 @@
 #'
 #' @name toggle_slider
 #' @keywords internal
-#' @return `NULL`.
+#' @return `toggle_slider_ui` returns a `shiny.tag` object with the UI for the toggleable slider module.
+#' `toggle_slider_server` returns a shiny module which itself returns a `reactiveValues`
+#' object with `min`, `max`, and `value` elements.
+#' @examples
+#' if (interactive()) {
+#'   shinyApp(
+#'     ui = fluidPage(toggle_slider_ui("slider", "Select range")),
+#'     server = function(input, output, session) {
+#'       data_state <- reactiveVal(
+#'         list(range = c(0, 100), step = 1)
+#'       )
+#'       toggle_slider_server("slider", data_state)
+#'     }
+#'   )
+#' }
 NULL
-
 
 #' @rdname toggle_slider
 toggle_slider_ui <- function(id, label) {

@@ -23,7 +23,18 @@ it will only change \code{chunk_output} objects.}
 \item{inner_classes}{(\code{character}) classes within \code{chunk_output} that should be modified.
 This can be used to only change \code{recordedplot}, \code{ggplot2} or other type of objects.}
 }
+\value{
+The modified \code{teal_card} object with updated attributes for the last chunk outputs.
+}
 \description{
 Set the attributes of the last chunk outputs
+}
+\examples{
+td <- within(
+  teal.reporter::teal_report(),
+  ggplot2::ggplot(mtcars, ggplot2::aes(x = wt, y = mpg)) + ggplot2::geom_point()
+)
+card <- teal.reporter::teal_card(td)
+set_chunk_attrs(card, list(dev.width = 200, dev.height = 100))
 }
 \keyword{internal}

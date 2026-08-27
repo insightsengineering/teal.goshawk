@@ -12,6 +12,7 @@
 #' @inheritParams teal.widgets::standard_layout
 #' @inheritParams teal::module
 #'
+#' @return A [teal::module()] object that can be used in a [teal::init()] call.
 #'
 #' @author Nick Paszty (npaszty) paszty.nicholas@gene.com
 #' @author Balazs Toth (tothb2)  toth.balazs@gene.com

@@ -27,10 +27,10 @@
 #' value of the relative plot height slider
 #' @inheritSection teal::example_module Reporting
 #'
+#' @return A [teal::module()] object that can be used in a [teal::init()] call.
+#'
 #' @author Wenyi Liu (luiw2) wenyi.liu@roche.com
 #' @author Balazs Toth (tothb2) toth.balazs@gene.com
-#'
-#' @return \code{shiny} object
 #'
 #' @export
 #'

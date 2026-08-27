@@ -52,6 +52,8 @@
 #' @param dot_size (`numeric(3)`) plot dot size.
 #' @param reg_text_size (`numeric(3)`) font size control for regression line annotations.
 #'
+#' @return A [teal::module()] object that can be used in a [teal::init()] call.
+#'
 #' @export
 #'
 #' @author Nick Paszty (npaszty) paszty.nicholas@gene.com

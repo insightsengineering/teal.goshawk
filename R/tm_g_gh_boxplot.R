@@ -37,12 +37,12 @@
 #' @inheritParams teal.widgets::standard_layout
 #' @inheritParams teal::module
 #'
+#' @return A [teal::module()] object that can be used in a [teal::init()] call.
+#'
 #' @author Jeff Tomlinson (tomlinsj) jeffrey.tomlinson@roche.com
 #' @author Balazs Toth (tothb2) toth.balazs@gene.com
 #'
 #' @inheritSection teal::example_module Reporting
-#'
-#' @return an \code{\link[teal]{module}} object
 #'
 #' @export
 #'

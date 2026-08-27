@@ -122,7 +122,7 @@ value of the relative plot height slider}
 To learn more check \code{vignette("transform-input-data", package = "teal")}.}
 }
 \value{
-\code{shiny} object
+A \code{\link[teal:module]{teal::module()}} object that can be used in a \code{\link[teal:init]{teal::init()}} call.
 }
 \description{
 This teal module renders the UI and calls the function that creates a line plot.
