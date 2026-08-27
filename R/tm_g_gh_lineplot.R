@@ -233,7 +233,7 @@ tm_g_gh_lineplot <- function(label,
   }
 
   if (inherits(param, "choices_selected")) {
-    stopifnot("param_var is necessary when providing param with `choices_selected()`. Consider moving to `param = teal.picks::picks(...)`" = is.character(param_var)) # nolint: line_length_linter.
+    stopifnot("param_var is necessary when providing param with `choices_selected()`. Consider moving to `param = teal.picks::picks(...)`" = inherits(param_var, "variables")) # nolint: line_length_linter.
     param <- migrate_choices_selected_to_values(param)
     param <- create_picks_helper(teal.picks::datasets(dataname, dataname), param_var, param)
   } else {

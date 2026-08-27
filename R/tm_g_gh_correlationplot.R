@@ -290,7 +290,7 @@ tm_g_gh_correlationplot <- function(label,
   }
 
   if (inherits(xaxis_param, "choices_selected")) {
-    stopifnot("param_var is necessary when providing param with `choices_selected()`. Consider moving to `param = teal.picks::picks(...)`" = is.character(param_var)) # nolint: line_length_linter.
+    stopifnot("param_var is necessary when providing param with `choices_selected()`. Consider moving to `param = teal.picks::picks(...)`" = inherits(param_var, "variables")) # nolint: line_length_linter.
     xaxis_param <- migrate_choices_selected_to_values(xaxis_param)
     xaxis_param <- create_picks_helper(teal.picks::datasets(dataname, dataname), param_var, xaxis_param)
   } else {
@@ -298,7 +298,7 @@ tm_g_gh_correlationplot <- function(label,
   }
 
   if (inherits(yaxis_param, "choices_selected")) {
-    stopifnot("param_var is necessary when providing param with `choices_selected()`. Consider moving to `param = teal.picks::picks(...)`" = is.character(param_var)) # nolint: line_length_linter.
+    stopifnot("param_var is necessary when providing param with `choices_selected()`. Consider moving to `param = teal.picks::picks(...)`" = inherits(param_var, "variables")) # nolint: line_length_linter.
     yaxis_param <- migrate_choices_selected_to_values(yaxis_param)
     yaxis_param <- create_picks_helper(teal.picks::datasets(dataname, dataname), param_var, yaxis_param)
   } else {
@@ -526,6 +526,22 @@ srv_g_correlationplot <- function(id,
           message = "X-Axis and Y-Axis biomarkers must be from the same biomarker variable in dataset"
         )
       )
+
+      if (length(input$hline_vars) > 0) {
+        validate(
+          teal::need_input(
+            inputId = "hline_vars",
+            condition = all(input$hline_vars %in% names(ANL)),
+            message = "One or more selected horizontal line variable(s) is/are not names to any column in the data"
+          ),
+          teal::need_input(
+            inputId = "vline_vars",
+            condition = all(input$vline_vars %in% names(ANL)),
+            message = "One or more selected vertical line variable(s) is/are not names to any column in the data"
+          )
+        )
+      }
+
       data_with_card()
     })
 
@@ -543,21 +559,6 @@ srv_g_correlationplot <- function(id,
       dataset_var <- dataname
       ANL <- validated_q()[[dataname]]
       validate_has_data(ANL, 1)
-
-      if (length(input$hline_vars) > 0) {
-        validate(
-          teal::need_input(
-            inputId = "hline_vars",
-            condition = all(input$hline_vars %in% names(ANL)),
-            message = "One or more selected horizontal line variable(s) is/are not names to any column in the data"
-          ),
-          teal::need_input(
-            inputId = "vline_vars",
-            condition = all(input$vline_vars %in% names(ANL)),
-            message = "One or more selected vertical line variable(s) is/are not names to any column in the data"
-          )
-        )
-      }
 
       validate_has_variable(ANL, param_var_sel())
       validate_has_variable(ANL, "AVISITCD")
