@@ -292,7 +292,6 @@ ui_g_density_distribution_plot <- function(id,
 srv_g_density_distribution_plot <- function(id, # nolint: object_length_linter.
                                             data,
                                             dataname,
-                                            param_var,
                                             param,
                                             xaxis_var,
                                             trt_group,

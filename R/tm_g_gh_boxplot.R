@@ -344,7 +344,6 @@ ui_g_boxplot <- function(id,
 srv_g_boxplot <- function(id,
                           data,
                           dataname,
-                          param_var,
                           param,
                           yaxis_var,
                           xaxis_var,
@@ -575,7 +574,11 @@ srv_g_boxplot <- function(id,
       req(iv_r()$is_valid())
       req(anl_q())
       font_size <- input$font_size
-      facet_var_val <- `if`(is.null(facet_var_sel()) || length(facet_var_sel()) == 0, "None", facet_var_sel())
+      facet_var_val <- if (is.null(facet_var_sel()) || length(facet_var_sel()) == 0) {
+        "None"
+      } else {
+        facet_var_sel()
+      }
 
       anl_q()$qenv %>% teal.code::eval_code(
         code = bquote({
