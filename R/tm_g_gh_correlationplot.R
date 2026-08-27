@@ -286,23 +286,19 @@ tm_g_gh_correlationplot <- function(label,
       details = "Please use `teal.picks::picks()` to specificy `xaxis_param` and `yaxis_param` instead of `param_var`."
     )
     checkmate::assert_string(param_var)
-  } else {
-    param_var <- rlang::maybe_missing(param_var, "PARAMCD")
+    param_var <- teal.picks::variables(param_var, param_var)
   }
-  param_var <- teal.picks::variables(param_var, param_var)
 
   if (inherits(xaxis_param, "choices_selected")) {
+    stopifnot("param_var is necessary when providing param with `choices_selected()`. Consider moving to `param = teal.picks::picks(...)`" = is.character(param_var)) # nolint: line_length_linter.
     xaxis_param <- migrate_choices_selected_to_values(xaxis_param)
     xaxis_param <- create_picks_helper(teal.picks::datasets(dataname, dataname), param_var, xaxis_param)
   } else {
     xaxis_param <- create_picks_helper(teal.picks::datasets(dataname, dataname), xaxis_param)
   }
 
-  xaxis_var <- migrate_choices_selected_to_variables(xaxis_var)
-  yaxis_var <- migrate_choices_selected_to_variables(yaxis_var)
-  trt_group <- migrate_choices_selected_to_variables(trt_group)
-
   if (inherits(yaxis_param, "choices_selected")) {
+    stopifnot("param_var is necessary when providing param with `choices_selected()`. Consider moving to `param = teal.picks::picks(...)`" = is.character(param_var)) # nolint: line_length_linter.
     yaxis_param <- migrate_choices_selected_to_values(yaxis_param)
     yaxis_param <- create_picks_helper(teal.picks::datasets(dataname, dataname), param_var, yaxis_param)
   } else {
@@ -312,6 +308,10 @@ tm_g_gh_correlationplot <- function(label,
   # These 2 assertions should be moved to section above after "choices_selected" migration is removed
   teal.picks::assert_last_level(xaxis_param, "values")
   teal.picks::assert_last_level(yaxis_param, "values")
+
+  xaxis_var <- migrate_choices_selected_to_variables(xaxis_var)
+  yaxis_var <- migrate_choices_selected_to_variables(yaxis_var)
+  trt_group <- migrate_choices_selected_to_variables(trt_group)
 
   xaxis_var <- create_picks_helper(teal.picks::datasets(dataname, dataname), xaxis_var)
   yaxis_var <- create_picks_helper(teal.picks::datasets(dataname, dataname), yaxis_var)
