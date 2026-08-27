@@ -627,6 +627,7 @@ srv_g_correlationplot <- function(id,
       validate_has_data(ANL, 1)
 
       ANL <- dplyr::filter(ANL, .data[[param_var_sel()]] == xaxis_param_sel())
+      validate_has_data(ANL, 1)
 
       visit_freq <- unique(ANL$AVISITCD)
 
