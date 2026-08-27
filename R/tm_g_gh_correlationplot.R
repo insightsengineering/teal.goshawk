@@ -9,15 +9,15 @@
 #' E.g. `ADaM` structured laboratory data frame `ADLB`.
 #' @param param_var `r badge("deprecated")` (`character(1)`)
 #' name of variable containing biomarker codes e.g. `PARAMCD`.
-#' @param xaxis_param (`[teal.picks::picks()]` or legacy `[teal.transform::choices_selected()]`)
+#' @param xaxis_param ([teal.picks::picks()] or legacy [teal.transform::choices_selected()])
 #' biomarker selected for `x-axis`.
-#' @param yaxis_param (`[teal.picks::picks()]` or legacy `[teal.transform::choices_selected()]`)
+#' @param yaxis_param ([teal.picks::picks()] or legacy [teal.transform::choices_selected()])
 #' biomarker selected for `y-axis`.
-#' @param xaxis_var (`[teal.picks::variables()]` or legacy `[teal.transform::choices_selected()]`)
+#' @param xaxis_var ([teal.picks::variables()] or legacy [teal.transform::choices_selected()])
 #' name of variable containing biomarker results displayed on x-axis e.g. `BASE`.
-#' @param yaxis_var (`[teal.picks::variables()]` or legacy `[teal.transform::choices_selected()]`)
+#' @param yaxis_var ([teal.picks::variables()] or legacy [teal.transform::choices_selected()])
 #' name of variable containing biomarker results displayed on y-axis e.g. `AVAL`.
-#' @param trt_group (`[teal.picks::variables()]` or legacy `[teal.transform::choices_selected()]`)
+#' @param trt_group ([teal.picks::variables()] or legacy [teal.transform::choices_selected()])
 #' object with available choices and pre-selected option for variable names representing treatment group e.g. `ARM`.
 #' @param color_manual (named `character`, optional) vector of colors applied to treatment values.
 #' @param shape_manual (named `numeric`, optional) vector of symbols applied to `LOQ` values.
