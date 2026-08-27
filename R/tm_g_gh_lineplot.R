@@ -46,6 +46,30 @@
 #' @param dot_size plot dot size.
 #' @param plot_relative_height_value numeric value between 500 and 5000 for controlling the starting value
 #' of the relative plot height slider
+#' @section Decorating Module:
+#'
+#' This module generates the following objects, which can be modified in place using decorators:
+#' - `plot` (`ggplot`)
+#'
+#' A Decorator is applied to the specific output using a named list of `teal_transform_module` objects.
+#' The name of this list corresponds to the name of the output to which the decorator is applied.
+#' See code snippet below:
+#'
+#' ```
+#' tm_g_gh_lineplot(
+#'    ..., # arguments for module
+#'    decorators = list(
+#'      plot = teal_transform_module(...) # applied only to `plot` output
+#'    )
+#' )
+#' ```
+#'
+#' For additional details and examples of decorators, refer to the vignette
+#' `vignette("decorate-module-output", package = "teal.modules.general")`.
+#'
+#' To learn more please refer to the vignette
+#' `vignette("transform-module-output", package = "teal")` or the [`teal::teal_transform_module()`] documentation.
+#'
 #' @inheritSection teal::example_module Reporting
 #'
 #' @author Wenyi Liu (luiw2) wenyi.liu@roche.com
@@ -166,7 +190,8 @@ tm_g_gh_lineplot <- function(label,
                              table_font_size = c(12, 4, 20),
                              dot_size = c(2, 1, 12),
                              plot_relative_height_value = 1000,
-                             transformators = list()) {
+                             transformators = list(),
+                             decorators = list()) {
   message("Initializing tm_g_gh_lineplot")
 
   if (lifecycle::is_present(filter_var)) {
@@ -221,6 +246,8 @@ tm_g_gh_lineplot <- function(label,
   )
   checkmate::assert_number(plot_relative_height_value, lower = 500, upper = 5000)
   checkmate::assert_list(transformators, types = "teal_transform_module")
+
+  teal::assert_decorators(decorators, names = "plot")
 
   if (lifecycle::is_present(param_var)) {
     lifecycle::deprecate_warn(
@@ -299,7 +326,8 @@ ui_lineplot <- function(id,
                         dot_size,
                         table_font_size,
                         pre_output,
-                        post_output) {
+                        post_output,
+                        decorators) {
   ns <- NS(id)
 
   shiny::tagList(
@@ -349,6 +377,7 @@ ui_lineplot <- function(id,
         ),
         templ_ui_constraint(ns),
         ui_arbitrary_lines(id = ns("hline_arb"), hline_arb, hline_arb_label, hline_arb_color),
+        teal::ui_transform_teal_data(ns("decorator"), select_decorators(decorators, "plot")),
         bslib::accordion(
           bslib::accordion_panel(
             title = "Plot Aesthetic Settings",
@@ -417,7 +446,8 @@ srv_lineplot <- function(id,
                          xtick,
                          xlabel,
                          plot_height,
-                         plot_width) {
+                         plot_width,
+                         decorators) {
   checkmate::assert_class(data, "reactive")
   checkmate::assert_class(shiny::isolate(data()), "teal_data")
 
@@ -803,7 +833,7 @@ srv_lineplot <- function(id,
       teal.code::eval_code(
         object = obj,
         code = bquote({
-          p <- goshawk::g_lineplot(
+          plot <- goshawk::g_lineplot(
             data = ANL[stats::complete.cases(ANL[, c(.(yaxis_var_sel()), .(xaxis_var_sel()))]), ],
             biomarker_var = .(param_var_sel()),
             biomarker_var_label = .(param_var_label),
@@ -833,12 +863,17 @@ srv_lineplot <- function(id,
             table_font_size = .(input$table_font_size),
             display_center_tbl = .(include_stat)
           )
-          p
         })
       )
     }), 800)
 
-    plot_r <- reactive(plot_q()[["p"]])
+    decorated_plot_q <- teal::srv_transform_teal_data(
+      "decorator",
+      plot_q,
+      select_decorators(decorators, "plot"),
+      expr = quote(plot)
+    )
+    plot_r <- reactive(decorated_plot_q()[["plot"]])
 
     plot_data <- teal.widgets::plot_with_settings_srv(
       id = "plot",
@@ -847,6 +882,6 @@ srv_lineplot <- function(id,
       width = plot_width,
     )
 
-    set_chunk_dims(plot_data, plot_q)
+    set_chunk_dims(plot_data, decorated_plot_q)
   })
 }
