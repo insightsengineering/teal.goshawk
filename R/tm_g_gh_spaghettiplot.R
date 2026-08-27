@@ -251,12 +251,11 @@ tm_g_gh_spaghettiplot <- function(label,
       details = "Please use `teal.picks::picks()` to specify `param` instead of `param_var`."
     )
     checkmate::assert_string(param_var)
-  } else {
-    param_var <- rlang::maybe_missing(param_var, "PARAMCD")
   }
-  param_var <- teal.picks::variables(param_var, param_var)
 
   if (inherits(param, "choices_selected")) {
+    stopifnot("param_var is necessary when providing param with `choices_selected()`. Consider moving to `param = teal.picks::picks(...)`" = is.character(param_var)) # nolint: line_length_linter.
+    param_var <- teal.picks::variables(param_var, param_var)
     param <- migrate_choices_selected_to_values(param)
     param <- create_picks_helper(teal.picks::datasets(dataname, dataname), param_var, param)
   } else {
@@ -436,27 +435,27 @@ srv_g_spaghettiplot <- function(id,
         teal::need_input(
           inputId = "xaxis_param-values-selected",
           condition = length(param_sel()) != 0,
-          msg = "Please select a biomarker"
+          message = "Please select a biomarker"
         ),
         teal::need_input(
           inputId = "trt_group-variables-selected",
           condition = length(trt_group_sel()) != 0,
-          msg = "Please select a treatment variable"
+          message = "Please select a treatment variable"
         ),
         teal::need_input(
           inputId = "xaxis_var-variables-selected",
           condition = length(xaxis_var_sel()) != 0,
-          msg = "Please select an X-Axis variable"
+          message = "Please select an X-Axis variable"
         ),
         teal::need_input(
           inputId = "yaxis_var-variables-selected",
           condition = length(yaxis_var_sel()) != 0,
-          msg = "Please select a Y-Axis variable"
+          message = "Please select a Y-Axis variable"
         ),
         teal::need_input(
           inputId = "facet_ncol",
           condition = length(input$facet_ncol) != 0 && input$facet_ncol > 0 && as.numeric(input$facet_ncol) %% 1 == 0,
-          msg = "Please select a facet column integer that is greater than 0"
+          message = "Please select a facet column integer that is greater than 0"
         )
       )
       data_with_card()
