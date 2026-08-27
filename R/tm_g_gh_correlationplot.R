@@ -1001,5 +1001,5 @@ srv_g_correlationplot <- function(id,
     })
 
     set_chunk_dims(plot_data, decorated_plot_q)
-    })
+  })
 }
