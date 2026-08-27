@@ -55,10 +55,10 @@ name of variable containing biomarker codes e.g. \code{PARAMCD}.}
 
 \item{param_var_label}{(\code{character(1)}) single name of variable in analysis data that includes parameter labels.}
 
-\item{xaxis_var}{(\verb{[teal.picks::variables()]} or legacy \verb{[teal.transform::choices_selected()]})
+\item{xaxis_var}{(\code{\link[teal.picks:variables]{teal.picks::variables()}} or legacy \code{\link[teal.transform:choices_selected]{teal.transform::choices_selected()}})
 name of variable containing biomarker results displayed on x-axis e.g. \code{BASE}.}
 
-\item{yaxis_var}{(\verb{[teal.picks::variables()]} or legacy \verb{[teal.transform::choices_selected()]})
+\item{yaxis_var}{(\code{\link[teal.picks:variables]{teal.picks::variables()}} or legacy \code{\link[teal.transform:choices_selected]{teal.transform::choices_selected()}})
 name of variable containing biomarker results displayed on y-axis e.g. \code{AVAL}.}
 
 \item{xvar_level}{(\code{character()}) vector that can be used to define the factor level of \code{xvar}. Only use it when
@@ -68,7 +68,7 @@ name of variable containing biomarker results displayed on y-axis e.g. \code{AVA
 
 \item{filter_var_choices}{\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#deprecated}{\figure{lifecycle-deprecated.svg}{options: alt='[Deprecated]'}}}{\strong{[Deprecated]}} data constraint variable choices.}
 
-\item{trt_group}{(\verb{[teal.picks::variables()]} or legacy \verb{[teal.transform::choices_selected()]})
+\item{trt_group}{(\code{\link[teal.picks:variables]{teal.picks::variables()}} or legacy \code{\link[teal.transform:choices_selected]{teal.transform::choices_selected()}})
 object with available choices and pre-selected option for variable names representing treatment group e.g. \code{ARM}.}
 
 \item{trt_group_level}{(\verb{named character()}) vector that can be used to define factor level of \code{trt_group}.}
@@ -219,7 +219,7 @@ if (interactive()) {
 \dontshow{\}) # examplesIf}
 }
 \author{
-Wenyi Liu (luiw2) wenyi.liu@roche.com
+Wenyi Liu
 
-Balazs Toth (tothb2) toth.balazs@gene.com
+Balazs Toth
 }

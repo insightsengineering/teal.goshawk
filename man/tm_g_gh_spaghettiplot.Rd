@@ -252,7 +252,7 @@ if (interactive()) {
 
 }
 \author{
-Wenyi Liu (luiw2) wenyi.liu@roche.com
+Wenyi Liu
 
-Balazs Toth (tothb2) toth.balazs@gene.com
+Balazs Toth
 }

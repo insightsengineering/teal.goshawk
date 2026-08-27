@@ -40,10 +40,10 @@ name of variable containing biomarker codes e.g. \code{PARAMCD}.}
 
 \item{param}{(\code{\link[teal.picks:picks]{teal.picks::picks()}} or \code{\link[teal.transform:choices_selected]{teal.transform::choices_selected()}}) biomarker selected.}
 
-\item{xaxis_var}{(\verb{[teal.picks::variables()]} or legacy \verb{[teal.transform::choices_selected()]})
+\item{xaxis_var}{(\code{\link[teal.picks:variables]{teal.picks::variables()}} or legacy \code{\link[teal.transform:choices_selected]{teal.transform::choices_selected()}})
 name of variable containing biomarker results displayed on x-axis e.g. \code{BASE}.}
 
-\item{trt_group}{(\verb{[teal.picks::variables()]} or legacy \verb{[teal.transform::choices_selected()]})
+\item{trt_group}{(\code{\link[teal.picks:variables]{teal.picks::variables()}} or legacy \code{\link[teal.transform:choices_selected]{teal.transform::choices_selected()}})
 object with available choices and pre-selected option for variable names representing treatment group e.g. \code{ARM}.}
 
 \item{color_manual}{(named \code{character}, optional) vector of colors applied to treatment values.}
@@ -187,7 +187,7 @@ if (interactive()) {
 
 }
 \author{
-Nick Paszty (npaszty) paszty.nicholas@gene.com
+Nick Paszty
 
-Balazs Toth (tothb2)  toth.balazs@gene.com
+Balazs Toth
 }

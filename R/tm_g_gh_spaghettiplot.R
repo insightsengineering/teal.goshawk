@@ -50,7 +50,7 @@
 #' @inheritParams teal::module
 #' @inheritParams teal.widgets::standard_layout
 #'
-#' @author Wenyi Liu (luiw2) wenyi.liu@roche.com
+#' @author Wenyi Liu
 #' @author Balazs Toth
 #'
 #' @inheritSection teal::example_module Reporting

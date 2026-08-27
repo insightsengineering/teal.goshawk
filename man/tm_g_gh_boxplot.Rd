@@ -225,7 +225,7 @@ if (interactive()) {
 \dontshow{\}) # examplesIf}
 }
 \author{
-Jeff Tomlinson (tomlinsj) jeffrey.tomlinson@roche.com
+Jeff Tomlinson
 
-Balazs Toth (tothb2) toth.balazs@gene.com
+Balazs Toth
 }

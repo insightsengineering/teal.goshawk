@@ -54,19 +54,19 @@ E.g. \code{ADaM} structured laboratory data frame \code{ADLB}.}
 \item{param_var}{\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#deprecated}{\figure{lifecycle-deprecated.svg}{options: alt='[Deprecated]'}}}{\strong{[Deprecated]}} (\code{character(1)})
 name of variable containing biomarker codes e.g. \code{PARAMCD}.}
 
-\item{xaxis_param}{(\verb{[teal.picks::picks()]} or legacy \verb{[teal.transform::choices_selected()]})
+\item{xaxis_param}{(\code{\link[teal.picks:picks]{teal.picks::picks()}} or legacy \code{\link[teal.transform:choices_selected]{teal.transform::choices_selected()}})
 biomarker selected for \code{x-axis}.}
 
-\item{xaxis_var}{(\verb{[teal.picks::variables()]} or legacy \verb{[teal.transform::choices_selected()]})
+\item{xaxis_var}{(\code{\link[teal.picks:variables]{teal.picks::variables()}} or legacy \code{\link[teal.transform:choices_selected]{teal.transform::choices_selected()}})
 name of variable containing biomarker results displayed on x-axis e.g. \code{BASE}.}
 
-\item{yaxis_param}{(\verb{[teal.picks::picks()]} or legacy \verb{[teal.transform::choices_selected()]})
+\item{yaxis_param}{(\code{\link[teal.picks:picks]{teal.picks::picks()}} or legacy \code{\link[teal.transform:choices_selected]{teal.transform::choices_selected()}})
 biomarker selected for \code{y-axis}.}
 
-\item{yaxis_var}{(\verb{[teal.picks::variables()]} or legacy \verb{[teal.transform::choices_selected()]})
+\item{yaxis_var}{(\code{\link[teal.picks:variables]{teal.picks::variables()}} or legacy \code{\link[teal.transform:choices_selected]{teal.transform::choices_selected()}})
 name of variable containing biomarker results displayed on y-axis e.g. \code{AVAL}.}
 
-\item{trt_group}{(\verb{[teal.picks::variables()]} or legacy \verb{[teal.transform::choices_selected()]})
+\item{trt_group}{(\code{\link[teal.picks:variables]{teal.picks::variables()}} or legacy \code{\link[teal.transform:choices_selected]{teal.transform::choices_selected()}})
 object with available choices and pre-selected option for variable names representing treatment group e.g. \code{ARM}.}
 
 \item{color_manual}{(named \code{character}, optional) vector of colors applied to treatment values.}
@@ -302,7 +302,7 @@ if (interactive()) {
 
 }
 \author{
-Nick Paszty (npaszty) paszty.nicholas@gene.com
+Nick Paszty
 
-Balazs Toth (tothb2)  toth.balazs@gene.com
+Balazs Toth
 }
