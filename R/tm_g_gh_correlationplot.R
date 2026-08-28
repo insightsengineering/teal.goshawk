@@ -46,6 +46,12 @@
 #' @param font_size font size control for title, `x-axis` label, `y-axis` label and legend.
 #' @param dot_size plot dot size.
 #' @param reg_text_size font size control for regression line annotations.
+#' @param decorators `r lifecycle::badge("experimental")`
+#' (named `list` of lists of `teal_transform_module`) optional,
+#' decorator for tables or plots included in the module output reported.
+#' The decorators are applied to the respective output objects.
+#'
+#' See section "Decorating Module" below for more details.
 #'
 #' @export
 #'
