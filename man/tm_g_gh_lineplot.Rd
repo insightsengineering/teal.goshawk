@@ -114,6 +114,8 @@ into context. For example the \code{\link[shiny:helpText]{shiny::helpText()}} el
 \item{count_threshold}{(\code{numeric(1)}) minimum count of observations (as listed in the output table) to plot
 nodes on the graph}
 
+\item{table_font_size}{(\code{numeric(3)}) controls the font size of values in the table.}
+
 \item{dot_size}{(\code{numeric(3)}) plot dot size.}
 
 \item{plot_relative_height_value}{(\code{numeric(1)}) numeric value between 500 and 5000 for controlling the starting
@@ -121,6 +123,13 @@ value of the relative plot height slider}
 
 \item{transformators}{(\code{list} of \code{teal_transform_module}) that will be applied to transform module's data input.
 To learn more check \code{vignette("transform-input-data", package = "teal")}.}
+
+\item{decorators}{\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#experimental}{\figure{lifecycle-experimental.svg}{options: alt='[Experimental]'}}}{\strong{[Experimental]}}
+(named \code{list} of lists of \code{teal_transform_module}) optional,
+decorator for tables or plots included in the module output reported.
+The decorators are applied to the respective output objects.
+
+See section "Decorating Module" below for more details.}
 }
 \value{
 A \code{\link[teal:module]{teal::module()}} object that can be used in a \code{\link[teal:init]{teal::init()}} call.

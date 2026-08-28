@@ -25,6 +25,7 @@
 #' nodes on the graph
 #' @param plot_relative_height_value (`numeric(1)`) numeric value between 500 and 5000 for controlling the starting
 #' value of the relative plot height slider
+#' @param table_font_size (`numeric(3)`) controls the font size of values in the table.
 #'
 #' @section Decorating Module:
 #'

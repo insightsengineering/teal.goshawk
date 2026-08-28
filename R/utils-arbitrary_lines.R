@@ -31,7 +31,7 @@
 #'      result <- srv_arbitrary_lines("arbitrary_lines")
 #'      output$result <- renderPrint({
 #'        req(result())
-#'        result()$iv()$validate()e
+#'        result()$iv()$validate()
 #'        result()[c("line_arb", "line_arb_color", "line_arb_label")]
 #'      })
 #'    }

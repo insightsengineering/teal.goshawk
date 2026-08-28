@@ -23,6 +23,7 @@ automatically sets the \code{dev.width} and \code{dev.height} attributes on the 
 chunk outputs of a \code{teal_card} based on plot dimensions from a plot widget.
 }
 \examples{
+set_chunk_dims <- getFromNamespace("set_chunk_dims", "teal.goshawk")
 td <- within(
   teal.reporter::teal_report(),
   ggplot2::ggplot(mtcars, ggplot2::aes(x = wt, y = mpg)) + ggplot2::geom_point()

@@ -49,31 +49,30 @@ tm_g_gh_spaghettiplot(
 \item{dataname}{analysis data passed to the data argument of \code{\link[teal]{init}}.
 E.g. \code{ADaM} structured laboratory data frame \code{ADLB}.}
 
-\item{param_var}{\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#deprecated}{\figure{lifecycle-deprecated.svg}{options: alt='[Deprecated]'}}}{\strong{[Deprecated]}} name of variable containing biomarker codes e.g. \code{PARAMCD}.}
+\item{param_var}{\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#deprecated}{\figure{lifecycle-deprecated.svg}{options: alt='[Deprecated]'}}}{\strong{[Deprecated]}} (\code{character(1)})
+name of variable containing biomarker codes e.g. \code{PARAMCD}.}
 
-\item{param}{(\code{picks} or \code{choices_selected}) biomarker selected.}
+\item{param}{(\code{\link[teal.picks:picks]{teal.picks::picks()}} or \code{\link[teal.transform:choices_selected]{teal.transform::choices_selected()}}) biomarker selected.}
 
-\item{param_var_label}{single name of variable in analysis data
-that includes parameter labels.}
+\item{param_var_label}{(\code{character(1)}) single name of variable in analysis data that includes parameter labels.}
 
 \item{idvar}{name of unique subject id variable.}
 
-\item{xaxis_var}{(\code{variables} or \code{choices_selected})
-single name of variable in analysis data that is used as x-axis in the plot.}
+\item{xaxis_var}{(\code{\link[teal.picks:variables]{teal.picks::variables()}} or legacy \code{\link[teal.transform:choices_selected]{teal.transform::choices_selected()}})
+name of variable containing biomarker results displayed on x-axis e.g. \code{BASE}.}
 
-\item{yaxis_var}{(\code{variables} or \code{choices_selected}) single name of variable in analysis data that is used as
-summary variable in the respective \code{goshawk} function.}
+\item{yaxis_var}{(\code{\link[teal.picks:variables]{teal.picks::variables()}} or legacy \code{\link[teal.transform:choices_selected]{teal.transform::choices_selected()}})
+name of variable containing biomarker results displayed on y-axis e.g. \code{AVAL}.}
 
 \item{xaxis_var_level}{vector that can be used to define the factor level of \code{xaxis_var}.
 Only use it when \code{xaxis_var} is character or factor.}
 
 \item{filter_var}{\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#deprecated}{\figure{lifecycle-deprecated.svg}{options: alt='[Deprecated]'}}}{\strong{[Deprecated]}} data constraint variable.}
 
-\item{trt_group}{(\code{variables} or \code{choices_selected}) object with available choices and pre-selected option
-for variable names representing treatment group e.g. \code{ARM}.}
+\item{trt_group}{(\code{\link[teal.picks:variables]{teal.picks::variables()}} or legacy \code{\link[teal.transform:choices_selected]{teal.transform::choices_selected()}})
+object with available choices and pre-selected option for variable names representing treatment group e.g. \code{ARM}.}
 
-\item{trt_group_level}{vector that can be used to define factor
-level of \code{trt_group}.}
+\item{trt_group_level}{(\verb{named character()}) vector that can be used to define factor level of \code{trt_group}.}
 
 \item{group_stats}{control group mean or median overlay.}
 
@@ -81,41 +80,41 @@ level of \code{trt_group}.}
 
 \item{color_comb}{name or hex value for combined treatment color.}
 
-\item{xtick}{numeric vector to define the tick values of \code{x-axis}
-when x variable is numeric. Default value is \code{waive()}.}
+\item{xtick}{(\code{numeric()}) numeric vector to define the tick values of x-axis when x variable is numeric.
+Default value is waive().}
 
-\item{xlabel}{vector with same length of \code{xtick} to define the
-label of \code{x-axis} tick values. Default value is \code{waive()}.}
+\item{xlabel}{(\code{character()}) vector with same length of \code{xtick} to define the label of x-axis tick values.
+Default value is waive().}
 
-\item{rotate_xlab}{\code{logical(1)} value indicating whether to rotate \code{x-axis} labels}
+\item{rotate_xlab}{(\code{logical(1)}) 45 degree rotation of \code{x-axis} values.}
 
-\item{facet_ncol}{numeric value indicating number of facets per row.}
+\item{facet_ncol}{(\code{integer(1)}) numeric value indicating number of facets per row.}
 
 \item{free_x}{\code{logical(1)} should scales be \code{"fixed"} (\code{FALSE}) of \code{"free"} (\code{TRUE}) for \code{x-axis} in
 \code{\link[ggplot2]{facet_wrap}} \code{scales} parameter.}
 
-\item{plot_height}{controls plot height.}
+\item{plot_height}{(\code{numeric(3)}) controls plot height.}
 
-\item{plot_width}{optional, controls plot width.}
+\item{plot_width}{(\code{numeric(3)}, optional) controls plot width.}
 
-\item{font_size}{control font size for title, \code{x-axis}, \code{y-axis} and legend font.}
+\item{font_size}{(\code{numeric(3)}) font size control for title, \code{x-axis} label, \code{y-axis} label and legend.}
 
-\item{dot_size}{plot dot size.}
+\item{dot_size}{(\code{numeric(3)}) plot dot size.}
 
-\item{hline_arb}{numeric vector of at most 2 values identifying intercepts for arbitrary horizontal lines.}
+\item{hline_arb}{(\code{numeric}) vector of at most 2 values identifying intercepts for arbitrary horizontal lines.}
 
-\item{hline_arb_color}{a character vector of at most length of \code{hline_arb}.
+\item{hline_arb_color}{(\code{character}) a character vector of at most length of \code{hline_arb}.
 naming the color for the arbitrary horizontal lines.}
 
-\item{hline_arb_label}{a character vector of at most length of \code{hline_arb}.
+\item{hline_arb_label}{(\code{character}) a character vector of at most length of \code{hline_arb}.
 naming the label for the arbitrary horizontal lines.}
 
-\item{hline_vars}{a character vector to name the columns that will define additional horizontal lines.}
+\item{hline_vars}{(\code{character}) a character vector to name the columns that will define additional horizontal lines.}
 
-\item{hline_vars_colors}{a character vector naming the colors for the additional horizontal lines.}
+\item{hline_vars_colors}{(\code{character}) a character vector naming the colors for the additional horizontal lines.}
 
-\item{hline_vars_labels}{a character vector naming the labels for the additional horizontal lines that will appear
-in the legend.}
+\item{hline_vars_labels}{(\code{character}) a character vector naming the labels for the additional horizontal lines
+that will appear in the plot.}
 
 \item{alpha}{(\code{numeric(3)}) vector to define transparency of plotted points.}
 
@@ -127,6 +126,13 @@ into context. For example the \code{\link[shiny:helpText]{shiny::helpText()}} el
 
 \item{transformators}{(\code{list} of \code{teal_transform_module}) that will be applied to transform module's data input.
 To learn more check \code{vignette("transform-input-data", package = "teal")}.}
+
+\item{decorators}{\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#experimental}{\figure{lifecycle-experimental.svg}{options: alt='[Experimental]'}}}{\strong{[Experimental]}}
+(named \code{list} of lists of \code{teal_transform_module}) optional,
+decorator for tables or plots included in the module output reported.
+The decorators are applied to the respective output objects.
+
+See section "Decorating Module" below for more details.}
 }
 \value{
 A \code{\link[teal:module]{teal::module()}} object that can be used in a \code{\link[teal:init]{teal::init()}} call.
