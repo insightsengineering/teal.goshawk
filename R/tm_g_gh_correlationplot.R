@@ -82,9 +82,6 @@
 #' )
 #' ```
 #'
-#' For additional details and examples of decorators, refer to the vignette
-#' `vignette("decorate-module-output", package = "teal.modules.general")`.
-#'
 #' To learn more please refer to the vignette
 #' `vignette("transform-module-output", package = "teal")` or the [`teal::teal_transform_module()`] documentation.
 #'
@@ -221,7 +218,9 @@
 #'       hline_vars_colors = c("green", "blue", "purple", "cyan"),
 #'       hline_vars_labels = c("ANRHI Label", "ANRLO Label", "ULOQN Label", "LLOQN Label"),
 #'       vline_vars = c("ANRHI", "ANRLO", "ULOQN", "LLOQN"),
-#'       vline_vars_colors = c("yellow", "orange", "brown", "gold"),
+#'       vline_vars_colors = c("yell#'
+#' For additional details and examples of decorators, refer to the vignette
+#' `vignette("decorate-module-output", package = "teal.modules.general")`.ow", "orange", "brown", "gold"),
 #'       vline_vars_labels = c("ANRHI Label", "ANRLO Label", "ULOQN Label", "LLOQN Label"),
 #'       vline_arb = c(50, 70),
 #'       vline_arb_label = "arb vert A",
