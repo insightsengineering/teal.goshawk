@@ -142,7 +142,9 @@ describe("tm_g_gh_density_distribution_plot: invalid arguments", {
     plot_width = c("1000", "500", "2000"),
     pre_output = 123L,
     post_output = list(TRUE),
-    transformators = list("not a function")
+    transformators = list("not a function"),
+    color_comb = 1L,
+    decorators = 1L
   )
   for (wrong_param in names(wrong_params)) {
     it(paste0("throws an error when ", wrong_param, " is invalid"), {
@@ -155,21 +157,37 @@ describe("tm_g_gh_density_distribution_plot: invalid arguments", {
     })
   }
 
-  it("throws error when hline_arb_label is invalid", {
-    args <- list(label = "module", hline_arb = c(0.02, 0.05))
-    args$hline_arb_label <- c(1, 2)
-    expect_error(
-      suppressWarnings(do.call(tm_g_gh_density_distribution_plot, args), classes = "pick_delayed"),
-      "Assertion on 'hline_arb_label' failed"
-    )
-  })
+  wrong_params2 <- list(hline_arb_label = c(1, 2), hline_arb_color = c(1, 2))
+  for (wrong_param2 in names(wrong_params2)) {
+    it(paste0("throws an error when ", wrong_param2, " is invalid"), {
+      args <- list(
+        label = "module",
+        hline_arb = c(0.02, 0.05)
+      )
+      args[[wrong_param2]] <- wrong_params2[[wrong_param2]]
+      expect_error(
+        suppressWarnings(do.call(tm_g_gh_density_distribution_plot, args), classes = "pick_delayed"),
+        sprintf("Assertion on '%s' failed", wrong_param2)
+      )
+    })
+  }
 
-  it("throws error when hline_arb_color is invalid", {
-    args <- list(label = "module", hline_arb = c(0.02, 0.05), hline_arb_label = c("Line A", "Line B"))
-    args$hline_arb_color <- c(1, 2)
-    expect_error(
-      suppressWarnings(do.call(tm_g_gh_density_distribution_plot, args), classes = "pick_delayed"),
-      "Assertion on 'hline_arb_color' failed"
+
+  deprecated <- c("param_var")
+  for (deprecated_param in deprecated) {
+    it(paste0("gives a deprecation warning when ", deprecated_param, " is used"), {
+      args <- list(label = "module")
+      args[[deprecated_param]] <- "PARAMCD"
+      lifecycle::expect_deprecated(
+        suppressWarnings(do.call(tm_g_gh_density_distribution_plot, args), classes = "pick_delayed")
+      )
+    })
+  }
+
+  it("all arguments are tested", {
+    expect_setequal(
+      unique(c(names(wrong_params), names(wrong_params2), deprecated)),
+      names(formals(tm_g_gh_density_distribution_plot))
     )
   })
 })

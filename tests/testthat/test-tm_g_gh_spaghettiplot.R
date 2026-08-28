@@ -147,7 +147,10 @@ describe("tm_g_gh_spaghettiplot: invalid arguments", {
     alpha = c("0.8", "0.0", "1.0"),
     pre_output = 123L,
     post_output = list(TRUE),
-    transformators = "not a list"
+    transformators = "not a list",
+    decorators = 1L,
+    xtick = base::identity,
+    xlabel = 1L
   )
 
   for (wrong_param in names(wrong_params)) {
@@ -181,4 +184,22 @@ describe("tm_g_gh_spaghettiplot: invalid arguments", {
       )
     })
   }
+
+  deprecated <- c("param_var", "filter_var")
+  for (deprecated_param in deprecated) {
+    it(paste0("gives a deprecation warning when ", deprecated_param, " is used"), {
+      args <- list(label = "module")
+      args[[deprecated_param]] <- "PARAMCD"
+      lifecycle::expect_deprecated(
+        suppressWarnings(do.call(tm_g_gh_spaghettiplot, args), classes = "pick_delayed")
+      )
+    })
+  }
+
+  it("all arguments are tested", {
+    expect_setequal(
+      unique(c(names(wrong_params), names(wrong_params2), deprecated)),
+      names(formals(tm_g_gh_spaghettiplot))
+    )
+  })
 })

@@ -244,6 +244,8 @@ tm_g_gh_spaghettiplot <- function(label,
 
   checkmate::assert_character(man_color, null.ok = TRUE)
   checkmate::assert_character(color_comb, null.ok = TRUE)
+  checkmate::assert(.var.name = "xtick", checkmate::check_class(xtick, "waiver"), checkmate::check_vector(xtick))
+  checkmate::assert(.var.name = "xlabel", checkmate::check_class(xlabel, "waiver"), checkmate::check_character(xlabel))
   checkmate::assert_character(xaxis_var_level, null.ok = TRUE)
   checkmate::assert_character(trt_group_level, null.ok = TRUE)
   checkmate::assert_numeric(hline_arb, null.ok = TRUE)

@@ -222,7 +222,7 @@ tm_g_gh_lineplot <- function(label,
   validate_line_arb_arg(hline_arb, hline_arb_color, hline_arb_label)
 
   checkmate::assert_character(color_manual, null.ok = TRUE)
-  checkmate::assert(.var.name = "xtick", checkmate::check_class(xtick, "waiver"), checkmate::check_numeric(xtick))
+  checkmate::assert(.var.name = "xtick", checkmate::check_class(xtick, "waiver"), checkmate::check_vector(xtick))
   checkmate::assert(.var.name = "xlabel", checkmate::check_class(xlabel, "waiver"), checkmate::check_character(xlabel))
   checkmate::assert_flag(rotate_xlab)
   checkmate::assert_numeric(plot_height, len = 3, any.missing = FALSE, finite = TRUE)
