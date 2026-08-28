@@ -12,7 +12,8 @@
 #' set_chunk_attrs <- getFromNamespace("set_chunk_attrs", "teal.goshawk")
 #' td <- within(
 #'   teal.reporter::teal_report(),
-#'   ggplot2::ggplot(mtcars, ggplot2::aes(x = wt, y = mpg)) + ggplot2::geom_point()
+#'   ggplot2::ggplot(mtcars, ggplot2::aes(x = wt, y = mpg)) +
+#'     ggplot2::geom_point()
 #' )
 #' card <- teal.reporter::teal_card(td)
 #' set_chunk_attrs(card, list(dev.width = 200, dev.height = 100))
@@ -85,9 +86,12 @@ set_chunk_attrs <- function(teal_card,
 #' set_chunk_dims <- getFromNamespace("set_chunk_dims", "teal.goshawk")
 #' td <- within(
 #'   teal.reporter::teal_report(),
-#'   ggplot2::ggplot(mtcars, ggplot2::aes(x = wt, y = mpg)) + ggplot2::geom_point()
+#'   ggplot2::ggplot(mtcars, ggplot2::aes(x = wt, y = mpg)) +
+#'     ggplot2::geom_point()
 #' )
-#' pws <- list(dim = reactive({ list(width = 200, height = 100) })) # mocking a teal.widget::plot_with_settings
+#' pws <- list(dim = reactive({
+#'   list(width = 200, height = 100)
+#' })) # mocking a teal.widget::plot_with_settings
 #' set_chunk_dims(pws = pws, q_r = reactive(td))
 set_chunk_dims <- function(pws, q_r, inner_classes = NULL) {
   checkmate::assert_list(pws)

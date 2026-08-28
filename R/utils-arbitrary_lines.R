@@ -16,25 +16,25 @@
 #' @keywords internal
 #' @examples
 #' if (interactive()) {
-#'  shinyApp(
-#'   ui = fluidPage(
-#'     ui_arbitrary_lines(
-#'       id = "arbitrary_lines",
-#'       line_arb = c(1, 2, 3),
-#'       line_arb_color = c("red", "blue", "green"),
-#'       line_arb_label = c("Line 1", "Line 2", "Line 3"),
-#'       title = "Arbitrary horizontal lines:"
-#'      ),
-#'    verbatimTextOutput("result"),
-#'    ),
-#'    server = function(input, output, session) {
-#'      result <- srv_arbitrary_lines("arbitrary_lines")
-#'      output$result <- renderPrint({
-#'        req(result())
-#'        result()$iv()$validate()
-#'        result()[c("line_arb", "line_arb_color", "line_arb_label")]
-#'      })
-#'    }
+#'   shinyApp(
+#'     ui = fluidPage(
+#'       ui_arbitrary_lines(
+#'         id = "arbitrary_lines",
+#'         line_arb = c(1, 2, 3),
+#'         line_arb_color = c("red", "blue", "green"),
+#'         line_arb_label = c("Line 1", "Line 2", "Line 3"),
+#'         title = "Arbitrary horizontal lines:"
+#'       ),
+#'       verbatimTextOutput("result"),
+#'     ),
+#'     server = function(input, output, session) {
+#'       result <- srv_arbitrary_lines("arbitrary_lines")
+#'       output$result <- renderPrint({
+#'         req(result())
+#'         result()$iv()$validate()
+#'         result()[c("line_arb", "line_arb_color", "line_arb_label")]
+#'       })
+#'     }
 #'   )
 #' }
 NULL
