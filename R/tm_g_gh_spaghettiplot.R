@@ -53,6 +53,30 @@
 #' @author Wenyi Liu
 #' @author Balazs Toth
 #'
+#' @section Decorating Module:
+#'
+#' This module generates the following objects, which can be modified in place using decorators:
+#' - `plot` (`ggplot`)
+#'
+#' A Decorator is applied to the specific output using a named list of `teal_transform_module` objects.
+#' The name of this list corresponds to the name of the output to which the decorator is applied.
+#' See code snippet below:
+#'
+#' ```
+#' tm_g_gh_spaghettiplot(
+#'    ..., # arguments for module
+#'    decorators = list(
+#'      plot = teal_transform_module(...) # applied only to `plot` output
+#'    )
+#' )
+#' ```
+#'
+#' For additional details and examples of decorators, refer to the vignette
+#' `vignette("decorate-module-output", package = "teal.modules.general")`.
+#'
+#' To learn more please refer to the vignette
+#' `vignette("transform-module-output", package = "teal")` or the [`teal::teal_transform_module()`] documentation.
+#'
 #' @inheritSection teal::example_module Reporting
 #'
 #' @return A [teal::module()] object that can be used in a [teal::init()] call.
@@ -196,7 +220,8 @@ tm_g_gh_spaghettiplot <- function(label,
                                   alpha = c(0.8, 0.0, 1.0),
                                   pre_output = NULL,
                                   post_output = NULL,
-                                  transformators = list()) {
+                                  transformators = list(),
+                                  decorators = list()) {
   message("Initializing tm_g_gh_spaghettiplot")
 
   if (lifecycle::is_present(filter_var)) {
@@ -219,6 +244,8 @@ tm_g_gh_spaghettiplot <- function(label,
 
   checkmate::assert_character(man_color, null.ok = TRUE)
   checkmate::assert_character(color_comb, null.ok = TRUE)
+  checkmate::assert(.var.name = "xtick", checkmate::check_class(xtick, "waiver"), checkmate::check_vector(xtick))
+  checkmate::assert(.var.name = "xlabel", checkmate::check_class(xlabel, "waiver"), checkmate::check_character(xlabel))
   checkmate::assert_character(xaxis_var_level, null.ok = TRUE)
   checkmate::assert_character(trt_group_level, null.ok = TRUE)
   checkmate::assert_numeric(hline_arb, null.ok = TRUE)
@@ -244,6 +271,8 @@ tm_g_gh_spaghettiplot <- function(label,
   validate_line_arb_arg(hline_arb, hline_arb_color, hline_arb_label)
   validate_line_vars_arg(hline_vars, hline_vars_colors, hline_vars_labels)
 
+  teal::assert_decorators(decorators, names = "plot")
+
   if (lifecycle::is_present(param_var)) {
     lifecycle::deprecate_warn(
       when = "0.6.0",
@@ -251,12 +280,11 @@ tm_g_gh_spaghettiplot <- function(label,
       details = "Please use `teal.picks::picks()` to specify `param` instead of `param_var`."
     )
     checkmate::assert_string(param_var)
-  } else {
-    param_var <- rlang::maybe_missing(param_var, "PARAMCD")
+    param_var <- teal.picks::variables(param_var, param_var)
   }
-  param_var <- teal.picks::variables(param_var, param_var)
 
   if (inherits(param, "choices_selected")) {
+    stopifnot("param_var is necessary when providing param with `choices_selected()`. Consider moving to `param = teal.picks::picks(...)`" = inherits(param_var, "variables")) # nolint: line_length_linter.
     param <- migrate_choices_selected_to_values(param)
     param <- create_picks_helper(teal.picks::datasets(dataname, dataname), param_var, param)
   } else {
@@ -309,7 +337,8 @@ g_ui_spaghettiplot <- function(id,
                                alpha,
                                group_stats,
                                pre_output,
-                               post_output) {
+                               post_output,
+                               decorators) {
   ns <- NS(id)
 
   tags$div(
@@ -343,6 +372,7 @@ g_ui_spaghettiplot <- function(id,
           )
         },
         ui_arbitrary_lines(id = ns("hline_arb"), hline_arb, hline_arb_label, hline_arb_color),
+        teal::ui_transform_teal_data(ns("decorator"), select_decorators(decorators, "plot")),
         bslib::accordion(
           bslib::accordion_panel(
             title = "Plot Aesthetic Settings",
@@ -382,7 +412,6 @@ srv_g_spaghettiplot <- function(id,
                                 data,
                                 dataname,
                                 idvar,
-                                param_var,
                                 param,
                                 xaxis_var,
                                 yaxis_var,
@@ -397,7 +426,8 @@ srv_g_spaghettiplot <- function(id,
                                 plot_height,
                                 plot_width,
                                 hline_vars_colors,
-                                hline_vars_labels) {
+                                hline_vars_labels,
+                                decorators) {
   checkmate::assert_class(data, "reactive")
   checkmate::assert_class(shiny::isolate(data()), "teal_data")
 
@@ -436,27 +466,27 @@ srv_g_spaghettiplot <- function(id,
         teal::need_input(
           inputId = "xaxis_param-values-selected",
           condition = length(param_sel()) != 0,
-          msg = "Please select a biomarker"
+          message = "Please select a biomarker"
         ),
         teal::need_input(
           inputId = "trt_group-variables-selected",
           condition = length(trt_group_sel()) != 0,
-          msg = "Please select a treatment variable"
+          message = "Please select a treatment variable"
         ),
         teal::need_input(
           inputId = "xaxis_var-variables-selected",
           condition = length(xaxis_var_sel()) != 0,
-          msg = "Please select an X-Axis variable"
+          message = "Please select an X-Axis variable"
         ),
         teal::need_input(
           inputId = "yaxis_var-variables-selected",
           condition = length(yaxis_var_sel()) != 0,
-          msg = "Please select a Y-Axis variable"
+          message = "Please select a Y-Axis variable"
         ),
         teal::need_input(
           inputId = "facet_ncol",
           condition = length(input$facet_ncol) != 0 && input$facet_ncol > 0 && as.numeric(input$facet_ncol) %% 1 == 0,
-          msg = "Please select a facet column integer that is greater than 0"
+          message = "Please select a facet column integer that is greater than 0"
         )
       )
       data_with_card()
@@ -556,7 +586,7 @@ srv_g_spaghettiplot <- function(id,
       teal.code::eval_code(
         object = obj,
         code = bquote({
-          p <- goshawk::g_spaghettiplot(
+          plot <- goshawk::g_spaghettiplot(
             data = ANL,
             subj_id = .(idvar),
             biomarker_var = .(param_var_sel()),
@@ -586,14 +616,17 @@ srv_g_spaghettiplot <- function(id,
             hline_vars_colors = .(hline_vars_colors[seq_along(hline_vars_val)]),
             hline_vars_labels = .(hline_vars_labels[seq_along(hline_vars_val)])
           )
-          p
         })
       )
     }), 800)
 
-    plot_r <- reactive({
-      plot_q()[["p"]]
-    })
+    decorated_plot_q <- teal::srv_transform_teal_data(
+      "decorator",
+      plot_q,
+      select_decorators(decorators, "plot"),
+      expr = quote(plot)
+    )
+    plot_r <- reactive(decorated_plot_q()[["plot"]])
 
     plot_data <- teal.widgets::plot_with_settings_srv(
       id = "plot",
@@ -602,7 +635,6 @@ srv_g_spaghettiplot <- function(id,
       width = plot_width,
       brushing = TRUE
     )
-
 
     reactive_df <- debounce(reactive({
       plot_brush <- plot_data$brush()
@@ -635,6 +667,6 @@ srv_g_spaghettiplot <- function(id,
         DT::formatRound(numeric_cols, 4)
     })
 
-    set_chunk_dims(plot_data, plot_q)
+    set_chunk_dims(plot_data, decorated_plot_q)
   })
 }

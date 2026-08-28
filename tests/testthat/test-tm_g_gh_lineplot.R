@@ -130,7 +130,13 @@ describe("tm_g_gh_lineplot: invalid arguments", {
     plot_relative_height_value = "1000",
     pre_output = 123L,
     post_output = list(TRUE),
-    transformators = list("not a function")
+    transformators = list("not a function"),
+    decorators = 1L,
+    xvar_level = 1L,
+    trt_group_level = 1L,
+    shape_choices = 1L,
+    xtick = base::identity,
+    xlabel = 1L
   )
   for (wrong_param in names(wrong_params)) {
     it(paste0("throws an error when ", wrong_param, " is invalid"), {
@@ -159,4 +165,19 @@ describe("tm_g_gh_lineplot: invalid arguments", {
       )
     })
   }
+
+  deprecated <- c("param_var", "filter_var", "filter_var_choices")
+  for (deprecated_param in deprecated) {
+    it(paste0("gives a deprecation warning when ", deprecated_param, " is used"), {
+      args <- list(label = "module")
+      args[[deprecated_param]] <- "PARAMCD"
+      lifecycle::expect_deprecated(
+        suppressWarnings(do.call(tm_g_gh_lineplot, args), classes = "pick_delayed")
+      )
+    })
+  }
+
+  it("all arguments are tested", {
+    expect_setequal(unique(c(names(wrong_params), names(wrong_params2), deprecated)), names(formals(tm_g_gh_lineplot)))
+  })
 })

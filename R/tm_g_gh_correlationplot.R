@@ -51,7 +51,12 @@
 #' @param font_size (`numeric(3)`) font size control for title, `x-axis` label, `y-axis` label and legend.
 #' @param dot_size (`numeric(3)`) plot dot size.
 #' @param reg_text_size (`numeric(3)`) font size control for regression line annotations.
+#' @param decorators `r lifecycle::badge("experimental")`
+#' (named `list` of lists of `teal_transform_module`) optional,
+#' decorator for tables or plots included in the module output reported.
+#' The decorators are applied to the respective output objects.
 #'
+#' See section "Decorating Module" below for more details.
 #' @return A [teal::module()] object that can be used in a [teal::init()] call.
 #'
 #' @export
@@ -59,8 +64,31 @@
 #' @author Nick Paszty
 #' @author Balazs Toth
 #'
-#' @inheritSection teal::example_module Reporting
+#' @section Decorating Module:
 #'
+#' This module generates the following objects, which can be modified in place using decorators:
+#' - `plot` (`ggplot`)
+#'
+#' A Decorator is applied to the specific output using a named list of `teal_transform_module` objects.
+#' The name of this list corresponds to the name of the output to which the decorator is applied.
+#' See code snippet below:
+#'
+#' ```
+#' tm_g_gh_correlationplot(
+#'    ..., # arguments for module
+#'    decorators = list(
+#'      plot = teal_transform_module(...) # applied only to `plot` output
+#'    )
+#' )
+#' ```
+#'
+#' For additional details and examples of decorators, refer to the vignette
+#' `vignette("decorate-module-output", package = "teal.modules.general")`.
+#'
+#' To learn more please refer to the vignette
+#' `vignette("transform-module-output", package = "teal")` or the [`teal::teal_transform_module()`] documentation.
+#'
+#' @inheritSection teal::example_module Reporting
 #'
 #' @examples
 #' # Example using ADaM structure analysis dataset.
@@ -248,7 +276,8 @@ tm_g_gh_correlationplot <- function(label,
                                     reg_text_size = c(3, 3, 10),
                                     pre_output = NULL,
                                     post_output = NULL,
-                                    transformators = list()) {
+                                    transformators = list(),
+                                    decorators = list()) {
   message("Initializing tm_g_gh_correlationplot")
 
   checkmate::assert_string(dataname)
@@ -287,6 +316,8 @@ tm_g_gh_correlationplot <- function(label,
   checkmate::assert_multi_class(post_output, c("shiny.tag", "shiny.tag.list"), null.ok = TRUE)
   checkmate::assert_list(transformators, types = "teal_transform_module")
 
+  teal::assert_decorators(decorators, names = "plot")
+
   if (lifecycle::is_present(param_var)) {
     lifecycle::deprecate_warn(
       when = "0.6.0",
@@ -294,23 +325,19 @@ tm_g_gh_correlationplot <- function(label,
       details = "Please use `teal.picks::picks()` to specificy `xaxis_param` and `yaxis_param` instead of `param_var`."
     )
     checkmate::assert_string(param_var)
-  } else {
-    param_var <- rlang::maybe_missing(param_var, "PARAMCD")
+    param_var <- teal.picks::variables(param_var, param_var)
   }
-  param_var <- teal.picks::variables(param_var, param_var)
 
   if (inherits(xaxis_param, "choices_selected")) {
+    stopifnot("param_var is necessary when providing param with `choices_selected()`. Consider moving to `param = teal.picks::picks(...)`" = inherits(param_var, "variables")) # nolint: line_length_linter.
     xaxis_param <- migrate_choices_selected_to_values(xaxis_param)
     xaxis_param <- create_picks_helper(teal.picks::datasets(dataname, dataname), param_var, xaxis_param)
   } else {
     xaxis_param <- create_picks_helper(teal.picks::datasets(dataname, dataname), xaxis_param)
   }
 
-  xaxis_var <- migrate_choices_selected_to_variables(xaxis_var)
-  yaxis_var <- migrate_choices_selected_to_variables(yaxis_var)
-  trt_group <- migrate_choices_selected_to_variables(trt_group)
-
   if (inherits(yaxis_param, "choices_selected")) {
+    stopifnot("param_var is necessary when providing param with `choices_selected()`. Consider moving to `param = teal.picks::picks(...)`" = inherits(param_var, "variables")) # nolint: line_length_linter.
     yaxis_param <- migrate_choices_selected_to_values(yaxis_param)
     yaxis_param <- create_picks_helper(teal.picks::datasets(dataname, dataname), param_var, yaxis_param)
   } else {
@@ -320,6 +347,10 @@ tm_g_gh_correlationplot <- function(label,
   # These 2 assertions should be moved to section above after "choices_selected" migration is removed
   teal.picks::assert_last_level(xaxis_param, "values")
   teal.picks::assert_last_level(yaxis_param, "values")
+
+  xaxis_var <- migrate_choices_selected_to_variables(xaxis_var)
+  yaxis_var <- migrate_choices_selected_to_variables(yaxis_var)
+  trt_group <- migrate_choices_selected_to_variables(trt_group)
 
   xaxis_var <- create_picks_helper(teal.picks::datasets(dataname, dataname), xaxis_var)
   yaxis_var <- create_picks_helper(teal.picks::datasets(dataname, dataname), yaxis_var)
@@ -370,7 +401,8 @@ ui_g_correlationplot <- function(id,
                                  dot_size,
                                  reg_text_size,
                                  pre_output,
-                                 post_output) {
+                                 post_output,
+                                 decorators) {
   ns <- NS(id)
 
   teal.widgets::standard_layout(
@@ -412,6 +444,7 @@ ui_g_correlationplot <- function(id,
         vline_arb_color,
         title = "Arbitrary Vertical Lines:"
       ),
+      teal::ui_transform_teal_data(ns("decorator"), select_decorators(decorators, "plot")),
       bslib::accordion(
         bslib::accordion_panel(
           title = "Plot Aesthetic Settings",
@@ -445,7 +478,6 @@ ui_g_correlationplot <- function(id,
 srv_g_correlationplot <- function(id,
                                   data,
                                   dataname,
-                                  param_var,
                                   xaxis_param,
                                   xaxis_var,
                                   yaxis_param,
@@ -459,7 +491,8 @@ srv_g_correlationplot <- function(id,
                                   hline_vars_colors,
                                   hline_vars_labels,
                                   vline_vars_colors,
-                                  vline_vars_labels) {
+                                  vline_vars_labels,
+                                  decorators) {
   checkmate::assert_class(data, "reactive")
   checkmate::assert_class(shiny::isolate(data()), "teal_data")
 
@@ -535,6 +568,22 @@ srv_g_correlationplot <- function(id,
           message = "X-Axis and Y-Axis biomarkers must be from the same biomarker variable in dataset"
         )
       )
+
+      if (length(input$hline_vars) > 0) {
+        validate(
+          teal::need_input(
+            inputId = "hline_vars",
+            condition = all(input$hline_vars %in% names(ANL)),
+            message = "One or more selected horizontal line variable(s) is/are not names to any column in the data"
+          ),
+          teal::need_input(
+            inputId = "vline_vars",
+            condition = all(input$vline_vars %in% names(ANL)),
+            message = "One or more selected vertical line variable(s) is/are not names to any column in the data"
+          )
+        )
+      }
+
       data_with_card()
     })
 
@@ -552,21 +601,6 @@ srv_g_correlationplot <- function(id,
       dataset_var <- dataname
       ANL <- validated_q()[[dataname]]
       validate_has_data(ANL, 1)
-
-      if (length(input$hline_vars) > 0) {
-        validate(
-          teal::need_input(
-            inputId = "hline_vars",
-            condition = all(input$hline_vars %in% names(ANL)),
-            message = "One or more selected horizontal line variable(s) is/are not names to any column in the data"
-          ),
-          teal::need_input(
-            inputId = "vline_vars",
-            condition = all(input$vline_vars %in% names(ANL)),
-            message = "One or more selected vertical line variable(s) is/are not names to any column in the data"
-          )
-        )
-      }
 
       validate_has_variable(ANL, param_var_sel())
       validate_has_variable(ANL, "AVISITCD")
@@ -635,6 +669,7 @@ srv_g_correlationplot <- function(id,
       validate_has_data(ANL, 1)
 
       ANL <- dplyr::filter(ANL, .data[[param_var_sel()]] == xaxis_param_sel())
+      validate_has_data(ANL, 1)
 
       visit_freq <- unique(ANL$AVISITCD)
 
@@ -893,7 +928,7 @@ srv_g_correlationplot <- function(id,
         object = obj,
         code = bquote({
           # re-establish treatment variable label
-          p <- goshawk::g_correlationplot(
+          plot <- goshawk::g_correlationplot(
             data = ANL_TRANSPOSED,
             param_var = .(param_var_sel()),
             xaxis_param = .(xaxis_param_sel()),
@@ -933,12 +968,17 @@ srv_g_correlationplot <- function(id,
             vline_vars_colors = .(vline_vars_colors[seq_along(vline_vars)]),
             vline_vars_labels = .(paste(vline_vars_labels[seq_along(vline_vars)], "-", xaxis_param_sel()))
           )
-          p
         })
       )
     }), 800)
 
-    plot_r <- reactive(plot_q()[["p"]])
+    decorated_plot_q <- teal::srv_transform_teal_data(
+      "decorator",
+      plot_q,
+      select_decorators(decorators, "plot"),
+      expr = quote(plot)
+    )
+    plot_r <- reactive(decorated_plot_q()[["plot"]])
 
     plot_data <- teal.widgets::plot_with_settings_srv(
       id = "plot",
@@ -973,6 +1013,6 @@ srv_g_correlationplot <- function(id,
         DT::formatRound(numeric_cols, 4)
     })
 
-    set_chunk_dims(plot_data, plot_q)
+    set_chunk_dims(plot_data, decorated_plot_q)
   })
 }

@@ -178,7 +178,8 @@ describe("tm_g_gh_correlationplot: invalid arguments", {
     reg_text_size = c("12", "8", "20"),
     pre_output = 123L,
     post_output = list(TRUE),
-    transformators = list("not a function")
+    transformators = list("not a function"),
+    decorators = 1L
   )
   for (wrong_param in names(wrong_params)) {
     it(paste0("throws an error when ", wrong_param, " is invalid"), {
@@ -211,4 +212,22 @@ describe("tm_g_gh_correlationplot: invalid arguments", {
       )
     })
   }
+
+  deprecated <- c("param_var")
+  for (deprecated_param in deprecated) {
+    it(paste0("gives a deprecation warning when ", deprecated_param, " is used"), {
+      args <- list(label = "module")
+      args[[deprecated_param]] <- "PARAMCD"
+      lifecycle::expect_deprecated(
+        suppressWarnings(do.call(tm_g_gh_correlationplot, args), classes = "pick_delayed")
+      )
+    })
+  }
+
+  it("all arguments are tested", {
+    expect_setequal(
+      unique(c(names(wrong_params), names(wrong_params2), deprecated)),
+      names(formals(tm_g_gh_correlationplot))
+    )
+  })
 })

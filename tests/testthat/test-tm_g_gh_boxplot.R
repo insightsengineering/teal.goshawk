@@ -165,7 +165,8 @@ describe("tm_g_gh_boxplot: invalid arguments", {
     alpha = c("0.8", "0.0", "1.0"),
     pre_output = 123L,
     post_output = list(TRUE),
-    transformators = list("not a function")
+    transformators = list("not a function"),
+    decorators = 12
   )
   for (wrong_param in names(wrong_params)) {
     it(paste0("throws an error when ", wrong_param, " is invalid"), {
