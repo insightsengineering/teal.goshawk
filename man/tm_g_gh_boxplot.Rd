@@ -253,7 +253,7 @@ app <- init(
       hline_arb_color = c("grey", "red"),
       hline_arb_label = c("default_hori_A", "default_hori_B"),
       hline_vars = c("ANRHI", "ANRLO", "ULOQN", "LLOQN"),
-      hline_vars_colors = c("pink", "brown", "purple", "black"),
+      hline_vars_colors = c("pink", "brown", "purple", "black")
     )
   )
 )
