@@ -450,7 +450,6 @@ srv_lineplot <- function(id,
     yaxis_var_sel <- reactive(selectors$yaxis_var()$variables$selected)
     trt_group_sel <- reactive(selectors$trt_group()$variables$selected)
     param_var_sel <- reactive(selectors$xaxis_param()$variables$selected)
-    browser()
     shape_choices_sel <- if (is.null(shape_choices)) {
       function() NULL
     } else {
