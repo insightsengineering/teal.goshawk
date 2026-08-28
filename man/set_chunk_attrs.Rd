@@ -33,7 +33,8 @@ Set the attributes of the last chunk outputs
 set_chunk_attrs <- getFromNamespace("set_chunk_attrs", "teal.goshawk")
 td <- within(
   teal.reporter::teal_report(),
-  ggplot2::ggplot(mtcars, ggplot2::aes(x = wt, y = mpg)) + ggplot2::geom_point()
+  ggplot2::ggplot(mtcars, ggplot2::aes(x = wt, y = mpg)) +
+    ggplot2::geom_point()
 )
 card <- teal.reporter::teal_card(td)
 set_chunk_attrs(card, list(dev.width = 200, dev.height = 100))
