@@ -3,42 +3,19 @@
 #' This teal module renders the UI and calls the functions that create a box plot and accompanying
 #' summary table.
 #'
-#' @param label menu item label of the module in the teal app.
-#' @param dataname analysis data passed to the data argument of \code{\link[teal]{init}}. E.g. `ADaM` structured
-#'  laboratory data frame `ADLB`.
-#' @param param_var `r badge("deprecated")` name of variable containing biomarker codes e.g. `PARAMCD`.
-#' @param param (`picks` or `choices_selected`) biomarker selected.
-#' @param yaxis_var (`variables` or `choices_selected`) name of variable containing biomarker results displayed on
-#'  y-axis e.g. `AVAL`.
-#' @param xaxis_var (`variables` or `choices_selected`) variable to categorize the x-axis.
-#' @param facet_var (`variables` or `choices_selected`) variable to facet the plots by.
-#' @param trt_group (`variables` or `choices_selected`) object with available choices and pre-selected option
-#'  for variable names representing treatment group e.g. `ARM`.
-#' @param color_manual vector of colors applied to treatment values.
-#' @param shape_manual vector of symbols applied to `LOQ` values.
-#' @param facet_ncol numeric value indicating number of facets per row.
-#' @param loq_legend `loq` legend toggle.
-#' @param rotate_xlab 45 degree rotation of `x-axis` values.
-#' @param hline_arb numeric vector of at most 2 values identifying intercepts for arbitrary horizontal lines.
-#' @param hline_arb_color a character vector of at most length of \code{hline_arb}.
-#' naming the color for the arbitrary horizontal lines.
-#' @param hline_arb_label a character vector of at most length of \code{hline_arb}.
-#' naming the label for the arbitrary horizontal lines.
-#' @param hline_vars a character vector to name the columns that will define additional horizontal lines.
-#' @param hline_vars_colors a character vector naming the colors for the additional horizontal lines.
-#' @param hline_vars_labels a character vector naming the labels for the additional horizontal lines that will appear
-#'  in the legend.
-#' @param plot_height controls plot height.
-#' @param plot_width optional, controls plot width.
-#' @param font_size font size control for title, `x-axis` label, `y-axis` label and legend.
-#' @param dot_size plot dot size.
-#' @param alpha numeric vector to define transparency of plotted points.
+#' @param facet_var (`variables` or `choices_selected`) object with available choices and pre-selected option for
+#' variable names representing facet variable e.g. `AVISITCD`.
+#' @param alpha (`numeric(3)`) vector to define transparency of plotted points.
 #'
+#' @inheritParams tm_g_gh_correlationplot
+#' @inheritParams tm_g_gh_lineplot
 #' @inheritParams teal.widgets::standard_layout
 #' @inheritParams teal::module
 #'
-#' @author Jeff Tomlinson (tomlinsj) jeffrey.tomlinson@roche.com
-#' @author Balazs Toth (tothb2) toth.balazs@gene.com
+#' @return A [teal::module()] object that can be used in a [teal::init()] call.
+#'
+#' @author Jeff Tomlinson
+#' @author Balazs Toth
 #'
 #' @section Decorating Module:
 #'
@@ -65,8 +42,6 @@
 #' `vignette("transform-module-output", package = "teal")` or the [`teal::teal_transform_module()`] documentation.
 #'
 #' @inheritSection teal::example_module Reporting
-#'
-#' @return an \code{\link[teal]{module}} object
 #'
 #' @export
 #'

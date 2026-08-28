@@ -11,6 +11,10 @@ maptrt(df_armvar, code = c("M", "O"))
 
 \item{code}{controls whether mapping or ordering code is written to console. Valid values: \code{"M"} and \code{"O"}.}
 }
+\value{
+Data frame with the unique treatment codes.
+The function prints the left hand side of the mapping or ordering code to the console.
+}
 \description{
 Provides lines of code for left hand side of arm mapping. user must provide right hand side
 }

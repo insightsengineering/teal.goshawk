@@ -31,46 +31,47 @@ tm_g_gh_density_distribution_plot(
 )
 }
 \arguments{
-\item{label}{menu item label of the module in the teal app.}
+\item{label}{(\code{character(1)}) menu item label of the module in the teal app.}
 
-\item{dataname}{analysis data passed to the data argument of \code{\link[teal]{init}}. E.g. \code{ADaM} structured
-laboratory data frame \code{ADLB}.}
+\item{dataname}{(\code{character(1)}) analysis data passed to the data argument of \code{\link[teal:init]{teal::init()}}.
+E.g. \code{ADaM} structured laboratory data frame \code{ADLB}.}
 
-\item{param_var}{\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#deprecated}{\figure{lifecycle-deprecated.svg}{options: alt='[Deprecated]'}}}{\strong{[Deprecated]}} name of variable containing biomarker codes e.g. \code{PARAMCD}.}
+\item{param_var}{\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#deprecated}{\figure{lifecycle-deprecated.svg}{options: alt='[Deprecated]'}}}{\strong{[Deprecated]}} (\code{character(1)})
+name of variable containing biomarker codes e.g. \code{PARAMCD}.}
 
-\item{param}{(\code{picks} or \code{choices_selected}) biomarker selected.}
+\item{param}{(\code{\link[teal.picks:picks]{teal.picks::picks()}} or \code{\link[teal.transform:choices_selected]{teal.transform::choices_selected()}}) biomarker selected.}
 
-\item{xaxis_var}{(\code{variables} or \code{choices_selected})
-name of variable containing biomarker results displayed on \code{x-axis} e.g. \code{BASE}.}
+\item{xaxis_var}{(\code{\link[teal.picks:variables]{teal.picks::variables()}} or legacy \code{\link[teal.transform:choices_selected]{teal.transform::choices_selected()}})
+name of variable containing biomarker results displayed on x-axis e.g. \code{BASE}.}
 
-\item{trt_group}{(\code{variables} or \code{choices_selected}) object with available choices and pre-selected option
-for variable names representing treatment group e.g. \code{ARM}.}
+\item{trt_group}{(\code{\link[teal.picks:variables]{teal.picks::variables()}} or legacy \code{\link[teal.transform:choices_selected]{teal.transform::choices_selected()}})
+object with available choices and pre-selected option for variable names representing treatment group e.g. \code{ARM}.}
 
-\item{color_manual}{vector of colors applied to treatment values.}
+\item{color_manual}{(named \code{character}, optional) vector of colors applied to treatment values.}
 
 \item{color_comb}{name or hex value for combined treatment color.}
 
-\item{plot_height}{controls plot height.}
+\item{plot_height}{(\code{numeric(3)}) controls plot height.}
 
-\item{plot_width}{optional, controls plot width.}
+\item{plot_width}{(\code{numeric(3)}, optional) controls plot width.}
 
-\item{font_size}{font size control for title, \code{x-axis} label, \code{y-axis} label and legend.}
+\item{font_size}{(\code{numeric(3)}) font size control for title, \code{x-axis} label, \code{y-axis} label and legend.}
 
 \item{line_size}{plot line thickness.}
 
-\item{hline_arb}{numeric vector of at most 2 values identifying intercepts for arbitrary horizontal lines.}
+\item{hline_arb}{(\code{numeric}) vector of at most 2 values identifying intercepts for arbitrary horizontal lines.}
 
-\item{hline_arb_color}{a character vector of at most length of \code{hline_arb}.
+\item{hline_arb_color}{(\code{character}) a character vector of at most length of \code{hline_arb}.
 naming the color for the arbitrary horizontal lines.}
 
-\item{hline_arb_label}{a character vector of at most length of \code{hline_arb}.
+\item{hline_arb_label}{(\code{character}) a character vector of at most length of \code{hline_arb}.
 naming the label for the arbitrary horizontal lines.}
 
-\item{facet_ncol}{numeric value indicating number of facets per row.}
+\item{facet_ncol}{(\code{integer(1)}) numeric value indicating number of facets per row.}
 
 \item{comb_line}{display combined treatment line toggle.}
 
-\item{rotate_xlab}{45 degree rotation of \code{x-axis} values.}
+\item{rotate_xlab}{(\code{logical(1)}) 45 degree rotation of \code{x-axis} values.}
 
 \item{pre_output}{(\code{shiny.tag}) optional,\cr
 with text placed before the output to put the output into context. For example a title.}
@@ -80,6 +81,16 @@ into context. For example the \code{\link[shiny:helpText]{shiny::helpText()}} el
 
 \item{transformators}{(\code{list} of \code{teal_transform_module}) that will be applied to transform module's data input.
 To learn more check \code{vignette("transform-input-data", package = "teal")}.}
+
+\item{decorators}{\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#experimental}{\figure{lifecycle-experimental.svg}{options: alt='[Experimental]'}}}{\strong{[Experimental]}}
+(named \code{list} of lists of \code{teal_transform_module}) optional,
+decorator for tables or plots included in the module output reported.
+The decorators are applied to the respective output objects.
+
+See section "Decorating Module" below for more details.}
+}
+\value{
+A \code{\link[teal:module]{teal::module()}} object that can be used in a \code{\link[teal:init]{teal::init()}} call.
 }
 \description{
 This teal module renders the UI and calls the functions that create a density distribution plot
@@ -211,7 +222,7 @@ if (interactive()) {
 
 }
 \author{
-Nick Paszty (npaszty) paszty.nicholas@gene.com
+Nick Paszty
 
-Balazs Toth (tothb2)  toth.balazs@gene.com
+Balazs Toth
 }

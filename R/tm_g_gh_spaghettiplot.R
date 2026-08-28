@@ -6,52 +6,23 @@
 #' @param label menu item label of the module in the teal app.
 #' @param dataname analysis data passed to the data argument of \code{\link[teal]{init}}.
 #' E.g. `ADaM` structured laboratory data frame `ADLB`.
-#' @param param_var `r badge("deprecated")` name of variable containing biomarker codes e.g. `PARAMCD`.
-#' @param param (`picks` or `choices_selected`) biomarker selected.
-#' @param param_var_label single name of variable in analysis data
-#' that includes parameter labels.
 #' @param idvar name of unique subject id variable.
-#' @param xaxis_var (`variables` or `choices_selected`)
-#' single name of variable in analysis data that is used as x-axis in the plot.
 #' @param xaxis_var_level vector that can be used to define the factor level of `xaxis_var`.
 #' Only use it when `xaxis_var` is character or factor.
 #' @param filter_var `r badge("deprecated")` data constraint variable.
-#' @param yaxis_var (`variables` or `choices_selected`) single name of variable in analysis data that is used as
-#' summary variable in the respective `goshawk` function.
-#' @param trt_group (`variables` or `choices_selected`) object with available choices and pre-selected option
-#' for variable names representing treatment group e.g. `ARM`.
-#' @param trt_group_level vector that can be used to define factor
-#' level of `trt_group`.
 #' @param man_color string vector representing customized colors
 #' @param color_comb name or hex value for combined treatment color.
-#' @param xtick numeric vector to define the tick values of `x-axis`
-#' when x variable is numeric. Default value is `waive()`.
-#' @param xlabel vector with same length of `xtick` to define the
-#' label of `x-axis` tick values. Default value is `waive()`.
-#' @param rotate_xlab `logical(1)` value indicating whether to rotate `x-axis` labels
-#' @param facet_ncol numeric value indicating number of facets per row.
 #' @param free_x `logical(1)` should scales be `"fixed"` (`FALSE`) of `"free"` (`TRUE`) for `x-axis` in
 #' \code{\link[ggplot2]{facet_wrap}} \code{scales} parameter.
-#' @param plot_height controls plot height.
-#' @param plot_width optional, controls plot width.
-#' @param font_size control font size for title, `x-axis`, `y-axis` and legend font.
-#' @param dot_size plot dot size.
 #' @param group_stats control group mean or median overlay.
-#' @param hline_arb numeric vector of at most 2 values identifying intercepts for arbitrary horizontal lines.
-#' @param hline_arb_color a character vector of at most length of \code{hline_arb}.
-#' naming the color for the arbitrary horizontal lines.
-#' @param hline_arb_label a character vector of at most length of \code{hline_arb}.
-#' naming the label for the arbitrary horizontal lines.
-#' @param hline_vars a character vector to name the columns that will define additional horizontal lines.
-#' @param hline_vars_colors a character vector naming the colors for the additional horizontal lines.
-#' @param hline_vars_labels a character vector naming the labels for the additional horizontal lines that will appear
-#'  in the legend.
 #' @param alpha (`numeric(3)`) vector to define transparency of plotted points.
+#' @inheritParams tm_g_gh_correlationplot
+#' @inheritParams tm_g_gh_lineplot
 #' @inheritParams teal::module
 #' @inheritParams teal.widgets::standard_layout
 #'
-#' @author Wenyi Liu (luiw2) wenyi.liu@roche.com
-#' @author Balazs Toth (tothb2) toth.balazs@gene.com
+#' @author Wenyi Liu
+#' @author Balazs Toth
 #'
 #' @section Decorating Module:
 #'
@@ -79,7 +50,7 @@
 #'
 #' @inheritSection teal::example_module Reporting
 #'
-#' @return \code{shiny} object
+#' @return A [teal::module()] object that can be used in a [teal::init()] call.
 #'
 #' @export
 #'

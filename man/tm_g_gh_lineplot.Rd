@@ -43,66 +43,67 @@ tm_g_gh_lineplot(
 )
 }
 \arguments{
-\item{label}{menu item label of the module in the teal app.}
+\item{label}{(\code{character(1)}) Label shown in the navigation item for the module or module group.
+For \code{modules()} defaults to \code{"root"}. See \code{Details}.}
 
-\item{dataname}{analysis data passed to the data argument of \code{\link[teal]{init}}. E.g. \code{ADaM} structured
-laboratory data frame \code{ADLB}.}
+\item{dataname}{(\code{character(1)}) analysis data passed to the data argument of \code{\link[teal:init]{teal::init()}}.
+E.g. \code{ADaM} structured laboratory data frame \code{ADLB}.}
 
-\item{param_var}{\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#deprecated}{\figure{lifecycle-deprecated.svg}{options: alt='[Deprecated]'}}}{\strong{[Deprecated]}} name of variable containing biomarker codes e.g. \code{PARAMCD}.}
+\item{param_var}{\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#deprecated}{\figure{lifecycle-deprecated.svg}{options: alt='[Deprecated]'}}}{\strong{[Deprecated]}} (\code{character(1)})
+name of variable containing biomarker codes e.g. \code{PARAMCD}.}
 
-\item{param}{(\code{picks} or \code{choices_selected}) biomarker selected.}
+\item{param}{(\code{\link[teal.picks:picks]{teal.picks::picks()}} or \code{\link[teal.transform:choices_selected]{teal.transform::choices_selected()}}) biomarker selected.}
 
-\item{param_var_label}{single name of variable in analysis data that includes parameter labels.}
+\item{param_var_label}{(\code{character(1)}) single name of variable in analysis data that includes parameter labels.}
 
-\item{xaxis_var}{(\code{variables} or \code{choices_selected})
-single name of variable in analysis data that is used as x-axis in the plot.}
+\item{xaxis_var}{(\code{\link[teal.picks:variables]{teal.picks::variables()}} or legacy \code{\link[teal.transform:choices_selected]{teal.transform::choices_selected()}})
+name of variable containing biomarker results displayed on x-axis e.g. \code{BASE}.}
 
-\item{yaxis_var}{(\code{variables} or \code{choices_selected})
-single name of variable in analysis data that is used as summary variable in the
-respective \code{goshawk} function.}
+\item{yaxis_var}{(\code{\link[teal.picks:variables]{teal.picks::variables()}} or legacy \code{\link[teal.transform:choices_selected]{teal.transform::choices_selected()}})
+name of variable containing biomarker results displayed on y-axis e.g. \code{AVAL}.}
 
-\item{xvar_level}{vector that can be used to define the factor level of \code{xvar}. Only use it when
+\item{xvar_level}{(\code{character()}) vector that can be used to define the factor level of \code{xvar}. Only use it when
 \code{xaxis_var} is of type character or factor.}
 
 \item{filter_var}{\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#deprecated}{\figure{lifecycle-deprecated.svg}{options: alt='[Deprecated]'}}}{\strong{[Deprecated]}} data constraint variable.}
 
 \item{filter_var_choices}{\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#deprecated}{\figure{lifecycle-deprecated.svg}{options: alt='[Deprecated]'}}}{\strong{[Deprecated]}} data constraint variable choices.}
 
-\item{trt_group}{(\code{variables} or \code{choices_selected}) object with available choices and pre-selected option
-for variable names representing treatment group e.g. \code{ARM}.}
+\item{trt_group}{(\code{\link[teal.picks:variables]{teal.picks::variables()}} or legacy \code{\link[teal.transform:choices_selected]{teal.transform::choices_selected()}})
+object with available choices and pre-selected option for variable names representing treatment group e.g. \code{ARM}.}
 
-\item{trt_group_level}{vector that can be used to define factor level of \code{trt_group}.}
+\item{trt_group_level}{(\verb{named character()}) vector that can be used to define factor level of \code{trt_group}.}
 
-\item{shape_choices}{Vector or \code{choices_selected} object with names of \code{ADSL} variables which
-can be used to change shape}
+\item{shape_choices}{(\code{character()}, \code{\link[teal.picks:variables]{teal.picks::variables()}} or legacy \code{\link[teal.transform:choices_selected]{teal.transform::choices_selected()}})
+vector or \code{\link[teal.picks:variables]{teal.picks::variables()}} object with names of \code{ADSL} variables which can be used to change shape}
 
-\item{stat}{string of statistics}
+\item{stat}{(\code{character(1)}) string of statistics}
 
-\item{hline_arb}{numeric vector of at most 2 values identifying intercepts for arbitrary horizontal lines.}
+\item{hline_arb}{(\code{numeric}) vector of at most 2 values identifying intercepts for arbitrary horizontal lines.}
 
-\item{hline_arb_color}{a character vector of at most length of \code{hline_arb}.
+\item{hline_arb_color}{(\code{character}) a character vector of at most length of \code{hline_arb}.
 naming the color for the arbitrary horizontal lines.}
 
-\item{hline_arb_label}{a character vector of at most length of \code{hline_arb}.
+\item{hline_arb_label}{(\code{character}) a character vector of at most length of \code{hline_arb}.
 naming the label for the arbitrary horizontal lines.}
 
-\item{color_manual}{string vector representing customized colors}
+\item{color_manual}{(named \code{character}, optional) vector of colors applied to treatment values.}
 
-\item{xtick}{numeric vector to define the tick values of x-axis when x variable is numeric.
+\item{xtick}{(\code{numeric()}) numeric vector to define the tick values of x-axis when x variable is numeric.
 Default value is waive().}
 
-\item{xlabel}{vector with same length of \code{xtick} to define the label of x-axis tick values.
+\item{xlabel}{(\code{character()}) vector with same length of \code{xtick} to define the label of x-axis tick values.
 Default value is waive().}
 
-\item{rotate_xlab}{\code{logical(1)} value indicating whether to rotate \code{x-axis} labels.}
+\item{rotate_xlab}{(\code{logical(1)}) 45 degree rotation of \code{x-axis} values.}
 
-\item{plot_height}{controls plot height.}
+\item{plot_height}{(\code{numeric(3)}) controls plot height.}
 
-\item{plot_width}{optional, controls plot width.}
+\item{plot_width}{(\code{numeric(3)}, optional) controls plot width.}
 
-\item{plot_font_size}{control font size for title, \code{x-axis}, \code{y-axis} and legend font.}
+\item{plot_font_size}{(\code{numeric(3)}) control font size for title, \code{x-axis}, \code{y-axis} and legend font.}
 
-\item{dodge}{controls the position dodge of error bar}
+\item{dodge}{(\code{numeric(3)}) controls the position dodge of error bar}
 
 \item{pre_output}{(\code{shiny.tag}) optional,\cr
 with text placed before the output to put the output into context. For example a title.}
@@ -110,21 +111,28 @@ with text placed before the output to put the output into context. For example a
 \item{post_output}{(\code{shiny.tag}) optional, with text placed after the output to put the output
 into context. For example the \code{\link[shiny:helpText]{shiny::helpText()}} elements are useful.}
 
-\item{count_threshold}{minimum count of observations (as listed in the output table) to plot
+\item{count_threshold}{(\code{numeric(1)}) minimum count of observations (as listed in the output table) to plot
 nodes on the graph}
 
-\item{table_font_size}{controls the font size of values in the table}
+\item{table_font_size}{(\code{numeric(3)}) controls the font size of values in the table.}
 
-\item{dot_size}{plot dot size.}
+\item{dot_size}{(\code{numeric(3)}) plot dot size.}
 
-\item{plot_relative_height_value}{numeric value between 500 and 5000 for controlling the starting value
-of the relative plot height slider}
+\item{plot_relative_height_value}{(\code{numeric(1)}) numeric value between 500 and 5000 for controlling the starting
+value of the relative plot height slider}
 
 \item{transformators}{(\code{list} of \code{teal_transform_module}) that will be applied to transform module's data input.
 To learn more check \code{vignette("transform-input-data", package = "teal")}.}
+
+\item{decorators}{\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#experimental}{\figure{lifecycle-experimental.svg}{options: alt='[Experimental]'}}}{\strong{[Experimental]}}
+(named \code{list} of lists of \code{teal_transform_module}) optional,
+decorator for tables or plots included in the module output reported.
+The decorators are applied to the respective output objects.
+
+See section "Decorating Module" below for more details.}
 }
 \value{
-\code{shiny} object
+A \code{\link[teal:module]{teal::module()}} object that can be used in a \code{\link[teal:init]{teal::init()}} call.
 }
 \description{
 This teal module renders the UI and calls the function that creates a line plot.
@@ -248,7 +256,7 @@ if (interactive()) {
 \dontshow{\}) # examplesIf}
 }
 \author{
-Wenyi Liu (luiw2) wenyi.liu@roche.com
+Wenyi Liu
 
-Balazs Toth (tothb2) toth.balazs@gene.com
+Balazs Toth
 }

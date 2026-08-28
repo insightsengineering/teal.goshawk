@@ -10,6 +10,9 @@
 #' @param df_armvar the dataframe and column name containing treatment code. e.g. `ADSL$ARMCD`
 #' @param code controls whether mapping or ordering code is written to console. Valid values: `"M"` and `"O"`.
 #'
+#' @return Data frame with the unique treatment codes.
+#' The function prints the left hand side of the mapping or ordering code to the console.
+#'
 #' @export
 #'
 #' @examples
