@@ -1,4 +1,5 @@
-# Setup timeout options for shinytest2 if none are set in options nor on environment variables (copied from `teal.modules.general`)
+# Setup timeout options for shinytest2 if none are set in options nor on environment variables
+# (copied from `teal.modules.general`)
 withr::local_options(
   list(
     shinytest2.timeout = getOption(
