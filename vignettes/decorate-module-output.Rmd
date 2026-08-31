@@ -45,11 +45,11 @@ You can also refer the table shown below to know which module outputs can be dec
 
 | Module                           | Output (Class) |
 |----------------------------------|----------------|
-| `tm_g_gh_boxplot`                | plot `ggplot`  |
-| `tm_g_gh_correlationplot`        | plot `ggplot`  |
-| `tm_g_gh_density_distribution_plot` | plot `ggplot`  |
-| `tm_g_gh_lineplot`               | plot `ggplot`  |
-| `tm_g_gh_spaghettiplot`          | plot `ggplot`  |
+| `tm_g_gh_boxplot`                | plot (`ggplot`)  |
+| `tm_g_gh_correlationplot`        | plot (`ggplot`)  |
+| `tm_g_gh_density_distribution_plot` | plot (`ggplot`)  |
+| `tm_g_gh_lineplot`               | plot (`ggplot`)  |
+| `tm_g_gh_spaghettiplot`          | plot (`ggplot`)  |
 
 ## Decorating `ggplot`
 
