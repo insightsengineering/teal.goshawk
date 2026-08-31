@@ -8,16 +8,17 @@ spaghetti plot.
 ``` r
 tm_g_gh_spaghettiplot(
   label,
-  dataname,
-  param_var,
-  param,
+  dataname = "ADLB",
+  param_var = lifecycle::deprecated(),
+  param = teal.picks::picks(teal.picks::variables("PARAMCD", "PARAMCD"),
+    teal.picks::values(selected = "ALT", multiple = FALSE), check_dataset = FALSE),
   param_var_label = "PARAM",
-  idvar,
-  xaxis_var,
-  yaxis_var,
+  idvar = "USUBJID",
+  xaxis_var = teal.picks::variables(c("AVISITCD", "AVISIT"), "AVISITCD"),
+  yaxis_var = teal.picks::variables(c("AVAL", "CHG", "PCHG"), "AVAL"),
   xaxis_var_level = NULL,
-  filter_var = yaxis_var,
-  trt_group,
+  filter_var = lifecycle::deprecated(),
+  trt_group = teal.picks::variables(dplyr::starts_with("ARM"), selected = "ARM"),
   trt_group_level = NULL,
   group_stats = "NONE",
   man_color = NULL,
@@ -37,9 +38,11 @@ tm_g_gh_spaghettiplot(
   hline_vars = character(0),
   hline_vars_colors = "green",
   hline_vars_labels = hline_vars,
+  alpha = c(0.8, 0, 1),
   pre_output = NULL,
   post_output = NULL,
-  transformators = list()
+  transformators = list(),
+  decorators = list()
 )
 ```
 
@@ -57,16 +60,20 @@ tm_g_gh_spaghettiplot(
 
 - param_var:
 
-  name of variable containing biomarker codes e.g. `PARAMCD`.
+  **\[deprecated\]** (`character(1)`) name of variable containing
+  biomarker codes e.g. `PARAMCD`.
 
 - param:
 
+  ([`teal.picks::picks()`](https://insightsengineering.github.io/teal.picks/latest-tag/reference/picks.html)
+  or
+  [`teal.transform::choices_selected()`](https://insightsengineering.github.io/teal.transform/latest-tag/reference/choices_selected.html))
   biomarker selected.
 
 - param_var_label:
 
-  single name of variable in analysis data that includes parameter
-  labels.
+  (`character(1)`) single name of variable in analysis data that
+  includes parameter labels.
 
 - idvar:
 
@@ -74,13 +81,19 @@ tm_g_gh_spaghettiplot(
 
 - xaxis_var:
 
-  single name of variable in analysis data that is used as x-axis in the
-  plot for the respective goshawk function.
+  ([`teal.picks::variables()`](https://insightsengineering.github.io/teal.picks/latest-tag/reference/picks.html)
+  or legacy
+  [`teal.transform::choices_selected()`](https://insightsengineering.github.io/teal.transform/latest-tag/reference/choices_selected.html))
+  name of variable containing biomarker results displayed on x-axis e.g.
+  `BASE`.
 
 - yaxis_var:
 
-  single name of variable in analysis data that is used as summary
-  variable in the respective `goshawk` function.
+  ([`teal.picks::variables()`](https://insightsengineering.github.io/teal.picks/latest-tag/reference/picks.html)
+  or legacy
+  [`teal.transform::choices_selected()`](https://insightsengineering.github.io/teal.transform/latest-tag/reference/choices_selected.html))
+  name of variable containing biomarker results displayed on y-axis e.g.
+  `AVAL`.
 
 - xaxis_var_level:
 
@@ -89,17 +102,20 @@ tm_g_gh_spaghettiplot(
 
 - filter_var:
 
-  data constraint variable.
+  **\[deprecated\]** data constraint variable.
 
 - trt_group:
 
-  [`choices_selected`](https://insightsengineering.github.io/teal.transform/latest-tag/reference/choices_selected.html)
+  ([`teal.picks::variables()`](https://insightsengineering.github.io/teal.picks/latest-tag/reference/picks.html)
+  or legacy
+  [`teal.transform::choices_selected()`](https://insightsengineering.github.io/teal.transform/latest-tag/reference/choices_selected.html))
   object with available choices and pre-selected option for variable
   names representing treatment group e.g. `ARM`.
 
 - trt_group_level:
 
-  vector that can be used to define factor level of `trt_group`.
+  (`named character()`) vector that can be used to define factor level
+  of `trt_group`.
 
 - group_stats:
 
@@ -115,21 +131,23 @@ tm_g_gh_spaghettiplot(
 
 - xtick:
 
-  numeric vector to define the tick values of `x-axis` when x variable
-  is numeric. Default value is `waive()`.
+  ([`numeric()`](https://rdrr.io/r/base/numeric.html)) numeric vector to
+  define the tick values of x-axis when x variable is numeric. Default
+  value is waive().
 
 - xlabel:
 
-  vector with same length of `xtick` to define the label of `x-axis`
-  tick values. Default value is `waive()`.
+  ([`character()`](https://rdrr.io/r/base/character.html)) vector with
+  same length of `xtick` to define the label of x-axis tick values.
+  Default value is waive().
 
 - rotate_xlab:
 
-  `logical(1)` value indicating whether to rotate `x-axis` labels
+  (`logical(1)`) 45 degree rotation of `x-axis` values.
 
 - facet_ncol:
 
-  numeric value indicating number of facets per row.
+  (`integer(1)`) numeric value indicating number of facets per row.
 
 - free_x:
 
@@ -140,53 +158,58 @@ tm_g_gh_spaghettiplot(
 
 - plot_height:
 
-  controls plot height.
+  (`numeric(3)`) controls plot height.
 
 - plot_width:
 
-  optional, controls plot width.
+  (`numeric(3)`, optional) controls plot width.
 
 - font_size:
 
-  control font size for title, `x-axis`, `y-axis` and legend font.
+  (`numeric(3)`) font size control for title, `x-axis` label, `y-axis`
+  label and legend.
 
 - dot_size:
 
-  plot dot size.
+  (`numeric(3)`) plot dot size.
 
 - hline_arb:
 
-  numeric vector of at most 2 values identifying intercepts for
+  (`numeric`) vector of at most 2 values identifying intercepts for
   arbitrary horizontal lines.
 
 - hline_arb_color:
 
-  a character vector of at most length of `hline_arb`. naming the color
-  for the arbitrary horizontal lines.
+  (`character`) a character vector of at most length of `hline_arb`.
+  naming the color for the arbitrary horizontal lines.
 
 - hline_arb_label:
 
-  a character vector of at most length of `hline_arb`. naming the label
-  for the arbitrary horizontal lines.
+  (`character`) a character vector of at most length of `hline_arb`.
+  naming the label for the arbitrary horizontal lines.
 
 - hline_vars:
 
-  a character vector to name the columns that will define additional
-  horizontal lines.
+  (`character`) a character vector to name the columns that will define
+  additional horizontal lines.
 
 - hline_vars_colors:
 
-  a character vector naming the colors for the additional horizontal
-  lines.
+  (`character`) a character vector naming the colors for the additional
+  horizontal lines.
 
 - hline_vars_labels:
 
-  a character vector naming the labels for the additional horizontal
-  lines that will appear in the legend.
+  (`character`) a character vector naming the labels for the additional
+  horizontal lines that will appear in the plot.
+
+- alpha:
+
+  (`numeric(3)`) vector to define transparency of plotted points.
 
 - pre_output:
 
-  (`shiny.tag`) optional,  
+  (`shiny.tag`) optional,\
   with text placed before the output to put the output into context. For
   example a title.
 
@@ -203,9 +226,50 @@ tm_g_gh_spaghettiplot(
   module's data input. To learn more check
   [`vignette("transform-input-data", package = "teal")`](https://insightsengineering.github.io/teal/latest-tag/articles/transform-input-data.html).
 
+- decorators:
+
+  **\[experimental\]** (named `list` of lists of
+  `teal_transform_module`) optional, decorator for tables or plots
+  included in the module output reported. The decorators are applied to
+  the respective output objects.
+
+  See section "Decorating Module" below for more details.
+
 ## Value
 
-`shiny` object
+A
+[`teal::module()`](https://insightsengineering.github.io/teal/latest-tag/reference/teal_modules.html)
+object that can be used in a
+[`teal::init()`](https://insightsengineering.github.io/teal/latest-tag/reference/init.html)
+call.
+
+## Decorating Module
+
+This module generates the following objects, which can be modified in
+place using decorators:
+
+- `plot` (`ggplot`)
+
+A Decorator is applied to the specific output using a named list of
+`teal_transform_module` objects. The name of this list corresponds to
+the name of the output to which the decorator is applied. See code
+snippet below:
+
+    tm_g_gh_spaghettiplot(
+       ..., # arguments for module
+       decorators = list(
+         plot = teal_transform_module(...) # applied only to `plot` output
+       )
+    )
+
+For additional details and examples of decorators, refer to the vignette
+[`vignette("decorate-module-output", package = "teal.goshawk")`](https://insightsengineering.github.io/teal.goshawk/articles/decorate-module-output.md).
+
+To learn more please refer to the vignette
+[`vignette("transform-module-output", package = "teal")`](https://insightsengineering.github.io/teal/latest-tag/articles/transform-module-output.html)
+or the
+[`teal::teal_transform_module()`](https://insightsengineering.github.io/teal/latest-tag/reference/teal_transform_module.html)
+documentation.
 
 ## Reporting
 
@@ -223,9 +287,9 @@ For more information on reporting in `teal`, see the vignettes:
 
 ## Author
 
-Wenyi Liu (luiw2) wenyi.liu@roche.com
+Wenyi Liu
 
-Balazs Toth (tothb2) toth.balazs@gene.com
+Balazs Toth
 
 ## Examples
 
@@ -245,9 +309,8 @@ data <- within(data, {
     "B: Placebo" = "Placebo",
     "C: Combination" = "Combination"
   )
-  set.seed(1) # @linksto ADSL ADLB
-  ADSL <- rADSL
-  ADLB <- rADLB
+  ADSL <- teal.data::rADSL
+  ADLB <- teal.data::rADLB
   .var_labels <- lapply(ADLB, function(x) attributes(x)$label)
   ADLB <- ADLB %>%
     mutate(
@@ -303,16 +366,15 @@ app <- init(
     tm_g_gh_spaghettiplot(
       label = "Spaghetti Plot",
       dataname = "ADLB",
-      param_var = "PARAMCD",
-      param = choices_selected(c("ALT", "CRP", "IGA"), "ALT"),
-      idvar = "USUBJID",
-      xaxis_var = choices_selected(c("Analysis Visit Code" = "AVISITCD"), "AVISITCD"),
-      yaxis_var = choices_selected(c("AVAL", "CHG", "PCHG"), "AVAL"),
-      filter_var = choices_selected(
-        c("None" = "NONE", "Screening" = "BASE2", "Baseline" = "BASE"),
-        "NONE"
+      param = picks(
+        variables("PARAMCD", "PARAMCD"),
+        values(selected = "ALT", multiple = FALSE),
+        check_dataset = FALSE
       ),
-      trt_group = choices_selected(c("ARM", "ACTARM"), "ARM"),
+      idvar = "USUBJID",
+      xaxis_var = variables(c("AVISITCD", "AVISIT"), "AVISITCD"),
+      yaxis_var = variables(c("AVAL", "CHG", "PCHG"), "AVAL"),
+      trt_group = variables(c("ARM", "ACTARM"), "ARM"),
       color_comb = "#39ff14",
       man_color = c(
         "Combination" = "#000000",
@@ -323,11 +385,13 @@ app <- init(
       hline_arb_color = c("grey", "red"),
       hline_arb_label = c("default A", "default B"),
       hline_vars = c("ANRHI", "ANRLO", "ULOQN", "LLOQN"),
-      hline_vars_colors = c("pink", "brown", "purple", "black"),
+      hline_vars_colors = c("pink", "brown", "purple", "black")
     )
   )
 )
 #> Initializing tm_g_gh_spaghettiplot
+#> Warning: rlang::dots_list(..., .ignore_empty = "trailing")
+#>  - Setting explicit `selected` while `choices` are delayed (set using `tidyselect`) doesn't guarantee that `selected` is a subset of `choices`.
 if (interactive()) {
   shinyApp(app$ui, app$server)
 }

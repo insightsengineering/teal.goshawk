@@ -2,7 +2,9 @@
 
 ## Authors
 
-- **Nick Paszty**. Author, maintainer.
+- **Dony Unardi**. Author, maintainer.
+
+- **Nick Paszty**. Author.
 
 - **Dawid Kaledkowski**. Author.
 
@@ -29,15 +31,14 @@
 Source:
 [`DESCRIPTION`](https://github.com/insightsengineering/teal.goshawk/blob/main/DESCRIPTION)
 
-Paszty N, Kaledkowski D, Hallal M, Rucki P, Liu W, Tomlinson J, Toth B,
-Zhao J, Nasinski M (2025). *teal.goshawk: Longitudinal Visualization
-'teal' Modules*. R package version 0.5.0,
+Unardi D, Paszty N, Kaledkowski D, Hallal M, Rucki P, Liu W, Tomlinson
+J, Toth B, Zhao J, Nasinski M (2026). *teal.goshawk: Longitudinal
+Visualization 'teal' Modules*. R package version 0.5.0.9003,
 <https://insightsengineering.github.io/teal.goshawk/>.
 
-    @Manual{,
-      title = {teal.goshawk: Longitudinal Visualization `teal` Modules},
-      author = {Nick Paszty and Dawid Kaledkowski and Mahmoud Hallal and Pawel Rucki and Wenyi Liu and Jeffrey Tomlinson and Bali Toth and Junlue Zhao and Maciej Nasinski},
-      year = {2025},
-      note = {R package version 0.5.0},
-      url = {https://insightsengineering.github.io/teal.goshawk/},
-    }
+@Manual{, title = {teal.goshawk: Longitudinal Visualization \`teal\`
+Modules}, author = {Dony Unardi and Nick Paszty and Dawid Kaledkowski
+and Mahmoud Hallal and Pawel Rucki and Wenyi Liu and Jeffrey Tomlinson
+and Bali Toth and Junlue Zhao and Maciej Nasinski}, year = {2026}, note
+= {R package version 0.5.0.9003}, url =
+{https://insightsengineering.github.io/teal.goshawk/}, }

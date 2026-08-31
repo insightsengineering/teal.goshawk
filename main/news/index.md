@@ -1,10 +1,17 @@
 # Changelog
 
+## teal.goshawk 0.5.0.9003
+
+#### Enhancements
+
+- Added decorators to all modules
+  ([\#329](https://github.com/insightsengineering/teal.goshawk/issues/329)).
+
 ## teal.goshawk 0.5.0
 
 #### Enhancements
 
-- Adds support for reporter and reproducibility by returning a
+- Added support for reporter and reproducibility by returning a
   `qenv`-based object from modules.
 
 #### Miscellaneous

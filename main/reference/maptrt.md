@@ -21,6 +21,11 @@ maptrt(df_armvar, code = c("M", "O"))
   controls whether mapping or ordering code is written to console. Valid
   values: `"M"` and `"O"`.
 
+## Value
+
+Data frame with the unique treatment codes. The function prints the left
+hand side of the mapping or ordering code to the console.
+
 ## Details
 
 SPA configure study specific pre-processing for deploying `goshawk`.
@@ -32,7 +37,7 @@ paste the resulting code from the console into the app.R file.
 ## Examples
 
 ``` r
-ADSL <- rADSL
+ADSL <- teal.data::rADSL
 
 # get treatment mapping code
 maptrt(df_armvar = ADSL$ARMCD, code = "M")
