@@ -1,0 +1,149 @@
+---
+title: "Decorate Module Output"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Decorate Module Output}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup, include = FALSE}
+library(teal.goshawk)
+```
+
+## Introduction
+
+The outputs produced by `teal` modules, like graphs or tables, are created by the module developer and look a certain way.
+It is hard to design an output that will satisfy every possible user, so the form of the output should be considered a default value that can be customized.
+Here we describe the concept of _decoration_, enabling the app developer to tailor outputs to their specific requirements without rewriting the original module code.
+
+The decoration process is build upon transformation procedures, introduced in `teal`.
+While `transformators` are meant to edit module's input, decorators are meant to adjust the module's output.
+To distinguish the difference, modules in  `teal.goshawk` have 2 separate parameters:
+`transformators` and `decorators`.
+
+To get a complete understanding refer the following vignettes:
+
+- Transforming the input data in
+[this vignette](https://insightsengineering.github.io/teal/latest-tag/articles/transform-input-data.html).
+- Transforming module output in [this vignette](https://insightsengineering.github.io/teal/latest-tag/articles/transform-module-output.html).
+
+## Outputs that can be decorated
+
+It is important to note which output objects from a given module can be decorated.
+The module function documentation's _Decorating Module_ section has this information.
+
+You can also refer the table shown below to know which module outputs can be decorated.
+
+
+| Module                           | Output (Class) |
+|----------------------------------|----------------|
+| `tm_g_gh_boxplot`                | plot (`ggplot`)  |
+| `tm_g_gh_correlationplot`        | plot (`ggplot`)  |
+| `tm_g_gh_density_distribution_plot` | plot (`ggplot`)  |
+| `tm_g_gh_lineplot`               | plot (`ggplot`)  |
+| `tm_g_gh_spaghettiplot`          | plot (`ggplot`)  |
+
+## Decorating `ggplot`
+
+Here's an example to showcase how you can edit an output of class `ggplot`.
+You can extend them using `ggplot2` functions.
+
+```{r decorate_ggplot, message=FALSE, eval = FALSE}
+data <- within(teal_data(), {
+  library(dplyr)
+  library(nestcolor)
+  library(stringr)
+  # use non-exported function from goshawk
+  .h_identify_loq_values <- getFromNamespace("h_identify_loq_values", "goshawk")
+  # original ARM value = dose value
+  .arm_mapping <- list(
+    "A: Drug X" = "150mg QD",
+    "B: Placebo" = "Placebo",
+    "C: Combination" = "Combination"
+  )
+  ADSL <- teal.data::rADSL
+  ADLB <- teal.data::rADLB
+  .var_labels <- lapply(ADLB, function(x) attributes(x)$label)
+  ADLB <- ADLB %>%
+    mutate(
+      AVISITCD = case_when(
+        AVISIT == "SCREENING" ~ "SCR",
+        AVISIT == "BASELINE" ~ "BL",
+        grepl("WEEK", AVISIT) ~ paste("W", str_extract(AVISIT, "(?<=(WEEK ))[0-9]+")),
+        TRUE ~ as.character(NA)
+      ),
+      AVISITCDN = case_when(
+        AVISITCD == "SCR" ~ -2,
+        AVISITCD == "BL" ~ 0,
+        grepl("W", AVISITCD) ~ as.numeric(gsub("[^0-9]*", "", AVISITCD)),
+        TRUE ~ as.numeric(NA)
+      ),
+      AVISITCD = factor(AVISITCD) %>% reorder(AVISITCDN),
+      TRTORD = case_when(
+        ARMCD == "ARM C" ~ 1,
+        ARMCD == "ARM B" ~ 2,
+        ARMCD == "ARM A" ~ 3
+      ),
+      ARM = as.character(.arm_mapping[match(ARM, names(.arm_mapping))]),
+      ARM = factor(ARM) %>% reorder(TRTORD),
+      ACTARM = as.character(.arm_mapping[match(ACTARM, names(.arm_mapping))]),
+      ACTARM = factor(ACTARM) %>% reorder(TRTORD),
+      ANRLO = 50,
+      ANRHI = 75
+    ) %>%
+    rowwise() %>%
+    group_by(PARAMCD) %>%
+    mutate(LBSTRESC = ifelse(
+      USUBJID %in% sample(USUBJID, 1, replace = TRUE),
+      paste("<", round(runif(1, min = 25, max = 30))), LBSTRESC
+    )) %>%
+    mutate(LBSTRESC = ifelse(
+      USUBJID %in% sample(USUBJID, 1, replace = TRUE),
+      paste(">", round(runif(1, min = 70, max = 75))), LBSTRESC
+    )) %>%
+    ungroup()
+  # add LLOQ and ULOQ variables
+  ALB_LOQS <- .h_identify_loq_values(ADLB, "LOQFL")
+  ADLB <- left_join(ADLB, ALB_LOQS, by = "PARAM")
+})
+
+join_keys(data) <- default_cdisc_join_keys[names(data)]
+
+app <- init(
+  data = data,
+  modules = modules(
+    tm_g_gh_boxplot(
+      label = "Box Plot",
+      dataname = "ADLB",
+      param = picks(
+        variables("PARAMCD", "PARAMCD"),
+        values(selected = "ALT", multiple = FALSE),
+        check_dataset = FALSE
+      ),
+      yaxis_var = variables(c("AVAL", "BASE", "CHG"), "AVAL"),
+      xaxis_var = variables(c("ACTARM", "ARM", "AVISITCD", "STUDYID"), "ARM"),
+      facet_var = variables(c("ACTARM", "ARM", "AVISITCD", "SEX"), "AVISITCD"),
+      trt_group = variables(c("ARM", "ACTARM"), "ARM"),
+      loq_legend = TRUE,
+      rotate_xlab = FALSE,
+      hline_arb = c(60, 55),
+      hline_arb_color = c("grey", "red"),
+      hline_arb_label = c("default_hori_A", "default_hori_B"),
+      hline_vars = c("ANRHI", "ANRLO", "ULOQN", "LLOQN"),
+      hline_vars_colors = c("pink", "brown", "purple", "black"),
+      decorators = list(plot = ggplot_caption_decorator("I am a ggplot"))
+    )
+  )
+)
+if (interactive()) {
+  shinyApp(app$ui, app$server)
+}
+```

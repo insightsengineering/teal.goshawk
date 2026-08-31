@@ -1,7 +1,8 @@
-#' UI module to arbitrary lines
+#' UI and server module to arbitrary lines
 #'
 #' UI module to input either horizontal or vertical lines to a plot via comma separated values
 #'
+#' @name arbitrary_lines
 #' @param id (`character(1)`)\cr
 #'  defining namespace of the `shiny` module.
 #' @param line_arb (`numeric`)\cr
@@ -12,9 +13,35 @@
 #'  default values for the `textInput` defining labels of arbitrary lines
 #' @param title (`character(1)`)\cr
 #'  title of the arbitrary lines input. The default is "Arbitrary Horizontal Lines".
-#' @return (`shiny.tag`) an input to define values, colors and labels for arbitrary
-#' straight lines.
 #' @keywords internal
+#' @examples
+#' if (interactive()) {
+#'   shinyApp(
+#'     ui = fluidPage(
+#'       ui_arbitrary_lines(
+#'         id = "arbitrary_lines",
+#'         line_arb = c(1, 2, 3),
+#'         line_arb_color = c("red", "blue", "green"),
+#'         line_arb_label = c("Line 1", "Line 2", "Line 3"),
+#'         title = "Arbitrary horizontal lines:"
+#'       ),
+#'       verbatimTextOutput("result"),
+#'     ),
+#'     server = function(input, output, session) {
+#'       result <- srv_arbitrary_lines("arbitrary_lines")
+#'       output$result <- renderPrint({
+#'         req(result())
+#'         result()$iv()$validate()
+#'         result()[c("line_arb", "line_arb_color", "line_arb_label")]
+#'       })
+#'     }
+#'   )
+#' }
+NULL
+
+#' @rdname arbitrary_lines
+#' @return - `ui_arbitrary_lines`: (`shiny.tag`) an input to define values, colors and labels for arbitrary
+#' straight lines.
 ui_arbitrary_lines <- function(id, line_arb, line_arb_label, line_arb_color, title = "Arbitrary horizontal lines:") {
   ns <- NS(id)
   tags$div(
@@ -36,14 +63,11 @@ ui_arbitrary_lines <- function(id, line_arb, line_arb_label, line_arb_color, tit
     textInput(ns("line_arb_color"), label = "Color:", value = paste(line_arb_color, collapse = ", "))
   )
 }
-#' Server module to arbitrary lines
-#'
-#' Server to validate and transform the comma separated values into vectors of values
+#' @rdname arbitrary_lines
+#' @description Server to validate and transform the comma separated values into vectors of values
 #' to be passed into goshawk functions.
-#' @inheritParams shiny::moduleServer
-#' @return (`reactive`) returning a `list` containing `line_arb`, `line_arb_color`,
+#' @return - `srv_arbitrary_lines`: (`reactive`) returning a `list` containing `line_arb`, `line_arb_color`,
 #'  `line_arb_label` which are validated and could be passed to `goshawk` plot functions.
-#' @keywords internal
 srv_arbitrary_lines <- function(id) {
   moduleServer(id, function(input, output, session) {
     comma_sep_to_values <- function(values, wrapper_fun = trimws) {
@@ -143,14 +167,23 @@ check_color <- function(col) {
 }
 
 # to check the arbitrary line arguments
-validate_line_arb_arg <- function(line_arb, line_arb_color, line_arb_label) {
-  checkmate::assert_numeric(line_arb)
+validate_line_arb_arg <- function(
+  line_arb,
+  line_arb_color,
+  line_arb_label,
+  line_arg_var_name = checkmate::vname(line_arb),
+  line_arb_color_var_name = checkmate::vname(line_arb_color),
+  line_arb_label_var_name = checkmate::vname(line_arb_label)
+) {
+  checkmate::assert_numeric(line_arb, .var.name = line_arg_var_name)
   if (length(line_arb) > 0) {
     checkmate::assert(
+      .var.name = line_arb_color_var_name,
       checkmate::check_string(line_arb_color),
       checkmate::check_character(line_arb_color, len = length(line_arb))
     )
     checkmate::assert(
+      .var.name = line_arb_label_var_name,
       checkmate::check_string(line_arb_label),
       checkmate::check_character(line_arb_label, len = length(line_arb))
     )
@@ -158,14 +191,23 @@ validate_line_arb_arg <- function(line_arb, line_arb_color, line_arb_label) {
 }
 
 # to check the variable line arguments
-validate_line_vars_arg <- function(line_vars, line_vars_colors, line_vars_labels) {
-  checkmate::assert_character(line_vars)
+validate_line_vars_arg <- function(
+  line_vars,
+  line_vars_colors,
+  line_vars_labels,
+  line_vars_var_name = checkmate::vname(line_vars),
+  line_vars_colors_var_name = checkmate::vname(line_vars_colors),
+  line_vars_labels_var_name = checkmate::vname(line_vars_labels)
+) {
+  checkmate::assert_character(line_vars, .var.name = line_vars_var_name)
   if (length(line_vars) > 0) {
     checkmate::assert(
+      .var.name = line_vars_colors_var_name,
       checkmate::check_string(line_vars_colors),
       checkmate::check_character(line_vars_colors, len = length(line_vars))
     )
     checkmate::assert(
+      .var.name = line_vars_labels_var_name,
       checkmate::check_string(line_vars_labels),
       checkmate::check_character(line_vars_labels, len = length(line_vars))
     )

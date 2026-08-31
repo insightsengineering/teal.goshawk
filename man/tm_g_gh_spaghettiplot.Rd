@@ -6,16 +6,17 @@
 \usage{
 tm_g_gh_spaghettiplot(
   label,
-  dataname,
-  param_var,
-  param,
+  dataname = "ADLB",
+  param_var = lifecycle::deprecated(),
+  param = teal.picks::picks(teal.picks::variables("PARAMCD", "PARAMCD"),
+    teal.picks::values(selected = "ALT", multiple = FALSE), check_dataset = FALSE),
   param_var_label = "PARAM",
-  idvar,
-  xaxis_var,
-  yaxis_var,
+  idvar = "USUBJID",
+  xaxis_var = teal.picks::variables(c("AVISITCD", "AVISIT"), "AVISITCD"),
+  yaxis_var = teal.picks::variables(c("AVAL", "CHG", "PCHG"), "AVAL"),
   xaxis_var_level = NULL,
-  filter_var = yaxis_var,
-  trt_group,
+  filter_var = lifecycle::deprecated(),
+  trt_group = teal.picks::variables(dplyr::starts_with("ARM"), selected = "ARM"),
   trt_group_level = NULL,
   group_stats = "NONE",
   man_color = NULL,
@@ -35,9 +36,11 @@ tm_g_gh_spaghettiplot(
   hline_vars = character(0),
   hline_vars_colors = "green",
   hline_vars_labels = hline_vars,
+  alpha = c(0.8, 0, 1),
   pre_output = NULL,
   post_output = NULL,
-  transformators = list()
+  transformators = list(),
+  decorators = list()
 )
 }
 \arguments{
@@ -46,31 +49,30 @@ tm_g_gh_spaghettiplot(
 \item{dataname}{analysis data passed to the data argument of \code{\link[teal]{init}}.
 E.g. \code{ADaM} structured laboratory data frame \code{ADLB}.}
 
-\item{param_var}{name of variable containing biomarker codes e.g. \code{PARAMCD}.}
+\item{param_var}{\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#deprecated}{\figure{lifecycle-deprecated.svg}{options: alt='[Deprecated]'}}}{\strong{[Deprecated]}} (\code{character(1)})
+name of variable containing biomarker codes e.g. \code{PARAMCD}.}
 
-\item{param}{biomarker selected.}
+\item{param}{(\code{\link[teal.picks:picks]{teal.picks::picks()}} or \code{\link[teal.transform:choices_selected]{teal.transform::choices_selected()}}) biomarker selected.}
 
-\item{param_var_label}{single name of variable in analysis data
-that includes parameter labels.}
+\item{param_var_label}{(\code{character(1)}) single name of variable in analysis data that includes parameter labels.}
 
 \item{idvar}{name of unique subject id variable.}
 
-\item{xaxis_var}{single name of variable in analysis data
-that is used as x-axis in the plot for the respective goshawk function.}
+\item{xaxis_var}{(\code{\link[teal.picks:variables]{teal.picks::variables()}} or legacy \code{\link[teal.transform:choices_selected]{teal.transform::choices_selected()}})
+name of variable containing biomarker results displayed on x-axis e.g. \code{BASE}.}
 
-\item{yaxis_var}{single name of variable in analysis data that is used as
-summary variable in the respective \code{goshawk} function.}
+\item{yaxis_var}{(\code{\link[teal.picks:variables]{teal.picks::variables()}} or legacy \code{\link[teal.transform:choices_selected]{teal.transform::choices_selected()}})
+name of variable containing biomarker results displayed on y-axis e.g. \code{AVAL}.}
 
 \item{xaxis_var_level}{vector that can be used to define the factor level of \code{xaxis_var}.
 Only use it when \code{xaxis_var} is character or factor.}
 
-\item{filter_var}{data constraint variable.}
+\item{filter_var}{\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#deprecated}{\figure{lifecycle-deprecated.svg}{options: alt='[Deprecated]'}}}{\strong{[Deprecated]}} data constraint variable.}
 
-\item{trt_group}{\code{\link[teal.transform]{choices_selected}} object with available choices and pre-selected option
-for variable names representing treatment group e.g. \code{ARM}.}
+\item{trt_group}{(\code{\link[teal.picks:variables]{teal.picks::variables()}} or legacy \code{\link[teal.transform:choices_selected]{teal.transform::choices_selected()}})
+object with available choices and pre-selected option for variable names representing treatment group e.g. \code{ARM}.}
 
-\item{trt_group_level}{vector that can be used to define factor
-level of \code{trt_group}.}
+\item{trt_group_level}{(\verb{named character()}) vector that can be used to define factor level of \code{trt_group}.}
 
 \item{group_stats}{control group mean or median overlay.}
 
@@ -78,41 +80,43 @@ level of \code{trt_group}.}
 
 \item{color_comb}{name or hex value for combined treatment color.}
 
-\item{xtick}{numeric vector to define the tick values of \code{x-axis}
-when x variable is numeric. Default value is \code{waive()}.}
+\item{xtick}{(\code{numeric()}) numeric vector to define the tick values of x-axis when x variable is numeric.
+Default value is waive().}
 
-\item{xlabel}{vector with same length of \code{xtick} to define the
-label of \code{x-axis} tick values. Default value is \code{waive()}.}
+\item{xlabel}{(\code{character()}) vector with same length of \code{xtick} to define the label of x-axis tick values.
+Default value is waive().}
 
-\item{rotate_xlab}{\code{logical(1)} value indicating whether to rotate \code{x-axis} labels}
+\item{rotate_xlab}{(\code{logical(1)}) 45 degree rotation of \code{x-axis} values.}
 
-\item{facet_ncol}{numeric value indicating number of facets per row.}
+\item{facet_ncol}{(\code{integer(1)}) numeric value indicating number of facets per row.}
 
 \item{free_x}{\code{logical(1)} should scales be \code{"fixed"} (\code{FALSE}) of \code{"free"} (\code{TRUE}) for \code{x-axis} in
 \code{\link[ggplot2]{facet_wrap}} \code{scales} parameter.}
 
-\item{plot_height}{controls plot height.}
+\item{plot_height}{(\code{numeric(3)}) controls plot height.}
 
-\item{plot_width}{optional, controls plot width.}
+\item{plot_width}{(\code{numeric(3)}, optional) controls plot width.}
 
-\item{font_size}{control font size for title, \code{x-axis}, \code{y-axis} and legend font.}
+\item{font_size}{(\code{numeric(3)}) font size control for title, \code{x-axis} label, \code{y-axis} label and legend.}
 
-\item{dot_size}{plot dot size.}
+\item{dot_size}{(\code{numeric(3)}) plot dot size.}
 
-\item{hline_arb}{numeric vector of at most 2 values identifying intercepts for arbitrary horizontal lines.}
+\item{hline_arb}{(\code{numeric}) vector of at most 2 values identifying intercepts for arbitrary horizontal lines.}
 
-\item{hline_arb_color}{a character vector of at most length of \code{hline_arb}.
+\item{hline_arb_color}{(\code{character}) a character vector of at most length of \code{hline_arb}.
 naming the color for the arbitrary horizontal lines.}
 
-\item{hline_arb_label}{a character vector of at most length of \code{hline_arb}.
+\item{hline_arb_label}{(\code{character}) a character vector of at most length of \code{hline_arb}.
 naming the label for the arbitrary horizontal lines.}
 
-\item{hline_vars}{a character vector to name the columns that will define additional horizontal lines.}
+\item{hline_vars}{(\code{character}) a character vector to name the columns that will define additional horizontal lines.}
 
-\item{hline_vars_colors}{a character vector naming the colors for the additional horizontal lines.}
+\item{hline_vars_colors}{(\code{character}) a character vector naming the colors for the additional horizontal lines.}
 
-\item{hline_vars_labels}{a character vector naming the labels for the additional horizontal lines that will appear
-in the legend.}
+\item{hline_vars_labels}{(\code{character}) a character vector naming the labels for the additional horizontal lines
+that will appear in the plot.}
+
+\item{alpha}{(\code{numeric(3)}) vector to define transparency of plotted points.}
 
 \item{pre_output}{(\code{shiny.tag}) optional,\cr
 with text placed before the output to put the output into context. For example a title.}
@@ -122,14 +126,48 @@ into context. For example the \code{\link[shiny:helpText]{shiny::helpText()}} el
 
 \item{transformators}{(\code{list} of \code{teal_transform_module}) that will be applied to transform module's data input.
 To learn more check \code{vignette("transform-input-data", package = "teal")}.}
+
+\item{decorators}{\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#experimental}{\figure{lifecycle-experimental.svg}{options: alt='[Experimental]'}}}{\strong{[Experimental]}}
+(named \code{list} of lists of \code{teal_transform_module}) optional,
+decorator for tables or plots included in the module output reported.
+The decorators are applied to the respective output objects.
+
+See section "Decorating Module" below for more details.}
 }
 \value{
-\code{shiny} object
+A \code{\link[teal:module]{teal::module()}} object that can be used in a \code{\link[teal:init]{teal::init()}} call.
 }
 \description{
 This teal module renders the UI and calls the function
 that creates a spaghetti plot.
 }
+\section{Decorating Module}{
+
+
+This module generates the following objects, which can be modified in place using decorators:
+\itemize{
+\item \code{plot} (\code{ggplot})
+}
+
+A Decorator is applied to the specific output using a named list of \code{teal_transform_module} objects.
+The name of this list corresponds to the name of the output to which the decorator is applied.
+See code snippet below:
+
+\if{html}{\out{<div class="sourceCode">}}\preformatted{tm_g_gh_spaghettiplot(
+   ..., # arguments for module
+   decorators = list(
+     plot = teal_transform_module(...) # applied only to `plot` output
+   )
+)
+}\if{html}{\out{</div>}}
+
+For additional details and examples of decorators, refer to the vignette
+\code{vignette("decorate-module-output", package = "teal.goshawk")}.
+
+To learn more please refer to the vignette
+\code{vignette("transform-module-output", package = "teal")} or the \code{\link[teal:teal_transform_module]{teal::teal_transform_module()}} documentation.
+}
+
 \section{Reporting}{
 
 
@@ -162,9 +200,8 @@ data <- within(data, {
     "B: Placebo" = "Placebo",
     "C: Combination" = "Combination"
   )
-  set.seed(1) # @linksto ADSL ADLB
-  ADSL <- rADSL
-  ADLB <- rADLB
+  ADSL <- teal.data::rADSL
+  ADLB <- teal.data::rADLB
   .var_labels <- lapply(ADLB, function(x) attributes(x)$label)
   ADLB <- ADLB \%>\%
     mutate(
@@ -220,16 +257,15 @@ app <- init(
     tm_g_gh_spaghettiplot(
       label = "Spaghetti Plot",
       dataname = "ADLB",
-      param_var = "PARAMCD",
-      param = choices_selected(c("ALT", "CRP", "IGA"), "ALT"),
-      idvar = "USUBJID",
-      xaxis_var = choices_selected(c("Analysis Visit Code" = "AVISITCD"), "AVISITCD"),
-      yaxis_var = choices_selected(c("AVAL", "CHG", "PCHG"), "AVAL"),
-      filter_var = choices_selected(
-        c("None" = "NONE", "Screening" = "BASE2", "Baseline" = "BASE"),
-        "NONE"
+      param = picks(
+        variables("PARAMCD", "PARAMCD"),
+        values(selected = "ALT", multiple = FALSE),
+        check_dataset = FALSE
       ),
-      trt_group = choices_selected(c("ARM", "ACTARM"), "ARM"),
+      idvar = "USUBJID",
+      xaxis_var = variables(c("AVISITCD", "AVISIT"), "AVISITCD"),
+      yaxis_var = variables(c("AVAL", "CHG", "PCHG"), "AVAL"),
+      trt_group = variables(c("ARM", "ACTARM"), "ARM"),
       color_comb = "#39ff14",
       man_color = c(
         "Combination" = "#000000",
@@ -240,7 +276,7 @@ app <- init(
       hline_arb_color = c("grey", "red"),
       hline_arb_label = c("default A", "default B"),
       hline_vars = c("ANRHI", "ANRLO", "ULOQN", "LLOQN"),
-      hline_vars_colors = c("pink", "brown", "purple", "black"),
+      hline_vars_colors = c("pink", "brown", "purple", "black")
     )
   )
 )
@@ -250,7 +286,7 @@ if (interactive()) {
 
 }
 \author{
-Wenyi Liu (luiw2) wenyi.liu@roche.com
+Wenyi Liu
 
-Balazs Toth (tothb2) toth.balazs@gene.com
+Balazs Toth
 }

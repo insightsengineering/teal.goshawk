@@ -20,11 +20,11 @@ templ_ui_constraint <- function(ns, label = "Data Constraint") {
   )
 }
 
-keep_data_const_opts_updated <- function(session, input, data, id_param_var) {
+keep_data_const_opts_updated <- function(session, input, data, param_var_r) {
   # use reactiveVal so that it only updates when options actually changed and not just data
   choices <- reactiveVal()
   observeEvent(data(), {
-    paramname <- input[[id_param_var]]
+    paramname <- param_var_r()
     req(length(paramname) == 1)
 
     data_filtered <- data()$ANL %>% dplyr::filter(.data$PARAMCD == paramname)
@@ -43,33 +43,33 @@ keep_data_const_opts_updated <- function(session, input, data, id_param_var) {
   })
 }
 
-
-
-
 # param_id: input id that contains values of PARAMCD to filter for
 # param_var: currently only "PARAMCD" is supported
-constr_anl_q <- function(session, input, data, dataname, param_id, param_var, trt_group, min_rows) {
+constr_anl_q <- function(session, input, data, dataname, param_r, param_var_r, trt_group_r, min_rows) {
   checkmate::assert_class(data, "reactive")
   checkmate::assert_class(shiny::isolate(data()), "teal_data")
   dataset_var <- dataname
-  if (!identical(param_var, "PARAMCD")) {
-    # why is there a variable param_id which is provided to this function and always equal to "param"?
-    stop("param_var must be 'PARAMCD'. Otherwise, we cannot currently guarantee the correctness of the code.")
-  }
 
   anl_param <- reactive({
-    param_var_value <- input[[param_id]] # value to filter PARAMCD for
+    validate(
+      need(
+        identical(param_var_r(), "PARAMCD"),
+        "param_var must be 'PARAMCD'. Otherwise, we cannot currently guarantee the correctness of the code."
+      )
+    )
+
+    param_var_value <- param_r() # value to filter PARAMCD for
     validate(need(param_var_value, "Please select a biomarker"))
     checkmate::assert_string(param_var_value)
 
     ANL <- data()[[dataname]] # nolint
     validate_has_data(ANL, min_rows)
 
-    validate_has_variable(ANL, param_var)
+    validate_has_variable(ANL, param_var_r())
     validate_has_variable(ANL, "AVISITCD")
     validate_has_variable(ANL, "BASE")
     validate_has_variable(ANL, "BASE2")
-    validate_has_variable(ANL, trt_group)
+    validate_has_variable(ANL, trt_group_r())
 
     # analysis
     private_qenv <- data() %>%
@@ -80,7 +80,7 @@ constr_anl_q <- function(session, input, data, dataname, param_id, param_var, tr
       teal.code::eval_code(
         code = bquote({
           ANL <- .(as.name(dataset_var)) %>% # nolint
-            dplyr::filter(.(as.name(param_var)) == .(param_var_value))
+            dplyr::filter(.(as.name(param_var_r())) == .(param_var_value))
         })
       )
     validate_has_data(private_qenv[["ANL"]], min_rows)
@@ -88,7 +88,7 @@ constr_anl_q <- function(session, input, data, dataname, param_id, param_var, tr
   })
 
   observe({
-    param_var_value <- input[[param_id]]
+    param_var_value <- param_r() # value to filter PARAMCD for
     validate(need(param_var_value, "Please select a biomarker"))
 
     constraint_var <- input[["constraint_var"]]
@@ -97,12 +97,12 @@ constr_anl_q <- function(session, input, data, dataname, param_id, param_var, tr
     ANL <- data()[[dataname]] # nolint
     validate_has_data(ANL, min_rows)
 
-    validate_has_variable(ANL, param_var)
+    validate_has_variable(ANL, param_var_r())
     validate_has_variable(ANL, "AVISITCD")
     validate_has_variable(ANL, "BASE")
     validate_has_variable(ANL, "BASE2")
 
-    ANL <- ANL %>% dplyr::filter(!!sym(param_var) == param_var_value) # nolint
+    ANL <- ANL %>% dplyr::filter(!!sym(param_var_r()) == param_var_value) # nolint
 
     visit_freq <- unique(ANL$AVISITCD)
 
@@ -156,7 +156,7 @@ constr_anl_q <- function(session, input, data, dataname, param_id, param_var, tr
     }
   })
 
-  create_anl_constraint_reactive(anl_param, input, param_id = param_id, min_rows = min_rows)
+  create_anl_constraint_reactive(anl_param, input, param_r, min_rows = min_rows)
 }
 
 # returns a reactive that applies the `x-axis data constraint`
@@ -164,7 +164,7 @@ constr_anl_q <- function(session, input, data, dataname, param_id, param_var, tr
 # `param_id.constraint_var` in the specified range
 # constraint var means that `param_id.constraint_var` is constrained to the filtered range (or NA),
 # e.g. `ALT.BASE2` (i.e. `PARAMCD = ALT & range_filter_on(BASE2)`)
-create_anl_constraint_reactive <- function(anl_param, input, param_id, min_rows) {
+create_anl_constraint_reactive <- function(anl_param, input, param_id_r, min_rows) {
   iv_r <- reactive({
     iv <- shinyvalidate::InputValidator$new()
     iv$condition(~ isTRUE(input$constraint_var != "NONE"))
@@ -193,7 +193,11 @@ create_anl_constraint_reactive <- function(anl_param, input, param_id, min_rows)
     constraint_var <- isolate(input[["constraint_var"]])
     constraint_range_min <- input[["constraint_range_min"]]
     constraint_range_max <- input[["constraint_range_max"]]
-    param <- input[[param_id]]
+    param <- if (is.reactive(param_id_r)) {
+      param_id_r()
+    } else {
+      input[[param_id_r]]
+    }
     req(param)
 
     # filter constraint
@@ -208,7 +212,7 @@ create_anl_constraint_reactive <- function(anl_param, input, param_id, min_rows)
           # the below includes patients who have at least one non-NA BASE value
           # ideally, a patient should either have all NA values or none at all
           # this could be achieved through preprocessing; otherwise, this is easily overseen
-          filtered_usubjids <- ANL %>% # nolint
+          filtered_usubjids <- ANL %>%
             dplyr::filter(
               PARAMCD == .(param),
               (.(constraint_range_min) <= .data[[.(constraint_var)]]) &
@@ -225,7 +229,7 @@ create_anl_constraint_reactive <- function(anl_param, input, param_id, min_rows)
               dplyr::filter(all_na) %>%
               dplyr::pull(USUBJID)
           )
-          ANL <- ANL %>% dplyr::filter(USUBJID %in% filtered_usubjids) # nolint
+          ANL <- ANL %>% dplyr::filter(USUBJID %in% filtered_usubjids)
         })
       )
       validate_has_data(private_qenv[["ANL"]], min_rows)

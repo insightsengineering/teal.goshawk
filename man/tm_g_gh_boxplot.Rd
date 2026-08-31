@@ -6,13 +6,14 @@
 \usage{
 tm_g_gh_boxplot(
   label,
-  dataname,
-  param_var,
-  param,
-  yaxis_var = teal.transform::choices_selected(c("AVAL", "CHG"), "AVAL"),
-  xaxis_var = teal.transform::choices_selected("AVISITCD", "AVISITCD"),
-  facet_var = teal.transform::choices_selected(c("ARM", "ACTARM"), "ARM"),
-  trt_group,
+  dataname = "ADLB",
+  param_var = lifecycle::deprecated(),
+  param = teal.picks::picks(teal.picks::variables("PARAMCD", "PARAMCD"),
+    teal.picks::values(selected = "ALT", multiple = FALSE), check_dataset = FALSE),
+  yaxis_var = teal.picks::variables(c("AVAL", "CHG"), "AVAL"),
+  xaxis_var = teal.picks::variables("AVISITCD", "AVISITCD"),
+  facet_var = teal.picks::variables(dplyr::starts_with("ARM"), selected = "ARM"),
+  trt_group = teal.picks::variables(selected = "ARM"),
   color_manual = NULL,
   shape_manual = NULL,
   facet_ncol = NULL,
@@ -31,65 +32,67 @@ tm_g_gh_boxplot(
   alpha = c(0.8, 0, 1),
   pre_output = NULL,
   post_output = NULL,
-  transformators = list()
+  transformators = list(),
+  decorators = list()
 )
 }
 \arguments{
-\item{label}{menu item label of the module in the teal app.}
+\item{label}{(\code{character(1)}) menu item label of the module in the teal app.}
 
-\item{dataname}{analysis data passed to the data argument of \code{\link[teal]{init}}. E.g. \code{ADaM} structured
-laboratory data frame \code{ALB}.}
+\item{dataname}{(\code{character(1)}) analysis data passed to the data argument of \code{\link[teal:init]{teal::init()}}.
+E.g. \code{ADaM} structured laboratory data frame \code{ADLB}.}
 
-\item{param_var}{name of variable containing biomarker codes e.g. \code{PARAMCD}.}
+\item{param_var}{\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#deprecated}{\figure{lifecycle-deprecated.svg}{options: alt='[Deprecated]'}}}{\strong{[Deprecated]}} (\code{character(1)})
+name of variable containing biomarker codes e.g. \code{PARAMCD}.}
 
-\item{param}{list of biomarkers of interest.}
+\item{param}{(\code{\link[teal.picks:picks]{teal.picks::picks()}} or \code{\link[teal.transform:choices_selected]{teal.transform::choices_selected()}}) biomarker selected.}
 
-\item{yaxis_var}{name of variable containing biomarker results displayed on y-axis e.g. \code{AVAL}. When not provided,
-it defaults to \code{choices_selected(c("AVAL", "CHG"), "AVAL")}.}
+\item{yaxis_var}{(\code{\link[teal.picks:variables]{teal.picks::variables()}} or legacy \code{\link[teal.transform:choices_selected]{teal.transform::choices_selected()}})
+name of variable containing biomarker results displayed on y-axis e.g. \code{AVAL}.}
 
-\item{xaxis_var}{variable to categorize the x-axis. When not provided, it defaults to
-\code{choices_selected("AVISITCD", "AVISITCD")}.}
+\item{xaxis_var}{(\code{\link[teal.picks:variables]{teal.picks::variables()}} or legacy \code{\link[teal.transform:choices_selected]{teal.transform::choices_selected()}})
+name of variable containing biomarker results displayed on x-axis e.g. \code{BASE}.}
 
-\item{facet_var}{variable to facet the plots by. When not provided, it defaults to
-\code{choices_selected(c("ARM", "ACTARM"), "ARM")}.}
+\item{facet_var}{(\code{variables} or \code{choices_selected}) object with available choices and pre-selected option for
+variable names representing facet variable e.g. \code{AVISITCD}.}
 
-\item{trt_group}{\code{\link[teal.transform]{choices_selected}} object with available choices and pre-selected
-option for variable names representing treatment group e.g. \code{ARM}.}
+\item{trt_group}{(\code{\link[teal.picks:variables]{teal.picks::variables()}} or legacy \code{\link[teal.transform:choices_selected]{teal.transform::choices_selected()}})
+object with available choices and pre-selected option for variable names representing treatment group e.g. \code{ARM}.}
 
-\item{color_manual}{vector of colors applied to treatment values.}
+\item{color_manual}{(named \code{character}, optional) vector of colors applied to treatment values.}
 
-\item{shape_manual}{vector of symbols applied to \code{LOQ} values.}
+\item{shape_manual}{(named \code{numeric}, optional) vector of symbols applied to \code{LOQ} values.}
 
-\item{facet_ncol}{numeric value indicating number of facets per row.}
+\item{facet_ncol}{(\code{integer(1)}) numeric value indicating number of facets per row.}
 
-\item{loq_legend}{\code{loq} legend toggle.}
+\item{loq_legend}{(\code{logical(1)}) \code{loq} legend toggle.}
 
-\item{rotate_xlab}{45 degree rotation of \code{x-axis} values.}
+\item{rotate_xlab}{(\code{logical(1)}) 45 degree rotation of \code{x-axis} values.}
 
-\item{hline_arb}{numeric vector of at most 2 values identifying intercepts for arbitrary horizontal lines.}
+\item{hline_arb}{(\code{numeric}) vector of at most 2 values identifying intercepts for arbitrary horizontal lines.}
 
-\item{hline_arb_color}{a character vector of at most length of \code{hline_arb}.
+\item{hline_arb_color}{(\code{character}) a character vector of at most length of \code{hline_arb}.
 naming the color for the arbitrary horizontal lines.}
 
-\item{hline_arb_label}{a character vector of at most length of \code{hline_arb}.
+\item{hline_arb_label}{(\code{character}) a character vector of at most length of \code{hline_arb}.
 naming the label for the arbitrary horizontal lines.}
 
-\item{hline_vars}{a character vector to name the columns that will define additional horizontal lines.}
+\item{hline_vars}{(\code{character}) a character vector to name the columns that will define additional horizontal lines.}
 
-\item{hline_vars_colors}{a character vector naming the colors for the additional horizontal lines.}
+\item{hline_vars_colors}{(\code{character}) a character vector naming the colors for the additional horizontal lines.}
 
-\item{hline_vars_labels}{a character vector naming the labels for the additional horizontal lines that will appear
-in the legend.}
+\item{hline_vars_labels}{(\code{character}) a character vector naming the labels for the additional horizontal lines
+that will appear in the plot.}
 
-\item{plot_height}{controls plot height.}
+\item{plot_height}{(\code{numeric(3)}) controls plot height.}
 
-\item{plot_width}{optional, controls plot width.}
+\item{plot_width}{(\code{numeric(3)}, optional) controls plot width.}
 
-\item{font_size}{font size control for title, \code{x-axis} label, \code{y-axis} label and legend.}
+\item{font_size}{(\code{numeric(3)}) font size control for title, \code{x-axis} label, \code{y-axis} label and legend.}
 
-\item{dot_size}{plot dot size.}
+\item{dot_size}{(\code{numeric(3)}) plot dot size.}
 
-\item{alpha}{numeric vector to define transparency of plotted points.}
+\item{alpha}{(\code{numeric(3)}) vector to define transparency of plotted points.}
 
 \item{pre_output}{(\code{shiny.tag}) optional,\cr
 with text placed before the output to put the output into context. For example a title.}
@@ -99,14 +102,48 @@ into context. For example the \code{\link[shiny:helpText]{shiny::helpText()}} el
 
 \item{transformators}{(\code{list} of \code{teal_transform_module}) that will be applied to transform module's data input.
 To learn more check \code{vignette("transform-input-data", package = "teal")}.}
+
+\item{decorators}{\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#experimental}{\figure{lifecycle-experimental.svg}{options: alt='[Experimental]'}}}{\strong{[Experimental]}}
+(named \code{list} of lists of \code{teal_transform_module}) optional,
+decorator for tables or plots included in the module output reported.
+The decorators are applied to the respective output objects.
+
+See section "Decorating Module" below for more details.}
 }
 \value{
-an \code{\link[teal]{module}} object
+A \code{\link[teal:module]{teal::module()}} object that can be used in a \code{\link[teal:init]{teal::init()}} call.
 }
 \description{
 This teal module renders the UI and calls the functions that create a box plot and accompanying
 summary table.
 }
+\section{Decorating Module}{
+
+
+This module generates the following objects, which can be modified in place using decorators:
+\itemize{
+\item \code{plot} (\code{ggplot})
+}
+
+A Decorator is applied to the specific output using a named list of \code{teal_transform_module} objects.
+The name of this list corresponds to the name of the output to which the decorator is applied.
+See code snippet below:
+
+\if{html}{\out{<div class="sourceCode">}}\preformatted{tm_g_gh_boxplot(
+   ..., # arguments for module
+   decorators = list(
+     plot = teal_transform_module(...) # applied only to `plot` output
+   )
+)
+}\if{html}{\out{</div>}}
+
+For additional details and examples of decorators, refer to the vignette
+\code{vignette("decorate-module-output", package = "teal.goshawk")}.
+
+To learn more please refer to the vignette
+\code{vignette("transform-module-output", package = "teal")} or the \code{\link[teal:teal_transform_module]{teal::teal_transform_module()}} documentation.
+}
+
 \section{Reporting}{
 
 
@@ -141,9 +178,8 @@ data <- within(data, {
     "B: Placebo" = "Placebo",
     "C: Combination" = "Combination"
   )
-  set.seed(1) # @linksto ADSL ADLB
-  ADSL <- rADSL
-  ADLB <- rADLB
+  ADSL <- teal.data::rADSL
+  ADLB <- teal.data::rADLB
   .var_labels <- lapply(ADLB, function(x) attributes(x)$label)
   ADLB <- ADLB \%>\%
     mutate(
@@ -202,19 +238,22 @@ app <- init(
     tm_g_gh_boxplot(
       label = "Box Plot",
       dataname = "ADLB",
-      param_var = "PARAMCD",
-      param = choices_selected(c("ALT", "CRP", "IGA"), "ALT"),
-      yaxis_var = choices_selected(c("AVAL", "BASE", "CHG"), "AVAL"),
-      xaxis_var = choices_selected(c("ACTARM", "ARM", "AVISITCD", "STUDYID"), "ARM"),
-      facet_var = choices_selected(c("ACTARM", "ARM", "AVISITCD", "SEX"), "AVISITCD"),
-      trt_group = choices_selected(c("ARM", "ACTARM"), "ARM"),
+      param = picks(
+        variables("PARAMCD", "PARAMCD"),
+        values(selected = "ALT", multiple = FALSE),
+        check_dataset = FALSE
+      ),
+      yaxis_var = variables(c("AVAL", "BASE", "CHG"), "AVAL"),
+      xaxis_var = variables(c("ACTARM", "ARM", "AVISITCD", "STUDYID"), "ARM"),
+      facet_var = variables(c("ACTARM", "ARM", "AVISITCD", "SEX"), "AVISITCD"),
+      trt_group = variables(c("ARM", "ACTARM"), "ARM"),
       loq_legend = TRUE,
       rotate_xlab = FALSE,
       hline_arb = c(60, 55),
       hline_arb_color = c("grey", "red"),
       hline_arb_label = c("default_hori_A", "default_hori_B"),
       hline_vars = c("ANRHI", "ANRLO", "ULOQN", "LLOQN"),
-      hline_vars_colors = c("pink", "brown", "purple", "black"),
+      hline_vars_colors = c("pink", "brown", "purple", "black")
     )
   )
 )
@@ -224,7 +263,7 @@ if (interactive()) {
 \dontshow{\}) # examplesIf}
 }
 \author{
-Jeff Tomlinson (tomlinsj) jeffrey.tomlinson@roche.com
+Jeff Tomlinson
 
-Balazs Toth (tothb2) toth.balazs@gene.com
+Balazs Toth
 }

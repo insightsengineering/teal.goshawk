@@ -9,9 +9,10 @@
 #' @import shiny
 #' @import teal
 #' @import teal.transform
+#' @import teal.picks
 #' @importFrom ggplot2 ggplot
 #' @importFrom rlang .data sym
-#' @importFrom teal.transform choices_selected
+#' @importFrom lifecycle badge
 #'
 #' @keywords internal
 "_PACKAGE"
