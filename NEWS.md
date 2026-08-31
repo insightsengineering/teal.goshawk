@@ -1,4 +1,4 @@
-# teal.goshawk 0.5.0.9002
+# teal.goshawk 0.5.0.9003
 
 ### Enhancements
 - Added decorators to all modules (#329).
