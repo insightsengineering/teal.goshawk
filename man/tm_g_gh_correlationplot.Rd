@@ -169,6 +169,9 @@ See code snippet below:
 )
 }\if{html}{\out{</div>}}
 
+For additional details and examples of decorators, refer to the vignette
+\code{vignette("decorate-module-output", package = "teal.goshawk")}.
+
 To learn more please refer to the vignette
 \code{vignette("transform-module-output", package = "teal")} or the \code{\link[teal:teal_transform_module]{teal::teal_transform_module()}} documentation.
 }
