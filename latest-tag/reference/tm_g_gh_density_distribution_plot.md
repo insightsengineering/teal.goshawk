@@ -8,11 +8,12 @@ density distribution plot and an accompanying summary table.
 ``` r
 tm_g_gh_density_distribution_plot(
   label,
-  dataname,
-  param_var,
-  param,
-  xaxis_var,
-  trt_group,
+  dataname = "ADLB",
+  param_var = lifecycle::deprecated(),
+  param = teal.picks::picks(teal.picks::variables("PARAMCD", "PARAMCD"),
+    teal.picks::values(selected = "ALT", multiple = FALSE), check_dataset = FALSE),
+  xaxis_var = teal.picks::variables(c("AVAL", "BASE", "CHG", "PCHG"), "AVAL"),
+  trt_group = teal.picks::variables(dplyr::starts_with("ARM"), selected = "ARM"),
   color_manual = NULL,
   color_comb = NULL,
   plot_height = c(500, 200, 2000),
@@ -27,7 +28,8 @@ tm_g_gh_density_distribution_plot(
   rotate_xlab = FALSE,
   pre_output = NULL,
   post_output = NULL,
-  transformators = list()
+  transformators = list(),
+  decorators = list()
 )
 ```
 
@@ -35,36 +37,46 @@ tm_g_gh_density_distribution_plot(
 
 - label:
 
-  menu item label of the module in the teal app.
+  (`character(1)`) menu item label of the module in the teal app.
 
 - dataname:
 
-  analysis data passed to the data argument of
-  [`init`](https://insightsengineering.github.io/teal/latest-tag/reference/init.html).
-  E.g. `ADaM` structured
+  (`character(1)`) analysis data passed to the data argument of
+  [`teal::init()`](https://insightsengineering.github.io/teal/latest-tag/reference/init.html).
+  E.g. `ADaM` structured laboratory data frame `ADLB`.
 
 - param_var:
 
-  name of variable containing biomarker codes e.g. `PARAMCD`.
+  **\[deprecated\]** (`character(1)`) name of variable containing
+  biomarker codes e.g. `PARAMCD`.
 
 - param:
 
+  ([`teal.picks::picks()`](https://insightsengineering.github.io/teal.picks/latest-tag/reference/picks.html)
+  or
+  [`teal.transform::choices_selected()`](https://insightsengineering.github.io/teal.transform/latest-tag/reference/choices_selected.html))
   biomarker selected.
 
 - xaxis_var:
 
-  name of variable containing biomarker results displayed on `x-axis`
-  e.g. `BASE`.
+  ([`teal.picks::variables()`](https://insightsengineering.github.io/teal.picks/latest-tag/reference/picks.html)
+  or legacy
+  [`teal.transform::choices_selected()`](https://insightsengineering.github.io/teal.transform/latest-tag/reference/choices_selected.html))
+  name of variable containing biomarker results displayed on x-axis e.g.
+  `BASE`.
 
 - trt_group:
 
-  [`choices_selected`](https://insightsengineering.github.io/teal.transform/latest-tag/reference/choices_selected.html)
+  ([`teal.picks::variables()`](https://insightsengineering.github.io/teal.picks/latest-tag/reference/picks.html)
+  or legacy
+  [`teal.transform::choices_selected()`](https://insightsengineering.github.io/teal.transform/latest-tag/reference/choices_selected.html))
   object with available choices and pre-selected option for variable
   names representing treatment group e.g. `ARM`.
 
 - color_manual:
 
-  vector of colors applied to treatment values.
+  (named `character`, optional) vector of colors applied to treatment
+  values.
 
 - color_comb:
 
@@ -72,16 +84,16 @@ tm_g_gh_density_distribution_plot(
 
 - plot_height:
 
-  controls plot height.
+  (`numeric(3)`) controls plot height.
 
 - plot_width:
 
-  optional, controls plot width.
+  (`numeric(3)`, optional) controls plot width.
 
 - font_size:
 
-  font size control for title, `x-axis` label, `y-axis` label and
-  legend.
+  (`numeric(3)`) font size control for title, `x-axis` label, `y-axis`
+  label and legend.
 
 - line_size:
 
@@ -89,22 +101,22 @@ tm_g_gh_density_distribution_plot(
 
 - hline_arb:
 
-  numeric vector of at most 2 values identifying intercepts for
+  (`numeric`) vector of at most 2 values identifying intercepts for
   arbitrary horizontal lines.
 
 - hline_arb_color:
 
-  a character vector of at most length of `hline_arb`. naming the color
-  for the arbitrary horizontal lines.
+  (`character`) a character vector of at most length of `hline_arb`.
+  naming the color for the arbitrary horizontal lines.
 
 - hline_arb_label:
 
-  a character vector of at most length of `hline_arb`. naming the label
-  for the arbitrary horizontal lines.
+  (`character`) a character vector of at most length of `hline_arb`.
+  naming the label for the arbitrary horizontal lines.
 
 - facet_ncol:
 
-  numeric value indicating number of facets per row.
+  (`integer(1)`) numeric value indicating number of facets per row.
 
 - comb_line:
 
@@ -112,11 +124,11 @@ tm_g_gh_density_distribution_plot(
 
 - rotate_xlab:
 
-  45 degree rotation of `x-axis` values.
+  (`logical(1)`) 45 degree rotation of `x-axis` values.
 
 - pre_output:
 
-  (`shiny.tag`) optional,  
+  (`shiny.tag`) optional,\
   with text placed before the output to put the output into context. For
   example a title.
 
@@ -133,9 +145,50 @@ tm_g_gh_density_distribution_plot(
   module's data input. To learn more check
   [`vignette("transform-input-data", package = "teal")`](https://insightsengineering.github.io/teal/latest-tag/articles/transform-input-data.html).
 
-## Details
+- decorators:
 
-None
+  **\[experimental\]** (named `list` of lists of
+  `teal_transform_module`) optional, decorator for tables or plots
+  included in the module output reported. The decorators are applied to
+  the respective output objects.
+
+  See section "Decorating Module" below for more details.
+
+## Value
+
+A
+[`teal::module()`](https://insightsengineering.github.io/teal/latest-tag/reference/teal_modules.html)
+object that can be used in a
+[`teal::init()`](https://insightsengineering.github.io/teal/latest-tag/reference/init.html)
+call.
+
+## Decorating Module
+
+This module generates the following objects, which can be modified in
+place using decorators:
+
+- `plot` (`ggplot`)
+
+A Decorator is applied to the specific output using a named list of
+`teal_transform_module` objects. The name of this list corresponds to
+the name of the output to which the decorator is applied. See code
+snippet below:
+
+    tm_g_gh_density_distribution_plot(
+       ..., # arguments for module
+       decorators = list(
+         plot = teal_transform_module(...) # applied only to `plot` output
+       )
+    )
+
+For additional details and examples of decorators, refer to the vignette
+[`vignette("decorate-module-output", package = "teal.goshawk")`](https://insightsengineering.github.io/teal.goshawk/articles/decorate-module-output.md).
+
+To learn more please refer to the vignette
+[`vignette("transform-module-output", package = "teal")`](https://insightsengineering.github.io/teal/latest-tag/articles/transform-module-output.html)
+or the
+[`teal::teal_transform_module()`](https://insightsengineering.github.io/teal/latest-tag/reference/teal_transform_module.html)
+documentation.
 
 ## Reporting
 
@@ -153,9 +206,9 @@ For more information on reporting in `teal`, see the vignettes:
 
 ## Author
 
-Nick Paszty (npaszty) paszty.nicholas@gene.com
+Nick Paszty
 
-Balazs Toth (tothb2) toth.balazs@gene.com
+Balazs Toth
 
 ## Examples
 
@@ -172,9 +225,8 @@ data <- within(data, {
     "B: Placebo" = "Placebo",
     "C: Combination" = "Combination"
   )
-  set.seed(1) # @linksto ADSL ADLB
-  ADSL <- rADSL
-  ADLB <- rADLB
+  ADSL <- teal.data::rADSL
+  ADLB <- teal.data::rADLB
   .var_labels <- lapply(ADLB, function(x) attributes(x)$label)
   ADLB <- ADLB %>%
     mutate(
@@ -214,10 +266,13 @@ app <- init(
     tm_g_gh_density_distribution_plot(
       label = "Density Distribution Plot",
       dataname = "ADLB",
-      param_var = "PARAMCD",
-      param = choices_selected(c("ALT", "CRP", "IGA"), "ALT"),
-      xaxis_var = choices_selected(c("AVAL", "BASE", "CHG", "PCHG"), "AVAL"),
-      trt_group = choices_selected(c("ARM", "ACTARM"), "ARM"),
+      param = picks(
+        variables("PARAMCD", "PARAMCD"),
+        values(selected = "ALT", multiple = FALSE),
+        check_dataset = FALSE
+      ),
+      xaxis_var = variables(c("AVAL", "BASE", "CHG", "PCHG"), "AVAL"),
+      trt_group = variables(c("ARM", "ACTARM"), "ARM"),
       color_manual = c(
         "150mg QD" = "#000000",
         "Placebo" = "#3498DB",
@@ -235,6 +290,8 @@ app <- init(
   )
 )
 #> Initializing tm_g_gh_density_distribution_plot
+#> Warning: rlang::dots_list(..., .ignore_empty = "trailing")
+#>  - Setting explicit `selected` while `choices` are delayed (set using `tidyselect`) doesn't guarantee that `selected` is a subset of `choices`.
 if (interactive()) {
   shinyApp(app$ui, app$server)
 }

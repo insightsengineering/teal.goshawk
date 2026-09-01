@@ -22,9 +22,13 @@ Useful links:
 
 ## Author
 
-**Maintainer**: Nick Paszty <nick.paszty@gene.com>
+**Maintainer**: Dony Unardi <unardid@gene.com>
 
 Authors:
+
+- Dony Unardi <unardid@gene.com>
+
+- Nick Paszty <nick.paszty@gene.com>
 
 - Dawid Kaledkowski <dawid.kaledkowski@roche.com>
 

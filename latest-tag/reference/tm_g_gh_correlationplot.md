@@ -7,13 +7,15 @@ Scatter Plot Teal Module For Biomarker Analysis
 ``` r
 tm_g_gh_correlationplot(
   label,
-  dataname,
-  param_var = "PARAMCD",
-  xaxis_param = "ALT",
-  xaxis_var = "BASE",
-  yaxis_param = "CRP",
-  yaxis_var = "AVAL",
-  trt_group,
+  dataname = "ADLB",
+  param_var = lifecycle::deprecated(),
+  xaxis_param = teal.picks::picks(teal.picks::variables("PARAMCD", "PARAMCD"),
+    teal.picks::values(selected = "ALT", multiple = FALSE), check_dataset = FALSE),
+  xaxis_var = teal.picks::variables(c("AVAL", "BASE", "CHG", "PCHG"), "BASE"),
+  yaxis_param = teal.picks::picks(teal.picks::variables("PARAMCD", "PARAMCD"),
+    teal.picks::values(selected = "CRP", multiple = FALSE), check_dataset = FALSE),
+  yaxis_var = teal.picks::variables(c("AVAL", "BASE", "CHG", "PCHG"), "AVAL"),
+  trt_group = teal.picks::variables(dplyr::starts_with("ARM"), selected = "ARM"),
   color_manual = NULL,
   shape_manual = NULL,
   facet_ncol = 2,
@@ -41,7 +43,8 @@ tm_g_gh_correlationplot(
   reg_text_size = c(3, 3, 10),
   pre_output = NULL,
   post_output = NULL,
-  transformators = list()
+  transformators = list(),
+  decorators = list()
 )
 ```
 
@@ -49,159 +52,175 @@ tm_g_gh_correlationplot(
 
 - label:
 
-  menu item label of the module in the teal app.
+  (`character(1)`) menu item label of the module in the teal app.
 
 - dataname:
 
-  analysis data passed to the data argument of
-  [`init`](https://insightsengineering.github.io/teal/latest-tag/reference/init.html).
+  (`character(1)`) analysis data passed to the data argument of
+  [`teal::init()`](https://insightsengineering.github.io/teal/latest-tag/reference/init.html).
   E.g. `ADaM` structured laboratory data frame `ADLB`.
 
 - param_var:
 
-  name of variable containing biomarker codes e.g. `PARAMCD`.
+  **\[deprecated\]** (`character(1)`) name of variable containing
+  biomarker codes e.g. `PARAMCD`.
 
 - xaxis_param:
 
+  ([`teal.picks::picks()`](https://insightsengineering.github.io/teal.picks/latest-tag/reference/picks.html)
+  or legacy
+  [`teal.transform::choices_selected()`](https://insightsengineering.github.io/teal.transform/latest-tag/reference/choices_selected.html))
   biomarker selected for `x-axis`.
 
 - xaxis_var:
 
+  ([`teal.picks::variables()`](https://insightsengineering.github.io/teal.picks/latest-tag/reference/picks.html)
+  or legacy
+  [`teal.transform::choices_selected()`](https://insightsengineering.github.io/teal.transform/latest-tag/reference/choices_selected.html))
   name of variable containing biomarker results displayed on x-axis e.g.
   `BASE`.
 
 - yaxis_param:
 
+  ([`teal.picks::picks()`](https://insightsengineering.github.io/teal.picks/latest-tag/reference/picks.html)
+  or legacy
+  [`teal.transform::choices_selected()`](https://insightsengineering.github.io/teal.transform/latest-tag/reference/choices_selected.html))
   biomarker selected for `y-axis`.
 
 - yaxis_var:
 
+  ([`teal.picks::variables()`](https://insightsengineering.github.io/teal.picks/latest-tag/reference/picks.html)
+  or legacy
+  [`teal.transform::choices_selected()`](https://insightsengineering.github.io/teal.transform/latest-tag/reference/choices_selected.html))
   name of variable containing biomarker results displayed on y-axis e.g.
   `AVAL`.
 
 - trt_group:
 
-  [`choices_selected`](https://insightsengineering.github.io/teal.transform/latest-tag/reference/choices_selected.html)
+  ([`teal.picks::variables()`](https://insightsengineering.github.io/teal.picks/latest-tag/reference/picks.html)
+  or legacy
+  [`teal.transform::choices_selected()`](https://insightsengineering.github.io/teal.transform/latest-tag/reference/choices_selected.html))
   object with available choices and pre-selected option for variable
   names representing treatment group e.g. `ARM`.
 
 - color_manual:
 
-  vector of colors applied to treatment values.
+  (named `character`, optional) vector of colors applied to treatment
+  values.
 
 - shape_manual:
 
-  vector of symbols applied to `LOQ` values.
+  (named `numeric`, optional) vector of symbols applied to `LOQ` values.
 
 - facet_ncol:
 
-  numeric value indicating number of facets per row.
+  (`integer(1)`) numeric value indicating number of facets per row.
 
 - visit_facet:
 
-  visit facet toggle.
+  (`logical(1)`) visit facet toggle.
 
 - trt_facet:
 
-  facet by treatment group `trt_group`.
+  (`logical(1)`) facet by treatment group `trt_group`.
 
 - reg_line:
 
-  include regression line and annotations for slope and coefficient in
-  visualization. Use with facet TRUE.
+  (`logical(1)`) include regression line and annotations for slope and
+  coefficient in visualization. Use with facet `TRUE`.
 
 - loq_legend:
 
-  `loq` legend toggle.
+  (`logical(1)`) `loq` legend toggle.
 
 - rotate_xlab:
 
-  45 degree rotation of `x-axis` values.
+  (`logical(1)`) 45 degree rotation of `x-axis` values.
 
 - hline_arb:
 
-  numeric vector of at most 2 values identifying intercepts for
+  (`numeric`) vector of at most 2 values identifying intercepts for
   arbitrary horizontal lines.
 
 - hline_arb_color:
 
-  a character vector of at most length of `hline_arb`. naming the color
-  for the arbitrary horizontal lines.
+  (`character`) a character vector of at most length of `hline_arb`.
+  naming the color for the arbitrary horizontal lines.
 
 - hline_arb_label:
 
-  a character vector of at most length of `hline_arb`. naming the label
-  for the arbitrary horizontal lines.
+  (`character`) a character vector of at most length of `hline_arb`.
+  naming the label for the arbitrary horizontal lines.
 
 - hline_vars:
 
-  a character vector to name the columns that will define additional
-  horizontal lines.
+  (`character`) a character vector to name the columns that will define
+  additional horizontal lines.
 
 - hline_vars_colors:
 
-  a character vector naming the colors for the additional horizontal
-  lines.
+  (`character`) a character vector naming the colors for the additional
+  horizontal lines.
 
 - hline_vars_labels:
 
-  a character vector naming the labels for the additional horizontal
-  lines that will appear
+  (`character`) a character vector naming the labels for the additional
+  horizontal lines that will appear in the plot.
 
 - vline_arb:
 
-  numeric vector of at most 2 values identifying intercepts for
-  arbitrary horizontal lines.
+  (`numeric`) vector of at most 2 values identifying intercepts for
+  arbitrary vertical lines.
 
 - vline_arb_color:
 
-  a character vector of at most length of `vline_arb`. naming the color
-  for the arbitrary horizontal lines.
+  (`character`) a character vector of at most length of `vline_arb`.
+  naming the color for the arbitrary vertical lines.
 
 - vline_arb_label:
 
-  a character vector of at most length of `vline_arb`. naming the label
-  for the arbitrary horizontal lines.
+  (`character`) a character vector of at most length of `vline_arb`.
+  naming the label for the arbitrary vertical lines.
 
 - vline_vars:
 
-  a character vector to name the columns that will define additional
-  vertical lines.
+  (`character`) a character vector to name the columns that will define
+  additional vertical lines.
 
 - vline_vars_colors:
 
-  a character vector naming the colors for the additional vertical
-  lines.
+  (`character`) a character vector naming the colors for the additional
+  vertical lines.
 
 - vline_vars_labels:
 
-  a character vector naming the labels for the additional vertical lines
-  that will appear
+  (`character`) a character vector naming the labels for the additional
+  vertical lines that will appear in the plot.
 
 - plot_height:
 
-  controls plot height.
+  (`numeric(3)`) controls plot height.
 
 - plot_width:
 
-  optional, controls plot width.
+  (`numeric(3)`, optional) controls plot width.
 
 - font_size:
 
-  font size control for title, `x-axis` label, `y-axis` label and
-  legend.
+  (`numeric(3)`) font size control for title, `x-axis` label, `y-axis`
+  label and legend.
 
 - dot_size:
 
-  plot dot size.
+  (`numeric(3)`) plot dot size.
 
 - reg_text_size:
 
-  font size control for regression line annotations.
+  (`numeric(3)`) font size control for regression line annotations.
 
 - pre_output:
 
-  (`shiny.tag`) optional,  
+  (`shiny.tag`) optional,\
   with text placed before the output to put the output into context. For
   example a title.
 
@@ -217,6 +236,51 @@ tm_g_gh_correlationplot(
   (`list` of `teal_transform_module`) that will be applied to transform
   module's data input. To learn more check
   [`vignette("transform-input-data", package = "teal")`](https://insightsengineering.github.io/teal/latest-tag/articles/transform-input-data.html).
+
+- decorators:
+
+  **\[experimental\]** (named `list` of lists of
+  `teal_transform_module`) optional, decorator for tables or plots
+  included in the module output reported. The decorators are applied to
+  the respective output objects.
+
+  See section "Decorating Module" below for more details.
+
+## Value
+
+A
+[`teal::module()`](https://insightsengineering.github.io/teal/latest-tag/reference/teal_modules.html)
+object that can be used in a
+[`teal::init()`](https://insightsengineering.github.io/teal/latest-tag/reference/init.html)
+call.
+
+## Decorating Module
+
+This module generates the following objects, which can be modified in
+place using decorators:
+
+- `plot` (`ggplot`)
+
+A Decorator is applied to the specific output using a named list of
+`teal_transform_module` objects. The name of this list corresponds to
+the name of the output to which the decorator is applied. See code
+snippet below:
+
+    tm_g_gh_correlationplot(
+       ..., # arguments for module
+       decorators = list(
+         plot = teal_transform_module(...) # applied only to `plot` output
+       )
+    )
+
+For additional details and examples of decorators, refer to the vignette
+[`vignette("decorate-module-output", package = "teal.goshawk")`](https://insightsengineering.github.io/teal.goshawk/articles/decorate-module-output.md).
+
+To learn more please refer to the vignette
+[`vignette("transform-module-output", package = "teal")`](https://insightsengineering.github.io/teal/latest-tag/articles/transform-module-output.html)
+or the
+[`teal::teal_transform_module()`](https://insightsengineering.github.io/teal/latest-tag/reference/teal_transform_module.html)
+documentation.
 
 ## Reporting
 
@@ -234,9 +298,9 @@ For more information on reporting in `teal`, see the vignettes:
 
 ## Author
 
-Nick Paszty (npaszty) paszty.nicholas@gene.com
+Nick Paszty
 
-Balazs Toth (tothb2) toth.balazs@gene.com
+Balazs Toth
 
 ## Examples
 
@@ -260,9 +324,8 @@ data <- within(data, {
   # assign LOQ flag symbols: circles for "N" and triangles for "Y", squares for "NA"
   .shape_manual <- c("N" = 1, "Y" = 2, "NA" = 0)
 
-  set.seed(1) # @linksto ADSL ADLB
-  ADSL <- rADSL
-  ADLB <- rADLB
+  ADSL <- teal.data::rADSL
+  ADLB <- teal.data::rADLB
   .var_labels <- lapply(ADLB, function(x) attributes(x)$label)
   ADLB <- ADLB %>%
     mutate(AVISITCD = case_when(
@@ -338,12 +401,19 @@ app <- init(
     tm_g_gh_correlationplot(
       label = "Correlation Plot",
       dataname = "ADLB",
-      param_var = "PARAMCD",
-      xaxis_param = choices_selected(c("ALT", "CRP", "IGA"), "ALT"),
-      yaxis_param = choices_selected(c("ALT", "CRP", "IGA"), "CRP"),
-      xaxis_var = choices_selected(c("AVAL", "BASE", "CHG", "PCHG"), "BASE"),
-      yaxis_var = choices_selected(c("AVAL", "BASE", "CHG", "PCHG"), "AVAL"),
-      trt_group = choices_selected(c("ARM", "ACTARM"), "ARM"),
+      xaxis_param = picks(
+        variables("PARAMCD", "PARAMCD"),
+        values(selected = "ALT", multiple = FALSE),
+        check_dataset = FALSE
+      ),
+      yaxis_param = picks(
+        variables("PARAMCD", "PARAMCD"),
+        values(selected = "CRP", multiple = FALSE),
+        check_dataset = FALSE
+      ),
+      xaxis_var = variables(c("AVAL", "BASE", "CHG", "PCHG"), "BASE"),
+      yaxis_var = variables(c("AVAL", "BASE", "CHG", "PCHG"), "AVAL"),
+      trt_group = variables(c("ARM", "ACTARM"), "ARM"),
       color_manual = c(
         "Drug X 100mg" = "#000000",
         "Placebo" = "#3498DB",
@@ -374,6 +444,10 @@ app <- init(
   )
 )
 #> Initializing tm_g_gh_correlationplot
+#> Warning: rlang::dots_list(..., .ignore_empty = "trailing")
+#>  - Setting explicit `selected` while `choices` are delayed (set using `tidyselect`) doesn't guarantee that `selected` is a subset of `choices`.
+#> Warning: rlang::dots_list(..., .ignore_empty = "trailing")
+#>  - Setting explicit `selected` while `choices` are delayed (set using `tidyselect`) doesn't guarantee that `selected` is a subset of `choices`.
 if (interactive()) {
   shinyApp(app$ui, app$server)
 }

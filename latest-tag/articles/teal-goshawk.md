@@ -49,60 +49,7 @@ standardized NEST color palette to all module plots.
 
 A simple application including the box plot module could look like this:
 
-``` r
-library(teal.goshawk)
-library(nestcolor)
-
-data <- teal_data()
-data <- within(data, {
-  ADSL <- goshawk::rADSL %>% 
-    mutate(TRTORD = case_when(
-      TRT01P == "A: Drug X" ~ 1,
-      TRT01P == "C: Combination" ~ 2,
-      TRT01P == "B: Placebo" ~ 3,
-      TRUE ~ as.numeric(NA)
-    )
-    )
-  
-  ADLB <- goshawk::rADLB %>% 
-    mutate(AVISITCD = AVISIT,
-           TRTORD = case_when(
-             TRT01P == "A: Drug X" ~ 1,
-             TRT01P == "C: Combination" ~ 2,
-             TRT01P == "B: Placebo" ~ 3,
-             TRUE ~ as.numeric(NA)
-           )
-    )
-})
-
-join_keys(data) <- default_cdisc_join_keys[names(data)]
-
-app <- teal::init(
-  data = data,
-  modules = list(
-    tm_g_gh_boxplot(
-      label = "Longitudinal Analysis",
-      dataname = "ADLB",
-      param_var = "PARAMCD",
-      param = teal.transform::choices_selected(
-        choices = c("ALT", "CRP", "IGA"),
-        selected = c("ALT")
-      ),
-      trt_group = teal.transform::choices_selected(
-        choices = c("TRT01P", "TRT01A"),
-        selected = c("TRT01P")
-      ),
-      facet_var = teal.transform::choices_selected(
-        choices = c("TRT01P", "TRT01A"),
-        selected = c("TRT01P")
-      ),
-      rotate_xlab = TRUE
-    )
-  )
-)
-
-if (interactive()) shiny::shinyApp(app$ui, app$server)
-```
+[`library`](https://rdrr.io/r/base/library.html)`(`[`teal.goshawk`](https://insightsengineering.github.io/teal.goshawk/)`)`` `[`library`](https://rdrr.io/r/base/library.html)`(`[`nestcolor`](https://insightsengineering.github.io/nestcolor/)`)`` `` ``data`` ``<-`` ``teal_data``(``)`` ``data`` ``<-`` `[`within`](https://rdrr.io/r/base/with.html)`(``data``, ``{`` `` ``ADSL`` ``<-`` ``goshawk``::`[`rADSL`](https://insightsengineering.github.io/goshawk/latest-tag/reference/rADSL.html)` `[`%>%`](https://magrittr.tidyverse.org/reference/pipe.html)` `` `` `[`mutate`](https://dplyr.tidyverse.org/reference/mutate.html)`(``TRTORD ``=`` `[`case_when`](https://dplyr.tidyverse.org/reference/case-and-replace-when.html)`(`` `` ``TRT01P`` ``==`` ``"A: Drug X"`` ``~`` ``1``,`` `` ``TRT01P`` ``==`` ``"C: Combination"`` ``~`` ``2``,`` `` ``TRT01P`` ``==`` ``"B: Placebo"`` ``~`` ``3``,`` `` ``TRUE`` ``~`` `[`as.numeric`](https://rdrr.io/r/base/numeric.html)`(``NA``)`` `` ``)`` `` ``)`` `` `` `` ``ADLB`` ``<-`` ``goshawk``::`[`rADLB`](https://insightsengineering.github.io/goshawk/latest-tag/reference/rADLB.html)` `[`%>%`](https://magrittr.tidyverse.org/reference/pipe.html)` `` `` `[`mutate`](https://dplyr.tidyverse.org/reference/mutate.html)`(``AVISITCD ``=`` ``AVISIT``,`` `` TRTORD ``=`` `[`case_when`](https://dplyr.tidyverse.org/reference/case-and-replace-when.html)`(`` `` ``TRT01P`` ``==`` ``"A: Drug X"`` ``~`` ``1``,`` `` ``TRT01P`` ``==`` ``"C: Combination"`` ``~`` ``2``,`` `` ``TRT01P`` ``==`` ``"B: Placebo"`` ``~`` ``3``,`` `` ``TRUE`` ``~`` `[`as.numeric`](https://rdrr.io/r/base/numeric.html)`(``NA``)`` `` ``)`` `` ``)`` ``}``)`` `` ``join_keys``(``data``)`` ``<-`` ``default_cdisc_join_keys``[`[`names`](https://rdrr.io/r/base/names.html)`(``data``)``]`` `` ``app`` ``<-`` ``teal``::`[`init`](https://insightsengineering.github.io/teal/latest-tag/reference/init.html)`(`` `` data ``=`` ``data``,`` `` modules ``=`` `[`list`](https://rdrr.io/r/base/list.html)`(`` `` `[`tm_g_gh_boxplot`](https://insightsengineering.github.io/teal.goshawk/reference/tm_g_gh_boxplot.md)`(`` `` label ``=`` ``"Longitudinal Analysis"``,`` `` dataname ``=`` ``"ADLB"``,`` `` param_var ``=`` ``"PARAMCD"``,`` `` param ``=`` ``teal.transform``::`[`choices_selected`](https://insightsengineering.github.io/teal.transform/latest-tag/reference/choices_selected.html)`(`` `` choices ``=`` `[`c`](https://rdrr.io/r/base/c.html)`(``"ALT"``, ``"CRP"``, ``"IGA"``)``,`` `` selected ``=`` `[`c`](https://rdrr.io/r/base/c.html)`(``"ALT"``)`` `` ``)``,`` `` trt_group ``=`` ``teal.transform``::`[`choices_selected`](https://insightsengineering.github.io/teal.transform/latest-tag/reference/choices_selected.html)`(`` `` choices ``=`` `[`c`](https://rdrr.io/r/base/c.html)`(``"TRT01P"``, ``"TRT01A"``)``,`` `` selected ``=`` `[`c`](https://rdrr.io/r/base/c.html)`(``"TRT01P"``)`` `` ``)``,`` `` facet_var ``=`` ``teal.transform``::`[`choices_selected`](https://insightsengineering.github.io/teal.transform/latest-tag/reference/choices_selected.html)`(`` `` choices ``=`` `[`c`](https://rdrr.io/r/base/c.html)`(``"TRT01P"``, ``"TRT01A"``)``,`` `` selected ``=`` `[`c`](https://rdrr.io/r/base/c.html)`(``"TRT01P"``)`` `` ``)``,`` `` rotate_xlab ``=`` ``TRUE`` `` ``)`` `` ``)`` ``)`` `` ``if`` ``(`[`interactive`](https://rdrr.io/r/base/interactive.html)`(``)``)`` ``shiny``::`[`shinyApp`](https://rdrr.io/pkg/shiny/man/shinyApp.html)`(``app``$``ui``, ``app``$``server``)`
 
 Refer to the [Get
 Started](https://insightsengineering.github.io/teal.modules.clinical/latest-tag/articles/teal-modules-clinical.html)

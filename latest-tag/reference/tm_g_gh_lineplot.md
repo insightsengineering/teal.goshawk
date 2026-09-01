@@ -8,16 +8,17 @@ line plot.
 ``` r
 tm_g_gh_lineplot(
   label,
-  dataname,
-  param_var,
-  param,
+  dataname = "ADLB",
+  param_var = lifecycle::deprecated(),
+  param = teal.picks::picks(teal.picks::variables("PARAMCD", "PARAMCD"),
+    teal.picks::values(selected = "ALT", multiple = FALSE), check_dataset = FALSE),
   param_var_label = "PARAM",
-  xaxis_var,
-  yaxis_var,
+  xaxis_var = teal.picks::variables(dplyr::starts_with("AVISIT"), "AVISITCD"),
+  yaxis_var = teal.picks::variables(c("AVAL", "CHG", "PCHG"), "AVAL"),
   xvar_level = NULL,
-  filter_var = yaxis_var,
-  filter_var_choices = filter_var,
-  trt_group,
+  filter_var = lifecycle::deprecated(),
+  filter_var_choices = lifecycle::deprecated(),
+  trt_group = teal.picks::variables(selected = "ARM"),
   trt_group_level = NULL,
   shape_choices = NULL,
   stat = "mean",
@@ -39,7 +40,8 @@ tm_g_gh_lineplot(
   table_font_size = c(12, 4, 20),
   dot_size = c(2, 1, 12),
   plot_relative_height_value = 1000,
-  transformators = list()
+  transformators = list(),
+  decorators = list()
 )
 ```
 
@@ -47,121 +49,146 @@ tm_g_gh_lineplot(
 
 - label:
 
-  menu item label of the module in the teal app.
+  (`character(1)`) Label shown in the navigation item for the module or
+  module group. For `modules()` defaults to `"root"`. See `Details`.
 
 - dataname:
 
-  analysis data passed to the data argument of
-  [`init`](https://insightsengineering.github.io/teal/latest-tag/reference/init.html).
+  (`character(1)`) analysis data passed to the data argument of
+  [`teal::init()`](https://insightsengineering.github.io/teal/latest-tag/reference/init.html).
   E.g. `ADaM` structured laboratory data frame `ADLB`.
 
 - param_var:
 
-  name of variable containing biomarker codes e.g. `PARAMCD`.
+  **\[deprecated\]** (`character(1)`) name of variable containing
+  biomarker codes e.g. `PARAMCD`.
 
 - param:
 
+  ([`teal.picks::picks()`](https://insightsengineering.github.io/teal.picks/latest-tag/reference/picks.html)
+  or
+  [`teal.transform::choices_selected()`](https://insightsengineering.github.io/teal.transform/latest-tag/reference/choices_selected.html))
   biomarker selected.
 
 - param_var_label:
 
-  single name of variable in analysis data that includes parameter
-  labels.
+  (`character(1)`) single name of variable in analysis data that
+  includes parameter labels.
 
 - xaxis_var:
 
-  single name of variable in analysis data that is used as x-axis in the
-  plot for the respective `goshawk` function.
+  ([`teal.picks::variables()`](https://insightsengineering.github.io/teal.picks/latest-tag/reference/picks.html)
+  or legacy
+  [`teal.transform::choices_selected()`](https://insightsengineering.github.io/teal.transform/latest-tag/reference/choices_selected.html))
+  name of variable containing biomarker results displayed on x-axis e.g.
+  `BASE`.
 
 - yaxis_var:
 
-  single name of variable in analysis data that is used as summary
-  variable in the respective `goshawk` function.
+  ([`teal.picks::variables()`](https://insightsengineering.github.io/teal.picks/latest-tag/reference/picks.html)
+  or legacy
+  [`teal.transform::choices_selected()`](https://insightsengineering.github.io/teal.transform/latest-tag/reference/choices_selected.html))
+  name of variable containing biomarker results displayed on y-axis e.g.
+  `AVAL`.
 
 - xvar_level:
 
-  vector that can be used to define the factor level of `xvar`. Only use
-  it when `xvar` is character or factor.
+  ([`character()`](https://rdrr.io/r/base/character.html)) vector that
+  can be used to define the factor level of `xvar`. Only use it when
+  `xaxis_var` is of type character or factor.
 
 - filter_var:
 
-  data constraint variable.
+  **\[deprecated\]** data constraint variable.
 
 - filter_var_choices:
 
-  data constraint variable choices.
+  **\[deprecated\]** data constraint variable choices.
 
 - trt_group:
 
-  [`choices_selected`](https://insightsengineering.github.io/teal.transform/latest-tag/reference/choices_selected.html)
+  ([`teal.picks::variables()`](https://insightsengineering.github.io/teal.picks/latest-tag/reference/picks.html)
+  or legacy
+  [`teal.transform::choices_selected()`](https://insightsengineering.github.io/teal.transform/latest-tag/reference/choices_selected.html))
   object with available choices and pre-selected option for variable
   names representing treatment group e.g. `ARM`.
 
 - trt_group_level:
 
-  vector that can be used to define factor level of `trt_group`.
+  (`named character()`) vector that can be used to define factor level
+  of `trt_group`.
 
 - shape_choices:
 
-  Vector or `choices_selected` object with names of `ADSL` variables
-  which can be used to change shape
+  ([`character()`](https://rdrr.io/r/base/character.html),
+  [`teal.picks::variables()`](https://insightsengineering.github.io/teal.picks/latest-tag/reference/picks.html)
+  or legacy
+  [`teal.transform::choices_selected()`](https://insightsengineering.github.io/teal.transform/latest-tag/reference/choices_selected.html))
+  vector or
+  [`teal.picks::variables()`](https://insightsengineering.github.io/teal.picks/latest-tag/reference/picks.html)
+  object with names of `ADSL` variables which can be used to change
+  shape
 
 - stat:
 
-  string of statistics
+  (`character(1)`) string of statistics
 
 - hline_arb:
 
-  numeric vector of at most 2 values identifying intercepts for
+  (`numeric`) vector of at most 2 values identifying intercepts for
   arbitrary horizontal lines.
 
 - hline_arb_color:
 
-  a character vector of at most length of `hline_arb`. naming the color
-  for the arbitrary horizontal lines.
+  (`character`) a character vector of at most length of `hline_arb`.
+  naming the color for the arbitrary horizontal lines.
 
 - hline_arb_label:
 
-  a character vector of at most length of `hline_arb`. naming the label
-  for the arbitrary horizontal lines.
+  (`character`) a character vector of at most length of `hline_arb`.
+  naming the label for the arbitrary horizontal lines.
 
 - color_manual:
 
-  string vector representing customized colors
+  (named `character`, optional) vector of colors applied to treatment
+  values.
 
 - xtick:
 
-  numeric vector to define the tick values of x-axis when x variable is
-  numeric. Default value is waive().
+  ([`numeric()`](https://rdrr.io/r/base/numeric.html)) numeric vector to
+  define the tick values of x-axis when x variable is numeric. Default
+  value is waive().
 
 - xlabel:
 
-  vector with same length of `xtick` to define the label of x-axis tick
-  values. Default value is waive().
+  ([`character()`](https://rdrr.io/r/base/character.html)) vector with
+  same length of `xtick` to define the label of x-axis tick values.
+  Default value is waive().
 
 - rotate_xlab:
 
-  `logical(1)` value indicating whether to rotate `x-axis` labels.
+  (`logical(1)`) 45 degree rotation of `x-axis` values.
 
 - plot_height:
 
-  controls plot height.
+  (`numeric(3)`) controls plot height.
 
 - plot_width:
 
-  optional, controls plot width.
+  (`numeric(3)`, optional) controls plot width.
 
 - plot_font_size:
 
-  control font size for title, `x-axis`, `y-axis` and legend font.
+  (`numeric(3)`) control font size for title, `x-axis`, `y-axis` and
+  legend font.
 
 - dodge:
 
-  controls the position dodge of error bar
+  (`numeric(3)`) controls the position dodge of error bar
 
 - pre_output:
 
-  (`shiny.tag`) optional,  
+  (`shiny.tag`) optional,\
   with text placed before the output to put the output into context. For
   example a title.
 
@@ -174,21 +201,21 @@ tm_g_gh_lineplot(
 
 - count_threshold:
 
-  minimum count of observations (as listed in the output table) to plot
-  nodes on the graph
+  (`numeric(1)`) minimum count of observations (as listed in the output
+  table) to plot nodes on the graph
 
 - table_font_size:
 
-  controls the font size of values in the table
+  (`numeric(3)`) controls the font size of values in the table.
 
 - dot_size:
 
-  plot dot size.
+  (`numeric(3)`) plot dot size.
 
 - plot_relative_height_value:
 
-  numeric value between 500 and 5000 for controlling the starting value
-  of the relative plot height slider
+  (`numeric(1)`) numeric value between 500 and 5000 for controlling the
+  starting value of the relative plot height slider
 
 - transformators:
 
@@ -196,9 +223,50 @@ tm_g_gh_lineplot(
   module's data input. To learn more check
   [`vignette("transform-input-data", package = "teal")`](https://insightsengineering.github.io/teal/latest-tag/articles/transform-input-data.html).
 
+- decorators:
+
+  **\[experimental\]** (named `list` of lists of
+  `teal_transform_module`) optional, decorator for tables or plots
+  included in the module output reported. The decorators are applied to
+  the respective output objects.
+
+  See section "Decorating Module" below for more details.
+
 ## Value
 
-`shiny` object
+A
+[`teal::module()`](https://insightsengineering.github.io/teal/latest-tag/reference/teal_modules.html)
+object that can be used in a
+[`teal::init()`](https://insightsengineering.github.io/teal/latest-tag/reference/init.html)
+call.
+
+## Decorating Module
+
+This module generates the following objects, which can be modified in
+place using decorators:
+
+- `plot` (`ggplot`)
+
+A Decorator is applied to the specific output using a named list of
+`teal_transform_module` objects. The name of this list corresponds to
+the name of the output to which the decorator is applied. See code
+snippet below:
+
+    tm_g_gh_lineplot(
+       ..., # arguments for module
+       decorators = list(
+         plot = teal_transform_module(...) # applied only to `plot` output
+       )
+    )
+
+For additional details and examples of decorators, refer to the vignette
+[`vignette("decorate-module-output", package = "teal.goshawk")`](https://insightsengineering.github.io/teal.goshawk/articles/decorate-module-output.md).
+
+To learn more please refer to the vignette
+[`vignette("transform-module-output", package = "teal")`](https://insightsengineering.github.io/teal/latest-tag/articles/transform-module-output.html)
+or the
+[`teal::teal_transform_module()`](https://insightsengineering.github.io/teal/latest-tag/reference/teal_transform_module.html)
+documentation.
 
 ## Reporting
 
@@ -216,9 +284,9 @@ For more information on reporting in `teal`, see the vignettes:
 
 ## Author
 
-Wenyi Liu (luiw2) wenyi.liu@roche.com
+Wenyi Liu
 
-Balazs Toth (tothb2) toth.balazs@gene.com
+Balazs Toth
 
 ## Examples
 
@@ -236,9 +304,8 @@ data <- within(data, {
     "B: Placebo" = "Placebo",
     "C: Combination" = "Combination"
   )
-  set.seed(1) # @linksto ADSL ADLB
-  ADSL <- rADSL
-  ADLB <- rADLB
+  ADSL <- teal.data::rADSL
+  ADLB <- teal.data::rADLB
   .var_labels <- lapply(ADLB, function(x) attributes(x)$label)
   ADLB <- ADLB %>%
     mutate(
@@ -277,12 +344,15 @@ app <- init(
     tm_g_gh_lineplot(
       label = "Line Plot",
       dataname = "ADLB",
-      param_var = "PARAMCD",
-      param = choices_selected(c("ALT", "CRP", "IGA"), "ALT"),
+      param = picks(
+        variables("PARAMCD", "PARAMCD"),
+        values(selected = "ALT", multiple = FALSE),
+        check_dataset = FALSE
+      ),
       shape_choices = c("SEX", "RACE"),
-      xaxis_var = choices_selected("AVISITCD", "AVISITCD"),
-      yaxis_var = choices_selected(c("AVAL", "BASE", "CHG", "PCHG"), "AVAL"),
-      trt_group = choices_selected(c("ARM", "ACTARM"), "ARM"),
+      xaxis_var = variables("AVISITCD", "AVISITCD"),
+      yaxis_var = variables(c("AVAL", "BASE", "CHG", "PCHG"), "AVAL"),
+      trt_group = variables(c("ARM", "ACTARM"), "ARM"),
       hline_arb = c(20.5, 19.5),
       hline_arb_color = c("red", "green"),
       hline_arb_label = c("A", "B")
@@ -290,6 +360,8 @@ app <- init(
   )
 )
 #> Initializing tm_g_gh_lineplot
+#> Warning: rlang::dots_list(..., .ignore_empty = "trailing")
+#>  - Setting explicit `selected` while `choices` are delayed (set using `tidyselect`) doesn't guarantee that `selected` is a subset of `choices`.
 if (interactive()) {
   shinyApp(app$ui, app$server)
 }

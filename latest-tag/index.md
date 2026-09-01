@@ -45,29 +45,4 @@ explore longitudinal clinical trial data.
 
 ## Installation
 
-``` r
-# stable versions
-# install.packages("pak")
-pak::pkg_install("insightsengineering/teal.goshawk@*release")
-
-# beta versions
-# install.packages("pak")
-pak::pkg_install("insightsengineering/teal.goshawk")
-```
-
-## Stargazers and Forkers
-
-### Stargazers over time
-
-[![Stargazers over
-time](https://starchart.cc/insightsengineering/teal.goshawk.svg)](https://starchart.cc/insightsengineering/teal.goshawk)
-
-### Stargazers
-
-[![Stargazers repo roster for
-@insightsengineering/teal.goshawk](https://reporoster.com/stars/insightsengineering/teal.goshawk)](https://github.com/insightsengineering/teal.goshawk/stargazers)
-
-### Forkers
-
-[![Forkers repo roster for
-@insightsengineering/teal.goshawk](https://reporoster.com/forks/insightsengineering/teal.goshawk)](https://github.com/insightsengineering/teal.goshawk/network/members)
+`# stable versions`` ``# install.packages("pak")`` ``pak``::`[`pkg_install`](https://pak.r-lib.org/reference/pkg_install.html)`(``"insightsengineering/teal.goshawk@*release"``)`` `` ``# beta versions`` ``# install.packages("pak")`` ``pak``::`[`pkg_install`](https://pak.r-lib.org/reference/pkg_install.html)`(``"insightsengineering/teal.goshawk"``)`

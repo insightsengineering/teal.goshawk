@@ -31,4 +31,23 @@ get_data_range_states(varname, paramname, ANL, trt_group = NULL, step = NULL)
 
 ## Value
 
-`NULL`.
+`toggle_slider_ui` returns a `shiny.tag` object with the UI for the
+toggleable slider module. `toggle_slider_server` returns a shiny module
+which itself returns a `reactiveValues` object with `min`, `max`, and
+`value` elements.
+
+## Examples
+
+``` r
+if (interactive()) {
+  shinyApp(
+    ui = fluidPage(toggle_slider_ui("slider", "Select range")),
+    server = function(input, output, session) {
+      data_state <- reactiveVal(
+        list(range = c(0, 100), step = 1)
+      )
+      toggle_slider_server("slider", data_state)
+    }
+  )
+}
+```
