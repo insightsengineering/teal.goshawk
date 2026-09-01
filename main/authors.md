@@ -33,12 +33,12 @@ Source:
 
 Unardi D, Paszty N, Kaledkowski D, Hallal M, Rucki P, Liu W, Tomlinson
 J, Toth B, Zhao J, Nasinski M (2026). *teal.goshawk: Longitudinal
-Visualization 'teal' Modules*. R package version 0.5.0.9003,
+Visualization 'teal' Modules*. R package version 0.6.0,
 <https://insightsengineering.github.io/teal.goshawk/>.
 
 @Manual{, title = {teal.goshawk: Longitudinal Visualization \`teal\`
 Modules}, author = {Dony Unardi and Nick Paszty and Dawid Kaledkowski
 and Mahmoud Hallal and Pawel Rucki and Wenyi Liu and Jeffrey Tomlinson
 and Bali Toth and Junlue Zhao and Maciej Nasinski}, year = {2026}, note
-= {R package version 0.5.0.9003}, url =
+= {R package version 0.6.0}, url =
 {https://insightsengineering.github.io/teal.goshawk/}, }

@@ -1,11 +1,16 @@
 # Changelog
 
-## teal.goshawk 0.5.0.9003
+## teal.goshawk 0.6.0
 
 #### Enhancements
 
 - Added decorators to all modules
   ([\#329](https://github.com/insightsengineering/teal.goshawk/issues/329)).
+- Migrated module inputs from
+  [`teal.transform::choices_selected()`](https://insightsengineering.github.io/teal.transform/latest-tag/reference/choices_selected.html)
+  to `teal.picks()`
+  ([\#378](https://github.com/insightsengineering/teal.goshawk/issues/378),
+  [\#376](https://github.com/insightsengineering/teal.goshawk/issues/376)).
 
 ## teal.goshawk 0.5.0
 
