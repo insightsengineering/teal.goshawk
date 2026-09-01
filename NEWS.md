@@ -2,6 +2,7 @@
 
 ### Enhancements
 - Added decorators to all modules (#329).
+- Migrated module inputs from `teal.transform::choices_selected()` to `teal.picks()` (#378, #376).
 
 # teal.goshawk 0.5.0
 
