@@ -72,7 +72,7 @@ VignetteBuilder:
     knitr,
     rmarkdown
 Remotes:
-    insightsengineering/goshawk
+    insightsengineering/goshawk@*release
 Config/Needs/verdepcheck: insightsengineering/goshawk, rstudio/shiny,
     insightsengineering/teal, insightsengineering/teal.transform,
     rstudio/bslib, mllg/checkmate, daattali/colourpicker, tidyverse/dplyr,
