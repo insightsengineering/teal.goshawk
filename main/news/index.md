@@ -1,6 +1,8 @@
 # Changelog
 
-## teal.goshawk 0.6.0.9001
+## teal.goshawk 0.6.1.9000
+
+## teal.goshawk 0.6.1
 
 #### Miscellaneous
 
