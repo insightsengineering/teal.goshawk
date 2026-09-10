@@ -52,7 +52,7 @@ td <- within(
 card <- teal.reporter::teal_card(td)
 set_chunk_attrs(card, list(dev.width = 200, dev.height = 100))
 
-#> $`444fc0ed`
+#> $`27b38792`
 #> [1] "ggplot2::ggplot(mtcars, ggplot2::aes(x = wt, y = mpg)) + ggplot2::geom_point()"
 #> attr(,"params")
 #> list()
@@ -61,7 +61,7 @@ set_chunk_attrs(card, list(dev.width = 200, dev.height = 100))
 #> attr(,"class")
 #> [1] "code_chunk"
 #> 
-#> $d7bafcae
+#> $`48ed9cba`
 #> [[1]]
 #> 
 #> attr(,"class")
