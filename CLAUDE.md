@@ -1,3 +1,3 @@
-#teal.goshawk Development Guide
+# teal.goshawk Development Guide
 
 See @AGENTS.md
