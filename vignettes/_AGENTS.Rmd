@@ -19,7 +19,7 @@ knitr::opts_chunk$set(echo = TRUE)
 
 `teal.goshawk` is a package of the `teal` framework that provides modules using `goshawk` package to create Longitudinal biomarker/lab visualizations. 
 
-The most important functions are the module functions that start with `tm_*`.
+The most important functions are the module functions that start with `tm_*`. The modules in this package reuse UI components and reactive components present in `utils-*.R` package.
 
 ## Development Context
 
@@ -37,8 +37,8 @@ The main feature of this package is to provide modules that are used in apps.
 - **teal.slice** - Data filtering capabilities for application.
 - **teal.widgets** - Reusable UI components for user input and output.
 - **teal.logger** - Standardized logging across the framework.
-- **teal.transform** - Helpers to transform and work with user input (deprecated in favor of `teal.picks`).
 - **teal.picks** - Helpers to select, transform and manipulate them.
+- **teal.transform** - Helpers to transform and work with user input (deprecated in favor of `teal.picks`).
 
 ### Supporting Packages
 
