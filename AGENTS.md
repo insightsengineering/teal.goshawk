@@ -8,7 +8,8 @@ modules using `goshawk` package to create Longitudinal biomarker/lab
 visualizations.
 
 The most important functions are the module functions that start with
-`tm_*`.
+`tm_*`. The modules in this package reuse UI components and reactive
+components present in `utils-*.R` package.
 
 ## Development Context
 
@@ -29,9 +30,9 @@ apps.
 - **teal.slice** - Data filtering capabilities for application.
 - **teal.widgets** - Reusable UI components for user input and output.
 - **teal.logger** - Standardized logging across the framework.
+- **teal.picks** - Helpers to select, transform and manipulate them.
 - **teal.transform** - Helpers to transform and work with user input
   (deprecated in favor of `teal.picks`).
-- **teal.picks** - Helpers to select, transform and manipulate them.
 
 ### Supporting Packages
 
