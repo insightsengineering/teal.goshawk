@@ -46,6 +46,11 @@ The `teal.goshawk` package uses:
 
 - **goshawk** - A package with Longitudinal biomarker/lab visualizations functions. 
 
+The `teal.goshawk` package is used by:
+
+- **teal.gallery** - Repository with several example apps that use these modules.
+
+
 
 ## Workflows
 
