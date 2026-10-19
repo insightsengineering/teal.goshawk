@@ -45,4 +45,11 @@ explore longitudinal clinical trial data.
 
 ## Installation
 
-`# stable versions`` ``# install.packages("pak")`` ``pak``::`[`pkg_install`](https://pak.r-lib.org/reference/pkg_install.html)`(``"insightsengineering/teal.goshawk@*release"``)`` `` ``# beta versions`` ``# install.packages("pak")`` ``pak``::`[`pkg_install`](https://pak.r-lib.org/reference/pkg_install.html)`(``"insightsengineering/teal.goshawk"``)`
+\
+`# stable versions`\
+`# install.packages("pak")`\
+`pak``::`[`pkg_install`](https://pak.r-lib.org/reference/pkg_install.html)`(``"insightsengineering/teal.goshawk@*release"``)`\
+\
+`# beta versions`\
+`# install.packages("pak")`\
+`pak``::`[`pkg_install`](https://pak.r-lib.org/reference/pkg_install.html)`(``"insightsengineering/teal.goshawk"``)`

@@ -45,4 +45,93 @@ can be decorated.
 Here’s an example to showcase how you can edit an output of class
 `ggplot`. You can extend them using `ggplot2` functions.
 
-`data`` ``<-`` `[`within`](https://rdrr.io/r/base/with.html)`(``teal_data``(``)``, ``{`` `` `[`library`](https://rdrr.io/r/base/library.html)`(`[`dplyr`](https://dplyr.tidyverse.org)`)`` `` `[`library`](https://rdrr.io/r/base/library.html)`(`[`nestcolor`](https://insightsengineering.github.io/nestcolor/)`)`` `` `[`library`](https://rdrr.io/r/base/library.html)`(`[`stringr`](https://stringr.tidyverse.org)`)`` `` ``# use non-exported function from goshawk`` `` ``.h_identify_loq_values`` ``<-`` `[`getFromNamespace`](https://rdrr.io/r/utils/getFromNamespace.html)`(``"h_identify_loq_values"``, ``"goshawk"``)`` `` ``# original ARM value = dose value`` `` ``.arm_mapping`` ``<-`` `[`list`](https://rdrr.io/r/base/list.html)`(`` `` ``"A: Drug X"`` ``=`` ``"150mg QD"``,`` `` ``"B: Placebo"`` ``=`` ``"Placebo"``,`` `` ``"C: Combination"`` ``=`` ``"Combination"`` `` ``)`` `` ``ADSL`` ``<-`` ``teal.data``::`[`rADSL`](https://insightsengineering.github.io/teal.data/latest-tag/reference/random_cdisc_data.html)` `` ``ADLB`` ``<-`` ``teal.data``::`[`rADLB`](https://insightsengineering.github.io/teal.data/latest-tag/reference/random_cdisc_data.html)` `` ``.var_labels`` ``<-`` `[`lapply`](https://rdrr.io/r/base/lapply.html)`(``ADLB``, ``function``(``x``)`` `[`attributes`](https://rdrr.io/r/base/attributes.html)`(``x``)``$``label``)`` `` ``ADLB`` ``<-`` ``ADLB`` `[`%>%`](https://magrittr.tidyverse.org/reference/pipe.html)` `` `[`mutate`](https://dplyr.tidyverse.org/reference/mutate.html)`(`` `` AVISITCD ``=`` `[`case_when`](https://dplyr.tidyverse.org/reference/case-and-replace-when.html)`(`` `` ``AVISIT`` ``==`` ``"SCREENING"`` ``~`` ``"SCR"``,`` `` ``AVISIT`` ``==`` ``"BASELINE"`` ``~`` ``"BL"``,`` `` `[`grepl`](https://rdrr.io/r/base/grep.html)`(``"WEEK"``, ``AVISIT``)`` ``~`` `[`paste`](https://rdrr.io/r/base/paste.html)`(``"W"``, `[`str_extract`](https://stringr.tidyverse.org/reference/str_extract.html)`(``AVISIT``, ``"(?<=(WEEK ))[0-9]+"``)``)``,`` `` ``TRUE`` ``~`` `[`as.character`](https://rdrr.io/r/base/character.html)`(``NA``)`` `` ``)``,`` `` AVISITCDN ``=`` `[`case_when`](https://dplyr.tidyverse.org/reference/case-and-replace-when.html)`(`` `` ``AVISITCD`` ``==`` ``"SCR"`` ``~`` ``-``2``,`` `` ``AVISITCD`` ``==`` ``"BL"`` ``~`` ``0``,`` `` `[`grepl`](https://rdrr.io/r/base/grep.html)`(``"W"``, ``AVISITCD``)`` ``~`` `[`as.numeric`](https://rdrr.io/r/base/numeric.html)`(`[`gsub`](https://rdrr.io/r/base/grep.html)`(``"[^0-9]*"``, ``""``, ``AVISITCD``)``)``,`` `` ``TRUE`` ``~`` `[`as.numeric`](https://rdrr.io/r/base/numeric.html)`(``NA``)`` `` ``)``,`` `` AVISITCD ``=`` `[`factor`](https://rdrr.io/r/base/factor.html)`(``AVISITCD``)`` `[`%>%`](https://magrittr.tidyverse.org/reference/pipe.html)` `[`reorder`](https://rdrr.io/r/stats/reorder.factor.html)`(``AVISITCDN``)``,`` `` TRTORD ``=`` `[`case_when`](https://dplyr.tidyverse.org/reference/case-and-replace-when.html)`(`` `` ``ARMCD`` ``==`` ``"ARM C"`` ``~`` ``1``,`` `` ``ARMCD`` ``==`` ``"ARM B"`` ``~`` ``2``,`` `` ``ARMCD`` ``==`` ``"ARM A"`` ``~`` ``3`` `` ``)``,`` `` ARM ``=`` `[`as.character`](https://rdrr.io/r/base/character.html)`(``.arm_mapping``[`[`match`](https://rdrr.io/r/base/match.html)`(``ARM``, `[`names`](https://rdrr.io/r/base/names.html)`(``.arm_mapping``)``)``]``)``,`` `` ARM ``=`` `[`factor`](https://rdrr.io/r/base/factor.html)`(``ARM``)`` `[`%>%`](https://magrittr.tidyverse.org/reference/pipe.html)` `[`reorder`](https://rdrr.io/r/stats/reorder.factor.html)`(``TRTORD``)``,`` `` ACTARM ``=`` `[`as.character`](https://rdrr.io/r/base/character.html)`(``.arm_mapping``[`[`match`](https://rdrr.io/r/base/match.html)`(``ACTARM``, `[`names`](https://rdrr.io/r/base/names.html)`(``.arm_mapping``)``)``]``)``,`` `` ACTARM ``=`` `[`factor`](https://rdrr.io/r/base/factor.html)`(``ACTARM``)`` `[`%>%`](https://magrittr.tidyverse.org/reference/pipe.html)` `[`reorder`](https://rdrr.io/r/stats/reorder.factor.html)`(``TRTORD``)``,`` `` ANRLO ``=`` ``50``,`` `` ANRHI ``=`` ``75`` `` ``)`` `[`%>%`](https://magrittr.tidyverse.org/reference/pipe.html)` `` `[`rowwise`](https://dplyr.tidyverse.org/reference/rowwise.html)`(``)`` `[`%>%`](https://magrittr.tidyverse.org/reference/pipe.html)` `` `[`group_by`](https://dplyr.tidyverse.org/reference/group_by.html)`(``PARAMCD``)`` `[`%>%`](https://magrittr.tidyverse.org/reference/pipe.html)` `` `[`mutate`](https://dplyr.tidyverse.org/reference/mutate.html)`(``LBSTRESC ``=`` `[`ifelse`](https://rdrr.io/r/base/ifelse.html)`(`` `` ``USUBJID`` `[`%in%`](https://rdrr.io/r/base/match.html)` `[`sample`](https://rdrr.io/r/base/sample.html)`(``USUBJID``, ``1``, replace ``=`` ``TRUE``)``,`` `` `[`paste`](https://rdrr.io/r/base/paste.html)`(``"<"``, `[`round`](https://rdrr.io/r/base/Round.html)`(`[`runif`](https://rdrr.io/r/stats/Uniform.html)`(``1``, min ``=`` ``25``, max ``=`` ``30``)``)``)``, ``LBSTRESC`` `` ``)``)`` `[`%>%`](https://magrittr.tidyverse.org/reference/pipe.html)` `` `[`mutate`](https://dplyr.tidyverse.org/reference/mutate.html)`(``LBSTRESC ``=`` `[`ifelse`](https://rdrr.io/r/base/ifelse.html)`(`` `` ``USUBJID`` `[`%in%`](https://rdrr.io/r/base/match.html)` `[`sample`](https://rdrr.io/r/base/sample.html)`(``USUBJID``, ``1``, replace ``=`` ``TRUE``)``,`` `` `[`paste`](https://rdrr.io/r/base/paste.html)`(``">"``, `[`round`](https://rdrr.io/r/base/Round.html)`(`[`runif`](https://rdrr.io/r/stats/Uniform.html)`(``1``, min ``=`` ``70``, max ``=`` ``75``)``)``)``, ``LBSTRESC`` `` ``)``)`` `[`%>%`](https://magrittr.tidyverse.org/reference/pipe.html)` `` `[`ungroup`](https://dplyr.tidyverse.org/reference/group_by.html)`(``)`` `` ``# add LLOQ and ULOQ variables`` `` ``ALB_LOQS`` ``<-`` ``.h_identify_loq_values``(``ADLB``, ``"LOQFL"``)`` `` ``ADLB`` ``<-`` `[`left_join`](https://dplyr.tidyverse.org/reference/mutate-joins.html)`(``ADLB``, ``ALB_LOQS``, by ``=`` ``"PARAM"``)`` ``}``)`` `` ``join_keys``(``data``)`` ``<-`` ``default_cdisc_join_keys``[`[`names`](https://rdrr.io/r/base/names.html)`(``data``)``]`` `` ``app`` ``<-`` ``init``(`` `` data ``=`` ``data``,`` `` modules ``=`` ``modules``(`` `` `[`tm_g_gh_boxplot`](https://insightsengineering.github.io/teal.goshawk/reference/tm_g_gh_boxplot.md)`(`` `` label ``=`` ``"Box Plot"``,`` `` dataname ``=`` ``"ADLB"``,`` `` param ``=`` ``picks``(`` `` ``variables``(``"PARAMCD"``, ``"PARAMCD"``)``,`` `` ``values``(``selected ``=`` ``"ALT"``, multiple ``=`` ``FALSE``)``,`` `` check_dataset ``=`` ``FALSE`` `` ``)``,`` `` yaxis_var ``=`` ``variables``(`[`c`](https://rdrr.io/r/base/c.html)`(``"AVAL"``, ``"BASE"``, ``"CHG"``)``, ``"AVAL"``)``,`` `` xaxis_var ``=`` ``variables``(`[`c`](https://rdrr.io/r/base/c.html)`(``"ACTARM"``, ``"ARM"``, ``"AVISITCD"``, ``"STUDYID"``)``, ``"ARM"``)``,`` `` facet_var ``=`` ``variables``(`[`c`](https://rdrr.io/r/base/c.html)`(``"ACTARM"``, ``"ARM"``, ``"AVISITCD"``, ``"SEX"``)``, ``"AVISITCD"``)``,`` `` trt_group ``=`` ``variables``(`[`c`](https://rdrr.io/r/base/c.html)`(``"ARM"``, ``"ACTARM"``)``, ``"ARM"``)``,`` `` loq_legend ``=`` ``TRUE``,`` `` rotate_xlab ``=`` ``FALSE``,`` `` hline_arb ``=`` `[`c`](https://rdrr.io/r/base/c.html)`(``60``, ``55``)``,`` `` hline_arb_color ``=`` `[`c`](https://rdrr.io/r/base/c.html)`(``"grey"``, ``"red"``)``,`` `` hline_arb_label ``=`` `[`c`](https://rdrr.io/r/base/c.html)`(``"default_hori_A"``, ``"default_hori_B"``)``,`` `` hline_vars ``=`` `[`c`](https://rdrr.io/r/base/c.html)`(``"ANRHI"``, ``"ANRLO"``, ``"ULOQN"``, ``"LLOQN"``)``,`` `` hline_vars_colors ``=`` `[`c`](https://rdrr.io/r/base/c.html)`(``"pink"``, ``"brown"``, ``"purple"``, ``"black"``)``,`` `` decorators ``=`` `[`list`](https://rdrr.io/r/base/list.html)`(``plot ``=`` ``ggplot_caption_decorator``(``"I am a ggplot"``)``)`` `` ``)`` `` ``)`` ``)`` ``if`` ``(`[`interactive`](https://rdrr.io/r/base/interactive.html)`(``)``)`` ``{`` `` ``shinyApp``(``app``$``ui``, ``app``$``server``)`` ``}`
+\
+`data`` ``<-`` `[`within`](https://rdrr.io/r/base/with.html)`(``teal_data``(``)``, ``{`\
+`  `[`library`](https://rdrr.io/r/base/library.html)`(`[`dplyr`](https://dplyr.tidyverse.org)`)`\
+`  `[`library`](https://rdrr.io/r/base/library.html)`(`[`nestcolor`](https://insightsengineering.github.io/nestcolor/)`)`\
+`  `[`library`](https://rdrr.io/r/base/library.html)`(`[`stringr`](https://stringr.tidyverse.org)`)`\
+`  ``# use non-exported function from goshawk`\
+`  ``.h_identify_loq_values`` ``<-`` `[`getFromNamespace`](https://rdrr.io/r/utils/getFromNamespace.html)`(``"h_identify_loq_values"``, ``"goshawk"``)`\
+`  ``# original ARM value = dose value`\
+`  ``.arm_mapping`` ``<-`` `[`list`](https://rdrr.io/r/base/list.html)`(`\
+`    ``"A: Drug X"`` ``=`` ``"150mg QD"``,`\
+`    ``"B: Placebo"`` ``=`` ``"Placebo"``,`\
+`    ``"C: Combination"`` ``=`` ``"Combination"`\
+`  ``)`\
+`  ``ADSL`` ``<-`` ``teal.data``::`[`rADSL`](https://insightsengineering.github.io/teal.data/latest-tag/reference/random_cdisc_data.html)\
+`  ``ADLB`` ``<-`` ``teal.data``::`[`rADLB`](https://insightsengineering.github.io/teal.data/latest-tag/reference/random_cdisc_data.html)\
+`  ``.var_labels`` ``<-`` `[`lapply`](https://rdrr.io/r/base/lapply.html)`(``ADLB``, ``function``(``x``)`` `[`attributes`](https://rdrr.io/r/base/attributes.html)`(``x``)``$``label``)`\
+`  ``ADLB`` ``<-`` ``ADLB`` `[`%>%`](https://magrittr.tidyverse.org/reference/pipe.html)\
+`    `[`mutate`](https://dplyr.tidyverse.org/reference/mutate.html)`(`\
+`      AVISITCD ``=`` `[`case_when`](https://dplyr.tidyverse.org/reference/case-and-replace-when.html)`(`\
+`        ``AVISIT`` ``==`` ``"SCREENING"`` ``~`` ``"SCR"``,`\
+`        ``AVISIT`` ``==`` ``"BASELINE"`` ``~`` ``"BL"``,`\
+`        `[`grepl`](https://rdrr.io/r/base/grep.html)`(``"WEEK"``, ``AVISIT``)`` ``~`` `[`paste`](https://rdrr.io/r/base/paste.html)`(``"W"``, `[`str_extract`](https://stringr.tidyverse.org/reference/str_extract.html)`(``AVISIT``, ``"(?<=(WEEK ))[0-9]+"``)``)``,`\
+`        ``TRUE`` ``~`` `[`as.character`](https://rdrr.io/r/base/character.html)`(``NA``)`\
+`      ``)``,`\
+`      AVISITCDN ``=`` `[`case_when`](https://dplyr.tidyverse.org/reference/case-and-replace-when.html)`(`\
+`        ``AVISITCD`` ``==`` ``"SCR"`` ``~`` ``-``2``,`\
+`        ``AVISITCD`` ``==`` ``"BL"`` ``~`` ``0``,`\
+`        `[`grepl`](https://rdrr.io/r/base/grep.html)`(``"W"``, ``AVISITCD``)`` ``~`` `[`as.numeric`](https://rdrr.io/r/base/numeric.html)`(`[`gsub`](https://rdrr.io/r/base/grep.html)`(``"[^0-9]*"``, ``""``, ``AVISITCD``)``)``,`\
+`        ``TRUE`` ``~`` `[`as.numeric`](https://rdrr.io/r/base/numeric.html)`(``NA``)`\
+`      ``)``,`\
+`      AVISITCD ``=`` `[`factor`](https://rdrr.io/r/base/factor.html)`(``AVISITCD``)`` `[`%>%`](https://magrittr.tidyverse.org/reference/pipe.html)` `[`reorder`](https://rdrr.io/r/stats/reorder.factor.html)`(``AVISITCDN``)``,`\
+`      TRTORD ``=`` `[`case_when`](https://dplyr.tidyverse.org/reference/case-and-replace-when.html)`(`\
+`        ``ARMCD`` ``==`` ``"ARM C"`` ``~`` ``1``,`\
+`        ``ARMCD`` ``==`` ``"ARM B"`` ``~`` ``2``,`\
+`        ``ARMCD`` ``==`` ``"ARM A"`` ``~`` ``3`\
+`      ``)``,`\
+`      ARM ``=`` `[`as.character`](https://rdrr.io/r/base/character.html)`(``.arm_mapping``[`[`match`](https://rdrr.io/r/base/match.html)`(``ARM``, `[`names`](https://rdrr.io/r/base/names.html)`(``.arm_mapping``)``)``]``)``,`\
+`      ARM ``=`` `[`factor`](https://rdrr.io/r/base/factor.html)`(``ARM``)`` `[`%>%`](https://magrittr.tidyverse.org/reference/pipe.html)` `[`reorder`](https://rdrr.io/r/stats/reorder.factor.html)`(``TRTORD``)``,`\
+`      ACTARM ``=`` `[`as.character`](https://rdrr.io/r/base/character.html)`(``.arm_mapping``[`[`match`](https://rdrr.io/r/base/match.html)`(``ACTARM``, `[`names`](https://rdrr.io/r/base/names.html)`(``.arm_mapping``)``)``]``)``,`\
+`      ACTARM ``=`` `[`factor`](https://rdrr.io/r/base/factor.html)`(``ACTARM``)`` `[`%>%`](https://magrittr.tidyverse.org/reference/pipe.html)` `[`reorder`](https://rdrr.io/r/stats/reorder.factor.html)`(``TRTORD``)``,`\
+`      ANRLO ``=`` ``50``,`\
+`      ANRHI ``=`` ``75`\
+`    ``)`` `[`%>%`](https://magrittr.tidyverse.org/reference/pipe.html)\
+`    `[`rowwise`](https://dplyr.tidyverse.org/reference/rowwise.html)`(``)`` `[`%>%`](https://magrittr.tidyverse.org/reference/pipe.html)\
+`    `[`group_by`](https://dplyr.tidyverse.org/reference/group_by.html)`(``PARAMCD``)`` `[`%>%`](https://magrittr.tidyverse.org/reference/pipe.html)\
+`    `[`mutate`](https://dplyr.tidyverse.org/reference/mutate.html)`(``LBSTRESC ``=`` `[`ifelse`](https://rdrr.io/r/base/ifelse.html)`(`\
+`      ``USUBJID`` `[`%in%`](https://rdrr.io/r/base/match.html)` `[`sample`](https://rdrr.io/r/base/sample.html)`(``USUBJID``, ``1``, replace ``=`` ``TRUE``)``,`\
+`      `[`paste`](https://rdrr.io/r/base/paste.html)`(``"<"``, `[`round`](https://rdrr.io/r/base/Round.html)`(`[`runif`](https://rdrr.io/r/stats/Uniform.html)`(``1``, min ``=`` ``25``, max ``=`` ``30``)``)``)``, ``LBSTRESC`\
+`    ``)``)`` `[`%>%`](https://magrittr.tidyverse.org/reference/pipe.html)\
+`    `[`mutate`](https://dplyr.tidyverse.org/reference/mutate.html)`(``LBSTRESC ``=`` `[`ifelse`](https://rdrr.io/r/base/ifelse.html)`(`\
+`      ``USUBJID`` `[`%in%`](https://rdrr.io/r/base/match.html)` `[`sample`](https://rdrr.io/r/base/sample.html)`(``USUBJID``, ``1``, replace ``=`` ``TRUE``)``,`\
+`      `[`paste`](https://rdrr.io/r/base/paste.html)`(``">"``, `[`round`](https://rdrr.io/r/base/Round.html)`(`[`runif`](https://rdrr.io/r/stats/Uniform.html)`(``1``, min ``=`` ``70``, max ``=`` ``75``)``)``)``, ``LBSTRESC`\
+`    ``)``)`` `[`%>%`](https://magrittr.tidyverse.org/reference/pipe.html)\
+`    `[`ungroup`](https://dplyr.tidyverse.org/reference/group_by.html)`(``)`\
+`  ``# add LLOQ and ULOQ variables`\
+`  ``ALB_LOQS`` ``<-`` ``.h_identify_loq_values``(``ADLB``, ``"LOQFL"``)`\
+`  ``ADLB`` ``<-`` `[`left_join`](https://dplyr.tidyverse.org/reference/mutate-joins.html)`(``ADLB``, ``ALB_LOQS``, by ``=`` ``"PARAM"``)`\
+`}``)`\
+\
+`join_keys``(``data``)`` ``<-`` ``default_cdisc_join_keys``[`[`names`](https://rdrr.io/r/base/names.html)`(``data``)``]`\
+\
+`app`` ``<-`` ``init``(`\
+`  data ``=`` ``data``,`\
+`  modules ``=`` ``modules``(`\
+`    `[`tm_g_gh_boxplot`](https://insightsengineering.github.io/teal.goshawk/reference/tm_g_gh_boxplot.md)`(`\
+`      label ``=`` ``"Box Plot"``,`\
+`      dataname ``=`` ``"ADLB"``,`\
+`      param ``=`` ``picks``(`\
+`        ``variables``(``"PARAMCD"``, ``"PARAMCD"``)``,`\
+`        ``values``(``selected ``=`` ``"ALT"``, multiple ``=`` ``FALSE``)``,`\
+`        check_dataset ``=`` ``FALSE`\
+`      ``)``,`\
+`      yaxis_var ``=`` ``variables``(`[`c`](https://rdrr.io/r/base/c.html)`(``"AVAL"``, ``"BASE"``, ``"CHG"``)``, ``"AVAL"``)``,`\
+`      xaxis_var ``=`` ``variables``(`[`c`](https://rdrr.io/r/base/c.html)`(``"ACTARM"``, ``"ARM"``, ``"AVISITCD"``, ``"STUDYID"``)``, ``"ARM"``)``,`\
+`      facet_var ``=`` ``variables``(`[`c`](https://rdrr.io/r/base/c.html)`(``"ACTARM"``, ``"ARM"``, ``"AVISITCD"``, ``"SEX"``)``, ``"AVISITCD"``)``,`\
+`      trt_group ``=`` ``variables``(`[`c`](https://rdrr.io/r/base/c.html)`(``"ARM"``, ``"ACTARM"``)``, ``"ARM"``)``,`\
+`      loq_legend ``=`` ``TRUE``,`\
+`      rotate_xlab ``=`` ``FALSE``,`\
+`      hline_arb ``=`` `[`c`](https://rdrr.io/r/base/c.html)`(``60``, ``55``)``,`\
+`      hline_arb_color ``=`` `[`c`](https://rdrr.io/r/base/c.html)`(``"grey"``, ``"red"``)``,`\
+`      hline_arb_label ``=`` `[`c`](https://rdrr.io/r/base/c.html)`(``"default_hori_A"``, ``"default_hori_B"``)``,`\
+`      hline_vars ``=`` `[`c`](https://rdrr.io/r/base/c.html)`(``"ANRHI"``, ``"ANRLO"``, ``"ULOQN"``, ``"LLOQN"``)``,`\
+`      hline_vars_colors ``=`` `[`c`](https://rdrr.io/r/base/c.html)`(``"pink"``, ``"brown"``, ``"purple"``, ``"black"``)``,`\
+`      decorators ``=`` `[`list`](https://rdrr.io/r/base/list.html)`(``plot ``=`` ``ggplot_caption_decorator``(``"I am a ggplot"``)``)`\
+`    ``)`\
+`  ``)`\
+`)`\
+`if`` ``(`[`interactive`](https://rdrr.io/r/base/interactive.html)`(``)``)`` ``{`\
+`  ``shinyApp``(``app``$``ui``, ``app``$``server``)`\
+`}`
