@@ -203,3 +203,142 @@ describe("tm_g_gh_spaghettiplot: invalid arguments", {
     )
   })
 })
+
+spaghettiplot_module <- function(...) {
+  args <- utils::modifyList(
+    list(
+      label = "Spaghetti Plot",
+      dataname = "ADLB",
+      param = teal.picks::picks(
+        teal.picks::variables("PARAMCD", "PARAMCD"),
+        teal.picks::values(c("ALT", "CRP", "IGA"), "ALT", multiple = FALSE),
+        check_dataset = FALSE
+      ),
+      xaxis_var = teal.picks::variables(c("AVISITCD", "AVISIT"), "AVISITCD"),
+      yaxis_var = teal.picks::variables(c("AVAL", "CHG", "PCHG"), "AVAL"),
+      trt_group = teal.picks::variables(c("ARM", "ACTARM"), "ARM"),
+      hline_vars = c("ANRHI", "ANRLO"),
+      hline_vars_colors = c("pink", "brown")
+    ),
+    list(...)
+  )
+  suppressMessages(do.call(tm_g_gh_spaghettiplot, args))
+}
+
+spaghettiplot_inputs <- function(...) {
+  utils::modifyList(
+    default_module_inputs(
+      facet_ncol = 2,
+      free_x = FALSE,
+      rotate_xlab = FALSE,
+      group_stats = "NONE",
+      font_size = 12,
+      dot_size = 2,
+      alpha = 0.8
+    ),
+    list(...)
+  )
+}
+
+spaghettiplot_server <- function(mod) {
+  with_initial_inputs(mod$server, list(facet_ncol = 2))
+}
+
+describe("g_ui_spaghettiplot", {
+  it("returns a tag with the plot and brushed data outputs", {
+    ui <- module_ui(spaghettiplot_module())
+    html <- as.character(ui)
+    expect_s3_class(ui, "shiny.tag")
+    expect_match(html, "test-plot")
+    expect_match(html, "test-brush_data")
+    expect_match(html, "test-group_stats")
+  })
+
+  it("adds a horizontal range line selector only when hline_vars are given", {
+    expect_match(as.character(module_ui(spaghettiplot_module())), "test-hline_vars")
+    expect_no_match(as.character(module_ui(spaghettiplot_module(hline_vars = character(0)))), "test-hline_vars")
+  })
+})
+
+describe("srv_g_spaghettiplot", {
+  mod <- spaghettiplot_module()
+
+  it("creates a spaghetti plot with default axis ticks", {
+    shiny::testServer(spaghettiplot_server(mod), args = module_server_args(mod), {
+      do.call(session$setInputs, spaghettiplot_inputs())
+      session$elapse(2000)
+
+      expect_s3_class(plot_r(), "ggplot")
+      code <- code_of(plot_q())
+      expect_match(code, "goshawk::g_spaghettiplot", fixed = TRUE)
+      expect_match(code, "xtick <- ggplot2::waiver()", fixed = TRUE)
+      expect_match(code, "xlabel <- ggplot2::waiver()", fixed = TRUE)
+      expect_match(code, 'facet_scales = "fixed"', fixed = TRUE)
+    })
+  })
+
+  it("uses the custom axis ticks and labels", {
+    mod <- spaghettiplot_module(xtick = c("BL", "W 1"), xlabel = c("Baseline", "Week 1"))
+    shiny::testServer(spaghettiplot_server(mod), args = module_server_args(mod), {
+      do.call(session$setInputs, spaghettiplot_inputs())
+      session$elapse(2000)
+
+      code <- code_of(plot_q())
+      expect_match(code, 'xtick <- c("BL", "W 1")', fixed = TRUE)
+      expect_match(code, 'xlabel <- c("Baseline", "Week 1")', fixed = TRUE)
+      expect_s3_class(plot_r(), "ggplot")
+    })
+  })
+
+  it("passes free scales, group statistics and range lines to the plot", {
+    shiny::testServer(spaghettiplot_server(mod), args = module_server_args(mod), {
+      do.call(session$setInputs, spaghettiplot_inputs(free_x = TRUE, group_stats = "MEAN", hline_vars = "ANRLO"))
+      session$elapse(2000)
+
+      code <- code_of(plot_q())
+      expect_match(code, 'facet_scales = "free_x"', fixed = TRUE)
+      expect_match(code, 'group_stats = "MEAN"', fixed = TRUE)
+      expect_match(code, 'hline_vars = "ANRLO"', fixed = TRUE)
+      expect_match(code, 'hline_vars_colors = "pink"', fixed = TRUE)
+      expect_s3_class(plot_r(), "ggplot")
+    })
+  })
+
+  it("returns the brushed data ordered and renders it in a table", {
+    shiny::testServer(spaghettiplot_server(mod), args = module_server_args(mod), {
+      do.call(session$setInputs, spaghettiplot_inputs())
+      session$elapse(2000)
+
+      df <- reactive_df()
+      expect_s3_class(df, "data.frame")
+      expect_identical(names(df), c("USUBJID", "ARM", "PARAMCD", "AVISITCD", "AVAL", "LOQFL"))
+      expect_type(output$brush_data, "character")
+    })
+  })
+
+  it("returns a teal_report with the plot code", {
+    shiny::testServer(spaghettiplot_server(mod), args = module_server_args(mod), {
+      do.call(session$setInputs, spaghettiplot_inputs())
+      session$elapse(2000)
+
+      report <- session$getReturned()()
+      expect_s4_class(report, "teal_report")
+      expect_match(code_of(report), "goshawk::g_spaghettiplot", fixed = TRUE)
+    })
+  })
+
+  it("fails validation when the number of plots per row is not a positive integer", {
+    shiny::testServer(spaghettiplot_server(mod), args = module_server_args(mod), {
+      do.call(session$setInputs, spaghettiplot_inputs(facet_ncol = -1))
+      expect_error(validated_q(), "Please select a facet column integer that is greater than 0")
+    })
+  })
+
+  it("fails validation when no treatment variable is selected", {
+    shiny::testServer(spaghettiplot_server(mod), args = module_server_args(mod), {
+      do.call(session$setInputs, spaghettiplot_inputs())
+      .change_selectors(selectors, trt_group = character(0))
+      expect_error(validated_q(), "Please select a treatment variable")
+    })
+  })
+})
