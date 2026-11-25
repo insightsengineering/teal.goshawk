@@ -118,13 +118,19 @@ describe("migrate_choices_selected_to_values", {
 
 describe("force_pick_selection", {
   it("returns the pick unchanged when the selection type already matches", {
-    x <- teal.picks::picks(teal.picks::datasets("ADLB", "ADLB"), teal.picks::variables("AVAL", "AVAL", multiple = FALSE))
+    x <- teal.picks::picks(
+      teal.picks::datasets("ADLB", "ADLB"),
+      teal.picks::variables("AVAL", "AVAL", multiple = FALSE)
+    )
     expect_no_warning(y <- force_pick_selection(x))
     expect_identical(y, x)
   })
 
   it("forces a single selection with a warning", {
-    x <- teal.picks::picks(teal.picks::datasets("ADLB", "ADLB"), teal.picks::variables(c("AVAL", "CHG"), multiple = TRUE))
+    x <- teal.picks::picks(
+      teal.picks::datasets("ADLB", "ADLB"),
+      teal.picks::variables(c("AVAL", "CHG"), multiple = TRUE)
+    )
     expect_warning(y <- force_pick_selection(x), "`x` accepts only a single variable selection")
     expect_false(teal.picks::is_pick_multiple(y$variables))
   })
