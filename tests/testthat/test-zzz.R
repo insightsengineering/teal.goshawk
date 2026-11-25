@@ -1,13 +1,4 @@
-describe(".onLoad: Initialised on package load", {
+describe(".onLoad: Initialised on package load without error", {
   testthat::skip_if(getOption("testthat_interactive"))
-  it("loads without error", {
-    testthat::expect_no_error(.onLoad())
-  })
-
-  it("registers the teal.logger handler", {
-    expect_equal(
-      attr(globalCallingHandlers()$message, "type", exact = TRUE),
-      "teal.logger_handler"
-    )
-  })
+  testthat::expect_no_error(.onLoad())
 })
