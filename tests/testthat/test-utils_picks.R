@@ -136,7 +136,10 @@ describe("force_pick_selection", {
   })
 
   it("forces a multiple selection with a warning", {
-    x <- teal.picks::picks(teal.picks::datasets("ADLB", "ADLB"), teal.picks::variables("AVAL", "AVAL", multiple = FALSE))
+    x <- teal.picks::picks(
+      teal.picks::datasets("ADLB", "ADLB"),
+      teal.picks::variables("AVAL", "AVAL", multiple = FALSE)
+    )
     expect_warning(y <- force_pick_selection(x, multiple = TRUE), "accepts only a multiple variable selection")
     expect_true(teal.picks::is_pick_multiple(y$variables))
   })
