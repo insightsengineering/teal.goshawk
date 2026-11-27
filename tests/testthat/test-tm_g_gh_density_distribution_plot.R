@@ -191,3 +191,124 @@ describe("tm_g_gh_density_distribution_plot: invalid arguments", {
     )
   })
 })
+
+density_module <- function(...) {
+  args <- utils::modifyList(
+    list(
+      label = "Density Distribution Plot",
+      dataname = "ADLB",
+      param = teal.picks::picks(
+        teal.picks::variables("PARAMCD", "PARAMCD"),
+        teal.picks::values(c("ALT", "CRP", "IGA"), "ALT", multiple = FALSE),
+        check_dataset = FALSE
+      ),
+      xaxis_var = teal.picks::variables(c("AVAL", "BASE", "CHG", "PCHG"), "AVAL"),
+      trt_group = teal.picks::variables(c("ARM", "ACTARM"), "ARM")
+    ),
+    list(...)
+  )
+  suppressMessages(do.call(tm_g_gh_density_distribution_plot, args))
+}
+
+density_inputs <- function(...) {
+  utils::modifyList(
+    default_module_inputs(
+      facet_ncol = 2,
+      comb_line = TRUE,
+      rug_plot = FALSE,
+      rotate_xlab = FALSE,
+      font_size = 12,
+      line_size = 1
+    ),
+    list(...)
+  )
+}
+
+describe("ui_g_density_distribution_plot", {
+  it("returns a tag list with the plot, table and range zoom inputs", {
+    ui <- module_ui(density_module())
+    html <- as.character(ui)
+    expect_s3_class(ui, "shiny.tag.list")
+    expect_match(html, "test-plot")
+    expect_match(html, "test-table_ui")
+    expect_match(html, "test-xrange_scale")
+    expect_match(html, "test-yrange_scale")
+  })
+})
+
+describe("srv_g_density_distribution_plot", {
+  mod <- density_module()
+
+  it("creates a density plot", {
+    shiny::testServer(mod$server, args = module_server_args(mod), {
+      do.call(session$setInputs, density_inputs())
+      session$elapse(2000)
+
+      expect_s3_class(create_plot()[["plot"]], "ggplot")
+      expect_match(code_of(create_plot()), "goshawk::g_density_distribution_plot", fixed = TRUE)
+      expect_s4_class(create_plot_dims(), "teal_report")
+    })
+  })
+
+  it("creates and renders a summary table", {
+    # `covr` rewrites the summary table code into nested `{` blocks ending with a bare symbol,
+    # which `teal.code::eval_code()` (<= 0.7.2) fails to parse.
+    skip_on_covr()
+    shiny::testServer(mod$server, args = module_server_args(mod), {
+      do.call(session$setInputs, density_inputs())
+      session$elapse(2000)
+
+      expect_s3_class(create_table()[["tbl"]], "data.frame")
+      expect_match(code_of(create_table()), "goshawk::t_summarytable", fixed = TRUE)
+      expect_type(output$table_ui, "character")
+    })
+  })
+
+  it("returns a teal_report with the plot and the summary table", {
+    # `covr` rewrites the summary table code into nested `{` blocks ending with a bare symbol,
+    # which `teal.code::eval_code()` (<= 0.7.2) fails to parse.
+    skip_on_covr()
+    shiny::testServer(mod$server, args = module_server_args(mod), {
+      do.call(session$setInputs, density_inputs())
+      session$elapse(2000)
+
+      report <- session$getReturned()()
+      expect_s4_class(report, "teal_report")
+      expect_match(code_of(report), "goshawk::g_density_distribution_plot", fixed = TRUE)
+      expect_match(code_of(report), "goshawk::t_summarytable", fixed = TRUE)
+      expect_true("### Descriptive Statistics" %in% unlist(teal.reporter::teal_card(report)))
+    })
+  })
+
+  it("sets the Y-axis zoom from the maximum density per visit and treatment", {
+    shiny::testServer(mod$server, args = module_server_args(mod), {
+      do.call(session$setInputs, density_inputs())
+      session$elapse(2000)
+
+      expect_equal(unname(data_state_y()$range[1]), 0)
+      expect_gt(data_state_y()$range[2], 0)
+      expect_equal(data_state_y()$step, round(data_state_y()$range[[2]] / 1.2 / 100, 5), tolerance = 1e-4)
+      expect_null(data_state_x()$step)
+    })
+  })
+
+  it("passes the plot settings to the plot", {
+    shiny::testServer(mod$server, args = module_server_args(mod), {
+      do.call(session$setInputs, density_inputs(rug_plot = TRUE, comb_line = FALSE, line_size = 2))
+      session$elapse(2000)
+
+      code <- code_of(create_plot())
+      expect_match(code, "rug_plot = TRUE", fixed = TRUE)
+      expect_match(code, "comb_line = FALSE", fixed = TRUE)
+      expect_match(code, "line_size = 2", fixed = TRUE)
+    })
+  })
+
+  it("fails validation when no X-axis variable is selected", {
+    shiny::testServer(mod$server, args = module_server_args(mod), {
+      do.call(session$setInputs, density_inputs())
+      .change_selectors(selectors, xaxis_var = character(0))
+      expect_error(validated_q(), "Please select an X-Axis variable")
+    })
+  })
+})

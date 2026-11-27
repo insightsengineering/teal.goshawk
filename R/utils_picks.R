@@ -145,18 +145,21 @@ create_picks_helper <- function(datasets = NULL, x, ...) {
   }
   checkmate::assert_class(datasets, "datasets", null.ok = FALSE)
   checkmate::assert_multi_class(x, c("pick", "picks"))
+  dots <- rlang::dots_list(...)
+  checkmate::assert_list(dots, types = c("pick", "picks"), .var.name = "...")
 
   if (inherits(x, "picks")) {
-    picks_args <- c(list(datasets, x$variables, x$values), rlang::dots_list(...))
+    picks_args <- c(list(datasets, x$variables, x$values), dots)
     do.call(
       teal.picks::picks,
       picks_args[vapply(picks_args, Negate(is.null), logical(1L))]
     )
   } else if (inherits(x, "pick")) {
-    do.call(
-      teal.picks::picks,
-      c(list(datasets, x), rlang::dots_list(...))
-    )
+    picks_args <- c(list(x), dots)
+    if (!any(vapply(picks_args, inherits, logical(1L), "datasets"))) {
+      picks_args <- c(list(datasets), picks_args)
+    }
+    do.call(teal.picks::picks, picks_args)
   }
 }
 

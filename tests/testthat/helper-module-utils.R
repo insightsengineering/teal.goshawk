@@ -71,3 +71,58 @@ get_test_data <- function() {
   data
 }
 # nolint end
+
+# Building the test data is slow, so it is cached for the whole test run.
+.test_data_cache <- new.env(parent = emptyenv())
+get_cached_test_data <- function() {
+  if (is.null(.test_data_cache$data)) {
+    .test_data_cache$data <- get_test_data()
+  }
+  .test_data_cache$data
+}
+
+#' Inputs that every goshawk module reads but that are not bound in `shiny::testServer()`.
+#' @param ... named inputs overriding or extending the defaults.
+default_module_inputs <- function(...) {
+  utils::modifyList(
+    list(
+      constraint_var = "NONE",
+      constraint_range_min = 0,
+      constraint_range_max = 0,
+      `hline_arb-line_arb` = "",
+      `hline_arb-line_arb_label` = "",
+      `hline_arb-line_arb_color` = ""
+    ),
+    list(...)
+  )
+}
+
+#' Server arguments for `shiny::testServer()` based on a `teal_module`.
+module_server_args <- function(mod, data = get_cached_test_data()) {
+  c(list(id = "test", data = shiny::reactive(data)), mod$server_args)
+}
+
+#' Call the module UI with its arguments.
+module_ui <- function(mod) {
+  do.call(mod$ui, c(list(id = "test"), mod$ui_args))
+}
+
+#' Extract the code of a `qenv` as a single string.
+code_of <- function(q) {
+  paste(teal.code::get_code(q), collapse = "\n")
+}
+
+#' Wrap a module server so that inputs exist before it starts.
+#'
+#' In a running app the browser sends the initial input values before the server function
+#' is called. `shiny::testServer()` only allows setting inputs after the module has started,
+#' which fails for modules that read inputs while initializing.
+#' @param server (`function`) module server function.
+#' @param inputs (`list`) named list of initial (non-namespaced) inputs.
+with_initial_inputs <- function(server, inputs) {
+  function(id, ...) {
+    session <- shiny::getDefaultReactiveDomain()
+    do.call(session$setInputs, stats::setNames(inputs, paste0(id, "-", names(inputs))))
+    server(id, ...)
+  }
+}

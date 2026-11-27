@@ -215,3 +215,233 @@ describe("tm_g_gh_boxplot: invalid arguments", {
     expect_setequal(unique(c(names(wrong_params), names(wrong_params2), deprecated)), names(formals(tm_g_gh_boxplot)))
   })
 })
+
+boxplot_module <- function(...) {
+  args <- utils::modifyList(
+    list(
+      label = "Box Plot",
+      dataname = "ADLB",
+      param = teal.picks::picks(
+        teal.picks::variables("PARAMCD", "PARAMCD"),
+        teal.picks::values(c("ALT", "CRP", "IGA"), "ALT", multiple = FALSE),
+        check_dataset = FALSE
+      ),
+      yaxis_var = teal.picks::variables(c("AVAL", "BASE", "CHG"), "AVAL"),
+      xaxis_var = teal.picks::variables(c("AVISITCD", "ACTARM", "ARM"), "AVISITCD"),
+      facet_var = teal.picks::variables(c("ARM", "ACTARM", "SEX"), "ARM"),
+      trt_group = teal.picks::variables(c("ARM", "ACTARM"), "ARM"),
+      hline_vars = c("ANRHI", "ANRLO"),
+      hline_vars_colors = c("pink", "brown")
+    ),
+    list(...)
+  )
+  suppressMessages(do.call(tm_g_gh_boxplot, args))
+}
+
+boxplot_inputs <- function(...) {
+  utils::modifyList(
+    default_module_inputs(
+      facet_ncol = NA,
+      alpha = 0.8,
+      font_size = 12,
+      dot_size = 2,
+      loq_legend = TRUE,
+      rotate_xlab = FALSE
+    ),
+    list(...)
+  )
+}
+
+describe("ui_g_boxplot", {
+  it("returns a tag list with the plot, brush and table outputs", {
+    ui <- module_ui(boxplot_module())
+    html <- as.character(ui)
+    expect_s3_class(ui, "shiny.tag.list")
+    expect_match(html, "test-boxplot")
+    expect_match(html, "test-brush_data")
+    expect_match(html, "test-table_ui")
+  })
+
+  it("adds a horizontal range line selector only when hline_vars are given", {
+    expect_match(as.character(module_ui(boxplot_module())), "test-hline_vars")
+    expect_no_match(as.character(module_ui(boxplot_module(hline_vars = character(0)))), "test-hline_vars")
+  })
+})
+
+describe("srv_g_boxplot", {
+  mod <- boxplot_module()
+
+  it("creates a box plot", {
+    shiny::testServer(mod$server, args = module_server_args(mod), {
+      do.call(session$setInputs, boxplot_inputs())
+      session$elapse(2000)
+
+      expect_s4_class(validated_q(), "teal_data")
+      expect_s3_class(create_plot()[["plot"]], "ggplot")
+      expect_match(code_of(create_plot()), "goshawk::g_boxplot", fixed = TRUE)
+      expect_s4_class(decorated_plot_q(), "teal_report")
+    })
+  })
+
+  it("creates and renders a summary table", {
+    # `covr` rewrites the summary table code into nested `{` blocks ending with a bare symbol,
+    # which `teal.code::eval_code()` (<= 0.7.2) fails to parse.
+    skip_on_covr()
+    shiny::testServer(mod$server, args = module_server_args(mod), {
+      do.call(session$setInputs, boxplot_inputs())
+      session$elapse(2000)
+
+      expect_s3_class(create_table()[["tbl"]], "data.frame")
+      expect_match(code_of(create_table()), "goshawk::t_summarytable", fixed = TRUE)
+      expect_type(output$table_ui, "character")
+    })
+  })
+
+  it("returns the brushed data and renders it in a table", {
+    shiny::testServer(mod$server, args = module_server_args(mod), {
+      do.call(session$setInputs, boxplot_inputs())
+      session$elapse(2000)
+
+      expect_s3_class(reactive_df(), "data.frame")
+      expect_true(all(c("USUBJID", "AVISITCD", "AVAL", "LOQFL") %in% names(reactive_df())))
+      expect_type(output$brush_data, "character")
+    })
+  })
+
+  it("passes range and arbitrary horizontal lines to the plot", {
+    shiny::testServer(mod$server, args = module_server_args(mod), {
+      do.call(
+        session$setInputs,
+        boxplot_inputs(
+          hline_vars = "ANRHI",
+          `hline_arb-line_arb` = "50, 60",
+          `hline_arb-line_arb_label` = "low, high",
+          `hline_arb-line_arb_color` = "red, blue"
+        )
+      )
+      session$elapse(2000)
+
+      code <- code_of(create_plot())
+      expect_match(code, 'hline_vars = "ANRHI"', fixed = TRUE)
+      expect_match(code, 'hline_vars_colors = "pink"', fixed = TRUE)
+      expect_match(code, "hline_arb = c(50, 60)", fixed = TRUE)
+      expect_match(code, 'hline_arb_label = c("low", "high")', fixed = TRUE)
+      expect_match(code, 'hline_arb_color = c("red", "blue")', fixed = TRUE)
+    })
+  })
+
+  it("filters the analysis data when a baseline data constraint is set", {
+    shiny::testServer(mod$server, args = module_server_args(mod), {
+      do.call(session$setInputs, boxplot_inputs())
+      session$elapse(2000)
+      do.call(
+        session$setInputs,
+        boxplot_inputs(constraint_var = "BASE", constraint_range_min = 0, constraint_range_max = 1000)
+      )
+      session$elapse(2000)
+
+      expect_match(code_of(create_plot()), "filtered_usubjids", fixed = TRUE)
+      expect_s3_class(create_plot()[["plot"]], "ggplot")
+    })
+  })
+
+  it("returns a teal_report with the plot and the summary table code", {
+    # `covr` rewrites the summary table code into nested `{` blocks ending with a bare symbol,
+    # which `teal.code::eval_code()` (<= 0.7.2) fails to parse.
+    skip_on_covr()
+    shiny::testServer(mod$server, args = module_server_args(mod), {
+      do.call(session$setInputs, boxplot_inputs())
+      session$elapse(2000)
+
+      expect_s4_class(joined_qenvs(), "teal_report")
+      expect_match(code_of(joined_qenvs()), "goshawk::t_summarytable", fixed = TRUE)
+      expect_match(code_of(joined_qenvs()), "goshawk::g_boxplot", fixed = TRUE)
+    })
+  })
+
+  it("fails validation when the x-axis is a treatment variable different from the treatment group", {
+    shiny::testServer(mod$server, args = module_server_args(mod), {
+      do.call(session$setInputs, boxplot_inputs())
+      .change_selectors(selectors, xaxis_var = "ACTARM")
+      expect_error(validated_q(), "You can not choose ACTARM as x-axis variable for treatment variable ARM")
+    })
+  })
+
+  it("fails validation when the facet is a treatment variable different from the treatment group", {
+    shiny::testServer(mod$server, args = module_server_args(mod), {
+      do.call(session$setInputs, boxplot_inputs())
+      .change_selectors(selectors, facet_var = "ACTARM")
+      expect_error(validated_q(), "You can not choose ACTARM as faceting variable for treatment variable ARM")
+    })
+  })
+
+  it("fails validation when the number of plots per row is not a positive integer", {
+    shiny::testServer(mod$server, args = module_server_args(mod), {
+      do.call(session$setInputs, boxplot_inputs(facet_ncol = 0))
+      expect_error(validated_q(), "Please select a facet column integer that is greater than 0")
+    })
+  })
+
+  it("fails validation when no Y-axis variable is selected", {
+    shiny::testServer(mod$server, args = module_server_args(mod), {
+      do.call(session$setInputs, boxplot_inputs())
+      .change_selectors(selectors, yaxis_var = character(0))
+      expect_error(validated_q(), "Please select a Y-Axis variable")
+    })
+  })
+
+  it("fails validation when the arbitrary line values are not numeric", {
+    shiny::testServer(mod$server, args = module_server_args(mod), {
+      do.call(session$setInputs, boxplot_inputs(`hline_arb-line_arb` = "a, b"))
+      session$elapse(2000)
+      expect_error(create_plot(), "comma separated list of numbers")
+    })
+  })
+})
+
+describe("boxplot handles colors for hline", {
+  mod <- boxplot_module()
+
+  it("no error is thrown when using invalid hex colors", {
+    shiny::testServer(mod$server, args = module_server_args(mod), {
+      do.call(session$setInputs, boxplot_inputs())
+      session$setInputs(
+        "hline_arb-line_arb" = "60,65",
+        "hline_arb-line_arb_color" = "#123456,#12345678",
+        "hline_arb-line_arb_label" = "label1,label2"
+      )
+      session$elapse(2000)
+      session$flushReact()
+      browser()
+      expect_no_error(create_plot())
+    })
+  })
+
+  it("throws error when using invalid names", {
+    shiny::testServer(mod$server, args = module_server_args(mod), {
+      do.call(session$setInputs, boxplot_inputs())
+      session$setInputs(
+        "hline_arb-line_arb" = "60,65",
+        "hline_arb-line_arb_color" = "yada,bla",
+        "hline_arb-line_arb_label" = "label1,label2"
+      )
+      session$elapse(2000)
+      session$flushReact()
+      expect_error(create_plot(), "cannot be converted to colors in R")
+    })
+  })
+
+  it("throws error when using invalid hex colors", {
+    shiny::testServer(mod$server, args = module_server_args(mod), {
+      do.call(session$setInputs, boxplot_inputs())
+      session$setInputs(
+        "hline_arb-line_arb" = "60,65",
+        "hline_arb-line_arb_color" = "#123456,#123456789",
+        "hline_arb-line_arb_label" = "label1,label2"
+      )
+      session$elapse(2000)
+      session$flushReact()
+      expect_error(create_plot(), "cannot be converted to colors in R")
+    })
+  })
+})

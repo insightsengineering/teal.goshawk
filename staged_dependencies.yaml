@@ -27,6 +27,9 @@ upstream_repos:
   pharmaverse/teal.reporter:
     repo: pharmaverse/teal.reporter
     host: https://github.com
+  pharmaverse/teal.picks:
+    repo: pharmaverse/teal.picks
+    host: https://github.com
   insightsengineering/nestcolor:
     repo: insightsengineering/nestcolor
     host: https://github.com
