@@ -496,9 +496,6 @@ srv_g_boxplot <- function(id,
       loq_legend <- input$loq_legend
       rotate_xlab <- input$rotate_xlab
 
-      print(horizontal_line())
-      print(horizontal_line()$line_arb_label)
-      print(horizontal_line()$line_arb_color)
       hline_arb <- horizontal_line()$line_arb
       hline_arb_label <- horizontal_line()$line_arb_label
       hline_arb_color <- horizontal_line()$line_arb_color
