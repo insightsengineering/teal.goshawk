@@ -96,6 +96,8 @@ describe("check_color", {
   it("returns TRUE for valid R colors and FALSE otherwise", {
     expect_true(check_color(c("red", "#123456")))
     expect_false(check_color("notacolor"))
+    expect_false(check_color("#123456789"))
+    expect_false(check_color("#12345R"))
   })
 })
 
