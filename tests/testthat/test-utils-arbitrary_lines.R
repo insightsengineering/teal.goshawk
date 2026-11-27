@@ -92,15 +92,6 @@ describe("srv_arbitrary_lines", {
   })
 })
 
-describe("check_color", {
-  it("returns TRUE for valid R colors and FALSE otherwise", {
-    expect_true(check_color(c("red", "#123456")))
-    expect_false(check_color("notacolor"))
-    expect_false(check_color("#123456789"))
-    expect_false(check_color("#12345R"))
-  })
-})
-
 describe("validate_line_arb_arg", {
   it("accepts a single or one color and label per line", {
     expect_no_error(validate_line_arb_arg(c(1, 2), "red", "label"))

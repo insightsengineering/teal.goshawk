@@ -398,3 +398,50 @@ describe("srv_g_boxplot", {
     })
   })
 })
+
+describe("boxplot handles colors for hline", {
+  mod <- boxplot_module()
+
+  it("no error is thrown when using invalid hex colors", {
+    shiny::testServer(mod$server, args = module_server_args(mod), {
+      do.call(session$setInputs, boxplot_inputs())
+      session$setInputs(
+        "hline_arb-line_arb" = "60,65",
+        "hline_arb-line_arb_color" = "#123456,#12345678",
+        "hline_arb-line_arb_label" = "label1,label2"
+      )
+      session$elapse(2000)
+      session$flushReact()
+      browser()
+      expect_no_error(create_plot())
+    })
+  })
+
+  it("throws error when using invalid names", {
+    shiny::testServer(mod$server, args = module_server_args(mod), {
+      do.call(session$setInputs, boxplot_inputs())
+      session$setInputs(
+        "hline_arb-line_arb" = "60,65",
+        "hline_arb-line_arb_color" = "yada,bla",
+        "hline_arb-line_arb_label" = "label1,label2"
+      )
+      session$elapse(2000)
+      session$flushReact()
+      expect_error(create_plot(), "cannot be converted to colors in R")
+    })
+  })
+
+  it("throws error when using invalid hex colors", {
+    shiny::testServer(mod$server, args = module_server_args(mod), {
+      do.call(session$setInputs, boxplot_inputs())
+      session$setInputs(
+        "hline_arb-line_arb" = "60,65",
+        "hline_arb-line_arb_color" = "#123456,#123456789",
+        "hline_arb-line_arb_label" = "label1,label2"
+      )
+      session$elapse(2000)
+      session$flushReact()
+      expect_error(create_plot(), "cannot be converted to colors in R")
+    })
+  })
+})
