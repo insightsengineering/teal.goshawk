@@ -19,9 +19,9 @@ parameters: `transformators` and `decorators`.
 To get a complete understanding refer the following vignettes:
 
 - Transforming the input data in [this
-  vignette](https://insightsengineering.github.io/teal/latest-tag/articles/transform-input-data.html).
+  vignette](https://pharmaverse.github.io/teal/latest-tag/articles/transform-input-data.html).
 - Transforming module output in [this
-  vignette](https://insightsengineering.github.io/teal/latest-tag/articles/transform-module-output.html).
+  vignette](https://pharmaverse.github.io/teal/latest-tag/articles/transform-module-output.html).
 
 ## Outputs that can be decorated
 
@@ -58,8 +58,8 @@ Here’s an example to showcase how you can edit an output of class
 `    ``"B: Placebo"`` ``=`` ``"Placebo"``,`\
 `    ``"C: Combination"`` ``=`` ``"Combination"`\
 `  ``)`\
-`  ``ADSL`` ``<-`` ``teal.data``::`[`rADSL`](https://insightsengineering.github.io/teal.data/latest-tag/reference/random_cdisc_data.html)\
-`  ``ADLB`` ``<-`` ``teal.data``::`[`rADLB`](https://insightsengineering.github.io/teal.data/latest-tag/reference/random_cdisc_data.html)\
+`  ``ADSL`` ``<-`` ``teal.data``::`[`rADSL`](https://rdrr.io/pkg/teal.data/man/random_cdisc_data.html)\
+`  ``ADLB`` ``<-`` ``teal.data``::`[`rADLB`](https://rdrr.io/pkg/teal.data/man/random_cdisc_data.html)\
 `  ``.var_labels`` ``<-`` `[`lapply`](https://rdrr.io/r/base/lapply.html)`(``ADLB``, ``function``(``x``)`` `[`attributes`](https://rdrr.io/r/base/attributes.html)`(``x``)``$``label``)`\
 `  ``ADLB`` ``<-`` ``ADLB`` `[`%>%`](https://magrittr.tidyverse.org/reference/pipe.html)\
 `    `[`mutate`](https://dplyr.tidyverse.org/reference/mutate.html)`(`\

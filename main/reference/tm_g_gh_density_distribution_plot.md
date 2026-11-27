@@ -42,8 +42,8 @@ tm_g_gh_density_distribution_plot(
 - dataname:
 
   (`character(1)`) analysis data passed to the data argument of
-  [`teal::init()`](https://insightsengineering.github.io/teal/latest-tag/reference/init.html).
-  E.g. `ADaM` structured laboratory data frame `ADLB`.
+  [`teal::init()`](https://rdrr.io/pkg/teal/man/init.html). E.g. `ADaM`
+  structured laboratory data frame `ADLB`.
 
 - param_var:
 
@@ -52,24 +52,24 @@ tm_g_gh_density_distribution_plot(
 
 - param:
 
-  ([`teal.picks::picks()`](https://insightsengineering.github.io/teal.picks/latest-tag/reference/picks.html)
+  ([`teal.picks::picks()`](https://rdrr.io/pkg/teal.picks/man/picks.html)
   or
-  [`teal.transform::choices_selected()`](https://insightsengineering.github.io/teal.transform/latest-tag/reference/choices_selected.html))
+  [`teal.transform::choices_selected()`](https://rdrr.io/pkg/teal.transform/man/choices_selected.html))
   biomarker selected.
 
 - xaxis_var:
 
-  ([`teal.picks::variables()`](https://insightsengineering.github.io/teal.picks/latest-tag/reference/picks.html)
+  ([`teal.picks::variables()`](https://rdrr.io/pkg/teal.picks/man/picks.html)
   or legacy
-  [`teal.transform::choices_selected()`](https://insightsengineering.github.io/teal.transform/latest-tag/reference/choices_selected.html))
+  [`teal.transform::choices_selected()`](https://rdrr.io/pkg/teal.transform/man/choices_selected.html))
   name of variable containing biomarker results displayed on x-axis e.g.
   `BASE`.
 
 - trt_group:
 
-  ([`teal.picks::variables()`](https://insightsengineering.github.io/teal.picks/latest-tag/reference/picks.html)
+  ([`teal.picks::variables()`](https://rdrr.io/pkg/teal.picks/man/picks.html)
   or legacy
-  [`teal.transform::choices_selected()`](https://insightsengineering.github.io/teal.transform/latest-tag/reference/choices_selected.html))
+  [`teal.transform::choices_selected()`](https://rdrr.io/pkg/teal.transform/man/choices_selected.html))
   object with available choices and pre-selected option for variable
   names representing treatment group e.g. `ARM`.
 
@@ -143,7 +143,7 @@ tm_g_gh_density_distribution_plot(
 
   (`list` of `teal_transform_module`) that will be applied to transform
   module's data input. To learn more check
-  [`vignette("transform-input-data", package = "teal")`](https://insightsengineering.github.io/teal/latest-tag/articles/transform-input-data.html).
+  [`vignette("transform-input-data", package = "teal")`](https://cran.rstudio.com/web/packages/teal/vignettes/transform-input-data.html).
 
 - decorators:
 
@@ -156,11 +156,9 @@ tm_g_gh_density_distribution_plot(
 
 ## Value
 
-A
-[`teal::module()`](https://insightsengineering.github.io/teal/latest-tag/reference/teal_modules.html)
+A [`teal::module()`](https://rdrr.io/pkg/teal/man/teal_modules.html)
 object that can be used in a
-[`teal::init()`](https://insightsengineering.github.io/teal/latest-tag/reference/init.html)
-call.
+[`teal::init()`](https://rdrr.io/pkg/teal/man/init.html) call.
 
 ## Decorating Module
 
@@ -185,9 +183,9 @@ For additional details and examples of decorators, refer to the vignette
 [`vignette("decorate-module-output", package = "teal.goshawk")`](https://insightsengineering.github.io/teal.goshawk/articles/decorate-module-output.md).
 
 To learn more please refer to the vignette
-[`vignette("transform-module-output", package = "teal")`](https://insightsengineering.github.io/teal/latest-tag/articles/transform-module-output.html)
+[`vignette("transform-module-output", package = "teal")`](https://cran.rstudio.com/web/packages/teal/vignettes/transform-module-output.html)
 or the
-[`teal::teal_transform_module()`](https://insightsengineering.github.io/teal/latest-tag/reference/teal_transform_module.html)
+[`teal::teal_transform_module()`](https://rdrr.io/pkg/teal/man/teal_transform_module.html)
 documentation.
 
 ## Reporting
@@ -200,7 +198,7 @@ framework.
 
 For more information on reporting in `teal`, see the vignettes:
 
-- [`vignette("reportable-shiny-application", package = "teal.reporter")`](https://insightsengineering.github.io/teal.reporter/latest-tag/articles/reportable-shiny-application.html)
+- [`vignette("reportable-shiny-application", package = "teal.reporter")`](https://cran.rstudio.com/web/packages/teal.reporter/vignettes/reportable-shiny-application.html)
 
 - `vignette("adding-support-for-reporting-to-custom-modules", package = "teal")`
 

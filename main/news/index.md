@@ -1,6 +1,6 @@
 # Changelog
 
-## teal.goshawk 0.6.1.9001
+## teal.goshawk 0.6.1.9002
 
 ## teal.goshawk 0.6.1
 
@@ -18,7 +18,7 @@
 - Added decorators to all modules
   ([\#329](https://github.com/insightsengineering/teal.goshawk/issues/329)).
 - Migrated module inputs from
-  [`teal.transform::choices_selected()`](https://insightsengineering.github.io/teal.transform/latest-tag/reference/choices_selected.html)
+  [`teal.transform::choices_selected()`](https://rdrr.io/pkg/teal.transform/man/choices_selected.html)
   to `teal.picks()`
   ([\#378](https://github.com/insightsengineering/teal.goshawk/issues/378),
   [\#376](https://github.com/insightsengineering/teal.goshawk/issues/376)).
@@ -79,7 +79,7 @@
 
 - Updated the documentation and vignettes to demonstrate method to pass
   `teal_data` object to
-  [`teal::init()`](https://insightsengineering.github.io/teal/latest-tag/reference/init.html).
+  [`teal::init()`](https://rdrr.io/pkg/teal/man/init.html).
 - Removed `Show Warnings` modals from modules.
 
 #### Miscellaneous
@@ -154,7 +154,7 @@
   `teal.devel` modules which have also been written to use
   `moduleServer`.
 - Replaced calls to `teal::root_modules` with
-  [`teal::modules`](https://insightsengineering.github.io/teal/latest-tag/reference/teal_modules.html)
+  [`teal::modules`](https://rdrr.io/pkg/teal/man/teal_modules.html)
   following deprecation of `teal::root_modules`.
 - Adjusted package imports to take into account changes to the `teal`
   framework.
