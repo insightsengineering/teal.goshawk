@@ -32,8 +32,8 @@ To distinguish the difference, modules in  `teal.goshawk` have 2 separate parame
 To get a complete understanding refer the following vignettes:
 
 - Transforming the input data in
-[this vignette](https://insightsengineering.github.io/teal/latest-tag/articles/transform-input-data.html).
-- Transforming module output in [this vignette](https://insightsengineering.github.io/teal/latest-tag/articles/transform-module-output.html).
+[this vignette](https://pharmaverse.github.io/teal/latest-tag/articles/transform-input-data.html).
+- Transforming module output in [this vignette](https://pharmaverse.github.io/teal/latest-tag/articles/transform-module-output.html).
 
 ## Outputs that can be decorated
 
