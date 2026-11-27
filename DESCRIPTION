@@ -74,17 +74,17 @@ VignetteBuilder:
 Remotes:
     insightsengineering/goshawk@*release
 Config/Needs/verdepcheck: insightsengineering/goshawk, rstudio/shiny,
-    insightsengineering/teal, insightsengineering/teal.transform,
+    pharmaverse/teal, pharmaverse/teal.transform,
     rstudio/bslib, mllg/checkmate, daattali/colourpicker, tidyverse/dplyr,
     rstudio/DT, tidyverse/ggplot2, r-lib/rlang, daattali/shinyjs,
-    rstudio/shinyvalidate, insightsengineering/teal.code,
-    insightsengineering/teal.logger, insightsengineering/teal.reporter,
-    insightsengineering/teal.widgets, yihui/knitr,
+    rstudio/shinyvalidate, pharmaverse/teal.code,
+    pharmaverse/teal.logger, pharmaverse/teal.reporter,
+    pharmaverse/teal.widgets, yihui/knitr,
     insightsengineering/nestcolor, rstudio/rmarkdown, tidyverse/rvest,
-    rstudio/shinytest2, tidyverse/stringr, insightsengineering/teal.data,
-    insightsengineering/tern, r-lib/testthat
+    rstudio/shinytest2, tidyverse/stringr, pharmaverse/teal.data,
+    pharmaverse/tern, r-lib/testthat
 Config/Needs/website: insightsengineering/nesttemplate
-Config/roxygen2/version: 8.1.0
+Config/roxygen2/version: 8.1.1
 Config/testthat/edition: 3
 Encoding: UTF-8
 Language: en-US

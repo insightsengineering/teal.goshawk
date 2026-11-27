@@ -6,26 +6,26 @@ upstream_repos:
   insightsengineering/goshawk:
     repo: insightsengineering/goshawk
     host: https://github.com
-  insightsengineering/teal.widgets:
-    repo: insightsengineering/teal.widgets
+  pharmaverse/teal.widgets:
+    repo: pharmaverse/teal.widgets
     host: https://github.com
-  insightsengineering/teal.logger:
-    repo: insightsengineering/teal.logger
+  pharmaverse/teal.logger:
+    repo: pharmaverse/teal.logger
     host: https://github.com
-  insightsengineering/teal.code:
-    repo: insightsengineering/teal.code
+  pharmaverse/teal.code:
+    repo: pharmaverse/teal.code
     host: https://github.com
-  insightsengineering/teal.transform:
-    repo: insightsengineering/teal.transform
+  pharmaverse/teal.transform:
+    repo: pharmaverse/teal.transform
     host: https://github.com
-  insightsengineering/teal:
-    repo: insightsengineering/teal
+  pharmaverse/teal:
+    repo: pharmaverse/teal
     host: https://github.com
-  insightsengineering/tern:
-    repo: insightsengineering/tern
+  pharmaverse/tern:
+    repo: pharmaverse/tern
     host: https://github.com
-  insightsengineering/teal.reporter:
-    repo: insightsengineering/teal.reporter
+  pharmaverse/teal.reporter:
+    repo: pharmaverse/teal.reporter
     host: https://github.com
   insightsengineering/nestcolor:
     repo: insightsengineering/nestcolor
